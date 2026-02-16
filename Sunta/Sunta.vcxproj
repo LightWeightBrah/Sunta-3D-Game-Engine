@@ -91,7 +91,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SUNTA_BUILD_DLL; SUNTA_PLATFORM_WINDOWS; GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\external;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -102,7 +102,11 @@
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"
+
+xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"
+xcopy /I /Y /E /D "$(SolutionDir)Sunta\res" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\res"
+xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,7 +115,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SUNTA_BUILD_DLL; SUNTA_PLATFORM_WINDOWS; GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\external;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -124,14 +128,18 @@
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"
+
+xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"
+xcopy /I /Y /E /D "$(SolutionDir)Sunta\res" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\res"
+xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SUNTA_BUILD_DLL; SUNTA_PLATFORM_WINDOWS; GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\external;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -142,7 +150,11 @@
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"
+
+xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"
+xcopy /I /Y /E /D "$(SolutionDir)Sunta\res" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\res"
+xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,7 +163,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SUNTA_BUILD_DLL; SUNTA_PLATFORM_WINDOWS; GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\external;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -164,17 +176,21 @@
       <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"</Command>
+      <Command>xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(OutDir)"
+
+xcopy /I /Y /E /D  "$(SolutionDir)Dependencies\Assimp\bin\x64\*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"
+xcopy /I /Y /E /D "$(SolutionDir)Sunta\res" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\res"
+xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platform)\Game\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\LightSource.cpp" />
-    <ClCompile Include="src\InputManager.cpp" />
-    <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\Material.cpp" />
-    <ClCompile Include="src\Primitives.cpp" />
-    <ClCompile Include="src\Scene.cpp" />
-    <ClCompile Include="src\Event.cpp" />
+    <ClCompile Include="src\Sunta\LightSource.cpp" />
+    <ClCompile Include="src\Sunta\InputManager.cpp" />
+    <ClCompile Include="src\Sunta\Engine.cpp" />
+    <ClCompile Include="src\Sunta\Material.cpp" />
+    <ClCompile Include="src\Sunta\Primitives.cpp" />
+    <ClCompile Include="src\Sunta\Scene.cpp" />
+    <ClCompile Include="src\Sunta\Event.cpp" />
     <ClCompile Include="src\external\imgui\imgui.cpp" />
     <ClCompile Include="src\external\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\external\imgui\imgui_draw.cpp" />
@@ -182,42 +198,42 @@
     <ClCompile Include="src\external\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\external\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\external\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\ResourceManager.cpp" />
-    <ClCompile Include="src\Entity.cpp" />
-    <ClCompile Include="src\Animation.cpp" />
-    <ClCompile Include="src\Animator.cpp" />
-    <ClCompile Include="src\Bone.cpp" />
-    <ClCompile Include="src\Mesh.cpp" />
-    <ClCompile Include="src\Model.cpp" />
-    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Sunta\ResourceManager.cpp" />
+    <ClCompile Include="src\Sunta\Entity.cpp" />
+    <ClCompile Include="src\Sunta\Animation.cpp" />
+    <ClCompile Include="src\Sunta\Animator.cpp" />
+    <ClCompile Include="src\Sunta\Bone.cpp" />
+    <ClCompile Include="src\Sunta\Mesh.cpp" />
+    <ClCompile Include="src\Sunta\Model.cpp" />
+    <ClCompile Include="src\Sunta\Camera.cpp" />
     <ClCompile Include="src\external\glm\detail\glm.cpp" />
     <ClCompile Include="src\external\stb\stb_image.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
-    <ClCompile Include="src\AStar.cpp" />
-    <ClCompile Include="src\Grid.cpp" />
-    <ClCompile Include="src\ElementBuffer.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Node.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
-    <ClCompile Include="src\Solaire.cpp" />
-    <ClCompile Include="src\VertexBuffer.cpp" />
-    <ClCompile Include="src\VertexArray.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
-    <ClCompile Include="src\Time.cpp" />
+    <ClCompile Include="src\Sunta\Shader.cpp" />
+    <ClCompile Include="src\Sunta\AStar.cpp" />
+    <ClCompile Include="src\Sunta\Grid.cpp" />
+    <ClCompile Include="src\Sunta\ElementBuffer.cpp" />
+    <ClCompile Include="src\Sunta\main.cpp" />
+    <ClCompile Include="src\Sunta\Node.cpp" />
+    <ClCompile Include="src\Sunta\Renderer.cpp" />
+    <ClCompile Include="src\Sunta\Solaire.cpp" />
+    <ClCompile Include="src\Sunta\VertexBuffer.cpp" />
+    <ClCompile Include="src\Sunta\VertexArray.cpp" />
+    <ClCompile Include="src\Sunta\Texture.cpp" />
+    <ClCompile Include="src\Sunta\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h" />
-    <ClInclude Include="src\SceneData.h" />
-    <ClInclude Include="src\LightSource.h" />
-    <ClInclude Include="src\AssimpUtilities.h" />
-    <ClInclude Include="src\BufferLayout.h" />
-    <ClInclude Include="src\Config.h" />
-    <ClInclude Include="src\InputManager.h" />
-    <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\Material.h" />
-    <ClInclude Include="src\Primitives.h" />
-    <ClInclude Include="src\Scene.h" />
-    <ClInclude Include="src\Event.h" />
+    <ClInclude Include="src\Sunta\Core.h" />
+    <ClInclude Include="src\Sunta\SceneData.h" />
+    <ClInclude Include="src\Sunta\LightSource.h" />
+    <ClInclude Include="src\Sunta\AssimpUtilities.h" />
+    <ClInclude Include="src\Sunta\BufferLayout.h" />
+    <ClInclude Include="src\Sunta\Config.h" />
+    <ClInclude Include="src\Sunta\InputManager.h" />
+    <ClInclude Include="src\Sunta\Engine.h" />
+    <ClInclude Include="src\Sunta\Material.h" />
+    <ClInclude Include="src\Sunta\Primitives.h" />
+    <ClInclude Include="src\Sunta\Scene.h" />
+    <ClInclude Include="src\Sunta\Event.h" />
     <ClInclude Include="src\external\imgui\imconfig.h" />
     <ClInclude Include="src\external\imgui\imgui.h" />
     <ClInclude Include="src\external\imgui\imgui_impl_glfw.h" />
@@ -227,14 +243,14 @@
     <ClInclude Include="src\external\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\external\imgui\imstb_textedit.h" />
     <ClInclude Include="src\external\imgui\imstb_truetype.h" />
-    <ClInclude Include="src\ResourceManager.h" />
-    <ClInclude Include="src\Entity.h" />
-    <ClInclude Include="src\Animation.h" />
-    <ClInclude Include="src\Animator.h" />
-    <ClInclude Include="src\Bone.h" />
-    <ClInclude Include="src\Mesh.h" />
-    <ClInclude Include="src\Model.h" />
-    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Sunta\ResourceManager.h" />
+    <ClInclude Include="src\Sunta\Entity.h" />
+    <ClInclude Include="src\Sunta\Animation.h" />
+    <ClInclude Include="src\Sunta\Animator.h" />
+    <ClInclude Include="src\Sunta\Bone.h" />
+    <ClInclude Include="src\Sunta\Mesh.h" />
+    <ClInclude Include="src\Sunta\Model.h" />
+    <ClInclude Include="src\Sunta\Camera.h" />
     <ClInclude Include="src\external\glm\common.hpp" />
     <ClInclude Include="src\external\glm\detail\func_common.hpp" />
     <ClInclude Include="src\external\glm\detail\func_exponential.hpp" />
@@ -380,25 +396,24 @@
     <ClInclude Include="src\external\glm\vec4.hpp" />
     <ClInclude Include="src\external\glm\vector_relational.hpp" />
     <ClInclude Include="src\external\stb\stb_image.h" />
-    <ClInclude Include="src\Shader.h" />
-    <ClInclude Include="src\AStar.h" />
-    <ClInclude Include="src\Grid.h" />
-    <ClInclude Include="src\ElementBuffer.h" />
-    <ClInclude Include="src\main.h" />
-    <ClInclude Include="src\Node.h" />
-    <ClInclude Include="src\Renderer.h" />
-    <ClInclude Include="src\Solaire.h" />
-    <ClInclude Include="src\VertexBuffer.h" />
-    <ClInclude Include="src\VertexArray.h" />
-    <ClInclude Include="src\Texture.h" />
-    <ClInclude Include="src\Time.h" />
-    <ClInclude Include="src\VertexLayouts.h" />
-    <ClInclude Include="src\VertexTypes.h" />
-    <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\Sunta\Shader.h" />
+    <ClInclude Include="src\Sunta\AStar.h" />
+    <ClInclude Include="src\Sunta\Grid.h" />
+    <ClInclude Include="src\Sunta\ElementBuffer.h" />
+    <ClInclude Include="src\Sunta\Node.h" />
+    <ClInclude Include="src\Sunta\Renderer.h" />
+    <ClInclude Include="src\Sunta\Solaire.h" />
+    <ClInclude Include="src\Sunta.h" />
+    <ClInclude Include="src\Sunta\VertexBuffer.h" />
+    <ClInclude Include="src\Sunta\VertexArray.h" />
+    <ClInclude Include="src\Sunta\Texture.h" />
+    <ClInclude Include="src\Sunta\Time.h" />
+    <ClInclude Include="src\Sunta\VertexLayouts.h" />
+    <ClInclude Include="src\Sunta\VertexTypes.h" />
+    <ClInclude Include="src\Sunta\Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\LightSource.shader" />
-    <None Include="map_generator.exe" />
     <None Include="res\shaders\Reflectable.shader" />
     <None Include="res\shaders\Model.shader" />
     <None Include="res\shaders\Basic.shader" />
@@ -515,7 +530,6 @@
     <None Include="src\external\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="grid.txt" />
     <Text Include="src\grid.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

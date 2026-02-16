@@ -19,4 +19,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\Basic.shader" />
+    <None Include="res\shaders\LightSource.shader" />
+    <None Include="res\shaders\Model.shader" />
+    <None Include="res\shaders\Reflectable.shader" />
+  </ItemGroup>
 </Project>

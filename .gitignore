@@ -1,6 +1,6 @@
 .vs/
-bin/
-A-Star-Pathfinding/bin/
+bin/*
+bin-intermediates/*
 *.obj
 *.ipch
 *.exe
