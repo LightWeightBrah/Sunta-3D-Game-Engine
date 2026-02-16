@@ -1,6 +1,6 @@
-#include <Sunta.h>
+#include <SuntaEngine.h>
 
-class Game : public Sunta::Engine
+class Game : public Sunta::Application
 {
 public:
 	Game()
@@ -14,9 +14,4 @@ public:
 	}
 };
 
-int main()
-{
-	Game* game = new Game();
-	game->Run();
-	delete game;
-}
+SUNTA_NEW_APPLICATION(Game)

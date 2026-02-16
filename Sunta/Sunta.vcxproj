@@ -186,7 +186,7 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
   <ItemGroup>
     <ClCompile Include="src\Sunta\LightSource.cpp" />
     <ClCompile Include="src\Sunta\InputManager.cpp" />
-    <ClCompile Include="src\Sunta\Engine.cpp" />
+    <ClCompile Include="src\Sunta\Application.cpp" />
     <ClCompile Include="src\Sunta\Material.cpp" />
     <ClCompile Include="src\Sunta\Primitives.cpp" />
     <ClCompile Include="src\Sunta\Scene.cpp" />
@@ -223,13 +223,14 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Sunta\Core.h" />
+    <ClInclude Include="src\Sunta\EntryPoint.h" />
     <ClInclude Include="src\Sunta\SceneData.h" />
     <ClInclude Include="src\Sunta\LightSource.h" />
     <ClInclude Include="src\Sunta\AssimpUtilities.h" />
     <ClInclude Include="src\Sunta\BufferLayout.h" />
     <ClInclude Include="src\Sunta\Config.h" />
     <ClInclude Include="src\Sunta\InputManager.h" />
-    <ClInclude Include="src\Sunta\Engine.h" />
+    <ClInclude Include="src\Sunta\Application.h" />
     <ClInclude Include="src\Sunta\Material.h" />
     <ClInclude Include="src\Sunta\Primitives.h" />
     <ClInclude Include="src\Sunta\Scene.h" />
@@ -403,7 +404,7 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\Sunta\Node.h" />
     <ClInclude Include="src\Sunta\Renderer.h" />
     <ClInclude Include="src\Sunta\Solaire.h" />
-    <ClInclude Include="src\Sunta.h" />
+    <ClInclude Include="src\SuntaEngine.h" />
     <ClInclude Include="src\Sunta\VertexBuffer.h" />
     <ClInclude Include="src\Sunta\VertexArray.h" />
     <ClInclude Include="src\Sunta\Texture.h" />

@@ -13,8 +13,16 @@ namespace Sunta
 	class Renderer;
 	class Event;
 	
-	class SUNTA_API Engine
+
+
+	class SUNTA_API Application
 	{
+	public:
+		Application();
+		virtual ~Application();
+
+		void Run();
+
 	private:
 		GLFWwindow*						window;
 		Renderer						renderer;
@@ -37,12 +45,9 @@ namespace Sunta
 		void SetCallbacks();
 		void SubsribeToEvents();
 		void OpenMenu();
-	
-	public:
-		Engine();
-		~Engine();
-	
-		void Run();
-	
 	};
+
+	//THIS SHOULD BE DEFINED BY CLIENT, THAT IS IN ALL GAMES USING SUNTA'S ENGINE
+	Application* CreateApplication();
+	
 }

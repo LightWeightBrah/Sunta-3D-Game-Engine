@@ -1,10 +1,10 @@
-﻿#include "Engine.h"
-
-int main()
-{
-	Sunta::Engine engine;
-	engine.Run();
-}
+﻿//#include "Engine.h"
+//
+//int main()
+//{
+//	Sunta::Engine engine;
+//	engine.Run();
+//}
 
 //#include <iostream>
 //#include <tuple>

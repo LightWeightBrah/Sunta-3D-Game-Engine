@@ -4,7 +4,7 @@
 
 #include <assimp/version.h>
 
-#include "Engine.h"
+#include "Application.h"
 #include "Scene.h"
 #include "Renderer.h"
 #include "Time.h"
@@ -12,17 +12,17 @@
 
 namespace Sunta
 {
-	Engine::Engine()
+	Application::Application()
 		: window(nullptr), isMenuOpen(false)
 	{
 	
 	}
-	Engine::~Engine()
+	Application::~Application()
 	{
 	
 	}
 	
-	void Engine::Run()
+	void Application::Run()
 	{
 		if (!Init())
 			return;
@@ -46,7 +46,7 @@ namespace Sunta
 		Shutdown();
 	}
 	
-	bool Engine::Init()
+	bool Application::Init()
 	{
 		if (!glfwInit())
 		{
@@ -99,12 +99,12 @@ namespace Sunta
 		return true;
 	}
 	
-	void Engine::Update(float deltaTime)
+	void Application::Update(float deltaTime)
 	{
 		scene->Update();
 	}
 	
-	void Engine::ProcessInput()
+	void Application::ProcessInput()
 	{
 		if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
 			onCloseEvent.Invoke();
@@ -115,7 +115,7 @@ namespace Sunta
 		scene->ProcessInput();
 	}
 	
-	void Engine::Render()
+	void Application::Render()
 	{
 		renderer.Clear(0.05f, 0.05f, 0.05f, 1.0f);
 	
@@ -128,7 +128,7 @@ namespace Sunta
 		scene->Render(renderer);
 	}
 	
-	void Engine::Shutdown()
+	void Application::Shutdown()
 	{
 		scene->Clear();
 	
@@ -138,13 +138,13 @@ namespace Sunta
 		glfwTerminate();
 	}
 	
-	void Engine::SetCallbacks()
+	void Application::SetCallbacks()
 	{
 		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) 
 		{ 
 			glViewport(0, 0, width, height);
 	
-			Engine* engine = static_cast<Engine*>(glfwGetWindowUserPointer(window));
+			Application* engine = static_cast<Application*>(glfwGetWindowUserPointer(window));
 	
 			if (!(engine && engine->scene))
 			{
@@ -160,13 +160,13 @@ namespace Sunta
 		glfwSetScrollCallback(window, InputManager::OnScroll);
 	}
 	
-	void Engine::SubsribeToEvents()
+	void Application::SubsribeToEvents()
 	{
 		onCloseEvent.AddListener([this]() { glfwSetWindowShouldClose(window, true);});
 		onMenuEvent.AddListener([this]()  { OpenMenu(); });
 	}
 	
-	void Engine::OpenMenu()
+	void Application::OpenMenu()
 	{
 		isMenuOpen = !isMenuOpen;
 	
