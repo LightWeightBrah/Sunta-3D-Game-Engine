@@ -1,0 +1,2 @@
+﻿  Game.cpp
+LINK : fatal error LNK1104: cannot open file 'C:\Dev\Sunta\bin\Debug\x64\Sunta\Sunta.lib'
