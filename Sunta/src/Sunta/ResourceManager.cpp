@@ -1,6 +1,7 @@
 #include "ResourceManager.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -22,7 +23,7 @@ namespace Sunta
 		data->animations[AnimationType::RUNNING] = Animation(path, &data->model, 2);
 	
 		modelsRegistered[name] = data;
-		std::cout << "Resource Manager: Registered Model '" << name << "'" << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Model '{}'", name);
 	}
 	
 	void ResourceManager::LoadTexture(const std::string& name, const std::string& path)
@@ -33,7 +34,7 @@ namespace Sunta
 		auto texture = std::make_shared<Texture>(path);
 		texturesRegistered[name] = texture;
 	
-		std::cout << "Resource Manager: Registered Texture '" << name << "'" << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture '{}'", name);
 	}
 	
 	void ResourceManager::LoadShader(const std::string& name, const std::string& path)
@@ -44,7 +45,7 @@ namespace Sunta
 		auto shader = std::make_shared<Shader>(path);
 		shadersRegistered[name] = shader;
 	
-		std::cout << "Resource Manager: Registered Shader '" << name << "'" << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader '{}'", name);
 	}
 	
 	std::shared_ptr<ModelData> ResourceManager::GetModelData(const std::string& name)
@@ -52,7 +53,7 @@ namespace Sunta
 		auto it = modelsRegistered.find(name);
 		if (it == modelsRegistered.end())
 		{
-			std::cout << "ERROR: Model \"" << name << "\" not found in ResourceManager..." << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Model '{}' not found in ResourceManager...", name);
 			return nullptr;
 		}
 		return it->second;
@@ -63,7 +64,7 @@ namespace Sunta
 		auto it = texturesRegistered.find(name);
 		if (it == texturesRegistered.end())
 		{
-			std::cout << "ERROR: Texture \"" << name << "\" not found in ResourceManager..." << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Texture '{}' not found in ResourceManager...", name);
 			return nullptr;
 		}
 		return it->second;
@@ -74,7 +75,7 @@ namespace Sunta
 		auto it = shadersRegistered.find(name);
 		if (it == shadersRegistered.end())
 		{
-			std::cout << "ERROR: Shader \"" << name << "\" not found in ResourceManager..." << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Shader '{}' not found in ResourceManager...", name);
 			return nullptr;
 		}
 		return it->second;

@@ -16,6 +16,7 @@
 #include "Entity.h"
 #include "Material.h"
 #include "LightSource.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -119,13 +120,13 @@ namespace Sunta
 	{
 		if (!entity)
 		{
-			std::cout << "ERROR: Scene::Render Entity is NULL" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Scene::Render Entity is NULL");
 			return;
 		}
 	
 		if (!entity->GetMesh())
 		{
-			std::cout << "ERROR: Scene::Render Entity's Mesh is NULL" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Scene::Render Entity's Mesh is NULL");
 			return;
 		}
 	

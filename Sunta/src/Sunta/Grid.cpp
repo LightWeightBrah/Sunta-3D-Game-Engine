@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Grid.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -58,8 +59,8 @@ namespace Sunta
 	{
 		if (path.empty())
 		{
-			std::cout << "No file provided...\n" << std::endl;
-			std::cout << "Opening with default 30x20 grid template...\n" << std::endl;
+			SUNTA_ENGINE_LOG_INFO("No file provided...");
+			SUNTA_ENGINE_LOG_INFO("Opening with default 30x20 grid template...");
 			return BuildGrid(MapTemplates::grid30x20, width, height);
 		}
 	
@@ -67,8 +68,8 @@ namespace Sunta
 		
 		if(!file.is_open())
 		{
-			std::cout << "ERROR: COULND'T OPEN FILE (\"" << path << "\")" << std::endl;
-			std::cout << "Opening with default 30x20 grid template...\n" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: COULND'T OPEN FILE ({})", path);
+			SUNTA_ENGINE_LOG_INFO("Opening with default 30x20 grid template...");
 			return BuildGrid(MapTemplates::grid30x20, width, height);
 		}
 	
@@ -80,15 +81,13 @@ namespace Sunta
 		}
 		file.close();
 		
-		std::cout << "Read file successfully!" << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Read file successfully!");
 		return BuildGrid(content, width, height);
 	}
 	
 	void PrintMapError(int y, int width, std::string issue)
 	{
-		std::cout << "\nERROR: MAP ERROR!!!" << std::endl;
-		std::cout << "Line " << y + 1 << " is " << issue << std::endl;
-		std::cout << "Expected width: " << width << std::endl;
+		SUNTA_ENGINE_LOG_ERROR("ERROR: MAP ERROR LINE {} is {}, expected width: {}", y + 1, issue, width);
 	}
 	
 	std::vector < std::vector<Node>> InitGrid(std::string& gridText, int& width, int& height)
@@ -133,7 +132,7 @@ namespace Sunta
 	{
 		if (gridText.empty())
 		{
-			std::cout << "ERROR: MAP IS EMPTY!" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: MAP IS EMPTY!");
 			return;
 		}
 	

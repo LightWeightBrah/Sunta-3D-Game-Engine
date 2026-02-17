@@ -5,6 +5,7 @@
 
 #include "Shader.h"
 #include "Renderer.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -69,8 +70,10 @@ namespace Sunta
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 			char* message = (char*)alloca(length * sizeof(char));
 			glGetShaderInfoLog(id, length, &length, message);
-			std::cout << "ERROR: COULDN'T COMPILE " <<
-				(type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT") << " SHADER: " << message << std::endl;
+
+			std::string info = (type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT");
+			SUNTA_ENGINE_LOG_ERROR("ERROR: COULDN'T COMPILE {} SHADER {}", info, message);
+
 			glDeleteShader(id);
 			return 0;
 		}
@@ -97,7 +100,7 @@ namespace Sunta
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 			char* message = (char*)alloca(length * sizeof(char));
 			glGetProgramInfoLog(program, length, &length, message);
-			std::cout << "ERROR: LINKING SHADERS TO PROGRAM FAILED: " << message << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: LINKING SHADERS TO PROGRAM FAILED: {}", message);
 			return 0;
 		}
 	
@@ -165,7 +168,7 @@ namespace Sunta
 	
 		GLCall(int location = glGetUniformLocation(id, name.c_str()));
 		if (location == -1)
-			std::cout << "UNIFORM: " << name << " DOESN'T EXIST" << std::endl;
+			SUNTA_ENGINE_LOG_WARNING("WARNING: UNIFORM: {} DOESN'T EXIST", name);
 		
 		uniformLocationCache[name] = location;
 		return location;

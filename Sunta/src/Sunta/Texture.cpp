@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include "stb/stb_image.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -12,12 +13,12 @@ namespace Sunta
 		id(0), filepath(filepath), data(nullptr), 
 		width(0), height(0), nrChannels(0)
 	{
-		std::cout << "Ladowanie tekstury: " << filepath << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Loading texture: {}", filepath);
 		stbi_set_flip_vertically_on_load(true);
 		data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
 		if(!data)
 		{
-			std::cout << "ERROR: COULDN'T LOAD TEXTURE: " << filepath << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: COULDN'T LOAD TEXTURE: {}", filepath);
 			return;
 		}
 		unsigned int format = GL_RGB;

@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "Entity.h"
 #include "LightSource.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -27,8 +28,7 @@ namespace Sunta
 	{
 		while (GLenum error = glGetError())
 		{
-			std::cout << "OPEN_GL ERROR (" << error << "): " << function << " "
-				<< file << ":" << line << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("OPEN_GL ERROR ({}): {} {}: {}", error, function, file, line);
 			return false;
 		}
 	
@@ -78,19 +78,19 @@ namespace Sunta
 		//TODO: CHANGE TO ASSERT 
 		if (!entity.GetMesh())
 		{
-			std::cout << "ERROR: Entity has no mesh" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Entity has no mesh");
 			return;
 		}
 	
 		if (!entity.GetMaterial())
 		{
-			std::cout << "ERROR: Entity has no material" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Entity has no material");
 			return;
 		}
 	
 		if (!sceneData.lightSource)
 		{
-			std::cout << "ERROR: SceneData has no lightSource" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: SceneData has no lightSource");
 			return;
 		}
 		//TODO : CHANGE TO ASSERT

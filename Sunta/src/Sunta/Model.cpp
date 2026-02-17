@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "AssimpUtilities.h"
 #include "VertexLayouts.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -17,7 +18,7 @@ namespace Sunta
 	
 	void Model::LoadModel(std::string path, bool flipUV) 
 	{
-		std::cout << "Loading model: " << path << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Loading model: {}", path);
 	
 		unsigned int flags = aiProcess_Triangulate |
 			aiProcess_LimitBoneWeights |
@@ -31,7 +32,7 @@ namespace Sunta
 		
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
 		{
-			std::cout << "ASSIMP ERROR: " << importer.GetErrorString() << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ASSIMP ERROR: {}", importer.GetErrorString());
 			return;
 		}
 		directory = path.substr(0, path.find_last_of("\\/"));
@@ -41,7 +42,7 @@ namespace Sunta
 	
 		ProcessNode(scene->mRootNode);
 	
-		std::cout << "Model loaded successfully!" << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Model loaded successfully!");
 	
 	}
 	

@@ -2,6 +2,7 @@
 
 #include "AStar.h"
 #include "Grid.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -10,7 +11,7 @@ namespace Sunta
 		grid = SetupWorld("", width, height);
 		if (grid.empty())
 		{
-			std::cout << "A Star won't be able to run. Please fix the map file..." << std::endl;
+			SUNTA_ENGINE_LOG_WARNING("A Star won't be able to run. Please fix the map file...");
 			return;
 		}
 	}
@@ -20,7 +21,7 @@ namespace Sunta
 		grid = SetupWorld(gridFilepath, width, height);
 		if (grid.empty())
 		{
-			std::cout << "A Star won't be able to run. Please fix the map file..." << std::endl;
+			SUNTA_ENGINE_LOG_WARNING("A Star won't be able to run. Please fix the map file...");
 			return;
 		}
 	}
@@ -31,7 +32,7 @@ namespace Sunta
 		grid = SetupWorld(gridFilepath, width, height);
 		if (grid.empty())
 		{
-			std::cout << "A Star won't be able to run. Please fix the map file..." << std::endl;
+			SUNTA_ENGINE_LOG_WARNING("A Star won't be able to run. Please fix the map file...");
 			return;
 		}
 	}
@@ -57,7 +58,7 @@ namespace Sunta
 				if (pathFound)
 				{
 					drawingPath = true;
-					std::cout << "\nYOU FOUND A PATH, STARTING DRAWING..." << std::endl;
+					SUNTA_ENGINE_LOG_INFO("\nYOU FOUND A PATH, STARTING DRAWING...");
 				}
 			}
 			else if(drawingPath)
@@ -162,7 +163,7 @@ namespace Sunta
 	{
 		if (grid.empty() || grid[0].empty())
 		{
-			std::cout << "ERROR: GRID IS EMPTY! CHECK YOUR MAP .TXT FILE!";
+			SUNTA_ENGINE_LOG_ERROR("ERROR: GRID IS EMPTY! CHECK YOUR MAP .TXT FILE!");
 			return;
 		}
 	
@@ -179,11 +180,11 @@ namespace Sunta
 		{
 			TraverseBackToStartFull();
 			RenderMap(grid, startNode, endNode);
-			std::cout << "\nYOU FOUND A PATH, LET'S GO!!!" << std::endl;
+			SUNTA_ENGINE_LOG_INFO("\nYOU FOUND A PATH, LET'S GO!!!");
 		}
 		else
 		{
-			std::cout << "\nCouldn't find a path :C" << "Change map template..." << std::endl;
+			SUNTA_ENGINE_LOG_WARNING("\nCouldn't find a path :C Change map template...");
 		}
 	}
 	
@@ -210,7 +211,7 @@ namespace Sunta
 	
 			if (currentNode == nullptr)
 			{
-				std::cout << "ERROR: THERE'S NO ROUTE TO END POINT!" << std::endl;
+				SUNTA_ENGINE_LOG_ERROR("ERROR: THERE'S NO ROUTE TO END POINT!");
 				return false;
 			}
 	
@@ -353,7 +354,7 @@ namespace Sunta
 			startX <    0   || startY <    0    ||
 			endX   <    0   || endY   <    0)
 		{
-			std::cout << "ERROR: COORDINATES OUT OF GRID BOUNDS!!!" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: COORDINATES OUT OF GRID BOUNDS!!!");
 			return false;
 		}
 	
@@ -362,7 +363,7 @@ namespace Sunta
 	
 		if (startNode->cellType == CELL::WALL || endNode->cellType == CELL::WALL)
 		{
-			std::cout << "ERROR: Start or End is a WALL (5)!!!" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Start or End is a WALL (5)!!!");
 			return false;
 		}
 	
@@ -371,9 +372,9 @@ namespace Sunta
 	
 	void AStar::PrintCoordinates()
 	{
-		std::cout << "Width is: (" << width << ") Height is: (" << height << ")" << std::endl;
-		std::cout << "Start: [" << startX << ", " << startY << "] "
-			<< "End: [" << endX << ", " << endY << "]" << std::endl;
+		SUNTA_ENGINE_LOG_INFO("Width is: ({}) Height is: ({})", width, height);
+		SUNTA_ENGINE_LOG_INFO("Start is: [{},{}]", startX, startY);
+		SUNTA_ENGINE_LOG_INFO("End   is: [{},{}]", endX, endY);
 	}
 	
 	void AStar::RemoveItemFromVector(std::vector<Node*>& vec, Node* node)

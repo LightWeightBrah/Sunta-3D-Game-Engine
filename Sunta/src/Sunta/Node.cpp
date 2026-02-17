@@ -21,11 +21,6 @@ namespace Sunta
 		this->fCost = 9999;
 	}
 	
-	void Node::PrintPosition()
-	{
-		std::cout << "x is: " << x << " y is: " << y << " cellType = " << cellType << std::endl;
-	}
-	
 	void Node::Reset()
 	{
 		parent = nullptr;

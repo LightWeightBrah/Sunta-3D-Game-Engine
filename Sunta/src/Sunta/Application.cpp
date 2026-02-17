@@ -17,6 +17,9 @@ namespace Sunta
 	Application::Application()
 		: window(nullptr), isMenuOpen(false)
 	{
+		Log::Init();
+
+		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	
 	}
 	Application::~Application()
@@ -29,9 +32,7 @@ namespace Sunta
 		if (!Init())
 			return;
 	
-		Log::Init();
-
-		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
+		
 
 
 		while (!glfwWindowShouldClose(window))
@@ -57,7 +58,7 @@ namespace Sunta
 	{
 		if (!glfwInit())
 		{
-			std::cout << "ERROR: Failed to initialize GLFW" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initialize GLFW");
 			return false;
 		}
 	
@@ -75,7 +76,7 @@ namespace Sunta
 	
 		if (!window)
 		{
-			std::cout << "ERROR: Failed to create GLFW window" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to create GLFW window");
 			glfwTerminate();
 			return false;
 		}
@@ -84,13 +85,13 @@ namespace Sunta
 		
 		if (glewInit() != GLEW_OK)
 		{
-			std::cout << "ERROR: Failed to initalize GLEW" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initalize GLEW");
 			return false;
 		}
 	
 		scene = std::make_unique<Scene>();
 	
-		std::cout << glGetString(GL_VERSION) << std::endl;
+		SUNTA_ENGINE_LOG_INFO("{}", glGetString(GL_VERSION));
 		
 		GLCall(glEnable(GL_DEPTH_TEST));
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -128,7 +129,7 @@ namespace Sunta
 	
 		if (!scene)
 		{
-			std::cout << "ERROR: Scene is NULL during Render" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Scene is NULL during Render");
 			return;
 		}
 	
@@ -155,7 +156,7 @@ namespace Sunta
 	
 			if (!(engine && engine->scene))
 			{
-				std::cout << "ERROR: NO ENGINE OR NO SCENE CREATED" << std::endl;
+				SUNTA_ENGINE_LOG_ERROR("ERROR: NO ENGINE OR NO SCENE CREATED");
 				return;
 			}
 	

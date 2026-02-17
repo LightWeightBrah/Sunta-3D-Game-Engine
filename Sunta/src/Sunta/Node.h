@@ -24,7 +24,6 @@ namespace Sunta
 		Node(int x, int y, CELL cellType);
 	
 	
-		void PrintPosition();
 		void Reset();
 		double CalculateHCost(int startX, int startY, int endX, int endY);
 		void IncreaseG();

@@ -12,6 +12,7 @@
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"
 #include "VertexArray.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -21,7 +22,7 @@ namespace Sunta
 	{
 		if (this->indices.empty())
 		{
-			std::cout << "ERROR: Mesh has no indices" << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ERROR: Mesh has no indices");
 			return;
 		}
 	
@@ -48,7 +49,7 @@ namespace Sunta
 		{
 			if (!textures[i].texture)
 			{
-				std::cout << "ERROR: Mesh Texture at index " << i << " is null, skipping" << std::endl;
+				SUNTA_ENGINE_LOG_WARNING("Mesh Texture at index {} is null, skipping", i);
 				continue;
 			}
 	

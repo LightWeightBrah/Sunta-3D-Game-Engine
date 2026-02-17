@@ -1,6 +1,7 @@
 #include "Animation.h"
 #include <iostream>
 #include "AssimpUtilities.h"
+#include "Log.h"
 
 namespace Sunta
 {
@@ -11,7 +12,7 @@ namespace Sunta
 	
 	    if (!scene || !scene->mAnimations) 
 	    {
-	        std::cout << "ANIMATION ERROR: No animations in " << animationPath << std::endl;
+			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animations in {}", animationPath);
 	        return;
 	    }
 	
