@@ -8,3 +8,5 @@
 //=====ENTRY POINT HERE======
 #include "Sunta/EntryPoint.h"
 //===========================
+
+#include "Sunta/Core.h"

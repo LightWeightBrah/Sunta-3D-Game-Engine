@@ -1,9 +1,6 @@
 #pragma once
 
-//PLATFORM DETECTION
-#ifdef _WIN32
-	#define SUNTA_PLATFORM_WINDOWS
-#endif
+#include "PlatformDetection.h"
 
 //DLL EXPORT/IMPORT
 #ifdef SUNTA_PLATFORM_WINDOWS

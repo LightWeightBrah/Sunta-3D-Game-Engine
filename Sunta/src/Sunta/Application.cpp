@@ -10,6 +10,8 @@
 #include "Time.h"
 #include "InputManager.h"
 
+#include "Log.h"
+
 namespace Sunta
 {
 	Application::Application()
@@ -27,6 +29,11 @@ namespace Sunta
 		if (!Init())
 			return;
 	
+		Log::Init();
+
+		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
+
+
 		while (!glfwWindowShouldClose(window))
 		{
 			Time::Update();
