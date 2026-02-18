@@ -11,16 +11,15 @@
 #include "InputManager.h"
 
 #include "Log.h"
+#include "EventBus.h"
+#include "EventTypes.h"
 
 namespace Sunta
 {
 	Application::Application()
 		: window(nullptr), isMenuOpen(false)
 	{
-		Log::Init();
-
-		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
-	
+		Init();
 	}
 	Application::~Application()
 	{
@@ -29,13 +28,7 @@ namespace Sunta
 	
 	void Application::Run()
 	{
-		if (!Init())
-			return;
-	
-		
-
-
-		while (!glfwWindowShouldClose(window))
+		while (isRunning)
 		{
 			Time::Update();
 	
@@ -47,8 +40,7 @@ namespace Sunta
 	
 			InputManager::Clear();
 	
-			glfwSwapBuffers(window);
-			glfwPollEvents();
+			window->Update();
 		}
 	
 		Shutdown();
@@ -56,55 +48,16 @@ namespace Sunta
 	
 	bool Application::Init()
 	{
-		if (!glfwInit())
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initialize GLFW");
-			return false;
-		}
-	
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
-		float xScale, yScale;
-		glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), &xScale, &yScale);
-	
-		window = glfwCreateWindow(
-			static_cast<int>((WINDOW_WIDTH  * xScale)),
-			static_cast<int>((WINDOW_HEIGHT * yScale)),
-			"SunFinder", NULL, NULL);
-	
-		if (!window)
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to create GLFW window");
-			glfwTerminate();
-			return false;
-		}
-	
-		glfwMakeContextCurrent(window);
-		
-		if (glewInit() != GLEW_OK)
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initalize GLEW");
-			return false;
-		}
-	
+		Log::Init();
+
+		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
+
+		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
+
 		scene = std::make_unique<Scene>();
-	
-		SUNTA_ENGINE_LOG_INFO("{}", glGetString(GL_VERSION));
-		
-		GLCall(glEnable(GL_DEPTH_TEST));
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetWindowUserPointer(window, this);
-	
-		SetCallbacks();
-		SubsribeToEvents();
-		
-		int width, height;
-		glfwGetFramebufferSize(window, &width, &height);
-		scene->Init(static_cast<float>(width), static_cast<float>(height));
-	
-		return true;
+		scene->Init(window->GetWidth(), window->GetHeight());
+
+		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	}
 	
 	void Application::Update(float deltaTime)
@@ -144,28 +97,6 @@ namespace Sunta
 			glfwDestroyWindow(window);
 	
 		glfwTerminate();
-	}
-	
-	void Application::SetCallbacks()
-	{
-		glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) 
-		{ 
-			glViewport(0, 0, width, height);
-	
-			Application* engine = static_cast<Application*>(glfwGetWindowUserPointer(window));
-	
-			if (!(engine && engine->scene))
-			{
-				SUNTA_ENGINE_LOG_ERROR("ERROR: NO ENGINE OR NO SCENE CREATED");
-				return;
-			}
-	
-			engine->scene->OnWindowResize(static_cast<float>(width), static_cast<float>(height));
-		});
-	
-		glfwSetCursorPosCallback(window, InputManager::OnMouse);
-		glfwSetKeyCallback(window, InputManager::OnSingleKey);
-		glfwSetScrollCallback(window, InputManager::OnScroll);
 	}
 	
 	void Application::SubsribeToEvents()

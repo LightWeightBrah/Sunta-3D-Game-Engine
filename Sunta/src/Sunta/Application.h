@@ -2,8 +2,8 @@
 #include <memory>
 
 #include "Renderer.h"
-#include "Event.h"
 #include "Core.h"
+#include "Window.h"
 
 class GLFWwindow;
 
@@ -24,12 +24,11 @@ namespace Sunta
 		void Run();
 
 	private:
-		GLFWwindow*						window;
 		Renderer						renderer;
+		std::unique_ptr<Window>			window;
 		std::unique_ptr<Scene>			scene;
 	
-		Event onCloseEvent;
-		Event onMenuEvent;
+		bool isRunning = true;
 	
 		bool isMenuOpen = false;
 	

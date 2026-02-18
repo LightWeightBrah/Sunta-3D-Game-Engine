@@ -194,10 +194,9 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\InputManager.cpp" />
     <ClCompile Include="src\Sunta\Application.cpp" />
     <ClCompile Include="src\Sunta\Material.cpp" />
-    <ClCompile Include="src\Sunta\Platform\WindowsTerminal.cpp" />
+    <ClCompile Include="src\Sunta\Platform\Windows\WindowsTerminal.cpp" />
     <ClCompile Include="src\Sunta\Primitives.cpp" />
     <ClCompile Include="src\Sunta\Scene.cpp" />
-    <ClCompile Include="src\Sunta\Event.cpp" />
     <ClCompile Include="src\external\imgui\imgui.cpp" />
     <ClCompile Include="src\external\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\external\imgui\imgui_draw.cpp" />
@@ -227,8 +226,11 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\VertexArray.cpp" />
     <ClCompile Include="src\Sunta\Texture.cpp" />
     <ClCompile Include="src\Sunta\Time.cpp" />
+    <ClCompile Include="src\Sunta\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Sunta\KeyCodes.h" />
+    <ClInclude Include="src\Sunta\EventBus.h" />
     <ClInclude Include="src\Sunta\PlatformDetection.h" />
     <ClInclude Include="src\Sunta\Logger.h" />
     <ClInclude Include="src\Sunta\Log.h" />
@@ -244,7 +246,7 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\Sunta\Material.h" />
     <ClInclude Include="src\Sunta\Primitives.h" />
     <ClInclude Include="src\Sunta\Scene.h" />
-    <ClInclude Include="src\Sunta\Event.h" />
+    <ClInclude Include="src\Sunta\EventTypes.h" />
     <ClInclude Include="src\external\imgui\imconfig.h" />
     <ClInclude Include="src\external\imgui\imgui.h" />
     <ClInclude Include="src\external\imgui\imgui_impl_glfw.h" />
@@ -423,6 +425,8 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\Sunta\VertexLayouts.h" />
     <ClInclude Include="src\Sunta\VertexTypes.h" />
     <ClInclude Include="src\Sunta\Transform.h" />
+    <ClInclude Include="src\Sunta\Window.h" />
+    <ClInclude Include="src\Sunta\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\LightSource.shader" />

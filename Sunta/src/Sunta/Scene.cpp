@@ -17,6 +17,8 @@
 #include "Material.h"
 #include "LightSource.h"
 #include "Log.h"
+#include "EventBus.h"
+#include "KeyCodes.h"
 
 namespace Sunta
 {
@@ -28,12 +30,16 @@ namespace Sunta
 	
 	Scene::~Scene()
 	{
-	
+		EventBus::Unsubsribe(resizeEventID);
 	}
 	
 	void Scene::Init(float windowWidth, float windowHeight)
 	{
 		OnWindowResize(windowWidth, windowHeight);
+
+		resizeEventID = EventBus::Subscribe<WindowResizeEvent>(
+			[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
+		);
 	
 		ResourceManager::LoadTexture("cube_container",	"res/Textures/container.jpg");
 		ResourceManager::LoadTexture("cube_chad",		"res/Textures/chad.png");
@@ -78,20 +84,20 @@ namespace Sunta
 		if (scroll != 0.0f)
 			camera.HandleScrolling(scroll);
 	
-		camera.HandleStayOnHeight(InputManager::IsKeyPressed(GLFW_KEY_LEFT_ALT));
+		camera.HandleStayOnHeight(InputManager::IsKeyPressed(SUNTA_KEY_LEFT_ALT));
 	
-		if (InputManager::IsKeyPressed(GLFW_KEY_W))
+		if (InputManager::IsKeyPressed(SUNTA_KEY_W))
 			camera.HandleKeyboardMove(MOVEMENT::FORWARD	, deltaTime);
-		if (InputManager::IsKeyPressed(GLFW_KEY_S))
+		if (InputManager::IsKeyPressed(SUNTA_KEY_S))
 			camera.HandleKeyboardMove(MOVEMENT::BACKWARD, deltaTime);
-		if (InputManager::IsKeyPressed(GLFW_KEY_A))
+		if (InputManager::IsKeyPressed(SUNTA_KEY_A))
 			camera.HandleKeyboardMove(MOVEMENT::LEFT	, deltaTime);
-		if (InputManager::IsKeyPressed(GLFW_KEY_D))
+		if (InputManager::IsKeyPressed(SUNTA_KEY_D))
 			camera.HandleKeyboardMove(MOVEMENT::RIGHT	, deltaTime);
 	
-		if (InputManager::IsKeyPressed(GLFW_KEY_SPACE))
+		if (InputManager::IsKeyPressed(SUNTA_KEY_SPACE))
 			camera.HandleKeyboardMove(MOVEMENT::UP		, deltaTime);
-		if (InputManager::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
+		if (InputManager::IsKeyPressed(SUNTA_KEY_LEFT_SHIFT))
 			camera.HandleKeyboardMove(MOVEMENT::DOWN	, deltaTime);
 	
 	}

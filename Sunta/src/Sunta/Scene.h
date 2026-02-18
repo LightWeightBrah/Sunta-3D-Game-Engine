@@ -17,6 +17,8 @@ namespace Sunta
 		std::unique_ptr<LightSource>	lightSource;
 	
 		Camera							camera;
+
+		unsigned int resizeEventID;
 	
 		//Solaire	  solaireEntity;
 		//Astar       aStar;

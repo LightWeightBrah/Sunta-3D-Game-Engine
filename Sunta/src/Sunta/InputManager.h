@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "EventTypes.h"
+
 namespace Sunta
 {
 	class InputManager
@@ -18,21 +20,24 @@ namespace Sunta
 		static float		scrollOffset;
 	
 	public:
-		static void OnSingleKey(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void OnMouse    (GLFWwindow* window, double xPos,    double yPos);
-		static void OnScroll   (GLFWwindow* window, double xOffset, double yOffset);
+		static void Init();
+
+		static void OnKeyPressed (const KeyPressedEvent&  event);
+		static void OnKeyReleased(const KeyReleasedEvent& event);
+		static void OnMouseMoved (const MouseMovedEvent&  event);
+		static void OnMouseScroll(const MouseScrollEvent& event);
 	
-		static bool IsKeyPressed(int keyCode);
-		static bool IsKeyDown	(int keyCode);
+		static bool IsKeyPressed (int keyCode);
+		static bool IsKeyDown	 (int keyCode);
 	
 		static void Clear();
 	
-		static glm::vec2	GetMousePosition()	{ return mousePosition; }
-		static glm::vec2	GetMouseDelta()		{ return mouseDelta;	}
-		static float		GetScrollOffset()	{ return scrollOffset;	}
+		static glm::vec2 GetMousePosition()		{ return mousePosition; }
+		static glm::vec2 GetMouseDelta()		{ return mouseDelta;	}
+		static float	 GetScrollOffset()		{ return scrollOffset;	}
 		
-		static void			ResetScroll()		{ scrollOffset = 0.0f;	}
+		static void ResetScroll()				{ scrollOffset = 0.0f;	}
 	
-		static void			SetFirstMouse(bool value)	{ firstMouse = value; }
+		static void SetFirstMouse(bool value)	{ firstMouse = value;   }
 	};
 }
