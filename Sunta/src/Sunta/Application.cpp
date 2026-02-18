@@ -46,9 +46,10 @@ namespace Sunta
 		Shutdown();
 	}
 	
-	bool Application::Init()
+	void Application::Init()
 	{
 		Log::Init();
+		InputManager::Init();
 
 		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -68,10 +69,10 @@ namespace Sunta
 	void Application::ProcessInput()
 	{
 		if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
-			onCloseEvent.Invoke();
+			isRunning = false;
 	
 		if (InputManager::IsKeyDown(GLFW_KEY_TAB))
-			onMenuEvent.Invoke();
+			OpenMenu();
 	
 		scene->ProcessInput();
 	}
@@ -94,15 +95,9 @@ namespace Sunta
 		scene->Clear();
 	
 		if (window)
-			glfwDestroyWindow(window);
+			window.reset();
 	
 		glfwTerminate();
-	}
-	
-	void Application::SubsribeToEvents()
-	{
-		onCloseEvent.AddListener([this]() { glfwSetWindowShouldClose(window, true);});
-		onMenuEvent.AddListener([this]()  { OpenMenu(); });
 	}
 	
 	void Application::OpenMenu()
@@ -111,11 +106,11 @@ namespace Sunta
 	
 		if (isMenuOpen)
 		{
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			window->EnableMouseCursor(true);
 		}
 		else
 		{
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			window->EnableMouseCursor(false);
 			InputManager::SetFirstMouse(true);
 		}
 	}

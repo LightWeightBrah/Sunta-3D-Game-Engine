@@ -5,8 +5,6 @@
 #include "Core.h"
 #include "Window.h"
 
-class GLFWwindow;
-
 namespace Sunta
 {
 	class Scene;
@@ -35,7 +33,7 @@ namespace Sunta
 		unsigned int WINDOW_WIDTH	=	1200;
 		unsigned int WINDOW_HEIGHT	=	800;
 	
-		bool Init();
+		void Init();
 		void ProcessInput();
 		void Update(float deltaTime);
 		void Render();

@@ -12,6 +12,8 @@ public:
 	virtual ~WindowsWindow();
 
 	virtual void Update() override;
+	virtual void EnableMouseCursor(bool enabled) override;
+
 	virtual unsigned int GetWidth()  const override { return width;  }
 	virtual unsigned int GetHeight() const override { return height; }
 

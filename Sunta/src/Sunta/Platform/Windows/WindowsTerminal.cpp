@@ -1,5 +1,5 @@
-#include "../Terminal.h"
-#include "../PlatformDetection.h"
+#include "../../Terminal.h"
+#include "../../PlatformDetection.h"
 
 #ifdef SUNTA_PLATFORM_WINDOWS
 #include <windows.h>

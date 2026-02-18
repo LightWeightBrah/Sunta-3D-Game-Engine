@@ -19,6 +19,16 @@ WindowsWindow::WindowsWindow(int width, int height, const std::string& title)
 	Init();
 }
 
+WindowsWindow::~WindowsWindow()
+{
+	if (!window)
+		return;
+	
+	glfwDestroyWindow(window);
+	window = nullptr;
+	SUNTA_ENGINE_LOG_INFO("Windows Window destroyed on destructor");
+}
+
 
 std::unique_ptr<Window> Window::CreateWindow(const std::string& title, int width, int height)
 {
@@ -115,5 +125,11 @@ void WindowsWindow::Update()
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }
+
+void WindowsWindow::EnableMouseCursor(bool enabled)
+{
+	glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+}
+
 
 }
