@@ -32,6 +32,8 @@ namespace Sunta
 		{
 			Time::Update();
 	
+			window->Update();
+
 			ProcessInput();
 	
 			Update(Time::deltaTime);
@@ -40,7 +42,6 @@ namespace Sunta
 	
 			InputManager::Clear();
 	
-			window->Update();
 		}
 	
 		Shutdown();

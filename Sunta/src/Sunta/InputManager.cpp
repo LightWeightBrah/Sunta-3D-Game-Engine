@@ -51,10 +51,11 @@ void InputManager::OnMouseMoved(const MouseMovedEvent& event)
 	{
 		lastMousePosition = { x, y };
 		firstMouse = false;
+		return; //makes sure mouseDelta is always 0 when received multiple mouse moved events in 1 frame 
 	}
 	
-	mouseDelta.x = x - lastMousePosition.x;
-	mouseDelta.y = lastMousePosition.y - y;
+	mouseDelta.x += x - lastMousePosition.x;
+	mouseDelta.y += lastMousePosition.y - y;
 	
 	lastMousePosition	= { x, y };
 	mousePosition		= { x, y };
