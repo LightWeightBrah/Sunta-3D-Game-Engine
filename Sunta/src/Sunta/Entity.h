@@ -2,13 +2,14 @@
 #include <memory>
 
 #include "Transform.h"
+#include "../../Inspectable.h"
 
 namespace Sunta
 {
 	class Mesh;
 	class Material;
 	
-	class Entity
+	class Entity : public Inspectable
 	{
 	public:
 		Entity(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
