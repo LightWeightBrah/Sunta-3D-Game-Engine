@@ -2,8 +2,10 @@
 #include <string>
 #include <glm/glm.hpp>
 
+
 namespace Sunta
 {
+class Inspectable;
 
 class EditorGUI
 {
@@ -20,6 +22,9 @@ public:
 
 	static void Text(const std::string& text);
 	static bool Button(const std::string& label);
+
+	static void DrawInspector(Inspectable* obj);
+
 };
 
 }

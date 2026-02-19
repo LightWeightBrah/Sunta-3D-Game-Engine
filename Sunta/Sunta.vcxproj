@@ -232,9 +232,11 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Sunta\EditorMacros.h" />
     <ClInclude Include="src\Sunta\Editor\EditorGUI.h" />
     <ClInclude Include="src\Sunta\Editor\EditorGUIBackend.h" />
     <ClInclude Include="src\Sunta\Editor\EditorGUIContext.h" />
+    <ClInclude Include="src\Sunta\Inspectable.h" />
     <ClInclude Include="src\Sunta\Platform\Windows\EditorGUIBackendWindows.h" />
     <ClInclude Include="src\Sunta\KeyCodes.h" />
     <ClInclude Include="src\Sunta\EventBus.h" />

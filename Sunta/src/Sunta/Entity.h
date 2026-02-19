@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "Transform.h"
-#include "../../Inspectable.h"
+#include "Inspectable.h"
 
 namespace Sunta
 {

@@ -1,5 +1,7 @@
 #include "EditorGUI.h"
+#include "Inspectable.h"
 #include <imgui/imgui.h>
+
 
 namespace Sunta
 {
@@ -49,6 +51,28 @@ bool EditorGUI::Button(const std::string& label)
 	return ImGui::Button(label.c_str());
 }
 
+void EditorGUI::DrawInspector(Inspectable* obj)
+{
+	if (!obj)
+		return;
+
+
+	obj->editorProperties;
+
+	//obj->editorProperties;
+
+	//for (auto& property : obj->editorProperties)
+	//{
+	//	bool changed = false;
+
+	//	switch (property.type)
+	//	{
+	//	case Inspectable::PropertyType::Float:
+	//		changed = ImGui::DragFloat(property.name, (float*)property.data, 0.1f);
+	//		break;
+	//	}
+	//}
+}
 
 
 }
