@@ -6,6 +6,7 @@
 #include "../../Renderer.h"
 #include "../../EventBus.h"
 #include "../../EventTypes.h"
+#include "EditorGUIBackendWindows.h"
 
 namespace Sunta
 {
@@ -131,5 +132,15 @@ void WindowsWindow::EnableMouseCursor(bool enabled)
 	glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 
+void WindowsWindow::SetAsGraphicsTarget()
+{
+	glfwMakeContextCurrent(window);
+}
+
+
+std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
+{
+	return std::make_unique<EditorGUIBackendWindows>();
+}
 
 }

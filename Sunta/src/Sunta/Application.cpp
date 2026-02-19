@@ -13,6 +13,8 @@
 #include "Log.h"
 #include "EventBus.h"
 #include "EventTypes.h"
+#include "Editor/EditorGUIContext.h"
+#include "Editor/EditorGUI.h"
 
 namespace Sunta
 {
@@ -34,6 +36,14 @@ namespace Sunta
 	
 			window->Update();
 
+			EditorGUIContext::NewFrame(window.get());
+			
+			EditorGUI::Begin("Sunta Engine Editor");
+			EditorGUI::Text("Defualt text");
+			EditorGUI::End();
+
+			EditorGUIContext::EndFrame(window.get());
+
 			ProcessInput();
 	
 			Update(Time::deltaTime);
@@ -53,6 +63,7 @@ namespace Sunta
 		InputManager::Init();
 
 		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
+		EditorGUIContext::Init(window.get());
 
 		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
 
@@ -93,6 +104,7 @@ namespace Sunta
 	
 	void Application::Shutdown()
 	{
+		EditorGUIContext::Shutdown(window.get());
 		scene->Clear();
 	
 		if (window)

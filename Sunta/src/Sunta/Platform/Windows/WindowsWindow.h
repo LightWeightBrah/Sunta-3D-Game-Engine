@@ -1,9 +1,12 @@
 #pragma once
 
 #include "../../Window.h"
+#include <memory>
 
 namespace Sunta
 {
+
+class EditorGUIBackend;
 
 class WindowsWindow : public Window
 {
@@ -13,9 +16,13 @@ public:
 
 	virtual void Update() override;
 	virtual void EnableMouseCursor(bool enabled) override;
+	virtual void SetAsGraphicsTarget() override;
+
+	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() override;
 
 	virtual unsigned int GetWidth()  const override { return width;  }
 	virtual unsigned int GetHeight() const override { return height; }
+	virtual void* GetNativeWindow() const override  { return window; }
 
 private:
 	GLFWwindow* window;
