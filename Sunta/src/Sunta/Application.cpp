@@ -36,20 +36,12 @@ namespace Sunta
 	
 			window->Update();
 
-			EditorGUIContext::NewFrame(window.get());
-			
-			EditorGUI::Begin("Sunta Engine Editor");
-			EditorGUI::Text("Defualt text");
-			EditorGUI::End();
-
-			EditorGUIContext::EndFrame(window.get());
-
 			ProcessInput();
 	
 			Update(Time::deltaTime);
 	
 			Render();
-	
+
 			InputManager::Clear();
 	
 		}
@@ -100,6 +92,14 @@ namespace Sunta
 		}
 	
 		scene->Render(renderer);
+
+		EditorGUIContext::NewFrame(window.get());
+
+		EditorGUI::Begin("Sunta Engine Editor");
+		EditorGUI::Text("Defualt text");
+		EditorGUI::End();
+
+		EditorGUIContext::EndFrame(window.get());
 	}
 	
 	void Application::Shutdown()
