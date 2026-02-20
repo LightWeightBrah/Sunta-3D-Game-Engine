@@ -6,6 +6,7 @@
 namespace Sunta
 {
 
+struct EngineModeChangedEvent;
 class EditorGUIBackend;
 
 class WindowsWindow : public Window
@@ -26,10 +27,12 @@ public:
 
 private:
 	GLFWwindow* window;
+	unsigned int engineModeChangedID;
 
 	void Init();
 	void SetCallbacks();
 	void Shutdown();
+	void OnEngineModeChanged(const EngineModeChangedEvent& event);
 };
 
 }

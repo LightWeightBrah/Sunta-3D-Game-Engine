@@ -1,6 +1,7 @@
 #include "EditorGUI.h"
 #include <imgui/imgui.h>
 #include "../Inspectable.h"
+#include <imgui_internal.h>
 
 
 namespace Sunta
@@ -66,6 +67,17 @@ void EditorGUI::DrawInspector(Inspectable* obj)
 	}
 }
 
+void EditorGUI::ClearFocus()
+{
+	if (!ImGui::GetCurrentContext())
+		return;
+	
+	//Removes foucs from the active widget (slider, button, color etc.)
+	ImGui::ClearActiveID();
+
+	//Deselects the window
+	ImGui::SetWindowFocus(nullptr);
+}
 
 bool EditorGUI::DrawProperty(EditorProperty* property)
 {

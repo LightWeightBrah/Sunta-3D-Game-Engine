@@ -17,6 +17,8 @@ WindowsWindow::WindowsWindow(int width, int height, const std::string& title)
 	this->height = height;
 	this->title  = title;
 
+	engineModeChangedID = EventBus::Subscribe<EngineModeChangedEvent>([this](const auto& event) { OnEngineModeChanged(event); });
+
 	Init();
 }
 
@@ -25,6 +27,8 @@ WindowsWindow::~WindowsWindow()
 	if (!window)
 		return;
 	
+	EventBus::Unsubsribe(engineModeChangedID);
+
 	glfwDestroyWindow(window);
 	window = nullptr;
 	SUNTA_ENGINE_LOG_INFO("Windows Window destroyed on destructor");
@@ -142,5 +146,12 @@ std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
 {
 	return std::make_unique<EditorGUIBackendWindows>();
 }
+
+void WindowsWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
+{
+	bool shouldShow = (event.mode == EngineMode::Editor);
+	EnableMouseCursor(shouldShow);
+}
+
 
 }

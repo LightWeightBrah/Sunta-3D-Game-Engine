@@ -6,6 +6,7 @@ namespace Sunta
 
 class Window;
 class EditorGUIBackend;
+struct EngineModeChangedEvent;
 
 class EditorGUIContext
 {
@@ -21,6 +22,11 @@ public:
 
 private:
 	static std::unique_ptr<EditorGUIBackend> backend;
+	static unsigned int engineModeChangeID;
+	
+	static void SetInputCapture(bool enabled);
+	static void OnEngineModeChanged(const EngineModeChangedEvent& event);
+
 };
 
 }

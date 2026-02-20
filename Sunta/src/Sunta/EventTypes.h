@@ -5,6 +5,17 @@
 namespace Sunta
 {
 
+enum class EngineMode
+{
+	Game,
+	Editor
+};
+
+struct EngineModeChangedEvent
+{
+	EngineMode mode;
+};
+
 struct WindowResizeEvent
 {
 	int width, height;

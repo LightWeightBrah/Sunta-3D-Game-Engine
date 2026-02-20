@@ -25,6 +25,7 @@ public:
 	static bool Button(const std::string& label);
 
 	static void DrawInspector(Inspectable* obj);
+	static void ClearFocus();
 
 private:
 	static bool DrawProperty(EditorProperty* property);

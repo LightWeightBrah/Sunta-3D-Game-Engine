@@ -4,14 +4,13 @@
 #include "Renderer.h"
 #include "Core.h"
 #include "Window.h"
+#include "EventTypes.h"
 
 namespace Sunta
 {
 	class Scene;
 	class Renderer;
 	class Event;
-	
-
 
 	class SUNTA_API Application
 	{
@@ -26,13 +25,13 @@ namespace Sunta
 		std::unique_ptr<Window>			window;
 		std::unique_ptr<Scene>			scene;
 	
-		bool isRunning = true;
-	
-		bool isMenuOpen = false;
+		EngineMode currentEngineMode = EngineMode::Game;
 	
 		unsigned int WINDOW_WIDTH	=	1200;
 		unsigned int WINDOW_HEIGHT	=	800;
 	
+		bool isRunning = true;
+
 		void Init();
 		void ProcessInput();
 		void Update(float deltaTime);
@@ -41,7 +40,6 @@ namespace Sunta
 	
 		void SetCallbacks();
 		void SubsribeToEvents();
-		void OpenMenu();
 	};
 
 	//THIS SHOULD BE DEFINED BY CLIENT, THAT IS IN ALL GAMES USING SUNTA'S ENGINE

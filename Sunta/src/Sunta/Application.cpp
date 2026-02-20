@@ -19,7 +19,7 @@
 namespace Sunta
 {
 	Application::Application()
-		: window(nullptr), isMenuOpen(false)
+		: window(nullptr)
 	{
 		Init();
 	}
@@ -76,7 +76,17 @@ namespace Sunta
 			isRunning = false;
 	
 		if (InputManager::IsKeyDown(GLFW_KEY_TAB))
-			OpenMenu();
+		{
+			currentEngineMode = (currentEngineMode == EngineMode::Game) ? EngineMode::Editor : EngineMode::Game;
+
+			if (currentEngineMode == EngineMode::Game)
+			{
+				EditorGUI::ClearFocus();
+				InputManager::SetFirstMouse(true);
+			}
+
+			EventBus::Publish<EngineModeChangedEvent>({ currentEngineMode });
+		}
 	
 		scene->ProcessInput();
 	}
@@ -120,18 +130,4 @@ namespace Sunta
 		glfwTerminate();
 	}
 	
-	void Application::OpenMenu()
-	{
-		isMenuOpen = !isMenuOpen;
-	
-		if (isMenuOpen)
-		{
-			window->EnableMouseCursor(true);
-		}
-		else
-		{
-			window->EnableMouseCursor(false);
-			InputManager::SetFirstMouse(true);
-		}
-	}
 }
