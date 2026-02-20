@@ -1,10 +1,12 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "EditorMacros.h"
+#include "Inspectable.h"
 
 namespace Sunta
 {
-	class Transform
+	class Transform : public Inspectable
 	{
 	public:
 		
@@ -34,6 +36,10 @@ namespace Sunta
 		glm::vec3 position		= glm::vec3(0.0f);
 		glm::vec3 rotation		= glm::vec3(0.0f);
 		glm::vec3 scale			= glm::vec3(1.0f);
+
+		PROPERTY_FLOAT3_CB(position, isDirty = true)
+		PROPERTY_FLOAT3_CB(rotation, isDirty = true)
+		PROPERTY_FLOAT3_CB(scale,	 isDirty = true)
 	
 		glm::mat4 cachedMatrix	= glm::mat4(1.0f);
 	

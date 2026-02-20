@@ -94,11 +94,18 @@ namespace Sunta
 		scene->Render(renderer);
 
 		EditorGUIContext::NewFrame(window.get());
-
 		EditorGUI::Begin("Sunta Engine Editor");
-		EditorGUI::Text("Defualt text");
-		EditorGUI::End();
 
+		if (scene->GetInspectables())
+		{
+			if (EditorGUI::BeginGroup("Cube Entity"))
+			{
+				EditorGUI::DrawInspector(scene->GetInspectables());
+				EditorGUI::EndGroup();
+			}
+		}
+
+		EditorGUI::End();
 		EditorGUIContext::EndFrame(window.get());
 	}
 	

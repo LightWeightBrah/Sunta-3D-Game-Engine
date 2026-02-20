@@ -9,6 +9,7 @@ namespace Sunta
 	class Renderer;
 	class Entity;
 	class LightSource;
+	class Inspectable;
 	
 	class Scene
 	{
@@ -33,6 +34,7 @@ namespace Sunta
 		void Update();
 		void Render(Renderer& renderer);
 		void Clear();
-		
+
+		Inspectable* GetInspectables() { return (Inspectable*)entity.get(); }
 	};
 }

@@ -36,5 +36,6 @@ namespace Sunta
 		std::shared_ptr<Material>		 material;
 										 
 		Transform						 transform;
+		PROPERTY_FOLDER(transform);
 	};
 }

@@ -6,6 +6,7 @@
 namespace Sunta
 {
 class Inspectable;
+struct EditorProperty;
 
 class EditorGUI
 {
@@ -24,6 +25,10 @@ public:
 	static bool Button(const std::string& label);
 
 	static void DrawInspector(Inspectable* obj);
+
+private:
+	static bool DrawProperty(EditorProperty* property);
+	static void DrawFolder(const char* name, Inspectable* subObject);
 
 };
 
