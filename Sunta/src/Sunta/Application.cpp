@@ -107,7 +107,7 @@ namespace Sunta
 		
 		EditorGUIContext::BeginDockingSpace(window.get());
 
-		EditorGUI::Begin("Sunta Engine Editor");
+		EditorGUI::Begin(EditorGUIContext::GetInspectorName());
 
 		if (scene->GetInspectables())
 		{

@@ -7,6 +7,7 @@ bin-intermediates/*
 *.pdb
 *.ilk
 *.recipe
+**/imgui.ini
 
 *.lib
 *.dll
