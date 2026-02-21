@@ -104,6 +104,9 @@ namespace Sunta
 		scene->Render(renderer);
 
 		EditorGUIContext::NewFrame(window.get());
+		
+		EditorGUIContext::BeginDockingSpace(window.get());
+
 		EditorGUI::Begin("Sunta Engine Editor");
 
 		if (scene->GetInspectables())

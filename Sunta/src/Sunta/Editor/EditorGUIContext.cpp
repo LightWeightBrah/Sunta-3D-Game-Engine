@@ -4,9 +4,12 @@
 #include "EditorGUIBackend.h"
 #include "../EventBus.h"
 #include "../EventTypes.h"
+#include <imgui_internal.h>
 
 namespace Sunta
 {
+
+
 
 std::unique_ptr<EditorGUIBackend> EditorGUIContext::backend;
 unsigned int EditorGUIContext::engineModeChangeID;
@@ -56,6 +59,81 @@ void EditorGUIContext::EndFrame(Window* window)
 
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		window->SetAsGraphicsTarget();
+}
+
+//TODO: Change to framebuffers
+void EditorGUIContext::BeginDockingSpace(Window* window)
+{
+	if (!backend || !window)
+		return;
+
+	MatchWindowSizeToViewport();
+	ApplyInvisibleWindowStyle();
+
+	ImGui::Begin(rootWindowID, nullptr, GetRootWindowFlags());
+
+	RestoreNormalWindowStyle();
+
+	unsigned int dockspaceID = ImGui::GetID(mainDockingSpaceID);
+	//creates docking space							passthru flag so  we can interact with scene
+	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	static bool firstInit = true;
+	if (firstInit)
+	{
+		SetupInitialLayout(dockspaceID);
+		firstInit = false;
+	}
+
+	ImGui::End();
+}
+
+void EditorGUIContext::MatchWindowSizeToViewport()
+{
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+}
+
+void EditorGUIContext::ApplyInvisibleWindowStyle()
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+}
+
+int EditorGUIContext::GetRootWindowFlags()
+{
+	return ImGuiWindowFlags_NoDocking
+		 | ImGuiWindowFlags_NoTitleBar
+		 | ImGuiWindowFlags_NoCollapse
+		 | ImGuiWindowFlags_NoResize
+		 | ImGuiWindowFlags_NoMove
+		 | ImGuiWindowFlags_NoBringToFrontOnFocus
+		 | ImGuiWindowFlags_NoNavFocus
+		 | ImGuiWindowFlags_MenuBar
+		 | ImGuiWindowFlags_NoBackground;
+}
+
+void EditorGUIContext::RestoreNormalWindowStyle()
+{
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar(3);
+}
+
+void EditorGUIContext::SetupInitialLayout(unsigned int dockspaceID)
+{
+	ImGui::DockBuilderRemoveNode(dockspaceID); //clears panel layout from .ini file
+	ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace); //creates main grid panel
+	ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size); //sets main grid panel size to whole viewport
+
+	//splits main panel to 2 panels, 30% left docking for inspector and 70% for game
+	unsigned int leftPanelID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left, defaultSidebarRatio, nullptr, &dockspaceID);
+
+	ImGui::DockBuilderDockWindow(inspectorName, leftPanelID); //sets inspector to left panel
+	ImGui::DockBuilderFinish(dockspaceID);
 }
 
 void EditorGUIContext::SetInputCapture(bool enabled)
