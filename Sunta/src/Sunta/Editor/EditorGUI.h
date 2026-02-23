@@ -5,8 +5,10 @@
 
 namespace Sunta
 {
-class Inspectable;
-struct EditorProperty;
+class PropertyDefinition;
+class EntityManager;
+class ComponentType;
+class IInspectableStorage;
 
 class EditorGUI
 {
@@ -24,12 +26,13 @@ public:
 	static void Text(const std::string& text);
 	static bool Button(const std::string& label);
 
-	static void DrawInspector(Inspectable* obj);
+	static void DrawInspector(EntityManager& entityManager);
 	static void ClearFocus();
 
 private:
-	static bool DrawProperty(EditorProperty* property);
-	static void DrawFolder(const char* name, Inspectable* subObject);
+	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
+	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
+	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
 
 };
 

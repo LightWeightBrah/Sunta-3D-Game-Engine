@@ -15,6 +15,8 @@
 #include "EventTypes.h"
 #include "Editor/EditorGUIContext.h"
 #include "Editor/EditorGUI.h"
+#include "ComponentLayout.h"
+#include "Component.h"
 
 namespace Sunta
 {
@@ -61,6 +63,9 @@ namespace Sunta
 
 		scene = std::make_unique<Scene>();
 		scene->Init(window->GetWidth(), window->GetHeight());
+
+		TransformComponent::RegisterToInspector();
+		LightComponent::RegisterToInspector();
 
 		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	}
@@ -109,14 +114,7 @@ namespace Sunta
 
 		EditorGUI::Begin(EditorGUIContext::GetInspectorName());
 
-		if (scene->GetInspectables())
-		{
-			if (EditorGUI::BeginGroup("Cube Entity"))
-			{
-				EditorGUI::DrawInspector(scene->GetInspectables());
-				EditorGUI::EndGroup();
-			}
-		}
+		EditorGUI::DrawInspector(scene->GetEntityManager());
 
 		EditorGUI::End();
 		EditorGUIContext::EndFrame(window.get());

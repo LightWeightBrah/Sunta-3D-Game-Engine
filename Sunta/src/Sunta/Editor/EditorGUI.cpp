@@ -1,7 +1,8 @@
 #include "EditorGUI.h"
 #include <imgui/imgui.h>
-#include "../Inspectable.h"
 #include <imgui_internal.h>
+#include <Sunta/EntityManager.h>
+#include "../ComponentLayout.h"
 
 
 namespace Sunta
@@ -52,19 +53,87 @@ bool EditorGUI::Button(const std::string& label)
 	return ImGui::Button(label.c_str());
 }
 
-void EditorGUI::DrawInspector(Inspectable* obj)
+void EditorGUI::DrawInspector(EntityManager& entityManager)
 {
-	if (!obj)
+	unsigned int totalEntities = entityManager.GetEntityCount();
+
+	for (unsigned int entityID = 0; entityID < totalEntities; entityID++)
+	{
+		std::string label = ("Entity " + std::to_string(entityID));
+
+		if (!ImGui::TreeNode(label.c_str()))
+			continue;
+
+		DrawEntityComponentList(entityID, entityManager);
+
+		ImGui::TreePop();
+
+	}
+}
+
+void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
+{
+	for (auto const& [typeHash, storage] : entityManager.GetInspectableMap())
+	{
+		if (!storage->Contains(entityID))
+			continue;
+
+		const auto* componentType =
+			InspectorComponentRegistry::GetComponentTypeByHash(typeHash);
+
+		if (!componentType)
+			continue;
+
+		DrawSingleComponent(entityID, componentType, storage);
+
+	}
+}
+
+void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* storage)
+{
+	if (!ImGui::CollapsingHeader(componentType->name.c_str()))
 		return;
 
-	for (auto& property : obj->editorProperties)
+	void* componentData = storage->GetEntityComponentData(entityID);
+	bool anyPropertyChanged = false;
+
+	for (const auto& property : componentType->properties)
 	{
-		if (DrawProperty(&property))
-		{
-			if (property.onUpdate)
-				property.onUpdate();
-		}
+		void* propertyData = (char*)componentData + property.byteOffset;
+
+		if (DrawPropertyWidget(property, propertyData))
+			anyPropertyChanged = true;
 	}
+
+	if (anyPropertyChanged && componentType->onChanged)
+		componentType->onChanged(componentData);
+}
+
+bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* propertyData)
+{
+	bool changed = false;
+
+	switch (property.dataType)
+	{
+	case PropertyDataType::Int:	
+		changed = ImGui::DragInt(property.label.c_str(), (int*)propertyData); 
+		break;
+	case PropertyDataType::Bool:
+		changed = ImGui::Checkbox(property.label.c_str(), (bool*)propertyData);
+		break;
+	case PropertyDataType::Float:
+		changed = ImGui::DragFloat(property.label.c_str(), (float*)propertyData, 0.1f);
+		break;
+	case PropertyDataType::Float3:
+		changed = ImGui::DragFloat3(property.label.c_str(), (float*)propertyData, 0.1f);
+		break;
+	case PropertyDataType::Color:
+		changed = ImGui::ColorEdit3(property.label.c_str(), (float*)propertyData);
+		break;
+
+	}
+	
+	return changed;
 }
 
 void EditorGUI::ClearFocus()
@@ -79,59 +148,5 @@ void EditorGUI::ClearFocus()
 	ImGui::SetWindowFocus(nullptr);
 }
 
-bool EditorGUI::DrawProperty(EditorProperty* property)
-{
-	bool changed = false;
-	const char* label = property->labelName.c_str();
-	void* data = property->data;
-
-	switch (property->type)
-	{
-	case PropertyType::Folder:
-		DrawFolder(label, (Inspectable*)(data));
-		break;
-
-	case PropertyType::Int:
-		changed = ImGui::DragInt(label, (int*)data, 0.1f);
-		break;
-	case PropertyType::Float:
-		changed = ImGui::DragFloat(label, (float*)data, 0.1f);
-		break;
-	case PropertyType::Bool:
-		changed = ImGui::Checkbox(label, (bool*)data);
-		break;
-	case PropertyType::Float3:
-		changed = ImGui::DragFloat3(label, (float*)data, 0.1f);
-		break;
-	case PropertyType::Color:
-		changed = ImGui::ColorEdit3(label, (float*)data);
-		break;
-
-	case PropertyType::None:
-		break;
-
-	default:
-		break;
-	}
-
-	return changed;
-}
-
-void EditorGUI::DrawFolder(const char* label, Inspectable* subObject)
-{
-	if (!subObject)
-		return;
-
-	//This adds a bit of indent margin to the right
-	ImGui::Indent();
-
-	if (BeginGroup(label))
-	{
-		DrawInspector(subObject);
-		EndGroup();
-	}
-
-	ImGui::Unindent();
-}
 
 }

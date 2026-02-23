@@ -13,8 +13,6 @@
 #include "Animator.h"
 
 #include "Camera.h"
-#include "Entity.h"
-#include "LightSource.h"
 #include "Log.h"
 
 namespace Sunta
@@ -68,65 +66,35 @@ namespace Sunta
 		Draw(mesh.GetVAO(), mesh.GetEBO(), shader);
 	}
 	
-	void Renderer::BeginScene(SceneData& data)
+	void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const
 	{
-		sceneData = data;
-	}
-	
-	void Renderer::DrawScene(Entity& entity) const
-	{
-		//TODO: CHANGE TO ASSERT 
-		if (!entity.GetMesh())
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Entity has no mesh");
-			return;
-		}
-	
-		if (!entity.GetMaterial())
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Entity has no material");
-			return;
-		}
-	
-		if (!sceneData.lightSource)
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: SceneData has no lightSource");
-			return;
-		}
-		//TODO : CHANGE TO ASSERT
-	
-		DrawEntity(entity);
-		DrawLightSource();
-	}
-	
-	void Renderer::DrawEntity(Entity& entity) const
-	{
-		auto entityShader = entity.GetMaterial()->GetShader();
-	
-		entityShader->Bind();
-	
-		entityShader->SetUniformMatrix4fv("model",			entity.GetModelMatrix());
-		entityShader->SetUniformMatrix4fv("view",			sceneData.viewMatrix);
-		entityShader->SetUniformMatrix4fv("projection",		sceneData.projectionMatrix);
-		entityShader->SetUniform3f       ("viewerPosition",	sceneData.cameraPosition);
-	
-		sceneData.lightSource->ApplyLight(*entityShader);
-		entity.GetMaterial()->ApplyLight();
-	
-		DrawMesh(*entity.GetMesh(), *entityShader);
-	}
-	
-	void Renderer::DrawLightSource() const
-	{
-		auto light  = sceneData.lightSource;
-		auto shader = light->GetShader();
-	
+		auto shader = material.GetShader();
 		shader->Bind();
-	
-		shader->SetUniformMatrix4fv("model",		light->GetModelMatrix());
+
+		shader->SetUniformMatrix4fv("model",		modelMatrix);
 		shader->SetUniformMatrix4fv("view",			sceneData.viewMatrix);
-		shader->SetUniformMatrix4fv("projection",	sceneData.projectionMatrix);
-	
-		DrawMesh(*light->GetMesh(), *shader);
+		shader->SetUniformMatrix4fv("projection",   sceneData.projectionMatrix);
+		shader->SetUniform3f("viewerPosition",		sceneData.cameraPosition);
+
+		shader->SetUniform3f("lightSource.position",			 sceneData.lightSourceData.position);
+		shader->SetUniform3f("lightSource.ambientIntensity",  sceneData.lightSourceData.ambientIntensity);
+		shader->SetUniform3f("lightSource.diffuseIntensity",  sceneData.lightSourceData.diffuseIntensity);
+		shader->SetUniform3f("lightSource.specularIntensity", sceneData.lightSourceData.specularIntensity);
+
+		material.ApplyLight();
+
+
+		DrawMesh(mesh, *shader);
+	}
+
+	void Renderer::DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const
+	{
+		shader.Bind();
+
+		shader.SetUniformMatrix4fv("model",		 modelMatrix);
+		shader.SetUniformMatrix4fv("view",		 sceneData.viewMatrix);
+		shader.SetUniformMatrix4fv("projection", sceneData.projectionMatrix);
+
+		DrawMesh(mesh, shader);
 	}
 }

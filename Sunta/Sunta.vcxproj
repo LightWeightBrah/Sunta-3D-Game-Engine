@@ -195,7 +195,6 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\Platform\Windows\EditorGUIBackendWindows.cpp" />
     <ClCompile Include="src\Sunta\Logger.cpp" />
     <ClCompile Include="src\Sunta\Log.cpp" />
-    <ClCompile Include="src\Sunta\LightSource.cpp" />
     <ClCompile Include="src\Sunta\InputManager.cpp" />
     <ClCompile Include="src\Sunta\Application.cpp" />
     <ClCompile Include="src\Sunta\Material.cpp" />
@@ -208,7 +207,6 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\external\imgui\imgui_tables.cpp" />
     <ClCompile Include="src\external\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Sunta\ResourceManager.cpp" />
-    <ClCompile Include="src\Sunta\Entity.cpp" />
     <ClCompile Include="src\Sunta\Animation.cpp" />
     <ClCompile Include="src\Sunta\Animator.cpp" />
     <ClCompile Include="src\Sunta\Bone.cpp" />
@@ -230,13 +228,17 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\Texture.cpp" />
     <ClCompile Include="src\Sunta\Time.cpp" />
     <ClCompile Include="src\Sunta\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\Sunta\Systems.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Sunta\ComponentLayout.h" />
+    <ClInclude Include="src\Sunta\EntityManager.h" />
+    <ClInclude Include="src\Sunta\Component.h" />
+    <ClInclude Include="src\Sunta\CubeEntity.h" />
     <ClInclude Include="src\Sunta\EditorMacros.h" />
     <ClInclude Include="src\Sunta\Editor\EditorGUI.h" />
     <ClInclude Include="src\Sunta\Editor\EditorGUIBackend.h" />
     <ClInclude Include="src\Sunta\Editor\EditorGUIContext.h" />
-    <ClInclude Include="src\Sunta\Inspectable.h" />
     <ClInclude Include="src\Sunta\Platform\Windows\EditorGUIBackendWindows.h" />
     <ClInclude Include="src\Sunta\KeyCodes.h" />
     <ClInclude Include="src\Sunta\EventBus.h" />
@@ -246,7 +248,6 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\Sunta\Core.h" />
     <ClInclude Include="src\Sunta\EntryPoint.h" />
     <ClInclude Include="src\Sunta\SceneData.h" />
-    <ClInclude Include="src\Sunta\LightSource.h" />
     <ClInclude Include="src\Sunta\AssimpUtilities.h" />
     <ClInclude Include="src\Sunta\BufferLayout.h" />
     <ClInclude Include="src\Sunta\Config.h" />
@@ -266,7 +267,6 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\external\imgui\imstb_textedit.h" />
     <ClInclude Include="src\external\imgui\imstb_truetype.h" />
     <ClInclude Include="src\Sunta\ResourceManager.h" />
-    <ClInclude Include="src\Sunta\Entity.h" />
     <ClInclude Include="src\Sunta\Animation.h" />
     <ClInclude Include="src\Sunta\Animator.h" />
     <ClInclude Include="src\Sunta\Bone.h" />
@@ -436,6 +436,7 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\Sunta\Transform.h" />
     <ClInclude Include="src\Sunta\Window.h" />
     <ClInclude Include="src\Sunta\Platform\Windows\WindowsWindow.h" />
+    <ClInclude Include="src\Sunta\Systems.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\LightSource.shader" />

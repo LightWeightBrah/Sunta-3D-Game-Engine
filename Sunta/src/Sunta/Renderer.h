@@ -1,5 +1,7 @@
 #pragma once
 #include <GL/glew.h>
+#include <vector>
+
 #include "SceneData.h"
 
 namespace Sunta
@@ -9,13 +11,14 @@ namespace Sunta
 	
 	class Texture;
 	class Shader;
+	class Material;
 	
 	class Mesh;
 	class Model;
 	class Animator;
 	
 	class Camera;
-	class Entity;
+	class PrimitiveEntity;
 	
 	#define ASSERT(x) if (!(x)) __debugbreak();
 	
@@ -36,16 +39,17 @@ namespace Sunta
 		
 		
 		void Draw(const VertexArray& VAO, const ElementBuffer& EBO, const Shader& shader) const;
-		void DrawMesh(const Mesh& mesh, Shader& shader) const;
 		void DrawModel(const Model& model, Shader& shader, const Animator* animator) const;
 		
-		void BeginScene(SceneData& data);
-		void DrawScene(Entity& entity) const;
-	
+		void DrawMesh(const Mesh& mesh, Shader& shader) const;
+
+		void DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
+		void DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
+		
 	private:
 		SceneData sceneData;
 	
-		void DrawEntity(Entity& entity) const;
+		void DrawEntity(PrimitiveEntity& entity) const;
 		void DrawLightSource() const;
 	};
 }
