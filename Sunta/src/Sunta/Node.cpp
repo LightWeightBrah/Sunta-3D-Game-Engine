@@ -1,5 +1,5 @@
-#include <iostream>
-#include <cmath>
+#include "SuntaPreCompiled.h"
+
 #include "Node.h"
 
 namespace Sunta

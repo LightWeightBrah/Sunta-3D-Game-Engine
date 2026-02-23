@@ -1,5 +1,5 @@
-#include <string>
-#include <iostream>
+#include "SuntaPreCompiled.h"
+
 #include <GL/glew.h>
 
 #include "Texture.h"

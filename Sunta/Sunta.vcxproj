@@ -95,6 +95,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\;src\external;src\external\imgui;src\external\imgui\backends;src\Sunta\ImGUI;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>SuntaPreCompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,6 +122,8 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\;src\external;src\external\imgui;src\external\imgui\backends;src\Sunta\ImGUI;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>SuntaPreCompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +149,8 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\;src\external;src\external\imgui;src\external\imgui\backends;src\Sunta\ImGUI;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>SuntaPreCompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -170,6 +176,8 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>src\;src\external;src\external\imgui;src\external\imgui\backends;src\Sunta\ImGUI;$(SolutionDir)Dependencies\Assimp\include;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\GLEW\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>SuntaPreCompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,10 +196,26 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\SuntaPreCompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Sunta\Editor\EditorGUI.cpp" />
     <ClCompile Include="src\Sunta\Editor\EditorGUIContext.cpp" />
-    <ClCompile Include="src\Sunta\ImGUI\imgui_impl_glfw.cpp" />
-    <ClCompile Include="src\Sunta\ImGUI\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\Sunta\ImGUI\imgui_impl_glfw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Sunta\ImGUI\imgui_impl_opengl3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Sunta\Platform\Windows\EditorGUIBackendWindows.cpp" />
     <ClCompile Include="src\Sunta\Logger.cpp" />
     <ClCompile Include="src\Sunta\Log.cpp" />
@@ -201,11 +225,36 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\Platform\Windows\WindowsTerminal.cpp" />
     <ClCompile Include="src\Sunta\Primitives.cpp" />
     <ClCompile Include="src\Sunta\Scene.cpp" />
-    <ClCompile Include="src\external\imgui\imgui.cpp" />
-    <ClCompile Include="src\external\imgui\imgui_demo.cpp" />
-    <ClCompile Include="src\external\imgui\imgui_draw.cpp" />
-    <ClCompile Include="src\external\imgui\imgui_tables.cpp" />
-    <ClCompile Include="src\external\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\external\imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\external\imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\external\imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\external\imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\external\imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Sunta\ResourceManager.cpp" />
     <ClCompile Include="src\Sunta\Animation.cpp" />
     <ClCompile Include="src\Sunta\Animator.cpp" />
@@ -213,13 +262,28 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\Mesh.cpp" />
     <ClCompile Include="src\Sunta\Model.cpp" />
     <ClCompile Include="src\Sunta\Camera.cpp" />
-    <ClCompile Include="src\external\glm\detail\glm.cpp" />
-    <ClCompile Include="src\external\stb\stb_image.cpp" />
+    <ClCompile Include="src\external\glm\detail\glm.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\external\stb\stb_image.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Sunta\Shader.cpp" />
     <ClCompile Include="src\Sunta\AStar.cpp" />
     <ClCompile Include="src\Sunta\Grid.cpp" />
     <ClCompile Include="src\Sunta\ElementBuffer.cpp" />
-    <ClCompile Include="src\Sunta\main.cpp" />
+    <ClCompile Include="src\Sunta\main.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Sunta\Node.cpp" />
     <ClCompile Include="src\Sunta\Renderer.cpp" />
     <ClCompile Include="src\Sunta\Solaire.cpp" />
@@ -231,6 +295,7 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClCompile Include="src\Sunta\Systems.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\SuntaPreCompiled.h" />
     <ClInclude Include="src\Sunta\ComponentLayout.h" />
     <ClInclude Include="src\Sunta\EntityManager.h" />
     <ClInclude Include="src\Sunta\Component.h" />
@@ -433,7 +498,6 @@ xcopy /I /Y /E /D  "$(OutDir)*.dll" "$(SolutionDir)bin\$(Configuration)\$(Platfo
     <ClInclude Include="src\Sunta\Time.h" />
     <ClInclude Include="src\Sunta\VertexLayouts.h" />
     <ClInclude Include="src\Sunta\VertexTypes.h" />
-    <ClInclude Include="src\Sunta\Transform.h" />
     <ClInclude Include="src\Sunta\Window.h" />
     <ClInclude Include="src\Sunta\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Sunta\Systems.h" />

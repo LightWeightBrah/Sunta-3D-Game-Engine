@@ -1,4 +1,4 @@
-#include <vector>
+#include "SuntaPreCompiled.h"
 
 #include "Primitives.h"
 #include "Mesh.h"

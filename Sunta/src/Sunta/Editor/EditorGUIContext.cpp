@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "EditorGUIContext.h"
 #include <imgui/imgui.h>
 #include "../Sunta/Window.h"

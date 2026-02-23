@@ -1,4 +1,5 @@
-#include <iostream>
+#include "SuntaPreCompiled.h"
+
 #include "Camera.h"
 #include "EventBus.h"
 #include "EventTypes.h"

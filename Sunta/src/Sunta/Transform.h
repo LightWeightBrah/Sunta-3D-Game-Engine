@@ -6,7 +6,7 @@
 
 namespace Sunta
 {
-	class Transform : public Inspectable
+	class Transform
 	{
 	public:
 		

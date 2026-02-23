@@ -1,4 +1,4 @@
-#include <iostream>
+#include "SuntaPreCompiled.h"
 
 #include "AStar.h"
 #include "Grid.h"

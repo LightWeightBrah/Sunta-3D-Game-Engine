@@ -1,6 +1,5 @@
-#include <fstream>
-#include <sstream>
-#include <iostream>
+#include "SuntaPreCompiled.h"
+
 #include <GL/glew.h>
 
 #include "Shader.h"

@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "Log.h"
 
 namespace Sunta {

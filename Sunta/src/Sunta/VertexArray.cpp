@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include <GL/glew.h>
 
 #include "VertexArray.h"

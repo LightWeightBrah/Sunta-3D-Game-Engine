@@ -1,10 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <cstring>
-#include <iostream>
-#include <iomanip>
-#include <chrono>
-#include <ctime>
-#include <sstream>
+#include "SuntaPreCompiled.h"
 
 #include "Logger.h"
 
@@ -59,7 +53,9 @@ std::string Logger::GetTimeAsString()
 {
 	char buffer[64];
 	auto currentTime = std::time(nullptr);
-	auto currentLocalTime = *std::localtime(&currentTime);
+	std::tm currentLocalTime;
+	localtime_s(&currentLocalTime, &currentTime);
+
 	std::strftime(buffer, sizeof(buffer), "%H:%M:%S", &currentLocalTime);
 
 	std::stringstream ss;

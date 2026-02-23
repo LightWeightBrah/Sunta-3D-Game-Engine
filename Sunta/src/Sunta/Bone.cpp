@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "Bone.h"
 #include "AssimpUtilities.h"
 #include <glm/gtx/quaternion.hpp>

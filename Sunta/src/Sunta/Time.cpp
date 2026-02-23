@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include <GLFW/glfw3.h>
 
 #include "Time.h"

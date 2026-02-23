@@ -1,5 +1,6 @@
+#include "SuntaPreCompiled.h"
+
 #include "Animation.h"
-#include <iostream>
 #include "AssimpUtilities.h"
 #include "Log.h"
 

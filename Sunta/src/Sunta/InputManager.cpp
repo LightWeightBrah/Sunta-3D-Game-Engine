@@ -1,4 +1,4 @@
-#include <cstring>
+#include "SuntaPreCompiled.h"
 
 #include "InputManager.h"
 #include "EventBus.h"

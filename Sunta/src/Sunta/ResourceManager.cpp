@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "ResourceManager.h"
 #include "Texture.h"
 #include "Shader.h"

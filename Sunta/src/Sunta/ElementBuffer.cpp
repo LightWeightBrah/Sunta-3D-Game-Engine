@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "Renderer.h"
 #include "ElementBuffer.h"
 

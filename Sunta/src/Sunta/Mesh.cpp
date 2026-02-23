@@ -1,6 +1,5 @@
-#pragma once
+#include "SuntaPreCompiled.h"
 
-#include <iostream>
 #include <GL/glew.h>
 
 #include "Mesh.h"

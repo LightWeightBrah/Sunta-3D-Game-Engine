@@ -1,5 +1,5 @@
-#pragma once
-#include <iostream>
+#include "SuntaPreCompiled.h"
+
 #include <glm/gtx/quaternion.hpp>
 
 #include "Model.h"

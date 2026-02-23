@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "Solaire.h"
 
 namespace Sunta

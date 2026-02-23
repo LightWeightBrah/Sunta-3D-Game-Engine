@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "VertexBuffer.h"
 #include "Renderer.h"
 

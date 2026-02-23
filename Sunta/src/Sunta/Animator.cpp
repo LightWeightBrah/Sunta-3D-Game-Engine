@@ -1,6 +1,7 @@
+#include "SuntaPreCompiled.h"
+
 #include "Animator.h"
 #include "AssimpUtilities.h"
-#include <iostream>
 
 namespace Sunta
 {

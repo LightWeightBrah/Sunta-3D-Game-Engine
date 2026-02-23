@@ -1,3 +1,5 @@
+#include "SuntaPreCompiled.h"
+
 #include "EditorGUI.h"
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
