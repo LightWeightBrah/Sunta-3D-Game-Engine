@@ -1,4 +1,0 @@
-[submodule "Sunta/src/external/imgui"]
-	path = Sunta/src/external/imgui
-	url = https://github.com/ocornut/imgui.git
-	branch = docking
