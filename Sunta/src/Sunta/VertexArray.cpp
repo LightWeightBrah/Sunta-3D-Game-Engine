@@ -1,6 +1,6 @@
 #include "SuntaPreCompiled.h"
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "VertexArray.h"
 #include "Renderer.h"
