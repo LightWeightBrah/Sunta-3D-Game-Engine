@@ -8,7 +8,7 @@
 #include "ElementBuffer.h"
 
 #include "Scene.h"
-#include "Time.h"
+#include "EngineTime.h"
 #include "InputManager.h"
 #include "Camera.h"
 #include "ResourceManager.h"
@@ -81,7 +81,7 @@ void Scene::OnWindowResize(float windowWidth, float windowHeight)
 	
 void Scene::ProcessInput()
 {
-	float deltaTime				= Time::deltaTime;
+	float deltaTime				= EngineTime::deltaTime;
 	glm::vec2 mouseDelta		= InputManager::GetMouseDelta();
 	
 	camera.HandleMouseMovement(mouseDelta.x, mouseDelta.y);

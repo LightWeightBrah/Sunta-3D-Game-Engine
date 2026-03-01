@@ -13,8 +13,8 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui/imgui_draw.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui/imgui_widgets.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui/imgui_tables.cpp"
-"${CMAKE_SOURCE_DIR}/Dependencies/imgui/imgui_impl_glfw.cpp"
-"${CMAKE_SOURCE_DIR}/Dependencies/imgui/imgui_impl_opengl3.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/imgui/backends/imgui_impl_glfw.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/imgui/backends/imgui_impl_opengl3.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb/stb_image.cpp"
 )
 
@@ -35,6 +35,7 @@ target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/SuntaPreCompiled.h"
 # --- PUBLIC API (ACCESS: GAME & ENGINE) ---
 target_include_directories(${PROJECT_NAME} PUBLIC
 "${CMAKE_CURRENT_SOURCE_DIR}/src"
+"${CMAKE_SOURCE_DIR}/Dependencies"
 "${CMAKE_SOURCE_DIR}/Dependencies/glm"
 "${CMAKE_SOURCE_DIR}/Dependencies/GLAD/include"
 )

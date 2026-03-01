@@ -8,7 +8,7 @@
 #include "Application.h"
 #include "Scene.h"
 #include "Renderer.h"
-#include "Time.h"
+#include "EngineTime.h"
 #include "InputManager.h"
 
 #include "Log.h"
@@ -35,13 +35,13 @@ namespace Sunta
 	{
 		while (isRunning)
 		{
-			Time::Update();
+			EngineTime::Update();
 	
 			window->Update();
 
 			ProcessInput();
 	
-			Update(Time::deltaTime);
+			Update(EngineTime::deltaTime);
 	
 			Render();
 

@@ -1886,7 +1886,7 @@ build cmake_object_order_depends_target_Sunta: phony || cmake_object_order_depen
 build Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\out\build\x64-Debug\Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YcC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1901,7 +1901,7 @@ build Sunta\CMakeFiles\Sunta.dir\.\cmake_pch.cxx.pch: phony Sunta\CMakeFiles\Sun
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\AStar.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\AStar.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1910,7 +1910,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\AStar.cpp.obj: CXX_COMPILER__Sunta_un
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animation.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Animation.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1919,7 +1919,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animation.cpp.obj: CXX_COMPILER__Sunt
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animator.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Animator.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1928,7 +1928,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animator.cpp.obj: CXX_COMPILER__Sunta
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Application.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Application.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1937,7 +1937,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Application.cpp.obj: CXX_COMPILER__Su
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Bone.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Bone.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1946,7 +1946,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Bone.cpp.obj: CXX_COMPILER__Sunta_uns
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Camera.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Camera.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1955,7 +1955,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Camera.cpp.obj: CXX_COMPILER__Sunta_u
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUI.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Editor\EditorGUI.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1964,7 +1964,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUI.cpp.obj: CXX_COMPILE
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUIContext.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Editor\EditorGUIContext.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1973,7 +1973,16 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUIContext.cpp.obj: CXX_
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\ElementBuffer.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\ElementBuffer.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
+  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
+  TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
+  TARGET_PDB = Sunta\Suntad.pdb
+
+build Sunta\CMakeFiles\Sunta.dir\src\Sunta\EngineTime.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\EngineTime.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
+  DEFINES = -DSUNTA_PLATFORM_WINDOWS
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1982,7 +1991,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\ElementBuffer.cpp.obj: CXX_COMPILER__
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Grid.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Grid.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -1991,7 +2000,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Grid.cpp.obj: CXX_COMPILER__Sunta_uns
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\InputManager.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\InputManager.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2000,7 +2009,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\InputManager.cpp.obj: CXX_COMPILER__S
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Log.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Log.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2009,7 +2018,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Log.cpp.obj: CXX_COMPILER__Sunta_unsc
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Logger.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Logger.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2018,7 +2027,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Logger.cpp.obj: CXX_COMPILER__Sunta_u
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Material.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Material.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2027,7 +2036,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Material.cpp.obj: CXX_COMPILER__Sunta
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Mesh.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Mesh.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2036,7 +2045,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Mesh.cpp.obj: CXX_COMPILER__Sunta_uns
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Model.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Model.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2045,7 +2054,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Model.cpp.obj: CXX_COMPILER__Sunta_un
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Node.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Node.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2054,7 +2063,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Node.cpp.obj: CXX_COMPILER__Sunta_uns
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\EditorGUIBackendWindows.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Platform\Windows\EditorGUIBackendWindows.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2063,7 +2072,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\EditorGUIBackendWind
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsTerminal.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Platform\Windows\WindowsTerminal.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2072,7 +2081,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsTerminal.cpp.
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsWindow.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Platform\Windows\WindowsWindow.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2081,7 +2090,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsWindow.cpp.ob
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Primitives.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Primitives.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2090,7 +2099,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Primitives.cpp.obj: CXX_COMPILER__Sun
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Renderer.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Renderer.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2099,7 +2108,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Renderer.cpp.obj: CXX_COMPILER__Sunta
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\ResourceManager.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\ResourceManager.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2108,7 +2117,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\ResourceManager.cpp.obj: CXX_COMPILER
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Scene.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Scene.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2117,7 +2126,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Scene.cpp.obj: CXX_COMPILER__Sunta_un
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Shader.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Shader.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2126,7 +2135,16 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Shader.cpp.obj: CXX_COMPILER__Sunta_u
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Solaire.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Solaire.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
+  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
+  TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
+  TARGET_PDB = Sunta\Suntad.pdb
+
+build Sunta\CMakeFiles\Sunta.dir\src\Sunta\SuntaPreCompiled.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\SuntaPreCompiled.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
+  DEFINES = -DSUNTA_PLATFORM_WINDOWS
+  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2135,7 +2153,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Solaire.cpp.obj: CXX_COMPILER__Sunta_
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Systems.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Systems.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2144,16 +2162,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Systems.cpp.obj: CXX_COMPILER__Sunta_
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Texture.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Texture.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
-  OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
-  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
-  TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
-  TARGET_PDB = Sunta\Suntad.pdb
-
-build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Time.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\Time.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
-  DEFINES = -DSUNTA_PLATFORM_WINDOWS
-  FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2162,7 +2171,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\Time.cpp.obj: CXX_COMPILER__Sunta_uns
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexArray.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\VertexArray.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2171,7 +2180,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexArray.cpp.obj: CXX_COMPILER__Su
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexBuffer.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\VertexBuffer.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2180,7 +2189,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexBuffer.cpp.obj: CXX_COMPILER__S
 build Sunta\CMakeFiles\Sunta.dir\src\Sunta\main.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Sunta\src\Sunta\main.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\src\Sunta
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2189,7 +2198,7 @@ build Sunta\CMakeFiles\Sunta.dir\src\Sunta\main.cpp.obj: CXX_COMPILER__Sunta_uns
 build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\GLAD\src\glad.c.obj: C_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\GLAD\src\glad.c || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = -TC /DWIN32 /D_WINDOWS /Zi /Ob0 /Od /RTC1 -MDd
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\GLAD\src
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2198,7 +2207,7 @@ build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\GLAD\src\glad.c.obj: C_COMPILER
 build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\imgui.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2207,7 +2216,7 @@ build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui.cpp.obj: CXX_COMPIL
 build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_draw.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\imgui_draw.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2216,7 +2225,7 @@ build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_draw.cpp.obj: CXX_C
 build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_widgets.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\imgui_widgets.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2225,34 +2234,34 @@ build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_widgets.cpp.obj: CX
 build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_tables.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\imgui_tables.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
   TARGET_PDB = Sunta\Suntad.pdb
 
-build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_impl_glfw.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\imgui_impl_glfw.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
+build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\backends\imgui_impl_glfw.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\backends\imgui_impl_glfw.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
-  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui
+  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\backends
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
   TARGET_PDB = Sunta\Suntad.pdb
 
-build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_impl_opengl3.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\imgui_impl_opengl3.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
+build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\backends\imgui_impl_opengl3.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\imgui\backends\imgui_impl_opengl3.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
-  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui
+  OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\backends
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
   TARGET_PDB = Sunta\Suntad.pdb
 
 build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\stb\stb_image.cpp.obj: CXX_COMPILER__Sunta_unscanned_Debug C$:\Dev\Sunta\Dependencies\stb\stb_image.cpp | Sunta\CMakeFiles\Sunta.dir\cmake_pch.hxx Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.pch || cmake_object_order_depends_target_Sunta
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd /YuC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx /FpC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/./cmake_pch.cxx.pch /FIC:/Dev/Sunta/out/build/x64-Debug/Sunta/CMakeFiles/Sunta.dir/cmake_pch.hxx
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Sunta\src\Sunta -IC:\Dev\Sunta\Dependencies\imgui -IC:\Dev\Sunta\Dependencies\stb -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
   OBJECT_FILE_DIR = Sunta\CMakeFiles\Sunta.dir\__\Dependencies\stb
   TARGET_COMPILE_PDB = Sunta\CMakeFiles\Sunta.dir\Sunta.pdb
@@ -2266,7 +2275,7 @@ build Sunta\CMakeFiles\Sunta.dir\__\Dependencies\stb\stb_image.cpp.obj: CXX_COMP
 #############################################
 # Link the static library Sunta\Suntad.lib
 
-build Sunta\Suntad.lib: CXX_STATIC_LIBRARY_LINKER__Sunta_Debug Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\AStar.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animation.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animator.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Application.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Bone.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Camera.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUI.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUIContext.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\ElementBuffer.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Grid.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\InputManager.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Log.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Logger.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Material.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Mesh.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Model.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Node.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\EditorGUIBackendWindows.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsTerminal.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsWindow.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Primitives.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Renderer.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\ResourceManager.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Scene.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Shader.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Solaire.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Systems.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Texture.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Time.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexArray.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexBuffer.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\main.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\GLAD\src\glad.c.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_draw.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_widgets.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_tables.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_impl_glfw.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_impl_opengl3.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\stb\stb_image.cpp.obj || Dependencies\Assimp\contrib\zlib\zlibstaticd.lib Dependencies\Assimp\lib\assimp-vc143-mtd.lib Dependencies\GLFW\src\glfw3d.lib
+build Sunta\Suntad.lib: CXX_STATIC_LIBRARY_LINKER__Sunta_Debug Sunta\CMakeFiles\Sunta.dir\cmake_pch.cxx.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\AStar.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animation.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Animator.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Application.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Bone.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Camera.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUI.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Editor\EditorGUIContext.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\ElementBuffer.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\EngineTime.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Grid.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\InputManager.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Log.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Logger.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Material.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Mesh.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Model.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Node.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\EditorGUIBackendWindows.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsTerminal.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Platform\Windows\WindowsWindow.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Primitives.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Renderer.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\ResourceManager.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Scene.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Shader.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Solaire.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\SuntaPreCompiled.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Systems.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\Texture.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexArray.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\VertexBuffer.cpp.obj Sunta\CMakeFiles\Sunta.dir\src\Sunta\main.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\GLAD\src\glad.c.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_draw.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_widgets.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\imgui_tables.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\backends\imgui_impl_glfw.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\imgui\backends\imgui_impl_opengl3.cpp.obj Sunta\CMakeFiles\Sunta.dir\__\Dependencies\stb\stb_image.cpp.obj || Dependencies\Assimp\contrib\zlib\zlibstaticd.lib Dependencies\Assimp\lib\assimp-vc143-mtd.lib Dependencies\GLFW\src\glfw3d.lib
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -MDd
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = Sunta\CMakeFiles\Sunta.dir
@@ -2346,7 +2355,7 @@ build cmake_object_order_depends_target_Game: phony || cmake_object_order_depend
 build Game\CMakeFiles\Game.dir\src\Game.cpp.obj: CXX_COMPILER__Game_unscanned_Debug C$:\Dev\Sunta\Game\src\Game.cpp || cmake_object_order_depends_target_Game
   DEFINES = -DSUNTA_PLATFORM_WINDOWS
   FLAGS = /DWIN32 /D_WINDOWS /EHsc /Zi /Ob0 /Od /RTC1 -std:c++17 -MDd
-  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
+  INCLUDES = -IC:\Dev\Sunta\Sunta\src -IC:\Dev\Sunta\Dependencies -IC:\Dev\Sunta\Dependencies\glm -IC:\Dev\Sunta\Dependencies\GLAD\include -IC:\Dev\Sunta\Dependencies\GLFW\include -IC:\Dev\Sunta\Dependencies\Assimp\code\..\include -IC:\Dev\Sunta\out\build\x64-Debug\Dependencies\Assimp\code\..\include
   OBJECT_DIR = Game\CMakeFiles\Game.dir
   OBJECT_FILE_DIR = Game\CMakeFiles\Game.dir\src
   TARGET_COMPILE_PDB = Game\CMakeFiles\Game.dir\
