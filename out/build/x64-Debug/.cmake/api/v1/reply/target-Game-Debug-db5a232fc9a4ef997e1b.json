@@ -33,13 +33,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 5,
+				"line" : 8,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 7,
+				"line" : 12,
 				"parent" : 0
 			},
 			{
@@ -137,11 +137,11 @@
 		},
 		{
 			"backtrace" : 2,
-			"id" : "zlibstatic::@63af127db601cf4eed1c"
+			"id" : "assimp::@b262335c520a486e031a"
 		},
 		{
 			"backtrace" : 2,
-			"id" : "assimp::@b262335c520a486e031a"
+			"id" : "zlibstatic::@63af127db601cf4eed1c"
 		},
 		{
 			"backtrace" : 2,
