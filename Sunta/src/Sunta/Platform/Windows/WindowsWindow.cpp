@@ -4,10 +4,10 @@
 #include <GLFW/glfw3.h>
 
 #include "WindowsWindow.h"
-#include "../../Log.h"
-#include "../../Renderer.h"
-#include "../../EventBus.h"
-#include "../../EventTypes.h"
+#include "Log.h"
+#include "Renderer.h"
+#include "EventBus.h"
+#include "EventTypes.h"
 #include "EditorGUIBackendWindows.h"
 
 namespace Sunta
@@ -68,9 +68,9 @@ void WindowsWindow::Init()
 
 	glfwMakeContextCurrent(window);
 
-	if (glewInit() != GLEW_OK)
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initalize GLEW");
+		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initalize GLAD");
 		return;
 	}
 

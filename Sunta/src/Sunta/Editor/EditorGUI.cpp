@@ -4,7 +4,7 @@
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
 #include <Sunta/EntityManager.h>
-#include "../ComponentLayout.h"
+#include "ComponentLayout.h"
 
 
 namespace Sunta

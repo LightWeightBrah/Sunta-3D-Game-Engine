@@ -12,7 +12,7 @@ namespace Sunta
 	class Renderer;
 	class Event;
 
-	class SUNTA_API Application
+	class Application
 	{
 	public:
 		Application();

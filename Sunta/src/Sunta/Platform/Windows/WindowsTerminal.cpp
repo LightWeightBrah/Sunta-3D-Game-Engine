@@ -1,7 +1,6 @@
 #include "SuntaPreCompiled.h"
 
-#include "../../Terminal.h"
-#include "../../PlatformDetection.h"
+#include "Terminal.h"
 
 #ifdef SUNTA_PLATFORM_WINDOWS
 

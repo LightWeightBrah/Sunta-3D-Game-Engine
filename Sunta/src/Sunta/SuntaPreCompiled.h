@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <typeindex>
 
+#include <ctime>
 #include <cmath>
 #include <cstring>
 

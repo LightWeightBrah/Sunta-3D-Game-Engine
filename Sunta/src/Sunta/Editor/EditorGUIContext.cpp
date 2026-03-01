@@ -2,10 +2,10 @@
 
 #include "EditorGUIContext.h"
 #include <imgui/imgui.h>
-#include "../Sunta/Window.h"
+#include "Sunta/Window.h"
 #include "EditorGUIBackend.h"
-#include "../EventBus.h"
-#include "../EventTypes.h"
+#include "EventBus.h"
+#include "EventTypes.h"
 #include <imgui_internal.h>
 
 namespace Sunta

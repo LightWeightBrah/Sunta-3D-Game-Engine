@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
-#include "EditorMacros.h"
 #include "ComponentLayout.h"
 
 namespace Sunta
