@@ -45,7 +45,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 52,
+				"line" : 53,
 				"parent" : 0
 			},
 			{
@@ -66,7 +66,7 @@
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 44,
+				"line" : 43,
 				"parent" : 0
 			},
 			{
@@ -104,11 +104,7 @@
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Dev/Sunta/Dependencies"
-				},
-				{
-					"backtrace" : 5,
-					"path" : "C:/Dev/Sunta/Dependencies/glm"
+					"path" : "C:/Dev/Sunta/Dependencies/glm_wrapper"
 				},
 				{
 					"backtrace" : 5,
@@ -120,11 +116,19 @@
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Dev/Sunta/Dependencies/imgui"
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Dev/Sunta/Dependencies/stb"
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper/imgui"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper/imgui/backends"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/Sunta/Dependencies/stb_wrapper"
 				},
 				{
 					"backtrace" : 2,
@@ -185,11 +189,7 @@
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Dev/Sunta/Dependencies"
-				},
-				{
-					"backtrace" : 5,
-					"path" : "C:/Dev/Sunta/Dependencies/glm"
+					"path" : "C:/Dev/Sunta/Dependencies/glm_wrapper"
 				},
 				{
 					"backtrace" : 5,
@@ -201,11 +201,19 @@
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Dev/Sunta/Dependencies/imgui"
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Dev/Sunta/Dependencies/stb"
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper/imgui"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper/imgui/backends"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/Sunta/Dependencies/stb_wrapper"
 				},
 				{
 					"backtrace" : 2,
@@ -302,11 +310,7 @@
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Dev/Sunta/Dependencies"
-				},
-				{
-					"backtrace" : 5,
-					"path" : "C:/Dev/Sunta/Dependencies/glm"
+					"path" : "C:/Dev/Sunta/Dependencies/glm_wrapper"
 				},
 				{
 					"backtrace" : 5,
@@ -318,11 +322,19 @@
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Dev/Sunta/Dependencies/imgui"
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Dev/Sunta/Dependencies/stb"
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper/imgui"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/Sunta/Dependencies/imgui_wrapper/imgui/backends"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/Sunta/Dependencies/stb_wrapper"
 				},
 				{
 					"backtrace" : 2,
@@ -965,43 +977,43 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/imgui/imgui.cpp",
+			"path" : "Dependencies/imgui_wrapper/imgui/imgui.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/imgui/imgui_draw.cpp",
+			"path" : "Dependencies/imgui_wrapper/imgui/imgui_draw.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/imgui/imgui_widgets.cpp",
+			"path" : "Dependencies/imgui_wrapper/imgui/imgui_widgets.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/imgui/imgui_tables.cpp",
+			"path" : "Dependencies/imgui_wrapper/imgui/imgui_tables.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/imgui/backends/imgui_impl_glfw.cpp",
+			"path" : "Dependencies/imgui_wrapper/imgui/backends/imgui_impl_glfw.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/imgui/backends/imgui_impl_opengl3.cpp",
+			"path" : "Dependencies/imgui_wrapper/imgui/backends/imgui_impl_opengl3.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
-			"path" : "Dependencies/stb/stb_image.cpp",
+			"path" : "Dependencies/stb_wrapper/stb/stb_image.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

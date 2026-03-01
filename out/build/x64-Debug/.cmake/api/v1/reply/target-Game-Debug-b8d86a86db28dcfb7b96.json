@@ -48,7 +48,7 @@
 			{
 				"command" : 1,
 				"file" : 1,
-				"line" : 52,
+				"line" : 53,
 				"parent" : 3
 			},
 			{
@@ -95,11 +95,7 @@
 				},
 				{
 					"backtrace" : 2,
-					"path" : "C:/Dev/Sunta/Dependencies"
-				},
-				{
-					"backtrace" : 2,
-					"path" : "C:/Dev/Sunta/Dependencies/glm"
+					"path" : "C:/Dev/Sunta/Dependencies/glm_wrapper"
 				},
 				{
 					"backtrace" : 2,
