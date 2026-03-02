@@ -1,6 +1,13 @@
 .vs/
+*.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
 bin/*
 bin-intermediates/*
+out/
+
 *.obj
 *.ipch
 *.exe
