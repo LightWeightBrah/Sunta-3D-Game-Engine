@@ -1,5 +1,5 @@
 [![CI: Platform Validation](https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/actions/workflows/build.yml/badge.svg)](https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/actions/workflows/build.yml)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/LightWeightBrah/Sunta-3D-Game-Engine?include_prereleases&label=version&color=orange)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/LightWeightBrah/Sunta-3D-Game-Engine?label=version&color=orange)
 ![GitHub License](https://img.shields.io/github/license/LightWeightBrah/Sunta-3D-Game-Engine?color=blue)
 
 # 🚀 A* Pathfinding 3D Visualization
