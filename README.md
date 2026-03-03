@@ -1,3 +1,5 @@
+[![CI: Platform Validation](https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/actions/workflows/build.yml/badge.svg)](https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/actions/workflows/build.yml)
+
 # 🚀 A* Pathfinding 3D Visualization
 
 A high-performance implementation of the **A\* (A-Star) Pathfinding Algorithm** written in C++, featuring a real-time **OpenGL 3D visualization**.
