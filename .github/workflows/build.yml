@@ -23,3 +23,13 @@ jobs:
 
             - name: "Compilation: Build Engine & Executables"
               run: cmake --build build --config Debug
+
+            - name: "Distribution: Upload Build Artifacts"
+              uses: actions/upload-artifact@v4
+              with: 
+                name: Sunta-Engine-Win64-Debug
+                path: |
+                  build/**/Game.exe
+                  build/**/Game.pdb
+                  build/**/res/
+                retention-days: 5
