@@ -145,6 +145,7 @@ void Scene::Render(Renderer& renderer)
 			renderer.DrawMesh(*meshes[i].mesh, *meshes[i].material, matricies[i].matrix, sceneData);
 	}*/
 
+	//INITIAL CUBE LIGHT MAP TEST - JIRA
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
 		auto* meshComponent = entityManager.GetComponent<MeshComponent>(i);
