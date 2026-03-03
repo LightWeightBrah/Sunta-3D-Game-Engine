@@ -1,0 +1,25 @@
+name: "CI: Platform Validation"
+
+# Defines when action happens 
+on:
+    push:
+        branches: [ "main", "master" ]
+    pull_request:
+        branches: [ "main", "master" ]
+
+jobs:
+    build-windows-msvc-x64: 
+        name: "Windows (MSVC) | x64 Debug"
+        runs-on: windows-latest
+
+        steps:
+            - name: "Setup: Fetch Sources & Submodules"
+              uses: actions/checkout@v4
+              with:
+                submodules: recursive # So it downloads GLFW Assimp etc.
+                    
+            - name: "Configuration: CMake Generate"
+              run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
+
+            - name: "Compilation: Build Engine & Executables"
+              run: cmake --build build --config Debug
