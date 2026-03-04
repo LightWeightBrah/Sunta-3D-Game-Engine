@@ -44,15 +44,21 @@ void Scene::Init(float windowWidth, float windowHeight)
 		[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
 	);
 	
-	ResourceManager::LoadTexture("cube_container",	"res/Textures/container.jpg");
-	ResourceManager::LoadTexture("cube_chad",		"res/Textures/chad.png");
-	ResourceManager::LoadShader ("reflectable",		"res/shaders/Reflectable.shader");
-	ResourceManager::LoadShader ("lightSource",		"res/shaders/LightSource.shader");
+	ResourceManager::LoadTexture("container2Diffuse",	"res/Textures/container2.png");
+	ResourceManager::LoadTexture("container2Specular",	"res/Textures/container2_specular.png");
+
+	ResourceManager::LoadTexture("whiteTexture",		"res/Textures/whitePixel.png");
+	ResourceManager::LoadTexture("cube_container",		"res/Textures/container.jpg");
+	ResourceManager::LoadTexture("cube_chad",			"res/Textures/chad.png");
+	ResourceManager::LoadShader ("reflectable",			"res/shaders/Reflectable.shader");
+	ResourceManager::LoadShader ("lightSource",			"res/shaders/LightSource.shader");
 	
-	auto cubeShader		= ResourceManager::GetShaderData("reflectable");
-	auto lightShader	= ResourceManager::GetShaderData("lightSource");
-	auto cubeMaterial	= std::make_shared<Material>(cubeShader);
-	auto lightMaterial	= std::make_shared<Material>(lightShader);
+	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
+	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
+	auto cubeShader			= ResourceManager::GetShaderData("reflectable");
+	auto lightShader		= ResourceManager::GetShaderData("lightSource");
+	auto cubeMaterial		= std::make_shared<Material>(cubeShader, cubeDiffuseMap, cubeSpecularMap);
+	auto lightMaterial		= std::make_shared<Material>(lightShader);
 	
 	cubeMaterial->SetAmbient(glm::vec3(1.0f, 0.5f, 0.31f))
 		.SetDiffuse(glm::vec3(1.0f, 0.5f, 0.31f))
