@@ -58,21 +58,28 @@ void Scene::Init(float windowWidth, float windowHeight)
 	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
 	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
 
+	auto texturedShader		= ResourceManager::GetShaderData("reflectable");
 	auto cubeShader			= ResourceManager::GetShaderData("reflectable");
 	auto lightShader		= ResourceManager::GetShaderData("lightSource");
 
-	auto cubeMaterial		= std::make_shared<Material>(cubeShader, cubeDiffuseMap, cubeSpecularMap);
+	auto texturedMaterial	= std::make_shared<Material>(texturedShader, cubeDiffuseMap, cubeSpecularMap);
+	auto cubeMaterial		= std::make_shared<Material>(cubeShader);
 	auto lightMaterial		= std::make_shared<Material>(lightShader);
 
-	/*cubeMaterial->SetAmbient(glm::vec3(1.0f, 0.5f, 0.31f))
-		.SetDiffuse(glm::vec3(1.0f, 0.5f, 0.31f))
-		.SetSpecular(glm::vec3(0.5, 0.5f, 0.5f))
-		.SetShininess(32.0f);*/
+	cubeMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
+		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
+		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
+		.SetShininess(128.0f);
 
 	unsigned int cube = entityManager.CreateEntity();
-	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(1.0f, 4.0f, 1.0f));
+	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(7.5f, 5.0f, 3.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(cube);
 	entityManager.AddComponent<MeshComponent>(cube, Primitives::CreateCube(), cubeMaterial);
+
+	unsigned int texturedCube = entityManager.CreateEntity();
+	entityManager.AddComponent<TransformComponent>(texturedCube, glm::vec3(0.0f, 5.0f, -0.5));
+	entityManager.AddComponent<WorldMatrixComponent>(texturedCube);
+	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(), texturedMaterial);
 
 	unsigned int light = entityManager.CreateEntity();
 	entityManager.AddComponent<TransformComponent>(light, glm::vec3(3.0f, 6.0f, 2.0f));
