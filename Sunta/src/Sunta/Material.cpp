@@ -4,40 +4,80 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "ResourceManager.h"
+#include <Log.h>
 
 namespace Sunta
 {
+	Material::Material(std::shared_ptr<Shader> shader)
+		: shader(std::move(shader))
+	{
+
+	}
+
 	Material::Material(
 		std::shared_ptr<Shader> shader, std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap)
 		: shader(std::move(shader))
-		, diffuseMap(std::move(diffuseMap))
-		, specularMap(std::move(specularMap))
-
 	{
-		if(!diffuseMap)
-			this->SetDiffuseMap(ResourceManager::GetTextureData("whiteTexture"));
-		if(!specularMap)
-			this->SetSpecularMap(ResourceManager::GetTextureData("whiteTexture"));
+		this->AddDiffuseMap(diffuseMap);
+		this->AddSpecularMap(specularMap);
 	}
 	
 	//DESTUCTOR: now compiler can see how to delete Shader shared_ptr member
 	Material::~Material() = default;
 	
-	Material& Material::ApplyLight()
+	Material& Material::Apply()
 	{
-		if (!shader)
+		if (!shader )
+		{
+			SUNTA_ENGINE_LOG_ERROR("Material: Material has no shader!");
 			return *this;
-	
-		shader->Bind();
-		diffuseMap->Bind(diffuseTextureSlot);
-		specularMap->Bind(specularTextureSlot);
+		}
 
+		shader->Bind();
+		unsigned int textureSlot = 0;
+
+		ApplyTextures(diffuseMaps, "materialDiffuseMap", textureSlot);
+		ApplyTextures(specularMaps, "materialSpecularMap", textureSlot);
+		
 		shader->SetUniform3f("material.ambientColor",	data.ambientColor);
 		shader->SetUniform3f("material.diffuseColor",	data.diffuseColor);
 		shader->SetUniform3f("material.specularColor",	data.specularColor);
 		shader->SetUniform1f("material.shininess",		data.shininess);
 
 		return *this;
+	}
+
+	void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, const std::string& baseName, unsigned int& textureSlot)
+	{
+		if (maps.empty())
+		{
+			if (auto whiteTexture = ResourceManager::GetTextureData("whiteTexture"))
+			{
+				whiteTexture->Bind(textureSlot);
+				shader->SetUniform1i(baseName + "1", textureSlot++);
+			}
+			
+			return;
+		}
+
+		for (unsigned int i = 0; i < maps.size(); i++)
+		{
+			if (!maps[i])
+			{
+				SUNTA_ENGINE_LOG_ERROR("Material: Texture map {0} at index {1} is null", baseName, i);
+				
+				if (auto errorTexture = ResourceManager::GetTextureData("errorTexture"))
+				{
+					errorTexture->Bind(textureSlot);
+					shader->SetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
+				}
+
+				continue;
+			}
+
+			maps[i]->Bind(textureSlot);
+			shader->SetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
+		}
 	}
 	
 	Material& Material::SetAmbient(const glm::vec3& color)
@@ -64,31 +104,18 @@ namespace Sunta
 		return *this;
 	}
 
-	Material& Material::SetDiffuseMap(const std::shared_ptr<Texture> diffuseMap)
+	Material& Material::AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap)
 	{
-		this->diffuseMap = diffuseMap;
-
-		if (!shader)
-			return *this;
-
-		shader->Bind();
-		shader->SetUniform1i("materialDiffuseMap", this->diffuseTextureSlot);
-
+		this->diffuseMaps.push_back(diffuseMap);
 		return *this;
 	}
 
-	Material& Material::SetSpecularMap(const std::shared_ptr<Texture> specularMap)
+	Material& Material::AddSpecularMap(const std::shared_ptr<Texture> specularMap)
 	{
-		this->specularMap = specularMap;
-
-		if (!shader)
-			return *this;
-
-		shader->Bind();
-		shader->SetUniform1i("materialSpecularMap", this->specularTextureSlot);
-
+		this->specularMaps.push_back(specularMap);
 		return *this;
 	}
 	
 	std::shared_ptr<Shader> Material::GetShader() const { return shader; }
+
 }

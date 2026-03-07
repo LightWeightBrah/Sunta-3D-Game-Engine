@@ -51,7 +51,7 @@ private:
 	float		 yaw				= -90.0f;
 	float		 fov				=  45.0f;
 				 
-	float		 movementSpeed		=  6.5f;
+	float		 movementSpeed		=  3.5f;
 	float		 mouseSensitivity	=  0.1f;
 	bool		 stayOnHeight		=  false;
 				 							   

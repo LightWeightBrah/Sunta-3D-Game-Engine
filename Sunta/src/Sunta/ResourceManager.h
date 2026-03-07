@@ -26,14 +26,18 @@ namespace Sunta
 		static std::map<std::string, std::shared_ptr<ModelData>> modelsRegistered;
 		static std::map<std::string, std::shared_ptr<Texture>>	 texturesRegistered;
 		static std::map<std::string, std::shared_ptr<Shader>>	 shadersRegistered;
+		static std::map<std::string, std::shared_ptr<Material>>	 materialsRegistered;
 	
 	public:
-		static void LoadModel  (const std::string& name, const std::string& path);
-		static void LoadTexture(const std::string& name, const std::string& path);
-		static void LoadShader (const std::string& name, const std::string& path);
+		static void LoadModel   (const std::string& name, const std::string& path);
+		static void LoadTexture (const std::string& name, const std::string& path);
+		static void LoadShader  (const std::string& name, const std::string& path);
 		
-		static std::shared_ptr<ModelData> GetModelData  (const std::string& name);
-		static std::shared_ptr<Texture>	  GetTextureData(const std::string& name);
-		static std::shared_ptr<Shader>	  GetShaderData (const std::string& name);
+		static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
+		static std::shared_ptr<Texture>	  GetTextureData     (const std::string& name);
+		static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);
+														    
+		static std::shared_ptr<Material>  LoadOrGetModelMaterial (const std::string& name, std::shared_ptr<Shader> shader);
+		static std::shared_ptr<Texture>   LoadOrGetModelTexture  (const std::string& path);
 	};
 }

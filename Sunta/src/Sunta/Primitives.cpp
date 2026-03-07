@@ -78,22 +78,21 @@ namespace Sunta
 		unsigned int floatsPerVertex = 8;
 		unsigned int vertexCount = sizeof(cubeVertices) / (sizeof(float) * floatsPerVertex);
 	
-		std::vector<TextureItem> defaultTextures;
+		/*std::vector<TextureItem> defaultTextures;
 		auto texture1 = ResourceManager::GetTextureData("cube_container");
 		auto texture2 = ResourceManager::GetTextureData("cube_chad");
-	
+
 		if (texture1)
 			defaultTextures.push_back({ texture1, "texture_diffuse" });
-	
+
 		if(texture2)
-			defaultTextures.push_back({ texture2, "texture_specular" });
+			defaultTextures.push_back({ texture2, "texture_specular" });*/
 	
 		return std::make_unique<Mesh>
 		(
 			cubeVertices,
 			sizeof(cubeVertices),
 			cubeIndicies,
-			defaultTextures,
 			VertexLayouts::GetStaticLayout()
 		);
 	}

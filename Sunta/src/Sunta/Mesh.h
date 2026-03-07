@@ -18,25 +18,19 @@ namespace Sunta
 	
 	class BufferLayout;
 	
-	struct TextureItem 
-	{
-		std::shared_ptr<Texture> texture;
-		std::string				 type;
-	};
-	
 	class Mesh	
 	{
 	private:
 		std::vector<unsigned int>		indices;
-		std::vector<TextureItem>		textures;
 	
 		std::unique_ptr<VertexArray>	VAO;
 		std::unique_ptr<VertexBuffer>	VBO;
 		std::unique_ptr<ElementBuffer>	EBO;
 	
 	public:
-		Mesh(const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, 
-			std::vector<TextureItem> textures, const BufferLayout& bufferLayout);
+		Mesh(const void* vertexData, unsigned int dataSize
+			, std::vector<unsigned int> indices
+			, const BufferLayout& bufferLayout);
 		
 		//(PIMPL) Pointer to IMPLementation, forward declarations
 	
@@ -55,8 +49,9 @@ namespace Sunta
 		Mesh& operator=(const Mesh&) = delete;
 	
 	
-		void BindTextures(const Shader& shader) const;
-	
+		//void BindTextures(const Shader& shader) const;
+		void Bind() const;
+
 		inline const VertexArray& GetVAO()		const { return *VAO; }
 		inline const ElementBuffer& GetEBO()	const { return *EBO; }
 		inline unsigned int GetIndexCount()		const { return (unsigned int)indices.size(); }

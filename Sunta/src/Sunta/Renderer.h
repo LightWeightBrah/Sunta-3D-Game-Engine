@@ -38,18 +38,14 @@ namespace Sunta
 		void Clear(float r, float g, float b, float a) const;
 		
 		
-		void Draw(const VertexArray& VAO, const ElementBuffer& EBO, const Shader& shader) const;
-		void DrawModel(const Model& model, Shader& shader, const Animator* animator) const;
-		
-		void DrawMesh(const Mesh& mesh, Shader& shader) const;
-
 		void DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
+		void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const;
 		void DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 		
 	private:
 		SceneData sceneData;
-	
-		void DrawEntity(PrimitiveEntity& entity) const;
-		void DrawLightSource() const;
+		
+		void SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
+		void SetBaseLighting(Shader& shader, const SceneData& sceneData) const;
 	};
 }

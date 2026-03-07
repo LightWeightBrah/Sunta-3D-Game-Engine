@@ -4,13 +4,15 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Log.h"
+#include "Material.h"
 
 namespace Sunta
 {
 	std::map<std::string, std::shared_ptr<ModelData>> ResourceManager::modelsRegistered;
 	std::map<std::string, std::shared_ptr<Texture>>   ResourceManager::texturesRegistered;
 	std::map<std::string, std::shared_ptr<Shader>>    ResourceManager::shadersRegistered;
-	
+	std::map<std::string, std::shared_ptr<Material>>  ResourceManager::materialsRegistered;
+
 	void ResourceManager::LoadModel(const std::string& name, const std::string& path)
 	{
 		if (modelsRegistered.count(name))
@@ -82,4 +84,38 @@ namespace Sunta
 		}
 		return it->second;
 	}
+
+	std::shared_ptr<Material> ResourceManager::LoadOrGetModelMaterial(const std::string& name, std::shared_ptr<Shader> shader)
+	{
+		auto it = materialsRegistered.find(name);
+		if (it == materialsRegistered.end())
+		{
+			auto newMaterial = std::make_shared<Material>(shader);
+			materialsRegistered[name] = newMaterial;
+
+			SUNTA_ENGINE_LOG_INFO("Loaded new material {0} in ResourceManager...", name);
+			return newMaterial;
+		}
+
+		SUNTA_ENGINE_LOG_INFO("Loaded existing material {0} from ResourceManager...", name);
+		return it->second;
+	}
+
+	std::shared_ptr<Texture> ResourceManager::LoadOrGetModelTexture(const std::string& path)
+	{
+		auto it = texturesRegistered.find(path);
+		if (it == texturesRegistered.end())
+		{
+			auto newTexture = std::make_shared<Texture>(path);
+			texturesRegistered[path] = newTexture;
+
+			SUNTA_ENGINE_LOG_INFO("Loaded new texture {0} in ResourceManager...", path);
+			return newTexture;
+		}
+
+
+		SUNTA_ENGINE_LOG_INFO("Loaded existing texture{0} from ResourceManager...", path);
+		return it->second;
+	}
+
 }

@@ -38,63 +38,70 @@ namespace Sunta
 		GLCall(glClearColor(r, g,b, a));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	}
-	
-	void Renderer::Draw(const VertexArray& VAO, const ElementBuffer& EBO, const Shader& shader) const
-	{
-		shader.Bind();
-		VAO.Bind();
-		EBO.Bind();
-		GLCall(glDrawElements(GL_TRIANGLES, EBO.GetCount(), GL_UNSIGNED_INT, 0));
-	}
-	
-	void Renderer::DrawModel(const Model& model, Shader& shader, const Animator* animator) const
-	{
-		shader.Bind();
-	
-		bool hasAnimations = (animator && model.HasAnimations());
-		shader.SetUniform1i("hasAnimations", hasAnimations);
-		if (hasAnimations)
-			shader.SetBoneMatrices(animator->GetFinalBoneMatrices());
-	
-		for (const auto& mesh : model.GetMeshes())
-			DrawMesh(mesh, shader);
-	}
-	
-	void Renderer::DrawMesh(const Mesh& mesh, Shader& shader) const
-	{
-		mesh.BindTextures(shader);
-		Draw(mesh.GetVAO(), mesh.GetEBO(), shader);
-	}
-	
+
 	void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const
 	{
 		auto shader = material.GetShader();
 		shader->Bind();
 
-		shader->SetUniformMatrix4fv("model",		modelMatrix);
-		shader->SetUniformMatrix4fv("view",			sceneData.viewMatrix);
-		shader->SetUniformMatrix4fv("projection",   sceneData.projectionMatrix);
-		shader->SetUniform3f("viewerPosition",		sceneData.cameraPosition);
+		SetBaseTransform(*shader, modelMatrix, sceneData);
+		SetBaseLighting(*shader, sceneData);
 
-		shader->SetUniform3f("lightSource.position",			 sceneData.lightSourceData.position);
-		shader->SetUniform3f("lightSource.ambientIntensity",  sceneData.lightSourceData.ambientIntensity);
-		shader->SetUniform3f("lightSource.diffuseIntensity",  sceneData.lightSourceData.diffuseIntensity);
-		shader->SetUniform3f("lightSource.specularIntensity", sceneData.lightSourceData.specularIntensity);
+		material.Apply();
+		mesh.Bind();
+		GLCall(glDrawElements(GL_TRIANGLES, mesh.GetIndexCount(), GL_UNSIGNED_INT, 0));
+	}
+	
+	void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const
+	{
+		bool hasAnimations = (animator && model.HasAnimations());
 
-		material.ApplyLight();
+		for (const auto& subMesh : model.GetSubMeshes())
+		{
+			if (!subMesh.mesh || !subMesh.material)
+				continue;
 
+			auto shader = subMesh.material->GetShader();
+			shader->Bind();
 
-		DrawMesh(mesh, *shader);
+			SetBaseTransform(*shader, modelMatrix, sceneData);
+			SetBaseLighting(*shader, sceneData);
+			
+			shader->SetUniform1i("hasAnimations", hasAnimations);
+			if (hasAnimations)
+				shader->SetBoneMatrices(animator->GetFinalBoneMatrices());
+
+			subMesh.material->Apply();
+			subMesh.mesh->Bind();
+
+			GLCall(glDrawElements(GL_TRIANGLES, subMesh.mesh->GetIndexCount(), GL_UNSIGNED_INT, 0));
+		}
 	}
 
 	void Renderer::DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const
 	{
 		shader.Bind();
+		SetBaseTransform(shader, modelMatrix, sceneData);
 
+		mesh.Bind();
+		GLCall(glDrawElements(GL_TRIANGLES, mesh.GetIndexCount(), GL_UNSIGNED_INT, 0));
+	}
+
+	void Renderer::SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const
+	{
 		shader.SetUniformMatrix4fv("model",		 modelMatrix);
 		shader.SetUniformMatrix4fv("view",		 sceneData.viewMatrix);
 		shader.SetUniformMatrix4fv("projection", sceneData.projectionMatrix);
-
-		DrawMesh(mesh, shader);
 	}
+
+	void Renderer::SetBaseLighting(Shader& shader, const SceneData& sceneData) const
+	{
+		shader.SetUniform3f("viewerPosition",				 sceneData.cameraPosition);
+
+		shader.SetUniform3f("lightSource.position",			 sceneData.lightSourceData.position);
+		shader.SetUniform3f("lightSource.ambientIntensity",  sceneData.lightSourceData.ambientIntensity);
+		shader.SetUniform3f("lightSource.diffuseIntensity",  sceneData.lightSourceData.diffuseIntensity);
+		shader.SetUniform3f("lightSource.specularIntensity", sceneData.lightSourceData.specularIntensity);
+	}
+
 }

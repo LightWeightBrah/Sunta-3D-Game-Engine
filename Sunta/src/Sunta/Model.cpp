@@ -8,6 +8,8 @@
 #include "AssimpUtilities.h"
 #include "VertexLayouts.h"
 #include "Log.h"
+#include "ResourceManager.h"
+#include "Material.h"
 
 namespace Sunta
 {
@@ -51,7 +53,7 @@ namespace Sunta
 		for (unsigned int i = 0; i < node->mNumMeshes; i++) 
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			meshes.emplace_back(ProcessMesh(mesh));
+			subMeshes.emplace_back(ProcessSubMesh(mesh));
 		}
 	
 		for (unsigned int i = 0; i < node->mNumChildren; i++) 
@@ -60,10 +62,10 @@ namespace Sunta
 		}
 	}
 	
-	Mesh Model::ProcessMesh(aiMesh* mesh)
+	SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 	{
 		std::vector<unsigned int> indices;
-		std::vector<TextureItem>  meshTextures;
+		std::shared_ptr<Material> meshMaterial;
 	
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
@@ -74,12 +76,23 @@ namespace Sunta
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	
-			std::vector<TextureItem> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-			meshTextures.insert(meshTextures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	
-			std::vector<TextureItem> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-			meshTextures.insert(meshTextures.end(), specularMaps.begin(), specularMaps.end());
+			aiString materialName;
+			material->Get(AI_MATKEY_NAME, materialName);
+			std::string materialKey = this->directory + ":" + materialName.C_Str();
+
+			auto modelShader = ResourceManager::GetShaderData("reflectable");
+
+			meshMaterial = ResourceManager::LoadOrGetModelMaterial(materialKey, modelShader);
+
+			if (meshMaterial->NeedsLoading())
+			{
+				LoadMaterialTextures(material, aiTextureType_DIFFUSE, meshMaterial);
+				LoadMaterialTextures(material, aiTextureType_SPECULAR, meshMaterial);
+
+				float shininess;
+				if (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS)
+					meshMaterial->SetShininess(shininess);
+			}
 		}
 		
 		if (mesh->HasBones())
@@ -88,15 +101,40 @@ namespace Sunta
 			SetVertexData(mesh, vertices);
 			ProcessMeshBones(mesh, vertices);
 	
-			return Mesh(vertices.data(), vertices.size() * sizeof(SkinnedVertex),
-				indices, meshTextures, VertexLayouts::GetSkinnedLayout());
+			auto skinnedMesh = std::make_shared<Mesh>(vertices.data(), vertices.size() * sizeof(SkinnedVertex),
+				indices, VertexLayouts::GetSkinnedLayout());
+
+			return { skinnedMesh, meshMaterial };
 		}
 	
 		std::vector<StaticVertex> vertices(mesh->mNumVertices);
 		SetVertexData(mesh, vertices);
 	
-		return Mesh(vertices.data(), vertices.size() * sizeof(StaticVertex),
-			indices, meshTextures, VertexLayouts::GetStaticLayout());
+		auto staticMesh = std::make_shared<Mesh>(vertices.data(), vertices.size() * sizeof(StaticVertex),
+			indices, VertexLayouts::GetStaticLayout());
+
+		return { staticMesh, meshMaterial };
+	}
+
+	void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::shared_ptr<Material>& material)
+	{
+		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+		{
+			aiString str;
+			mat->GetTexture(type, i, &str);
+
+			std::string path = std::string(str.C_Str());
+			std::string filename = path.substr(path.find_last_of("\\/") + 1);
+			std::string textureFullPath = directory + "/" + filename;
+
+			auto texture = ResourceManager::LoadOrGetModelTexture(textureFullPath);
+
+			if (type == aiTextureType_DIFFUSE)
+				material->AddDiffuseMap(texture);
+			else if (type == aiTextureType_SPECULAR)
+				material->AddSpecularMap(texture);
+
+		}
 	}
 	
 	void Model::ProcessMeshBones(aiMesh* mesh, std::vector<SkinnedVertex>& vertices)
@@ -162,43 +200,5 @@ namespace Sunta
 		return id;
 	}
 	
-	std::vector<TextureItem> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
-	{
-		std::vector<TextureItem> textures;
-		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) 
-		{
-			aiString str;
-			mat->GetTexture(type, i, &str);
 	
-			std::string path = std::string(str.C_Str());
-			std::string filename = path.substr(path.find_last_of("\\/") + 1);
-	
-			std::string fullPath = directory + "/" + filename;
-	
-	
-			bool skip = false;
-			for (unsigned int j = 0; j < texturesLoaded.size(); j++) 
-			{
-				if (texturesLoaded[j].texture->GetFilepath() == fullPath) 
-				{
-					textures.push_back(texturesLoaded[j]);
-					skip = true;
-					break;
-				}
-			}
-	
-			if (!skip) 
-			{
-				auto tex = std::make_shared<Texture>(fullPath);
-				TextureItem texture;
-	
-				texture.texture = tex;
-				texture.type	= typeName;
-	
-				textures.push_back(texture);
-				texturesLoaded.push_back(texture);
-			}
-		}
-		return textures;
-	}
 }

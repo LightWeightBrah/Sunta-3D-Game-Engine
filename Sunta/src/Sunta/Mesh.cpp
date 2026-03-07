@@ -15,9 +15,8 @@
 
 namespace Sunta
 {
-	Mesh::Mesh(const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices,
-			std::vector<TextureItem> textures, const BufferLayout& bufferLayout)
-		: indices(std::move(indices)), textures(std::move(textures))
+	Mesh::Mesh(const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout)
+		: indices(std::move(indices))
 	{
 		if (this->indices.empty())
 		{
@@ -32,6 +31,12 @@ namespace Sunta
 		VAO->AddBuffer(*VBO, bufferLayout);
 	}
 	
+	void Mesh::Bind() const
+	{
+		this->VAO->Bind();
+		this->EBO->Bind();
+	}
+
 	//DESTRUCTOR: now compiler can see how to delete unique_ptr members
 	Mesh::~Mesh() = default;
 	
@@ -39,7 +44,9 @@ namespace Sunta
 	Mesh::Mesh(Mesh&& other) noexcept = default;
 	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
 	
-	void Mesh::BindTextures(const Shader& shader) const
+	//TODO: REWORK THIS IN MATERIAL SO IT WORKS WITH 3D MODELS
+	//FOR MODELS
+	/*void Mesh::BindTextures(const Shader& shader) const
 	{
 		unsigned int diffuseNr  = 1;
 		unsigned int specularNr = 1;
@@ -59,5 +66,5 @@ namespace Sunta
 	
 			shader.SetUniform1i(name + number, i);
 		}
-	}
+	}*/
 }

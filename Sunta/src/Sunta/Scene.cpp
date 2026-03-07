@@ -46,24 +46,28 @@ void Scene::Init(float windowWidth, float windowHeight)
 	
 	ResourceManager::LoadTexture("container2Diffuse",	"res/Textures/container2.png");
 	ResourceManager::LoadTexture("container2Specular",	"res/Textures/container2_specular.png");
-
 	ResourceManager::LoadTexture("whiteTexture",		"res/Textures/whitePixel.png");
+	ResourceManager::LoadTexture("errorTexture",		"res/Textures/errorTexture.png");
+
 	ResourceManager::LoadTexture("cube_container",		"res/Textures/container.jpg");
 	ResourceManager::LoadTexture("cube_chad",			"res/Textures/chad.png");
+
 	ResourceManager::LoadShader ("reflectable",			"res/shaders/Reflectable.shader");
 	ResourceManager::LoadShader ("lightSource",			"res/shaders/LightSource.shader");
 	
 	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
 	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
+
 	auto cubeShader			= ResourceManager::GetShaderData("reflectable");
 	auto lightShader		= ResourceManager::GetShaderData("lightSource");
+
 	auto cubeMaterial		= std::make_shared<Material>(cubeShader, cubeDiffuseMap, cubeSpecularMap);
 	auto lightMaterial		= std::make_shared<Material>(lightShader);
-	
-	cubeMaterial->SetAmbient(glm::vec3(1.0f, 0.5f, 0.31f))
+
+	/*cubeMaterial->SetAmbient(glm::vec3(1.0f, 0.5f, 0.31f))
 		.SetDiffuse(glm::vec3(1.0f, 0.5f, 0.31f))
 		.SetSpecular(glm::vec3(0.5, 0.5f, 0.5f))
-		.SetShininess(32.0f);
+		.SetShininess(32.0f);*/
 
 	unsigned int cube = entityManager.CreateEntity();
 	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(1.0f, 4.0f, 1.0f));
@@ -158,13 +162,13 @@ void Scene::Render(Renderer& renderer)
 		auto* meshComponent = entityManager.GetComponent<MeshComponent>(i);
 		auto* matrixComponent = entityManager.GetComponent<WorldMatrixComponent>(i);
 
-		if (meshComponent && matrixComponent)
-		{
-			if (entityManager.GetComponent<LightComponent>(i))
-				renderer.DrawLigthSource(*meshComponent->mesh, *meshComponent->material->GetShader(), matrixComponent->matrix, sceneData);
-			else
-				renderer.DrawMesh(*meshComponent->mesh, *meshComponent->material, matrixComponent->matrix, sceneData);
-		}
+		if (!(meshComponent && matrixComponent && meshComponent->mesh && meshComponent->material))
+			continue;
+
+		if (entityManager.GetComponent<LightComponent>(i))
+			renderer.DrawLigthSource(*meshComponent->mesh, *meshComponent->material->GetShader(), matrixComponent->matrix, sceneData);
+		else
+			renderer.DrawMesh(*meshComponent->mesh, *meshComponent->material, matrixComponent->matrix, sceneData);
 	}
 }
 	
