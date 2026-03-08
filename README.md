@@ -1,5 +1,4 @@
 <div align="center">
-  <br />
   <h1>Sunta Engine 3D</h1>
   <img src="https://github.com/user-attachments/assets/4e58ae55-28b3-4ddb-b76b-5c802ab82e38" width="600" />
   <p align="center">
