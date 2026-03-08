@@ -74,23 +74,6 @@ The engine includes a built-in editor designed to simplify scene creation and re
 
 ---
 
-## Project Management
-I manage the development process using industry-standard tools to maintain a clear roadmap and code quality.
-
-* **Jira Roadmap:** Every feature and refactor is tracked as a technical task on a Kanban Board.
-* **Continuous Integration (CI):** Automated build pipelines verify code stability on every commit.
-* **Build System:** Managed via CMake for consistent cross-platform configuration.
-
-<div align="center">
-  <a href="https://julianlabanowski.atlassian.net/jira/software/c/projects/SUN/issues/">
-    <img src="https://github.com/user-attachments/assets/9ac6ac7e-f0c1-4642-b00f-6ad443dc1172" width="1200" />
-  </a>
-  <br />
-  <em><b>Interactive Roadmap:</b> Click the image to view real-time project progress and technical tasks on Jira.</em>
-</div>
-
----
-
 ## Engine Architecture
 
 ### System Abstraction and Logic
@@ -110,6 +93,23 @@ The engine is built on a modular architecture that separates low-level API calls
 
 ---
 
+## Project Management
+I manage the development process using industry-standard tools to maintain a clear roadmap and code quality.
+
+* **Jira Roadmap:** Every feature and refactor is tracked as a technical task on a Kanban Board.
+* **Continuous Integration (CI):** Automated build pipelines verify code stability on every commit.
+* **Build System:** Managed via CMake for consistent cross-platform configuration.
+
+<div align="center">
+  <a href="https://julianlabanowski.atlassian.net/jira/software/c/projects/SUN/issues/">
+    <img src="https://github.com/user-attachments/assets/9ac6ac7e-f0c1-4642-b00f-6ad443dc1172" width="1200" />
+  </a>
+  <br />
+  <em><b>Interactive Roadmap:</b> Click the image to view real-time project progress and technical tasks on Jira.</em>
+</div>
+
+---
+
 ## Tech Stack and Dependencies
 Sunta Engine integrates several industry-standard libraries:
 
@@ -119,6 +119,17 @@ Sunta Engine integrates several industry-standard libraries:
 * [**ImGui**](https://github.com/ocornut/imgui) - Editor interface and tooling.
 * [**Assimp**](https://www.assimp.org/) - 3D model and animation loading.
 * [**stb_image**](https://github.com/nothings/stb) - Texture and image parsing.
+
+---
+
+## Learning Resources & Credits
+The following resources were used to study and implement the core systems of Sunta Engine:
+
+* [**TheCherno**](https://www.youtube.com/@TheCherno) – Learning modern C++ practices and conceptual engine architecture.
+* [**LearnOpenGL**](https://learnopengl.com/) – Implementation of the graphics pipeline, lighting models, and Assimp model loading.
+* [**OGLDev**](https://www.youtube.com/@OGLDEV) – Study of skeletal animation mathematics logic and advanced OpenGL techniques.
+* [**Udemy (CMake Mastery)**](https://www.udemy.com/course/cmake-tests-and-tooling-for-cc-projects/) – Mastering CMake architecture, C++ tooling, and CI workflows.
+* [**Official CMake Guide**](https://cmake.org/cmake/help/latest/guide/tutorial/index.html) – Used alongside the Udemy course to further study CMake documentation and best practices.
 
 ---
 
