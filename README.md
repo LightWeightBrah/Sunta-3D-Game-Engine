@@ -1,6 +1,6 @@
 <div align="center">
   <h1>Sunta Engine 3D</h1>
-  <img src="https://github.com/user-attachments/assets/4e58ae55-28b3-4ddb-b76b-5c802ab82e38" width="600" />
+  <img src="https://github.com/user-attachments/assets/4e58ae55-28b3-4ddb-b76b-5c802ab82e38" width="600" alt="Sunta Engine Logo" />
   <p align="center">
     <a href="https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/actions/workflows/build.yml"><img src="https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/actions/workflows/build.yml/badge.svg" alt="CI Status" valign="middle"></a>
     <a href="https://github.com/LightWeightBrah/Sunta-3D-Game-Engine/releases"><img src="https://img.shields.io/github/v/tag/LightWeightBrah/Sunta-3D-Game-Engine?label=version&color=orange" alt="Version" valign="middle"></a>
@@ -22,7 +22,7 @@ The engine uses a custom lighting system based on the Phong reflection model to 
 
 <div align="center">
   <h3>Specular Mapping (Texture-based detail)</h3>
-  <img src="https://github.com/user-attachments/assets/67078846-06eb-4321-a3b7-c42b775cbbd4" width="800" />
+  <img src="https://github.com/user-attachments/assets/67078846-06eb-4321-a3b7-c42b775cbbd4" width="800" alt="Specular mapping on cube container box" />
   <p><i>Using Specular Maps to define surface shininess at a pixel level, allowing for realistic mixing of metallic and matte materials.</i></p>
 </div>
 
@@ -30,7 +30,7 @@ The engine uses a custom lighting system based on the Phong reflection model to 
 
 <div align="center">
   <h3>Core Material Physics (No texture)</h3>
-  <img src="https://github.com/user-attachments/assets/2a75c028-28f7-4d51-a0e4-3ad0ce6f80ae" width="800" />
+  <img src="https://github.com/user-attachments/assets/2a75c028-28f7-4d51-a0e4-3ad0ce6f80ae" width="800" alt="Phong lighting model on 3D Cube" />
   <p><i>Demonstrating the underlying light-reflection mathematics applied to geometry without textures.</i></p>
 </div>
 
@@ -41,7 +41,7 @@ The engine uses a custom lighting system based on the Phong reflection model to 
 
 <div align="center">
   <h3>Skeletal Animation</h3>
-  <img src="https://github.com/user-attachments/assets/5192e57a-432e-4ba7-b6d8-d9f4288b2550" width="800" />
+  <img src="https://github.com/user-attachments/assets/5192e57a-432e-4ba7-b6d8-d9f4288b2550" width="800" alt="Bone-based skeletal animation on 3D model" />
   <p><i>Showcasing the skeletal animation logic, supporting bone-based movements and smooth transitions.</i></p>
 </div>
 
@@ -49,7 +49,7 @@ The engine uses a custom lighting system based on the Phong reflection model to 
 
 <div align="center">
   <h3>Grid-Based A* Pathfinding</h3>
-  <img src="https://github.com/user-attachments/assets/ca79aaba-e06b-45f5-8fe7-74ab3636509a" width="800" />
+  <img src="https://github.com/user-attachments/assets/ca79aaba-e06b-45f5-8fe7-74ab3636509a" width="800" alt="A star pathfinding visualization on 3D grid" />
   <p><i>A navigation system designed for grid-based environments, allowing AI agents to calculate efficient paths while avoiding obstacles.</i></p>
 </div>
 
@@ -60,7 +60,7 @@ The engine includes a built-in editor designed to simplify scene creation and re
 
 <div align="center">
   <h3>Real-time Property Inspector</h3>
-  <img src="https://github.com/user-attachments/assets/e82e96e1-2a2d-4d50-8d68-ff460cab9a51" width="800" />
+  <img src="https://github.com/user-attachments/assets/e82e96e1-2a2d-4d50-8d68-ff460cab9a51" width="800" alt="Property editor with real time changes" />
   <p><i>Modify object data like positions, colors, and logic toggles instantly. The interface is automatically generated from the underlying C++ components.</i></p>
 </div>
 
@@ -68,7 +68,7 @@ The engine includes a built-in editor designed to simplify scene creation and re
 
 <div align="center">
   <h3>Window Docking System</h3>
-  <img src="https://github.com/user-attachments/assets/4e281319-6077-4421-9b91-dc0680cc18bc" width="800" />
+  <img src="https://github.com/user-attachments/assets/4e281319-6077-4421-9b91-dc0680cc18bc" width="800" alt ="Editor window docking system"/>
   <p><i>A professional workspace interface that allows windows to be dragged, snapped, and organized into custom layouts.</i></p>
 </div>
 
@@ -102,7 +102,7 @@ I manage the development process using industry-standard tools to maintain a cle
 
 <div align="center">
   <a href="https://julianlabanowski.atlassian.net/jira/software/c/projects/SUN/issues/">
-    <img src="https://github.com/user-attachments/assets/9ac6ac7e-f0c1-4642-b00f-6ad443dc1172" width="1200" />
+    <img src="https://github.com/user-attachments/assets/9ac6ac7e-f0c1-4642-b00f-6ad443dc1172" width="1200" alt="Jira Kanban board" />
   </a>
   <br />
   <em><b>Interactive Roadmap:</b> Click the image to view real-time project progress and technical tasks on Jira.</em>
