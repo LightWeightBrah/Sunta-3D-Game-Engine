@@ -1,10 +1,10 @@
-#include "SuntaPreCompiled.h"
+#include "Core/SuntaPreCompiled.h"
 
 #include "EditorGUI.h"
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
-#include <Sunta/EntityManager.h>
-#include "ComponentLayout.h"
+#include "ECS/EntityManager.h"
+#include "ECS/ComponentLayout.h"
 
 
 namespace Sunta

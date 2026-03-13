@@ -28,7 +28,7 @@ PROPERTIES LANGUAGE C
 SKIP_PRECOMPILE_HEADERS ON)
 
 # --- PRECOMPILED HEADER IMPLEMENTATION ---
-target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/SuntaPreCompiled.h")
+target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")
 
 # ========================= MAIN API ACCESS ========================= 
 

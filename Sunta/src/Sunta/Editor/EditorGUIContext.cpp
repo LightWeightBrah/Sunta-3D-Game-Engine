@@ -1,11 +1,11 @@
-#include "SuntaPreCompiled.h"
+#include "Core/SuntaPreCompiled.h"
 
 #include "EditorGUIContext.h"
 #include <imgui/imgui.h>
-#include "Sunta/Window.h"
+#include "Core/Window.h"
 #include "EditorGUIBackend.h"
-#include "EventBus.h"
-#include "EventTypes.h"
+#include "Events/EventBus.h"
+#include "Events/EventTypes.h"
 #include <imgui_internal.h>
 
 namespace Sunta
