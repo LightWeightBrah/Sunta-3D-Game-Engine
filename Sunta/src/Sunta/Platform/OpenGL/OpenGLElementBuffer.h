@@ -11,11 +11,12 @@ namespace Sunta
 		unsigned int count;
 	public:
 		OpenGLElementBuffer(const unsigned int* data, unsigned int size);
-		~OpenGLElementBuffer();
+		virtual ~OpenGLElementBuffer() override;
 	
-		void Bind() const;
-		void Unbind() const;
-		inline unsigned int GetCount() const { return count; }
+		virtual void Bind() const override;
+		virtual void Unbind() const override;
+
+		virtual unsigned int GetCount() const override { return count; }
 	
 	};
 }

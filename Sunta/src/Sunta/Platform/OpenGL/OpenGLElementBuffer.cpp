@@ -1,7 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 
-#include "Renderer.h"
-#include "ElementBuffer.h"
+#include "OpenGLUtilities.h"
+#include "OpenGLElementBuffer.h"
 
 namespace Sunta
 {

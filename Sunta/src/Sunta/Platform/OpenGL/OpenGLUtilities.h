@@ -1,17 +1,16 @@
 #pragma once
 
+#include "Core/Assert.h"
 #include <glad/glad.h>
-
-#define ASSERT(x) if (!(x)) __debugbreak();
-
-#ifdef _DEBUG
-	#define GLCall(x) GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-#else
-	#define GLCall(x) x
-#endif
 
 namespace Sunta
 {
+
+#ifdef SUNTA_DEBUG	//Sunta:: for safety, to make sure it works in every namespace
+	#define GLCall(x) Sunta::GLClearError(); x; SUNTA_ASSERT(Sunta::GLLogCall(#x, __FILE__, __LINE__))
+#else
+	#define GLCall(x) x
+#endif
 
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
