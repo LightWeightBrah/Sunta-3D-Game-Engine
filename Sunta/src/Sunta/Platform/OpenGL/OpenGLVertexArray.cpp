@@ -1,0 +1,72 @@
+#include "Core/SuntaPreCompiled.h"
+
+#include <glad/glad.h>
+
+#include "VertexArray.h"
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "BufferLayout.h"
+
+namespace Sunta
+{
+	OpenGLVertexArray::OpenGLVertexArray()
+	{
+		GLCall(glGenVertexArrays(1, &id));
+		Bind();
+	}
+	
+	OpenGLVertexArray::~OpenGLVertexArray()
+	{
+		GLCall(glDeleteVertexArrays(1, &id));
+	}
+	
+	void OpenGLVertexArray::AddBuffer(const OpenGLVertexBuffer& VBO, const OpenGLBufferLayout& layout)
+	{
+		Bind();
+		VBO.Bind();
+	
+		const auto& elements	= layout.GetBufferElements();
+		unsigned int offset		= 0;
+	
+		for (unsigned int i = 0; i < elements.size(); i++)
+		{
+			const auto& element = elements[i];
+	
+			GLCall(glEnableVertexAttribArray(i));
+	
+			if (element.type == GL_UNSIGNED_INT)
+			{
+				GLCall(glVertexAttribIPointer(
+					i, 
+					element.count, 
+					element.type, 
+					layout.GetStride(), 
+					(const void*)offset
+				));
+			}
+			else
+			{
+				GLCall(glVertexAttribPointer(
+					i,
+					element.count,
+					element.type,
+					element.normalized ? GL_TRUE : GL_FALSE,
+					layout.GetStride(),
+					(const void*)offset
+				));
+			}
+	
+			offset += element.count * BufferElement::GetSizeOfType(element.type);
+		}
+	}
+	
+	void OpenGLVertexArray::Bind() const
+	{
+		GLCall(glBindVertexArray(id));
+	}
+	
+	void OpenGLVertexArray::Unbind() const
+	{
+		GLCall(glBindVertexArray(0));
+	}
+}
