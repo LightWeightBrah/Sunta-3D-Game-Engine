@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <vector>
 
-#include "Scene/SceneData.h"
+#include "Sunta/Scene/SceneData.h"
 
 namespace Sunta
 {

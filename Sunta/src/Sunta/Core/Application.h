@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
 
-#include "Renderer/Renderer.h"
+#include "Sunta/Renderer/Renderer.h"
 #include "Core.h"
 #include "Window.h"
-#include "Events/EventTypes.h"
+#include "Sunta/Events/EventTypes.h"
 
 namespace Sunta
 {
