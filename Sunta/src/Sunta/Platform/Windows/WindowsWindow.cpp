@@ -1,13 +1,13 @@
-#include "SuntaPreCompiled.h"
+#include "Core/SuntaPreCompiled.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "WindowsWindow.h"
-#include "Log.h"
-#include "Renderer.h"
-#include "EventBus.h"
-#include "EventTypes.h"
+#include "Core/Log.h"
+#include "Renderer/Renderer.h"
+#include "Events/EventBus.h"
+#include "Events/EventTypes.h"
 #include "EditorGUIBackendWindows.h"
 
 namespace Sunta
