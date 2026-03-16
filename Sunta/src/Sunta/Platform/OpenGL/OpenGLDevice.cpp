@@ -19,7 +19,17 @@ void Sunta::OpenGLDevice::DrawElements(unsigned int count)
 
 std::shared_ptr<Sunta::VertexBuffer> Sunta::OpenGLDevice::CreateVertexBuffer(const BufferDescriptor& descriptor)
 {
+	return std::make_shared<OpenGLVertexBuffer>(descriptor);
+}
 
+std::shared_ptr<Sunta::ElementBuffer> OpenGLDevice::CreateElementBuffer(const BufferDescriptor& descriptor)
+{
+	return std::make_shared<OpenGLElementBuffer>(descriptor);
+}
+
+std::shared_ptr<Assimp::MD5::VertexArray> OpenGLDevice::CreateVertexArrayBuffer()
+{
+	return std::make_shared<OpenGLVertexArray>();
 }
 
 }

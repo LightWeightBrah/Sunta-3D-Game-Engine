@@ -6,6 +6,8 @@
 namespace Sunta
 {
 
+enum class BufferUsage;
+
 #ifdef SUNTA_DEBUG	//Sunta:: for safety, to make sure it works in every namespace
 	#define GLCall(x) Sunta::GLClearError(); x; SUNTA_ASSERT(Sunta::GLLogCall(#x, __FILE__, __LINE__))
 #else
@@ -14,6 +16,9 @@ namespace Sunta
 
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
+
+static GLenum BufferUsageToOpenGL(BufferUsage usage);
+
 
 }
 
