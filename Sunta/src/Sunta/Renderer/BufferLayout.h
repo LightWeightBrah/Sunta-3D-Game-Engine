@@ -53,13 +53,16 @@ struct BufferLayoutElement
 	ShaderDataType	shaderDataType;
 	std::string		name;
 	bool			normalized;
+	bool			instanced;
+
 	unsigned int	size;
 	unsigned int	offset;
 
-	BufferLayoutElement(ShaderDataType shaderDataType, const std::string& name, bool normalized = false)
+	BufferLayoutElement(ShaderDataType shaderDataType, const std::string& name, bool normalized = false, bool instanced = false)
 		: shaderDataType(shaderDataType)
 		, name(name)
 		, normalized(normalized)
+		, instanced(instanced)
 		, size(CalculateDataTypeSize(shaderDataType))
 		, offset(0)
 	{
@@ -75,8 +78,8 @@ struct BufferLayoutElement
 		case ShaderDataType::Float3: return 3;
 		case ShaderDataType::Float4: return 4;
 
-		case ShaderDataType::Mat3:   return 3; // 3 * Float3
-		case ShaderDataType::Mat4:   return 4; // 4 * Float4
+		case ShaderDataType::Mat3:   return 3; // layout (location = 0) Takes 3 * Float3, so next location is (location = 3)
+		case ShaderDataType::Mat4:   return 4; // layout (location = 0) Takes 4 * Float4, so next location is (location = 4)
 
 		case ShaderDataType::Int:    return 1;
 		case ShaderDataType::Int2:   return 2;

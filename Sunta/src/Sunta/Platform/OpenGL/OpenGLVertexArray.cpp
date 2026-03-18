@@ -45,8 +45,6 @@ namespace Sunta
 		{
 			const auto& element = elements[i];
 
-			GLCall(glEnableVertexAttribArray(i));
-
 			switch (element.shaderDataType)
 			{
 			case ShaderDataType::Float:
@@ -54,12 +52,16 @@ namespace Sunta
 			case ShaderDataType::Float3:
 			case ShaderDataType::Float4:
 			{
-				GLCall(glVertexAttribPointer(vertexBufferIndex
+				GLCall(glEnableVertexAttribArray(attributeIndex));
+				GLCall(glVertexAttribPointer(attributeIndex
 					, element.GetComponentCount()
-					, ShaderDataTypeToOpenGLBaseType(element.shaderDataType)
+					, ShaderDataTypeToGLenum(element.shaderDataType)
 					, element.normalized ? GL_TRUE : GL_FALSE
 					, bufferLayout.GetStride()
 					, (const void*)(element.offset)));
+
+				ActivateInstancing(attributeIndex, element.instanced);
+				attributeIndex++;
 
 				break;
 			}
@@ -67,7 +69,26 @@ namespace Sunta
 			case ShaderDataType::Mat3:
 			case ShaderDataType::Mat4:
 			{
-				//TODO: add Matricies vertexAttribPointer
+				// Matricies vertexAttribPointer (mainly for instancing)
+
+				// count is how much elements are in Matrix Column 
+				// e.g for 3x3 Matrix we have count = 3
+				// e.g for 4x4 Matrix we have count = 4
+				unsigned int count = element.GetComponentCount();
+				for (unsigned int i = 0; i < count; i++)
+				{
+					GLCall(glEnableVertexAttribArray(attributeIndex));
+					GLCall(glVertexAttribPointer(attributeIndex
+						, count
+						, ShaderDataTypeToGLenum(element.shaderDataType)
+						, element.normalized ? GL_TRUE : GL_FALSE
+						, bufferLayout.GetStride()
+						, (const void*)(element.offset + sizeof(float) * count * i)));
+					
+					ActivateInstancing(attributeIndex, element.instanced);
+					attributeIndex++;
+				}
+
 				break;
 			}
 
@@ -77,11 +98,15 @@ namespace Sunta
 			case ShaderDataType::Int4:
 			case ShaderDataType::Bool:
 			{
-				GLCall(glVertexAttribIPointer(vertexBufferIndex
+				GLCall(glEnableVertexAttribArray(attributeIndex));
+				GLCall(glVertexAttribIPointer(attributeIndex
 					, element.GetComponentCount()
-					, ShaderDataTypeToOpenGLBaseType(element.shaderDataType)
+					, ShaderDataTypeToGLenum(element.shaderDataType)
 					, bufferLayout.GetStride()
 					, (const void*)element.offset));
+
+				ActivateInstancing(attributeIndex, element.instanced);
+				attributeIndex++;
 
 				break;
 			}
@@ -91,13 +116,25 @@ namespace Sunta
 
 			}
 
-			vertexBufferIndex++;
 			vertexBuffers.push_back(vertexBuffer);
 		}
 	}
 
 	void OpenGLVertexArray::SetElementBuffer(const std::shared_ptr<ElementBuffer>& elementBuffer)
 	{
+		GLCall(glBindVertexArray(id));
+		elementBuffer->Bind();
+		this->elementBuffer = elementBuffer;
+	}
+
+	void OpenGLVertexArray::ActivateInstancing(unsigned int attributeIndex, bool instanced)
+	{
+		// glVertexAttribDivisor allows us to draw same layout (location=attributeIndex)
+		// per draw instance instead of per vertex so we can have a lot of instances and 1 draw call
+		if (instanced)
+			GLCall(glVertexAttribDivisor(attributeIndex, 1));
+		else
+			GLCall(glVertexAttribDivisor(attributeIndex, 0));
 
 	}
 

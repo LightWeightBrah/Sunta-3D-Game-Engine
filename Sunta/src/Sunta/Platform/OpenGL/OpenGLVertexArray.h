@@ -25,10 +25,12 @@ public:
 
 private:
 	unsigned int id;
-	unsigned int vertexBufferIndex;
+	unsigned int attributeIndex;
 
 	std::vector<std::shared_ptr<VertexBuffer>> vertexBuffers;
 	std::shared_ptr<ElementBuffer>			   elementBuffer;
+
+	void ActivateInstancing(unsigned int shaderLocationIndex, bool instanced);
 };
 
 }
