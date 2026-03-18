@@ -3,6 +3,7 @@
 #include "OpenGLVertexBuffer.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/RendererDevice.h"
+#include "OpenGLUtilities.h"
 
 namespace Sunta
 {
@@ -10,7 +11,7 @@ namespace Sunta
 	{
 		GLCall(glGenBuffers(1, &id));
 		GLCall(glBindBuffer(GL_ARRAY_BUFFER, id));
-		GLCall(glBufferData(GL_ARRAY_BUFFER, descriptor.size, descriptor.data, GL_STATIC_DRAW));
+		GLCall(glBufferData(GL_ARRAY_BUFFER, descriptor.size, descriptor.data, BufferUsageToOpenGL(descriptor.usage)));
 	}
 	
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()

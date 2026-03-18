@@ -9,12 +9,13 @@ void Sunta::OpenGLDevice::Clear(float r, float g, float b, float a)
 {
 	GLCall(glClearColor(r, g, b, a));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
 }
 
-void Sunta::OpenGLDevice::DrawElements(unsigned int count)
+void Sunta::OpenGLDevice::DrawElements(const std::shared_ptr<VertexArray>& VAO)
 {
-
+	VAO->Bind();
+	unsigned int count = VAO->GetElementBuffer()->GetCount();
+	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
 }
 
 std::shared_ptr<Sunta::VertexBuffer> Sunta::OpenGLDevice::CreateVertexBuffer(const BufferDescriptor& descriptor)

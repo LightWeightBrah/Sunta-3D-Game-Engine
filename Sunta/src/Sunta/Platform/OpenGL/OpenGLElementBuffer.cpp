@@ -1,17 +1,17 @@
 #include "Core/SuntaPreCompiled.h"
 
-#include "OpenGLUtilities.h"
 #include "OpenGLElementBuffer.h"
+#include "OpenGLUtilities.h"
+#include "Renderer/RendererDevice.h"
 
 namespace Sunta
 {
-	OpenGLElementBuffer::OpenGLElementBuffer(const unsigned int* data, unsigned int size)
+	OpenGLElementBuffer::OpenGLElementBuffer(const BufferDescriptor& descriptor)
+		: count(descriptor.size / sizeof(unsigned int))
 	{
-		count = size / sizeof(unsigned int);
-	
 		GLCall(glGenBuffers(1, &id));
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
-		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
+		GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, descriptor.size, descriptor.data, BufferUsageToOpenGL(descriptor.usage)));
 	}
 	
 	OpenGLElementBuffer::~OpenGLElementBuffer()
