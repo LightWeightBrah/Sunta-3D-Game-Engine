@@ -19,7 +19,7 @@ void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
 static GLenum BufferUsageToOpenGL(BufferUsage usage);
-static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType shaderDataType);
+static GLenum ShaderDataTypeToGLenum(ShaderDataType shaderDataType);
 
 }
 

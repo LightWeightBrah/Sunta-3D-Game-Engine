@@ -30,7 +30,7 @@ private:
 	std::vector<std::shared_ptr<VertexBuffer>> vertexBuffers;
 	std::shared_ptr<ElementBuffer>			   elementBuffer;
 
-	void ActivateInstancing(unsigned int shaderLocationIndex, bool instanced);
+	void ActivateInstancing(unsigned int attributeIndex, bool instanced);
 };
 
 }

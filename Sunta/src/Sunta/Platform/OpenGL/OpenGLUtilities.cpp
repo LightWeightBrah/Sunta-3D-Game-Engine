@@ -37,7 +37,7 @@ GLenum BufferUsageToOpenGL(BufferUsage usage)
 	return GL_STATIC_DRAW;
 }
 
-GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType shaderDataType)
+GLenum ShaderDataTypeToGLenum(ShaderDataType shaderDataType)
 {
 	switch (shaderDataType)
 	{
