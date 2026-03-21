@@ -24,12 +24,15 @@ struct BufferDescriptor
 	BufferUsage		usage = BufferUsage::Static;
 };
 
+// Factory of Renderer Device once per GPU
+
 class RendererDevice
 {
 public:
 	virtual ~RendererDevice() = default;
 
 	virtual void Clear(float r, float g, float b, float a) = 0;
+	virtual void SetViewport(int x, int y, int width, int height) = 0;
 	virtual void DrawElements(const std::shared_ptr<VertexArray>& VAO) = 0;
 
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) = 0;

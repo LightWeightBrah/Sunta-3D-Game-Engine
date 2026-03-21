@@ -9,6 +9,7 @@ class OpenGLDevice : public RendererDevice
 {
 public:
 	virtual void Clear(float r, float g, float b, float a) override;
+	virtual void SetViewport(int x, int y, int width, int height) override;
 	virtual void DrawElements(const std::shared_ptr<VertexArray>& VAO) override;
 
 	virtual std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferDescriptor& descriptor) override;

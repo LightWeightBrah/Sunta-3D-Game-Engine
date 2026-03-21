@@ -99,7 +99,7 @@ namespace Sunta
 	
 	void Application::Render()
 	{
-		renderer.Clear(0.05f, 0.05f, 0.05f, 1.0f);
+		Renderer::Clear(0.05f, 0.05f, 0.05f, 1.0f);
 	
 		if (!scene)
 		{

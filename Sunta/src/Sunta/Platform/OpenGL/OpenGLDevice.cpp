@@ -11,6 +11,11 @@ void Sunta::OpenGLDevice::Clear(float r, float g, float b, float a)
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
+void OpenGLDevice::SetViewport(int x, int y, int width, int height)
+{
+	GLCall(glViewport(x, y, width, height));
+}
+
 void Sunta::OpenGLDevice::DrawElements(const std::shared_ptr<VertexArray>& VAO)
 {
 	VAO->Bind();
