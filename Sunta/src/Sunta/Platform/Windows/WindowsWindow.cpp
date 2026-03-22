@@ -1,6 +1,5 @@
 #include "Core/SuntaPreCompiled.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "WindowsWindow.h"

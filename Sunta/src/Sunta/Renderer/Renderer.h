@@ -45,6 +45,8 @@ public:
 	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const;
 	void DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 
+	static RendererDevice& GetDevice() { return *rendererDevice; }
+
 private:
 	static std::unique_ptr<RendererDevice> rendererDevice;
 	SceneData sceneData;

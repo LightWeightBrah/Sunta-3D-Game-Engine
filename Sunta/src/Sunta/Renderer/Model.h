@@ -12,6 +12,7 @@ namespace Sunta
 {
 
 class Material;
+class RendererDevice;
 
 struct BoneInfo
 {
@@ -29,7 +30,7 @@ class Model
 {
 public:
 	Model() = default;
-	Model(const std::string& path, bool flipUV);
+	Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV);
 	
 	inline const bool HasAnimations()				  const { return hasAnimations; }
 	inline const std::vector<SubMesh>& GetSubMeshes() const { return subMeshes;		}
@@ -38,6 +39,8 @@ public:
 	inline const glm::mat4 GetGlobalInverseTransform()				 const { return globalInverseTransform; }
 	
 private:
+	RendererDevice*					rendererDevice;
+
 	const aiScene*					scene;
 	std::string						directory;
 	

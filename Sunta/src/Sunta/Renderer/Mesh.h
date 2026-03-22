@@ -9,6 +9,8 @@
 
 namespace Sunta
 {
+	class RendererDevice;
+
 	class Texture;
 	class Shader;
 	
@@ -23,12 +25,14 @@ namespace Sunta
 	private:
 		std::vector<unsigned int>		indices;
 	
-		std::unique_ptr<VertexArray>	VAO;
-		std::unique_ptr<VertexBuffer>	VBO;
-		std::unique_ptr<ElementBuffer>	EBO;
+		std::shared_ptr<VertexArray>	vertexArray;
+		std::shared_ptr<VertexBuffer>	vertexBuffer;
+		std::shared_ptr<ElementBuffer>	elementBuffer;
 	
 	public:
-		Mesh(const void* vertexData, unsigned int dataSize
+		Mesh(RendererDevice& rendererDevice
+			, const void* vertexData
+			, unsigned int dataSize
 			, std::vector<unsigned int> indices
 			, const BufferLayout& bufferLayout);
 		
@@ -52,8 +56,8 @@ namespace Sunta
 		//void BindTextures(const Shader& shader) const;
 		void Bind() const;
 
-		inline const VertexArray& GetVAO()		const { return *VAO; }
-		inline const ElementBuffer& GetEBO()	const { return *EBO; }
-		inline unsigned int GetIndexCount()		const { return (unsigned int)indices.size(); }
+		inline const VertexArray&   GetVertexArrayBuffer()	const { return *vertexArray; }
+		inline const ElementBuffer& GetElementBuffer()	    const { return *elementBuffer; }
+		inline unsigned int         GetIndexCount()		    const { return (unsigned int)indices.size(); }
 	};
 }

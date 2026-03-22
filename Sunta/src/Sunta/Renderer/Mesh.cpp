@@ -12,10 +12,11 @@
 #include "ElementBuffer.h"
 #include "VertexArray.h"
 #include "Core/Log.h"
+#include "RendererDevice.h"
 
 namespace Sunta
 {
-	Mesh::Mesh(const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout)
+	Mesh::Mesh(RendererDevice& rendererDevice, const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout)
 		: indices(std::move(indices))
 	{
 		if (this->indices.empty())
@@ -24,17 +25,30 @@ namespace Sunta
 			return;
 		}
 	
-		VAO = std::make_unique<VertexArray>();
-		VBO = std::make_unique<VertexBuffer>(vertexData, dataSize);
-		EBO = std::make_unique<ElementBuffer>(&this->indices[0], this->indices.size() * sizeof(unsigned int));
+		vertexArray = rendererDevice.CreateVertexArrayBuffer();
+
+		BufferDescriptor vertexBufferDescriptor;
+		vertexBufferDescriptor.data = vertexData;
+		vertexBufferDescriptor.size = dataSize;
+		vertexBufferDescriptor.usage = BufferUsage::Static;
+		vertexBuffer = rendererDevice.CreateVertexBuffer(vertexBufferDescriptor);
+		vertexBuffer->SetLayout(bufferLayout);
+
+
+		BufferDescriptor elementBufferDescriptor;
+		elementBufferDescriptor.data = indices.data();
+		elementBufferDescriptor.size = indices.size() * sizeof(unsigned int);
+		elementBufferDescriptor.usage = BufferUsage::Static;
+		elementBuffer = rendererDevice.CreateElementBuffer(elementBufferDescriptor);
 	
-		VAO->AddBuffer(*VBO, bufferLayout);
+		vertexArray->AddVertexBuffer(vertexBuffer);
+		vertexArray->SetElementBuffer(elementBuffer);
 	}
 	
 	void Mesh::Bind() const
 	{
-		this->VAO->Bind();
-		this->EBO->Bind();
+		this->vertexArray->Bind();
+		this->elementBuffer->Bind();
 	}
 
 	//DESTRUCTOR: now compiler can see how to delete unique_ptr members

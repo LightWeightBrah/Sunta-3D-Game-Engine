@@ -12,9 +12,11 @@ public:
 	virtual void SetViewport(int x, int y, int width, int height) override;
 	virtual void DrawElements(const std::shared_ptr<VertexArray>& VAO) override;
 
-	virtual std::shared_ptr<VertexBuffer> CreateVertexBuffer(const BufferDescriptor& descriptor) override;
+	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) override;
 	virtual std::shared_ptr<ElementBuffer> CreateElementBuffer(const BufferDescriptor& descriptor) override;
-	virtual std::shared_ptr<VertexArray> CreateVertexArrayBuffer() override;
+	virtual std::shared_ptr<VertexArray>   CreateVertexArrayBuffer() override;
+	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath) override;
+	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) override;
 };
 
 

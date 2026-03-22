@@ -62,6 +62,9 @@ namespace Sunta
 
 		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
 
+		Renderer::Init();
+		ResourceManager::Init(Renderer::GetDevice());
+
 		scene = std::make_unique<Scene>();
 		scene->Init(window->GetWidth(), window->GetHeight());
 

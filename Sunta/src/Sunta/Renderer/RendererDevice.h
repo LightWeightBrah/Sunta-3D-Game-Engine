@@ -8,6 +8,8 @@ namespace Sunta
 class VertexBuffer;
 class ElementBuffer;
 class VertexArray;
+class Texture;
+class Shader;
 
 enum class BufferUsage 
 { 
@@ -24,7 +26,7 @@ struct BufferDescriptor
 	BufferUsage		usage = BufferUsage::Static;
 };
 
-// Factory of Renderer Device once per GPU
+// Factory of Renderer Device once per GPU (for basic usage)
 
 class RendererDevice
 {
@@ -38,6 +40,8 @@ public:
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) = 0;
 	virtual std::shared_ptr<ElementBuffer> CreateElementBuffer(const BufferDescriptor& descriptor) = 0;
 	virtual std::shared_ptr<VertexArray>   CreateVertexArrayBuffer() = 0;
+	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath) = 0;
+	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) = 0;
 
 	static std::unique_ptr<RendererDevice> Create();
 };

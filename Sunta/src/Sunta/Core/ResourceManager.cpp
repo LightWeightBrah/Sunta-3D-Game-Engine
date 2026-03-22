@@ -1,26 +1,33 @@
 #include "SuntaPreCompiled.h"
-
 #include "ResourceManager.h"
+
+#include "Log.h"
 #include "Renderer/Texture.h"
 #include "Renderer/Shader.h"
-#include "Log.h"
 #include "Renderer/Material.h"
+#include "Renderer/Model.h"
+#include "Animation/Animation.h"
+#include "Renderer/RendererDevice.h"
 
 namespace Sunta
 {
-	std::map<std::string, std::shared_ptr<ModelData>> ResourceManager::modelsRegistered;
-	std::map<std::string, std::shared_ptr<Texture>>   ResourceManager::texturesRegistered;
-	std::map<std::string, std::shared_ptr<Shader>>    ResourceManager::shadersRegistered;
-	std::map<std::string, std::shared_ptr<Material>>  ResourceManager::materialsRegistered;
-
 	void ResourceManager::LoadModel(const std::string& name, const std::string& path)
 	{
 		if (modelsRegistered.count(name))
+		{
+			SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find model named: {}", name);
 			return;
+		}
+
+		if (!rendererDevice)
+		{
+			SUNTA_ENGINE_LOG_ERROR("Resource Manager: Renderer device is NULL! You should call Renderer.Init() first");
+			return;
+		}
 	
 		auto data = std::make_shared<ModelData>();
 	
-		data->model = Model(path, false);
+		data->model = Model(*rendererDevice, path, false);
 	
 		data->animations[AnimationType::IDLE]	 = Animation(path, &data->model, 0);
 		data->animations[AnimationType::GESTURE] = Animation(path, &data->model, 1);
@@ -33,9 +40,18 @@ namespace Sunta
 	void ResourceManager::LoadTexture(const std::string& name, const std::string& path)
 	{
 		if (texturesRegistered.count(name))
+		{
+			SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find texture named: {}", name);
 			return;
+		}
+
+		if (!rendererDevice)
+		{
+			SUNTA_ENGINE_LOG_ERROR("Resource Manager: Renderer device is NULL! You should call Renderer.Init() first");
+			return;
+		}
 	
-		auto texture = std::make_shared<Texture>(path);
+		auto texture = rendererDevice->CreateTexture(path);
 		texturesRegistered[name] = texture;
 	
 		SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture '{}'", name);
@@ -44,9 +60,18 @@ namespace Sunta
 	void ResourceManager::LoadShader(const std::string& name, const std::string& path)
 	{
 		if (shadersRegistered.count(name))
+		{
+			SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find shader named: {}", name);
 			return;
+		}
+
+		if (!rendererDevice)
+		{
+			SUNTA_ENGINE_LOG_ERROR("Resource Manager: Renderer device is NULL! You should call Renderer.Init() first");
+			return;
+		}
 	
-		auto shader = std::make_shared<Shader>(path);
+		auto shader = rendererDevice->CreateShader(path);
 		shadersRegistered[name] = shader;
 	
 		SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader '{}'", name);
@@ -106,7 +131,7 @@ namespace Sunta
 		auto it = texturesRegistered.find(path);
 		if (it == texturesRegistered.end())
 		{
-			auto newTexture = std::make_shared<Texture>(path);
+			auto newTexture = rendererDevice->CreateTexture(path);
 			texturesRegistered[path] = newTexture;
 
 			SUNTA_ENGINE_LOG_INFO("Loaded new texture {0} in ResourceManager...", path);

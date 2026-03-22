@@ -2,42 +2,55 @@
 #include <map>
 #include <string>
 
-#include "Animation/Animation.h"
+//#include "Animation/Animation.h"
 #include <iostream>
 
 namespace Sunta
 {
-	enum class AnimationType
-	{
-		IDLE,
-		GESTURE,
-		RUNNING
-	};
+
+class RendererDevice;
+class Animation;
+class Model;
+class Texture;
+class Shader;
+class Material;
+
+enum class AnimationType
+{
+	IDLE,
+	GESTURE,
+	RUNNING
+};
 	
-	struct ModelData
-	{
-		Model model;
-		std::map<AnimationType, Animation> animations;
-	};
+struct ModelData
+{
+	Model model;
+	std::map<AnimationType, Animation> animations;
+};
 	
-	class ResourceManager
-	{
-	private:
-		static std::map<std::string, std::shared_ptr<ModelData>> modelsRegistered;
-		static std::map<std::string, std::shared_ptr<Texture>>	 texturesRegistered;
-		static std::map<std::string, std::shared_ptr<Shader>>	 shadersRegistered;
-		static std::map<std::string, std::shared_ptr<Material>>	 materialsRegistered;
-	
-	public:
-		static void LoadModel   (const std::string& name, const std::string& path);
-		static void LoadTexture (const std::string& name, const std::string& path);
-		static void LoadShader  (const std::string& name, const std::string& path);
+class ResourceManager
+{
+public:
+	static void Init(RendererDevice& device) { rendererDevice = &device; }
+
+	static void LoadModel   (const std::string& name, const std::string& path);
+	static void LoadTexture (const std::string& name, const std::string& path);
+	static void LoadShader  (const std::string& name, const std::string& path);
 		
-		static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
-		static std::shared_ptr<Texture>	  GetTextureData     (const std::string& name);
-		static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);
+	static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
+	static std::shared_ptr<Texture>	  GetTextureData     (const std::string& name);
+	static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);
 														    
-		static std::shared_ptr<Material>  LoadOrGetModelMaterial (const std::string& name, std::shared_ptr<Shader> shader);
-		static std::shared_ptr<Texture>   LoadOrGetModelTexture  (const std::string& path);
-	};
+	static std::shared_ptr<Material>  LoadOrGetModelMaterial (const std::string& name, std::shared_ptr<Shader> shader);
+	static std::shared_ptr<Texture>   LoadOrGetModelTexture  (const std::string& path);
+
+private:
+	inline static RendererDevice* rendererDevice;
+
+	inline static std::map<std::string, std::shared_ptr<ModelData>>  modelsRegistered;
+	inline static std::map<std::string, std::shared_ptr<Texture>>	 texturesRegistered;
+	inline static std::map<std::string, std::shared_ptr<Shader>>	 shadersRegistered;
+	inline static std::map<std::string, std::shared_ptr<Material>>	 materialsRegistered;
+};
+
 }
