@@ -18,6 +18,7 @@
 #include "Editor/EditorGUI.h"
 #include "ECS/ComponentLayout.h"
 #include "ECS/Component.h"
+#include "ResourceManager.h"
 
 namespace Sunta
 {

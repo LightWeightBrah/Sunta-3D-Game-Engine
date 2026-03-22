@@ -25,7 +25,7 @@ public:
 
 private:
 	unsigned int id;
-	unsigned int attributeIndex;
+	unsigned int attributeIndex = 0;
 
 	std::vector<std::shared_ptr<VertexBuffer>> vertexBuffers;
 	std::shared_ptr<ElementBuffer>			   elementBuffer;

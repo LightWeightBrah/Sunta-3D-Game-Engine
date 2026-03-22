@@ -1,10 +1,10 @@
 #include "Core/SuntaPreCompiled.h"
+#include "OpenGLShader.h"
 
 #include <glad/glad.h>
 
-#include "Shader.h"
-#include "Renderer.h"
 #include "Core/Log.h"
+#include "OpenGLUtilities.h"
 
 namespace Sunta
 {

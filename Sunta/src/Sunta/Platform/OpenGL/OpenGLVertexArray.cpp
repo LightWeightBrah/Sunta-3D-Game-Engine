@@ -131,11 +131,7 @@ namespace Sunta
 	{
 		// glVertexAttribDivisor allows us to draw same layout (location=attributeIndex)
 		// per draw instance instead of per vertex so we can have a lot of instances and 1 draw call
-		if (instanced)
-			GLCall(glVertexAttribDivisor(attributeIndex, 1));
-		else
-			GLCall(glVertexAttribDivisor(attributeIndex, 0));
-
+		GLCall(glVertexAttribDivisor(attributeIndex, instanced ? 1 : 0));
 	}
 
 }

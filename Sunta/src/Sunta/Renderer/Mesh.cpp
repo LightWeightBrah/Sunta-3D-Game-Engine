@@ -51,13 +51,6 @@ namespace Sunta
 		this->elementBuffer->Bind();
 	}
 
-	//DESTRUCTOR: now compiler can see how to delete unique_ptr members
-	Mesh::~Mesh() = default;
-	
-	//MOVE: transferring unique_ptr from 'other' to 'this'
-	Mesh::Mesh(Mesh&& other) noexcept = default;
-	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
-	
 	//TODO: REWORK THIS IN MATERIAL SO IT WORKS WITH 3D MODELS
 	//FOR MODELS
 	/*void Mesh::BindTextures(const Shader& shader) const

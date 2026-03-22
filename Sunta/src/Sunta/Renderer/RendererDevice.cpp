@@ -1,5 +1,9 @@
 #include "RendererDevice.h"
 
+#include "RendererAPI.h"
+#include "Platform/OpenGL/OpenGLDevice.h"
+#include "Core/Assert.h"
+
 namespace Sunta
 {
 

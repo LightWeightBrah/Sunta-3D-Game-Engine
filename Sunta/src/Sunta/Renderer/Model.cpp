@@ -104,7 +104,7 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 		SetVertexData(mesh, vertices);
 		ProcessMeshBones(mesh, vertices);
 	
-		auto skinnedMesh = std::make_shared<Mesh>(vertices.data(), vertices.size() * sizeof(SkinnedVertex),
+		auto skinnedMesh = std::make_shared<Mesh>(*rendererDevice, vertices.data(), vertices.size() * sizeof(SkinnedVertex),
 			indices, VertexLayouts::GetSkinnedLayout());
 
 		return { skinnedMesh, meshMaterial };
@@ -113,7 +113,7 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 	std::vector<StaticVertex> vertices(mesh->mNumVertices);
 	SetVertexData(mesh, vertices);
 	
-	auto staticMesh = std::make_shared<Mesh>(vertices.data(), vertices.size() * sizeof(StaticVertex),
+	auto staticMesh = std::make_shared<Mesh>(*rendererDevice, vertices.data(), vertices.size() * sizeof(StaticVertex),
 		indices, VertexLayouts::GetStaticLayout());
 
 	return { staticMesh, meshMaterial };

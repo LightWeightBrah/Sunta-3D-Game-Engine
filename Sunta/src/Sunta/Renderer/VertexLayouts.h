@@ -12,7 +12,7 @@ namespace Sunta
 			{
 				{ ShaderDataType::Float3, "aPos"      },
 				{ ShaderDataType::Float3, "aNormal"   },
-				{ ShaderDataType::Float3, "aTexCoord" }
+				{ ShaderDataType::Float2, "aTexCoord" }
 			};
 
 			//bufferLayout.Push<float>(3); //position
@@ -28,10 +28,10 @@ namespace Sunta
 			{
 				{ ShaderDataType::Float3, "aPos"      },
 				{ ShaderDataType::Float3, "aNormal"   },
-				{ ShaderDataType::Float3, "aTexCoord" },
+				{ ShaderDataType::Float2, "aTexCoord" },
 
-				{ ShaderDataType::Float3, "aBoneIDs"  },
-				{ ShaderDataType::Float3, "aWeights"  }
+				{ ShaderDataType::Int4,   "aBoneIDs"  }, // DEPENDENT ON MAX_NUM_BONES_PER_VERTEX
+				{ ShaderDataType::Float4, "aWeights"  }  // DEPENDENT ON MAX_NUM_BONES_PER_VERTEX
 			};
 
 			//BufferLayout bufferLayout = GetStaticLayout();
