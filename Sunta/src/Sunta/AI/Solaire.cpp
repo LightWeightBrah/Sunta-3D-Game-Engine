@@ -8,7 +8,7 @@ namespace Sunta
 		position(startPosition), startPoisiton(startPosition)
 	{
 		resources = ResourceManager::GetModelData(filepath);
-		animator  = Animator  (&resources->model);
+		animator  = Animator(resources->model.get());
 		animator.PlayAnimation(&resources->animations.at(AnimationType::IDLE));
 	}
 	

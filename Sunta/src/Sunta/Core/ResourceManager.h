@@ -1,8 +1,7 @@
 #pragma once
+
 #include <map>
 #include <string>
-
-//#include "Animation/Animation.h"
 #include <iostream>
 
 namespace Sunta
@@ -24,7 +23,7 @@ enum class AnimationType
 	
 struct ModelData
 {
-	Model model;
+	std::shared_ptr<Model>             model;
 	std::map<AnimationType, Animation> animations;
 };
 	

@@ -97,6 +97,8 @@ struct BufferLayoutElement
 class BufferLayout
 {
 public:
+	BufferLayout() = default;
+
 	BufferLayout(const std::initializer_list<BufferLayoutElement>& bufferLayoutElements)
 		: bufferLayoutElements(bufferLayoutElements)
 	{

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Renderer/GraphicsContext.h"
 
 typedef struct GLFWwindow GLFWwindow;

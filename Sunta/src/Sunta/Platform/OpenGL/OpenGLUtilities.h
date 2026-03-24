@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Core/Assert.h"
-#include <glad/glad.h>
 
 namespace Sunta
 {
+
+typedef unsigned int GLenum;
 
 enum class BufferUsage;
 enum class ShaderDataType;
@@ -18,8 +19,8 @@ enum class ShaderDataType;
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
-static GLenum BufferUsageToOpenGL(BufferUsage usage);
-static GLenum ShaderDataTypeToGLenum(ShaderDataType shaderDataType);
+GLenum BufferUsageToOpenGL(BufferUsage usage);
+GLenum ShaderDataTypeToGLenum(ShaderDataType shaderDataType);
 
 }
 

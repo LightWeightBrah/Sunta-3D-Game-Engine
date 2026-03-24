@@ -7,9 +7,8 @@
 namespace Sunta
 {
 
-class Shader;
 class Renderer;
-class SceneData;
+class RendererDevice;
 
 class Scene
 {
@@ -17,7 +16,7 @@ public:
 	Scene();
 	~Scene();
 
-	void Init(float windowWidth, float windowHeight);
+	void Init(RendererDevice& rendererDevice, float windowWidth, float windowHeight);
 	void OnWindowResize(float windowWidth, float windowHeight);
 	void ProcessInput();
 	void Update();

@@ -1,8 +1,5 @@
 #include "SuntaPreCompiled.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <assimp/version.h>
 
 #include "Application.h"
@@ -67,7 +64,7 @@ namespace Sunta
 		ResourceManager::Init(Renderer::GetDevice());
 
 		scene = std::make_unique<Scene>();
-		scene->Init(window->GetWidth(), window->GetHeight());
+		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
 
 		TransformComponent::RegisterToInspector();
 		LightComponent::RegisterToInspector();

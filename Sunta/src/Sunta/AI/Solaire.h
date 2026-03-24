@@ -35,7 +35,7 @@ namespace Sunta
 		void Update (float deltaTime);
 		void Reset();
 	
-		inline const Model& GetCharacterModel() const { return  resources->model; }
+		inline const Model& GetCharacterModel() const { return *resources->model; }
 		inline const Animator* GetAnimator  ()  const { return &animator; }
 		
 		glm::mat4 GetModelMatrix();

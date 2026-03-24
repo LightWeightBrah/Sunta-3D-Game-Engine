@@ -1,7 +1,5 @@
 #include "Core/SuntaPreCompiled.h"
 
-#include <GLFW/glfw3.h>
-
 #include "WindowsWindow.h"
 #include "Core/Log.h"
 #include "Renderer/Renderer.h"
@@ -11,6 +9,8 @@
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 #include "Renderer/RendererAPI.h"
 #include "Core/Assert.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Sunta
 {

@@ -23,15 +23,6 @@ class PrimitiveEntity;
 
 class RendererDevice;
 
-#define ASSERT(x) if (!(x)) __debugbreak();
-
-#ifdef _DEBUG
-#define GLCall(x) GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-#else
-#define GLCall(x) x
-#endif
-
-
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
@@ -48,6 +39,9 @@ public:
 	static RendererDevice& GetDevice() { return *rendererDevice; }
 
 private:
+	// inline static doesn't work well with unique_ptr so we use standard static
+	// inline static with unique_ptr would require full definition of RendererDevice 
+	// in all files that includes Renderer.h in order to know the destructor of RendererDevice
 	static std::unique_ptr<RendererDevice> rendererDevice;
 	SceneData sceneData;
 

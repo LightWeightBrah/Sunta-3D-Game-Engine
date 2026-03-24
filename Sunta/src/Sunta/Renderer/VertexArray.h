@@ -4,6 +4,7 @@
 	{
 		class BufferLayout;
 		class VertexBuffer;
+		class ElementBuffer;
 	
 		class VertexArray
 		{

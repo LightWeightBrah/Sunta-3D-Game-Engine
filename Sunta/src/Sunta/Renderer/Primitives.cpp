@@ -1,16 +1,17 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "Primitives.h"
+
 #include "Mesh.h"
 #include "VertexTypes.h"
 #include "VertexLayouts.h"
 #include "Core/ResourceManager.h"
+#include "RendererDevice.h"
 
 namespace Sunta
 {
 	class TextureItem;
 	
-	std::unique_ptr<Mesh> Primitives::CreateCube()
+	std::unique_ptr<Mesh> Primitives::CreateCube(RendererDevice& rendererDevice)
 	{
 		float cubeVertices[] = 
 		{
@@ -90,6 +91,7 @@ namespace Sunta
 	
 		return std::make_unique<Mesh>
 		(
+			rendererDevice,
 			cubeVertices,
 			sizeof(cubeVertices),
 			cubeIndicies,

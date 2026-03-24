@@ -3,6 +3,8 @@
 #include "Core/Window.h"
 #include <memory>
 
+struct GLFWwindow;
+
 namespace Sunta
 {
 

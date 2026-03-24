@@ -1,8 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
+#include "OpenGLTexture.h"
 
 #include <glad/glad.h>
-
-#include "OpenGLTexture.h"
 
 #include "stb/stb_image.h"
 #include "Core/Log.h"

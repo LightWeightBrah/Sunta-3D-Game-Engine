@@ -17,7 +17,7 @@ public:
 
 	static API GetAPI() { return usedAPI; }
 private:
-	static API usedAPI;
+	inline static API usedAPI;
 };
 
 }

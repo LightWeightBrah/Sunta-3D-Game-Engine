@@ -3,11 +3,15 @@
 
 namespace Sunta
 {
-	class Mesh;
-	
-	class Primitives
-	{
-	public:
-		static std::unique_ptr<Mesh> CreateCube();
-	};
+
+class RendererDevice;
+
+class Mesh;
+
+class Primitives
+{
+public:
+	static std::unique_ptr<Mesh> CreateCube(RendererDevice& rendererDevice);
+};
+
 }

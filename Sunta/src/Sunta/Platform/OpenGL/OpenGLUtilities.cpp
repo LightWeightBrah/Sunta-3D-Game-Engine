@@ -1,9 +1,11 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "OpenGLUtilities.h"
+
 #include "Core/Log.h"
 #include "Renderer/RendererDevice.h"
 #include "Renderer/BufferLayout.h"
+
+#include <glad/glad.h>
 
 namespace Sunta
 {
