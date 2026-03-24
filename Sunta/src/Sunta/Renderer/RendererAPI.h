@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace Sunta
 {
 
@@ -9,6 +10,7 @@ public:
 	enum class API
 	{
 		None = 0,
+
 		OpenGL,
 		Vulkan,
 		DirectX12,
@@ -16,9 +18,12 @@ public:
 	};
 
 	static API GetAPI() { return usedAPI; }
-	static void SetAPI(API newAPI) { usedAPI = newAPI; }
+	static void SetAPI(API targetedAPI);
 private:
 	inline static API usedAPI;
+
+	static bool IsSupported(API targetedAPI);
+	static const char* GetAPIName(API targetedAPI);
 };
 
 }
