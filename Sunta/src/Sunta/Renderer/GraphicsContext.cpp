@@ -31,6 +31,7 @@ std::unique_ptr<GraphicsContext> GraphicsContext::Create(void* window)
 	}
 
 	SUNTA_ASSERT(false, "Unknown Renderer API!!!");
+	return nullptr;
 
 }
 

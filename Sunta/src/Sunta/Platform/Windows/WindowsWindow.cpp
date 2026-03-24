@@ -54,8 +54,13 @@ void WindowsWindow::Init()
 
 	GraphicsContext::Configure();
 
-	float xScale, yScale;
-	glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), &xScale, &yScale);
+	float xScale = 1.0f, yScale = 1.0f;
+	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+
+	if (primaryMonitor)
+		glfwGetMonitorContentScale(primaryMonitor, &xScale, &yScale);
+	else
+		SUNTA_ENGINE_LOG_WARNING("Primary monitor not found, using default scale 1.0f");
 
 	window = glfwCreateWindow((width * xScale), (height * yScale), title.c_str(), NULL, NULL);
 

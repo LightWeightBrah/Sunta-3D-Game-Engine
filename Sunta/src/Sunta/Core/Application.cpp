@@ -16,6 +16,7 @@
 #include "ECS/ComponentLayout.h"
 #include "ECS/Component.h"
 #include "ResourceManager.h"
+#include "Renderer/RendererAPI.h"
 
 namespace Sunta
 {
@@ -54,6 +55,8 @@ namespace Sunta
 	{
 		Log::Init();
 		InputManager::Init();
+
+		RendererAPI::SetAPI(RendererAPI::API::OpenGL);
 
 		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
 		EditorGUIContext::Init(window.get());

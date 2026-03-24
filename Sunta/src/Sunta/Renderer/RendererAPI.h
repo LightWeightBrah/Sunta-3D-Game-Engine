@@ -16,6 +16,7 @@ public:
 	};
 
 	static API GetAPI() { return usedAPI; }
+	static void SetAPI(API newAPI) { usedAPI = newAPI; }
 private:
 	inline static API usedAPI;
 };
