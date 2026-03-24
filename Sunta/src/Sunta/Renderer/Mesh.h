@@ -45,7 +45,7 @@ namespace Sunta
 		//void BindTextures(const Shader& shader) const;
 		void Bind() const;
 
-		inline const VertexArray&   GetVertexArrayBuffer()	const { return *vertexArray; }
+		inline const VertexArray&   GetVertexArray()	const { return *vertexArray; }
 		inline const ElementBuffer& GetElementBuffer()	    const { return *elementBuffer; }
 		inline unsigned int         GetIndexCount()		    const { return (unsigned int)indices.size(); }
 	};

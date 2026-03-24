@@ -10,13 +10,13 @@ void RendererAPI::SetAPI(API targetedAPI)
 {
 	if (IsSupported(targetedAPI))
 	{
-		SUNTA_ENGINE_LOG_INFO("Selected Renderer API ({0})", GetAPIName(targetedAPI));
+		SUNTA_ENGINE_LOG_INFO("Selected Renderer API: '{0}'", GetAPIName(targetedAPI));
 		usedAPI = targetedAPI;
 	}
 	else
 	{
 		usedAPI = API::OpenGL;
-		SUNTA_ENGINE_LOG_WARNING("Selected Renderer API ({0}) is not supported! Using default OpenGL API", GetAPIName(targetedAPI));
+		SUNTA_ENGINE_LOG_WARNING("Selected Renderer API: '{0}' is not supported! Using default: 'OpenGL' API", GetAPIName(targetedAPI));
 	}
 }
 

@@ -24,10 +24,10 @@ void OpenGLDevice::SetViewport(int x, int y, int width, int height)
 	GLCall(glViewport(x, y, width, height));
 }
 
-void OpenGLDevice::DrawElements(const std::shared_ptr<VertexArray>& VAO)
+void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 {
-	VAO->Bind();
-	unsigned int count = VAO->GetElementBuffer()->GetCount();
+	vertexArray.Bind();
+	unsigned int count = vertexArray.GetElementBuffer()->GetCount();
 	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
 }
 
@@ -41,7 +41,7 @@ std::shared_ptr<ElementBuffer> OpenGLDevice::CreateElementBuffer(const BufferDes
 	return std::make_shared<OpenGLElementBuffer>(descriptor);
 }
 
-std::shared_ptr<VertexArray> OpenGLDevice::CreateVertexArrayBuffer()
+std::shared_ptr<VertexArray> OpenGLDevice::CreateVertexArray()
 {
 	return std::make_shared<OpenGLVertexArray>();
 }

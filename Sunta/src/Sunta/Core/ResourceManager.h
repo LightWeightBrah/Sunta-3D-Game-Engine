@@ -32,16 +32,16 @@ class ResourceManager
 public:
 	static void Init(RendererDevice& device) { rendererDevice = &device; }
 
-	static void LoadModel   (const std::string& name, const std::string& path);
-	static void LoadTexture (const std::string& name, const std::string& path);
-	static void LoadShader  (const std::string& name, const std::string& path);
+	static void LoadModel   (const std::string& name, const std::string& filepath);
+	static void LoadTexture (const std::string& name, const std::string& filepath);
+	static void LoadShader  (const std::string& name, const std::string& filepath);
 		
 	static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
 	static std::shared_ptr<Texture>	  GetTextureData     (const std::string& name);
 	static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);
 														    
 	static std::shared_ptr<Material>  LoadOrGetModelMaterial (const std::string& name, std::shared_ptr<Shader> shader);
-	static std::shared_ptr<Texture>   LoadOrGetModelTexture  (const std::string& path);
+	static std::shared_ptr<Texture>   LoadOrGetModelTexture  (const std::string& filepath);
 
 private:
 	inline static RendererDevice* rendererDevice;

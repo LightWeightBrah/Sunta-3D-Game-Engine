@@ -25,7 +25,7 @@ namespace Sunta
 			return;
 		}
 	
-		vertexArray = rendererDevice.CreateVertexArrayBuffer();
+		vertexArray = rendererDevice.CreateVertexArray();
 
 		BufferDescriptor vertexBufferDescriptor;
 		vertexBufferDescriptor.data = vertexData;

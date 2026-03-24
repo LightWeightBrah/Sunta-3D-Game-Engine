@@ -12,11 +12,11 @@
 namespace Sunta
 {
 
-void ResourceManager::LoadModel(const std::string& name, const std::string& path)
+void ResourceManager::LoadModel(const std::string& name, const std::string& filepath)
 {
 	if (modelsRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find model named: {}", name);
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find model named: '{0}' filepath: '{1}'", name, filepath);
 		return;
 	}
 
@@ -28,21 +28,21 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& path
 
 	auto data = std::make_shared<ModelData>();
 
-	data->model = std::make_shared<Model>(*rendererDevice, path, false);
+	data->model = std::make_shared<Model>(*rendererDevice, filepath, false);
 
-	data->animations[AnimationType::IDLE]    = Animation(path, data->model.get(), 0);
-	data->animations[AnimationType::GESTURE] = Animation(path, data->model.get(), 1);
-	data->animations[AnimationType::RUNNING] = Animation(path, data->model.get(), 2);
+	data->animations[AnimationType::IDLE]    = Animation(filepath, data->model.get(), 0);
+	data->animations[AnimationType::GESTURE] = Animation(filepath, data->model.get(), 1);
+	data->animations[AnimationType::RUNNING] = Animation(filepath, data->model.get(), 2);
 
 	modelsRegistered[name] = data;
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Model '{}'", name);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Model: '{0}' filepath: '{1}'", name, filepath);
 }
 
-void ResourceManager::LoadTexture(const std::string& name, const std::string& path)
+void ResourceManager::LoadTexture(const std::string& name, const std::string& filepath)
 {
 	if (texturesRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find texture named: {}", name);
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find texture named: '{0}' filepath: '{1}'", name, filepath);
 		return;
 	}
 
@@ -52,17 +52,17 @@ void ResourceManager::LoadTexture(const std::string& name, const std::string& pa
 		return;
 	}
 
-	auto texture = rendererDevice->CreateTexture(path);
+	auto texture = rendererDevice->CreateTexture(filepath);
 	texturesRegistered[name] = texture;
 
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture '{}'", name);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture: '{0}' filepath: '{1}'", name, filepath);
 }
 
-void ResourceManager::LoadShader(const std::string& name, const std::string& path)
+void ResourceManager::LoadShader(const std::string& name, const std::string& filepath)
 {
 	if (shadersRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find shader named: {}", name);
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find shader named: '{0}' filepath: '{1}'", name, filepath);
 		return;
 	}
 
@@ -72,10 +72,10 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& pat
 		return;
 	}
 
-	auto shader = rendererDevice->CreateShader(path);
+	auto shader = rendererDevice->CreateShader(filepath);
 	shadersRegistered[name] = shader;
 
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader '{}'", name);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, filepath);
 }
 
 std::shared_ptr<ModelData> ResourceManager::GetModelData(const std::string& name)
@@ -83,7 +83,7 @@ std::shared_ptr<ModelData> ResourceManager::GetModelData(const std::string& name
 	auto it = modelsRegistered.find(name);
 	if (it == modelsRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Model '{}' not found in ResourceManager...", name);
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetModelData: Couldn't find Model named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -94,7 +94,7 @@ std::shared_ptr<Texture> ResourceManager::GetTextureData(const std::string& name
 	auto it = texturesRegistered.find(name);
 	if (it == texturesRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Texture '{}' not found in ResourceManager...", name);
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetTextureData: Couldn't find Texture named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -105,7 +105,7 @@ std::shared_ptr<Shader> ResourceManager::GetShaderData(const std::string& name)
 	auto it = shadersRegistered.find(name);
 	if (it == shadersRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Shader '{}' not found in ResourceManager...", name);
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetShaderData: Couldn't find Shader named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -119,28 +119,28 @@ std::shared_ptr<Material> ResourceManager::LoadOrGetModelMaterial(const std::str
 		auto newMaterial = std::make_shared<Material>(shader);
 		materialsRegistered[name] = newMaterial;
 
-		SUNTA_ENGINE_LOG_INFO("Loaded new material {0} in ResourceManager...", name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelMaterial Loaded new Material '{0}'", name);
 		return newMaterial;
 	}
 
-	SUNTA_ENGINE_LOG_INFO("Loaded existing material {0} from ResourceManager...", name);
+	SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelMaterial Loaded existing Material '{0}'", name);
 	return it->second;
 }
 
-std::shared_ptr<Texture> ResourceManager::LoadOrGetModelTexture(const std::string& path)
+std::shared_ptr<Texture> ResourceManager::LoadOrGetModelTexture(const std::string& filepath)
 {
-	auto it = texturesRegistered.find(path);
+	auto it = texturesRegistered.find(filepath);
 	if (it == texturesRegistered.end())
 	{
-		auto newTexture = rendererDevice->CreateTexture(path);
-		texturesRegistered[path] = newTexture;
+		auto newTexture = rendererDevice->CreateTexture(filepath);
+		texturesRegistered[filepath] = newTexture;
 
-		SUNTA_ENGINE_LOG_INFO("Loaded new texture {0} in ResourceManager...", path);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelTexture Loaded new Texture '{0}'", filepath);
 		return newTexture;
 	}
 
 
-	SUNTA_ENGINE_LOG_INFO("Loaded existing texture{0} from ResourceManager...", path);
+	SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelTexture Loaded existing Texture '{0}'", filepath);
 	return it->second;
 }
 

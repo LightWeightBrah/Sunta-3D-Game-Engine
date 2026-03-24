@@ -17,7 +17,6 @@ OpenGLTexture::OpenGLTexture(const std::string& filepath)
 	, height(0)
 	, nrChannels(0)
 {
-	SUNTA_ENGINE_LOG_INFO("Loading texture: {}", filepath);
 	stbi_set_flip_vertically_on_load(true);
 	data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
 	if (!data)

@@ -1,5 +1,4 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "Renderer.h"
 
 #include "ElementBuffer.h"
@@ -18,9 +17,6 @@
 
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-
-//TEMP TODO: remove all opengl
-#include <Platform/OpenGL/OpenGLUtilities.h>
 
 namespace Sunta
 {
@@ -56,7 +52,7 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 
 	material.Apply();
 	mesh.Bind();
-	GLCall(glDrawElements(GL_TRIANGLES, mesh.GetIndexCount(), GL_UNSIGNED_INT, 0));
+	rendererDevice->DrawElements(mesh.GetVertexArray());
 }
 	
 void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const
@@ -81,7 +77,7 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 		subMesh.material->Apply();
 		subMesh.mesh->Bind();
 
-		GLCall(glDrawElements(GL_TRIANGLES, subMesh.mesh->GetIndexCount(), GL_UNSIGNED_INT, 0));
+		rendererDevice->DrawElements(subMesh.mesh->GetVertexArray());
 	}
 }
 
@@ -91,7 +87,8 @@ void Renderer::DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4
 	SetBaseTransform(shader, modelMatrix, sceneData);
 
 	mesh.Bind();
-	GLCall(glDrawElements(GL_TRIANGLES, mesh.GetIndexCount(), GL_UNSIGNED_INT, 0));
+
+	rendererDevice->DrawElements(mesh.GetVertexArray());
 }
 
 void Renderer::SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const
