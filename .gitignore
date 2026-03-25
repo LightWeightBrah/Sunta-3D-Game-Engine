@@ -1,23 +1,41 @@
+# ========================= VISUAL STUDIO / IDE ========================= 
+
 .vs/
 *.sln
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
 
-bin/*
-bin-intermediates/*
-out/
+# ========================= CMAKE ======================================= 
 
-*.obj
-*.ipch
-*.exe
-*.pdb
-*.ilk
-*.recipe
-**/imgui.ini
+build/
+out/
+CMakeCache.txt
+CMakeFiles/
+CMakeSettings.json
+*.cmake
+
+# ========================= BUILD OUTPUTS =============================== 
+
+bin/
+bin-intermediates/
 
 *.lib
 *.dll
+*.exe
+*.pdb
+*.ipch
+*.ilk
+*.recipe
+
+bin-intermediates/**.obj
+
+# ========================= TOOLS ======================================= 
+
+**/imgui.ini
+
+# ========================= ASSETS ====================================== 
+
 
 !Dependencies/
 !Dependencies/**

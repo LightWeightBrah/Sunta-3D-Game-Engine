@@ -45,16 +45,16 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 		[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
 	);
 	
-	ResourceManager::LoadTexture("container2Diffuse",	"res/Textures/container2.png");
-	ResourceManager::LoadTexture("container2Specular",	"res/Textures/container2_specular.png");
-	ResourceManager::LoadTexture("whiteTexture",		"res/Textures/whitePixel.png");
-	ResourceManager::LoadTexture("errorTexture",		"res/Textures/errorTexture.png");
+	ResourceManager::LoadTexture("container2Diffuse",	"res/Sunta/Textures/container2.png");
+	ResourceManager::LoadTexture("container2Specular",	"res/Sunta/Textures/container2_specular.png");
+	ResourceManager::LoadTexture("whiteTexture",		"res/Sunta/Textures/whitePixel.png");
+	ResourceManager::LoadTexture("errorTexture",		"res/Sunta/Textures/errorTexture.png");
 
-	ResourceManager::LoadTexture("cube_container",		"res/Textures/container.jpg");
-	ResourceManager::LoadTexture("cube_chad",			"res/Textures/chad.png");
+	ResourceManager::LoadTexture("cube_container",		"res/Sunta/Textures/container.jpg");
+	ResourceManager::LoadTexture("cube_chad",			"res/Sunta/Textures/chad.png");
 
-	ResourceManager::LoadShader ("reflectable",			"res/shaders/Reflectable.shader");
-	ResourceManager::LoadShader ("lightSource",			"res/shaders/LightSource.shader");
+	ResourceManager::LoadShader ("reflectable",			"res/Sunta/Shaders/Reflectable.shader");
+	ResourceManager::LoadShader ("lightSource",			"res/Sunta/Shaders/LightSource.shader");
 	
 	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
 	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");

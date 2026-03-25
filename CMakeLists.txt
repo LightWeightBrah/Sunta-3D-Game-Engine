@@ -7,7 +7,32 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-# ========================= DEPENDENCIES ========================= 
+# ========================= OUTPUT SETTINGS ========================= 
+
+set(CONFIG_NAME "$<CONFIG>-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+
+set(SUNTA_BIN_DIR "${CMAKE_SOURCE_DIR}/bin/${CONFIG_NAME}")
+set(SUNTA_INT_DIR "${CMAKE_SOURCE_DIR}/bin-intermediates/${CONFIG_NAME}")
+
+# for single-config generators (e.g. Makefiles)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SUNTA_BIN_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SUNTA_INT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SUNTA_INT_DIR})
+set(CMAKE_PDB_OUTPUT_DIRECTORY ${SUNTA_INT_DIR})
+
+
+# for multi-config generators (e.g. Visual Studio)
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES}) # Debug, Release, ...
+	string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG_UPPER) # e.g. change "Debug" to "DEBUG"
+
+	# so we don't have bin/Debug/Game.exe, instead we have bin/Game.exe
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${SUNTA_BIN_DIR}) # Windows: .exe, .dll | Linux: .exe
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${SUNTA_INT_DIR}) # Windows:     -      | Linux: .so
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER} ${SUNTA_INT_DIR}) # Windows:   .lib     | Linux: .a
+	set(CMAKE_PDB_OUTPUT_DIRECTORY_${OUTPUTCONFIG_UPPER}     ${SUNTA_INT_DIR}) # Windows:   .pdb     | Linux:  -
+endforeach()
+
+# ========================= DEPENDENCIES ============================ 
 
 # --- GLFW ---
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
