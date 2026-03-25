@@ -116,11 +116,11 @@ namespace Sunta
 		EditorGUIContext::NewFrame(window.get());
 		
 		EditorGUIContext::BeginDockingSpace(window.get());
-
+		
 		EditorGUI::Begin(EditorGUIContext::GetInspectorName());
-
+		
 		EditorGUI::DrawInspector(scene->GetEntityManager());
-
+		
 		EditorGUI::End();
 		EditorGUIContext::EndFrame(window.get());
 	}

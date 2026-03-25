@@ -17,6 +17,7 @@
 
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
+#include "Core/Assert.h"
 
 namespace Sunta
 {
@@ -26,6 +27,7 @@ std::unique_ptr<RendererDevice> Renderer::rendererDevice;
 void Renderer::Init()
 {
 	rendererDevice = RendererDevice::Create();
+	SUNTA_ASSERT(rendererDevice, "Renderer: Failed to create Renderer Device!");
 
 	EventBus::Subscribe<WindowResizeEvent>([](const auto& event) 
 		{ 

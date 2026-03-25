@@ -94,7 +94,7 @@ namespace Sunta
 			rendererDevice,
 			cubeVertices,
 			sizeof(cubeVertices),
-			cubeIndicies,
+			std::move(cubeIndicies),
 			VertexLayouts::GetStaticLayout()
 		);
 	}

@@ -116,8 +116,9 @@ namespace Sunta
 
 			}
 
-			vertexBuffers.push_back(vertexBuffer);
 		}
+
+		vertexBuffers.push_back(vertexBuffer);
 	}
 
 	void OpenGLVertexArray::SetElementBuffer(const std::shared_ptr<ElementBuffer>& elementBuffer)
