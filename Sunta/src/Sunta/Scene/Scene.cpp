@@ -19,9 +19,10 @@
 #include "Core/Log.h"
 #include "Events/EventBus.h"
 #include "Core/KeyCodes.h"
-//#include "Inspectable.h"
 #include "ECS/Component.h"
 #include "ECS/Systems.h"
+#include "Renderer/RendererDevice.h"
+#include "Renderer/Mesh.h"
 
 namespace Sunta
 {
@@ -36,7 +37,7 @@ Scene::~Scene()
 	EventBus::Unsubsribe(resizeEventID);
 }
 	
-void Scene::Init(float windowWidth, float windowHeight)
+void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float windowHeight)
 {
 	OnWindowResize(windowWidth, windowHeight);
 
@@ -74,17 +75,17 @@ void Scene::Init(float windowWidth, float windowHeight)
 	unsigned int cube = entityManager.CreateEntity();
 	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(7.5f, 5.0f, 3.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(cube);
-	entityManager.AddComponent<MeshComponent>(cube, Primitives::CreateCube(), cubeMaterial);
+	entityManager.AddComponent<MeshComponent>(cube, Primitives::CreateCube(rendererDevice), cubeMaterial);
 
 	unsigned int texturedCube = entityManager.CreateEntity();
 	entityManager.AddComponent<TransformComponent>(texturedCube, glm::vec3(0.0f, 5.0f, -0.5));
 	entityManager.AddComponent<WorldMatrixComponent>(texturedCube);
-	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(), texturedMaterial);
+	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(rendererDevice), texturedMaterial);
 
 	unsigned int light = entityManager.CreateEntity();
 	entityManager.AddComponent<TransformComponent>(light, glm::vec3(3.0f, 6.0f, 2.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(light);
-	entityManager.AddComponent<MeshComponent>(light, Primitives::CreateCube(), lightMaterial);
+	entityManager.AddComponent<MeshComponent>(light, Primitives::CreateCube(rendererDevice), lightMaterial);
 	entityManager.AddComponent<LightComponent>(light, glm::vec3(0.2f), glm::vec3(0.5f), glm::vec3(1.0f));
 
 	//AddEntity(std::move(cubeEntity));

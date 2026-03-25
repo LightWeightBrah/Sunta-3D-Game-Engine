@@ -1,14 +1,16 @@
 #include "Core/SuntaPreCompiled.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "WindowsWindow.h"
 #include "Core/Log.h"
 #include "Renderer/Renderer.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
 #include "EditorGUIBackendWindows.h"
+#include "Platform/OpenGL/OpenGLGraphicsContext.h"
+#include "Renderer/RendererAPI.h"
+#include "Core/Assert.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Sunta
 {
@@ -50,12 +52,15 @@ void WindowsWindow::Init()
 		return;
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	GraphicsContext::Configure();
 
-	float xScale, yScale;
-	glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), &xScale, &yScale);
+	float xScale = 1.0f, yScale = 1.0f;
+	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+
+	if (primaryMonitor)
+		glfwGetMonitorContentScale(primaryMonitor, &xScale, &yScale);
+	else
+		SUNTA_ENGINE_LOG_WARNING("Primary monitor not found, using default scale 1.0f");
 
 	window = glfwCreateWindow((width * xScale), (height * yScale), title.c_str(), NULL, NULL);
 
@@ -66,17 +71,9 @@ void WindowsWindow::Init()
 		return;
 	}
 
-	glfwMakeContextCurrent(window);
+	graphicsContext = GraphicsContext::Create(window);
+	graphicsContext->Init();
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initalize GLAD");
-		return;
-	}
-
-	SUNTA_ENGINE_LOG_INFO("{}", glGetString(GL_VERSION));
-
-	GLCall(glEnable(GL_DEPTH_TEST));
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetWindowUserPointer(window, this);
 
@@ -87,8 +84,6 @@ void WindowsWindow::SetCallbacks()
 {
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
-			glViewport(0, 0, width, height);
-
 			//we must do this to set new width, height, cause of lambda
 			//we cant do here this->width = width
 			auto& data = *(WindowsWindow*)glfwGetWindowUserPointer(window);
@@ -129,7 +124,7 @@ void WindowsWindow::SetCallbacks()
 
 void WindowsWindow::Update()
 {
-	glfwSwapBuffers(window);
+	graphicsContext->SwapBuffers();
 	glfwPollEvents();
 }
 
@@ -140,7 +135,7 @@ void WindowsWindow::EnableMouseCursor(bool enabled)
 
 void WindowsWindow::SetAsGraphicsTarget()
 {
-	glfwMakeContextCurrent(window);
+	graphicsContext->MakeContextCurrent();
 }
 
 

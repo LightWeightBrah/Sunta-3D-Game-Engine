@@ -12,59 +12,69 @@
 #include "ElementBuffer.h"
 #include "VertexArray.h"
 #include "Core/Log.h"
+#include "RendererDevice.h"
 
 namespace Sunta
 {
-	Mesh::Mesh(const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout)
-		: indices(std::move(indices))
-	{
-		if (this->indices.empty())
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Mesh has no indices");
-			return;
-		}
-	
-		VAO = std::make_unique<VertexArray>();
-		VBO = std::make_unique<VertexBuffer>(vertexData, dataSize);
-		EBO = std::make_unique<ElementBuffer>(&this->indices[0], this->indices.size() * sizeof(unsigned int));
-	
-		VAO->AddBuffer(*VBO, bufferLayout);
-	}
-	
-	void Mesh::Bind() const
-	{
-		this->VAO->Bind();
-		this->EBO->Bind();
-	}
 
-	//DESTRUCTOR: now compiler can see how to delete unique_ptr members
-	Mesh::~Mesh() = default;
-	
-	//MOVE: transferring unique_ptr from 'other' to 'this'
-	Mesh::Mesh(Mesh&& other) noexcept = default;
-	Mesh& Mesh::operator=(Mesh&& other) noexcept = default;
-	
-	//TODO: REWORK THIS IN MATERIAL SO IT WORKS WITH 3D MODELS
-	//FOR MODELS
-	/*void Mesh::BindTextures(const Shader& shader) const
+Mesh::Mesh(RendererDevice& rendererDevice, const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout)
+{
+	if (indices.empty())
 	{
-		unsigned int diffuseNr  = 1;
-		unsigned int specularNr = 1;
+		SUNTA_ENGINE_LOG_ERROR("ERROR: Mesh has no indices");
+		return;
+	}
 	
-		for (unsigned int i = 0; i < textures.size(); i++)
+	vertexArray = rendererDevice.CreateVertexArray();
+
+	BufferDescriptor vertexBufferDescriptor;
+	vertexBufferDescriptor.data = vertexData;
+	vertexBufferDescriptor.size = dataSize;
+	vertexBufferDescriptor.usage = BufferUsage::Static;
+	vertexBuffer = rendererDevice.CreateVertexBuffer(vertexBufferDescriptor);
+	vertexBuffer->SetLayout(bufferLayout);
+
+
+	BufferDescriptor elementBufferDescriptor;
+	elementBufferDescriptor.data = indices.data();
+	elementBufferDescriptor.size = indices.size() * sizeof(unsigned int);
+	elementBufferDescriptor.usage = BufferUsage::Static;
+	elementBuffer = rendererDevice.CreateElementBuffer(elementBufferDescriptor);
+	
+	vertexArray->AddVertexBuffer(vertexBuffer);
+	vertexArray->SetElementBuffer(elementBuffer);
+
+	this->indices = std::move(indices); //can move this to member initializer list, but need to use this->indices
+}
+
+void Mesh::Bind() const
+{
+	this->vertexArray->Bind();
+	this->elementBuffer->Bind();
+}
+
+//TODO: REWORK THIS IN MATERIAL SO IT WORKS WITH 3D MODELS
+//FOR MODELS
+/*void Mesh::BindTextures(const Shader& shader) const
+{
+	unsigned int diffuseNr  = 1;
+	unsigned int specularNr = 1;
+	
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		if (!textures[i].texture)
 		{
-			if (!textures[i].texture)
-			{
-				SUNTA_ENGINE_LOG_WARNING("Mesh Texture at index {} is null, skipping", i);
-				continue;
-			}
-	
-			textures[i].texture->Bind(i);
-	
-			std::string name   = textures[i].type;
-			std::string number = (name == "texture_diffuse") ? std::to_string(diffuseNr++) : std::to_string(specularNr++);
-	
-			shader.SetUniform1i(name + number, i);
+			SUNTA_ENGINE_LOG_WARNING("Mesh Texture at index {} is null, skipping", i);
+			continue;
 		}
-	}*/
+	
+		textures[i].texture->Bind(i);
+	
+		std::string name   = textures[i].type;
+		std::string number = (name == "texture_diffuse") ? std::to_string(diffuseNr++) : std::to_string(specularNr++);
+	
+		shader.SetUniform1i(name + number, i);
+	}
+}*/
+
 }

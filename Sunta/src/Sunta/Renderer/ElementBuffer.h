@@ -2,18 +2,16 @@
 
 namespace Sunta
 {
-	class ElementBuffer
-	{
-	private:
-		unsigned int id;
-		unsigned int count;
-	public:
-		ElementBuffer(const unsigned int* data, unsigned int size);
-		~ElementBuffer();
-	
-		void Bind() const;
-		void Unbind() const;
-		inline unsigned int GetCount() const { return count; }
-	
-	};
+
+class ElementBuffer
+{
+public:
+	virtual ~ElementBuffer() = default;
+
+	virtual void Bind() const = 0;
+	virtual void Unbind() const = 0;
+
+	virtual unsigned int GetCount() const = 0;
+};
+
 }

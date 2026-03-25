@@ -1,8 +1,5 @@
 #include "SuntaPreCompiled.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <assimp/version.h>
 
 #include "Application.h"
@@ -18,6 +15,8 @@
 #include "Editor/EditorGUI.h"
 #include "ECS/ComponentLayout.h"
 #include "ECS/Component.h"
+#include "ResourceManager.h"
+#include "Renderer/RendererAPI.h"
 
 namespace Sunta
 {
@@ -57,13 +56,18 @@ namespace Sunta
 		Log::Init();
 		InputManager::Init();
 
+		RendererAPI::SetAPI(RendererAPI::API::OpenGL);
+
 		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
 		EditorGUIContext::Init(window.get());
 
 		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
 
+		Renderer::Init();
+		ResourceManager::Init(Renderer::GetDevice());
+
 		scene = std::make_unique<Scene>();
-		scene->Init(window->GetWidth(), window->GetHeight());
+		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
 
 		TransformComponent::RegisterToInspector();
 		LightComponent::RegisterToInspector();
@@ -99,7 +103,7 @@ namespace Sunta
 	
 	void Application::Render()
 	{
-		renderer.Clear(0.05f, 0.05f, 0.05f, 1.0f);
+		Renderer::Clear(0.05f, 0.05f, 0.05f, 1.0f);
 	
 		if (!scene)
 		{
@@ -112,11 +116,11 @@ namespace Sunta
 		EditorGUIContext::NewFrame(window.get());
 		
 		EditorGUIContext::BeginDockingSpace(window.get());
-
+		
 		EditorGUI::Begin(EditorGUIContext::GetInspectorName());
-
+		
 		EditorGUI::DrawInspector(scene->GetEntityManager());
-
+		
 		EditorGUI::End();
 		EditorGUIContext::EndFrame(window.get());
 	}

@@ -3,11 +3,14 @@
 #include "Core/Window.h"
 #include <memory>
 
+struct GLFWwindow;
+
 namespace Sunta
 {
 
 struct EngineModeChangedEvent;
 class EditorGUIBackend;
+class GraphicsContext;
 
 class WindowsWindow : public Window
 {
@@ -27,6 +30,7 @@ public:
 
 private:
 	GLFWwindow* window;
+	std::unique_ptr<GraphicsContext> graphicsContext;
 	unsigned int engineModeChangedID;
 
 	void Init();
