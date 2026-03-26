@@ -24,7 +24,7 @@ if(WIN32)
 # Linux
 elseif(UNIX AND NOT APPLE)
 	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Linux/*.cpp" "src/Sunta/Platform/Linux/*.h")
-	set(PLATFORM_LIBS GL X11 lpthread dl)
+	set(PLATFORM_LIBS GL X11 pthread dl)
 
 # Mac
 elseif(APPLE)
