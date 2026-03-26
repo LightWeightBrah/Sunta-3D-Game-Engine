@@ -21,7 +21,7 @@ public:
 		float			shininess			= 32.0f;
 	};
 	
-	Material::Material(std::shared_ptr<Shader> shader);
+	Material(std::shared_ptr<Shader> shader);
 
 	Material(std::shared_ptr<Shader> shader
 		, std::shared_ptr<Texture> diffuseMap
@@ -36,8 +36,8 @@ public:
 	Material& SetSpecular(const glm::vec3& color);
 	Material& SetShininess(float shininess);
 	
-	Material& Material::AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
-	Material& Material::AddSpecularMap(const std::shared_ptr<Texture> specularMap);
+	Material& AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
+	Material& AddSpecularMap(const std::shared_ptr<Texture> specularMap);
 
 	Material& Apply();
 	
