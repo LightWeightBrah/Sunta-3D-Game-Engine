@@ -60,6 +60,13 @@ add_subdirectory(Dependencies/Assimp)
 # --- PLATFORMS ---
 if(WIN32)
 	add_definitions(-DSUNTA_PLATFORM_WINDOWS)
+	message(STATUS "Sunta: Windows platform detected")
+elseif(UNIX AND NOT APPLE)
+	add_definitions(-DSUNTA_PLATFORM_LINUX)
+	message(STATUS "Sunta: Linux platform detected")
+elseif(APPLE)
+	add_definitions(-DSUNTA_PLATFORM_MACOS)
+	message(STATUS "Sunta: MacOS platform detected")
 endif()
 
 # --- PROJECTS ---

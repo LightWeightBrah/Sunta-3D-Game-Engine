@@ -1,10 +1,14 @@
 #pragma once
 
 // ========================= PLATFORMS ========================= 
-#ifdef SUNTA_PLATFORM_WINDOWS
+#if   defined(SUNTA_PLATFORM_WINDOWS)
 	//CODE NEEDED FOR WINDOWS
+#elif defined(SUNTA_PLATFORM_LINUX)
+	//CODE NEEDED FOR LINUX
+#elif defined(SUNTA_PLATFORM_MACOS)
+	//CODE NEEDED FOR MACOS
 #else
-	#error ERROR: Sunta currently supports only Windows
+	#error ERROR: Sunta Engine does not support this platform!
 #endif
 
 //============== CREATE APPLICATION - MEANT TO BE USED BY CLIENT ==============

@@ -38,12 +38,6 @@ WindowsWindow::~WindowsWindow()
 	SUNTA_ENGINE_LOG_INFO("Windows Window destroyed on destructor");
 }
 
-
-std::unique_ptr<Window> Window::CreateWindow(const std::string& title, int width, int height)
-{
-	return std::make_unique<WindowsWindow>(width, height, title);
-}
-
 void WindowsWindow::Init()
 {
 	if (!glfwInit())

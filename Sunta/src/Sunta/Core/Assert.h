@@ -3,8 +3,21 @@
 #include "Log.h"
 
 #ifdef SUNTA_DEBUG
-	#define SUNTA_DEBUGBREAK() __debugbreak()
-	
+	#if   defined(SUNTA_PLATFORM_WINDOWS)
+		#define SUNTA_DEBUGBREAK() __debugbreak()
+
+	#elif defined(SUNTA_PLATFORM_LINUX)
+		#include <signal.h>
+		#define SUNTA_DEBUGBREAK() raise(SIGTRAP)
+
+	#elif defined(SUNTA_PLATFORM_MACOS)
+		#define SUNTA_DEBUGBREAK() __builtin_trap()
+		
+	#else
+		#define SUNTA_DEBUGBREAK()
+
+	#endif
+
 	//__VA_ARGS__ pastes everything what we passed as arguments in ... 
 	#define SUNTA_ASSERT(x, ...) \
 	{ \
