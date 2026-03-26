@@ -8,16 +8,28 @@ on:
         branches: [ "main", "master" ]
 
 jobs:
-    build-windows-msvc-x64: 
-        name: "Windows (MSVC) | x64 Debug"
-        runs-on: windows-latest
+    build: 
+        name: "${{ matrix.os }} | x64 Debug"
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+              os: [ windows-latest, ubuntu-latest ] 
 
         steps:
             - name: "Setup: Fetch Sources & Submodules"
               uses: actions/checkout@v4
               with:
-                submodules: recursive # So it downloads GLFW Assimp etc.
+                submodules: recursive # for .gitmodules if added in future
                     
+            - name: "Linux: Install Dependencies"
+              if: runner.os == 'Linux'
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y libx11-dev libxcursor-dev libxinerama-dev \
+                                 libxrandr-dev libxi-dev libgl1-mesa-dev \
+                                 libglu1-mesa-dev mesa-common-dev
+
             - name: "Configuration: CMake Generate"
               run: cmake -B build -DCMAKE_BUILD_TYPE=Debug
 
@@ -27,9 +39,11 @@ jobs:
             - name: "Distribution: Upload Build Artifacts"
               uses: actions/upload-artifact@v4
               with: 
-                name: Sunta-Engine-Win64-Debug
+                name: Sunta-Engine-${{ matrix.os }}-x64-Debug
                 path: |
-                  build/**/Game.exe
-                  build/**/Game.pdb
-                  build/**/res/
+                  bin/**/Game.exe
+                  bin/**/Game # linux just uses Game without .exe
+                  bin/**/Game.pdb
+                  bin/**/res/
+                if-no-files-found: error
                 retention-days: 5
