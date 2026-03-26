@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 
-namespace Sunta {
+namespace Sunta 
+{
 
 class Terminal
 {

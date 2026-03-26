@@ -11,8 +11,6 @@
 namespace Sunta
 {
 
-
-
 std::unique_ptr<EditorGUIBackend> EditorGUIContext::backend;
 unsigned int EditorGUIContext::engineModeChangeID;
 

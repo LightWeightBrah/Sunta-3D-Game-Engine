@@ -5,10 +5,10 @@
 namespace Sunta
 {
 
-class EditorGUIBackendWindows : public EditorGUIBackend
+class WindowsOpenGLEditorGUIBackend : public EditorGUIBackend
 {
 public:
-	virtual ~EditorGUIBackendWindows() override;
+	virtual ~WindowsOpenGLEditorGUIBackend() override;
 
 	virtual void Init	 (void* window)		 override;
 	virtual void Shutdown(void* window)		 override;

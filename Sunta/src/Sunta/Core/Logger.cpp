@@ -1,5 +1,4 @@
 #include "SuntaPreCompiled.h"
-
 #include "Logger.h"
 
 namespace Sunta {
@@ -39,6 +38,9 @@ void Logger::InsertIndexedArgument(const char* text, int& nextPosition, const in
 	if (text[tempPosition] != '}')
 		return;
 
+	if (numberAsString.empty())
+		return;
+
 	int number = std::stoi(numberAsString);
 
 	if (number >= 0 && number < argsCount)
@@ -54,7 +56,13 @@ std::string Logger::GetTimeAsString()
 	char buffer[64];
 	auto currentTime = std::time(nullptr);
 	std::tm currentLocalTime;
-	localtime_s(&currentLocalTime, &currentTime);
+
+
+#if defined(SUNTA_PLATFORM_WINDOWS)
+	localtime_s(&currentLocalTime, &currentTime); // FOR WINDOWS
+#else 
+	localtime_r(&currentTime, &currentLocalTime); // FOR (LINUX, MAC)
+#endif
 
 	std::strftime(buffer, sizeof(buffer), "%H:%M:%S", &currentLocalTime);
 

@@ -1,12 +1,41 @@
-# ========================= SUNTA ENGINE CORE ========================= 
+# ========================= SUNTA ENGINE CORE ============================  
 
 project(Sunta)
 
-# --- ENGINE IMPLEMENTATIONS AND EXPLORER FILE TREE ---
-file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp" "src/*.h")
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${ENGINE_SOURCES})
+# ========================= ENGINE SOURCES ===============================  
 
-# --- DEPENDENCIES IMPLEMENTATIONS ---
+file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp" "src/*.h")
+
+#								   REGEX "Regular Expressions"
+list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Platform/.*") # . means any sign (letter, number, / etc.); * means repeat previous sign n times
+
+# ====================== RENDERER API SOURCES ============================      
+
+file(GLOB_RECURSE OPENGL_SOURCES  "src/Sunta/Platform/OpenGL/*.cpp" "src/Sunta/Platform/OpenGL/*.h")
+list(APPEND ENGINE_SOURCES ${OPENGL_SOURCES})
+
+# ========================= PLATFORM DETECTION ===========================  
+
+# Windows
+if(WIN32)
+	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Windows/*.cpp" "src/Sunta/Platform/Windows/*.h")
+	set(PLATFORM_LIBS opengl32.lib)
+
+# Linux
+elseif(UNIX AND NOT APPLE)
+	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Linux/*.cpp" "src/Sunta/Platform/Linux/*.h")
+	set(PLATFORM_LIBS GL X11 lpthread dl)
+
+# Mac
+elseif(APPLE)
+	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Mac/*.cpp" "src/Sunta/Platform/Mac/*.h")
+	set(PLATFORM_LIBS "-framework OpenGL" "-framework Cocoa" "-framework IOKit")
+endif()
+
+list(APPEND ENGINE_SOURCES ${PLATFORM_SOURCES})
+
+# ========================= DEPENDENCIES SOURCES ========================= 
+
 list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c"
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/imgui.cpp"
@@ -18,7 +47,17 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image.cpp"
 )
 
-# ========================= PRECOMPILED HEADER ========================= 
+# ========================= IDE ORGANIZATION =============================  
+
+set(SUNTA_INTERNAL_FILES ${ENGINE_SOURCES})
+list(FILTER SUNTA_INTERNAL_FILES INCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/.*")
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SUNTA_INTERNAL_FILES})
+
+set(SUNTA_EXTERNAL_FILES ${ENGINE_SOURCES})
+list(FILTER SUNTA_EXTERNAL_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/.*")
+source_group("Dependencies" FILES ${SUNTA_EXTERNAL_FILES})
+
+# ========================= PRECOMPILED HEADER ===========================   
 
 add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
 
@@ -30,7 +69,7 @@ SKIP_PRECOMPILE_HEADERS ON)
 # --- PRECOMPILED HEADER IMPLEMENTATION ---
 target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")
 
-# ========================= MAIN API ACCESS ========================= 
+# ========================= MAIN API ACCESS ============================== 
 
 # --- PUBLIC API (ACCESS: GAME & ENGINE) ---
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -48,10 +87,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
 )
 
-# ========================= LINKING ========================= 
+# =========================== LINKING ====================================  
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
 glfw 
 assimp 
-opengl32.lib
+${PLATFORM_LIBS}
 )
