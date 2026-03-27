@@ -24,12 +24,17 @@ if(WIN32)
 # Linux
 elseif(UNIX AND NOT APPLE)
 	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Linux/*.cpp" "src/Sunta/Platform/Linux/*.h")
-	set(PLATFORM_LIBS GL X11 pthread dl) # test comment
+	set(PLATFORM_LIBS GL X11 pthread dl)
 
 # Mac
 elseif(APPLE)
 	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Mac/*.cpp" "src/Sunta/Platform/Mac/*.h")
-	set(PLATFORM_LIBS "-framework OpenGL" "-framework Cocoa" "-framework IOKit")
+	set(PLATFORM_LIBS 
+	"-framework OpenGL" 
+	"-framework Cocoa" 
+	"-framework IOKit"
+	"-framework CoreVideo"
+    "-framework QuartzCore")
 endif()
 
 list(APPEND ENGINE_SOURCES ${PLATFORM_SOURCES})

@@ -23,7 +23,7 @@ std::unique_ptr<Window> Window::CreateWindow(const std::string& title, int width
         return std::make_unique<LinuxWindow>(title, width, height);
 
     #elif defined(SUNTA_PLATFORM_MACOS)
-        return std::make_unique<MacOSWindow>(title, width, height);
+        return std::make_unique<MacWindow>(title, width, height);
 
     #else
         SUNTA_ASSERT(false, "Unsupported platform! Sunta Engine does not support this platform yet.");

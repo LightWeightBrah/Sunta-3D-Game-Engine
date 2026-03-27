@@ -14,7 +14,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-              os: [ windows-latest, ubuntu-latest ] 
+              os: [ windows-latest, ubuntu-latest, macos-latest ] 
 
         steps:
             - name: "Setup: Fetch Sources & Submodules"
@@ -42,9 +42,7 @@ jobs:
               with: 
                 name: Sunta-Engine-${{ matrix.os }}-x64-Debug
                 path: |
-                  bin/**/Game.exe
-                  bin/**/Game # linux just uses Game without .exe
-                  bin/**/Game.pdb
+                  bin/**/Game* # Game, Game.exe, Game.pdb, Linux and Mac just uses Game without .exe
                   bin/**/res/
                 if-no-files-found: error
                 retention-days: 5

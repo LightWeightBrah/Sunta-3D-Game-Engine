@@ -4,6 +4,7 @@
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
+#include "Renderer/RendererAPI.h"
 
 namespace Sunta
 {
@@ -31,7 +32,13 @@ void WindowsOpenGLEditorGUIBackend::Init(void* window)
 	//style.FontScaleDpi = main_scale;
 
 	ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)window, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
+
+	// ImplOpenGL3 is OpenGL beggining from version 3.0 (first MODERN OpenGL),
+	// so it'll be the same even for (OpenGL version 4.6.0), it just means MODERN OpenGL
+	// 
+	//					     e.g #version 330
+	const char* GLSLVersion = RendererAPI::GetConfig().ImGuiGLSLVersion.c_str();
+	ImGui_ImplOpenGL3_Init(GLSLVersion);
 }
 
 void WindowsOpenGLEditorGUIBackend::Shutdown(void* window)

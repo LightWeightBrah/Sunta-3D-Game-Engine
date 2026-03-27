@@ -1,5 +1,5 @@
 #include "Core/SuntaPreCompiled.h"
-#include "LinuxOpenGLEditorGUIBackend.h"
+#include "MacOpenGLEditorGUIBackend.h"
 
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -9,12 +9,12 @@
 namespace Sunta
 {
 
-LinuxOpenGLEditorGUIBackend::~LinuxOpenGLEditorGUIBackend()
+MacOpenGLEditorGUIBackend::~MacOpenGLEditorGUIBackend()
 {
 
 }
 
-void LinuxOpenGLEditorGUIBackend::Init(void* window)
+void MacOpenGLEditorGUIBackend::Init(void* window)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -41,21 +41,21 @@ void LinuxOpenGLEditorGUIBackend::Init(void* window)
 	ImGui_ImplOpenGL3_Init(GLSLVersion);
 }
 
-void LinuxOpenGLEditorGUIBackend::Shutdown(void* window)
+void MacOpenGLEditorGUIBackend::Shutdown(void* window)
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void LinuxOpenGLEditorGUIBackend::NewFrame(void* window)
+void MacOpenGLEditorGUIBackend::NewFrame(void* window)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void LinuxOpenGLEditorGUIBackend::EndFrame(void* window)
+void MacOpenGLEditorGUIBackend::EndFrame(void* window)
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -67,7 +67,7 @@ void LinuxOpenGLEditorGUIBackend::EndFrame(void* window)
 	}
 }
 
-void LinuxOpenGLEditorGUIBackend::Render(void* window)
+void MacOpenGLEditorGUIBackend::Render(void* window)
 {
 
 }
