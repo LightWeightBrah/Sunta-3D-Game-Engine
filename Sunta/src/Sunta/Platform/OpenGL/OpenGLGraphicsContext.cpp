@@ -25,7 +25,7 @@ void OpenGLGraphicsContext::Configure()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// We need to add this for GLFW on Mac
-#if defined(SUNTA_PLATFORM_MACOS)
+#if defined(SUNTA_PLATFORM_MAC)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
