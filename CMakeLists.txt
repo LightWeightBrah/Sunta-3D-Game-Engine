@@ -71,7 +71,7 @@ elseif(UNIX AND NOT APPLE)
 
 # Mac
 elseif(APPLE)
-	add_definitions(-DSUNTA_PLATFORM_MACOS)
+	add_definitions(-DSUNTA_PLATFORM_MAC)
 	message(STATUS "Sunta: MacOS platform detected")
 
 endif()

@@ -7,8 +7,8 @@
     #include "Platform/Windows/WindowsWindow.h"
 #elif defined(SUNTA_PLATFORM_LINUX)
     #include "Platform/Linux/LinuxWindow.h"
-#elif defined(SUNTA_PLATFORM_MACOS)
-    #include "Platform/MacOS/MacOSWindow.h"
+#elif defined(SUNTA_PLATFORM_MAC)
+    #include "Platform/Mac/MacWindow.h"
 #endif    
 
 namespace Sunta
@@ -22,7 +22,7 @@ std::unique_ptr<Window> Window::CreateWindow(const std::string& title, int width
     #elif defined(SUNTA_PLATFORM_LINUX)
         return std::make_unique<LinuxWindow>(title, width, height);
 
-    #elif defined(SUNTA_PLATFORM_MACOS)
+    #elif defined(SUNTA_PLATFORM_MAC)
         return std::make_unique<MacWindow>(title, width, height);
 
     #else

@@ -10,7 +10,7 @@
 		#include <signal.h>
 		#define SUNTA_DEBUGBREAK() raise(SIGTRAP)
 
-	#elif defined(SUNTA_PLATFORM_MACOS)
+	#elif defined(SUNTA_PLATFORM_MAC)
 		#define SUNTA_DEBUGBREAK() __builtin_trap()
 		
 	#else

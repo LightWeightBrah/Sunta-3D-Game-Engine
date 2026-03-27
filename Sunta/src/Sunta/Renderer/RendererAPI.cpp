@@ -53,7 +53,7 @@ void RendererAPI::ConfigureRendererSpecs()
 	{
 	case API::OpenGL:
 		// Mac only support OpenGL up to version 410!!!
-#if defined(SUNTA_PLATFORM_MACOS)
+#if defined(SUNTA_PLATFORM_MAC)
 		rendererConfig.GLSLVersion		= "#version 410 core";
 		rendererConfig.ImGuiGLSLVersion = "#version 410";
 		rendererConfig.OpenGLMajor		= 4;

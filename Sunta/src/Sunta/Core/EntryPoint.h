@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(SUNTA_PLATFORM_WINDOWS) || defined(SUNTA_PLATFORM_LINUX) || defined(SUNTA_PLATFORM_MACOS)
+#if defined(SUNTA_PLATFORM_WINDOWS) || defined(SUNTA_PLATFORM_LINUX) || defined(SUNTA_PLATFORM_MAC)
 
 extern Sunta::Application* Sunta::CreateApplication();
 
