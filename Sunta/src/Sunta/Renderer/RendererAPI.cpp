@@ -18,6 +18,9 @@ void RendererAPI::SetAPI(API targetedAPI)
 		usedAPI = API::OpenGL;
 		SUNTA_ENGINE_LOG_WARNING("Selected Renderer API: '{0}' is not supported! Using default: 'OpenGL' API", GetAPIName(targetedAPI));
 	}
+
+	ConfigureRendererSpecs();
+
 }
 
 bool RendererAPI::IsSupported(API targetedAPI)
@@ -42,6 +45,32 @@ const char* RendererAPI::GetAPIName(API targetedAPI)
 	case API::Metal:       return "Metal";
 	default:               return "None";
 	}
+}
+
+void RendererAPI::ConfigureRendererSpecs()
+{
+	switch (usedAPI)
+	{
+	case API::OpenGL:
+		// Mac only support OpenGL up to version 410!!!
+#if defined(SUNTA_PLATFORM_MAC)
+		rendererConfig.GLSLVersion		= "#version 410 core";
+		rendererConfig.ImGuiGLSLVersion = "#version 410";
+		rendererConfig.OpenGLMajor		= 4;
+		rendererConfig.OpenGLMinor		= 1;
+#else
+		rendererConfig.GLSLVersion		= "#version 330 core";
+		rendererConfig.ImGuiGLSLVersion = "#version 330";
+		rendererConfig.OpenGLMajor		= 3;
+		rendererConfig.OpenGLMinor		= 3;
+		break;
+#endif
+	case API::Vulkan:      break;
+	case API::DirectX12:   break;
+	case API::Metal:       break;
+	default:               break;
+	}
+
 }
 
 }

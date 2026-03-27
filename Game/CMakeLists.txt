@@ -17,6 +17,10 @@ set(FINAL_RES_DIR "${SUNTA_BIN_DIR}/res")
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     
+    # If there's no directory: create new. If there IS directory: don't do anything 
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Sunta"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Game"
+
     # Copying Engine sources to output directory for runtime access (e.g. shaders, textures, models)
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/Sunta/res" "${FINAL_RES_DIR}/Sunta"

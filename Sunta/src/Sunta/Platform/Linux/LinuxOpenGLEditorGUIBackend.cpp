@@ -1,20 +1,20 @@
 #include "Core/SuntaPreCompiled.h"
+#include "LinuxOpenGLEditorGUIBackend.h"
 
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
-
-#include "EditorGUIBackendWindows.h"
+#include "Renderer/RendererAPI.h"
 
 namespace Sunta
 {
 
-EditorGUIBackendWindows::~EditorGUIBackendWindows()
+LinuxOpenGLEditorGUIBackend::~LinuxOpenGLEditorGUIBackend()
 {
 
 }
 
-void EditorGUIBackendWindows::Init(void* window)
+void LinuxOpenGLEditorGUIBackend::Init(void* window)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -32,22 +32,30 @@ void EditorGUIBackendWindows::Init(void* window)
 	//style.FontScaleDpi = main_scale;
 
 	ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)window, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
+
+	// ImplOpenGL3 is OpenGL beggining from version 3.0 (first MODERN OpenGL),
+	// so it'll be the same even for (OpenGL version 4.6.0), it just means MODERN OpenGL
+	// 
+	//					     e.g #version 330
+	const char* GLSLVersion = RendererAPI::GetConfig().ImGuiGLSLVersion.c_str();
+	ImGui_ImplOpenGL3_Init(GLSLVersion);
 }
 
-void EditorGUIBackendWindows::Shutdown(void* window)
+void LinuxOpenGLEditorGUIBackend::Shutdown(void* window)
 {
-
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 }
 
-void EditorGUIBackendWindows::NewFrame(void* window)
+void LinuxOpenGLEditorGUIBackend::NewFrame(void* window)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void EditorGUIBackendWindows::EndFrame(void* window)
+void LinuxOpenGLEditorGUIBackend::EndFrame(void* window)
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -59,7 +67,7 @@ void EditorGUIBackendWindows::EndFrame(void* window)
 	}
 }
 
-void EditorGUIBackendWindows::Render(void* window)
+void LinuxOpenGLEditorGUIBackend::Render(void* window)
 {
 
 }

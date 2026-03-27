@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 
 #include "OpenGLUtilities.h"
+#include "Renderer/RendererAPI.h"
+#include "Core/Log.h"
 
 namespace Sunta
 {
@@ -16,9 +18,18 @@ OpenGLGraphicsContext::OpenGLGraphicsContext(GLFWwindow* window)
 
 void OpenGLGraphicsContext::Configure()
 {
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	const auto& config = RendererAPI::GetConfig();
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, config.OpenGLMajor);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, config.OpenGLMinor);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	// We need to add this for GLFW on Mac
+#if defined(SUNTA_PLATFORM_MACOS)
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+	SUNTA_ENGINE_LOG_INFO("Started with OpenGL: {0}.{1}", config.OpenGLMajor, config.OpenGLMinor);
 }
 
 void OpenGLGraphicsContext::Init()

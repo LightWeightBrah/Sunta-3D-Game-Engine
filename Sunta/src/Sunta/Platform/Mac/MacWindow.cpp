@@ -1,11 +1,11 @@
 #include "Core/SuntaPreCompiled.h"
+#include "MacWindow.h"
+#include "MacOpenGLEditorGUIBackend.h"
 
-#include "WindowsWindow.h"
 #include "Core/Log.h"
 #include "Renderer/Renderer.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-#include "WindowsOpenGLEditorGUIBackend.h"
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 #include "Renderer/RendererAPI.h"
 #include "Core/Assert.h"
@@ -15,10 +15,11 @@
 namespace Sunta
 {
 
-WindowsWindow::WindowsWindow(const std::string& title, int width, int height)
+MacWindow::MacWindow(const std::string& title, int width, int height)
 {
-	this->title  = title;
-	this->width  = width;
+	// Mac instead of pixels uses "points" and "Retina"
+	this->title  = title; // Logic size in "points", on "Retina" it represents more physcial pixels
+	this->width  = width; // On Mac, 1 pixel (point) can be 2x2 physical pixels (2.0)
 	this->height = height;
 
 	engineModeChangedID = EventBus::Subscribe<EngineModeChangedEvent>([this](const auto& event) { OnEngineModeChanged(event); });
@@ -26,12 +27,12 @@ WindowsWindow::WindowsWindow(const std::string& title, int width, int height)
 	Init();
 }
 
-WindowsWindow::~WindowsWindow()
+MacWindow::~MacWindow()
 {
 	Shutdown();
 }
 
-void WindowsWindow::Init()
+void MacWindow::Init()
 {
 	if (!glfwInit())
 	{
@@ -45,11 +46,19 @@ void WindowsWindow::Init()
 	GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
 
 	if (primaryMonitor)
+	{
 		glfwGetMonitorContentScale(primaryMonitor, &xScale, &yScale);
-	else
-		SUNTA_ENGINE_LOG_WARNING("Primary monitor not found, using default scale 1.0f");
+		SUNTA_ENGINE_LOG_INFO("Mac Retina Scale: {0}", xScale); // retina is special Mac pixel scale (usually 2x2 for 1 pixel instead of just 1x1 pixel)
+		// Log is for UI scaling (ImGUI), NOT window creation
 
-	window = glfwCreateWindow((width * xScale), (height * yScale), title.c_str(), NULL, NULL);
+	}
+	else
+	{
+		SUNTA_ENGINE_LOG_WARNING("Mac Primary monitor not found!");
+	}
+
+	// we use Mac "points" here, GLFW and Mac handles 2x2 pixels automatically
+	window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
 	if (!window)
 	{
@@ -67,13 +76,13 @@ void WindowsWindow::Init()
 	SetCallbacks();
 }
 
-void WindowsWindow::SetCallbacks()
+void MacWindow::SetCallbacks()
 {
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
 			//we must do this to set new width, height, cause of lambda
 			//we cant do here this->width = width
-			auto& data = *(WindowsWindow*)glfwGetWindowUserPointer(window);
+			auto& data = *(MacWindow*)glfwGetWindowUserPointer(window);
 			data.width = width;
 			data.height = height;
 
@@ -109,7 +118,7 @@ void WindowsWindow::SetCallbacks()
 		});
 }
 
-void WindowsWindow::Shutdown()
+void MacWindow::Shutdown()
 {
 	if (!window)
 		return;
@@ -118,32 +127,31 @@ void WindowsWindow::Shutdown()
 
 	glfwDestroyWindow(window);
 	window = nullptr;
-	SUNTA_ENGINE_LOG_INFO("Windows Window destroyed on destructor");
+	SUNTA_ENGINE_LOG_INFO("Mac Window destroyed on destructor");
 }
 
-void WindowsWindow::Update()
+void MacWindow::Update()
 {
 	graphicsContext->SwapBuffers();
 	glfwPollEvents();
 }
 
-void WindowsWindow::EnableMouseCursor(bool enabled)
+void MacWindow::EnableMouseCursor(bool enabled)
 {
 	glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 
-void WindowsWindow::SetAsGraphicsTarget()
+void MacWindow::SetAsGraphicsTarget()
 {
 	graphicsContext->MakeContextCurrent();
 }
 
-
-std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
+std::unique_ptr<Sunta::EditorGUIBackend> MacWindow::CreateGUIBackend()
 {
-	return std::make_unique<WindowsOpenGLEditorGUIBackend>();
+	return std::make_unique<MacOpenGLEditorGUIBackend>();
 }
 
-void WindowsWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
+void MacWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
 {
 	bool shouldShow = (event.mode == EngineMode::Editor);
 	EnableMouseCursor(shouldShow);

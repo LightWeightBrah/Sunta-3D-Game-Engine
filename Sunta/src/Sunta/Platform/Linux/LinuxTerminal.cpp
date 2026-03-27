@@ -6,20 +6,7 @@ namespace Sunta
 
 void Terminal::Init()
 {
-	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	
-	if (consoleHandle == INVALID_HANDLE_VALUE)
-		return;
-
-	DWORD currentConsoleMode = 0;
-
-	if (GetConsoleMode(consoleHandle, &currentConsoleMode))
-	{
-		//ENABLE_VIRTUAL_TERMINAL_PROCESSING (allows to change color via ANSI)
-		DWORD colorsEnabledConsoleMode = currentConsoleMode | 0x0004;
-
-		SetConsoleMode(consoleHandle, colorsEnabledConsoleMode);
-	}
+	std::cout << "\033[0m";
 }
 
 void Terminal::SetColor(Color color)

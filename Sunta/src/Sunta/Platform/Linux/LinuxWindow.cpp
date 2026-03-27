@@ -1,11 +1,11 @@
 #include "Core/SuntaPreCompiled.h"
+#include "LinuxWindow.h"
+#include "LinuxOpenGLEditorGUIBackend.h"
 
-#include "WindowsWindow.h"
 #include "Core/Log.h"
 #include "Renderer/Renderer.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-#include "WindowsOpenGLEditorGUIBackend.h"
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 #include "Renderer/RendererAPI.h"
 #include "Core/Assert.h"
@@ -15,7 +15,7 @@
 namespace Sunta
 {
 
-WindowsWindow::WindowsWindow(const std::string& title, int width, int height)
+LinuxWindow::LinuxWindow(const std::string& title, int width, int height)
 {
 	this->title  = title;
 	this->width  = width;
@@ -26,12 +26,12 @@ WindowsWindow::WindowsWindow(const std::string& title, int width, int height)
 	Init();
 }
 
-WindowsWindow::~WindowsWindow()
+LinuxWindow::~LinuxWindow()
 {
 	Shutdown();
 }
 
-void WindowsWindow::Init()
+void LinuxWindow::Init()
 {
 	if (!glfwInit())
 	{
@@ -67,13 +67,13 @@ void WindowsWindow::Init()
 	SetCallbacks();
 }
 
-void WindowsWindow::SetCallbacks()
+void LinuxWindow::SetCallbacks()
 {
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
 			//we must do this to set new width, height, cause of lambda
 			//we cant do here this->width = width
-			auto& data = *(WindowsWindow*)glfwGetWindowUserPointer(window);
+			auto& data = *(LinuxWindow*)glfwGetWindowUserPointer(window);
 			data.width = width;
 			data.height = height;
 
@@ -109,7 +109,7 @@ void WindowsWindow::SetCallbacks()
 		});
 }
 
-void WindowsWindow::Shutdown()
+void LinuxWindow::Shutdown()
 {
 	if (!window)
 		return;
@@ -118,32 +118,31 @@ void WindowsWindow::Shutdown()
 
 	glfwDestroyWindow(window);
 	window = nullptr;
-	SUNTA_ENGINE_LOG_INFO("Windows Window destroyed on destructor");
+	SUNTA_ENGINE_LOG_INFO("Linux Window destroyed on destructor");
 }
 
-void WindowsWindow::Update()
+void LinuxWindow::Update()
 {
 	graphicsContext->SwapBuffers();
 	glfwPollEvents();
 }
 
-void WindowsWindow::EnableMouseCursor(bool enabled)
+void LinuxWindow::EnableMouseCursor(bool enabled)
 {
 	glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 
-void WindowsWindow::SetAsGraphicsTarget()
+void LinuxWindow::SetAsGraphicsTarget()
 {
 	graphicsContext->MakeContextCurrent();
 }
 
-
-std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
+std::unique_ptr<Sunta::EditorGUIBackend> LinuxWindow::CreateGUIBackend()
 {
-	return std::make_unique<WindowsOpenGLEditorGUIBackend>();
+	return std::make_unique<LinuxOpenGLEditorGUIBackend>();
 }
 
-void WindowsWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
+void LinuxWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
 {
 	bool shouldShow = (event.mode == EngineMode::Editor);
 	EnableMouseCursor(shouldShow);

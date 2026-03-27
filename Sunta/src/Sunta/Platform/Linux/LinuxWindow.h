@@ -12,11 +12,11 @@ struct EngineModeChangedEvent;
 class EditorGUIBackend;
 class GraphicsContext;
 
-class WindowsWindow : public Window
+class LinuxWindow : public Window
 {
 public:
-	WindowsWindow(const std::string& title, int width, int height);
-	virtual ~WindowsWindow();
+	LinuxWindow(const std::string& title, int width, int height);
+	virtual ~LinuxWindow();
 
 	virtual void Update() override;
 	virtual void EnableMouseCursor(bool enabled) override;
