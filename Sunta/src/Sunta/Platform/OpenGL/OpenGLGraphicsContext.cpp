@@ -29,7 +29,6 @@ void OpenGLGraphicsContext::Configure()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-	SUNTA_ENGINE_LOG_INFO("Started with OpenGL: {0}.{1}", config.OpenGLMajor, config.OpenGLMinor);
 }
 
 void OpenGLGraphicsContext::Init()

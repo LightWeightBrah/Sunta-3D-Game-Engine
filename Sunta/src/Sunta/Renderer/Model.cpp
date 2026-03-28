@@ -83,7 +83,7 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 		material->Get(AI_MATKEY_NAME, materialName);
 		std::string materialKey = this->directory + ":" + materialName.C_Str();
 
-		auto modelShader = ResourceManager::GetShaderData("reflectable");
+		auto modelShader = ResourceManager::GetShaderData("Lit");
 
 		meshMaterial = ResourceManager::LoadOrGetModelMaterial(materialKey, modelShader);
 

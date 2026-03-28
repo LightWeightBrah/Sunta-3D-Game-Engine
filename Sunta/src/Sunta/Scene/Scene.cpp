@@ -53,15 +53,15 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	ResourceManager::LoadTexture("cube_container",		"res/Sunta/Textures/container.jpg");
 	ResourceManager::LoadTexture("cube_chad",			"res/Sunta/Textures/chad.png");
 
-	ResourceManager::LoadShader ("reflectable",			"res/Sunta/Shaders/Reflectable.shader");
-	ResourceManager::LoadShader ("lightSource",			"res/Sunta/Shaders/LightSource.shader");
+	ResourceManager::LoadShader ("Lit",					"res/Sunta/Shaders/Lit.shader");
+	ResourceManager::LoadShader ("Unlit",				"res/Sunta/Shaders/Unlit.shader");
 	
 	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
 	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
 
-	auto texturedShader		= ResourceManager::GetShaderData("reflectable");
-	auto cubeShader			= ResourceManager::GetShaderData("reflectable");
-	auto lightShader		= ResourceManager::GetShaderData("lightSource");
+	auto texturedShader		= ResourceManager::GetShaderData("Lit");
+	auto cubeShader			= ResourceManager::GetShaderData("Lit");
+	auto lightShader		= ResourceManager::GetShaderData("Unlit");
 
 	auto texturedMaterial	= std::make_shared<Material>(texturedShader, cubeDiffuseMap, cubeSpecularMap);
 	auto cubeMaterial		= std::make_shared<Material>(cubeShader);

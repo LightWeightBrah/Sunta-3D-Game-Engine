@@ -51,23 +51,77 @@ struct MeshComponent
 	std::shared_ptr<Material> material;
 };
 
-struct LightComponent
+struct BasicLight
 {
 	glm::vec3 ambientIntensity  = glm::vec3(0.2f);
 	glm::vec3 diffuseIntensity  = glm::vec3(0.5f);
 	glm::vec3 specularIntensity = glm::vec3(1.0f);
+};
+
+struct DirectionalLightComponent : BasicLight
+{
+	glm::vec3 direction			= glm::vec3(-0.2f, -1.0f, -0.3f);
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<LightComponent>("Light Source",
+		InspectorComponentRegistry::RegisterComponent<DirectionalLightComponent>("Directional Light",
 			{
-				ADD_PROPERTY(LightComponent, ambientIntensity,	PropertyDataType::Color),
-				ADD_PROPERTY(LightComponent, diffuseIntensity,	PropertyDataType::Color),
-				ADD_PROPERTY(LightComponent, specularIntensity,	PropertyDataType::Color)
+				ADD_PROPERTY(DirectionalLightComponent, ambientIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(DirectionalLightComponent, diffuseIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(DirectionalLightComponent, specularIntensity,	PropertyDataType::Color),
+
+				ADD_PROPERTY(DirectionalLightComponent, direction,			PropertyDataType::Float3)
 			});
 	}
 };
 
+struct PointLightComponent : BasicLight
+{
+	float constant				= 1.0f;
+	float linear				= 0.09f;
+	float quadratic				= 0.032f;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<PointLightComponent>("Directional Light",
+			{
+				ADD_PROPERTY(PointLightComponent, ambientIntensity,		PropertyDataType::Color),
+				ADD_PROPERTY(PointLightComponent, diffuseIntensity,		PropertyDataType::Color),
+				ADD_PROPERTY(PointLightComponent, specularIntensity,	PropertyDataType::Color),
+
+				ADD_PROPERTY(PointLightComponent, constant,				PropertyDataType::Float),
+				ADD_PROPERTY(PointLightComponent, linear,				PropertyDataType::Float),
+				ADD_PROPERTY(PointLightComponent, quadratic,			PropertyDataType::Float)
+			});
+	}
+};
+
+struct SpotlightComponent : BasicLight
+{
+	float cutOffAngle		= 12.5f;
+	float outerCutOffAngle	= 17.5f;
+
+	float constant			= 1.0f;
+	float linear			= 0.09f;
+	float quadratic			= 0.032f;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<SpotlightComponent>("Directional Light",
+			{
+				ADD_PROPERTY(SpotlightComponent, ambientIntensity,		PropertyDataType::Color),
+				ADD_PROPERTY(SpotlightComponent, diffuseIntensity,		PropertyDataType::Color),
+				ADD_PROPERTY(SpotlightComponent, specularIntensity,		PropertyDataType::Color),
+
+				ADD_PROPERTY(SpotlightComponent, cutOffAngle,			PropertyDataType::Float),
+				ADD_PROPERTY(SpotlightComponent, outerCutOffAngle,		PropertyDataType::Float),
+
+				ADD_PROPERTY(SpotlightComponent, constant,				PropertyDataType::Float),
+				ADD_PROPERTY(SpotlightComponent, linear,				PropertyDataType::Float),
+				ADD_PROPERTY(SpotlightComponent, quadratic,				PropertyDataType::Float)
+			});
+	}
+};
 
 
 }
