@@ -154,7 +154,7 @@ void Renderer::SetSpotLights(Shader& shader, const SceneData& sceneData) const
 		std::string base = "spotLights[" + std::to_string(i) + "].";
 
 		shader.SetUniform3f(base + "position",				  sceneData.spotlights[i].position);
-		shader.SetUniform3f(base + "direction",				  sceneData.spotlights[i].direction);
+		shader.SetUniform3f(base + "spotlightDirection",	  sceneData.spotlights[i].spotlightDirection);
 
 		shader.SetUniform1f(base + "innerCutOffAngle",		  glm::cos(glm::radians(sceneData.spotlights[i].innercutOffAngle)));
 		shader.SetUniform1f(base + "outerCutOffAngle",		  glm::cos(glm::radians(sceneData.spotlights[i].outerCutOffAngle)));

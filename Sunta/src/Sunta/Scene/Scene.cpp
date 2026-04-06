@@ -166,6 +166,8 @@ void Scene::Render(Renderer& renderer)
 			data.color	   = directionalLightComponent->color;
 
 			sceneData.directionalLights.push_back(data);
+
+			SUNTA_ENGINE_LOG_INFO("Light Direction: {0}, {1}, {2}", data.direction.x, data.direction.y, data.direction.z);
 		}
 
 		if (auto* pointlightComponent = entityManager.GetComponent<PointLightComponent>(i))
@@ -190,14 +192,14 @@ void Scene::Render(Renderer& renderer)
 
 			SpotlightData data;
 
-			data.position		  = lightTransform->position;
-			data.direction		  = Sunta::Math::DegreesToDirection(lightTransform->rotation);
+			data.position		     = lightTransform->position;
+			data.spotlightDirection	 = Sunta::Math::DegreesToDirection(lightTransform->rotation);
 
-			data.innercutOffAngle = spotlightComponent->innerCutOffAngle;
-			data.outerCutOffAngle = spotlightComponent->outerCutOffAngle;
+			data.innercutOffAngle	 = spotlightComponent->innerCutOffAngle;
+			data.outerCutOffAngle	 = spotlightComponent->outerCutOffAngle;
 
-			data.color			  = spotlightComponent->color;
-			data.attenuation	  = spotlightComponent->attenuation;
+			data.color               = spotlightComponent->color;
+			data.attenuation         = spotlightComponent->attenuation;
 			
 			sceneData.spotlights.push_back(data);
 		}
