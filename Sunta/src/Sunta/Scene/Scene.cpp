@@ -74,29 +74,34 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 		.SetShininess(128.0f);
 
 	unsigned int cube = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(cube).name = "Cube";
 	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(7.5f, 5.0f, 3.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(cube);
 	entityManager.AddComponent<MeshComponent>(cube, Primitives::CreateCube(rendererDevice), cubeMaterial);
 
 	unsigned int texturedCube = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(texturedCube).name = "Textured Cube";
 	entityManager.AddComponent<TransformComponent>(texturedCube, glm::vec3(0.0f, 5.0f, -0.5));
 	entityManager.AddComponent<WorldMatrixComponent>(texturedCube);
 	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(rendererDevice), texturedMaterial);
 
 	unsigned int sun = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(sun).name = "Directional Light";
 	entityManager.AddComponent<TransformComponent>(sun, glm::vec3(3.0f, 6.0f, 2.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(sun);
 	entityManager.AddComponent<MeshComponent>(sun, Primitives::CreateCube(rendererDevice), lightMaterial);
 	entityManager.AddComponent<DirectionalLightComponent>(sun);
 
 	unsigned int pointLight = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(pointLight).name = "Point Light";
 	entityManager.AddComponent<TransformComponent>(pointLight, glm::vec3(-4.0f, 2.0f, 0.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(pointLight);
 	entityManager.AddComponent<MeshComponent>(pointLight, Primitives::CreateCube(rendererDevice), lightMaterial);
 	entityManager.AddComponent<PointLightComponent>(pointLight);
 
 	unsigned int spotLight = entityManager.CreateEntity();
-	entityManager.AddComponent<TransformComponent>(spotLight, glm::vec3(-4.0f, 2.0f, 0.0f));
+	entityManager.AddComponent<TagComponent>(spotLight).name = "Spot Light";
+	entityManager.AddComponent<TransformComponent>(spotLight, glm::vec3(-2.5f, 4.5f, 0.0f));
 	entityManager.AddComponent<WorldMatrixComponent>(spotLight);
 	entityManager.AddComponent<MeshComponent>(spotLight, Primitives::CreateCube(rendererDevice), lightMaterial);
 	entityManager.AddComponent<SpotlightComponent>(spotLight);
@@ -166,8 +171,6 @@ void Scene::Render(Renderer& renderer)
 			data.color	   = directionalLightComponent->color;
 
 			sceneData.directionalLights.push_back(data);
-
-			SUNTA_ENGINE_LOG_INFO("Light Direction: {0}, {1}, {2}", data.direction.x, data.direction.y, data.direction.z);
 		}
 
 		if (auto* pointlightComponent = entityManager.GetComponent<PointLightComponent>(i))

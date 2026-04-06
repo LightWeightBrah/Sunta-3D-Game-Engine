@@ -1,11 +1,13 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "EditorGUI.h"
+
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
+
 #include "ECS/EntityManager.h"
 #include "ECS/ComponentLayout.h"
-
+#include "ECS/Component.h"
 
 namespace Sunta
 {
@@ -63,13 +65,24 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 	{
 		std::string label = ("Entity " + std::to_string(entityID));
 
-		if (!ImGui::TreeNode(label.c_str()))
-			continue;
+		if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
+		{
+			if (!tag->name.empty())
+				label = tag->name;
+		}
 
-		DrawEntityComponentList(entityID, entityManager);
+		// unique ID for ImGUI, so objects with same name can be in tree hierarchy
+		// PushID makes everything drawn below belongs to that unique ID
+		ImGui::PushID(entityID);
 
-		ImGui::TreePop();
+		if (ImGui::TreeNode(label.c_str()))
+		{
+			DrawEntityComponentList(entityID, entityManager);
+			ImGui::TreePop();
+		}
 
+		// here we stop using that uniqueID for ImGUI and we go back to defualt mode
+		ImGui::PopID();
 	}
 }
 
@@ -80,8 +93,7 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 		if (!storage->Contains(entityID))
 			continue;
 
-		const auto* componentType =
-			InspectorComponentRegistry::GetComponentTypeByHash(typeHash);
+		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(typeHash);
 
 		if (!componentType)
 			continue;
@@ -131,12 +143,13 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 			changed = ImGui::SliderFloat3(property.label.c_str(), (float*)propertyData, property.minValue, property.maxValue);
 		else
 			changed = ImGui::DragFloat3(property.label.c_str(), (float*)propertyData, 0.1f);
-
 		break;
 	case PropertyDataType::Color:
 		changed = ImGui::ColorEdit3(property.label.c_str(), (float*)propertyData);
 		break;
-
+	case PropertyDataType::String:
+		changed = ImGui::InputText(property.label.c_str(), (std::string*)propertyData);
+		break;
 	}
 	
 	return changed;

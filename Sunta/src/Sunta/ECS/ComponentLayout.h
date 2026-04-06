@@ -14,8 +14,8 @@ enum class PropertyDataType
 	Bool,
 	Float,
 	Float3,
-	Color
-
+	Color,
+	String
 };
 
 struct PropertyDefinition

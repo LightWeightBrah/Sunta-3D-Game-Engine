@@ -18,6 +18,20 @@ struct Component
 	Entity* owner = nullptr;
 };
 
+struct TagComponent
+{
+	std::string name = "New Entity";
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<TagComponent>("Tag",
+			{
+				ADD_PROPERTY(TagComponent, name, PropertyDataType::String)
+			});
+	}
+	
+};
+
 struct TransformComponent
 {
 	glm::vec3 position = glm::vec3(0.0f);
