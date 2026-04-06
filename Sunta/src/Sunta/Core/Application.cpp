@@ -69,8 +69,11 @@ namespace Sunta
 		scene = std::make_unique<Scene>();
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
 
+		TagComponent::RegisterToInspector();
 		TransformComponent::RegisterToInspector();
-		LightComponent::RegisterToInspector();
+		DirectionalLightComponent::RegisterToInspector();
+		PointLightComponent::RegisterToInspector();
+		SpotlightComponent::RegisterToInspector();
 
 		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	}

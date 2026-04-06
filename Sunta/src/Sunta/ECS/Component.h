@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include "ComponentLayout.h"
 
+#include "Renderer/LightingCommon.h"
+
 namespace Sunta
 {
 
@@ -14,6 +16,20 @@ struct Component
 {
 	virtual ~Component() = default;
 	Entity* owner = nullptr;
+};
+
+struct TagComponent
+{
+	std::string name = "New Entity";
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<TagComponent>("Tag",
+			{
+				ADD_PROPERTY(TagComponent, name, PropertyDataType::String)
+			});
+	}
+	
 };
 
 struct TransformComponent
@@ -51,23 +67,66 @@ struct MeshComponent
 	std::shared_ptr<Material> material;
 };
 
-struct LightComponent
+struct DirectionalLightComponent
 {
-	glm::vec3 ambientIntensity  = glm::vec3(0.2f);
-	glm::vec3 diffuseIntensity  = glm::vec3(0.5f);
-	glm::vec3 specularIntensity = glm::vec3(1.0f);
+	LightColor color;
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<LightComponent>("Light Source",
+		InspectorComponentRegistry::RegisterComponent<DirectionalLightComponent>("Directional Light",
 			{
-				ADD_PROPERTY(LightComponent, ambientIntensity,	PropertyDataType::Color),
-				ADD_PROPERTY(LightComponent, diffuseIntensity,	PropertyDataType::Color),
-				ADD_PROPERTY(LightComponent, specularIntensity,	PropertyDataType::Color)
+				ADD_PROPERTY(DirectionalLightComponent, color.ambientIntensity,	 PropertyDataType::Color),
+				ADD_PROPERTY(DirectionalLightComponent, color.diffuseIntensity,	 PropertyDataType::Color),
+				ADD_PROPERTY(DirectionalLightComponent, color.specularIntensity, PropertyDataType::Color),
 			});
 	}
 };
 
+struct PointLightComponent
+{
+	LightColor  color;
+	Attenuation attenuation;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<PointLightComponent>("Point Light",
+			{
+				ADD_PROPERTY(PointLightComponent, color.ambientIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(PointLightComponent, color.diffuseIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(PointLightComponent, color.specularIntensity,	PropertyDataType::Color),
+
+				ADD_PROPERTY(PointLightComponent, attenuation.constant,		PropertyDataType::Float),
+				ADD_PROPERTY(PointLightComponent, attenuation.linear,		PropertyDataType::Float),
+				ADD_PROPERTY(PointLightComponent, attenuation.quadratic,	PropertyDataType::Float)
+			});
+	}
+};
+
+struct SpotlightComponent
+{
+	LightColor  color;
+	Attenuation attenuation;
+
+	float innerCutOffAngle  = 12.5f;
+	float outerCutOffAngle	= 17.5f;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<SpotlightComponent>("Spotlight",
+			{
+				ADD_PROPERTY(SpotlightComponent, color.ambientIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(SpotlightComponent, color.diffuseIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(SpotlightComponent, color.specularIntensity,	PropertyDataType::Color),
+
+				ADD_PROPERTY(SpotlightComponent, attenuation.constant,		PropertyDataType::Float),
+				ADD_PROPERTY(SpotlightComponent, attenuation.linear,		PropertyDataType::Float),
+				ADD_PROPERTY(SpotlightComponent, attenuation.quadratic,		PropertyDataType::Float),
+
+				ADD_PROPERTY(SpotlightComponent, innerCutOffAngle,			PropertyDataType::Float),
+				ADD_PROPERTY(SpotlightComponent, outerCutOffAngle,			PropertyDataType::Float)
+			});
+	}
+};
 
 
 }

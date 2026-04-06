@@ -1,11 +1,13 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "EditorGUI.h"
+
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
+
 #include "ECS/EntityManager.h"
 #include "ECS/ComponentLayout.h"
-
+#include "ECS/Component.h"
 
 namespace Sunta
 {
@@ -63,25 +65,67 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 	{
 		std::string label = ("Entity " + std::to_string(entityID));
 
-		if (!ImGui::TreeNode(label.c_str()))
-			continue;
+		if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
+		{
+			if (!tag->name.empty())
+				label = tag->name;
+		}
 
-		DrawEntityComponentList(entityID, entityManager);
+		// ### is special imgui separator, everything after this is seen via imGUI
+		// as a permament unique ID (so we won't see ###EntityID-, but it works for 
+		// changing names in inspector)
+		std::string imguiLabel = label + "###EntityID-" + std::to_string(entityID);
 
-		ImGui::TreePop();
+		// unique ID for ImGUI, so objects with same name can be in tree hierarchy
+		// PushID makes everything drawn below belongs to that unique ID
+		ImGui::PushID(entityID);
 
+		if (ImGui::TreeNode(imguiLabel.c_str()))
+		{
+			DrawEntityComponentList(entityID, entityManager);
+			ImGui::TreePop();
+		}
+
+		// here we stop using that uniqueID for ImGUI and we go back to defualt mode
+		ImGui::PopID();
 	}
 }
 
 void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
 {
-	for (auto const& [typeHash, storage] : entityManager.GetInspectableMap())
+	auto& inspectableMap = entityManager.GetInspectableMap();
+
+	// Draw tag component first
+	size_t tagHash = typeid(TagComponent).hash_code();
+	auto tagIterator = inspectableMap.find(tagHash);
+	if (tagIterator != inspectableMap.end() && tagIterator->second->Contains(entityID))
 	{
+		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(tagHash);
+		if (componentType)
+			DrawSingleComponent(entityID, componentType, tagIterator->second);
+	}
+
+	// Draw transform component second
+	size_t transformHash = typeid(TransformComponent).hash_code();
+	auto transformIterator = inspectableMap.find(transformHash);
+	if (transformIterator != inspectableMap.end() && transformIterator->second->Contains(entityID))
+	{
+		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(transformHash);
+		if (componentType)
+			DrawSingleComponent(entityID, componentType, transformIterator->second);
+	}
+
+	// Draw rest of the components randomly
+	for (auto const& [typeHash, storage] : inspectableMap)
+	{
+		// Don't draw again tag nor transform components, since they are already drawn
+		if (typeHash == tagHash || typeHash == transformHash)
+			continue;
+
 		if (!storage->Contains(entityID))
 			continue;
 
-		const auto* componentType =
-			InspectorComponentRegistry::GetComponentTypeByHash(typeHash);
+		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(typeHash);
 
 		if (!componentType)
 			continue;
@@ -127,12 +171,17 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 		changed = ImGui::DragFloat(property.label.c_str(), (float*)propertyData, 0.1f);
 		break;
 	case PropertyDataType::Float3:
-		changed = ImGui::DragFloat3(property.label.c_str(), (float*)propertyData, 0.1f);
+		if (property.HasRange())
+			changed = ImGui::SliderFloat3(property.label.c_str(), (float*)propertyData, property.minValue, property.maxValue);
+		else
+			changed = ImGui::DragFloat3(property.label.c_str(), (float*)propertyData, 0.1f);
 		break;
 	case PropertyDataType::Color:
 		changed = ImGui::ColorEdit3(property.label.c_str(), (float*)propertyData);
 		break;
-
+	case PropertyDataType::String:
+		changed = ImGui::InputText(property.label.c_str(), (std::string*)propertyData);
+		break;
 	}
 	
 	return changed;
