@@ -71,11 +71,16 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				label = tag->name;
 		}
 
+		// ### is special imgui separator, everything after this is seen via imGUI
+		// as a permament unique ID (so we won't see ###EntityID-, but it works for 
+		// changing names in inspector)
+		std::string imguiLabel = label + "###EntityID-" + std::to_string(entityID);
+
 		// unique ID for ImGUI, so objects with same name can be in tree hierarchy
 		// PushID makes everything drawn below belongs to that unique ID
 		ImGui::PushID(entityID);
 
-		if (ImGui::TreeNode(label.c_str()))
+		if (ImGui::TreeNode(imguiLabel.c_str()))
 		{
 			DrawEntityComponentList(entityID, entityManager);
 			ImGui::TreePop();
@@ -88,8 +93,35 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 
 void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
 {
-	for (auto const& [typeHash, storage] : entityManager.GetInspectableMap())
+	auto& inspectableMap = entityManager.GetInspectableMap();
+
+	// Draw tag component first
+	size_t tagHash = typeid(TagComponent).hash_code();
+	auto tagIterator = inspectableMap.find(tagHash);
+	if (tagIterator != inspectableMap.end() && tagIterator->second->Contains(entityID))
 	{
+		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(tagHash);
+		if (componentType)
+			DrawSingleComponent(entityID, componentType, tagIterator->second);
+	}
+
+	// Draw transform component second
+	size_t transformHash = typeid(TransformComponent).hash_code();
+	auto transformIterator = inspectableMap.find(transformHash);
+	if (transformIterator != inspectableMap.end() && transformIterator->second->Contains(entityID))
+	{
+		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(transformHash);
+		if (componentType)
+			DrawSingleComponent(entityID, componentType, transformIterator->second);
+	}
+
+	// Draw rest of the components randomly
+	for (auto const& [typeHash, storage] : inspectableMap)
+	{
+		// Don't draw again tag nor transform components, since they are already drawn
+		if (typeHash == tagHash || typeHash == transformHash)
+			continue;
+
 		if (!storage->Contains(entityID))
 			continue;
 

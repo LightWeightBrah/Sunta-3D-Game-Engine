@@ -69,6 +69,7 @@ namespace Sunta
 		scene = std::make_unique<Scene>();
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
 
+		TagComponent::RegisterToInspector();
 		TransformComponent::RegisterToInspector();
 		DirectionalLightComponent::RegisterToInspector();
 		PointLightComponent::RegisterToInspector();
