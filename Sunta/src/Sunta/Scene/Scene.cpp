@@ -23,6 +23,7 @@
 #include "ECS/Systems.h"
 #include "Renderer/RendererDevice.h"
 #include "Renderer/Mesh.h"
+#include "Utilities/MathUtilities.h"
 
 namespace Sunta
 {
@@ -82,11 +83,23 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	entityManager.AddComponent<WorldMatrixComponent>(texturedCube);
 	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(rendererDevice), texturedMaterial);
 
-	unsigned int light = entityManager.CreateEntity();
-	entityManager.AddComponent<TransformComponent>(light, glm::vec3(3.0f, 6.0f, 2.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(light);
-	entityManager.AddComponent<MeshComponent>(light, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<LightComponent>(light, glm::vec3(0.2f), glm::vec3(0.5f), glm::vec3(1.0f));
+	unsigned int sun = entityManager.CreateEntity();
+	entityManager.AddComponent<TransformComponent>(sun, glm::vec3(3.0f, 6.0f, 2.0f));
+	entityManager.AddComponent<WorldMatrixComponent>(sun);
+	entityManager.AddComponent<MeshComponent>(sun, Primitives::CreateCube(rendererDevice), lightMaterial);
+	entityManager.AddComponent<DirectionalLightComponent>(sun);
+
+	unsigned int pointLight = entityManager.CreateEntity();
+	entityManager.AddComponent<TransformComponent>(pointLight, glm::vec3(-4.0f, 2.0f, 0.0f));
+	entityManager.AddComponent<WorldMatrixComponent>(pointLight);
+	entityManager.AddComponent<MeshComponent>(pointLight, Primitives::CreateCube(rendererDevice), lightMaterial);
+	entityManager.AddComponent<PointLightComponent>(pointLight);
+
+	unsigned int spotLight = entityManager.CreateEntity();
+	entityManager.AddComponent<TransformComponent>(spotLight, glm::vec3(-4.0f, 2.0f, 0.0f));
+	entityManager.AddComponent<WorldMatrixComponent>(spotLight);
+	entityManager.AddComponent<MeshComponent>(spotLight, Primitives::CreateCube(rendererDevice), lightMaterial);
+	entityManager.AddComponent<SpotlightComponent>(spotLight);
 
 	//AddEntity(std::move(cubeEntity));
 	//AddEntity(std::move(lightSource));
@@ -135,20 +148,58 @@ void Scene::Render(Renderer& renderer)
 	renderer.Clear(0.05f, 0.15f, 0.25f, 1.0f);
 	SceneData sceneData = camera.GetSceneData();
 
+	sceneData.directionalLights.clear();
+	sceneData.pointLights.clear();
+	sceneData.spotlights.clear();
+
 	unsigned int totalEntites = entityManager.GetEntityCount();
 
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
-		auto* light = entityManager.GetComponent<LightComponent>(i);
 		auto* lightTransform = entityManager.GetComponent<TransformComponent>(i);
 
-		if (light && lightTransform)
+		if (auto* directionalLightComponent = entityManager.GetComponent<DirectionalLightComponent>(i))
 		{
-			sceneData.lightSourceData.position          = lightTransform->position;
-			sceneData.lightSourceData.ambientIntensity  = light->ambientIntensity;
-			sceneData.lightSourceData.diffuseIntensity  = light->diffuseIntensity;
-			sceneData.lightSourceData.specularIntensity = light->specularIntensity;
-			break;
+			DirectionalLightData data;
+
+			data.direction = Sunta::Math::DegreesToDirection(lightTransform->rotation);
+			data.color	   = directionalLightComponent->color;
+
+			sceneData.directionalLights.push_back(data);
+		}
+
+		if (auto* pointlightComponent = entityManager.GetComponent<PointLightComponent>(i))
+		{
+			if (!lightTransform)
+				continue;
+
+			PointLightData data;
+
+			data.position	 = lightTransform->position;
+
+			data.color		 = pointlightComponent->color;
+			data.attenuation = pointlightComponent->attenuation;
+
+			sceneData.pointLights.push_back(data);
+		}
+
+		if (auto* spotlightComponent = entityManager.GetComponent<SpotlightComponent>(i))
+		{
+			if (!lightTransform)
+				continue;
+
+			SpotlightData data;
+
+			data.position		  = lightTransform->position;
+			data.direction		  = Sunta::Math::DegreesToDirection(lightTransform->rotation);
+
+			data.innercutOffAngle = spotlightComponent->innerCutOffAngle;
+			data.outerCutOffAngle = spotlightComponent->outerCutOffAngle;
+
+			data.color			  = spotlightComponent->color;
+			data.attenuation	  = spotlightComponent->attenuation;
+			
+			sceneData.spotlights.push_back(data);
 		}
 	}
 
@@ -173,10 +224,18 @@ void Scene::Render(Renderer& renderer)
 		if (!(meshComponent && matrixComponent && meshComponent->mesh && meshComponent->material))
 			continue;
 
-		if (entityManager.GetComponent<LightComponent>(i))
+		bool isLightSource = entityManager.GetComponent<DirectionalLightComponent>(i) ||
+							 entityManager.GetComponent<PointLightComponent>(i)       ||
+							 entityManager.GetComponent<SpotlightComponent>(i);
+
+		if (isLightSource)
+		{
 			renderer.DrawLigthSource(*meshComponent->mesh, *meshComponent->material->GetShader(), matrixComponent->matrix, sceneData);
+		}
 		else
+		{
 			renderer.DrawMesh(*meshComponent->mesh, *meshComponent->material, matrixComponent->matrix, sceneData);
+		}
 	}
 }
 	

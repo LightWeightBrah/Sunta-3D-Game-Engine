@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <limits>
 
 namespace Sunta
 {
@@ -22,6 +23,15 @@ struct PropertyDefinition
 	std::string label;
 	unsigned int byteOffset;
 	PropertyDataType dataType;
+
+	float minValue = -std::numeric_limits<float>::infinity();
+	float maxValue =  std::numeric_limits<float>::infinity();
+
+	bool HasRange() const
+	{
+		return minValue != -std::numeric_limits<float>::infinity() &&
+			   maxValue !=  std::numeric_limits<float>::infinity();
+	}
 };
 
 struct ComponentType
@@ -33,6 +43,9 @@ struct ComponentType
 
 #define ADD_PROPERTY(ComponentStruct, PropertyName, PropertyType) \
 	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyType}
+
+#define ADD_PROPERTY_RANGED(ComponentStruct, PropertyName, PropertyType, MinValue, MaxValue) \
+	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyType, MinValue, MaxValue }
 
 
 class InspectorComponentRegistry

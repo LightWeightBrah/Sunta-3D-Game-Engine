@@ -127,7 +127,11 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 		changed = ImGui::DragFloat(property.label.c_str(), (float*)propertyData, 0.1f);
 		break;
 	case PropertyDataType::Float3:
-		changed = ImGui::DragFloat3(property.label.c_str(), (float*)propertyData, 0.1f);
+		if (property.HasRange())
+			changed = ImGui::SliderFloat3(property.label.c_str(), (float*)propertyData, property.minValue, property.maxValue);
+		else
+			changed = ImGui::DragFloat3(property.label.c_str(), (float*)propertyData, 0.1f);
+
 		break;
 	case PropertyDataType::Color:
 		changed = ImGui::ColorEdit3(property.label.c_str(), (float*)propertyData);

@@ -47,6 +47,11 @@ private:
 
 	void SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 	void SetBaseLighting(Shader& shader, const SceneData& sceneData) const;
+
+	void SetDirectionalLights(Shader& shader, const SceneData& sceneData) const;
+	void SetPointLights(Shader& shader, const SceneData& sceneData) const;
+	void SetSpotLights(Shader& shader, const SceneData& sceneData) const;
+
 };
 
 }

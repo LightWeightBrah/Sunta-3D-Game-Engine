@@ -70,7 +70,9 @@ namespace Sunta
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
 
 		TransformComponent::RegisterToInspector();
-		LightComponent::RegisterToInspector();
+		DirectionalLightComponent::RegisterToInspector();
+		PointLightComponent::RegisterToInspector();
+		SpotlightComponent::RegisterToInspector();
 
 		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	}
