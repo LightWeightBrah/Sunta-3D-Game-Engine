@@ -57,7 +57,7 @@ bool EditorGUI::Button(const std::string& label)
 	return ImGui::Button(label.c_str());
 }
 
-void EditorGUI::DrawInspector(EntityManager& entityManager)
+void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 {
 	unsigned int totalEntities = entityManager.GetEntityCount();
 
@@ -76,19 +76,40 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		// changing names in inspector)
 		std::string imguiLabel = label + "###EntityID-" + std::to_string(entityID);
 
-		// unique ID for ImGUI, so objects with same name can be in tree hierarchy
-		// PushID makes everything drawn below belongs to that unique ID
-		ImGui::PushID(entityID);
+		ImGuiTreeNodeFlags flags = (selectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
 
-		if (ImGui::TreeNode(imguiLabel.c_str()))
+		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+		ImGui::TreeNodeEx(imguiLabel.c_str(), flags);
+
+		if (ImGui::IsItemClicked())
 		{
-			DrawEntityComponentList(entityID, entityManager);
-			ImGui::TreePop();
+			selectedEntity = static_cast<int>(entityID);
 		}
 
-		// here we stop using that uniqueID for ImGUI and we go back to defualt mode
-		ImGui::PopID();
+		
 	}
+}
+
+void EditorGUI::DrawInspector(EntityManager& entityManager)
+{
+	if (selectedEntity == -1)
+	{
+		return;
+	}
+
+	ImGui::Text("Selected Entity ID: %d", selectedEntity);
+	ImGui::Separator();
+
+	// unique ID for ImGUI, so objects with same name can be in tree hierarchy
+	// PushID makes everything drawn below belongs to that unique ID
+	ImGui::PushID(selectedEntity);
+
+	DrawEntityComponentList(selectedEntity, entityManager);
+
+	// here we stop using that uniqueID for ImGUI and we go back to defualt mode
+	ImGui::PopID();
+
 }
 
 void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
@@ -199,5 +220,10 @@ void EditorGUI::ClearFocus()
 	ImGui::SetWindowFocus(nullptr);
 }
 
+
+void EditorGUI::DrawFileBrowser()
+{
+
+}
 
 }

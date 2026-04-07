@@ -1,12 +1,14 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "EditorGUIContext.h"
+
 #include <imgui/imgui.h>
+#include <imgui_internal.h>
+
 #include "Core/Window.h"
 #include "EditorGUIBackend.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-#include <imgui_internal.h>
+#include "EditorGUI.h"
 
 namespace Sunta
 {
@@ -75,7 +77,7 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	RestoreNormalWindowStyle();
 
 	unsigned int dockspaceID = ImGui::GetID(mainDockingSpaceID);
-	//creates docking space							passthru flag so  we can interact with scene
+	// creates docking space						 passthru flag so  we can interact with scene
 	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	static bool firstInit = true;
@@ -86,6 +88,26 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	}
 
 	ImGui::End();
+}
+
+void EditorGUIContext::RenderUI(Window* window, EntityManager& entityManager)
+{
+	EditorGUIContext::NewFrame(window);
+	EditorGUIContext::BeginDockingSpace(window);
+		
+	EditorGUI::Begin(inspectorName);
+	EditorGUI::DrawInspector(entityManager);
+	EditorGUI::End();
+
+	EditorGUI::Begin(hierarchyName);
+	EditorGUI::DrawHierarchy(entityManager);
+	EditorGUI::End();
+
+	EditorGUI::Begin(fileBrowserName);
+	EditorGUI::DrawFileBrowser();
+	EditorGUI::End();
+
+	EditorGUIContext::EndFrame(window);
 }
 
 void EditorGUIContext::MatchWindowSizeToViewport()
@@ -125,14 +147,20 @@ void EditorGUIContext::RestoreNormalWindowStyle()
 
 void EditorGUIContext::SetupInitialLayout(unsigned int dockspaceID)
 {
-	ImGui::DockBuilderRemoveNode(dockspaceID); //clears panel layout from .ini file
-	ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace); //creates main grid panel
-	ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size); //sets main grid panel size to whole viewport
+	ImGui::DockBuilderRemoveNode(dockspaceID); // clears panel layout from .ini file
+	ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace); // creates main grid panel
+	ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size); // sets main grid panel size to whole viewport
 
-	//splits main panel to 2 panels, 30% left docking for inspector and 70% for game
-	unsigned int leftPanelID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left, defaultSidebarRatio, nullptr, &dockspaceID);
+	// splits main panel to 4 panels: hierarchy, inspector, viewport, fileBrowser
+	unsigned int hierarchyPanelID   = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left,  defaultHierarchyRatio,   nullptr, &dockspaceID);
+	unsigned int inspectorPanelID   = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, defaultInspectorRatio,   nullptr, &dockspaceID);
+	unsigned int fileBrowserPanelID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Down, defaultFileBrowserRatio, nullptr, &dockspaceID);
 
-	ImGui::DockBuilderDockWindow(inspectorName, leftPanelID); //sets inspector to left panel
+	ImGui::DockBuilderDockWindow(hierarchyName,   hierarchyPanelID);
+	ImGui::DockBuilderDockWindow(inspectorName,   inspectorPanelID);
+	ImGui::DockBuilderDockWindow(fileBrowserName, fileBrowserPanelID);
+	ImGui::DockBuilderDockWindow(viewportName,    dockspaceID);
+	
 	ImGui::DockBuilderFinish(dockspaceID);
 }
 
@@ -142,12 +170,12 @@ void EditorGUIContext::SetInputCapture(bool enabled)
 
 	if (enabled)
 	{
-		//enable mouse interaction, remove noMouse flag
+		// enable mouse interaction, remove noMouse flag
 		io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 	}
 	else
 	{
-		//disable interactions, add noMouse flag and set mouse pos outside window
+		// disable interactions, add noMouse flag and set mouse pos outside window
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		io.MousePos = ImVec2(-1.0f, -1.0f);
 	}

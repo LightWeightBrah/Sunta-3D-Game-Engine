@@ -116,16 +116,16 @@ namespace Sunta
 	
 		scene->Render(renderer);
 
-		EditorGUIContext::NewFrame(window.get());
+		EditorGUIContext::RenderUI(window.get(), scene->GetEntityManager());
 		
-		EditorGUIContext::BeginDockingSpace(window.get());
-		
-		EditorGUI::Begin(EditorGUIContext::GetInspectorName());
-		
-		EditorGUI::DrawInspector(scene->GetEntityManager());
-		
-		EditorGUI::End();
-		EditorGUIContext::EndFrame(window.get());
+		//EditorGUIContext::BeginDockingSpace(window.get());
+		//
+		//EditorGUI::Begin(EditorGUIContext::GetInspectorName());
+		//
+		//EditorGUI::DrawInspector(scene->GetEntityManager());
+		//
+		//EditorGUI::End();
+		//EditorGUIContext::EndFrame(window.get());
 	}
 	
 	void Application::Shutdown()

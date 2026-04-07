@@ -6,6 +6,7 @@ namespace Sunta
 
 class Window;
 class EditorGUIBackend;
+class EntityManager;
 struct EngineModeChangedEvent;
 
 class EditorGUIContext
@@ -24,13 +25,21 @@ public:
 
 	inline static const char* GetInspectorName() { return inspectorName; }
 
+	static void RenderUI(Window* window, EntityManager& entityManager);
 private:
 	static std::unique_ptr<EditorGUIBackend> backend;
 	static unsigned int engineModeChangeID;
 
-	static constexpr float defaultSidebarRatio		= 0.3f; //30% screen width
+	static constexpr float defaultFileBrowserRatio	= 0.25f; // 25% screen height
 
-	static constexpr const char* inspectorName		= "Sunta Engine Editor";
+	static constexpr float defaultHierarchyRatio	= 0.2f;	 // 20% screen width
+	static constexpr float defaultInspectorRatio	= 0.25f; // 20% screen width
+	//								from 80% take 25% so we have 60% viewport from initial screen
+
+	static constexpr const char* viewportName		= "Viewport";
+	static constexpr const char* fileBrowserName    = "File Browser";
+	static constexpr const char* inspectorName		= "Inspector";
+	static constexpr const char* hierarchyName		= "Hierarchy";
 	static constexpr const char* rootWindowID		= "Main Viewport Docking Window";
 	static constexpr const char* mainDockingSpaceID = "Editor Docking Space";
 	

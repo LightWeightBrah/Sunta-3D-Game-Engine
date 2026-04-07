@@ -27,7 +27,7 @@ namespace Sunta
 	
 		EngineMode currentEngineMode = EngineMode::Game;
 	
-		unsigned int WINDOW_WIDTH	=	1200;
+		unsigned int WINDOW_WIDTH	=	1600;
 		unsigned int WINDOW_HEIGHT	=	800;
 	
 		bool isRunning = true;

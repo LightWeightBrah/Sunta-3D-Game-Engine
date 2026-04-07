@@ -27,9 +27,13 @@ public:
 	static bool Button(const std::string& label);
 
 	static void DrawInspector(EntityManager& entityManager);
+	static void DrawHierarchy(EntityManager& entityManager);
 	static void ClearFocus();
 
+	static void DrawFileBrowser();
 private:
+	static inline int selectedEntity = -1;
+	
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
 	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
