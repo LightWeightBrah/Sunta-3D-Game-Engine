@@ -132,6 +132,7 @@ void EditorGUI::DrawFileBrowser()
 
 	float cellSize = 90.0f;
 	float panelWidth = ImGui::GetContentRegionAvail().x;
+	int padding	= 15;
 	int columns = static_cast<int>(panelWidth / cellSize);
 	if (columns < 1)
 		columns = 1;
@@ -142,14 +143,14 @@ void EditorGUI::DrawFileBrowser()
 	if (currentDirectory.empty())
 	{
 		// Sunta Engine Folder
-		if (ImGui::Button("[ENGINE]", ImVec2(cellSize - 15, cellSize - 15)))
+		if (ImGui::Button("[ENGINE]", ImVec2(cellSize - padding, cellSize - padding)))
 			currentDirectory = "res/Sunta";
 
 		ImGui::Text("Sunta res");
 		ImGui::NextColumn();
 
 		// Game Folder
-		if(ImGui::Button("[GAME]", ImVec2(cellSize - 15, cellSize - 15)))
+		if(ImGui::Button("[GAME]", ImVec2(cellSize - padding, cellSize - padding)))
 			currentDirectory =  "res/Game";
 
 		ImGui::Text("Game res");
@@ -181,7 +182,7 @@ void EditorGUI::DrawFileBrowser()
 			if (path.extension() == ".png")
 				label = "[IMG]";
 
-			if (ImGui::Button(label, ImVec2(cellSize - 15, cellSize - 15)))
+			if (ImGui::Button(label, ImVec2(cellSize - padding, cellSize - padding)))
 			{
 				if (isDirectory)
 					currentDirectory /= path.filename(); // connect together filepaths
@@ -189,7 +190,7 @@ void EditorGUI::DrawFileBrowser()
 					selectedFile = path; // select file
 			}
 
-			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + cellSize - 15);
+			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + cellSize - padding);
 			ImGui::Text("%s", filename.c_str());
 			ImGui::PopTextWrapPos();
 
