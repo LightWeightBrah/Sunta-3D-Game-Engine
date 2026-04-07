@@ -66,6 +66,11 @@ namespace Sunta
 		Renderer::Init();
 		ResourceManager::Init(Renderer::GetDevice());
 
+		ResourceManager::LoadEditorIcon("Folder",	"res/Sunta/Textures/folderIcon.png");
+		ResourceManager::LoadEditorIcon("File",		"res/Sunta/Textures/fileIcon.png");
+		ResourceManager::LoadEditorIcon("Shader",	"res/Sunta/Textures/shaderIcon.png");
+		ResourceManager::LoadEditorIcon("Image",	"res/Sunta/Textures/imageIcon.png");
+
 		scene = std::make_unique<Scene>();
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
 

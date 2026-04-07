@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
-
+#include <filesystem>
 
 namespace Sunta
 {
@@ -33,6 +33,9 @@ public:
 	static void DrawFileBrowser();
 private:
 	static inline int selectedEntity = -1;
+
+	static inline std::filesystem::path currentDirectory = "";
+	static inline std::filesystem::path selectedFile	 = "";
 	
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);

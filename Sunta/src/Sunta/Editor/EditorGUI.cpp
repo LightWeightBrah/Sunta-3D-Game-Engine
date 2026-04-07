@@ -86,7 +86,6 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		{
 			selectedEntity = static_cast<int>(entityID);
 		}
-
 		
 	}
 }
@@ -110,6 +109,96 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 	// here we stop using that uniqueID for ImGUI and we go back to defualt mode
 	ImGui::PopID();
 
+}
+
+void EditorGUI::DrawFileBrowser()
+{
+	if (currentDirectory.empty())
+	{
+		ImGui::Text("Select file:");
+	}
+	else
+	{
+		if (ImGui::Button("<--- Back to root"))
+		{
+			currentDirectory = "";
+		}
+
+		ImGui::SameLine();
+		ImGui::Text("Path: %s", currentDirectory.string().c_str());
+	}
+
+	ImGui::Separator();
+
+	float cellSize = 90.0f;
+	float panelWidth = ImGui::GetContentRegionAvail().x;
+	int columns = static_cast<int>(panelWidth / cellSize);
+	if (columns < 1)
+		columns = 1;
+
+	ImGui::Columns(columns, nullptr, false);
+
+	// we are in root
+	if (currentDirectory.empty())
+	{
+		// Sunta Engine Folder
+		if (ImGui::Button("[ENGINE]", ImVec2(cellSize - 15, cellSize - 15)))
+			currentDirectory = "res/Sunta";
+
+		ImGui::Text("Sunta res");
+		ImGui::NextColumn();
+
+		// Game Folder
+		if(ImGui::Button("[GAME]", ImVec2(cellSize - 15, cellSize - 15)))
+			currentDirectory =  "res/Game";
+
+		ImGui::Text("Game res");
+	}
+	else // if we are inside other folder
+	{
+		if (!std::filesystem::exists(currentDirectory))
+		{
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Missing res folder");
+			return;
+		}
+
+		for (auto& entry : std::filesystem::directory_iterator(currentDirectory))
+		{
+			const auto& path = entry.path();
+			std::string filename = path.filename().string();
+
+			// ignore files like .gitkeep
+			if (filename[0] == '.')
+				continue;
+
+			ImGui::PushID(filename.c_str());
+
+			bool isDirectory = entry.is_directory();
+
+			const char* label = isDirectory ? "[DIR]" : "[FILE]";
+			if (path.extension() == ".shader")
+				label = "[FX]";
+			if (path.extension() == ".png")
+				label = "[IMG]";
+
+			if (ImGui::Button(label, ImVec2(cellSize - 15, cellSize - 15)))
+			{
+				if (isDirectory)
+					currentDirectory /= path.filename(); // connect together filepaths
+				else
+					selectedFile = path; // select file
+			}
+
+			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + cellSize - 15);
+			ImGui::Text("%s", filename.c_str());
+			ImGui::PopTextWrapPos();
+
+			ImGui::NextColumn();
+			ImGui::PopID();
+		}
+	}
+
+	ImGui::Columns(1); // column reset
 }
 
 void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
@@ -221,9 +310,6 @@ void EditorGUI::ClearFocus()
 }
 
 
-void EditorGUI::DrawFileBrowser()
-{
 
-}
 
 }

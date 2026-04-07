@@ -32,10 +32,12 @@ class ResourceManager
 public:
 	static void Init(RendererDevice& device) { rendererDevice = &device; }
 
-	static void LoadModel   (const std::string& name, const std::string& filepath);
-	static void LoadTexture (const std::string& name, const std::string& filepath);
-	static void LoadShader  (const std::string& name, const std::string& filepath);
+	static void LoadEditorIcon  (const std::string& name, const std::string& filepath);
+	static void LoadModel       (const std::string& name, const std::string& filepath);
+	static void LoadTexture     (const std::string& name, const std::string& filepath);
+	static void LoadShader      (const std::string& name, const std::string& filepath);
 		
+	static std::shared_ptr<Texture> GetEditorIcon      (const std::string& name);
 	static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
 	static std::shared_ptr<Texture>	  GetTextureData     (const std::string& name);
 	static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);
@@ -46,6 +48,7 @@ public:
 private:
 	inline static RendererDevice* rendererDevice;
 
+	inline static std::map<std::string, std::shared_ptr<Texture>>    editorIconsRegistered;
 	inline static std::map<std::string, std::shared_ptr<ModelData>>  modelsRegistered;
 	inline static std::map<std::string, std::shared_ptr<Texture>>	 texturesRegistered;
 	inline static std::map<std::string, std::shared_ptr<Shader>>	 shadersRegistered;

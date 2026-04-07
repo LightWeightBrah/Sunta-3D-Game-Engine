@@ -12,6 +12,26 @@
 namespace Sunta
 {
 
+void ResourceManager::LoadEditorIcon(const std::string& name, const std::string& filepath)
+{
+	if (editorIconsRegistered.count(name))
+	{
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find editor icon named: '{0}' filepath: '{1}'", name, filepath);
+		return;
+	}
+
+	if (!rendererDevice)
+	{
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Renderer device is NULL! You should call Renderer.Init() first");
+		return;
+	}
+
+	auto iconTexture = rendererDevice->CreateTexture(filepath);
+	editorIconsRegistered[name] = iconTexture;
+
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Editor Icon: '{0}' filepath: '{1}'", name, filepath);
+}
+
 void ResourceManager::LoadModel(const std::string& name, const std::string& filepath)
 {
 	if (modelsRegistered.count(name))
@@ -76,6 +96,17 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& fil
 	shadersRegistered[name] = shader;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, filepath);
+}
+
+std::shared_ptr<Texture> ResourceManager::GetEditorIcon(const std::string& name)
+{
+	auto it = editorIconsRegistered.find(name);
+	if (it == editorIconsRegistered.end())
+	{
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetEditorIcon: Couldn't find Editor Icon named: '{0}'", name);
+		return nullptr;
+	}
+	return it->second;
 }
 
 std::shared_ptr<ModelData> ResourceManager::GetModelData(const std::string& name)
