@@ -46,9 +46,9 @@ std::shared_ptr<VertexArray> OpenGLDevice::CreateVertexArray()
 	return std::make_shared<OpenGLVertexArray>();
 }
 
-std::shared_ptr<Texture> OpenGLDevice::CreateTexture(const std::string& filepath)
+std::shared_ptr<Texture> OpenGLDevice::CreateTexture(const std::string& filepath, bool flip)
 {
-	return std::make_shared<OpenGLTexture>(filepath);
+	return std::make_shared<OpenGLTexture>(filepath, flip);
 }
 
 std::shared_ptr<Shader> OpenGLDevice::CreateShader(const std::string& filepath)

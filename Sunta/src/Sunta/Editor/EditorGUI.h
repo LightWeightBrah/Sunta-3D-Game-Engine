@@ -40,6 +40,7 @@ private:
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
 	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
+	static std::string GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory);
 
 };
 

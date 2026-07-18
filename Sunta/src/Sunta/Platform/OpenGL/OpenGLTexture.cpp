@@ -9,15 +9,15 @@
 
 namespace Sunta
 {
-OpenGLTexture::OpenGLTexture(const std::string& filepath) 
-	: Texture(filepath)
+OpenGLTexture::OpenGLTexture(const std::string& filepath, bool flip)
+	: Texture(filepath, flip)
 	, id(0)
 	, data(nullptr)
 	, width(0)
 	, height(0)
 	, nrChannels(0)
 {
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(flip);
 	data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
 	if (!data)
 	{

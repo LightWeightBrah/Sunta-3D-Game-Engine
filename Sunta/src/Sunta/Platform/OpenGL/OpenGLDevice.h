@@ -15,7 +15,7 @@ public:
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) override;
 	virtual std::shared_ptr<ElementBuffer> CreateElementBuffer(const BufferDescriptor& descriptor) override;
 	virtual std::shared_ptr<VertexArray>   CreateVertexArray() override;
-	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath) override;
+	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath, bool flip = true) override;
 	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) override;
 };
 

@@ -37,7 +37,7 @@ public:
 	static void LoadTexture     (const std::string& name, const std::string& filepath);
 	static void LoadShader      (const std::string& name, const std::string& filepath);
 		
-	static std::shared_ptr<Texture> GetEditorIcon      (const std::string& name);
+	static std::shared_ptr<Texture>	  GetEditorIcon      (const std::string& name);
 	static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
 	static std::shared_ptr<Texture>	  GetTextureData     (const std::string& name);
 	static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);

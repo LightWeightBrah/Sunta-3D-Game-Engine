@@ -26,7 +26,7 @@ void ResourceManager::LoadEditorIcon(const std::string& name, const std::string&
 		return;
 	}
 
-	auto iconTexture = rendererDevice->CreateTexture(filepath);
+	auto iconTexture = rendererDevice->CreateTexture(filepath, false);
 	editorIconsRegistered[name] = iconTexture;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Editor Icon: '{0}' filepath: '{1}'", name, filepath);

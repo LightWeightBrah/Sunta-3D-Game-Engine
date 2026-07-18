@@ -66,10 +66,20 @@ namespace Sunta
 		Renderer::Init();
 		ResourceManager::Init(Renderer::GetDevice());
 
-		ResourceManager::LoadEditorIcon("Folder",	"res/Sunta/Textures/folderIcon.png");
-		ResourceManager::LoadEditorIcon("File",		"res/Sunta/Textures/fileIcon.png");
-		ResourceManager::LoadEditorIcon("Shader",	"res/Sunta/Textures/shaderIcon.png");
-		ResourceManager::LoadEditorIcon("Image",	"res/Sunta/Textures/imageIcon.png");
+		ResourceManager::LoadEditorIcon("defualt_folder",	"res/Sunta/Textures/Icons/defualt_folder_icon.png");
+		ResourceManager::LoadEditorIcon("cpp_folder",		"res/Sunta/Textures/Icons/cpp_folder_icon.png");
+		ResourceManager::LoadEditorIcon("3d_model_folder",	"res/Sunta/Textures/Icons/3d_model_folder_icon.png");
+		ResourceManager::LoadEditorIcon("shader_folder",	"res/Sunta/Textures/Icons/shader_folder_icon.png");
+		ResourceManager::LoadEditorIcon("image_folder",		"res/Sunta/Textures/Icons/image_folder_icon.png");
+		ResourceManager::LoadEditorIcon("audio_folder",		"res/Sunta/Textures/Icons/audio_folder_icon.png");
+
+
+		ResourceManager::LoadEditorIcon("defualt_file",		"res/Sunta/Textures/Icons/defualt_file_icon.png");
+		ResourceManager::LoadEditorIcon("cpp_file",			"res/Sunta/Textures/Icons/cpp_file_icon.png");
+		ResourceManager::LoadEditorIcon("3d_model_file",	"res/Sunta/Textures/Icons/3d_model_file_icon.png");
+		ResourceManager::LoadEditorIcon("shader_file",		"res/Sunta/Textures/Icons/shader_file_icon.png");
+		ResourceManager::LoadEditorIcon("image_file",		"res/Sunta/Textures/Icons/image_file_icon.png");
+		ResourceManager::LoadEditorIcon("audio_file",		"res/Sunta/Textures/Icons/audio_file_icon.png");
 
 		scene = std::make_unique<Scene>();
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());

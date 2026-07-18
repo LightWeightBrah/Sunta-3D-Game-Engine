@@ -5,9 +5,13 @@
 #include <imgui_internal.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 
+#include <algorithm>
+
 #include "ECS/EntityManager.h"
 #include "ECS/ComponentLayout.h"
 #include "ECS/Component.h"
+#include "Core/ResourceManager.h"
+#include "Renderer/Texture.h"
 
 namespace Sunta
 {
@@ -119,9 +123,9 @@ void EditorGUI::DrawFileBrowser()
 	}
 	else
 	{
-		if (ImGui::Button("<--- Back to root"))
+		if (ImGui::Button("<--- Back"))
 		{
-			currentDirectory = "";
+			currentDirectory = currentDirectory.parent_path();
 		}
 
 		ImGui::SameLine();
@@ -176,19 +180,21 @@ void EditorGUI::DrawFileBrowser()
 
 			bool isDirectory = entry.is_directory();
 
-			const char* label = isDirectory ? "[DIR]" : "[FILE]";
-			if (path.extension() == ".shader")
-				label = "[FX]";
-			if (path.extension() == ".png")
-				label = "[IMG]";
+			std::string iconKey = GetIconKeyForPath(path, isDirectory);
+			auto icon = ResourceManager::GetEditorIcon(iconKey);
+			ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
 
-			if (ImGui::Button(label, ImVec2(cellSize - padding, cellSize - padding)))
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+
+			if (ImGui::ImageButton(("##" + filename).c_str(), textureID, ImVec2(cellSize - padding, cellSize - padding)))
 			{
-				if (isDirectory)
-					currentDirectory /= path.filename(); // connect together filepaths
-				else
-					selectedFile = path; // select file
+				if (isDirectory) 
+					currentDirectory /= path.filename();
+				else 
+					selectedFile = path;
 			}
+
+			ImGui::PopStyleColor();
 
 			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + cellSize - padding);
 			ImGui::Text("%s", filename.c_str());
@@ -200,6 +206,45 @@ void EditorGUI::DrawFileBrowser()
 	}
 
 	ImGui::Columns(1); // column reset
+}
+
+std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory)
+{
+	if (isDirectory)
+	{
+		static const std::unordered_map<std::string, std::string> folderIcons = 
+		{
+			{ "scripts",		"cpp_folder" },			{ "src ",		"cpp_folder" },			{ "cpp ",	"cpp_folder" },
+			{ "models",			"3d_model_folder" },	{ "meshes ",	"3d_model_folder" },
+			{ "shaders",		"shader_folder" },
+			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
+			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" } 
+		};
+
+		std::string name = path.filename().string();
+		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
+		auto it = folderIcons.find(name);
+		return (it != folderIcons.end()) ? it->second : "defualt_folder";
+	}
+	else
+	{
+		static const std::unordered_map<std::string, std::string> fileIcons =
+		{
+			{".shader",		"shader_file"},
+			{".png",		"image_file"},		{".jpg", "image_file"},		{".jpeg", "image_file"},
+			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},
+			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
+			{".wav",		"audio_file"},		{".ogg", "audio_file"}
+		};
+
+		std::string extension = path.extension().string();
+		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+		auto it = fileIcons.find(extension);
+		return (it != fileIcons.end()) ? it->second : "defualt_file";
+
+	}
 }
 
 void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
