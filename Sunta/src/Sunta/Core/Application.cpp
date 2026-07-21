@@ -17,6 +17,7 @@
 #include "ECS/Component.h"
 #include "ResourceManager.h"
 #include "Renderer/RendererAPI.h"
+#include "Assert.h"
 
 namespace Sunta
 {
@@ -38,10 +39,14 @@ namespace Sunta
 	
 			window->Update();
 
+			if (!isRunning)
+				break;
+
+			if (isMinimized)
+				continue;
+
 			ProcessInput();
-	
 			Update(EngineTime::deltaTime);
-	
 			Render();
 
 			InputManager::Clear();
@@ -63,6 +68,17 @@ namespace Sunta
 		EditorGUI::SetDarkTheme();
 
 		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
+		EventBus::Subscribe<WindowResizeEvent>([this](const WindowResizeEvent& event) 
+			{ 
+				if (event.width == 0 || event.height == 0)
+				{
+					isMinimized = true;
+					return;
+				}
+
+				isMinimized = false;
+			}
+		);
 
 		Renderer::Init();
 		ResourceManager::Init(Renderer::GetDevice());
@@ -124,16 +140,11 @@ namespace Sunta
 	
 	void Application::Render()
 	{
+		SUNTA_ASSERT(scene, "CRITIC ERROR: Scene CAN'T BE NULL during Render");
+
 		Renderer::Clear(0.02f, 0.01f, 0.01f, 1.0f);
 	
-		if (!scene)
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Scene is NULL during Render");
-			return;
-		}
-	
 		scene->Render(renderer);
-
 		EditorGUIContext::RenderUI(window.get(), scene->GetEntityManager());
 		
 		//EditorGUIContext::BeginDockingSpace(window.get());

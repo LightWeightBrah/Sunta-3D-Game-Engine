@@ -84,11 +84,18 @@ void Camera::HandleScrolling(float yOffset)
 	
 void Camera::UpdateProjectionMatrix()
 {
+	if (aspectRatio <= 0.0f)
+		return;
+
 	projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 100.0f);
 }
 	
 void Camera::SetViewportSize(float windowWidth, float windowHeight)
 {
+	// Don't calculate aspect ratio if window is minimzed (thus width and height = 0 when minimized)
+	if (windowWidth <= 0.0f || windowHeight <= 0.0f)
+		return;
+
 	aspectRatio = windowWidth / windowHeight;
 	UpdateProjectionMatrix();
 }

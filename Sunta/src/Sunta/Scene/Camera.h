@@ -56,7 +56,7 @@ private:
 	bool		 stayOnHeight		=  false;
 				 							   
 	glm::mat4	 projectionMatrix	=  glm::mat4(1.0f);
-	float		 aspectRatio		=  0.0f;
+	float		 aspectRatio		=  16.0 / 9.0f; // safety for first frame
 				 
 	bool		 isLocked			=  false;
 	unsigned int subscriptionID;

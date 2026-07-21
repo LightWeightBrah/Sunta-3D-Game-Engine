@@ -30,7 +30,8 @@ namespace Sunta
 		unsigned int WINDOW_WIDTH	=	1600;
 		unsigned int WINDOW_HEIGHT	=	800;
 	
-		bool isRunning = true;
+		bool isRunning   = true;
+		bool isMinimized = false;
 
 		void Init();
 		void ProcessInput();

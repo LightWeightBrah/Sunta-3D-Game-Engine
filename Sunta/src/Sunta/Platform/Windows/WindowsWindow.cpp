@@ -71,14 +71,21 @@ void WindowsWindow::SetCallbacks()
 {
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
-			//we must do this to set new width, height, cause of lambda
-			//we cant do here this->width = width
+			// If we are closing the window don't publish resize events
+			if (glfwWindowShouldClose(window))
+				return;
+
+			// only publish resize event if window isn't minimized
+			if (width <= 0 || height <= 0)
+				return;
+
+			// we must do this to set new width, height, cause of lambda
+			// we cant do here this->width = width
 			auto& data = *(WindowsWindow*)glfwGetWindowUserPointer(window);
 			data.width = width;
 			data.height = height;
 
 			EventBus::Publish(WindowResizeEvent{ width, height });
-
 		});
 
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPosition, double yPosition)
@@ -104,6 +111,7 @@ void WindowsWindow::SetCallbacks()
 
 	glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
+			glfwHideWindow(window);
 			EventBus::Publish(WindowCloseEvent{});
 
 		});
@@ -123,8 +131,12 @@ void WindowsWindow::Shutdown()
 
 void WindowsWindow::Update()
 {
-	graphicsContext->SwapBuffers();
 	glfwPollEvents();
+	
+	if (glfwWindowShouldClose(window))
+		return;
+
+	graphicsContext->SwapBuffers();
 }
 
 void WindowsWindow::EnableMouseCursor(bool enabled)
