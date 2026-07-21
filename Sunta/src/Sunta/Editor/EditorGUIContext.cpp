@@ -96,14 +96,17 @@ void EditorGUIContext::RenderUI(Window* window, EntityManager& entityManager)
 	EditorGUIContext::BeginDockingSpace(window);
 		
 	EditorGUI::Begin(inspectorName);
+	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
 	EditorGUI::DrawInspector(entityManager);
 	EditorGUI::End();
 
 	EditorGUI::Begin(hierarchyName);
+	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
 	EditorGUI::DrawHierarchy(entityManager);
 	EditorGUI::End();
 
 	EditorGUI::Begin(fileBrowserName);
+	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
 	EditorGUI::DrawFileBrowser();
 	EditorGUI::End();
 

@@ -25,8 +25,6 @@ void WindowsOpenGLEditorGUIBackend::Init(void* window)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;		// Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;     // Enable Pulling Window Out Of Application
 
-	ImGui::StyleColorsDark();
-
 	//ImGuiStyle& style = ImGui::GetStyle();
 	//style.ScaleAllSizes(main_scale);
 	//style.FontScaleDpi = main_scale;

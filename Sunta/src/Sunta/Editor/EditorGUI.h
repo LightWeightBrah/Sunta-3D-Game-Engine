@@ -31,6 +31,9 @@ public:
 	static void ClearFocus();
 
 	static void DrawFileBrowser();
+
+	static void SetDarkTheme();
+	static void DrawWindowBackground(const std::string& textureKey, glm::vec4 tintColor = glm::vec4(1.0f));
 private:
 	static inline int selectedEntity = -1;
 

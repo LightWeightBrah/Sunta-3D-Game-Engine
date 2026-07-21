@@ -208,6 +208,144 @@ void EditorGUI::DrawFileBrowser()
 	ImGui::Columns(1); // column reset
 }
 
+void EditorGUI::SetDarkTheme()
+{
+	auto& style = ImGui::GetStyle();
+	auto* colors = style.Colors;
+
+	// =========================================================
+	// 1. Style Geometry & Padding
+	// =========================================================
+	style.WindowRounding = 0.0f; // Rounding of window corners
+	style.FrameRounding = 2.0f; // Rounding of buttons and input frames
+	style.ChildRounding = 0.0f; // Rounding of child windows
+	style.GrabRounding = 2.0f; // Rounding of slider grabs
+
+	style.WindowBorderSize = 0.0f; // Outer border size for active windows
+	style.FrameBorderSize = 1.0f; // Border size around interactive frames
+	style.PopupBorderSize = 1.0f; // Border size around popup menus
+	style.TabBorderSize = 0.0f; // Border size for tabs
+
+	style.WindowPadding = ImVec2(8.0f, 8.0f); // Outer padding inside windows
+	style.FramePadding = ImVec2(4.0f, 3.0f); // Inner padding inside widgets
+	style.ItemSpacing = ImVec2(8.0f, 4.0f); // Spacing between widgets
+	style.ItemInnerSpacing = ImVec2(4.0f, 4.0f); // Spacing inside multi-part widgets
+
+	// =========================================================
+	// 2. Windows & Backgrounds
+	// =========================================================
+	colors[ImGuiCol_WindowBg] = ImVec4(0.08f, 0.07f, 0.06f, 1.00f); // Main window background
+	colors[ImGuiCol_ChildBg] = ImVec4(0.05f, 0.04f, 0.04f, 1.00f); // Child window background
+	colors[ImGuiCol_PopupBg] = ImVec4(0.10f, 0.08f, 0.07f, 1.00f); // Context menus and popups
+
+	// =========================================================
+	// 3. Title Bars & Menu Bar
+	// =========================================================
+	colors[ImGuiCol_TitleBg] = ImVec4(0.12f, 0.10f, 0.08f, 1.00f); // Inactive title bar
+	colors[ImGuiCol_TitleBgActive] = ImVec4(0.18f, 0.12f, 0.10f, 1.00f); // Focused title bar
+	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.08f, 0.07f, 0.06f, 0.75f); // Collapsed title bar
+	colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.08f, 0.07f, 1.00f); // Main menu bar background
+
+	// =========================================================
+	// 4. Borders & Separators
+	// =========================================================
+	colors[ImGuiCol_Border] = ImVec4(0.30f, 0.05f, 0.05f, 0.80f); // Dark red border tint
+	colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f); // Border drop shadow
+	colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];            // Default separator color
+	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.50f, 0.15f, 0.15f, 1.00f); // Separator on mouse hover
+	colors[ImGuiCol_SeparatorActive] = ImVec4(0.50f, 0.20f, 0.15f, 1.00f); // Separator when clicked/dragged
+
+	// =========================================================
+	// 5. Input Fields & Text Selection
+	// =========================================================
+	colors[ImGuiCol_FrameBg] = ImVec4(0.12f, 0.10f, 0.09f, 1.00f); // Background for input boxes & checkmarks
+	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.20f, 0.15f, 0.13f, 1.00f); // Hovered input box background
+	colors[ImGuiCol_FrameBgActive] = ImVec4(0.25f, 0.18f, 0.15f, 1.00f); // Active/editing input box background
+	colors[ImGuiCol_TextSelectedBg] = ImVec4(0.50f, 0.20f, 0.20f, 0.43f); // Selected text highlight color
+
+	// =========================================================
+	// 6. Buttons & Collapsible Headers
+	// =========================================================
+	colors[ImGuiCol_Button] = ImVec4(0.18f, 0.14f, 0.12f, 1.00f); // Normal button color
+	colors[ImGuiCol_ButtonHovered] = ImVec4(0.30f, 0.18f, 0.15f, 1.00f); // Hovered button color
+	colors[ImGuiCol_ButtonActive] = ImVec4(0.50f, 0.15f, 0.15f, 1.00f); // Pressed button color
+
+	colors[ImGuiCol_Header] = ImVec4(0.20f, 0.12f, 0.10f, 1.00f); // CollapsingHeader / TreeNode header
+	colors[ImGuiCol_HeaderHovered] = ImVec4(0.35f, 0.15f, 0.12f, 1.00f); // Hovered header
+	colors[ImGuiCol_HeaderActive] = ImVec4(0.50f, 0.20f, 0.15f, 1.00f); // Selected/Active header
+
+	// =========================================================
+	// 7. Checkmarks, Sliders & Resize Handles
+	// =========================================================
+	colors[ImGuiCol_CheckMark] = ImVec4(0.80f, 0.20f, 0.20f, 1.00f); // Checkbox tick color
+	colors[ImGuiCol_SliderGrab] = ImVec4(0.60f, 0.20f, 0.20f, 1.00f); // Slider handle color
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.90f, 0.25f, 0.25f, 1.00f); // Slider handle while dragging
+
+	colors[ImGuiCol_ResizeGrip] = ImVec4(0.18f, 0.14f, 0.12f, 1.00f); // Window resize corner handle
+	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.30f, 0.18f, 0.15f, 1.00f); // Hovered resize handle
+	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.50f, 0.15f, 0.15f, 1.00f); // Active resize handle
+
+	// =========================================================
+	// 8. Tabs & Tab Bars
+	// =========================================================
+	colors[ImGuiCol_Tab] = ImVec4(0.12f, 0.10f, 0.08f, 1.00f); // Inactive tab
+	colors[ImGuiCol_TabHovered] = ImVec4(0.25f, 0.15f, 0.12f, 1.00f); // Hovered tab
+	colors[ImGuiCol_TabActive] = ImVec4(0.12f, 0.10f, 0.08f, 1.00f); // Active/focused tab
+	colors[ImGuiCol_TabUnfocused] = ImVec4(0.08f, 0.07f, 0.06f, 1.00f); // Inactive tab in unfocused window
+	colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.12f, 0.10f, 0.08f, 1.00f); // Active tab in unfocused window
+
+	colors[ImGuiCol_TabSelectedOverline] = ImVec4(0.50f, 0.15f, 0.15f, 1.00f); // Red accent overline on active tab
+	colors[ImGuiCol_TabDimmedSelectedOverline] = ImVec4(0.20f, 0.12f, 0.10f, 1.00f); // Accent overline on unfocused active tab
+
+	// =========================================================
+	// 9. Scrollbars
+	// =========================================================
+	colors[ImGuiCol_ScrollbarBg] = ImVec4(0.05f, 0.04f, 0.04f, 1.00f); // Scrollbar track background
+	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.18f, 0.14f, 0.12f, 1.00f); // Scrollbar grab handle
+	colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.30f, 0.18f, 0.15f, 1.00f); // Hovered scrollbar grab handle
+	colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.50f, 0.15f, 0.15f, 1.00f); // Active scrollbar grab handle
+
+	// =========================================================
+	// 10. Docking & Drag and Drop
+	// =========================================================
+	colors[ImGuiCol_DockingPreview] = ImVec4(0.50f, 0.20f, 0.15f, 0.40f); // Preview area when docking windows
+	colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.08f, 0.07f, 0.06f, 1.00f); // Background for empty docking nodes
+	colors[ImGuiCol_DragDropTarget] = ImVec4(0.80f, 0.20f, 0.20f, 1.00f); // Target highlight when dragging elements
+
+	// =========================================================
+	// 11. Navigation & Focus Highlights
+	// =========================================================
+	colors[ImGuiCol_NavHighlight] = ImVec4(0.50f, 0.15f, 0.15f, 1.00f); // Keyboard/gamepad navigation highlight
+	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.20f); // Highlight during window switching (Ctrl+Tab)
+	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.05f, 0.04f, 0.04f, 0.20f); // Background dimming during window switching
+}
+
+void EditorGUI::DrawWindowBackground(const std::string& textureKey, glm::vec4 tintColor)
+{
+	const auto background = ResourceManager::GetEditorIcon(textureKey);
+	if (!background)
+		return;
+
+	ImTextureID textureID = (ImTextureID)(uintptr_t)background->GetID();
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 position = ImGui::GetWindowPos();
+	ImVec2 size = ImGui::GetWindowSize();
+
+	float textureWidth = static_cast<float>(background->GetWidth());
+	float textureHeight = static_cast<float>(background->GetHeight());
+
+	// UV = teture coordinates (0.0 to 1.0), scaling by (windowSize /  textureSize) repeats texture (tiling)
+	ImVec2 uv0 = ImVec2(0, 0); // 0.0 in textures is top left corner)
+	ImVec2 uv1 = ImVec2(size.x / textureWidth, size.y / textureHeight); // 1.0 in textures is bottom right corner
+
+	ImVec4 imguiColor = ImVec4(tintColor.r, tintColor.g, tintColor.b, tintColor.a);
+
+	drawList->AddImage(textureID, position, ImVec2(position.x + size.x, position.y + size.y),
+		ImVec2(0, 0), ImVec2(size.x / textureWidth, size.y / textureHeight),
+		ImGui::GetColorU32(imguiColor));
+
+}
+
 std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory)
 {
 	if (isDirectory)

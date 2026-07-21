@@ -60,6 +60,7 @@ namespace Sunta
 
 		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
 		EditorGUIContext::Init(window.get());
+		EditorGUI::SetDarkTheme();
 
 		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
 
@@ -73,13 +74,15 @@ namespace Sunta
 		ResourceManager::LoadEditorIcon("image_folder",		"res/Sunta/Textures/Icons/image_folder_icon.png");
 		ResourceManager::LoadEditorIcon("audio_folder",		"res/Sunta/Textures/Icons/audio_folder_icon.png");
 
-
 		ResourceManager::LoadEditorIcon("defualt_file",		"res/Sunta/Textures/Icons/defualt_file_icon.png");
 		ResourceManager::LoadEditorIcon("cpp_file",			"res/Sunta/Textures/Icons/cpp_file_icon.png");
 		ResourceManager::LoadEditorIcon("3d_model_file",	"res/Sunta/Textures/Icons/3d_model_file_icon.png");
 		ResourceManager::LoadEditorIcon("shader_file",		"res/Sunta/Textures/Icons/shader_file_icon.png");
 		ResourceManager::LoadEditorIcon("image_file",		"res/Sunta/Textures/Icons/image_file_icon.png");
 		ResourceManager::LoadEditorIcon("audio_file",		"res/Sunta/Textures/Icons/audio_file_icon.png");
+		
+		ResourceManager::LoadEditorIcon("editor_window_bg",	"res/Sunta/Textures/ui/editor_window_background.jpg");
+		ResourceManager::LoadEditorIcon("file_browser_bg",	"res/Sunta/Textures/ui/file_browser_background.jpg");
 
 		scene = std::make_unique<Scene>();
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
@@ -121,7 +124,7 @@ namespace Sunta
 	
 	void Application::Render()
 	{
-		Renderer::Clear(0.05f, 0.05f, 0.05f, 1.0f);
+		Renderer::Clear(0.02f, 0.01f, 0.01f, 1.0f);
 	
 		if (!scene)
 		{

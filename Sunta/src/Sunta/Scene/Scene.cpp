@@ -150,7 +150,6 @@ void Scene::Update()
 	
 void Scene::Render(Renderer& renderer)
 {
-	renderer.Clear(0.05f, 0.15f, 0.25f, 1.0f);
 	SceneData sceneData = camera.GetSceneData();
 
 	sceneData.directionalLights.clear();
