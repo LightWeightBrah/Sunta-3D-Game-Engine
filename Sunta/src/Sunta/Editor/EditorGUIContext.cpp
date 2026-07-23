@@ -35,6 +35,9 @@ void EditorGUIContext::Init(Window* window)
 	window->SetAsGraphicsTarget();
 
 	engineModeChangeID = EventBus::Subscribe<EngineModeChangedEvent>(EditorGUIContext::OnEngineModeChanged);
+
+	ImGuiIO& io = ImGui::GetIO();
+	mainFont = io.Fonts->AddFontFromFileTTF("res/Sunta/Fonts/Crimson_Text/CrimsonText-Regular.ttf", fontSize);
 }
 
 void EditorGUIContext::Shutdown(Window* window)
@@ -103,6 +106,9 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 {
 	EditorGUIContext::NewFrame(window);
 
+	if (mainFont)
+		ImGui::PushFont(mainFont);
+
 	EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
 	EditorGUIContext::BeginDockingSpace(window);
 
@@ -120,6 +126,9 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
 	EditorGUI::DrawFileBrowser();
 	EditorGUI::End();
+
+	if (mainFont)
+		ImGui::PopFont();
 
 	EditorGUIContext::EndFrame(window);
 }

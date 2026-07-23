@@ -1,6 +1,9 @@
 #pragma once
 #include <memory>
 
+// ImFont is ImGui's struct so it needs to be in global scope not Sunta namespace
+struct ImFont;
+
 namespace Sunta
 {
 
@@ -31,6 +34,9 @@ private:
 	static std::unique_ptr<EditorGUIBackend> backend;
 	static unsigned int engineModeChangeID;
 
+	static constexpr float fontSize					= 24.0f;
+
+	static inline ImFont* mainFont = nullptr;
 	static constexpr float toolbarHeight			= 36.0f;
 
 	static constexpr float defaultFileBrowserRatio	= 0.25f; // 25% screen height
