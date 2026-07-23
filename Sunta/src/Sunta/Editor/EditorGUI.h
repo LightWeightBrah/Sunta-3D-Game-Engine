@@ -28,7 +28,7 @@ public:
 	static void Text(const std::string& text);
 	static bool Button(const std::string& label);
 
-	static void DrawToolbar(Scene& scene, RendererDevice& rendererDevice);
+	static void DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight);
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser();

@@ -72,11 +72,17 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	if (!backend || !window)
 		return;
 
-	MatchWindowSizeToViewport();
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	ImVec2 dockPos = ImVec2(viewport->WorkPos.x, viewport->WorkPos.y + toolbarHeight);
+	ImVec2 dockSize = ImVec2(viewport->WorkSize.x, viewport->WorkSize.y - toolbarHeight);
+
+	ImGui::SetNextWindowPos(dockPos);
+	ImGui::SetNextWindowSize(dockSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
 	ApplyInvisibleWindowStyle();
-
 	ImGui::Begin(rootWindowID, nullptr, GetRootWindowFlags());
-
 	RestoreNormalWindowStyle();
 
 	unsigned int dockspaceID = ImGui::GetID(mainDockingSpaceID);
@@ -96,9 +102,9 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice)
 {
 	EditorGUIContext::NewFrame(window);
+
+	EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
 	EditorGUIContext::BeginDockingSpace(window);
-		
-	EditorGUI::DrawToolbar(scene, rendererDevice);
 
 	EditorGUI::Begin(inspectorName);
 	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
@@ -143,7 +149,6 @@ int EditorGUIContext::GetRootWindowFlags()
 		 | ImGuiWindowFlags_NoMove
 		 | ImGuiWindowFlags_NoBringToFrontOnFocus
 		 | ImGuiWindowFlags_NoNavFocus
-		 | ImGuiWindowFlags_MenuBar
 		 | ImGuiWindowFlags_NoBackground;
 }
 

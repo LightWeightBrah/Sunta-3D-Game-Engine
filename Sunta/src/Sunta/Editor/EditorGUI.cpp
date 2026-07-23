@@ -63,15 +63,14 @@ bool EditorGUI::Button(const std::string& label)
 	return ImGui::Button(label.c_str());
 }
 
-void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice)
+void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight)
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-	float toolbarHeight = 36.0f;
-	float borderThickness = 4.0f;
-
 	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y));
 	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarHeight));
+
+	float borderThickness = 2.0f;
 
 	ImGuiWindowFlags toolbarFlags =
 		  ImGuiWindowFlags_NoDecoration

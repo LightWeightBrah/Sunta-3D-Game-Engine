@@ -31,6 +31,8 @@ private:
 	static std::unique_ptr<EditorGUIBackend> backend;
 	static unsigned int engineModeChangeID;
 
+	static constexpr float toolbarHeight			= 36.0f;
+
 	static constexpr float defaultFileBrowserRatio	= 0.25f; // 25% screen height
 
 	static constexpr float defaultHierarchyRatio	= 0.2f;	 // 20% screen width
