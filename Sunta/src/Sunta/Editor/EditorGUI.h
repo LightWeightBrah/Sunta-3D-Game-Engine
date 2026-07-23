@@ -9,6 +9,8 @@ class PropertyDefinition;
 class EntityManager;
 class ComponentType;
 class IInspectableStorage;
+class Scene;
+class RendererDevice;
 
 class EditorGUI
 {
@@ -26,11 +28,12 @@ public:
 	static void Text(const std::string& text);
 	static bool Button(const std::string& label);
 
-	static void DrawInspector(EntityManager& entityManager);
+	static void DrawToolbar(Scene& scene, RendererDevice& rendererDevice);
 	static void DrawHierarchy(EntityManager& entityManager);
-	static void ClearFocus();
-
+	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser();
+	
+	static void ClearFocus();
 
 	static void SetDarkTheme();
 	static void DrawWindowBackground(const std::string& textureKey, glm::vec4 tintColor = glm::vec4(1.0f));

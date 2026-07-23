@@ -4,11 +4,14 @@
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
 
-#include "Core/Window.h"
 #include "EditorGUIBackend.h"
+#include "EditorGUI.h"
+
+#include "Core/Window.h"
+#include "Renderer/RendererDevice.h"
+#include "Scene/Scene.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-#include "EditorGUI.h"
 
 namespace Sunta
 {
@@ -90,19 +93,21 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	ImGui::End();
 }
 
-void EditorGUIContext::RenderUI(Window* window, EntityManager& entityManager)
+void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice)
 {
 	EditorGUIContext::NewFrame(window);
 	EditorGUIContext::BeginDockingSpace(window);
 		
+	EditorGUI::DrawToolbar(scene, rendererDevice);
+
 	EditorGUI::Begin(inspectorName);
 	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
-	EditorGUI::DrawInspector(entityManager);
+	EditorGUI::DrawInspector(scene.GetEntityManager());
 	EditorGUI::End();
 
 	EditorGUI::Begin(hierarchyName);
 	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
-	EditorGUI::DrawHierarchy(entityManager);
+	EditorGUI::DrawHierarchy(scene.GetEntityManager());
 	EditorGUI::End();
 
 	EditorGUI::Begin(fileBrowserName);

@@ -6,7 +6,8 @@ namespace Sunta
 
 class Window;
 class EditorGUIBackend;
-class EntityManager;
+class Scene;
+class RendererDevice;
 struct EngineModeChangedEvent;
 
 class EditorGUIContext
@@ -25,7 +26,7 @@ public:
 
 	inline static const char* GetInspectorName() { return inspectorName; }
 
-	static void RenderUI(Window* window, EntityManager& entityManager);
+	static void RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice);
 private:
 	static std::unique_ptr<EditorGUIBackend> backend;
 	static unsigned int engineModeChangeID;

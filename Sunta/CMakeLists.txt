@@ -4,7 +4,7 @@ project(Sunta)
 
 # ========================= ENGINE SOURCES ===============================  
 
-file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp" "src/*.h")
+file(GLOB_RECURSE ENGINE_SOURCES CMAKE_CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 
 #								   REGEX "Regular Expressions"
 list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Platform/.*") # . means any sign (letter, number, / etc.); * means repeat previous sign n times

@@ -12,6 +12,8 @@
 #include "ECS/Component.h"
 #include "Core/ResourceManager.h"
 #include "Renderer/Texture.h"
+#include "Scene/EntityFactory.h"
+#include "Scene/Scene.h"
 
 namespace Sunta
 {
@@ -59,6 +61,74 @@ void EditorGUI::Text(const std::string& text)
 bool EditorGUI::Button(const std::string& label)
 {
 	return ImGui::Button(label.c_str());
+}
+
+void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice)
+{
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	float toolbarHeight = 36.0f;
+	float borderThickness = 4.0f;
+
+	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y));
+	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarHeight));
+
+	ImGuiWindowFlags toolbarFlags =
+		  ImGuiWindowFlags_NoDecoration
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoScrollWithMouse
+		| ImGuiWindowFlags_NoDocking
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoSavedSettings;
+
+	float framePadding = 2.0f;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6.0f, 3.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(framePadding, framePadding));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.3f, 0.3f, 0.5f));
+
+	if (ImGui::Begin("##Toolbar", nullptr, toolbarFlags))
+	{
+		DrawWindowBackground("file_browser_bg", glm::vec4(0.5f, 0.45f, 0.4f, 1.0f));
+		//DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
+
+		float availableHeight = ImGui::GetContentRegionAvail().y - borderThickness;
+		float iconSize = availableHeight - (framePadding * 2);
+
+		auto cubeIcon = ResourceManager::GetEditorIcon("cube");
+		if (cubeIcon)
+		{
+			ImTextureID textureID = (ImTextureID)(uintptr_t)cubeIcon->GetID();
+			if (ImGui::ImageButton("##CreateCubeButton", textureID, ImVec2(iconSize, iconSize)))
+			{
+				EntityFactory::CreateCube(scene, rendererDevice, "Cube", glm::vec3(0.0f, 2.0f, 0.0f));
+			}
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Create Cube Entity");
+		}
+
+		ImVec2 pos = ImGui::GetWindowPos();
+		ImVec2 size = ImGui::GetWindowSize();
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+		ImU32 borderColor = ImGui::GetColorU32(ImGuiCol_Border);
+
+		drawList->AddRectFilled(
+			ImVec2(pos.x,          pos.y + size.y - borderThickness),
+			ImVec2(pos.x + size.x, pos.y + size.y),
+			borderColor);
+
+		ImGui::End();
+	}
+
+	ImGui::PopStyleColor(3);
+	ImGui::PopStyleVar(3);
 }
 
 void EditorGUI::DrawHierarchy(EntityManager& entityManager)
