@@ -12,6 +12,7 @@ class Primitives
 {
 public:
 	static std::unique_ptr<Mesh> CreateCube(RendererDevice& rendererDevice);
+	static std::unique_ptr<Mesh> CreatePyramide(RendererDevice& rendererDevice);
 };
 
 }

@@ -99,18 +99,48 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 		float availableHeight = ImGui::GetContentRegionAvail().y - borderThickness;
 		float iconSize = availableHeight - (framePadding * 2);
 
-		auto cubeIcon = ResourceManager::GetEditorIcon("cube");
-		if (cubeIcon)
+		auto DrawToolbarButton = [&](const char* iconKey, const char* id, const char* tooltip, auto action)
 		{
-			ImTextureID textureID = (ImTextureID)(uintptr_t)cubeIcon->GetID();
-			if (ImGui::ImageButton("##CreateCubeButton", textureID, ImVec2(iconSize, iconSize)))
+			auto icon = ResourceManager::GetEditorIcon(iconKey);
+			if (icon)
 			{
-				EntityFactory::CreateCube(scene, rendererDevice, "Cube", glm::vec3(0.0f, 2.0f, 0.0f));
-			}
+				ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
+				if (ImGui::ImageButton(id, textureID, ImVec2(iconSize, iconSize)))
+					action();
 
-			if (ImGui::IsItemHovered())
-				ImGui::SetTooltip("Create Cube Entity");
-		}
+				if (ImGui::IsItemHovered())
+					ImGui::SetTooltip("%s", tooltip);
+
+				ImGui::SameLine();
+			}
+		};
+
+		DrawToolbarButton("cube", "##CreateCube", "Create Cube Entity", [&]() 
+		{
+			EntityFactory::CreateCube(scene, rendererDevice, "Cube", glm::vec3(0.0f, 2.0f, 0.0f));
+		});
+
+		DrawToolbarButton("pyramid", "##CreatePyramid", "Create Pyramid Entity", [&]()
+		{
+			EntityFactory::CreatePyramid(scene, rendererDevice, "Pyramid", glm::vec3(0.0f, 2.0f, 0.0f));
+		});
+
+		DrawToolbarButton("diectional_light", "##CreateDirectionalLight", "Create Directional Light", [&]()
+		{
+			EntityFactory::CreateDirectionalLight(scene, rendererDevice, "Directional Light", glm::vec3(0.0f, 2.0f, 0.0f));
+		});
+		
+		DrawToolbarButton("point_light", "##CreatePointLight", "Create Point Light", [&]()
+		{
+			EntityFactory::CreatePointLight(scene, rendererDevice, "Point Light", glm::vec3(0.0f, 2.0f, 0.0f));
+		});
+
+		DrawToolbarButton("spotlight", "##CreateSpotLight", "Create Spot Light", [&]()
+		{
+			EntityFactory::CreateSpotLight(scene, rendererDevice, "Spot Light", glm::vec3(0.0f, 2.0f, 0.0f));
+		});
+
+		// Draw bottom line of toolbar
 
 		ImVec2 pos = ImGui::GetWindowPos();
 		ImVec2 size = ImGui::GetWindowSize();

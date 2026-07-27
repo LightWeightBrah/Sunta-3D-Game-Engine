@@ -101,7 +101,7 @@ namespace Sunta
 		ResourceManager::LoadEditorIcon("capsule",				"res/Sunta/Textures/Icons/capsule_icon.png");
 		ResourceManager::LoadEditorIcon("sphere",				"res/Sunta/Textures/Icons/sphere_icon.png");
 		ResourceManager::LoadEditorIcon("cone",					"res/Sunta/Textures/Icons/cone_icon.png");
-		ResourceManager::LoadEditorIcon("pyramide",				"res/Sunta/Textures/Icons/pyramide_icon.png");
+		ResourceManager::LoadEditorIcon("pyramid",				"res/Sunta/Textures/Icons/pyramid_icon.png");
 
 		ResourceManager::LoadEditorIcon("box_collider",			"res/Sunta/Textures/Icons/box_collider_icon.png");
 		ResourceManager::LoadEditorIcon("capsule_collider",		"res/Sunta/Textures/Icons/capsule_collider_icon.png");

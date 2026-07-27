@@ -12,7 +12,7 @@
 namespace Sunta
 {
 
-unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDevice, const std::string& name /*= "Cube"*/, const glm::vec3& position /*= glm::vec3(0.0f)*/)
+unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
 {
 	auto& entityManager = scene.GetEntityManager();
 
@@ -32,20 +32,78 @@ unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDev
 	return cubeEntity;
 }
 
-//TODO: Add light creation
-unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name /*= "Directional Light"*/, const glm::vec3& position /*= glm::vec3(0.0f)*/)
+unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const std::string& name /*= "Pyramid"*/, const glm::vec3& position /*= glm::vec3(0.0f)*/)
 {
-	return 0;
+	auto& entityManager = scene.GetEntityManager();
+
+	auto cubeShader = ResourceManager::GetShaderData("Lit");
+	auto cubeMaterial = std::make_shared<Material>(cubeShader);
+	cubeMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
+		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
+		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
+		.SetShininess(128.0f);
+
+	unsigned int cubeEntity = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(cubeEntity).name = name;
+	entityManager.AddComponent<TransformComponent>(cubeEntity, position);
+	entityManager.AddComponent<WorldMatrixComponent>(cubeEntity);
+	entityManager.AddComponent<MeshComponent>(cubeEntity, Primitives::CreatePyramide(rendererDevice), cubeMaterial);
+
+	return cubeEntity;
 }
 
-unsigned int EntityFactory::CreatePointLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name /*= "Point Light"*/, const glm::vec3& position /*= glm::vec3(0.0f)*/)
+unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
 {
-	return 0;
+	auto& entityManager = scene.GetEntityManager();
+
+	auto lightShader = ResourceManager::GetShaderData("Unlit");
+	auto lightMaterial = std::make_shared<Material>(lightShader);
+
+	unsigned int lightEntity = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(lightEntity).name = name;
+	entityManager.AddComponent<TransformComponent>(lightEntity, position);
+	entityManager.AddComponent<WorldMatrixComponent>(lightEntity);
+	entityManager.AddComponent<MeshComponent>(lightEntity, Primitives::CreateCube(rendererDevice), lightMaterial);
+
+	entityManager.AddComponent<DirectionalLightComponent>(lightEntity);
+
+	return lightEntity;
 }
 
-unsigned int EntityFactory::CreateSpotLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name /*= "Spot Light"*/, const glm::vec3& position /*= glm::vec3(0.0f)*/)
+unsigned int EntityFactory::CreatePointLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
 {
-	return 0;
+	auto& entityManager = scene.GetEntityManager();
+
+	auto lightShader = ResourceManager::GetShaderData("Unlit");
+	auto lightMaterial = std::make_shared<Material>(lightShader);
+
+	unsigned int lightEntity = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(lightEntity).name = name;
+	entityManager.AddComponent<TransformComponent>(lightEntity, position);
+	entityManager.AddComponent<WorldMatrixComponent>(lightEntity);
+	entityManager.AddComponent<MeshComponent>(lightEntity, Primitives::CreateCube(rendererDevice), lightMaterial);
+
+	entityManager.AddComponent<PointLightComponent>(lightEntity);
+
+	return lightEntity;
+}
+
+unsigned int EntityFactory::CreateSpotLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
+{
+	auto& entityManager = scene.GetEntityManager();
+
+	auto lightShader = ResourceManager::GetShaderData("Unlit");
+	auto lightMaterial = std::make_shared<Material>(lightShader);
+
+	unsigned int lightEntity = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(lightEntity).name = name;
+	entityManager.AddComponent<TransformComponent>(lightEntity, position);
+	entityManager.AddComponent<WorldMatrixComponent>(lightEntity);
+	entityManager.AddComponent<MeshComponent>(lightEntity, Primitives::CreateCube(rendererDevice), lightMaterial);
+
+	entityManager.AddComponent<SpotlightComponent>(lightEntity);
+
+	return lightEntity;
 }
 
 }
