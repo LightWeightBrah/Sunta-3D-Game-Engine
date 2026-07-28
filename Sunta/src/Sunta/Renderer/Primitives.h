@@ -14,6 +14,7 @@ public:
 	static std::unique_ptr<Mesh> CreateCube(RendererDevice& rendererDevice);
 	static std::unique_ptr<Mesh> CreatePyramide(RendererDevice& rendererDevice);
 	static std::unique_ptr<Mesh> CreateSphere(RendererDevice& rendererDevice);
+	static std::unique_ptr<Mesh> CreateCapsule(RendererDevice& rendererDevice);
 	static std::unique_ptr<Mesh> CreateCone(RendererDevice& rendererDevice);
 
 private:

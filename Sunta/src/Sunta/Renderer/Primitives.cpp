@@ -276,6 +276,185 @@ std::unique_ptr<Mesh> Primitives::CreateSphere(RendererDevice& rendererDevice)
 	);
 }
 
+// Similar generation to sphere
+std::unique_ptr<Mesh> Primitives::CreateCapsule(RendererDevice& rendererDevice)
+{
+	std::vector<float> capsuleVertices;
+	std::vector<unsigned int> capsuleIndices;
+
+	float radius = 0.5f;
+	float height = 1.0f; // height of the middle cylinder section
+
+	unsigned int hemisphereStack = 16;  // horizontal rings (top - down) per single hemisphere
+	unsigned int sectorCount = 64;		// points on every ring (circle)
+
+	float halfHeight = height * 0.5f;
+
+	// Step size in radians for each loop iteration
+	// 2 * PI = 360 degrees (full circle horizontally)
+	float sectorStep = 2 * PI / sectorCount;
+
+	// from 90 degrees to 0 degrees
+	float stackStep = (PI / 2.0f) / hemisphereStack;
+
+	// total number of horizontal rings along Y-axis
+	const unsigned int totalRings = 2 * hemisphereStack + 2;
+	// total number of quad rows (stacks) connencting rings
+	// number of spaces between N rings is always N - 1
+	const unsigned int stackCount = totalRings - 1;
+
+	// for UV-mapping
+	const float totalCapsuleHeight = height + 2.0f * radius;
+	const float maxY = halfHeight + radius;
+
+	// =================================================
+	//				VERTEX GENERATION				   |
+	// =================================================
+
+	// TOP HEMISPHERE
+	// we are going VERTICALLY
+	for (unsigned int i = 0; i <= hemisphereStack; i++)
+	{
+		// Aangle from (+90 degrees to 0 degrees)
+		float stackAngle = (PI / 2.0f) - (stackStep * i);
+
+		// Vertical position (Y axis):
+		// sin(+90 deg) =  1 -> TOP POLE    (+radius)
+		// sin(  0 deg) =  0 -> EQUATOR     (   0   )
+		float sphereY = radius * std::sin(stackAngle);
+
+		// Radius of the current horizontal ring (slice of sphere)
+		// cos(+90 deg) = 0 -> Ring radius = 0 (just a single point at TOP)
+		// cos(  0 deg) = 1 -> Ring radius = MAXIMUM AT THE EQUATOR
+		float ringRadius = radius * std::cos(stackAngle);
+
+		// loop around the current horizontal ring (0 to 360 degrees)
+		for (unsigned int j = 0; j <= sectorCount; j++)
+		{
+			// Horizontal angle (from 0 to 2Pi) (0 degrees to 360 degrees)
+			float sectorAngle = sectorStep * j;
+
+			// We take the ring radius and we divide it to X and Z:
+			// X = width in left/right (cos of horizontal angle)
+			// Y = Shift Y by + halfheight for top hemisphere
+			// Z = depth in front/back (sin of horizontal angle)
+			float x = ringRadius * std::cos(sectorAngle);
+			float y = sphereY + halfHeight;
+			float z = ringRadius * std::sin(sectorAngle);
+
+			// Normals like typical sphere
+			float normalX = x		/ radius;
+			float normalY = sphereY / radius;
+			float normalZ = z		/ radius;
+
+			float u = (float)j / sectorCount;
+			float v = (maxY - y) / totalCapsuleHeight;
+
+			capsuleVertices.insert(capsuleVertices.end(), { x, y, z, normalX, normalY, normalZ, u, v });
+		}
+	}
+
+	// BOTTOM HEMISPHERE
+	// we are going VERTICALLY
+	for (unsigned int i = 0; i <= hemisphereStack; i++)
+	{
+		// Aangle from (0 degrees to -90 degrees)
+		float stackAngle = 0.0f - (stackStep * i);
+
+		// Vertical position (Y axis):
+		// sin(  0 deg) =  0 -> EQUATOR		   (   0   )
+		// sin(-90 deg) = -1 -> BOTTOM POLE    (-radius)
+		float sphereY = radius * std::sin(stackAngle);
+
+		// Radius of the current horizontal ring (slice of sphere)
+		// cos(  0 deg) = 1 -> Ring radius = MAXIMUM AT THE EQUATOR
+		// cos(-90 deg) = 0 -> Ring radius = 0 (just a single point at BOTTOM)
+		float ringRadius = radius * std::cos(stackAngle);
+
+		// loop around the current horizontal ring (0 to 360 degrees)
+		for (unsigned int j = 0; j <= sectorCount; j++)
+		{
+			// Horizontal angle (from 0 to 2Pi) (0 degrees to 360 degrees)
+			float sectorAngle = sectorStep * j;
+
+			// We take the ring radius and we divide it to X and Z:
+			// X = width in left/right (cos of horizontal angle)
+			// Y = Shift Y by - halfheight for BOTTOM hemisphere
+			// Z = depth in front/back (sin of horizontal angle)
+			float x = ringRadius * std::cos(sectorAngle);
+			float y = sphereY - halfHeight;
+			float z = ringRadius * std::sin(sectorAngle);
+
+			// Normals like typical sphere
+			float normalX = x		/ radius;
+			float normalY = sphereY / radius;
+			float normalZ = z		/ radius;
+
+			float u = (float)j / sectorCount;
+			float v = (maxY - y) / totalCapsuleHeight;
+
+			capsuleVertices.insert(capsuleVertices.end(), { x, y, z, normalX, normalY, normalZ, u, v });
+		}
+	}
+
+
+	// ===============================================
+	//				INDEX GENERATION				 |
+	// ===============================================
+	for (unsigned int i = 0; i < stackCount; i++)
+	{
+		// Each row has (sectorCount + 1) vertices because the last vertex
+		// overlaps the first vertex to complete the texture (UV: 0.0 -> 1.0)
+		unsigned int k1 = i * (sectorCount + 1);		// start of current row
+		unsigned int k2 = k1 + (sectorCount + 1);		// start of row below
+
+		for (unsigned int j = 0; j < sectorCount; j++, k1++, k2++)
+		{
+			// Triangles to connect
+			//
+			// k1 ------- k1 + 1       first row
+			// |     	 /   |
+			// |       /	 |
+			// |	 /       |
+			// |   /      	 |
+			// | /      	 |
+			// k2 ------- k2 + 1       row below
+
+
+			// Triangle 1: Top-left (k1) -> Top-right (k1 + 1) -> Bottom-left (k2)
+			// 
+			// SKIP at TOP POLE (i == 0) cause 2 vertices
+			// are the exact same point (0, halfHeight + radius, 0) and that triangle would have 0 area
+			if (i != 0)
+			{
+				capsuleIndices.push_back(k1);
+				capsuleIndices.push_back(k1 + 1);
+				capsuleIndices.push_back(k2);
+			}
+
+			// Triangle 2: Bottom-left (k2) -> Top-right (k1 + 1) -> Bottom-right(k2 + 1)
+			// 
+			// SKIP at BOTTOm POLE (i == stackCount - 1) cause 2 vertices
+			// are the exact same point (0, -halfHeight - radius, 0) and that triangle would have 0 area
+			if (i != (stackCount - 1))
+			{
+				capsuleIndices.push_back(k2);
+				capsuleIndices.push_back(k1 + 1);
+				capsuleIndices.push_back(k2 + 1);
+			}
+		}
+	}
+
+	return std::make_unique<Mesh>
+	(
+		rendererDevice,
+		capsuleVertices.data(),
+		static_cast<unsigned int>(capsuleVertices.size() * sizeof(float)),
+		std::move(capsuleIndices),
+		VertexLayouts::GetStaticLayout()
+	);
+}
+
 std::unique_ptr<Mesh> Primitives::CreateCone(RendererDevice& rendererDevice)
 {
 	std::vector<float> coneVertices;
