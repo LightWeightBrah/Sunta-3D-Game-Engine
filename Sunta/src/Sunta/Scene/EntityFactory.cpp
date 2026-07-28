@@ -32,7 +32,7 @@ unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDev
 	return cubeEntity;
 }
 
-unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const std::string& name /*= "Pyramid"*/, const glm::vec3& position /*= glm::vec3(0.0f)*/)
+unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
 {
 	auto& entityManager = scene.GetEntityManager();
 
@@ -50,6 +50,26 @@ unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& renderer
 	entityManager.AddComponent<MeshComponent>(cubeEntity, Primitives::CreatePyramide(rendererDevice), cubeMaterial);
 
 	return cubeEntity;
+}
+
+unsigned int EntityFactory::CreateSphere(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
+{
+	auto& entityManager = scene.GetEntityManager();
+
+	auto sphereShader = ResourceManager::GetShaderData("Lit");
+	auto sphereMaterial = std::make_shared<Material>(sphereShader);
+	sphereMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
+		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
+		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
+		.SetShininess(128.0f);
+
+	unsigned int sphereEntity = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(sphereEntity).name = name;
+	entityManager.AddComponent<TransformComponent>(sphereEntity, position);
+	entityManager.AddComponent<WorldMatrixComponent>(sphereEntity);
+	entityManager.AddComponent<MeshComponent>(sphereEntity, Primitives::CreateSphere(rendererDevice), sphereMaterial);
+
+	return sphereEntity;
 }
 
 unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)

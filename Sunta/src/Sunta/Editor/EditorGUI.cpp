@@ -125,6 +125,11 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 			EntityFactory::CreatePyramid(scene, rendererDevice, "Pyramid", glm::vec3(0.0f, 2.0f, 0.0f));
 		});
 
+		DrawToolbarButton("sphere", "##CreateSphere", "Create Sphere Entity", [&]()
+		{
+			EntityFactory::CreateSphere(scene, rendererDevice, "Sphere", glm::vec3(0.0f, 2.0f, 0.0f));
+		});
+
 		DrawToolbarButton("diectional_light", "##CreateDirectionalLight", "Create Directional Light", [&]()
 		{
 			EntityFactory::CreateDirectionalLight(scene, rendererDevice, "Directional Light", glm::vec3(0.0f, 2.0f, 0.0f));
