@@ -159,8 +159,6 @@ std::unique_ptr<Mesh> Primitives::CreateSphere(RendererDevice& rendererDevice)
 	std::vector<float> sphereVertices;
 	std::vector<unsigned int> sphereIndices;
 
-	const float PI = 3.14159265359;
-
 	float radius = 0.5f;
 
 	unsigned int stackCount = 32;  // horizontal rings (top - down)
@@ -268,13 +266,6 @@ std::unique_ptr<Mesh> Primitives::CreateSphere(RendererDevice& rendererDevice)
 		}
 	}
 	
-
-	
-
-	//8 floats per vertex => (3 pos + 3 normals + 2 text coords)
-	unsigned int floatsPerVertex = 8;
-	unsigned int vertexCount = sizeof(sphereVertices) / (sizeof(float) * floatsPerVertex);
-
 	return std::make_unique<Mesh>
 	(
 		rendererDevice,
@@ -283,6 +274,150 @@ std::unique_ptr<Mesh> Primitives::CreateSphere(RendererDevice& rendererDevice)
 		std::move(sphereIndices),
 		VertexLayouts::GetStaticLayout()
 	);
+}
+
+std::unique_ptr<Mesh> Primitives::CreateCone(RendererDevice& rendererDevice)
+{
+	std::vector<float> coneVertices;
+	std::vector<unsigned int> coneIndices;
+
+	float radius = 0.5f;
+	float height = 1.0f;
+	unsigned int sectorCount = 36; // amount of points on circle
+
+	// Place center of cone at Y = 0.0
+	// Top apex will be at +halfHeight, base at -halfHeight
+	float halfHeight = height * 0.5f;
+	float sectorStep = 2.0f * PI / sectorCount;
+
+	// Side wall length from top apex to bottom edge (Pythagorean theorem)
+	float sideWallLength = std::sqrt(radius * radius + height * height);
+
+	// Light direction factors for the slanted wall (range from 0.0 to 1.0)
+	// - Vertical   factor depends on base radius (wider base  = wall faces more upward)
+	// - Horizontal factor depends on height      (taller cone = wall faces	more outward)
+
+	float normalVertical   = radius / sideWallLength;
+	float normalHorizontal = height / sideWallLength;
+
+	// =================================================
+	//				VERTEX GENERATION				   |
+	// =================================================
+	
+	// SIDE SURFACE - TOP APEX
+	// we duplicate top apex, so texture wraps correctly for each side surface
+	for (unsigned int i = 0; i <= sectorCount; i++)
+	{
+		float sectorAngle = sectorStep * i;
+		
+		// Combine horizontal light factor with rotation angle
+		float normalX = normalHorizontal * std::cos(sectorAngle);
+		float normalY = normalVertical;
+		float normalZ = normalHorizontal * std::sin(sectorAngle);
+
+		float u = (float)i / sectorCount;
+		float v = 0.0f;
+
+		// Top Apex position: (X = 0, Y = + halfHeight, Z = 0)
+		coneVertices.insert(coneVertices.end(),
+			{
+				0.0f, halfHeight, 0.0f,
+				normalX, normalY, normalZ,
+				u, v
+			});
+	}
+
+
+	// SIDE SURFACE - BOTTOM RING vertices
+	for (unsigned int i = 0; i <= sectorCount; i++)
+	{
+		float sectorAngle = sectorStep * i;
+
+		float x = radius * std::cos(sectorAngle);
+		float z = radius * std::sin(sectorAngle);
+
+		float normalX = normalHorizontal * std::cos(sectorAngle);
+		float normalY = normalVertical;
+		float normalZ = normalHorizontal * std::sin(sectorAngle);
+
+		float u = (float)i / sectorCount;
+		float v = 1.0f;
+
+		coneVertices.insert(coneVertices.end(),
+			{ 
+				x, -halfHeight, z, 
+				normalX, normalY, normalZ, 
+				u, v 
+			});
+	}
+
+	// BOTTOM CAP CENTER
+	// All vertices created so far / floatsPerVertex gives us next available vertex index
+	unsigned int baseCenterIndex = static_cast<unsigned int>(coneVertices.size() / floatsPerVertex);
+
+	coneVertices.insert(coneVertices.end(), 
+		{
+			0.0f, -halfHeight, 0.0f, // center of bottom base
+			0.0f, -1.0f, 0.0f,
+			0.5f, 0.5f
+		});
+
+
+	// Vertices for bottom circle base, from center of bottom circle to bottom of side walls
+	unsigned int baseRingStartIndex = baseCenterIndex + 1;
+	for (unsigned int i = 0; i <= sectorCount; i++)
+	{
+		float sectorAngle = sectorStep * i;
+
+		float x = radius * std::cos(sectorAngle);
+		float z = radius * std::sin(sectorAngle);
+
+		// Circular UV mapping (remaps (-1 to 1) to (0 to 1) for texture
+		float u = (std::cos(sectorAngle) + 1.0f) * 0.5f;
+		float v = (std::sin(sectorAngle) + 1.0f) * 0.5f;
+
+		coneVertices.insert(coneVertices.end(), 
+			{ 
+				x, -halfHeight, z, 
+				0.0f, -1.0f, 0.0f, 
+				u, v 
+			});
+	}
+
+	// ===============================================
+	//				INDEX GENERATION				 |
+	// ===============================================
+
+	// SIDE SURFACE
+	// Connect TOP APEX point to BOTTOM SIDE SURFACE POINTS 
+	for (unsigned int i = 0; i < sectorCount; i++)
+	{
+		unsigned int topIndex    = i;
+		unsigned int bottomIndex = i + (sectorCount + 1);
+
+		coneIndices.push_back(topIndex);
+		coneIndices.push_back(bottomIndex + 1);
+		coneIndices.push_back(bottomIndex);
+	}
+
+	// BOTTOM CAP TRIANGLES
+	// Connect BOTTOM BASE CENTER to BOTTOM SIDE SURFACE
+	for (unsigned int i = 0; i < sectorCount; i++)
+	{
+		coneIndices.push_back(baseCenterIndex);
+		coneIndices.push_back(baseRingStartIndex + i + 1);
+		coneIndices.push_back(baseRingStartIndex + i);
+	}
+
+	return std::make_unique<Mesh>
+	(
+		rendererDevice,
+		coneVertices.data(),
+		static_cast<unsigned int>(coneVertices.size() * sizeof(float)),
+		std::move(coneIndices),
+		VertexLayouts::GetStaticLayout()
+	);
+
 }
 
 }

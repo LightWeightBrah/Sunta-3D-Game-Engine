@@ -14,6 +14,7 @@ class EntityFactory
 public:
 	static unsigned int CreateCube(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Cube", const glm::vec3& position = glm::vec3(0.0f));
 	static unsigned int CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Pyramid", const glm::vec3& position = glm::vec3(0.0f));
+	static unsigned int CreateCone(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Cone", const glm::vec3& position = glm::vec3(0.0f));
 	static unsigned int CreateSphere(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Sphere", const glm::vec3& position = glm::vec3(0.0f));
 	
 	static unsigned int CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Directional Light", const glm::vec3& position = glm::vec3(0.0f));

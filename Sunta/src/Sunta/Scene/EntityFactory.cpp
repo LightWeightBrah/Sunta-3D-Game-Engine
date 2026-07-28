@@ -52,6 +52,26 @@ unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& renderer
 	return cubeEntity;
 }
 
+unsigned int EntityFactory::CreateCone(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
+{
+	auto& entityManager = scene.GetEntityManager();
+
+	auto shader = ResourceManager::GetShaderData("Lit");
+	auto material = std::make_shared<Material>(shader);
+	material->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
+		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
+		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
+		.SetShininess(128.0f);
+
+	unsigned int entity = entityManager.CreateEntity();
+	entityManager.AddComponent<TagComponent>(entity).name = name;
+	entityManager.AddComponent<TransformComponent>(entity, position);
+	entityManager.AddComponent<WorldMatrixComponent>(entity);
+	entityManager.AddComponent<MeshComponent>(entity, Primitives::CreateCone(rendererDevice), material);
+
+	return entity;
+}
+
 unsigned int EntityFactory::CreateSphere(Scene& scene, RendererDevice& rendererDevice, const std::string& name, const glm::vec3& position)
 {
 	auto& entityManager = scene.GetEntityManager();
