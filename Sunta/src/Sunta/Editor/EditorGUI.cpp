@@ -200,6 +200,34 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 
 		ImGui::TreeNodeEx(imguiLabel.c_str(), flags);
 
+		ImGui::PushID(static_cast<int>(entityID));
+
+		if (ImGui::BeginPopupContextItem("EntityMenu"))
+		{
+			if (ImGui::MenuItem("Delete"))
+			{
+				// TODO: add implementation for Destroy Entity in entity Manager
+				//entityManager.DestroyEntity(entityID);
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Reset Transform"))
+			{
+				if (auto* transform = entityManager.GetComponent<TransformComponent>(entityID))
+				{
+					transform->position = glm::vec3(0.0f);
+					transform->rotation = glm::vec3(0.0f);
+					transform->scale    = glm::vec3(1.0f);
+				}
+
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+
+		ImGui::PopID();
+
 		if (ImGui::IsItemClicked())
 		{
 			selectedEntity = static_cast<int>(entityID);
@@ -298,7 +326,7 @@ void EditorGUI::DrawFileBrowser()
 			auto icon = ResourceManager::GetEditorIcon(iconKey);
 			ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));	
 
 			if (ImGui::ImageButton(("##" + filename).c_str(), textureID, ImVec2(cellSize - padding, cellSize - padding)))
 			{
@@ -308,15 +336,95 @@ void EditorGUI::DrawFileBrowser()
 					selectedFile = path;
 			}
 
+			if (ImGui::BeginPopupContextItem("FileMenu"))
+			{
+				if (ImGui::MenuItem("Delete"))
+				{
+					std::filesystem::remove(path);
+					ImGui::CloseCurrentPopup();
+				}
+
+				ImGui::EndPopup();
+			}
+
 			ImGui::PopStyleColor();
 
-			ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + cellSize - padding);
-			ImGui::Text("%s", filename.c_str());
-			ImGui::PopTextWrapPos();
+			std::string displayFilename = filename;
+			float availableWidth = cellSize - padding;
+
+			if (ImGui::CalcTextSize(displayFilename.c_str()).x > availableWidth)
+			{
+				while (ImGui::CalcTextSize((displayFilename + "...").c_str()).x > availableWidth && displayFilename.length() > 1)
+				{
+					displayFilename.pop_back();
+				}
+				displayFilename += "...";
+			}
+
+			float textWidth = ImGui::CalcTextSize(filename.c_str()).x;
+			float indent = (availableWidth - textWidth) * 0.5f;
+
+			if (indent > 0)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
+
+			ImGui::Text("%s", displayFilename.c_str());
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::Text("%s", filename.c_str());
+				ImGui::EndTooltip();
+			}
 
 			ImGui::NextColumn();
 			ImGui::PopID();
 		}
+	}
+
+	if (ImGui::BeginPopupContextWindow("BrowserEmptyMenu", ImGuiPopupFlags_NoOpenOverItems))
+	{
+		if (ImGui::MenuItem("Create New Folder"))
+		{
+			isCreatingFolder = true;
+			strcpy(newFolderName, "New Folder");
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (isCreatingFolder)
+	{
+		float iconSize = cellSize - padding;
+		float availableWidth = cellSize - padding;
+		float indent = (availableWidth - iconSize) * 0.5f;
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
+		auto icon = ResourceManager::GetEditorIcon("defualt_folder");
+		ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
+		ImGui::ImageButton("##NewFolderIcon", textureID, ImVec2(cellSize - padding, cellSize - padding));
+
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.4f, 0.8f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
+		ImGui::SetNextItemWidth(iconSize);
+
+		ImGui::SetKeyboardFocusHere();
+		if (ImGui::InputText("##Rename", newFolderName, IM_ARRAYSIZE(newFolderName), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			std::filesystem::path newPath = currentDirectory / newFolderName;
+			if (!std::filesystem::exists(newPath))
+				std::filesystem::create_directory(newPath);
+
+			isCreatingFolder = false;
+		}
+
+		if (ImGui::IsItemDeactivated() && !ImGui::IsKeyDown(ImGuiKey_Enter))
+		{
+			isCreatingFolder = false;
+		}
+
+		ImGui::PopStyleColor(2);
 	}
 
 	ImGui::Columns(1); // column reset

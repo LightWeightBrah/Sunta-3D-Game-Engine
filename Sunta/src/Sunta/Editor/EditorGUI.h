@@ -40,6 +40,9 @@ public:
 private:
 	static inline int selectedEntity = -1;
 
+	static inline bool isCreatingFolder = false;
+	static inline char newFolderName[64] = "";
+
 	static inline std::filesystem::path currentDirectory = "";
 	static inline std::filesystem::path selectedFile	 = "";
 	
