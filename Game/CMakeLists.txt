@@ -15,7 +15,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Sunta)
 
 set(FINAL_RES_DIR "${SUNTA_BIN_DIR}/res")
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+add_custom_target(CopyAssets ALL
     
     # If there's no directory: create new. If there IS directory: don't do anything 
     COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Sunta"
@@ -32,3 +32,5 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMENT "COPYING ASSETS TO: '${FINAL_RES_DIR}' FOR RUNTIME ACCESS"
     
 )
+
+add_dependencies(${PROJECT_NAME} CopyAssets)
