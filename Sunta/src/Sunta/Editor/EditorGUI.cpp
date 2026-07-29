@@ -470,7 +470,8 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{ "models",			"3d_model_folder" },	{ "meshes ",	"3d_model_folder" },
 			{ "shaders",		"shader_folder" },
 			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
-			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" } 
+			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" },
+			{ "fonts",			"fonts_folder" }
 		};
 
 		std::string name = path.filename().string();
@@ -487,7 +488,8 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{".png",		"image_file"},		{".jpg", "image_file"},		{".jpeg", "image_file"},
 			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},
 			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
-			{".wav",		"audio_file"},		{".ogg", "audio_file"}
+			{".wav",		"audio_file"},		{".ogg", "audio_file"},
+			{".ttf",		"font_file"}
 		};
 
 		std::string extension = path.extension().string();

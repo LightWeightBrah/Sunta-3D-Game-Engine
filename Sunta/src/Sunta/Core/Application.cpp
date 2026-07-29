@@ -89,6 +89,7 @@ namespace Sunta
 		ResourceManager::LoadEditorIcon("shader_folder",		"res/Sunta/Textures/Icons/shader_folder_icon.png");
 		ResourceManager::LoadEditorIcon("image_folder",			"res/Sunta/Textures/Icons/image_folder_icon.png");
 		ResourceManager::LoadEditorIcon("audio_folder",			"res/Sunta/Textures/Icons/audio_folder_icon.png");
+		ResourceManager::LoadEditorIcon("fonts_folder",			"res/Sunta/Textures/Icons/fonts_folder_icon.png");
 
 		ResourceManager::LoadEditorIcon("defualt_file",			"res/Sunta/Textures/Icons/defualt_file_icon.png");
 		ResourceManager::LoadEditorIcon("cpp_file",				"res/Sunta/Textures/Icons/cpp_file_icon.png");
@@ -96,6 +97,7 @@ namespace Sunta
 		ResourceManager::LoadEditorIcon("shader_file",			"res/Sunta/Textures/Icons/shader_file_icon.png");
 		ResourceManager::LoadEditorIcon("image_file",			"res/Sunta/Textures/Icons/image_file_icon.png");
 		ResourceManager::LoadEditorIcon("audio_file",			"res/Sunta/Textures/Icons/audio_file_icon.png");
+		ResourceManager::LoadEditorIcon("font_file",			"res/Sunta/Textures/Icons/font_file_icon.png");
 		
 		ResourceManager::LoadEditorIcon("cube",					"res/Sunta/Textures/Icons/cube_icon.png");
 		ResourceManager::LoadEditorIcon("capsule",				"res/Sunta/Textures/Icons/capsule_icon.png");
