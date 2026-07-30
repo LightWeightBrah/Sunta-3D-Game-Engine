@@ -45,6 +45,15 @@ private:
 
 	static inline std::filesystem::path currentDirectory = "";
 	static inline std::filesystem::path selectedFile	 = "";
+
+	static inline int entityToRename = -1;
+	static inline char entityNameBuffer[64] = "";
+
+	static inline std::filesystem::path fileToRename = "";
+	static inline char fileRenameBuffer[64] = "";
+
+	static inline std::filesystem::path pendingRenamePath = "";
+	static inline std::string pendingRenameNewName = "";
 	
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);

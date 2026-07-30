@@ -14,6 +14,7 @@
 #include "Renderer/Texture.h"
 #include "Scene/EntityFactory.h"
 #include "Scene/Scene.h"
+#include "Core/Log.h"
 
 namespace Sunta
 {
@@ -184,26 +185,54 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		std::string label = ("Entity " + std::to_string(entityID));
 
 		if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
-		{
 			if (!tag->name.empty())
 				label = tag->name;
-		}
 
 		// ### is special imgui separator, everything after this is seen via imGUI
 		// as a permament unique ID (so we won't see ###EntityID-, but it works for 
 		// changing names in inspector)
-		std::string imguiLabel = label + "###EntityID-" + std::to_string(entityID);
+		std::string uniqueID = "###EntityID-" + std::to_string(entityID);
 
-		ImGuiTreeNodeFlags flags = (selectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
+		if (entityToRename == static_cast<int>(entityID))
+		{
+			ImGui::SetNextItemWidth(-1.0f);
+			ImGui::SetKeyboardFocusHere();
 
-		flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			if (ImGui::InputText(uniqueID.c_str(), entityNameBuffer, IM_ARRAYSIZE(entityNameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
+					tag->name = entityNameBuffer;
 
-		ImGui::TreeNodeEx(imguiLabel.c_str(), flags);
+				entityToRename = -1;
+			}
+
+			if (ImGui::IsItemDeactivated() && !ImGui::IsKeyDown(ImGuiKey_Enter))
+				entityToRename = -1;
+		}
+		else
+		{
+			ImGuiTreeNodeFlags flags = (selectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
+			flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+			ImGui::TreeNodeEx((label + uniqueID).c_str(), flags);
+
+			if (ImGui::IsItemFocused() && ImGui::IsKeyPressed(ImGuiKey_F2))
+			{
+				entityToRename = entityID;
+				strncpy(entityNameBuffer, label.c_str(), sizeof(entityNameBuffer));
+			}
+		}
 
 		ImGui::PushID(static_cast<int>(entityID));
-
 		if (ImGui::BeginPopupContextItem("EntityMenu"))
 		{
+			selectedEntity = static_cast<int>(entityID);
+
+			if (ImGui::MenuItem("Rename"))
+			{
+				entityToRename = entityID;
+				strncpy(entityNameBuffer, label.c_str(), sizeof(entityNameBuffer));
+			}
+
 			if (ImGui::MenuItem("Delete"))
 			{
 				// TODO: add implementation for Destroy Entity in entity Manager
@@ -268,6 +297,7 @@ void EditorGUI::DrawFileBrowser()
 		if (ImGui::Button("<--- Back"))
 		{
 			currentDirectory = currentDirectory.parent_path();
+			selectedFile = "";
 		}
 
 		ImGui::SameLine();
@@ -290,14 +320,20 @@ void EditorGUI::DrawFileBrowser()
 	{
 		// Sunta Engine Folder
 		if (ImGui::Button("[ENGINE]", ImVec2(cellSize - padding, cellSize - padding)))
+		{
 			currentDirectory = "res/Sunta";
+			selectedFile = "";
+		}
 
 		ImGui::Text("Sunta res");
 		ImGui::NextColumn();
 
 		// Game Folder
-		if(ImGui::Button("[GAME]", ImVec2(cellSize - padding, cellSize - padding)))
+		if (ImGui::Button("[GAME]", ImVec2(cellSize - padding, cellSize - padding)))
+		{
 			currentDirectory =  "res/Game";
+			selectedFile = "";
+		}
 
 		ImGui::Text("Game res");
 	}
@@ -321,23 +357,64 @@ void EditorGUI::DrawFileBrowser()
 			ImGui::PushID(filename.c_str());
 
 			bool isDirectory = entry.is_directory();
+			bool isSelected = (selectedFile == path);
+
+			ImVec4 activeColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
+			ImVec4 hoverColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
+
+			if (isSelected)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Button, activeColor);
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, activeColor);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
+			}
+			else
+			{
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
+			}
 
 			std::string iconKey = GetIconKeyForPath(path, isDirectory);
 			auto icon = ResourceManager::GetEditorIcon(iconKey);
 			ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));	
 
 			if (ImGui::ImageButton(("##" + filename).c_str(), textureID, ImVec2(cellSize - padding, cellSize - padding)))
 			{
-				if (isDirectory) 
-					currentDirectory /= path.filename();
-				else 
-					selectedFile = path;
+				selectedFile = path;
+			}
+
+			ImGui::PopStyleColor(3);
+
+			if (ImGui::IsItemHovered())
+			{
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					if (isDirectory)
+					{
+						currentDirectory /= path.filename();
+						selectedFile = "";
+					}
+				}
+			}
+
+			if (isSelected && ImGui::IsKeyPressed(ImGuiKey_F2))
+			{
+				fileToRename = path;
+				strncpy(fileRenameBuffer, filename.c_str(), sizeof(fileRenameBuffer));
 			}
 
 			if (ImGui::BeginPopupContextItem("FileMenu"))
 			{
+				selectedFile = path;
+
+				if (ImGui::MenuItem("Rename"))
+				{
+					fileToRename = path;
+					strncpy(fileRenameBuffer, filename.c_str(), sizeof(fileRenameBuffer));
+				}
+
 				if (ImGui::MenuItem("Delete"))
 				{
 					std::filesystem::remove(path);
@@ -347,37 +424,72 @@ void EditorGUI::DrawFileBrowser()
 				ImGui::EndPopup();
 			}
 
-			ImGui::PopStyleColor();
-
-			std::string displayFilename = filename;
-			float availableWidth = cellSize - padding;
-
-			if (ImGui::CalcTextSize(displayFilename.c_str()).x > availableWidth)
+			if (fileToRename == path)
 			{
-				while (ImGui::CalcTextSize((displayFilename + "...").c_str()).x > availableWidth && displayFilename.length() > 1)
+				ImGui::SetNextItemWidth(cellSize - padding);
+				ImGui::SetKeyboardFocusHere();
+
+				if (ImGui::InputText("##Rename", fileRenameBuffer, IM_ARRAYSIZE(fileRenameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
 				{
-					displayFilename.pop_back();
+					pendingRenamePath = path;
+					pendingRenameNewName = fileRenameBuffer;
+
+					fileToRename = "";
 				}
-				displayFilename += "...";
+
+				if (ImGui::IsItemDeactivated() && !ImGui::IsKeyDown(ImGuiKey_Enter))
+					fileToRename = "";
 			}
-
-			float textWidth = ImGui::CalcTextSize(filename.c_str()).x;
-			float indent = (availableWidth - textWidth) * 0.5f;
-
-			if (indent > 0)
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
-
-			ImGui::Text("%s", displayFilename.c_str());
-
-			if (ImGui::IsItemHovered())
+			else
 			{
-				ImGui::BeginTooltip();
-				ImGui::Text("%s", filename.c_str());
-				ImGui::EndTooltip();
+				std::string displayFilename = filename;
+				float availableWidth = cellSize - padding;
+
+				if (ImGui::CalcTextSize(displayFilename.c_str()).x > availableWidth)
+				{
+					while (ImGui::CalcTextSize((displayFilename + "...").c_str()).x > availableWidth && displayFilename.length() > 1)
+					{
+						displayFilename.pop_back();
+					}
+					displayFilename += "...";
+				}
+
+				float textWidth = ImGui::CalcTextSize(filename.c_str()).x;
+				float indent = (availableWidth - textWidth) * 0.5f;
+
+				if (indent > 0)
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
+
+				ImGui::Text("%s", displayFilename.c_str());
+
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text("%s", filename.c_str());
+					ImGui::EndTooltip();
+				}
+
 			}
 
 			ImGui::NextColumn();
 			ImGui::PopID();
+		}
+
+		if (!pendingRenamePath.empty())
+		{
+			std::filesystem::path newPath = pendingRenamePath.parent_path() / pendingRenameNewName;
+
+			std::error_code errorCode;
+			if (std::filesystem::exists(pendingRenamePath))
+			{
+				std::filesystem::rename(pendingRenamePath, newPath, errorCode);
+				if (errorCode)
+				{
+					SUNTA_ENGINE_LOG_ERROR("File Rename error: {0}", errorCode.message());
+				}
+			}
+
+			pendingRenamePath = "";
 		}
 	}
 
