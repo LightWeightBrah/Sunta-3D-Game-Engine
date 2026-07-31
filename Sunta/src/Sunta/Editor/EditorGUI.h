@@ -33,6 +33,8 @@ public:
 	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser();
 	
+	static void HandleSelectionInteraction();
+	static void ClearSelection();
 	static void ClearFocus();
 
 	static void SetDarkTheme();
@@ -59,6 +61,8 @@ private:
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
 	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
 	static std::string GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory);
+
+	static bool IsClickingEmptySpace();
 
 };
 

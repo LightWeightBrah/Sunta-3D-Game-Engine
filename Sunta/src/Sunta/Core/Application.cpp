@@ -174,6 +174,7 @@ namespace Sunta
 			if (currentEngineMode == EngineMode::Game)
 			{
 				EditorGUI::ClearFocus();
+				EditorGUI::ClearSelection();
 				InputManager::SetFirstMouse(true);
 			}
 
@@ -191,6 +192,8 @@ namespace Sunta
 	
 		scene->Render(renderer);
 		EditorGUIContext::RenderUI(window.get(), *scene, Renderer::GetDevice());
+
+		EditorGUI::HandleSelectionInteraction();
 		
 		//EditorGUIContext::BeginDockingSpace(window.get());
 		//

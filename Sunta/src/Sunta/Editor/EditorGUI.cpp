@@ -226,6 +226,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		if (ImGui::BeginPopupContextItem("EntityMenu"))
 		{
 			selectedEntity = static_cast<int>(entityID);
+			selectedFile = "";
 
 			if (ImGui::MenuItem("Rename"))
 			{
@@ -260,13 +261,25 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		if (ImGui::IsItemClicked())
 		{
 			selectedEntity = static_cast<int>(entityID);
+			selectedFile = "";
 		}
-		
+
+	}
+
+	if (IsClickingEmptySpace())
+	{
+		selectedEntity = -1;
+		selectedFile = "";
 	}
 }
 
 void EditorGUI::DrawInspector(EntityManager& entityManager)
 {
+	if (IsClickingEmptySpace())
+	{
+		selectedFile = "";
+	}
+
 	if (selectedEntity == -1)
 	{
 		return;
@@ -375,6 +388,7 @@ void EditorGUI::DrawFileBrowser()
 			if (ImGui::IsItemClicked())
 			{
 				selectedFile = path;
+				selectedEntity = -1;
 			}
 
 			if (isSelected)
@@ -550,6 +564,12 @@ void EditorGUI::DrawFileBrowser()
 		}
 
 		ImGui::PopStyleColor(2);
+	}
+
+	if (IsClickingEmptySpace())
+	{
+		selectedEntity = -1;
+		selectedFile = "";
 	}
 
 	ImGui::Columns(1); // column reset
@@ -830,6 +850,23 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 	return changed;
 }
 
+void EditorGUI::HandleSelectionInteraction()
+{
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+	{
+		if (!ImGui::GetIO().WantCaptureMouse)
+		{
+			ClearSelection();
+		}
+	}
+}
+
+void EditorGUI::ClearSelection()
+{
+	selectedEntity = -1;
+	selectedFile = "";
+}
+
 void EditorGUI::ClearFocus()
 {
 	if (!ImGui::GetCurrentContext())
@@ -842,7 +879,10 @@ void EditorGUI::ClearFocus()
 	ImGui::SetWindowFocus(nullptr);
 }
 
-
+bool EditorGUI::IsClickingEmptySpace()
+{
+	return ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsAnyItemHovered();
+}
 
 
 }
