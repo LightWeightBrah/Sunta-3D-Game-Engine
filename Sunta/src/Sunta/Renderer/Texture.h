@@ -7,7 +7,7 @@ class Texture
 {
 
 public:
-	Texture(const std::string& filepath, bool flip = true) : filepath(filepath) { }
+	Texture(const std::string& filepath, bool flip = true, bool isPixelArt = false) : filepath(filepath) { }
 	virtual ~Texture() = default;
 
 	virtual unsigned int GetID() const = 0;

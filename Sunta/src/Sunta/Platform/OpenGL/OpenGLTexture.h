@@ -8,7 +8,7 @@ class OpenGLTexture : public Texture
 {
 
 public:
-	OpenGLTexture(const std::string& filepath, bool flip = true);
+	OpenGLTexture(const std::string& filepath, bool flip = true, bool isPixelArt = false);
 	virtual ~OpenGLTexture() override;
 	
 	virtual unsigned int GetID() const override { return id; }

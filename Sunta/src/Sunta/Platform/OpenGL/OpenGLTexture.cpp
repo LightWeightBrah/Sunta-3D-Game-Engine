@@ -9,7 +9,7 @@
 
 namespace Sunta
 {
-OpenGLTexture::OpenGLTexture(const std::string& filepath, bool flip)
+OpenGLTexture::OpenGLTexture(const std::string& filepath, bool flip, bool isPixelArt)
 	: Texture(filepath, flip)
 	, id(0)
 	, data(nullptr)
@@ -37,8 +37,12 @@ OpenGLTexture::OpenGLTexture(const std::string& filepath, bool flip)
 
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+	unsigned int minFilter = isPixelArt ? GL_NEAREST : GL_LINEAR_MIPMAP_LINEAR;
+	unsigned int magFilter = isPixelArt ? GL_NEAREST : GL_LINEAR;
+
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter));
 
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, openGLFormat, width, height, 0, imageFormat, GL_UNSIGNED_BYTE, data));
 	GLCall(glGenerateMipmap(GL_TEXTURE_2D));

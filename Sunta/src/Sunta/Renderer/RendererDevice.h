@@ -40,7 +40,7 @@ public:
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) = 0;
 	virtual std::shared_ptr<ElementBuffer> CreateElementBuffer(const BufferDescriptor& descriptor) = 0;
 	virtual std::shared_ptr<VertexArray>   CreateVertexArray() = 0;
-	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath, bool flip = true) = 0;
+	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath, bool flip = true, bool isPixelArt = false) = 0;
 	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) = 0;
 
 	static std::unique_ptr<RendererDevice> Create();
