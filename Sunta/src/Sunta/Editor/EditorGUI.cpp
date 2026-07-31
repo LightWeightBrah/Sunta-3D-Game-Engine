@@ -549,11 +549,14 @@ void EditorGUI::DrawFileBrowser()
 		ImGui::SetNextItemWidth(iconSize);
 
 		ImGui::SetKeyboardFocusHere();
-		if (ImGui::InputText("##Rename", newFolderName, IM_ARRAYSIZE(newFolderName), ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputText("##CreateFolderInput", newFolderName, IM_ARRAYSIZE(newFolderName), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
 			std::filesystem::path newPath = currentDirectory / newFolderName;
 			if (!std::filesystem::exists(newPath))
+			{
 				std::filesystem::create_directory(newPath);
+				selectedFile = newPath;
+			}
 
 			isCreatingFolder = false;
 		}
