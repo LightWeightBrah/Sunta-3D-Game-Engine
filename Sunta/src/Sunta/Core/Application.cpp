@@ -18,6 +18,7 @@
 #include "ResourceManager.h"
 #include "Renderer/RendererAPI.h"
 #include "Assert.h"
+#include "Platform.h"
 
 namespace Sunta
 {
@@ -59,6 +60,7 @@ namespace Sunta
 	void Application::Init()
 	{
 		Log::Init();
+		Platform::Init();
 		InputManager::Init();
 
 		RendererAPI::SetAPI(RendererAPI::API::OpenGL);
@@ -212,6 +214,8 @@ namespace Sunta
 	
 		if (window)
 			window.reset();
+
+		Platform::Shutdown();
 	
 		glfwTerminate();
 	}

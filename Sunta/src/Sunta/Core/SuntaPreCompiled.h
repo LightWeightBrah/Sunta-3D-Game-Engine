@@ -10,6 +10,7 @@
 	#define NOMINMAX			 //WINDOWS CONFLICTING NAMES FIXES
 
 	#include <Windows.h>
+	#include <shellapi.h>
 
 	#undef ERROR	             //WINDOWS CONFLICTING NAMES FIXES
 	#undef CreateWindow          //WINDOWS CONFLICTING NAMES FIXES
@@ -23,6 +24,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 
 #include <vector>
 #include <map>

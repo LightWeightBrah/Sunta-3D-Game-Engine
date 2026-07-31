@@ -15,6 +15,7 @@
 #include "Scene/EntityFactory.h"
 #include "Scene/Scene.h"
 #include "Core/Log.h"
+#include "Core/Platform.h"
 
 namespace Sunta
 {
@@ -446,6 +447,11 @@ void EditorGUI::DrawFileBrowser()
 				{
 					std::filesystem::remove(path);
 					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Open In Explorer"))
+				{
+					Platform::Get().OpenInExplorer(path.string());
 				}
 
 				ImGui::EndPopup();
