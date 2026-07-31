@@ -357,35 +357,48 @@ void EditorGUI::DrawFileBrowser()
 			ImGui::PushID(filename.c_str());
 
 			bool isDirectory = entry.is_directory();
+
+			ImVec2 size = ImVec2(cellSize - padding, cellSize - padding);
+			ImVec2 pos = ImGui::GetCursorScreenPos();
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+			ImU32 borderColor = ImGui::GetColorU32(ImGuiCol_Border);
+			ImU32 activeColor = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+			ImU32 hoverColor = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+
+			// Invisible Button works as hitbox 
+			ImGui::InvisibleButton(("##" + filename).c_str(), size);
+
 			bool isSelected = (selectedFile == path);
+			bool isHovered = ImGui::IsItemHovered();
 
-			ImVec4 activeColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
-			ImVec4 hoverColor = ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered);
-
-			if (isSelected)
-			{
-				ImGui::PushStyleColor(ImGuiCol_Button, activeColor);
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, activeColor);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
-			}
-			else
-			{
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hoverColor);
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, activeColor);
-			}
-
-			std::string iconKey = GetIconKeyForPath(path, isDirectory);
-			auto icon = ResourceManager::GetEditorIcon(iconKey);
-			ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
-
-
-			if (ImGui::ImageButton(("##" + filename).c_str(), textureID, ImVec2(cellSize - padding, cellSize - padding)))
+			if (ImGui::IsItemClicked())
 			{
 				selectedFile = path;
 			}
 
-			ImGui::PopStyleColor(3);
+			if (isSelected)
+			{
+				drawList->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y), activeColor);
+			}
+			else if (isHovered)
+			{
+				drawList->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y), hoverColor);
+			}
+
+			drawList->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y), borderColor);
+
+			float margin = 4.0f;
+			ImVec2 iconPos0 = ImVec2(pos.x + margin, pos.y + margin);
+			ImVec2 iconPos1 = ImVec2(pos.x + size.x - margin, pos.y + size.y - margin);
+
+			std::string iconKey = GetIconKeyForPath(path, isDirectory);
+			auto icon = ResourceManager::GetEditorIcon(iconKey);
+			if (icon)
+			{
+				ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
+				drawList->AddImage(textureID, iconPos0, iconPos1);
+			}
 
 			if (ImGui::IsItemHovered())
 			{
