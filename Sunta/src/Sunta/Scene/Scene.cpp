@@ -54,14 +54,15 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	ResourceManager::LoadTexture("cube_container",		"res/Sunta/Textures/container.jpg");
 	ResourceManager::LoadTexture("cube_chad",			"res/Sunta/Textures/chad.png");
 
-	ResourceManager::LoadShader ("Lit",					"res/Sunta/Shaders/Lit.shader");
-	ResourceManager::LoadShader ("Unlit",				"res/Sunta/Shaders/Unlit.shader");
-	
 	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
 	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
 
 	auto texturedShader		= ResourceManager::GetShaderData("Lit");
+	texturedShader->AddFeature(ShaderFeature::Lighting);
+
 	auto cubeShader			= ResourceManager::GetShaderData("Lit");
+	cubeShader->AddFeature(ShaderFeature::Lighting);
+
 	auto lightShader		= ResourceManager::GetShaderData("Unlit");
 
 	auto texturedMaterial	= std::make_shared<Material>(texturedShader, cubeDiffuseMap, cubeSpecularMap);
@@ -208,19 +209,17 @@ void Scene::Render(Renderer& renderer)
 		}
 	}
 
-	
+	struct RenderItem 
+	{ 
+		Mesh* mesh; 
+		Material* material; 
+		glm::mat4 matrix; 
+	};
 
-	/*auto& meshes = entityManager.GetAllComponents<MeshComponent>();
-	auto& matricies = entityManager.GetAllComponents<WorldMatrixComponent>();
+	std::vector<RenderItem> litQueue;
+	std::vector<RenderItem> unlitQueue;
+	std::vector<RenderItem> lightSourceQueue;
 
-	for (int i = 0; i < meshes.size(); i++)
-	{
-		if (meshes[i].mesh && meshes[i].material)
-			renderer.DrawMesh(*meshes[i].mesh, *meshes[i].material, matricies[i].matrix, sceneData);
-	}*/
-
-	//2ND JIRA COMMIT TEST
-	//INITIAL CUBE LIGHT MAP TEST - JIRA
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
 		auto* meshComponent = entityManager.GetComponent<MeshComponent>(i);
@@ -236,15 +235,31 @@ void Scene::Render(Renderer& renderer)
 							 entityManager.GetComponent<PointLightComponent>(i)       ||
 							 entityManager.GetComponent<SpotlightComponent>(i);
 
+		RenderItem item = { meshComponent->mesh.get(), meshComponent->material.get(), matrixComponent->matrix };
+
 		if (isLightSource)
 		{
-			renderer.DrawLigthSource(*meshComponent->mesh, *meshComponent->material->GetShader(), matrixComponent->matrix, sceneData);
+			lightSourceQueue.push_back(item);
 		}
 		else
 		{
-			renderer.DrawMesh(*meshComponent->mesh, *meshComponent->material, matrixComponent->matrix, sceneData);
+			if (item.material->GetShader()->HasFeature(ShaderFeature::Lighting))
+				litQueue.push_back(item);
+			else
+				unlitQueue.push_back(item);
 		}
+
 	}
+
+	for (const auto& item : lightSourceQueue)
+		renderer.DrawLigthSource(*item.mesh, *item.material->GetShader(), item.matrix, sceneData);
+
+	for (const auto& item : litQueue)
+		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
+
+	for (const auto& item : unlitQueue)
+		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
+
 }
 	
 void Scene::Clear()

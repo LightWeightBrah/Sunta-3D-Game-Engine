@@ -74,7 +74,7 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 			
 		shader->SetUniform1i("hasAnimations", hasAnimations);
 		if (hasAnimations)
-			shader->SetBoneMatrices(animator->GetFinalBoneMatrices());
+			shader->TrySetBoneMatrices(animator->GetFinalBoneMatrices());
 
 		subMesh.material->Apply();
 		subMesh.mesh->Bind();
@@ -102,6 +102,9 @@ void Renderer::SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, co
 
 void Renderer::SetBaseLighting(Shader& shader, const SceneData& sceneData) const
 {
+	if (!shader.HasFeature(ShaderFeature::Lighting))
+		return;
+
 	shader.SetUniform3f("viewerPosition", sceneData.cameraPosition);
 
 	SetDirectionalLights(shader, sceneData);

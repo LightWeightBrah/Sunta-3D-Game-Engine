@@ -48,8 +48,13 @@ void Systems::SyncMeshComponents(EntityManager& entityManager)
 	{
 		if (component.isDirty)
 		{
-			auto mesh     = ResourceManager::GetMeshData(component.meshName);
-			auto material = ResourceManager::GetMaterialData(component.materialName);
+			std::shared_ptr<Mesh> mesh = nullptr;
+			if(component.meshName != MeshComponent::NULL_ASSET_NAME)
+				mesh = ResourceManager::GetMeshData(component.meshName);
+
+			std::shared_ptr<Material> material = nullptr;
+			if(component.materialName != MeshComponent::NULL_ASSET_NAME)
+				material = ResourceManager::GetMaterialData(component.materialName);
 
 			component.mesh	   = (mesh != nullptr)     ? mesh     : errorMesh;
 			component.material = (material != nullptr) ? material : errorMaterial;

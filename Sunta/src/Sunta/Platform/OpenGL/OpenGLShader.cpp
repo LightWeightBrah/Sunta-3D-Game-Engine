@@ -87,6 +87,12 @@ void OpenGLShader::Unbind() const
 	GLCall(glUseProgram(0));
 }
 
+bool OpenGLShader::HasUniform(const std::string& name) const
+{
+	GLCall(int location = glGetUniformLocation(id, name.c_str()));
+	return location != -1;
+}
+
 void OpenGLShader::SetUniform1i(const std::string& name, int value) const
 {
 	GLCall(glUniform1i(GetUniformLocation(name), value));
@@ -117,12 +123,47 @@ void OpenGLShader::SetUniformMatrix4fv(const std::string& name, const glm::mat4&
 	GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
 }
 
-void OpenGLShader::SetBoneMatrices(const std::vector<glm::mat4>& matrices)
+void OpenGLShader::TrySetUniform1i(const std::string& name, int value) const
 {
-	int location = GetUniformLocation("bones[0]");
+	if (HasUniform(name))
+		SetUniform1i(name, value);
+}
 
-	if (location != -1 && !matrices.empty())
+void OpenGLShader::TrySetUniform1f(const std::string& name, float value) const
+{
+	if (HasUniform(name))
+		SetUniform1f(name, value);
+}
+
+void OpenGLShader::TrySetUniform3f(const std::string& name, float v0, float v1, float v2) const
+{
+	if (HasUniform(name))
+		SetUniform3f(name, v0, v1, v2);
+}
+
+void OpenGLShader::TrySetUniform3f(const std::string& name, glm::vec3 vec) const
+{
+	if (HasUniform(name))
+		SetUniform3f(name, vec);
+}
+
+void OpenGLShader::TrySetUniform4f(const std::string& name, float f0, float f1, float f2, float f3) const
+{
+	if (HasUniform(name))
+		SetUniform4f(name, f0, f1, f2, f3);
+}
+
+void OpenGLShader::TrySetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix) const
+{
+	if (HasUniform(name))
+		SetUniformMatrix4fv(name, matrix);
+}
+
+void OpenGLShader::TrySetBoneMatrices(const std::vector<glm::mat4>& matrices)
+{
+	if (HasUniform("bones[0]") && !matrices.empty())
 	{
+		int location = GetUniformLocation("bones[0]");
 		unsigned int count = std::min((unsigned int)matrices.size(), 200u);
 		GLCall(glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(matrices[0])));
 	}

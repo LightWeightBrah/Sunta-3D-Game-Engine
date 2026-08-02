@@ -40,14 +40,14 @@ Material& Material::Apply()
 	ApplyTextures(diffuseMaps, "materialDiffuseMap", textureSlot);
 	ApplyTextures(specularMaps, "materialSpecularMap", textureSlot);
 		
-	shader->SetUniform3f("material.ambientColor",	data.ambientColor);
-	shader->SetUniform3f("material.diffuseColor",	data.diffuseColor);
-	shader->SetUniform3f("material.specularColor",	data.specularColor);
-	shader->SetUniform1f("material.shininess",		data.shininess);
+	shader->TrySetUniform3f("material.ambientColor",	data.ambientColor);
+	shader->TrySetUniform3f("material.diffuseColor",	data.diffuseColor);
+	shader->TrySetUniform3f("material.specularColor",	data.specularColor);
+	shader->TrySetUniform1f("material.shininess",		data.shininess);
 
 	for (const auto& [name, value] : customVec3Uniforms)
 	{
-		shader->SetUniform3f(name, value);
+		shader->TrySetUniform3f(name, value);
 	}
 
 	return *this;

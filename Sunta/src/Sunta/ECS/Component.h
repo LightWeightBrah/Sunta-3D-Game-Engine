@@ -68,9 +68,11 @@ struct WorldMatrixComponent
 
 struct MeshComponent
 {
+	static constexpr const char* NULL_ASSET_NAME = "None";
+
 	bool isVisible = true;
-	std::string meshName = "None";
-	std::string materialName = "None";
+	std::string meshName = NULL_ASSET_NAME;
+	std::string materialName = NULL_ASSET_NAME;
 
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
