@@ -1,13 +1,17 @@
 #include "Core/SuntaPreCompiled.h"
+#include "Systems.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Systems.h"
+#include "Core/ResourceManager.h"
 #include "EntityManager.h"
 #include "Component.h"
 
-void Sunta::Systems::UpdateTransform(EntityManager& entityManager)
+namespace Sunta
+{
+
+void Systems::UpdateTransform(EntityManager& entityManager)
 {
 	auto& transforms = entityManager.GetAllComponents<TransformComponent>();
 	auto& matrices = entityManager.GetAllComponents<WorldMatrixComponent>();
@@ -33,3 +37,26 @@ void Sunta::Systems::UpdateTransform(EntityManager& entityManager)
 	}
 }
 
+void Systems::SyncMeshComponents(EntityManager& entityManager)
+{
+	auto& meshComponents = entityManager.GetAllComponents<MeshComponent>();
+
+	auto errorMesh = ResourceManager::GetMeshData("cube");
+	auto errorMaterial = ResourceManager::GetMaterialData("error_material");
+
+	for (auto& component : meshComponents)
+	{
+		if (component.isDirty)
+		{
+			auto mesh     = ResourceManager::GetMeshData(component.meshName);
+			auto material = ResourceManager::GetMaterialData(component.materialName);
+
+			component.mesh	   = (mesh != nullptr)     ? mesh     : errorMesh;
+			component.material = (material != nullptr) ? material : errorMaterial;
+
+			component.isDirty = false;
+		}
+	}
+}
+
+}

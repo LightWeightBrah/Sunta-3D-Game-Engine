@@ -19,13 +19,14 @@ struct ComponentStorage : public IInspectableStorage
 	std::vector<T>   components;
 	std::vector<int> entityToComponent;
 
-	T& Assign(unsigned int entityID, T&& data)
+	template<typename... Args>
+	T& Assign(unsigned int entityID, Args&&... args)
 	{
 		if (entityID >= entityToComponent.size())
 			entityToComponent.resize(entityID + 1, -1);
 		
-		entityToComponent[entityID] = components.size();
-		components.push_back(std::move(data));
+		entityToComponent[entityID] = static_cast<int>(components.size());
+		components.emplace_back(std::forward<Args>(args)...); //emplace_back with forward so we can call constructor in vector
 		return components.back();
 	}
 
@@ -64,7 +65,7 @@ public:
 		//register component for the editor the first time we add new component type
 		inspectableMap.try_emplace(typeid(T).hash_code(), &storage);
 
-		return storage.Assign(entityID, T{ std::forward<Args>(args)... });
+		return storage.Assign(entityID, std::forward<Args>(args)...);
 	}
 
 	template<typename T>

@@ -146,6 +146,7 @@ void Scene::ProcessInput()
 void Scene::Update()
 {
 	Systems::UpdateTransform(entityManager);
+	Systems::SyncMeshComponents(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)
@@ -225,7 +226,10 @@ void Scene::Render(Renderer& renderer)
 		auto* meshComponent = entityManager.GetComponent<MeshComponent>(i);
 		auto* matrixComponent = entityManager.GetComponent<WorldMatrixComponent>(i);
 
-		if (!(meshComponent && matrixComponent && meshComponent->mesh && meshComponent->material))
+		if (!meshComponent || !matrixComponent || !meshComponent->mesh || !meshComponent->material)
+			continue;
+
+		if (!meshComponent->isVisible)
 			continue;
 
 		bool isLightSource = entityManager.GetComponent<DirectionalLightComponent>(i) ||

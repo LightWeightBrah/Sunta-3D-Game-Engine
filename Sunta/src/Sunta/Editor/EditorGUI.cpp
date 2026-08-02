@@ -392,6 +392,16 @@ void EditorGUI::DrawFileBrowser()
 				selectedEntity = -1;
 			}
 
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				std::string pathString = path.string();
+				ImGui::SetDragDropPayload("FILE_PATH", pathString.c_str(), pathString.size() + 1);
+
+				ImGui::Text("Dragging: %s", path.filename().string().c_str());
+
+				ImGui::EndDragDropSource();
+			}
+
 			if (isSelected)
 			{
 				drawList->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y), activeColor);
@@ -853,6 +863,44 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 		break;
 	case PropertyDataType::String:
 		changed = ImGui::InputText(property.label.c_str(), (std::string*)propertyData);
+		break;
+	case PropertyDataType::AssetPath:
+		std::string& currentPath = *(std::string*)propertyData;
+		std::vector<std::string> options;
+
+		if (property.assetType == AssetType::Mesh)
+			options = ResourceManager::GetMeshesNames();
+		else if (property.assetType == AssetType::Material)
+			options = ResourceManager::GetMaterialsNames();
+
+		if (ImGui::BeginCombo(property.label.c_str(), currentPath.c_str()))
+		{
+			for (const auto& option : options)
+			{
+				bool isSelected = (currentPath == option);
+				if (ImGui::Selectable(option.c_str(), isSelected))
+				{
+					currentPath = option;
+					changed = true;
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+			{
+				std::string droppedPath = (const char*)payload->Data;
+
+				currentPath = droppedPath;
+				changed = true;
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 		break;
 	}
 	

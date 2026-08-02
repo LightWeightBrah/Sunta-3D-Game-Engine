@@ -93,7 +93,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
 )
 
-# =========================== LINKING ====================================  
+# =========================== LINKING ====================================   
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
 glfw 

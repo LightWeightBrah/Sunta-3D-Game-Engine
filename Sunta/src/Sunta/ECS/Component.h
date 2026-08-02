@@ -40,6 +40,11 @@ struct TransformComponent
 
 	bool isDirty = true;
 
+	TransformComponent(const glm::vec3& position)
+		: position(position) { }
+
+	TransformComponent() = default;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<TransformComponent>("Transform",
@@ -63,8 +68,38 @@ struct WorldMatrixComponent
 
 struct MeshComponent
 {
+	bool isVisible = true;
+	std::string meshName = "None";
+	std::string materialName = "None";
+
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
+
+	bool isDirty = true;
+
+	MeshComponent(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material)
+		: mesh(mesh)
+		, material(material) { }
+
+	MeshComponent() = default;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<MeshComponent>("Mesh",
+			{
+				ADD_PROPERTY(MeshComponent, isVisible, PropertyDataType::Bool),
+
+				ADD_ASSET(MeshComponent, meshName,	   AssetType::Mesh),
+				ADD_ASSET(MeshComponent, materialName, AssetType::Material)
+			},
+			[](void* data)
+			{
+				auto* component = static_cast<MeshComponent*>(data);
+				component->isDirty = true;
+			});
+
+	}
+
 };
 
 struct DirectionalLightComponent

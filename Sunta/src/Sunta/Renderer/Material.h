@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <glm/glm.hpp>
+#include <unordered_map>
 
 namespace Sunta
 {
@@ -38,6 +39,8 @@ public:
 	
 	Material& AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
 	Material& AddSpecularMap(const std::shared_ptr<Texture> specularMap);
+	
+	Material& SetUniform3f(const std::string& name, const glm::vec3& value);
 
 	Material& Apply();
 	
@@ -51,6 +54,8 @@ private:
 
 	std::vector<std::shared_ptr<Texture>> diffuseMaps;
 	std::vector<std::shared_ptr<Texture>> specularMaps;
+
+	std::unordered_map<std::string, glm::vec3> customVec3Uniforms;
 
 	Data						data;
 
