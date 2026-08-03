@@ -7,20 +7,22 @@ namespace Sunta
 
 class Scene;
 class RendererDevice;
-
+class Material;
 
 class EntityFactory
 {
 public:
-	static unsigned int CreateCube(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Cube", const glm::vec3& position = glm::vec3(0.0f));
-	static unsigned int CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Pyramid", const glm::vec3& position = glm::vec3(0.0f));
-	static unsigned int CreateCone(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Cone", const glm::vec3& position = glm::vec3(0.0f));
-	static unsigned int CreateSphere(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Sphere", const glm::vec3& position = glm::vec3(0.0f));
-	static unsigned int CreateCapsule(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Capsule", const glm::vec3& position = glm::vec3(0.0f));
+	static unsigned int CreateEmpty(Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Empty Entity");
 	
-	static unsigned int CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Directional Light", const glm::vec3& position = glm::vec3(0.0f));
-	static unsigned int CreatePointLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Point Light", const glm::vec3& position = glm::vec3(0.0f));
-	static unsigned int CreateSpotLight(Scene& scene, RendererDevice& rendererDevice, const std::string& name = "Spot Light", const glm::vec3& position = glm::vec3(0.0f));
+	static unsigned int CreateCube(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cube", std::shared_ptr<Material> customMaterial = nullptr);
+	static unsigned int CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Pyramid", std::shared_ptr<Material> customMaterial = nullptr);
+	static unsigned int CreateCone(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cone", std::shared_ptr<Material> customMaterial = nullptr);
+	static unsigned int CreateSphere(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Sphere", std::shared_ptr<Material> customMaterial = nullptr);
+	static unsigned int CreateCapsule(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Capsule", std::shared_ptr<Material> customMaterial = nullptr);
+	
+	static unsigned int CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Directional Light", std::shared_ptr<Material> customMaterial = nullptr);
+	static unsigned int CreatePointLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Point Light", std::shared_ptr<Material> customMaterial = nullptr);
+	static unsigned int CreateSpotLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Spot Light", std::shared_ptr<Material> customMaterial = nullptr);
 
 };
 

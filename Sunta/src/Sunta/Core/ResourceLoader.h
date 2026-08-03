@@ -12,6 +12,7 @@ public:
 
 private:
 	static void LoadShaders(RendererDevice& rendererDevice);
+	static void LoadTextures(RendererDevice& rendererDevice);
 	static void LoadMaterials(RendererDevice& rendererDevice);
 	static void LoadMeshes(RendererDevice& rendererDevice);
 	static void LoadIcons(RendererDevice& rendererDevice);

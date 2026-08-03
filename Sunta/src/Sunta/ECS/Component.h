@@ -79,9 +79,19 @@ struct MeshComponent
 
 	bool isDirty = true;
 
+	// Constructor for Init via Primive
 	MeshComponent(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material)
 		: mesh(mesh)
-		, material(material) { }
+		, material(material)
+		, isDirty(false) { }
+
+	// Constructor for Init via asset name
+	MeshComponent(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, 
+		const std::string& meshName, const std::string& materialName)
+		: mesh(mesh)
+		, material(material)
+		, meshName(meshName)
+		, materialName(materialName) { }
 
 	MeshComponent() = default;
 

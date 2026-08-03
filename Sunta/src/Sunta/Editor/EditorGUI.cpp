@@ -119,42 +119,42 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 
 		DrawToolbarButton("cube", "##CreateCube", "Create Cube Entity", [&]() 
 			{
-				EntityFactory::CreateCube(scene, rendererDevice, "Cube", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreateCube(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Cube");
 			});
 
 		DrawToolbarButton("pyramid", "##CreatePyramid", "Create Pyramid Entity", [&]()
 			{
-				EntityFactory::CreatePyramid(scene, rendererDevice, "Pyramid", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreatePyramid(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Pyramid");
 			});
 
 		DrawToolbarButton("cone", "##CreateCone", "Create Cone Entity", [&]()
 			{
-				EntityFactory::CreateCone(scene, rendererDevice, "Cone", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreateCone(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Cone");
 			});
 
 		DrawToolbarButton("sphere", "##CreateSphere", "Create Sphere Entity", [&]()
 			{
-				EntityFactory::CreateSphere(scene, rendererDevice, "Sphere", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreateSphere(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Sphere");
 			});
 
 		DrawToolbarButton("capsule", "##CreateCapsule", "Create Capsule Entity", [&]()
 			{
-				EntityFactory::CreateCapsule(scene, rendererDevice, "Capsule", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreateCapsule(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Capsule");
 			});
 
 		DrawToolbarButton("diectional_light", "##CreateDirectionalLight", "Create Directional Light", [&]()
 			{
-				EntityFactory::CreateDirectionalLight(scene, rendererDevice, "Directional Light", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreateDirectionalLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Directional Light");
 			});
 		
 		DrawToolbarButton("point_light", "##CreatePointLight", "Create Point Light", [&]()
 			{
-				EntityFactory::CreatePointLight(scene, rendererDevice, "Point Light", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreatePointLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Point Light");
 			});
 
 		DrawToolbarButton("spotlight", "##CreateSpotLight", "Create Spot Light", [&]()
 			{
-				EntityFactory::CreateSpotLight(scene, rendererDevice, "Spot Light", glm::vec3(0.0f, 2.0f, 0.0f));
+				EntityFactory::CreateSpotLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Spot Light");
 			});
 
 		// Draw bottom line of toolbar

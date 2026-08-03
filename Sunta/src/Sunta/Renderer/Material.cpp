@@ -60,7 +60,7 @@ void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, 
 		if (auto whiteTexture = ResourceManager::GetTextureData("whiteTexture"))
 		{
 			whiteTexture->Bind(textureSlot);
-			shader->SetUniform1i(baseName + "1", textureSlot++);
+			shader->TrySetUniform1i(baseName + "1", textureSlot++);
 		}
 			
 		return;
@@ -75,14 +75,14 @@ void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, 
 			if (auto errorTexture = ResourceManager::GetTextureData("errorTexture"))
 			{
 				errorTexture->Bind(textureSlot);
-				shader->SetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
+				shader->TrySetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
 			}
 
 			continue;
 		}
 
 		maps[i]->Bind(textureSlot);
-		shader->SetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
+		shader->TrySetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
 	}
 }
 	

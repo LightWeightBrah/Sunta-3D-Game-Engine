@@ -19,11 +19,13 @@
 #include "Core/Log.h"
 #include "Events/EventBus.h"
 #include "Core/KeyCodes.h"
+#include "Core/EngineAssets.h"
 #include "ECS/Component.h"
 #include "ECS/Systems.h"
 #include "Renderer/RendererDevice.h"
 #include "Renderer/Mesh.h"
 #include "Utilities/MathUtilities.h"
+#include "EntityFactory.h"
 
 namespace Sunta
 {
@@ -45,70 +47,21 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	resizeEventID = EventBus::Subscribe<WindowResizeEvent>(
 		[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
 	);
-	
-	ResourceManager::LoadTexture("container2Diffuse",	"res/Sunta/Textures/container2.png");
-	ResourceManager::LoadTexture("container2Specular",	"res/Sunta/Textures/container2_specular.png");
-	ResourceManager::LoadTexture("whiteTexture",		"res/Sunta/Textures/whitePixel.png");
-	ResourceManager::LoadTexture("errorTexture",		"res/Sunta/Textures/errorTexture.png");
 
-	ResourceManager::LoadTexture("cube_container",		"res/Sunta/Textures/container.jpg");
-	ResourceManager::LoadTexture("cube_chad",			"res/Sunta/Textures/chad.png");
+	using namespace Sunta::EngineAssets;
 
-	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
-	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
+	auto texturedMaterial = std::make_shared<Material>
+	(
+		ResourceManager::GetShaderData(Shaders::Lit), 
+		ResourceManager::GetTextureData(Textures::Container2Diffuse), 
+		ResourceManager::GetTextureData(Textures::Container2Specular)
+	);
 
-	auto texturedShader		= ResourceManager::GetShaderData("Lit");
-	texturedShader->AddFeature(ShaderFeature::Lighting);
-
-	auto cubeShader			= ResourceManager::GetShaderData("Lit");
-	cubeShader->AddFeature(ShaderFeature::Lighting);
-
-	auto lightShader		= ResourceManager::GetShaderData("Unlit");
-
-	auto texturedMaterial	= std::make_shared<Material>(texturedShader, cubeDiffuseMap, cubeSpecularMap);
-	auto cubeMaterial		= std::make_shared<Material>(cubeShader);
-	auto lightMaterial		= std::make_shared<Material>(lightShader);
-
-	cubeMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
-		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
-		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
-		.SetShininess(128.0f);
-
-	unsigned int cube = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(cube).name = "Cube";
-	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(7.5f, 5.0f, 3.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(cube);
-	entityManager.AddComponent<MeshComponent>(cube, Primitives::CreateCube(rendererDevice), cubeMaterial);
-
-	unsigned int texturedCube = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(texturedCube).name = "Textured Cube";
-	entityManager.AddComponent<TransformComponent>(texturedCube, glm::vec3(0.0f, 5.0f, -0.5));
-	entityManager.AddComponent<WorldMatrixComponent>(texturedCube);
-	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(rendererDevice), texturedMaterial);
-
-	unsigned int sun = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(sun).name = "Directional Light";
-	entityManager.AddComponent<TransformComponent>(sun, glm::vec3(3.0f, 6.0f, 2.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(sun);
-	entityManager.AddComponent<MeshComponent>(sun, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<DirectionalLightComponent>(sun);
-
-	unsigned int pointLight = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(pointLight).name = "Point Light";
-	entityManager.AddComponent<TransformComponent>(pointLight, glm::vec3(-4.0f, 2.0f, 0.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(pointLight);
-	entityManager.AddComponent<MeshComponent>(pointLight, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<PointLightComponent>(pointLight);
-
-	unsigned int spotLight = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(spotLight).name = "Spot Light";
-	entityManager.AddComponent<TransformComponent>(spotLight, glm::vec3(-2.5f, 4.5f, 0.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(spotLight);
-	entityManager.AddComponent<MeshComponent>(spotLight, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<SpotlightComponent>(spotLight);
-
-	//AddEntity(std::move(cubeEntity));
-	//AddEntity(std::move(lightSource));
+	EntityFactory::CreateCube(*this, rendererDevice, glm::vec3(7.5f, 5.0f, 3.0f), "Cube");
+	EntityFactory::CreateCube(*this, rendererDevice, glm::vec3(0.0f, 5.0f, -0.5), "Textured Cube", texturedMaterial);
+	EntityFactory::CreateDirectionalLight(*this, rendererDevice, glm::vec3(3.0f, 6.0f, 2.0f), "Directional Light");
+	EntityFactory::CreatePointLight(*this, rendererDevice, glm::vec3(-4.0f, 2.0f, 0.0f), "Point Light");
+	EntityFactory::CreateSpotLight(*this, rendererDevice, glm::vec3(-2.5f, 4.5f, 0.0f), "Spot Light");
 }
 	
 void Scene::OnWindowResize(float windowWidth, float windowHeight)
