@@ -16,6 +16,7 @@
 #include "Scene/Scene.h"
 #include "Core/Log.h"
 #include "Core/Platform.h"
+#include "Core/EngineAssets.h"
 
 namespace Sunta
 {
@@ -117,42 +118,44 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 			}
 		};
 
-		DrawToolbarButton("cube", "##CreateCube", "Create Cube Entity", [&]() 
+		using namespace Sunta::EngineAssets;
+
+		DrawToolbarButton(Icons::Cube, "##CreateCube", "Create Cube Entity", [&]() 
 			{
 				EntityFactory::CreateCube(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Cube");
 			});
 
-		DrawToolbarButton("pyramid", "##CreatePyramid", "Create Pyramid Entity", [&]()
+		DrawToolbarButton(Icons::Pyramid, "##CreatePyramid", "Create Pyramid Entity", [&]()
 			{
 				EntityFactory::CreatePyramid(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Pyramid");
 			});
 
-		DrawToolbarButton("cone", "##CreateCone", "Create Cone Entity", [&]()
+		DrawToolbarButton(Icons::Cone, "##CreateCone", "Create Cone Entity", [&]()
 			{
 				EntityFactory::CreateCone(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Cone");
 			});
 
-		DrawToolbarButton("sphere", "##CreateSphere", "Create Sphere Entity", [&]()
+		DrawToolbarButton(Icons::Sphere, "##CreateSphere", "Create Sphere Entity", [&]()
 			{
 				EntityFactory::CreateSphere(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Sphere");
 			});
 
-		DrawToolbarButton("capsule", "##CreateCapsule", "Create Capsule Entity", [&]()
+		DrawToolbarButton(Icons::Capsule, "##CreateCapsule", "Create Capsule Entity", [&]()
 			{
 				EntityFactory::CreateCapsule(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Capsule");
 			});
 
-		DrawToolbarButton("diectional_light", "##CreateDirectionalLight", "Create Directional Light", [&]()
+		DrawToolbarButton(Icons::DirectionalLight, "##CreateDirectionalLight", "Create Directional Light", [&]()
 			{
 				EntityFactory::CreateDirectionalLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Directional Light");
 			});
 		
-		DrawToolbarButton("point_light", "##CreatePointLight", "Create Point Light", [&]()
+		DrawToolbarButton(Icons::PointLight, "##CreatePointLight", "Create Point Light", [&]()
 			{
 				EntityFactory::CreatePointLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Point Light");
 			});
 
-		DrawToolbarButton("spotlight", "##CreateSpotLight", "Create Spot Light", [&]()
+		DrawToolbarButton(Icons::Spotlight, "##CreateSpotLight", "Create Spot Light", [&]()
 			{
 				EntityFactory::CreateSpotLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Spot Light");
 			});

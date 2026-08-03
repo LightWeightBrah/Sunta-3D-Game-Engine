@@ -53,7 +53,7 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	auto texturedMaterial = std::make_shared<Material>
 	(
 		ResourceManager::GetShaderData(Shaders::Lit), 
-		ResourceManager::GetTextureData(Textures::Container2Diffuse), 
+		ResourceManager::GetTextureData(Textures::Container2Diffuse),
 		ResourceManager::GetTextureData(Textures::Container2Specular)
 	);
 
