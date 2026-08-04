@@ -12,10 +12,17 @@ namespace Sunta::EngineAssets
 	namespace Meshes
 	{
 		constexpr const char* Cube     = "cube";
-		constexpr const char* Pyramide = "pyramide";
+		constexpr const char* Pyramid  = "pyramid";
 		constexpr const char* Sphere   = "sphere";
 		constexpr const char* Cone     = "cone";
 		constexpr const char* Capsule  = "capsule";
+	}
+
+	namespace Materials
+	{
+		constexpr const char* Error   = "error_material";
+		constexpr const char* Default = "default_material";
+		constexpr const char* Unlit   = "unlit_material";
 	}
 
 	namespace Textures

@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Core/ResourceManager.h"
 #include "Core/Log.h"
+#include "Core/EngineAssets.h"
 
 namespace Sunta
 {
@@ -55,9 +56,11 @@ Material& Material::Apply()
 
 void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, const std::string& baseName, unsigned int& textureSlot)
 {
+	using namespace Sunta::EngineAssets;
+
 	if (maps.empty())
 	{
-		if (auto whiteTexture = ResourceManager::GetTextureData("whiteTexture"))
+		if (auto whiteTexture = ResourceManager::GetTextureData(Textures::WhiteTexture))
 		{
 			whiteTexture->Bind(textureSlot);
 			shader->TrySetUniform1i(baseName + "1", textureSlot++);
@@ -72,7 +75,7 @@ void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, 
 		{
 			SUNTA_ENGINE_LOG_ERROR("Material: Texture map {0} at index {1} is null", baseName, i);
 				
-			if (auto errorTexture = ResourceManager::GetTextureData("errorTexture"))
+			if (auto errorTexture = ResourceManager::GetTextureData(Textures::ErrorTexture))
 			{
 				errorTexture->Bind(textureSlot);
 				shader->TrySetUniform1i(baseName + std::to_string(i + 1), textureSlot++);

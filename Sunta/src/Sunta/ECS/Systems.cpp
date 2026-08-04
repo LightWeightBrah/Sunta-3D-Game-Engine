@@ -7,6 +7,7 @@
 #include "Core/ResourceManager.h"
 #include "EntityManager.h"
 #include "Component.h"
+#include "Core/EngineAssets.h"
 
 namespace Sunta
 {
@@ -41,8 +42,10 @@ void Systems::SyncMeshComponents(EntityManager& entityManager)
 {
 	auto& meshComponents = entityManager.GetAllComponents<MeshComponent>();
 
-	auto errorMesh = ResourceManager::GetMeshData("cube");
-	auto errorMaterial = ResourceManager::GetMaterialData("error_material");
+	using namespace Sunta::EngineAssets;
+
+	auto errorMesh = ResourceManager::GetMeshData(Meshes::Cube);
+	auto errorMaterial = ResourceManager::GetMaterialData(Materials::Error);
 
 	for (auto& component : meshComponents)
 	{

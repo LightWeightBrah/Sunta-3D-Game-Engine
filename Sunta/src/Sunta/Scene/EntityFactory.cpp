@@ -28,91 +28,106 @@ unsigned int EntityFactory::CreateEmpty(Scene& scene, const glm::vec3& position,
 
 static std::shared_ptr<Material> GetDefaultMaterial()
 {
-	auto shader = ResourceManager::GetShaderData(Sunta::EngineAssets::Shaders::Lit);
-
-	auto material = std::make_shared<Material>(shader);
-	material->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
-		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
-		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
-		.SetShininess(128.0f);
-
-	return material;
+	return ResourceManager::GetMaterialData(Sunta::EngineAssets::Materials::Default);
 }
 
 unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
+
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : GetDefaultMaterial();
+	auto mesh = ResourceManager::GetMeshData(Meshes::Cube);
 
-	scene.GetEntityManager().AddComponent<MeshComponent>(entity, Primitives::CreateCube(rendererDevice), material);
+	scene.GetEntityManager().AddComponent<MeshComponent>(entity, mesh, material, 
+		Meshes::Cube, Materials::Default);
 	return entity;
 }
 
 unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
+
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : GetDefaultMaterial();
+	auto mesh = ResourceManager::GetMeshData(Meshes::Pyramid);
 
-	scene.GetEntityManager().AddComponent<MeshComponent>(entity, Primitives::CreatePyramide(rendererDevice), material);
+	scene.GetEntityManager().AddComponent<MeshComponent>(entity, mesh, material,
+		Meshes::Pyramid, Materials::Default);
 	return entity;
 }
 
 unsigned int EntityFactory::CreateCone(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : GetDefaultMaterial();
+	auto mesh = ResourceManager::GetMeshData(Meshes::Cone);
 
-	scene.GetEntityManager().AddComponent<MeshComponent>(entity, Primitives::CreateCone(rendererDevice), material);
+	scene.GetEntityManager().AddComponent<MeshComponent>(entity, mesh, material,
+		Meshes::Cone, Materials::Default);
 	return entity;
 }
 
 unsigned int EntityFactory::CreateSphere(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : GetDefaultMaterial();
+	auto mesh = ResourceManager::GetMeshData(Meshes::Sphere);
 
-	scene.GetEntityManager().AddComponent<MeshComponent>(entity, Primitives::CreateSphere(rendererDevice), material);
+	scene.GetEntityManager().AddComponent<MeshComponent>(entity, mesh, material,
+		Meshes::Sphere, Materials::Default);
 	return entity;
 }
 
 unsigned int EntityFactory::CreateCapsule(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : GetDefaultMaterial();
+	auto mesh = ResourceManager::GetMeshData(Meshes::Capsule);
 
-	scene.GetEntityManager().AddComponent<MeshComponent>(entity, Primitives::CreateCapsule(rendererDevice), material);
+	scene.GetEntityManager().AddComponent<MeshComponent>(entity, mesh, material,
+		Meshes::Capsule, Materials::Default);
 	return entity;
 }
 
 unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : std::make_shared<Material>(ResourceManager::GetShaderData(EngineAssets::Shaders::Unlit));
+	auto mesh = ResourceManager::GetMeshData(Meshes::Cube);
 
 	auto& entityManager = scene.GetEntityManager();
-	entityManager.AddComponent<MeshComponent>(entity, Primitives::CreateCube(rendererDevice), material);
+	entityManager.AddComponent<MeshComponent>(entity, mesh, material, Meshes::Cube, Materials::Unlit);
 	entityManager.AddComponent<DirectionalLightComponent>(entity);
 	return entity;
 }
 
 unsigned int EntityFactory::CreatePointLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : std::make_shared<Material>(ResourceManager::GetShaderData(EngineAssets::Shaders::Unlit));
+	auto mesh = ResourceManager::GetMeshData(Meshes::Cube);
 
 	auto& entityManager = scene.GetEntityManager();
-	entityManager.AddComponent<MeshComponent>(entity, Primitives::CreateCube(rendererDevice), material);
+	entityManager.AddComponent<MeshComponent>(entity, mesh, material, Meshes::Cube, Materials::Unlit);
 	entityManager.AddComponent<PointLightComponent>(entity);
 	return entity;
 }
 
 unsigned int EntityFactory::CreateSpotLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
+	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
 	auto material = customMaterial ? customMaterial : std::make_shared<Material>(ResourceManager::GetShaderData(EngineAssets::Shaders::Unlit));
+	auto mesh = ResourceManager::GetMeshData(Meshes::Cube);
 
 	auto& entityManager = scene.GetEntityManager();
-	entityManager.AddComponent<MeshComponent>(entity, Primitives::CreateCube(rendererDevice), material);
+	entityManager.AddComponent<MeshComponent>(entity, mesh, material, Meshes::Cube, Materials::Unlit);
 	entityManager.AddComponent<SpotlightComponent>(entity);
 	return entity;
 }

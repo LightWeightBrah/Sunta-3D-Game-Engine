@@ -57,6 +57,11 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 		ResourceManager::GetTextureData(Textures::Container2Specular)
 	);
 
+	texturedMaterial->SetAmbient(glm::vec3(1.0f));
+	texturedMaterial->SetDiffuse(glm::vec3(1.0f));
+	texturedMaterial->SetSpecular(glm::vec3(1.0f));
+	texturedMaterial->SetShininess(32.0f);
+
 	EntityFactory::CreateCube(*this, rendererDevice, glm::vec3(7.5f, 5.0f, 3.0f), "Cube");
 	EntityFactory::CreateCube(*this, rendererDevice, glm::vec3(0.0f, 5.0f, -0.5), "Textured Cube", texturedMaterial);
 	EntityFactory::CreateDirectionalLight(*this, rendererDevice, glm::vec3(3.0f, 6.0f, 2.0f), "Directional Light");
