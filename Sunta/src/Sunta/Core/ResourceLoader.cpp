@@ -46,11 +46,13 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 {
 	using namespace Sunta::EngineAssets;
 
+	// Error Material
 	auto errorShader = ResourceManager::GetShaderData(Shaders::Error);
 	auto errorMaterial = std::make_shared<Material>(errorShader);
 	errorMaterial->SetUniform3f("errorColor", glm::vec3(1.0f, 0.0f, 1.0f));
 	ResourceManager::LoadMaterial(Materials::Error, errorMaterial);
 
+	// Default Material (Lit)
 	auto litShader = ResourceManager::GetShaderData(Shaders::Lit);
 	litShader->AddFeature(ShaderFeature::Lighting);
 	auto defaultMaterial = std::make_shared<Material>(litShader);
@@ -60,9 +62,22 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 		.SetShininess(128.0f);
 	ResourceManager::LoadMaterial(Materials::Default, defaultMaterial);
 
+	// Unlit Material
 	auto unlitShader = ResourceManager::GetShaderData(Shaders::Unlit);
 	auto unlitMaterial = std::make_shared<Material>(unlitShader);
 	ResourceManager::LoadMaterial(Materials::Unlit, unlitMaterial);
+
+	// Textures Material
+	auto texturedMaterial = std::make_shared<Material>(
+		litShader,
+		ResourceManager::GetTextureData(Textures::Container2Diffuse),
+		ResourceManager::GetTextureData(Textures::Container2Specular)
+	);
+	texturedMaterial->SetAmbient(glm::vec3(1.0f))
+		.SetDiffuse(glm::vec3(1.0f))
+		.SetSpecular(glm::vec3(1.0f))
+		.SetShininess(32.0f);
+	ResourceManager::LoadMaterial(Materials::Textured, texturedMaterial);
 }
 
 void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
@@ -70,7 +85,7 @@ void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
 	using namespace Sunta::EngineAssets;
 
 	ResourceManager::LoadMesh(Meshes::Cube,     [&]() { return Primitives::CreateCube(rendererDevice); });
-	ResourceManager::LoadMesh(Meshes::Pyramid, [&]() { return Primitives::CreatePyramide(rendererDevice); });
+	ResourceManager::LoadMesh(Meshes::Pyramid,  [&]() { return Primitives::CreatePyramide(rendererDevice); });
 	ResourceManager::LoadMesh(Meshes::Sphere,   [&]() { return Primitives::CreateSphere(rendererDevice); });
 	ResourceManager::LoadMesh(Meshes::Capsule,  [&]() { return Primitives::CreateCapsule(rendererDevice); });
 	ResourceManager::LoadMesh(Meshes::Cone,     [&]() { return Primitives::CreateCone(rendererDevice); });

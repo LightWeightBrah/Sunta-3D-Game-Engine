@@ -50,17 +50,7 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 
 	using namespace Sunta::EngineAssets;
 
-	auto texturedMaterial = std::make_shared<Material>
-	(
-		ResourceManager::GetShaderData(Shaders::Lit), 
-		ResourceManager::GetTextureData(Textures::Container2Diffuse),
-		ResourceManager::GetTextureData(Textures::Container2Specular)
-	);
-
-	texturedMaterial->SetAmbient(glm::vec3(1.0f));
-	texturedMaterial->SetDiffuse(glm::vec3(1.0f));
-	texturedMaterial->SetSpecular(glm::vec3(1.0f));
-	texturedMaterial->SetShininess(32.0f);
+	auto texturedMaterial = ResourceManager::GetMaterialData(Materials::Textured);
 
 	EntityFactory::CreateCube(*this, rendererDevice, glm::vec3(7.5f, 5.0f, 3.0f), "Cube");
 	EntityFactory::CreateCube(*this, rendererDevice, glm::vec3(0.0f, 5.0f, -0.5), "Textured Cube", texturedMaterial);

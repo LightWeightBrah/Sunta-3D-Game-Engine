@@ -4,9 +4,9 @@ namespace Sunta::EngineAssets
 {
 	namespace Shaders
 	{
+		constexpr const char* Error = "Error";
 		constexpr const char* Lit   = "Lit";
 		constexpr const char* Unlit = "Unlit";
-		constexpr const char* Error = "Error";
 	}
 
 	namespace Meshes
@@ -20,9 +20,10 @@ namespace Sunta::EngineAssets
 
 	namespace Materials
 	{
-		constexpr const char* Error   = "error_material";
-		constexpr const char* Default = "default_material";
-		constexpr const char* Unlit   = "unlit_material";
+		constexpr const char* Error     = "error_material";
+		constexpr const char* Default   = "default_material";
+		constexpr const char* Unlit     = "unlit_material";
+		constexpr const char* Textured  = "textured_material";
 	}
 
 	namespace Textures

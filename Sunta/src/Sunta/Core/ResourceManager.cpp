@@ -76,12 +76,19 @@ void ResourceManager::LoadMesh(const std::string& name, std::function<std::share
 
 void ResourceManager::LoadMaterial(const std::string& name, std::shared_ptr<Material> material)
 {
+	if (!material)
+	{
+		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Material passed to LoadMaterial is NULL!");
+		return;
+	}
+
 	if (materialsRegistered.count(name))
 	{
 		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find Material named: '{0}'", name);
 		return;
 	}
 
+	material->SetName(name);
 	materialsRegistered[name] = material;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Material: '{0}'", name);
