@@ -232,7 +232,7 @@ std::shared_ptr<Texture> ResourceManager::LoadOrGetTexture(const std::string& fi
 	return GetTextureData(filepath);
 }
 
-void ResourceManager::LoadMaterialFromFile(const std::string& filepath)
+std::shared_ptr<Material> ResourceManager::LoadMaterialFromFile(const std::string& filepath)
 {
 	auto material = MaterialSerializer::Deserialize(filepath);
 	if (material)

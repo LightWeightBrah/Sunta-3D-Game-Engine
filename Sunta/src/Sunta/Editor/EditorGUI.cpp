@@ -12,6 +12,7 @@
 #include "ECS/Component.h"
 #include "Core/ResourceManager.h"
 #include "Renderer/Texture.h"
+#include "Renderer/Material.h"
 #include "Scene/EntityFactory.h"
 #include "Scene/Scene.h"
 #include "Core/Log.h"
@@ -294,15 +295,22 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		if (material)
 		{
 			auto& data = material->GetData();
+
+			// data copy (ImGui needs non-const pointer)
+			glm::vec3 ambient    = data.ambientColor;
+			glm::vec3 diffuse    = data.diffuseColor;
+			glm::vec3 specular   = data.specularColor;
+			float     shininess  = data.shininess;
+
 			bool changed = false;
 
-			if (ImGui::ColorEdit3("Ambient", &data.ambientColor.r))
+			if (ImGui::ColorEdit3("Ambient", &ambient.r))
 				changed = true;
-			if (ImGui::ColorEdit3("Diffuse", &data.diffuseColor.r))
+			if (ImGui::ColorEdit3("Diffuse", &diffuse.r))
 				changed = true;
-			if (ImGui::ColorEdit3("Specular", &data.specularColor.r))
+			if (ImGui::ColorEdit3("Specular", &specular.r))
 				changed = true;
-			if (ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f))
+			if (ImGui::DragFloat("Shininess", &shininess, 0.5f, 1.0f, 256.0f))
 				changed = true;
 
 			if (ImGui::Button("Save Material") || changed)
@@ -594,7 +602,7 @@ void EditorGUI::DrawFileBrowser()
 
 			auto defaultShader = ResourceManager::GetShaderData(EngineAssets::Shaders::Lit);
 			auto newMaterial = std::make_shared<Material>(defaultShader);
-			newMaterial->SetName(materialPath.stem.string());
+			newMaterial->SetName(materialPath.stem().string());
 
 			MaterialSerializer::Serialize(materialPath.string(), newMaterial);
 		}
@@ -609,7 +617,7 @@ void EditorGUI::DrawFileBrowser()
 		float indent = (availableWidth - iconSize) * 0.5f;
 
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
-		auto icon = ResourceManager::GetEditorIcon("defualt_folder");
+		auto icon = ResourceManager::GetEditorIcon(Sunta::EngineAssets::Icons::DefaultFolder);
 		ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
 		ImGui::ImageButton("##NewFolderIcon", textureID, ImVec2(cellSize - padding, cellSize - padding));
 
@@ -789,6 +797,8 @@ void EditorGUI::DrawWindowBackground(const std::string& textureKey, glm::vec4 ti
 
 std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory)
 {
+	using namespace Sunta::EngineAssets;
+
 	if (isDirectory)
 	{
 		static const std::unordered_map<std::string, std::string> folderIcons = 
@@ -805,7 +815,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
 		auto it = folderIcons.find(name);
-		return (it != folderIcons.end()) ? it->second : "defualt_folder";
+		return (it != folderIcons.end()) ? it->second : Icons::DefaultFolder;
 	}
 	else
 	{
@@ -823,7 +833,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
 		auto it = fileIcons.find(extension);
-		return (it != fileIcons.end()) ? it->second : "defualt_file";
+		return (it != fileIcons.end()) ? it->second : Icons::DefaultFile;
 
 	}
 }

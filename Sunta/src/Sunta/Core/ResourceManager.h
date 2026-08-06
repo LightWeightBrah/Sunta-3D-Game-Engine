@@ -52,7 +52,7 @@ public:
 	static std::shared_ptr<Material>  LoadOrGetMaterial (const std::string& name, std::shared_ptr<Shader> shader);
 	static std::shared_ptr<Texture>   LoadOrGetTexture  (const std::string& filepath);
 
-	static void LoadMaterialFromFile(const std::string& filepath);
+	static std::shared_ptr<Material>  LoadMaterialFromFile(const std::string& filepath);
 
 	static std::vector<std::string>	  GetMeshesNames();
 	static std::vector<std::string>	  GetMaterialsNames();
