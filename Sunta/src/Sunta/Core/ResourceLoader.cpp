@@ -58,7 +58,7 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 	auto defaultMaterial = std::make_shared<Material>(litShader);
 	defaultMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
 		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
-		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
+		.SetSpecular(glm::vec3(0.63f, 0.56f, 0.37f))
 		.SetShininess(128.0f);
 	ResourceManager::LoadMaterial(Materials::Default, defaultMaterial);
 

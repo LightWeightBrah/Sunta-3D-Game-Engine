@@ -85,7 +85,7 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 
 		auto modelShader = ResourceManager::GetShaderData("Lit");
 
-		meshMaterial = ResourceManager::LoadOrGetModelMaterial(materialKey, modelShader);
+		meshMaterial = ResourceManager::LoadOrGetMaterial(materialKey, modelShader);
 
 		if (meshMaterial->NeedsLoading())
 		{
@@ -130,7 +130,7 @@ void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::share
 		std::string filename = path.substr(path.find_last_of("\\/") + 1);
 		std::string textureFullPath = directory + "/" + filename;
 
-		auto texture = ResourceManager::LoadOrGetModelTexture(textureFullPath);
+		auto texture = ResourceManager::LoadOrGetTexture(textureFullPath);
 
 		if (type == aiTextureType_DIFFUSE)
 			material->AddDiffuseMap(texture);

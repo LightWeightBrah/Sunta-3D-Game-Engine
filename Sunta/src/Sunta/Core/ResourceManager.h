@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <vector>
 
 namespace Sunta
 {
@@ -48,8 +49,10 @@ public:
 	static std::shared_ptr<Shader>	  GetShaderData      (const std::string& name);
 	static std::shared_ptr<Material>  GetMaterialData	 (const std::string& name);
 										    
-	static std::shared_ptr<Material>  LoadOrGetModelMaterial (const std::string& name, std::shared_ptr<Shader> shader);
-	static std::shared_ptr<Texture>   LoadOrGetModelTexture  (const std::string& filepath);
+	static std::shared_ptr<Material>  LoadOrGetMaterial (const std::string& name, std::shared_ptr<Shader> shader);
+	static std::shared_ptr<Texture>   LoadOrGetTexture  (const std::string& filepath);
+
+	static void LoadMaterialFromFile(const std::string& filepath);
 
 	static std::vector<std::string>	  GetMeshesNames();
 	static std::vector<std::string>	  GetMaterialsNames();

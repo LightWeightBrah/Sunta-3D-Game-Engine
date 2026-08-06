@@ -8,6 +8,7 @@
 #include "Renderer/Model.h"
 #include "Animation/Animation.h"
 #include "Renderer/RendererDevice.h"
+#include "Serialization/MaterialSerializer.h"
 
 namespace Sunta
 {
@@ -16,7 +17,7 @@ void ResourceManager::LoadEditorIcon(const std::string& name, const std::string&
 {
 	if (editorIconsRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find editor icon named: '{0}' filepath: '{1}'", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadEditorIcon: Editor Icon with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
 		return;
 	}
 
@@ -27,6 +28,7 @@ void ResourceManager::LoadEditorIcon(const std::string& name, const std::string&
 	}
 
 	auto iconTexture = rendererDevice->CreateTexture(filepath, false);
+	iconTexture->SetName(name);
 	editorIconsRegistered[name] = iconTexture;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Editor Icon: '{0}' filepath: '{1}'", name, filepath);
@@ -36,7 +38,7 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& file
 {
 	if (modelsRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find model named: '{0}' filepath: '{1}'", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadModel: Model with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
 		return;
 	}
 
@@ -62,7 +64,7 @@ void ResourceManager::LoadMesh(const std::string& name, std::function<std::share
 {
 	if (meshesRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find Primitive Mesh named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadMesh: Mesh with name '{0}' already exists! Cannot map multiple meshes to the same name!", name);
 		return;
 	}
 
@@ -84,7 +86,7 @@ void ResourceManager::LoadMaterial(const std::string& name, std::shared_ptr<Mate
 
 	if (materialsRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find Material named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadMaterial: Material with name '{0}' already exists! Cannot map multiple materials to the same name!", name);
 		return;
 	}
 
@@ -98,7 +100,7 @@ void ResourceManager::LoadTexture(const std::string& name, const std::string& fi
 {
 	if (texturesRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find texture named: '{0}' filepath: '{1}'", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadTexture: Texture with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
 		return;
 	}
 
@@ -109,6 +111,7 @@ void ResourceManager::LoadTexture(const std::string& name, const std::string& fi
 	}
 
 	auto texture = rendererDevice->CreateTexture(filepath);
+	texture->SetName(name);
 	texturesRegistered[name] = texture;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture: '{0}' filepath: '{1}'", name, filepath);
@@ -118,7 +121,7 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& fil
 {
 	if (shadersRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager: Couldn't find shader named: '{0}' filepath: '{1}'", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadShader: Shader with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
 		return;
 	}
 
@@ -129,6 +132,7 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& fil
 	}
 
 	auto shader = rendererDevice->CreateShader(filepath);
+	shader->SetName(name);
 	shadersRegistered[name] = shader;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, filepath);
@@ -139,7 +143,7 @@ std::shared_ptr<Texture> ResourceManager::GetEditorIcon(const std::string& name)
 	auto it = editorIconsRegistered.find(name);
 	if (it == editorIconsRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetEditorIcon: Couldn't find Editor Icon named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::GetEditorIcon: Couldn't find Editor Icon named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -150,7 +154,7 @@ std::shared_ptr<ModelData> ResourceManager::GetModelData(const std::string& name
 	auto it = modelsRegistered.find(name);
 	if (it == modelsRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetModelData: Couldn't find Model named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::GetModelData: Couldn't find Model named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -161,7 +165,7 @@ std::shared_ptr<Mesh> ResourceManager::GetMeshData(const std::string& name)
 	auto it = meshesRegistered.find(name);
 	if (it == meshesRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetMeshData: Couldn't find Mesh named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::GetMeshData: Couldn't find Mesh named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -172,7 +176,7 @@ std::shared_ptr<Texture> ResourceManager::GetTextureData(const std::string& name
 	auto it = texturesRegistered.find(name);
 	if (it == texturesRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetTextureData: Couldn't find Texture named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::GetTextureData: Couldn't find Texture named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -183,7 +187,7 @@ std::shared_ptr<Shader> ResourceManager::GetShaderData(const std::string& name)
 	auto it = shadersRegistered.find(name);
 	if (it == shadersRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetShaderData: Couldn't find Shader named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::GetShaderData: Couldn't find Shader named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
@@ -194,43 +198,49 @@ std::shared_ptr<Material> ResourceManager::GetMaterialData(const std::string& na
 	auto it = materialsRegistered.find(name);
 	if (it == materialsRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_ERROR("Resource Manager::GetMaterialData: Couldn't find Material named: '{0}'", name);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::GetMaterialData: Couldn't find Material named: '{0}'", name);
 		return nullptr;
 	}
 	return it->second;
 }
 
-std::shared_ptr<Material> ResourceManager::LoadOrGetModelMaterial(const std::string& name, std::shared_ptr<Shader> shader)
+std::shared_ptr<Material> ResourceManager::LoadOrGetMaterial(const std::string& name, std::shared_ptr<Shader> shader)
 {
 	auto it = materialsRegistered.find(name);
-	if (it == materialsRegistered.end())
+	if (it != materialsRegistered.end())
 	{
-		auto newMaterial = std::make_shared<Material>(shader);
-		materialsRegistered[name] = newMaterial;
-
-		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelMaterial Loaded new Material '{0}'", name);
-		return newMaterial;
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetMaterial: Loaded existing Material '{0}'", name);
+		return it->second;
 	}
 
-	SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelMaterial Loaded existing Material '{0}'", name);
-	return it->second;
+	auto newMaterial = std::make_shared<Material>(shader);
+	LoadMaterial(name, newMaterial);
+	return newMaterial;
 }
 
-std::shared_ptr<Texture> ResourceManager::LoadOrGetModelTexture(const std::string& filepath)
+// For automatic textures e.g 3d Models
+std::shared_ptr<Texture> ResourceManager::LoadOrGetTexture(const std::string& filepath)
 {
 	auto it = texturesRegistered.find(filepath);
-	if (it == texturesRegistered.end())
+	if (it != texturesRegistered.end())
 	{
-		auto newTexture = rendererDevice->CreateTexture(filepath);
-		texturesRegistered[filepath] = newTexture;
-
-		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelTexture Loaded new Texture '{0}'", filepath);
-		return newTexture;
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetTexture: Loaded existing Texture '{0}'", filepath);
+		return it->second;
 	}
 
+	LoadTexture(filepath, filepath);
+	return GetTextureData(filepath);
+}
 
-	SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetModelTexture Loaded existing Texture '{0}'", filepath);
-	return it->second;
+void ResourceManager::LoadMaterialFromFile(const std::string& filepath)
+{
+	auto material = MaterialSerializer::Deserialize(filepath);
+	if (material)
+	{
+		LoadMaterial(material->GetName(), material);
+	}
+
+	return material;
 }
 
 std::vector<std::string> ResourceManager::GetMeshesNames()

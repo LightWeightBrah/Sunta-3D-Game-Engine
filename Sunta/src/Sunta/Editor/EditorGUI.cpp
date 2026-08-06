@@ -17,6 +17,7 @@
 #include "Core/Log.h"
 #include "Core/Platform.h"
 #include "Core/EngineAssets.h"
+#include "Serialization/MaterialSerializer.h"
 
 namespace Sunta
 {
@@ -279,6 +280,40 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 
 void EditorGUI::DrawInspector(EntityManager& entityManager)
 {
+	if (!selectedFile.empty() && selectedFile.extension() == ".material")
+	{
+		ImGui::Text("Material Asset: %s", selectedFile.filename().string().c_str());
+		ImGui::Separator();
+
+		std::string materialName = selectedFile.stem().string();
+		auto material = ResourceManager::GetMaterialData(materialName);
+
+		if (!material)
+			material = ResourceManager::LoadMaterialFromFile(selectedFile.string());
+
+		if (material)
+		{
+			auto& data = material->GetData();
+			bool changed = false;
+
+			if (ImGui::ColorEdit3("Ambient", &data.ambientColor.r))
+				changed = true;
+			if (ImGui::ColorEdit3("Diffuse", &data.diffuseColor.r))
+				changed = true;
+			if (ImGui::ColorEdit3("Specular", &data.specularColor.r))
+				changed = true;
+			if (ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f))
+				changed = true;
+
+			if (ImGui::Button("Save Material") || changed)
+				MaterialSerializer::Serialize(selectedFile.string(), material);
+		}
+
+		return;
+		
+	}
+
+
 	if (IsClickingEmptySpace())
 	{
 		selectedFile = "";
@@ -545,6 +580,23 @@ void EditorGUI::DrawFileBrowser()
 		{
 			isCreatingFolder = true;
 			strcpy(newFolderName, "New Folder");
+		}
+
+		if (ImGui::MenuItem("Create New Material"))
+		{
+			std::filesystem::path materialPath = currentDirectory / "NewMaterial.material";
+
+			int index = 1;
+			while (std::filesystem::exists(materialPath))
+			{
+				materialPath = currentDirectory / ("NewMaterial_" + std::to_string(index++) + ".material");
+			}
+
+			auto defaultShader = ResourceManager::GetShaderData(EngineAssets::Shaders::Lit);
+			auto newMaterial = std::make_shared<Material>(defaultShader);
+			newMaterial->SetName(materialPath.stem.string());
+
+			MaterialSerializer::Serialize(materialPath.string(), newMaterial);
 		}
 
 		ImGui::EndPopup();

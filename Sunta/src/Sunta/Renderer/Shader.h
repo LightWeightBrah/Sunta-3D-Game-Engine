@@ -37,6 +37,10 @@ public:
 	virtual void Bind() const = 0;
 	virtual void Unbind() const = 0;
 
+	inline const std::string& GetName() const { return name; }
+	inline void SetName(const std::string& name) { this->name = name; }
+	inline const std::string& GetFilePath() const { return filepath; }
+
 	void AddFeature(ShaderFeature feature) { features |= (unsigned int)feature; }
 	bool HasFeature(ShaderFeature feature) const { return (features & (unsigned int)feature) != 0; }
 
@@ -60,6 +64,7 @@ public:
 
 protected:
 	std::string filepath;
+	std::string name = "";
 	unsigned int features;
 
 	ShaderProgramSource ParseShader();

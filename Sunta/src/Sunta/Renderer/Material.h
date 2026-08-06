@@ -32,7 +32,6 @@ public:
 	//how to delete the Shader in shared_ptr so we gotta know the Shader destructor
 	~Material();
 	
-	inline const std::string& GetName() const { return name; }
 	inline void SetName(const std::string& name) { this->name = name; }
 
 	Material& SetAmbient(const glm::vec3& color);
@@ -49,6 +48,10 @@ public:
 	
 	inline const Data&			GetData()		const { return data; }
 	std::shared_ptr<Shader>		GetShader()		const;
+	inline const std::string&	GetName()		const { return name; }
+
+	inline const std::vector<std::shared_ptr<Texture>>& GetDiffuseMaps()  const { return diffuseMaps; }
+	inline const std::vector<std::shared_ptr<Texture>>& GetSpecularMaps() const { return specularMaps; }
 
 	bool						NeedsLoading()	const { return diffuseMaps.empty() && specularMaps.empty(); }
 	
