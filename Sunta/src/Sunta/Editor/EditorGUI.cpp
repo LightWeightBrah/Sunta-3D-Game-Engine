@@ -286,39 +286,34 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		ImGui::Text("Material Asset: %s", selectedFile.filename().string().c_str());
 		ImGui::Separator();
 
-		std::string materialName = selectedFile.stem().string();
-		auto material = ResourceManager::GetMaterialData(materialName);
-
-		if (!material)
-			material = ResourceManager::LoadMaterialFromFile(selectedFile.string());
-
-		if (material)
+		if (lastSelectedFile != selectedFile)
 		{
-			auto& data = material->GetData();
+			lastSelectedFile = selectedFile;
 
-			// data copy (ImGui needs non-const pointer)
-			glm::vec3 ambient    = data.ambientColor;
-			glm::vec3 diffuse    = data.diffuseColor;
-			glm::vec3 specular   = data.specularColor;
-			float     shininess  = data.shininess;
+			currentMaterial = ResourceManager::LoadMaterialFromFile(selectedFile.string());
+		}
 
+		if (currentMaterial)
+		{
+			auto& data = currentMaterial->GetData();
 			bool changed = false;
 
-			if (ImGui::ColorEdit3("Ambient", &ambient.r))
-				changed = true;
-			if (ImGui::ColorEdit3("Diffuse", &diffuse.r))
-				changed = true;
-			if (ImGui::ColorEdit3("Specular", &specular.r))
-				changed = true;
-			if (ImGui::DragFloat("Shininess", &shininess, 0.5f, 1.0f, 256.0f))
-				changed = true;
+			changed |= ImGui::ColorEdit3("Ambient",  &data.ambientColor.r);
+			changed |= ImGui::ColorEdit3("Diffuse",  &data.diffuseColor.r);
+			changed |= ImGui::ColorEdit3("Specular", &data.specularColor.r);
+			changed |= ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f);
 
-			if (ImGui::Button("Save Material") || changed)
-				MaterialSerializer::Serialize(selectedFile.string(), material);
+			if (changed)
+				MaterialSerializer::Serialize(selectedFile.string(), currentMaterial);
 		}
 
 		return;
 		
+	}
+	else
+	{
+		lastSelectedFile.clear();
+		currentMaterial = nullptr;
 	}
 
 
@@ -568,11 +563,37 @@ void EditorGUI::DrawFileBrowser()
 		{
 			std::filesystem::path newPath = pendingRenamePath.parent_path() / pendingRenameNewName;
 
+			if (pendingRenamePath.has_extension() && newPath.extension() != pendingRenamePath.extension())
+				newPath.replace_extension(pendingRenamePath.extension());
+
 			std::error_code errorCode;
 			if (std::filesystem::exists(pendingRenamePath))
 			{
 				std::filesystem::rename(pendingRenamePath, newPath, errorCode);
-				if (errorCode)
+				if (!errorCode)
+				{
+					if (newPath.extension() == ".material")
+					{
+						std::string oldMaterialName = pendingRenamePath.stem().string();
+						std::string newMaterialName = newPath.stem().string();
+
+						ResourceManager::RenameMaterial(oldMaterialName, newMaterialName);
+
+						auto materialToUpdate = ResourceManager::GetMaterialData(newMaterialName);
+						if (materialToUpdate)
+						{
+							MaterialSerializer::Serialize(newPath.string(), materialToUpdate);
+						}
+					}
+
+					// Make sure inspector doesn't lose reference to renamed file
+					if (selectedFile == pendingRenamePath)
+					{
+						selectedFile = newPath;
+						lastSelectedFile = newPath;
+					}
+				}
+				else
 				{
 					SUNTA_ENGINE_LOG_ERROR("File Rename error: {0}", errorCode.message());
 				}
@@ -605,6 +626,7 @@ void EditorGUI::DrawFileBrowser()
 			newMaterial->SetName(materialPath.stem().string());
 
 			MaterialSerializer::Serialize(materialPath.string(), newMaterial);
+			ResourceManager::LoadMaterial(materialPath.stem().string(), newMaterial);
 		}
 
 		ImGui::EndPopup();
@@ -803,8 +825,8 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 	{
 		static const std::unordered_map<std::string, std::string> folderIcons = 
 		{
-			{ "scripts",		"cpp_folder" },			{ "src ",		"cpp_folder" },			{ "cpp ",	"cpp_folder" },
-			{ "models",			"3d_model_folder" },	{ "meshes ",	"3d_model_folder" },
+			{ "scripts",		"cpp_folder" },			{ "src",		  "cpp_folder" },		{ "cpp",	"cpp_folder" },
+			{ "models",			"3d_model_folder" },	{ "meshes",	 "3d_model_folder" },
 			{ "shaders",		"shader_folder" },
 			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
 			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" },
@@ -930,42 +952,44 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 		changed = ImGui::InputText(property.label.c_str(), (std::string*)propertyData);
 		break;
 	case PropertyDataType::AssetPath:
-		std::string& currentPath = *(std::string*)propertyData;
-		std::vector<std::string> options;
-
-		if (property.assetType == AssetType::Mesh)
-			options = ResourceManager::GetMeshesNames();
-		else if (property.assetType == AssetType::Material)
-			options = ResourceManager::GetMaterialsNames();
-
-		if (ImGui::BeginCombo(property.label.c_str(), currentPath.c_str()))
 		{
-			for (const auto& option : options)
+			std::string& currentPath = *(std::string*)propertyData;
+			std::vector<std::string> options;
+
+			if (property.assetType == AssetType::Mesh)
+				options = ResourceManager::GetMeshesNames();
+			else if (property.assetType == AssetType::Material)
+				options = ResourceManager::GetMaterialsNames();
+
+			if (ImGui::BeginCombo(property.label.c_str(), currentPath.c_str()))
 			{
-				bool isSelected = (currentPath == option);
-				if (ImGui::Selectable(option.c_str(), isSelected))
+				for (const auto& option : options)
 				{
-					currentPath = option;
+					bool isSelected = (currentPath == option);
+					if (ImGui::Selectable(option.c_str(), isSelected))
+					{
+						currentPath = option;
+						changed = true;
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+				{
+					std::string droppedPath = (const char*)payload->Data;
+
+					currentPath = droppedPath;
 					changed = true;
 				}
+
+				ImGui::EndDragDropTarget();
 			}
 
-			ImGui::EndCombo();
 		}
-
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
-			{
-				std::string droppedPath = (const char*)payload->Data;
-
-				currentPath = droppedPath;
-				changed = true;
-			}
-
-			ImGui::EndDragDropTarget();
-		}
-
 		break;
 	}
 	

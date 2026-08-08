@@ -138,6 +138,26 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& fil
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, filepath);
 }
 
+void ResourceManager::RenameMaterial(const std::string& oldName, const std::string& newName)
+{
+	if (oldName == newName)
+		return;
+
+	auto it = materialsRegistered.find(oldName);
+	if (it != materialsRegistered.end())
+	{
+		auto material = it->second;
+
+		materialsRegistered.erase(it);
+
+		material->SetName(newName);
+
+		materialsRegistered[newName] = material;
+
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::RenameMaterial: Renamed Material from '{0}' to '{1}'", oldName, newName);
+	}
+}
+
 std::shared_ptr<Texture> ResourceManager::GetEditorIcon(const std::string& name)
 {
 	auto it = editorIconsRegistered.find(name);
@@ -234,13 +254,20 @@ std::shared_ptr<Texture> ResourceManager::LoadOrGetTexture(const std::string& fi
 
 std::shared_ptr<Material> ResourceManager::LoadMaterialFromFile(const std::string& filepath)
 {
-	auto material = MaterialSerializer::Deserialize(filepath);
-	if (material)
+	std::filesystem::path path(filepath);
+	std::string materialName = path.stem().string();
+
+	auto it = materialsRegistered.find(materialName);
+	if (it != materialsRegistered.end())
+		return it->second;
+
+	auto deserializedMaterial = MaterialSerializer::Deserialize(filepath);
+	if (deserializedMaterial)
 	{
-		LoadMaterial(material->GetName(), material);
+		LoadMaterial(materialName, deserializedMaterial);
 	}
 
-	return material;
+	return deserializedMaterial;
 }
 
 std::vector<std::string> ResourceManager::GetMeshesNames()

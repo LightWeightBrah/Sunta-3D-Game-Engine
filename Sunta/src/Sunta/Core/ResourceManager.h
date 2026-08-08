@@ -42,6 +42,8 @@ public:
 	static void LoadTexture     (const std::string& name, const std::string& filepath);
 	static void LoadShader      (const std::string& name, const std::string& filepath);
 		
+	static void RenameMaterial  (const std::string& oldName, const std::string& newName);
+
 	static std::shared_ptr<Texture>	  GetEditorIcon      (const std::string& name);
 	static std::shared_ptr<ModelData> GetModelData       (const std::string& name);
 	static std::shared_ptr<Mesh>	  GetMeshData		 (const std::string& name);
@@ -53,6 +55,7 @@ public:
 	static std::shared_ptr<Texture>   LoadOrGetTexture  (const std::string& filepath);
 
 	static std::shared_ptr<Material>  LoadMaterialFromFile(const std::string& filepath);
+
 
 	static std::vector<std::string>	  GetMeshesNames();
 	static std::vector<std::string>	  GetMaterialsNames();

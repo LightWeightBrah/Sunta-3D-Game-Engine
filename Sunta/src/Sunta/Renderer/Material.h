@@ -46,6 +46,7 @@ public:
 
 	Material& Apply();
 	
+	inline       Data&			GetData()		      { return data; }
 	inline const Data&			GetData()		const { return data; }
 	std::shared_ptr<Shader>		GetShader()		const;
 	inline const std::string&	GetName()		const { return name; }

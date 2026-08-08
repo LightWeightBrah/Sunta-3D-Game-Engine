@@ -37,6 +37,7 @@
 #include <functional>
 #include <algorithm>
 #include <typeindex>
+#include <filesystem>
 
 #include <ctime>
 #include <cmath>

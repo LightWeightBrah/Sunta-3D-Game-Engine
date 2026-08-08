@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 #include <glm/glm.hpp>
 #include <filesystem>
 
@@ -11,6 +12,7 @@ class ComponentType;
 class IInspectableStorage;
 class Scene;
 class RendererDevice;
+class Material;
 
 class EditorGUI
 {
@@ -56,6 +58,9 @@ private:
 
 	static inline std::filesystem::path pendingRenamePath = "";
 	static inline std::string pendingRenameNewName = "";
+
+	static inline std::filesystem::path lastSelectedFile;
+	static inline std::shared_ptr<Material> currentMaterial = nullptr;
 	
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
