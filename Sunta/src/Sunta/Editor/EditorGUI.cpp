@@ -175,8 +175,9 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 			ImVec2(pos.x + size.x, pos.y + size.y),
 			borderColor);
 
-		ImGui::End();
 	}
+
+	ImGui::End();
 
 	ImGui::PopStyleColor(3);
 	ImGui::PopStyleVar(3);
@@ -224,7 +225,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 			if (ImGui::IsItemFocused() && ImGui::IsKeyPressed(ImGuiKey_F2))
 			{
 				entityToRename = entityID;
-				strncpy(entityNameBuffer, label.c_str(), sizeof(entityNameBuffer));
+				snprintf(entityNameBuffer, sizeof(entityNameBuffer), "%s", label.c_str());
 			}
 		}
 
@@ -237,7 +238,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 			if (ImGui::MenuItem("Rename"))
 			{
 				entityToRename = entityID;
-				strncpy(entityNameBuffer, label.c_str(), sizeof(entityNameBuffer));
+				snprintf(entityNameBuffer, sizeof(entityNameBuffer), "%s", label.c_str());
 			}
 
 			if (ImGui::MenuItem("Delete"))
@@ -397,6 +398,7 @@ void EditorGUI::DrawFileBrowser()
 		if (!std::filesystem::exists(currentDirectory))
 		{
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Missing res folder");
+			ImGui::Columns(1);
 			return;
 		}
 
@@ -481,7 +483,7 @@ void EditorGUI::DrawFileBrowser()
 			if (isSelected && ImGui::IsKeyPressed(ImGuiKey_F2))
 			{
 				fileToRename = path;
-				strncpy(fileRenameBuffer, filename.c_str(), sizeof(fileRenameBuffer));
+				snprintf(fileRenameBuffer, sizeof(fileRenameBuffer), "%s", filename.c_str());
 			}
 
 			if (ImGui::BeginPopupContextItem("FileMenu"))
@@ -491,11 +493,14 @@ void EditorGUI::DrawFileBrowser()
 				if (ImGui::MenuItem("Rename"))
 				{
 					fileToRename = path;
-					strncpy(fileRenameBuffer, filename.c_str(), sizeof(fileRenameBuffer));
+					snprintf(fileRenameBuffer, sizeof(fileRenameBuffer), "%s", filename.c_str());
 				}
 
 				if (ImGui::MenuItem("Delete"))
 				{
+					if (selectedFile == path)
+						selectedFile = "";
+
 					std::filesystem::remove(path);
 					ImGui::CloseCurrentPopup();
 				}
@@ -605,43 +610,78 @@ void EditorGUI::DrawFileBrowser()
 
 	if (ImGui::BeginPopupContextWindow("BrowserEmptyMenu", ImGuiPopupFlags_NoOpenOverItems))
 	{
+		auto StartCreation = [](const std::string& baseName, const std::string& extension, const std::string& icon, auto onCreateFunc)
+		{
+			std::string uniqueName = baseName;
+			int index = 1;
+
+			auto BuildTestPath = [&](const std::string& name)
+			{
+				std::filesystem::path path = currentDirectory / name;
+				if (!extension.empty() && path.extension() != extension)
+					path.replace_extension(extension);
+
+				return path;
+			};
+
+			while (std::filesystem::exists(BuildTestPath(uniqueName)))
+			{
+				uniqueName = baseName + "_" + std::to_string(index++);
+			}
+
+			pendingCreation.active = true;
+			snprintf(pendingCreation.nameBuffer, sizeof(pendingCreation.nameBuffer), "%s", uniqueName.c_str());
+			pendingCreation.extension = extension;
+			pendingCreation.iconKey = icon;
+			pendingCreation.onCreate = onCreateFunc;
+		};
+
 		if (ImGui::MenuItem("Create New Folder"))
 		{
-			isCreatingFolder = true;
-			strcpy(newFolderName, "New Folder");
+			StartCreation("New Folder", "", Sunta::EngineAssets::Icons::DefaultFolder, [](const std::filesystem::path& path)
+				{
+					if (!std::filesystem::exists(path))
+					{
+						std::filesystem::create_directory(path);
+						selectedFile = path;
+					}
+				});
 		}
 
 		if (ImGui::MenuItem("Create New Material"))
 		{
-			std::filesystem::path materialPath = currentDirectory / "NewMaterial.material";
+			StartCreation("New Material", ".material", Sunta::EngineAssets::Icons::DefaultFile, [](const std::filesystem::path& path)
+				{
+					if (!std::filesystem::exists(path))
+					{
+						auto defaultShader = ResourceManager::GetShaderData(EngineAssets::Shaders::Lit);
+						auto newMaterial = std::make_shared<Material>(defaultShader);
+						newMaterial->SetName(path.stem().string());
 
-			int index = 1;
-			while (std::filesystem::exists(materialPath))
-			{
-				materialPath = currentDirectory / ("NewMaterial_" + std::to_string(index++) + ".material");
-			}
+						MaterialSerializer::Serialize(path.string(), newMaterial);
+						ResourceManager::LoadMaterial(path.stem().string(), newMaterial);
+						selectedFile = path;
+					}
+				});
 
-			auto defaultShader = ResourceManager::GetShaderData(EngineAssets::Shaders::Lit);
-			auto newMaterial = std::make_shared<Material>(defaultShader);
-			newMaterial->SetName(materialPath.stem().string());
-
-			MaterialSerializer::Serialize(materialPath.string(), newMaterial);
-			ResourceManager::LoadMaterial(materialPath.stem().string(), newMaterial);
 		}
 
 		ImGui::EndPopup();
 	}
 
-	if (isCreatingFolder)
+	if (pendingCreation.active)
 	{
 		float iconSize = cellSize - padding;
 		float availableWidth = cellSize - padding;
 		float indent = (availableWidth - iconSize) * 0.5f;
 
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + indent);
-		auto icon = ResourceManager::GetEditorIcon(Sunta::EngineAssets::Icons::DefaultFolder);
-		ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
-		ImGui::ImageButton("##NewFolderIcon", textureID, ImVec2(cellSize - padding, cellSize - padding));
+		auto icon = ResourceManager::GetEditorIcon(pendingCreation.iconKey);
+		if (icon)
+		{
+			ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
+			ImGui::ImageButton("##NewItemIcon", textureID, ImVec2(iconSize, iconSize));
+		}
 
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.4f, 0.8f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -650,21 +690,28 @@ void EditorGUI::DrawFileBrowser()
 		ImGui::SetNextItemWidth(iconSize);
 
 		ImGui::SetKeyboardFocusHere();
-		if (ImGui::InputText("##CreateFolderInput", newFolderName, IM_ARRAYSIZE(newFolderName), ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputText("##CreateItemInput", pendingCreation.nameBuffer, IM_ARRAYSIZE(pendingCreation.nameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
 		{
-			std::filesystem::path newPath = currentDirectory / newFolderName;
-			if (!std::filesystem::exists(newPath))
+			std::string finalName = pendingCreation.nameBuffer;
+
+			if (!finalName.empty())
 			{
-				std::filesystem::create_directory(newPath);
-				selectedFile = newPath;
+				std::filesystem::path fullPath = currentDirectory / finalName;
+
+				if (!pendingCreation.extension.empty() && fullPath.extension() != pendingCreation.extension)
+					fullPath.replace_extension(pendingCreation.extension);
+
+				if (pendingCreation.onCreate)
+					pendingCreation.onCreate(fullPath);
 			}
 
-			isCreatingFolder = false;
+			pendingCreation.active = false;
+
 		}
 
 		if (ImGui::IsItemDeactivated() && !ImGui::IsKeyDown(ImGuiKey_Enter))
 		{
-			isCreatingFolder = false;
+			pendingCreation.active = false;
 		}
 
 		ImGui::PopStyleColor(2);

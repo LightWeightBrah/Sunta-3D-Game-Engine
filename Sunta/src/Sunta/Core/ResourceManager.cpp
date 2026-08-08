@@ -143,6 +143,12 @@ void ResourceManager::RenameMaterial(const std::string& oldName, const std::stri
 	if (oldName == newName)
 		return;
 
+	if (materialsRegistered.count(newName) > 0)
+	{
+		SUNTA_ENGINE_LOG_WARNING("ResourceManager::RenameMaterial: Material named '{0}' already exists!", newName);
+		return;
+	}
+
 	auto it = materialsRegistered.find(oldName);
 	if (it != materialsRegistered.end())
 	{

@@ -3,6 +3,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include <filesystem>
+#include <functional>
 
 namespace Sunta
 {
@@ -42,10 +43,18 @@ public:
 	static void SetDarkTheme();
 	static void DrawWindowBackground(const std::string& textureKey, glm::vec4 tintColor = glm::vec4(1.0f));
 private:
-	static inline int selectedEntity = -1;
+	struct PendingCreationState
+	{
+		bool active = false;
+		char nameBuffer[64] = "";
+		std::string extension = "";
+		std::string iconKey = "";
+		std::function<void(const std::filesystem::path& fullPath)> onCreate;
+	};
 
-	static inline bool isCreatingFolder = false;
-	static inline char newFolderName[64] = "";
+	static inline PendingCreationState pendingCreation;
+
+	static inline int selectedEntity = -1;
 
 	static inline std::filesystem::path currentDirectory = "";
 	static inline std::filesystem::path selectedFile	 = "";

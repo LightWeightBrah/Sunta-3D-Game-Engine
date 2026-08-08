@@ -78,6 +78,8 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 		.SetSpecular(glm::vec3(1.0f))
 		.SetShininess(32.0f);
 	ResourceManager::LoadMaterial(Materials::Textured, texturedMaterial);
+
+	LoadMaterialsFromDirectory("res");
 }
 
 void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
@@ -161,6 +163,21 @@ void ResourceLoader::LoadUIAssets(RendererDevice& rendererDevice)
 
 	ResourceManager::LoadEditorIcon(UIAssets::EditorWindowBG,   "res/Sunta/Textures/ui/editor_window_background.jpg");
 	ResourceManager::LoadEditorIcon(UIAssets::FileBrowserBG ,   "res/Sunta/Textures/ui/file_browser_background.jpg");
+}
+
+void ResourceLoader::LoadMaterialsFromDirectory(const std::filesystem::path& directoryPath)
+{
+	if (!std::filesystem::exists(directoryPath))
+		return;
+
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".material")
+		{
+			ResourceManager::LoadMaterialFromFile(entry.path().string());
+		}
+	}
+
 }
 
 }

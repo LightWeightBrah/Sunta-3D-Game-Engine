@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 
 namespace Sunta
 {
@@ -17,6 +18,8 @@ private:
 	static void LoadMeshes(RendererDevice& rendererDevice);
 	static void LoadIcons(RendererDevice& rendererDevice);
 	static void LoadUIAssets(RendererDevice& rendererDevice);
+
+	static void LoadMaterialsFromDirectory(const std::filesystem::path& directoryPath);
 };
 
 }

@@ -6,11 +6,12 @@
 #include <functional>
 #include <vector>
 
+#include "Animation/Animation.h"
+
 namespace Sunta
 {
 
 class RendererDevice;
-class Animation;
 class Model;
 class Texture;
 class Shader;
