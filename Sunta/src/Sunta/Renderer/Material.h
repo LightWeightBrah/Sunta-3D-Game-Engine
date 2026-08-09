@@ -42,6 +42,9 @@ public:
 	Material& AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
 	Material& AddSpecularMap(const std::shared_ptr<Texture> specularMap);
 	
+	Material& SetDiffuseMap(const std::shared_ptr<Texture> diffuseMap, unsigned int index = 0);
+	Material& SetSpecularMap(const std::shared_ptr<Texture> specularMap, unsigned int index = 0);
+
 	Material& SetUniform3f(const std::string& name, const glm::vec3& value);
 
 	Material& Apply();

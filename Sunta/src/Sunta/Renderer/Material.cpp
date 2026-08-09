@@ -125,6 +125,42 @@ Material& Material::AddSpecularMap(const std::shared_ptr<Texture> specularMap)
 	return *this;
 }
 	
+Material& Material::SetDiffuseMap(const std::shared_ptr<Texture> diffuseMap, unsigned int index)
+{
+	// if we pass null texture, remove texture from this slot
+	if (diffuseMap == nullptr)
+	{
+		if (index < diffuseMaps.size())
+			diffuseMaps.erase(diffuseMaps.begin() + index);
+
+		return *this;
+	}
+
+	if (index >= diffuseMaps.size())
+		diffuseMaps.resize(index + 1);
+
+	diffuseMaps[index] = diffuseMap;
+	return *this;
+}
+
+Material& Material::SetSpecularMap(const std::shared_ptr<Texture> specularMap, unsigned int index)
+{
+	// if we pass null texture, remove texture from this slot
+	if (specularMap == nullptr)
+	{
+		if (index < specularMaps.size())
+			specularMaps.erase(specularMaps.begin() + index);
+		
+		return *this;
+	}
+
+	if (index >= specularMaps.size())
+		specularMaps.resize(index + 1);
+
+	specularMaps[index] = specularMap;
+	return *this;
+}
+
 Material& Material::SetUniform3f(const std::string& name, const glm::vec3& value)
 {
 	customVec3Uniforms[name] = value;

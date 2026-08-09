@@ -14,6 +14,7 @@ class IInspectableStorage;
 class Scene;
 class RendererDevice;
 class Material;
+class Texture;
 
 class EditorGUI
 {
@@ -35,6 +36,8 @@ public:
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser();
+
+	static bool DrawTextureSlot(const char* label, std::shared_ptr<Texture>& texture);
 	
 	static void HandleSelectionInteraction();
 	static void ClearSelection();

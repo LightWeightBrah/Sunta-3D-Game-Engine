@@ -290,7 +290,6 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		if (lastSelectedFile != selectedFile)
 		{
 			lastSelectedFile = selectedFile;
-
 			currentMaterial = ResourceManager::LoadMaterialFromFile(selectedFile.string());
 		}
 
@@ -303,6 +302,31 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			changed |= ImGui::ColorEdit3("Diffuse",  &data.diffuseColor.r);
 			changed |= ImGui::ColorEdit3("Specular", &data.specularColor.r);
 			changed |= ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f);
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Text("Textures");
+			ImGui::Spacing();
+
+			const auto& diffuseMaps = currentMaterial->GetDiffuseMaps();
+			std::shared_ptr<Texture> currentDiffuse = diffuseMaps.empty() ? nullptr : diffuseMaps[0];
+
+			if (DrawTextureSlot("Diffuse Map", currentDiffuse))
+			{
+				currentMaterial->SetDiffuseMap(currentDiffuse, 0);
+				changed = true;
+			}
+
+			ImGui::Spacing();
+
+			const auto& specularMaps = currentMaterial->GetSpecularMaps();
+			std::shared_ptr<Texture> currentSpecular = specularMaps.empty() ? nullptr : specularMaps[0];
+
+			if (DrawTextureSlot("Specular Map", currentSpecular))
+			{
+				currentMaterial->SetSpecularMap(currentSpecular, 0);
+				changed = true;
+			}
 
 			if (changed)
 				MaterialSerializer::Serialize(selectedFile.string(), currentMaterial);
@@ -353,7 +377,7 @@ void EditorGUI::DrawFileBrowser()
 		if (ImGui::Button("<--- Back"))
 		{
 			currentDirectory = currentDirectory.parent_path();
-			selectedFile = "";
+			//selectedFile = "";
 		}
 
 		ImGui::SameLine();
@@ -724,6 +748,78 @@ void EditorGUI::DrawFileBrowser()
 	}
 
 	ImGui::Columns(1); // column reset
+}
+
+bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& texture)
+{
+	bool changed = false;
+
+	ImGui::PushID(label);
+	ImGui::Text("%s", label);
+
+	float slotSize = 60.0f;
+
+	ImTextureID textureID = 0;
+	if (texture)
+	{
+		textureID = (ImTextureID)(uintptr_t)texture->GetID();
+	}
+	else
+	{
+		auto defaultIcon = ResourceManager::GetEditorIcon(Sunta::EngineAssets::Icons::ImageFile);
+		if (defaultIcon)
+			textureID = (ImTextureID)(uintptr_t)defaultIcon->GetID();
+	}
+
+	if (textureID)
+		ImGui::Image(textureID, ImVec2(slotSize, slotSize));
+	else
+		ImGui::Button("No Texture", ImVec2(slotSize, slotSize));
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+		{
+			std::string droppedPath = (const char*)payload->Data;
+			std::filesystem::path path(droppedPath);
+			std::string extension = path.extension().string();
+			std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" 
+				|| extension == ".tga" || extension == ".bmp")
+			{
+				texture = ResourceManager::LoadOrGetTexture(droppedPath);
+				changed = true;
+			}
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
+	ImGui::SameLine();
+	ImGui::BeginGroup();
+
+	if (texture)
+	{
+		std::string filename = std::filesystem::path(texture->GetFilePath()).filename().string();
+		ImGui::TextUnformatted(filename.c_str());
+
+		if (ImGui::Button("Remove"))
+		{
+			texture = nullptr;
+			changed = true;
+		}
+	}
+	else
+	{
+		ImGui::TextDisabled("None (Texture)");
+		ImGui::TextDisabled("Drag & Drop Image here");
+	}
+
+	ImGui::EndGroup();
+	ImGui::PopID();
+
+	return changed;
 }
 
 void EditorGUI::SetDarkTheme()
