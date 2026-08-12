@@ -124,42 +124,42 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 
 		DrawToolbarButton(Icons::Cube, "##CreateCube", "Create Cube Entity", [&]() 
 			{
-				EntityFactory::CreateCube(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Cube");
+				EntityFactory::CreateCube(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Cube");
 			});
 
 		DrawToolbarButton(Icons::Pyramid, "##CreatePyramid", "Create Pyramid Entity", [&]()
 			{
-				EntityFactory::CreatePyramid(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Pyramid");
+				EntityFactory::CreatePyramid(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Pyramid");
 			});
 
 		DrawToolbarButton(Icons::Cone, "##CreateCone", "Create Cone Entity", [&]()
 			{
-				EntityFactory::CreateCone(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Cone");
+				EntityFactory::CreateCone(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Cone");
 			});
 
 		DrawToolbarButton(Icons::Sphere, "##CreateSphere", "Create Sphere Entity", [&]()
 			{
-				EntityFactory::CreateSphere(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Sphere");
+				EntityFactory::CreateSphere(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Sphere");
 			});
 
 		DrawToolbarButton(Icons::Capsule, "##CreateCapsule", "Create Capsule Entity", [&]()
 			{
-				EntityFactory::CreateCapsule(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Capsule");
+				EntityFactory::CreateCapsule(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Capsule");
 			});
 
 		DrawToolbarButton(Icons::DirectionalLight, "##CreateDirectionalLight", "Create Directional Light", [&]()
 			{
-				EntityFactory::CreateDirectionalLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Directional Light");
+				EntityFactory::CreateDirectionalLight(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Directional Light");
 			});
 		
 		DrawToolbarButton(Icons::PointLight, "##CreatePointLight", "Create Point Light", [&]()
 			{
-				EntityFactory::CreatePointLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Point Light");
+				EntityFactory::CreatePointLight(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Point Light");
 			});
 
 		DrawToolbarButton(Icons::Spotlight, "##CreateSpotLight", "Create Spot Light", [&]()
 			{
-				EntityFactory::CreateSpotLight(scene, rendererDevice, glm::vec3(0.0f, 2.0f, 0.0f), "Spot Light");
+				EntityFactory::CreateSpotLight(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Spot Light");
 			});
 
 		// Draw bottom line of toolbar
@@ -786,7 +786,7 @@ bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& tex
 			std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
 			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" 
-				|| extension == ".tga" || extension == ".bmp")
+				|| extension == ".tga" || extension == ".bmp" || extension == ".psd" || extension == ".hdr")
 			{
 				texture = ResourceManager::LoadOrGetTexture(droppedPath);
 				changed = true;
@@ -814,6 +814,17 @@ bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& tex
 	{
 		ImGui::TextDisabled("None (Texture)");
 		ImGui::TextDisabled("Drag & Drop Image here");
+	}
+
+	if (ImGui::Button("Browse..."))
+	{
+		std::string selectedPath = Platform::Get().OpenFileDialog("Texture Files", {"png", "jpg", "jpeg", "tga", "bmp", "psd", "hdr"});
+
+		if (!selectedPath.empty())
+		{
+			texture = ResourceManager::LoadOrGetTexture(selectedPath);
+			changed = true;
+		}
 	}
 
 	ImGui::EndGroup();
@@ -955,7 +966,7 @@ void EditorGUI::DrawWindowBackground(const std::string& textureKey, glm::vec4 ti
 	ImVec4 imguiColor = ImVec4(tintColor.r, tintColor.g, tintColor.b, tintColor.a);
 
 	drawList->AddImage(textureID, position, ImVec2(position.x + size.x, position.y + size.y),
-		ImVec2(0, 0), ImVec2(size.x / textureWidth, size.y / textureHeight),
+		uv0, uv1,
 		ImGui::GetColorU32(imguiColor));
 
 }
@@ -987,7 +998,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 		static const std::unordered_map<std::string, std::string> fileIcons =
 		{
 			{".shader",		"shader_file"},
-			{".png",		"image_file"},		{".jpg", "image_file"},		{".jpeg", "image_file"},
+			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
 			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},
 			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
 			{".wav",		"audio_file"},		{".ogg", "audio_file"},

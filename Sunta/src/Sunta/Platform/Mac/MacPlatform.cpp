@@ -7,7 +7,7 @@ namespace Sunta
 
 bool MacPlatform::OpenInExplorer(const std::string& path)
 {
-	std::string command = "open " + path;
+	std::string command = "open \"" + path + "\"";
 	return std::system(command.c_str()) == 0;
 }
 

@@ -41,7 +41,7 @@ unsigned int EntityFactory::CreateEmpty(Scene& scene, const glm::vec3& position,
 	return entity;
 }
 
-unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreateCube(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 
@@ -54,7 +54,7 @@ unsigned int EntityFactory::CreateCube(Scene& scene, RendererDevice& rendererDev
 	return entity;
 }
 
-unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreatePyramid(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 
@@ -67,7 +67,7 @@ unsigned int EntityFactory::CreatePyramid(Scene& scene, RendererDevice& renderer
 	return entity;
 }
 
-unsigned int EntityFactory::CreateCone(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreateCone(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
@@ -79,7 +79,7 @@ unsigned int EntityFactory::CreateCone(Scene& scene, RendererDevice& rendererDev
 	return entity;
 }
 
-unsigned int EntityFactory::CreateSphere(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreateSphere(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
@@ -91,7 +91,7 @@ unsigned int EntityFactory::CreateSphere(Scene& scene, RendererDevice& rendererD
 	return entity;
 }
 
-unsigned int EntityFactory::CreateCapsule(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreateCapsule(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
@@ -103,7 +103,7 @@ unsigned int EntityFactory::CreateCapsule(Scene& scene, RendererDevice& renderer
 	return entity;
 }
 
-unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
@@ -116,7 +116,7 @@ unsigned int EntityFactory::CreateDirectionalLight(Scene& scene, RendererDevice&
 	return entity;
 }
 
-unsigned int EntityFactory::CreatePointLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreatePointLight(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);
@@ -129,7 +129,7 @@ unsigned int EntityFactory::CreatePointLight(Scene& scene, RendererDevice& rende
 	return entity;
 }
 
-unsigned int EntityFactory::CreateSpotLight(Scene& scene, RendererDevice& rendererDevice, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
+unsigned int EntityFactory::CreateSpotLight(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;
 	unsigned int entity = CreateEmpty(scene, position, name);

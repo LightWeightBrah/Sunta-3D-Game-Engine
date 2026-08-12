@@ -1,6 +1,8 @@
 #include "SuntaPreCompiled.h"
 #include "Platform.h"
 
+#include <nfd.hpp>
+
 #include "Assert.h"
 
 #if   defined(SUNTA_PLATFORM_WINDOWS)
@@ -16,12 +18,52 @@ namespace Sunta
 
 void Platform::Init()
 {
+	NFD_Init();
 	instance = Create();
 }
 
 void Platform::Shutdown()
 {
 	instance.reset();
+	NFD_Quit();
+}
+
+std::string Platform::OpenFileDialog(const std::string& filterName, const std::vector<std::string>& extensions)
+{
+	std::string formattedExtensions;
+	for (unsigned int i = 0; i < extensions.size(); i++)
+	{
+		formattedExtensions += extensions[i];
+		if (i + 1 < extensions.size())
+			formattedExtensions += ",";
+	}
+
+	std::vector<nfdu8filteritem_t> filterItems;
+	if (!formattedExtensions.empty())
+		filterItems.push_back({ filterName.c_str(), formattedExtensions.c_str() });
+
+	NFD::UniquePath outPath;
+	nfdresult_t result = NFD::OpenDialog(outPath,
+		filterItems.empty() ? nullptr : filterItems.data(),
+		static_cast<nfdfiltersize_t>(filterItems.size()));
+
+	if (result == NFD_OKAY)
+	{
+		std::filesystem::path absolutePath(outPath.get());
+		std::filesystem::path currentPath = std::filesystem::current_path();
+
+		try
+		{
+			return std::filesystem::relative(absolutePath, currentPath).string();
+		}
+		catch (...)
+		{
+			return absolutePath.string();
+		}
+		
+	}
+
+	return "";
 }
 
 std::unique_ptr<Platform> Platform::Create()

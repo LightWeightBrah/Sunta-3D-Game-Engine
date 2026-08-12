@@ -25,7 +25,9 @@
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
+#include <cstdio>
 
+#include <array>
 #include <vector>
 #include <map>
 #include <unordered_map>

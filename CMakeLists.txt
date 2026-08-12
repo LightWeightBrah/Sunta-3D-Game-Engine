@@ -55,6 +55,9 @@ set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
 add_subdirectory(Dependencies/Assimp)
 
+# --- Native File Dialog Extended (nfd) ---
+add_subdirectory(Dependencies/nfd)
+
 #  ========================= SUNTA MODULES ========================= 
 
 # --- PLATFORMS ---
