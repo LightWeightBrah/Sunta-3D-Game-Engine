@@ -50,6 +50,7 @@ struct PropertyDefinition
 struct ComponentType
 {
 	std::string name;
+	std::string iconKey;
 	std::vector<PropertyDefinition> properties;
 	std::function<void(void*)> onChanged = nullptr;
 };
@@ -68,13 +69,14 @@ class InspectorComponentRegistry
 {
 public:
 	template<typename T>
-	static void RegisterComponent(const std::string& name, std::vector<PropertyDefinition> properties, std::function<void(void*)> onChanged = nullptr)
+	static void RegisterComponent(const std::string& name, const std::string& iconKey, std::vector<PropertyDefinition> properties, std::function<void(void*)> onChanged = nullptr)
 	{
 		ComponentType newComponentType;
 
 		newComponentType.name = name;
-		newComponentType.properties = properties;
-		newComponentType.onChanged = onChanged;
+		newComponentType.iconKey = iconKey;
+		newComponentType.properties = std::move(properties);
+		newComponentType.onChanged = std::move(onChanged);
 
 		GetComponentsMap()[typeid(T).hash_code()] = newComponentType;
 	}

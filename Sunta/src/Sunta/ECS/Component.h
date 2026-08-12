@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "ComponentLayout.h"
 
+#include "Core/EngineAssets.h"
 #include "Renderer/LightingCommon.h"
 
 namespace Sunta
@@ -24,7 +25,7 @@ struct TagComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<TagComponent>("Tag",
+		InspectorComponentRegistry::RegisterComponent<TagComponent>("Tag", EngineAssets::Icons::Transform,
 			{
 				ADD_PROPERTY(TagComponent, name, PropertyDataType::String)
 			});
@@ -47,7 +48,7 @@ struct TransformComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<TransformComponent>("Transform",
+		InspectorComponentRegistry::RegisterComponent<TransformComponent>("Transform", EngineAssets::Icons::Transform,
 			{
 				ADD_PROPERTY(TransformComponent, position, PropertyDataType::Float3),
 				ADD_PROPERTY(TransformComponent, rotation, PropertyDataType::Float3),
@@ -97,7 +98,7 @@ struct MeshComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<MeshComponent>("Mesh",
+		InspectorComponentRegistry::RegisterComponent<MeshComponent>("Mesh", EngineAssets::Icons::Bonfire,
 			{
 				ADD_PROPERTY(MeshComponent, isVisible, PropertyDataType::Bool),
 
@@ -120,7 +121,7 @@ struct DirectionalLightComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<DirectionalLightComponent>("Directional Light",
+		InspectorComponentRegistry::RegisterComponent<DirectionalLightComponent>("Directional Light", EngineAssets::Icons::DirectionalLight,
 			{
 				ADD_PROPERTY(DirectionalLightComponent, color.ambientIntensity,	 PropertyDataType::Color),
 				ADD_PROPERTY(DirectionalLightComponent, color.diffuseIntensity,	 PropertyDataType::Color),
@@ -136,7 +137,7 @@ struct PointLightComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<PointLightComponent>("Point Light",
+		InspectorComponentRegistry::RegisterComponent<PointLightComponent>("Point Light", EngineAssets::Icons::PointLight,
 			{
 				ADD_PROPERTY(PointLightComponent, color.ambientIntensity,	PropertyDataType::Color),
 				ADD_PROPERTY(PointLightComponent, color.diffuseIntensity,	PropertyDataType::Color),
@@ -159,7 +160,7 @@ struct SpotlightComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<SpotlightComponent>("Spotlight",
+		InspectorComponentRegistry::RegisterComponent<SpotlightComponent>("Spotlight", EngineAssets::Icons::Spotlight,
 			{
 				ADD_PROPERTY(SpotlightComponent, color.ambientIntensity,	PropertyDataType::Color),
 				ADD_PROPERTY(SpotlightComponent, color.diffuseIntensity,	PropertyDataType::Color),

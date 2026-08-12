@@ -772,7 +772,7 @@ bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& tex
 	}
 
 	if (textureID)
-		ImGui::Image(textureID, ImVec2(slotSize, slotSize));
+		ImGui::Image(textureID, ImVec2(slotSize, slotSize), ImVec2(0, 1), ImVec2(1, 0));
 	else
 		ImGui::Button("No Texture", ImVec2(slotSize, slotSize));
 
@@ -983,6 +983,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{ "models",			"3d_model_folder" },	{ "meshes",	 "3d_model_folder" },
 			{ "shaders",		"shader_folder" },
 			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
+			{ "materials",		"image_folder" },
 			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" },
 			{ "fonts",			"fonts_folder" }
 		};
@@ -997,10 +998,11 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 	{
 		static const std::unordered_map<std::string, std::string> fileIcons =
 		{
+			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
+			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},
 			{".shader",		"shader_file"},
 			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
-			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},
-			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
+			{".material",	"image_file"},
 			{".wav",		"audio_file"},		{".ogg", "audio_file"},
 			{".ttf",		"font_file"}
 		};
@@ -1060,7 +1062,48 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 
 void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* storage)
 {
-	if (!ImGui::CollapsingHeader(componentType->name.c_str()))
+	auto icon = ResourceManager::GetEditorIcon(componentType->iconKey);
+
+	ImVec2 cursorPosition = ImGui::GetCursorScreenPos();
+	float frameHeight = ImGui::GetFrameHeight();
+	float fontSize = ImGui::GetFontSize();
+	const ImGuiStyle& style = ImGui::GetStyle();
+
+	// ===============================================
+	//				INDENT CONFIG			        ||
+	// ===============================================
+	float iconSize           = 24.0f;             //||
+	float arrowToIconSpacing = 2.0f;			  //||
+	float iconToTextSpacing  = 6.0f;			  //||
+	// ===============================================
+
+	std::string headerID = "###Header_" + componentType->name;
+	bool isOpen = ImGui::CollapsingHeader(headerID.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	float arrowOffset = style.FramePadding.x + fontSize + arrowToIconSpacing;
+	float currentX = cursorPosition.x + arrowOffset;
+	
+	if (icon)
+	{
+		float iconOffsetY = (frameHeight - iconSize) * 0.5f;
+		ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
+
+		drawList->AddImage(textureID,
+			ImVec2(currentX           , cursorPosition.y + iconOffsetY),
+			ImVec2(currentX + iconSize, cursorPosition.y + iconOffsetY + iconSize));
+
+		currentX += iconSize + iconToTextSpacing;
+	}
+
+	float textOffsetY = (frameHeight - fontSize) * 0.5f;
+	drawList->AddText(
+		ImVec2(currentX, cursorPosition.y + textOffsetY), 
+		ImGui::GetColorU32(ImGuiCol_Text), 
+		componentType->name.c_str());
+
+	if (!isOpen)
 		return;
 
 	void* componentData = storage->GetEntityComponentData(entityID);
