@@ -93,6 +93,11 @@ bool OpenGLShader::HasUniform(const std::string& name) const
 	return location != -1;
 }
 
+void OpenGLShader::SetUniformBool(const std::string& name, bool value) const
+{
+	SetUniform1i(name, value ? 1 : 0);
+}
+
 void OpenGLShader::SetUniform1i(const std::string& name, int value) const
 {
 	GLCall(glUniform1i(GetUniformLocation(name), value));
@@ -121,6 +126,12 @@ void OpenGLShader::SetUniform4f(const std::string& name, float v0, float v1, flo
 void OpenGLShader::SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix) const
 {
 	GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]));
+}
+
+void OpenGLShader::TrySetUniformBool(const std::string& name, bool value) const
+{
+	if (HasUniform(name))
+		SetUniformBool(name, value);
 }
 
 void OpenGLShader::TrySetUniform1i(const std::string& name, int value) const

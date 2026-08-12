@@ -303,6 +303,8 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			changed |= ImGui::ColorEdit3("Specular", &data.specularColor.r);
 			changed |= ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f);
 
+			changed |= ImGui::Checkbox("Use Alpha Cutout", &data.useAlphaCutout);
+
 			ImGui::Spacing();
 			ImGui::Separator();
 			ImGui::Text("Textures");

@@ -46,6 +46,7 @@ public:
 
 	virtual bool HasUniform(const std::string& name) const = 0;
 
+	virtual void SetUniformBool(const std::string& name, bool value) const = 0;
 	virtual void SetUniform1i(const std::string& name, int value) const = 0;
 	virtual void SetUniform1f(const std::string& name, float value) const = 0;
 	virtual void SetUniform3f(const std::string& name, float v0, float v1, float v2) const = 0;
@@ -53,6 +54,7 @@ public:
 	virtual void SetUniform4f(const std::string& name, float f0, float f1, float f2, float f3) const = 0;
 	virtual void SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix) const = 0;
 
+	virtual void TrySetUniformBool(const std::string& name, bool value) const = 0;
 	virtual void TrySetUniform1i(const std::string& name, int value) const = 0;
 	virtual void TrySetUniform1f(const std::string& name, float value) const = 0;
 	virtual void TrySetUniform3f(const std::string& name, float v0, float v1, float v2) const = 0;

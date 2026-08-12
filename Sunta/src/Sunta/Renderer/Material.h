@@ -20,6 +20,7 @@ public:
 		glm::vec3		specularColor		= glm::vec3(1.0f);
 
 		float			shininess			= 32.0f;
+		bool			useAlphaCutout      = false;
 	};
 	
 	Material(std::shared_ptr<Shader> shader);
@@ -38,6 +39,8 @@ public:
 	Material& SetDiffuse(const glm::vec3& color);
 	Material& SetSpecular(const glm::vec3& color);
 	Material& SetShininess(float shininess);
+
+	Material& SetAlphaCutout(bool useAlphaCutout);
 	
 	Material& AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
 	Material& AddSpecularMap(const std::shared_ptr<Texture> specularMap);

@@ -38,13 +38,15 @@ Material& Material::Apply()
 	shader->Bind();
 	unsigned int textureSlot = 0;
 
-	ApplyTextures(diffuseMaps, "materialDiffuseMap", textureSlot);
+	ApplyTextures(diffuseMaps,  "materialDiffuseMap",  textureSlot);
 	ApplyTextures(specularMaps, "materialSpecularMap", textureSlot);
 		
-	shader->TrySetUniform3f("material.ambientColor",	data.ambientColor);
-	shader->TrySetUniform3f("material.diffuseColor",	data.diffuseColor);
-	shader->TrySetUniform3f("material.specularColor",	data.specularColor);
-	shader->TrySetUniform1f("material.shininess",		data.shininess);
+	shader->TrySetUniform3f("material.ambientColor", data.ambientColor);
+	shader->TrySetUniform3f("material.diffuseColor", data.diffuseColor);
+	shader->TrySetUniform3f("material.specularColor", data.specularColor);
+	shader->TrySetUniform1f("material.shininess", data.shininess);
+
+	shader->TrySetUniformBool("material.useAlphaCutout", data.useAlphaCutout);
 
 	for (const auto& [name, value] : customVec3Uniforms)
 	{
@@ -110,6 +112,12 @@ Material& Material::SetSpecular(const glm::vec3& color)
 Material& Material::SetShininess(float shininess)
 {
 	data.shininess = shininess;
+	return *this;
+}
+
+Material& Material::SetAlphaCutout(bool useAlphaCutout)
+{
+	data.useAlphaCutout = useAlphaCutout;
 	return *this;
 }
 

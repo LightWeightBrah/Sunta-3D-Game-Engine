@@ -24,10 +24,13 @@ void main()
 
 struct Material
 {
-	vec3 ambientColor;
-	vec3 diffuseColor;
-	vec3 specularColor;
+	vec3  ambientColor;
+	vec3  diffuseColor;
+	vec3  specularColor;
 	float shininess;
+
+    bool  useAlphaCutout;
+
 };
 
 struct LightColor
@@ -110,6 +113,11 @@ void main()
 	// vec4 combined = mix(tex1, tex2, tex2.a);
 	// vec3 baseColor = combined.rgb;
 	// vec3 baseColor = texture(texture_diffuse1, TexCoord).rgb;
+
+	float textureAlpha = texture(materialDiffuseMap1, TexCoord).a;
+
+	if(material.useAlphaCutout && textureAlpha < 0.1f)
+		discard;
 
 	vec3 normalVector 	 = normalize(Normal);
 	vec3 viewerDirection = normalize(viewerPosition - FragPos);

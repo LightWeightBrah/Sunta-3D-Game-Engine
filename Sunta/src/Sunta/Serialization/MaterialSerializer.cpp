@@ -18,16 +18,18 @@ using json = nlohmann::json;
 
 namespace MaterialKeys
 {
-	constexpr const char* Name          = "name";
-	constexpr const char* Shader        = "shader";
-	constexpr const char* Properties    = "properties";
-	constexpr const char* Ambient       = "ambient";
-	constexpr const char* Diffuse       = "diffuse";
-	constexpr const char* Specular      = "specular";
-	constexpr const char* Shininess     = "shininess";
-	constexpr const char* Textures      = "textures";
-	constexpr const char* DiffuseMaps   = "diffuse_maps";
-	constexpr const char* SpecularMaps  = "specular_maps";
+	constexpr const char* Name           = "name";
+	constexpr const char* Shader         = "shader";
+	constexpr const char* Properties     = "properties";
+	constexpr const char* Ambient        = "ambient";
+	constexpr const char* Diffuse        = "diffuse";
+	constexpr const char* Specular       = "specular";
+	constexpr const char* Shininess      = "shininess";
+	constexpr const char* Textures       = "textures";
+	constexpr const char* DiffuseMaps    = "diffuse_maps";
+	constexpr const char* SpecularMaps   = "specular_maps";
+	constexpr const char* UseAlphaCutout = "use_alpha_cutout";
+
 }
 
 
@@ -50,6 +52,8 @@ bool MaterialSerializer::Serialize(const std::string& filepath, const std::share
 	data[MaterialKeys::Properties][MaterialKeys::Diffuse]   = { materialData.diffuseColor.r,  materialData.diffuseColor.g,  materialData.diffuseColor.b };
 	data[MaterialKeys::Properties][MaterialKeys::Specular]  = { materialData.specularColor.r, materialData.specularColor.g, materialData.specularColor.b };
 	data[MaterialKeys::Properties][MaterialKeys::Shininess] =   materialData.shininess;
+
+	data[MaterialKeys::Properties][MaterialKeys::UseAlphaCutout] = materialData.useAlphaCutout;
 
 	json diffusePaths = json::array();
 	for (const auto& texture : material->GetDiffuseMaps())
@@ -133,6 +137,9 @@ std::shared_ptr<Material> MaterialSerializer::Deserialize(const std::string& fil
 
 		if (properties.contains(MaterialKeys::Shininess))
 			material->SetShininess(properties[MaterialKeys::Shininess]);
+
+		if (properties.contains(MaterialKeys::UseAlphaCutout))
+			material->SetAlphaCutout(properties[MaterialKeys::UseAlphaCutout]);
 	}
 
 	if (data.contains(MaterialKeys::Textures))
