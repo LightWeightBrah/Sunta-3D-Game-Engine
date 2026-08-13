@@ -841,11 +841,31 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				{
 					// TODO: ADD CREATING 3D MODEL
 					EntityFactory::CreateCube(scene, spawnPosition, entityName);
+					SUNTA_ENGINE_LOG_INFO("Dropped 3D Model: '{0}' onto scene", droppedPath.string());
 				}
 				else if (extension == ".material")
 				{
 					// TODO: ADD HANDLING DROPPED MATERIAL
+					auto material = ResourceManager::GetMaterialData(entityName);
+					if(material)
+						EntityFactory::CreateCube(scene, spawnPosition, entityName, material);
+
 					SUNTA_ENGINE_LOG_INFO("Dropped material: '{0}'", entityName);
+				}
+				else if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga" || extension == ".bmp")
+				{
+					SUNTA_ENGINE_LOG_INFO("Dropped Texture: '{0}' onto scene", droppedPath.string());
+				}
+				else if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+				{
+					SUNTA_ENGINE_LOG_INFO("Dropped Audio File: '{0}' onto scene. Creating AudioSource Entity...", droppedPath.string());
+					unsigned int audioEntity = EntityFactory::CreateEmpty(scene, spawnPosition, entityName + "_Audio");
+					// TODO: Add AudioSource Component
+				}
+				else
+				{
+					SUNTA_ENGINE_LOG_WARNING("Unsuported file extension '{0}' dropped onto scene.", extension);
+						
 				}
 				
 			}

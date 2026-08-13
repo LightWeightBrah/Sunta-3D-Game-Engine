@@ -54,7 +54,7 @@ private:
 	struct PendingCreationState
 	{
 		bool active = false;
-		char nameBuffer[64] = "";
+		char nameBuffer[256] = "";
 		std::string extension = "";
 		std::string iconKey = "";
 		std::function<void(const std::filesystem::path& fullPath)> onCreate;
@@ -68,10 +68,10 @@ private:
 	static inline std::filesystem::path selectedFile	 = "";
 
 	static inline int entityToRename = -1;
-	static inline char entityNameBuffer[64] = "";
+	static inline char entityNameBuffer[256] = "";
 
 	static inline std::filesystem::path fileToRename = "";
-	static inline char fileRenameBuffer[64] = "";
+	static inline char fileRenameBuffer[256] = "";
 
 	static inline std::filesystem::path pendingRenamePath = "";
 	static inline std::string pendingRenameNewName = "";
