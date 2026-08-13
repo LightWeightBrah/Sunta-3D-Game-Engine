@@ -114,7 +114,7 @@ void LinuxWindow::Shutdown()
 	if (!window)
 		return;
 
-	EventBus::Unsubsribe(engineModeChangedID);
+	EventBus::Unsubscribe(engineModeChangedID);
 
 	glfwDestroyWindow(window);
 	window = nullptr;

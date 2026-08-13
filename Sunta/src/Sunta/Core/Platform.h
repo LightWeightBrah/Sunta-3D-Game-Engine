@@ -18,6 +18,7 @@ public:
 	static Platform& Get() { return *instance; }
 
 	virtual bool OpenInExplorer(const std::string& path) = 0;
+	virtual bool OpenFileExternally(const std::string& path) = 0;
 	std::string OpenFileDialog(const std::string& filterName = "Supported Files", const std::vector<std::string>&extensions = {});
 	
 private:

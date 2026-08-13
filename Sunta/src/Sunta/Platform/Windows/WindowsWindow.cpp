@@ -88,6 +88,19 @@ void WindowsWindow::SetCallbacks()
 			EventBus::Publish(WindowResizeEvent{ width, height });
 		});
 
+	glfwSetDropCallback(window, [](GLFWwindow*, int count, const char** paths)
+		{
+			std::vector<std::string> droppedPaths;
+			droppedPaths.reserve(count);
+
+			for (unsigned int i = 0; i < count; i++)
+			{
+				droppedPaths.push_back(paths[i]);
+			}
+
+			EventBus::Publish(FileDroppedEvent{ droppedPaths });
+		});
+
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPosition, double yPosition)
 		{
 			EventBus::Publish(MouseMovedEvent{ static_cast<float>(xPosition), static_cast<float>(yPosition)});
@@ -122,7 +135,7 @@ void WindowsWindow::Shutdown()
 	if (!window)
 		return;
 
-	EventBus::Unsubsribe(engineModeChangedID);
+	EventBus::Unsubscribe(engineModeChangedID);
 
 	glfwDestroyWindow(window);
 	window = nullptr;

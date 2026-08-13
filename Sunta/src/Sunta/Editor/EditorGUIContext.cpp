@@ -17,7 +17,6 @@ namespace Sunta
 {
 
 std::unique_ptr<EditorGUIBackend> EditorGUIContext::backend;
-unsigned int EditorGUIContext::engineModeChangeID;
 
 EditorGUIContext::~EditorGUIContext() = default;
 
@@ -35,6 +34,7 @@ void EditorGUIContext::Init(Window* window)
 	window->SetAsGraphicsTarget();
 
 	engineModeChangeID = EventBus::Subscribe<EngineModeChangedEvent>(EditorGUIContext::OnEngineModeChanged);
+	fileDroppedID = EventBus::Subscribe<FileDroppedEvent>(EditorGUI::OnFileDropped);
 
 	ImGuiIO& io = ImGui::GetIO();
 	mainFont = io.Fonts->AddFontFromFileTTF("res/Sunta/Fonts/Crimson_Text/CrimsonText-Regular.ttf", fontSize);
@@ -45,7 +45,8 @@ void EditorGUIContext::Shutdown(Window* window)
 	if (!backend || !window)
 		return;
 
-	EventBus::Unsubsribe(engineModeChangeID);
+	EventBus::Unsubscribe(engineModeChangeID);
+	EventBus::Unsubscribe(fileDroppedID);
 	backend->Shutdown(window->GetNativeWindow());
 	backend.reset();
 }
@@ -111,6 +112,8 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 
 	EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
 	EditorGUIContext::BeginDockingSpace(window);
+
+	EditorGUI::DrawSceneDropTarget(scene);
 
 	EditorGUI::Begin(inspectorName);
 	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));

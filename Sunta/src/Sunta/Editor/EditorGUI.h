@@ -16,6 +16,8 @@ class RendererDevice;
 class Material;
 class Texture;
 
+struct FileDroppedEvent;
+
 class EditorGUI
 {
 public:
@@ -36,6 +38,9 @@ public:
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser();
+	static void DrawSceneDropTarget(Scene& scene);
+
+	static void OnFileDropped(const FileDroppedEvent& event);
 
 	static bool DrawTextureSlot(const char* label, std::shared_ptr<Texture>& texture);
 	

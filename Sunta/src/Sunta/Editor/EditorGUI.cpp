@@ -19,6 +19,7 @@
 #include "Core/Platform.h"
 #include "Core/EngineAssets.h"
 #include "Serialization/MaterialSerializer.h"
+#include "Events/EventTypes.h"
 
 namespace Sunta
 {
@@ -245,6 +246,9 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 			{
 				// TODO: add implementation for Destroy Entity in entity Manager
 				//entityManager.DestroyEntity(entityID);
+				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
+				selectedEntity = -1;
+
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -277,6 +281,15 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 	{
 		selectedEntity = -1;
 		selectedFile = "";
+	}
+
+	if (selectedEntity != -1 && entityToRename == -1)
+	{
+		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
+		{
+			SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
+			selectedEntity = -1;
+		}
 	}
 }
 
@@ -502,6 +515,10 @@ void EditorGUI::DrawFileBrowser()
 					{
 						currentDirectory /= path.filename();
 						selectedFile = "";
+					}
+					else
+					{
+						Platform::Get().OpenFileExternally(path.string());
 					}
 				}
 			}
@@ -749,7 +766,125 @@ void EditorGUI::DrawFileBrowser()
 		selectedFile = "";
 	}
 
+	if (!selectedFile.empty() && fileToRename.empty() && !pendingCreation.active)
+	{
+		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
+		{
+			if (std::filesystem::exists(selectedFile))
+			{
+				std::filesystem::remove_all(selectedFile);
+				SUNTA_ENGINE_LOG_INFO("Deleted file: '{0}'", selectedFile.string());
+			}
+			selectedFile = "";
+		}
+	}
+
 	ImGui::Columns(1); // column reset
+}
+
+void EditorGUI::DrawSceneDropTarget(Scene& scene)
+{
+	if (!ImGui::IsDragDropActive())
+		return;
+
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowBgAlpha(0.0f);
+
+	ImGuiWindowFlags flags = 
+		  ImGuiWindowFlags_NoTitleBar
+		| ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoScrollbar
+		| ImGuiWindowFlags_NoSavedSettings
+		| ImGuiWindowFlags_NoBringToFrontOnFocus
+		| ImGuiWindowFlags_NoFocusOnAppearing
+		| ImGuiWindowFlags_NoNav;
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+	if (ImGui::Begin("##SceneDropTarget", nullptr, flags))
+	{
+		// Invisble element set to whole window that captures mouse
+		ImGui::Dummy(viewport->Size);
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+			{
+				const char* pathString = static_cast<const char*>(payload->Data);
+				std::filesystem::path droppedPath(pathString);
+
+				std::string extension = droppedPath.extension().string();
+				std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+				// ===================================================================================
+				// TODO: ADD RAYCASTING BASED ON MOUSE POSITON AND THEN CREATE ENTITY IN THAT POSITION
+				// ===================================================================================
+				ImVec2 mousePosition = ImGui::GetMousePos();
+				SUNTA_ENGINE_LOG_INFO("Dropped file '{0}' onto Scene background at screen position: ({1}, {2})",
+					droppedPath.string(), mousePosition.x, mousePosition.y);
+				// ===================================================================================
+				// ===================================================================================
+
+				glm::vec3 spawnPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+				std::string entityName = droppedPath.stem().string();
+
+				// ===================================================================================
+				// TODO: ADD DIFFERENT EXTENSIONS HANDLING 
+				// ===================================================================================
+
+				if (extension == ".obj" || extension == ".fbx" || extension == ".gltf" || extension == ".glb")
+				{
+					// TODO: ADD CREATING 3D MODEL
+					EntityFactory::CreateCube(scene, spawnPosition, entityName);
+				}
+				else if (extension == ".material")
+				{
+					// TODO: ADD HANDLING DROPPED MATERIAL
+					SUNTA_ENGINE_LOG_INFO("Dropped material: '{0}'", entityName);
+				}
+				
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+	}
+
+	ImGui::End();
+	ImGui::PopStyleVar(2);
+
+}
+
+void EditorGUI::OnFileDropped(const FileDroppedEvent& event)
+{
+	std::filesystem::path targetDirectory = currentDirectory.empty() ? "res/Game" : currentDirectory;
+
+	if (!std::filesystem::exists(targetDirectory))
+	{
+		std::filesystem::create_directories(targetDirectory);
+	}
+
+	for (const auto& pathString : event.paths)
+	{
+		std::filesystem::path srcPath(pathString);
+		std::filesystem::path destinationPath = targetDirectory / srcPath.filename();
+
+		std::error_code errorCode;
+		std::filesystem::copy_file(srcPath, destinationPath, std::filesystem::copy_options::overwrite_existing, errorCode);
+
+		if (errorCode)
+		{
+			SUNTA_ENGINE_LOG_ERROR("EditorGUI::OnFileDropped: Error Importing file '{0}': '{1}'", srcPath.filename().string(), errorCode.message());
+		}
+		else
+		{
+			SUNTA_ENGINE_LOG_INFO("EditorGUI::OnFileDropped: Successfully imported file to: '{0}'", destinationPath.string());
+		}
+	}
 }
 
 bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& texture)

@@ -37,7 +37,7 @@ Scene::Scene()
 	
 Scene::~Scene()
 {
-	EventBus::Unsubsribe(resizeEventID);
+	EventBus::Unsubscribe(resizeEventID);
 }
 	
 void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float windowHeight)

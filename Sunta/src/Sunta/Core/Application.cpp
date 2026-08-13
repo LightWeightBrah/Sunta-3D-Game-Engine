@@ -82,7 +82,7 @@ namespace Sunta
 				isMinimized = false;
 			}
 		);
-
+		
 		Renderer::Init();
 		ResourceManager::Init(Renderer::GetDevice());
 		ResourceLoader::Init(Renderer::GetDevice());

@@ -123,7 +123,7 @@ void MacWindow::Shutdown()
 	if (!window)
 		return;
 
-	EventBus::Unsubsribe(engineModeChangedID);
+	EventBus::Unsubscribe(engineModeChangedID);
 
 	glfwDestroyWindow(window);
 	window = nullptr;

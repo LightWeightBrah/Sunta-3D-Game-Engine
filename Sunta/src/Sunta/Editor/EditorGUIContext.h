@@ -32,7 +32,8 @@ public:
 	static void RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice);
 private:
 	static std::unique_ptr<EditorGUIBackend> backend;
-	static unsigned int engineModeChangeID;
+	inline static unsigned int engineModeChangeID;
+	inline static unsigned int fileDroppedID;
 
 	static constexpr float fontSize					= 24.0f;
 

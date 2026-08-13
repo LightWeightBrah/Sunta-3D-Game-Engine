@@ -18,7 +18,7 @@ Camera::Camera(glm::vec3 position, float pitch, float yaw)
 
 Camera::~Camera()
 {
-	EventBus::Unsubsribe(subscriptionID);
+	EventBus::Unsubscribe(subscriptionID);
 }
 
 	

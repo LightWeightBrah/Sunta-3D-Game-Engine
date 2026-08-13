@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <functional>
+#include <string>
 
 namespace Sunta
 {
@@ -24,6 +25,11 @@ struct WindowResizeEvent
 struct WindowCloseEvent
 {
 
+};
+
+struct FileDroppedEvent
+{
+	std::vector<std::string> paths;
 };
 
 struct MouseMovedEvent
