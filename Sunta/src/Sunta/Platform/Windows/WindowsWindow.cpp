@@ -9,6 +9,9 @@
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 #include "Renderer/RendererAPI.h"
 #include "Core/Assert.h"
+#include "Core/EngineAssets.h"
+
+#include <stb/stb_image.h>
 
 #include <GLFW/glfw3.h>
 
@@ -57,6 +60,8 @@ void WindowsWindow::Init()
 		glfwTerminate();
 		return;
 	}
+
+	SetWindowIcon();
 
 	graphicsContext = GraphicsContext::Create(window);
 	graphicsContext->Init();
@@ -174,5 +179,25 @@ void WindowsWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
 	EnableMouseCursor(shouldShow);
 }
 
+
+void WindowsWindow::SetWindowIcon()
+{
+	GLFWimage icon;
+	int channels = 0;
+
+	stbi_set_flip_vertically_on_load(false);
+	icon.pixels = stbi_load(EngineAssets::App::EngineLogoPath, &icon.width, &icon.height, &channels, 4);
+
+	if (icon.pixels)
+	{
+		glfwSetWindowIcon(window, 1, &icon);
+		stbi_image_free(icon.pixels);
+		SUNTA_ENGINE_LOG_INFO("Window icon successfully updated!");
+	}
+	else
+	{
+		SUNTA_ENGINE_LOG_WARNING("Failed to load Window icon!");
+	}
+}
 
 }

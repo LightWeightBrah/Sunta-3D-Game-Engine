@@ -37,6 +37,8 @@ private:
 	void SetCallbacks();
 	void Shutdown();
 	void OnEngineModeChanged(const EngineModeChangedEvent& event);
+
+	void SetWindowIcon();
 };
 
 }

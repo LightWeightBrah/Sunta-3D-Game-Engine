@@ -2,6 +2,11 @@
 
 namespace Sunta::EngineAssets
 {
+	namespace App
+	{
+		constexpr const char* EngineLogoPath = "res/Sunta/Textures/Icons/engine_logo.jpg";
+	}
+
 	namespace Shaders
 	{
 		constexpr const char* Error = "Error";

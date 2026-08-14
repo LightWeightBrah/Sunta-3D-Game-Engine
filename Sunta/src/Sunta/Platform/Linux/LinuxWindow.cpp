@@ -9,6 +9,9 @@
 #include "Platform/OpenGL/OpenGLGraphicsContext.h"
 #include "Renderer/RendererAPI.h"
 #include "Core/Assert.h"
+#include "Core/EngineAssets.h"
+
+#include <stb/stb_image.h>
 
 #include <GLFW/glfw3.h>
 
@@ -58,6 +61,8 @@ void LinuxWindow::Init()
 		return;
 	}
 
+	SetWindowIcon();
+
 	graphicsContext = GraphicsContext::Create(window);
 	graphicsContext->Init();
 
@@ -71,39 +76,60 @@ void LinuxWindow::SetCallbacks()
 {
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height)
 		{
-			//we must do this to set new width, height, cause of lambda
-			//we cant do here this->width = width
+			// If we are closing the window don't publish resize events
+			if (glfwWindowShouldClose(window))
+				return;
+
+			// only publish resize event if window isn't minimized
+			if (width <= 0 || height <= 0)
+				return;
+
+			// we must do this to set new width, height, cause of lambda
+			// we cant do here this->width = width
 			auto& data = *(LinuxWindow*)glfwGetWindowUserPointer(window);
 			data.width = width;
 			data.height = height;
 
 			EventBus::Publish(WindowResizeEvent{ width, height });
+		});
 
+	glfwSetDropCallback(window, [](GLFWwindow*, int count, const char** paths)
+		{
+			std::vector<std::string> droppedPaths;
+			droppedPaths.reserve(count);
+
+			for (unsigned int i = 0; i < count; i++)
+			{
+				droppedPaths.push_back(paths[i]);
+			}
+
+			EventBus::Publish(FileDroppedEvent{ droppedPaths });
 		});
 
 	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xPosition, double yPosition)
 		{
-			EventBus::Publish(MouseMovedEvent{ static_cast<float>(xPosition), static_cast<float>(yPosition)});
+			EventBus::Publish(MouseMovedEvent{ static_cast<float>(xPosition), static_cast<float>(yPosition) });
 		});
 
 	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			switch (action)
 			{
-			case GLFW_PRESS :   EventBus::Publish(KeyPressedEvent{ key }); break;
-			case GLFW_REPEAT :  EventBus::Publish(KeyPressedEvent{ key }); break;
-			case GLFW_RELEASE : EventBus::Publish(KeyReleasedEvent{ key }); break;
+			case GLFW_PRESS:   EventBus::Publish(KeyPressedEvent{ key }); break;
+			case GLFW_REPEAT:  EventBus::Publish(KeyPressedEvent{ key }); break;
+			case GLFW_RELEASE: EventBus::Publish(KeyReleasedEvent{ key }); break;
 
 			}
 		});
 
 	glfwSetScrollCallback(window, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
-			EventBus::Publish(MouseScrollEvent{ static_cast<float>(xOffset), static_cast<float>(yOffset)});
+			EventBus::Publish(MouseScrollEvent{ static_cast<float>(xOffset), static_cast<float>(yOffset) });
 		});
 
 	glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
+			glfwHideWindow(window);
 			EventBus::Publish(WindowCloseEvent{});
 
 		});
@@ -123,8 +149,12 @@ void LinuxWindow::Shutdown()
 
 void LinuxWindow::Update()
 {
-	graphicsContext->SwapBuffers();
 	glfwPollEvents();
+
+	if (glfwWindowShouldClose(window))
+		return;
+
+	graphicsContext->SwapBuffers();
 }
 
 void LinuxWindow::EnableMouseCursor(bool enabled)
@@ -148,5 +178,25 @@ void LinuxWindow::OnEngineModeChanged(const EngineModeChangedEvent& event)
 	EnableMouseCursor(shouldShow);
 }
 
+
+void LinuxWindow::SetWindowIcon()
+{
+	GLFWimage icon;
+	int channels = 0;
+
+	stbi_set_flip_vertically_on_load(false);
+	icon.pixels = stbi_load(EngineAssets::App::EngineLogoPath, &icon.width, &icon.height, &channels, 4);
+
+	if (icon.pixels)
+	{
+		glfwSetWindowIcon(window, 1, &icon);
+		stbi_image_free(icon.pixels);
+		SUNTA_ENGINE_LOG_INFO("Window icon successfully updated!");
+	}
+	else
+	{
+		SUNTA_ENGINE_LOG_WARNING("Failed to load Window icon!");
+	}
+}
 
 }

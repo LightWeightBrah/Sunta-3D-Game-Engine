@@ -5,7 +5,46 @@ project(Game)
 # ========================= SOURCES ========================= 
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp" "src/*.h")
-add_executable(${PROJECT_NAME} ${GAME_SOURCES})
+
+# ========================= APP EXE ICON ========================= 
+
+# --- PLATFORMS ---
+
+# Windows
+if(WIN32)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/res/App/resource.rc")
+        message(STATUS "Game: Using custom Game executable icon")
+        list(APPEND GAME_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/res/App/resource.rc")
+
+    elseif(EXISTS "${CMAKE_SOURCE_DIR}/Sunta/res/App/resource.rc")
+        message(STATUS "Game: Using default Sunta Engine executable icon")
+        list(APPEND GAME_SOURCES "${CMAKE_SOURCE_DIR}/Sunta/res/App/resource.rc")
+
+    endif()
+
+# Linux
+elseif(UNIX AND NOT APPLE)
+	message(STATUS "Game: Linux platform detected (Icons handled via desktop files and runtime GLFW)")
+
+# Mac
+elseif(APPLE)
+    set(MACOSX_BUNDLE_ICON_FILE engine_logo.icns)
+
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/res/App/engine_logo.icns")
+        set(MAC_ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/res/App/engine_logo.icns")
+    elseif(EXISTS "${CMAKE_SOURCE_DIR}/Sunta/res/App/engine_logo.icns")
+        set(MAC_ICON_PATH "${CMAKE_SOURCE_DIR}/Sunta/res/App/engine_logo.icns")
+    endif()
+
+    if(MAC_ICON_PATH)
+        message(STATUS "Game: Using App Icon for MacOS Bundle")
+        list(APPEND GAME_SOURCES ${MAC_ICON_PATH})
+        set_source_files_properties(${MAC_ICON_PATH} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    endif()
+
+endif()
+
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${GAME_SOURCES})
 
 # ========================= LINKING ========================= 
 
