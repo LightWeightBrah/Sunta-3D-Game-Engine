@@ -26,6 +26,20 @@ if(WIN32)
 elseif(UNIX AND NOT APPLE)
 	message(STATUS "Game: Linux platform detected (Icons handled via desktop files and runtime GLFW)")
 
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/res/App/app.desktop.in")
+        set(DESKTOP_IN_PATH "${CMAKE_CURRENT_SOURCE_DIR}/res/App/app.desktop.in")
+    elseif(EXISTS "${CMAKE_SOURCE_DIR}/Sunta/res/App/app.desktop.in")
+        set(DESKTOP_IN_PATH "${CMAKE_SOURCE_DIR}/Sunta/res/App/app.desktop.in")
+    endif()
+
+    if(DESKTOP_IN_PATH)
+        configure_file(
+            "${DESKTOP_IN_PATH}"
+            "${SUNTA_BIN_DIR}/${PROJECT_NAME}.desktop"
+            @ONLY
+        )
+    endif()
+
 # Mac
 elseif(APPLE)
     set(MACOSX_BUNDLE_ICON_FILE engine_logo.icns)
