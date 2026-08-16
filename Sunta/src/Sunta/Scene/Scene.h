@@ -23,16 +23,17 @@ public:
 	void Render(Renderer& renderer);
 	void Clear();
 
-	EntityManager& GetEntityManager() { return entityManager; }
+	EntityManager& GetEntityManager()		{ return entityManager; }
+
+	const std::string& GetName()			{ return name; }
+	void SetName(const std::string& name)	{ this->name = name; }
 
 private:
-	EntityManager							entityManager;
-	Camera									camera;
+	EntityManager		entityManager;
+	Camera				camera;
 
-	unsigned int resizeEventID;
-	
-	//Solaire	  solaireEntity;
-	//Astar       aStar;
+	unsigned int		resizeEventID;
+	std::string			name = "Untitled_Scene";
 };
 
 }

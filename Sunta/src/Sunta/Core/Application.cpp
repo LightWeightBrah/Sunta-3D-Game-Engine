@@ -95,7 +95,7 @@ namespace Sunta
 		MeshComponent::RegisterToInspector();
 		DirectionalLightComponent::RegisterToInspector();
 		PointLightComponent::RegisterToInspector();
-		SpotlightComponent::RegisterToInspector();
+		SpotLightComponent::RegisterToInspector();
 
 		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	}

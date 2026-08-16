@@ -11,6 +11,7 @@ struct IInspectableStorage
 	virtual ~IInspectableStorage() = default;
 	virtual void* GetEntityComponentData(unsigned int entityID) = 0;
 	virtual bool Contains(unsigned int entityID) = 0;
+	virtual void Clear() = 0;
 };
 
 template<typename T>
@@ -46,6 +47,12 @@ struct ComponentStorage : public IInspectableStorage
 	bool Contains(unsigned int entityID) override
 	{
 		return (entityID < entityToComponent.size() && entityToComponent[entityID] != -1);
+	}
+
+	void Clear() override
+	{
+		components.clear();
+		entityToComponent.clear();
 	}
 };
 
@@ -83,6 +90,16 @@ public:
 	unsigned int GetEntityCount() const
 	{
 		return nextID;
+	}
+
+	void Clear()
+	{
+		nextID = 0;
+		for (auto& [hash, storage] : inspectableMap)
+		{
+			if (storage)
+				storage->Clear();
+		}
 	}
 
 	const std::unordered_map<size_t, IInspectableStorage*>& GetInspectableMap() const

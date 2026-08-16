@@ -150,7 +150,7 @@ struct PointLightComponent
 	}
 };
 
-struct SpotlightComponent
+struct SpotLightComponent
 {
 	LightColor  color;
 	Attenuation attenuation;
@@ -160,18 +160,18 @@ struct SpotlightComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<SpotlightComponent>("Spotlight", EngineAssets::Icons::Spotlight,
+		InspectorComponentRegistry::RegisterComponent<SpotLightComponent>("Spotlight", EngineAssets::Icons::Spotlight,
 			{
-				ADD_PROPERTY(SpotlightComponent, color.ambientIntensity,	PropertyDataType::Color),
-				ADD_PROPERTY(SpotlightComponent, color.diffuseIntensity,	PropertyDataType::Color),
-				ADD_PROPERTY(SpotlightComponent, color.specularIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(SpotLightComponent, color.ambientIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(SpotLightComponent, color.diffuseIntensity,	PropertyDataType::Color),
+				ADD_PROPERTY(SpotLightComponent, color.specularIntensity,	PropertyDataType::Color),
 
-				ADD_PROPERTY(SpotlightComponent, attenuation.constant,		PropertyDataType::Float),
-				ADD_PROPERTY(SpotlightComponent, attenuation.linear,		PropertyDataType::Float),
-				ADD_PROPERTY(SpotlightComponent, attenuation.quadratic,		PropertyDataType::Float),
+				ADD_PROPERTY(SpotLightComponent, attenuation.constant,		PropertyDataType::Float),
+				ADD_PROPERTY(SpotLightComponent, attenuation.linear,		PropertyDataType::Float),
+				ADD_PROPERTY(SpotLightComponent, attenuation.quadratic,		PropertyDataType::Float),
 
-				ADD_PROPERTY(SpotlightComponent, innerCutOffAngle,			PropertyDataType::Float),
-				ADD_PROPERTY(SpotlightComponent, outerCutOffAngle,			PropertyDataType::Float)
+				ADD_PROPERTY(SpotLightComponent, innerCutOffAngle,			PropertyDataType::Float),
+				ADD_PROPERTY(SpotLightComponent, outerCutOffAngle,			PropertyDataType::Float)
 			});
 	}
 };

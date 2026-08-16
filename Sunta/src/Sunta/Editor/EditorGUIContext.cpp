@@ -110,7 +110,9 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 	if (mainFont)
 		ImGui::PushFont(mainFont);
 
-	EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
+	EditorGUI::DrawMainMenuBar(scene);
+
+	//EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
 	EditorGUIContext::BeginDockingSpace(window);
 
 	EditorGUI::DrawSceneDropTarget(scene);

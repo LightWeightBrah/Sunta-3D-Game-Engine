@@ -138,7 +138,7 @@ unsigned int EntityFactory::CreateSpotLight(Scene& scene, const glm::vec3& posit
 
 	auto& entityManager = scene.GetEntityManager();
 	entityManager.AddComponent<MeshComponent>(entity, mesh, material, Meshes::Cube, GetMaterialName(material));
-	entityManager.AddComponent<SpotlightComponent>(entity);
+	entityManager.AddComponent<SpotLightComponent>(entity);
 	return entity;
 }
 

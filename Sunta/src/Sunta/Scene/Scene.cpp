@@ -114,6 +114,9 @@ void Scene::Render(Renderer& renderer)
 
 		if (auto* directionalLightComponent = entityManager.GetComponent<DirectionalLightComponent>(i))
 		{
+			if (!lightTransform)
+				continue;
+
 			DirectionalLightData data;
 
 			data.direction = Sunta::Math::DegreesToDirection(lightTransform->rotation);
@@ -137,7 +140,7 @@ void Scene::Render(Renderer& renderer)
 			sceneData.pointLights.push_back(data);
 		}
 
-		if (auto* spotlightComponent = entityManager.GetComponent<SpotlightComponent>(i))
+		if (auto* spotlightComponent = entityManager.GetComponent<SpotLightComponent>(i))
 		{
 			if (!lightTransform)
 				continue;
@@ -181,7 +184,7 @@ void Scene::Render(Renderer& renderer)
 
 		bool isLightSource = entityManager.GetComponent<DirectionalLightComponent>(i) ||
 							 entityManager.GetComponent<PointLightComponent>(i)       ||
-							 entityManager.GetComponent<SpotlightComponent>(i);
+							 entityManager.GetComponent<SpotLightComponent>(i);
 
 		RenderItem item = { meshComponent->mesh.get(), meshComponent->material.get(), matrixComponent->matrix };
 
@@ -212,7 +215,7 @@ void Scene::Render(Renderer& renderer)
 	
 void Scene::Clear()
 {
-	
+	entityManager.Clear();
 }
 
 //void Scene::AddEntity(std::unique_ptr<Entity> entity)

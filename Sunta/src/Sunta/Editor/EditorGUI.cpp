@@ -20,6 +20,7 @@
 #include "Core/EngineAssets.h"
 #include "Serialization/MaterialSerializer.h"
 #include "Events/EventTypes.h"
+#include "Serialization/SceneSerializer.h"
 
 namespace Sunta
 {
@@ -67,6 +68,55 @@ void EditorGUI::Text(const std::string& text)
 bool EditorGUI::Button(const std::string& label)
 {
 	return ImGui::Button(label.c_str());
+}
+
+void EditorGUI::DrawMainMenuBar(Scene& scene)
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New Scene"))
+			{
+				scene.Clear();
+				scene.SetName("Untitled_Scene");
+			}
+
+			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+			{
+				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" });
+				if (!path.empty())
+					SceneSerializer::Deserialize(path, scene);
+			}
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+			{
+				std::string path = "res/Game/Scenes/" + scene.GetName() + ".scene";
+				SceneSerializer::Serialize(path, scene);
+			}
+
+			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
+			{
+				std::string path = Platform::Get().SaveFileDialog("Scene Files", { "scene" });
+				if (!path.empty())
+				{
+					std::filesystem::path filepath = path;
+					if (filepath.extension() != ".scene")
+						filepath += ".scene";
+
+					scene.SetName(filepath.stem().string());
+					SceneSerializer::Serialize(filepath.string(), scene);
+				}
+			}
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+
 }
 
 void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight)
