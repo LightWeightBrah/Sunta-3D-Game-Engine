@@ -1,0 +1,207 @@
+{
+    "entities": [
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    7.5,
+                    5.0,
+                    3.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "textured_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Textured Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    5.0,
+                    -0.5
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "directional_light": {
+                "ambient": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                ],
+                "diffuse": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "specular": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Directional Light"
+            },
+            "transform": {
+                "position": [
+                    3.0,
+                    6.0,
+                    2.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.09000000357627869,
+                    "attenuation_quadratic": 0.03200000151991844
+                },
+                "color": {
+                    "ambient": [
+                        0.20000000298023224,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "diffuse": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "specular": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Point Light"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "spot_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.09000000357627869,
+                    "attenuation_quadratic": 0.03200000151991844
+                },
+                "color": {
+                    "ambient": [
+                        0.20000000298023224,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "diffuse": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "specular": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                "inner_cut_off": 12.5,
+                "outer_cut_off": 17.5
+            },
+            "tag": {
+                "name": "Spot Light"
+            },
+            "transform": {
+                "position": [
+                    -2.5,
+                    4.5,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        }
+    ],
+    "scene_name": "raz"
+}

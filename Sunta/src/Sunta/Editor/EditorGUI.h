@@ -85,6 +85,8 @@ private:
 	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
 	static std::string GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory);
 
+	static void DeletePathAndUnloadResources(const std::filesystem::path& path);
+
 	static bool IsClickingEmptySpace();
 
 };

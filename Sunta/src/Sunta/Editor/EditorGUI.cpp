@@ -21,6 +21,7 @@
 #include "Serialization/MaterialSerializer.h"
 #include "Events/EventTypes.h"
 #include "Serialization/SceneSerializer.h"
+#include "Utilities/FileSystemUtilities.h"
 
 namespace Sunta
 {
@@ -84,7 +85,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
 			{
-				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" });
+				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
 				if (!path.empty())
 					SceneSerializer::Deserialize(path, scene);
 			}
@@ -99,13 +100,10 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
 			{
-				std::string path = Platform::Get().SaveFileDialog("Scene Files", { "scene" });
+				std::string path = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
 				if (!path.empty())
 				{
-					std::filesystem::path filepath = path;
-					if (filepath.extension() != ".scene")
-						filepath += ".scene";
-
+					std::filesystem::path filepath = std::filesystem::path(path).lexically_normal();
 					scene.SetName(filepath.stem().string());
 					SceneSerializer::Serialize(filepath.string(), scene);
 				}
@@ -594,7 +592,8 @@ void EditorGUI::DrawFileBrowser()
 					if (selectedFile == path)
 						selectedFile = "";
 
-					std::filesystem::remove(path);
+					DeletePathAndUnloadResources(path);
+
 					ImGui::CloseCurrentPopup();
 				}
 
@@ -820,11 +819,7 @@ void EditorGUI::DrawFileBrowser()
 	{
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
 		{
-			if (std::filesystem::exists(selectedFile))
-			{
-				std::filesystem::remove_all(selectedFile);
-				SUNTA_ENGINE_LOG_INFO("Deleted file: '{0}'", selectedFile.string());
-			}
+			DeletePathAndUnloadResources(selectedFile);
 			selectedFile = "";
 		}
 	}
@@ -887,13 +882,13 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				// TODO: ADD DIFFERENT EXTENSIONS HANDLING 
 				// ===================================================================================
 
-				if (extension == ".obj" || extension == ".fbx" || extension == ".gltf" || extension == ".glb")
+				if (IsModelExtension(extension))
 				{
 					// TODO: ADD CREATING 3D MODEL
 					EntityFactory::CreateCube(scene, spawnPosition, entityName);
 					SUNTA_ENGINE_LOG_INFO("Dropped 3D Model: '{0}' onto scene", droppedPath.string());
 				}
-				else if (extension == ".material")
+				else if (IsMaterialExtension(extension))
 				{
 					// TODO: ADD HANDLING DROPPED MATERIAL
 					auto material = ResourceManager::GetMaterialData(entityName);
@@ -902,11 +897,11 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 
 					SUNTA_ENGINE_LOG_INFO("Dropped material: '{0}'", entityName);
 				}
-				else if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".tga" || extension == ".bmp")
+				else if (IsTextureExtension(extension))
 				{
 					SUNTA_ENGINE_LOG_INFO("Dropped Texture: '{0}' onto scene", droppedPath.string());
 				}
-				else if (extension == ".wav" || extension == ".mp3" || extension == ".ogg")
+				else if (IsAudioExtension(extension))
 				{
 					SUNTA_ENGINE_LOG_INFO("Dropped Audio File: '{0}' onto scene. Creating AudioSource Entity...", droppedPath.string());
 					unsigned int audioEntity = EntityFactory::CreateEmpty(scene, spawnPosition, entityName + "_Audio");
@@ -992,8 +987,7 @@ bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& tex
 			std::string extension = path.extension().string();
 			std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
-			if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" 
-				|| extension == ".tga" || extension == ".bmp" || extension == ".psd" || extension == ".hdr")
+			if (IsTextureExtension(extension))
 			{
 				texture = ResourceManager::LoadOrGetTexture(droppedPath);
 				changed = true;
@@ -1220,6 +1214,41 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 		auto it = fileIcons.find(extension);
 		return (it != fileIcons.end()) ? it->second : Icons::DefaultFile;
 
+	}
+}
+
+void EditorGUI::DeletePathAndUnloadResources(const std::filesystem::path& path)
+{
+	if (!std::filesystem::exists(path))
+		return;
+
+	if (std::filesystem::is_directory(path))
+	{
+		std::error_code error;
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(path, error))
+		{
+			if (entry.is_regular_file())
+			{
+				ResourceManager::UnloadResourceByPath(entry.path());
+			}
+		}
+	}
+	else
+	{
+		ResourceManager::UnloadResourceByPath(path);
+	}
+
+	std::error_code errorCode;
+	std::filesystem::remove_all(path, errorCode);
+
+	if (errorCode)
+	{
+		SUNTA_ENGINE_LOG_ERROR("EditorGUI::DeletePathAndUnloadResources: Error deleting '{0}': '{1}'", 
+			path.string(), errorCode.message());
+	}
+	else
+	{
+		SUNTA_ENGINE_LOG_INFO("EditorGUI::DeletePathAndUnloadResources: Successfully deletd: '{0}'", path.string());
 	}
 }
 

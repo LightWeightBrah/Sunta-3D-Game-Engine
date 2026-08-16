@@ -9,6 +9,7 @@
 #include "Animation/Animation.h"
 #include "Renderer/RendererDevice.h"
 #include "Serialization/MaterialSerializer.h"
+#include "Utilities/FileSystemUtilities.h"
 
 namespace Sunta
 {
@@ -136,6 +137,87 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& fil
 	shadersRegistered[name] = shader;
 
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, filepath);
+}
+
+void ResourceManager::UnloadEditorIcon(const std::string& name)
+{
+	if (editorIconsRegistered.count(name))
+	{
+		editorIconsRegistered.erase(name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::UnloadEditorIcon: Unloaded Editor Icon: '{0}'", name);
+	}
+}
+
+void ResourceManager::UnloadModel(const std::string& name)
+{
+	if (modelsRegistered.count(name))
+	{
+		modelsRegistered.erase(name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::UnloadModel: Unloaded 3D Model: '{0}'", name);
+	}
+}
+
+void ResourceManager::UnloadMesh(const std::string& name)
+{
+	if (meshesRegistered.count(name))
+	{
+		meshesRegistered.erase(name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::UnloadMesh: Unloaded Mesh: '{0}'", name);
+	}
+}
+
+void ResourceManager::UnloadMaterial(const std::string& name)
+{
+	if (materialsRegistered.count(name))
+	{
+		materialsRegistered.erase(name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::UnloadMaterial: Unloaded Material: '{0}'", name);
+	}
+}
+
+void ResourceManager::UnloadTexture(const std::string& name)
+{
+	if (texturesRegistered.count(name))
+	{
+		texturesRegistered.erase(name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::UnloadTexture: Unloaded Texture: '{0}'", name);
+	}
+}
+
+void ResourceManager::UnloadShader(const std::string& name)
+{
+	if (shadersRegistered.count(name))
+	{
+		shadersRegistered.erase(name);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::UnloadShader: Unloaded Shader: '{0}'", name);
+	}
+}
+
+void ResourceManager::UnloadResourceByPath(const std::filesystem::path& filePath)
+{
+	std::string extension = filePath.extension().string();
+	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+	std::string stemName = filePath.stem().string();
+	std::string fullPathString = filePath.generic_string();
+
+	if (IsMaterialExtension(extension))
+	{
+		UnloadMaterial(stemName);
+	}
+	else if (IsTextureExtension(extension))
+	{
+		UnloadTexture(stemName);
+		UnloadTexture(fullPathString);
+	}
+	else if (IsShaderExtension(extension))
+	{
+		UnloadShader(stemName);
+	}
+	else if (IsModelExtension(extension))
+	{
+		UnloadModel(stemName);
+	}
 }
 
 void ResourceManager::RenameMaterial(const std::string& oldName, const std::string& newName)

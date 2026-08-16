@@ -42,7 +42,16 @@ public:
 	static void LoadMaterial    (const std::string& name, std::shared_ptr<Material> material);
 	static void LoadTexture     (const std::string& name, const std::string& filepath);
 	static void LoadShader      (const std::string& name, const std::string& filepath);
+
+	static void UnloadEditorIcon(const std::string& name);
+	static void UnloadModel     (const std::string& name);
+	static void UnloadMesh      (const std::string& name);
+	static void UnloadMaterial  (const std::string& name);
+	static void UnloadTexture   (const std::string& name);
+	static void UnloadShader    (const std::string& name);
 		
+	static void UnloadResourceByPath(const std::filesystem::path& filePath);
+
 	static void RenameMaterial  (const std::string& oldName, const std::string& newName);
 
 	static std::shared_ptr<Texture>	  GetEditorIcon      (const std::string& name);

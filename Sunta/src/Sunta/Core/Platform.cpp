@@ -28,7 +28,7 @@ void Platform::Shutdown()
 	NFD_Quit();
 }
 
-std::string Platform::OpenFileDialog(const std::string& filterName, const std::vector<std::string>& extensions)
+std::string Platform::OpenFileDialog(const std::string& filterName, const std::vector<std::string>& extensions, const std::string& defaultPath)
 {
 	std::string formattedExtensions;
 	for (unsigned int i = 0; i < extensions.size(); i++)
@@ -45,7 +45,8 @@ std::string Platform::OpenFileDialog(const std::string& filterName, const std::v
 	NFD::UniquePath outPath;
 	nfdresult_t result = NFD::OpenDialog(outPath,
 		filterItems.empty() ? nullptr : filterItems.data(),
-		static_cast<nfdfiltersize_t>(filterItems.size()));
+		static_cast<nfdfiltersize_t>(filterItems.size()),
+		defaultPath.empty() ? nullptr : defaultPath.c_str());
 
 	if (result == NFD_OKAY)
 	{
@@ -54,11 +55,11 @@ std::string Platform::OpenFileDialog(const std::string& filterName, const std::v
 
 		try
 		{
-			return std::filesystem::relative(absolutePath, currentPath).string();
+			return std::filesystem::relative(absolutePath, currentPath).generic_string();
 		}
 		catch (...)
 		{
-			return absolutePath.string();
+			return absolutePath.generic_string();
 		}
 		
 	}
@@ -66,7 +67,7 @@ std::string Platform::OpenFileDialog(const std::string& filterName, const std::v
 	return "";
 }
 
-std::string Platform::SaveFileDialog(const std::string& filterName, const std::vector<std::string>& extensions)
+std::string Platform::SaveFileDialog(const std::string& filterName, const std::vector<std::string>& extensions, const std::string& defaultPath)
 {
 	std::string formattedExtensions;
 	for (unsigned int i = 0; i < extensions.size(); i++)
@@ -83,20 +84,32 @@ std::string Platform::SaveFileDialog(const std::string& filterName, const std::v
 	NFD::UniquePath outPath;
 	nfdresult_t result = NFD::SaveDialog(outPath,
 		filterItems.empty() ? nullptr : filterItems.data(),
-		static_cast<nfdfiltersize_t>(filterItems.size()));
+		static_cast<nfdfiltersize_t>(filterItems.size()),
+		defaultPath.empty() ? nullptr : defaultPath.c_str());
 
 	if (result == NFD_OKAY)
 	{
 		std::filesystem::path absolutePath(outPath.get());
+
+		if (!extensions.empty() && !absolutePath.has_extension())
+		{
+			std::string extensionToAdd = extensions[0];
+			if (extensionToAdd[0] != '.')
+				extensionToAdd = "." + extensionToAdd;
+			
+			absolutePath += extensionToAdd;
+
+		}
+
 		std::filesystem::path currentPath = std::filesystem::current_path();
 
 		try
 		{
-			return std::filesystem::relative(absolutePath, currentPath).string();
+			return std::filesystem::relative(absolutePath, currentPath).generic_string();
 		}
 		catch (...)
 		{
-			return absolutePath.string();
+			return absolutePath.generic_string();
 		}
 
 	}
