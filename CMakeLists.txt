@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+option(SUNTA_COPY_ASSETS "Copy assets to bin directory for distribution" OFF)
+
 # ========================= OUTPUT SETTINGS ========================= 
 
 set(CONFIG_NAME "$<CONFIG>-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")

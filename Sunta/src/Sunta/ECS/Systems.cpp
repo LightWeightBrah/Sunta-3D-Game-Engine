@@ -67,4 +67,20 @@ void Systems::SyncMeshComponents(EntityManager& entityManager)
 	}
 }
 
+void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
+{
+	auto& scriptComponents = entityManager.GetAllComponents<ScriptComponent>();
+
+	for (auto& component : scriptComponents)
+	{
+		for (auto& script : component.scripts)
+		{
+			if (script.instance && script.updateFunc)
+			{
+				script.updateFunc(script.instance.get(), deltaTime);
+			}
+		}
+	}
+}
+
 }

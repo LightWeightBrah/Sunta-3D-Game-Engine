@@ -64,26 +64,30 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${GAME_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Sunta)
 
+set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
 # ========================= POST-BUILD ASSETS COPY ========================= 
 
-set(FINAL_RES_DIR "${SUNTA_BIN_DIR}/res")
+if(SUNTA_COPY_ASSETS)
+    set(FINAL_RES_DIR "${SUNTA_BIN_DIR}/res")
 
-add_custom_target(CopyAssets ALL
+    add_custom_target(CopyAssets ALL
     
-    # If there's no directory: create new. If there IS directory: don't do anything 
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Sunta"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Game"
+        # If there's no directory: create new. If there IS directory: don't do anything 
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Sunta"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${FINAL_RES_DIR}/Game"
 
-    # Copying Engine sources to output directory for runtime access (e.g. shaders, textures, models)
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Sunta/res" "${FINAL_RES_DIR}/Sunta"
+        # Copying Engine sources to output directory for runtime access (e.g. shaders, textures, models)
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/Sunta/res" "${FINAL_RES_DIR}/Sunta"
 
-    # Copying Game sources to output directory
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Game/res" "${FINAL_RES_DIR}/Game"
+        # Copying Game sources to output directory
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/Game/res" "${FINAL_RES_DIR}/Game"
 
-    COMMENT "COPYING ASSETS TO: '${FINAL_RES_DIR}' FOR RUNTIME ACCESS"
+        COMMENT "COPYING ASSETS TO: '${FINAL_RES_DIR}' FOR RUNTIME ACCESS"
     
-)
+    )
+    add_dependencies(${PROJECT_NAME} CopyAssets)
 
-add_dependencies(${PROJECT_NAME} CopyAssets)
+endif()

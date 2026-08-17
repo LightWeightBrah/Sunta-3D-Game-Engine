@@ -67,6 +67,37 @@ struct WorldMatrixComponent
 	glm::mat4 matrix = glm::mat4(1.0f);
 };
 
+struct ScriptContainer
+{
+	std::string name;
+	std::shared_ptr<ScriptableEntity> instance;
+	std::function<void(ScriptableEntity*, float)> updateFunc;
+};
+
+struct ScriptComponent
+{
+	std::vector<ScriptContainer> scripts;
+
+	template<typename T>
+	void Add(const std::string& scriptName, unsigned int entityID, EntityManager* entityManager)
+	{
+		auto script = std::make_shared<T>();
+		script->entityID = entityID;
+		script->entityManager = entityManager;
+		script->OnCreate();
+
+		ScriptContainer container;
+		container.name = scriptName;
+		container.instance = script;
+		container.updateFunc = [](ScriptableEntity* scriptableEntity, float deltaTime)
+			{
+				static_cast<T*>(scriptableEntity)->OnUpdate(deltaTime);
+			};
+
+		scripts.push_back(container);
+	}
+};
+
 struct MeshComponent
 {
 	static constexpr const char* NULL_ASSET_NAME = "None";
