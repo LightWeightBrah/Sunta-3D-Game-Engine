@@ -82,6 +82,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 "${CMAKE_CURRENT_SOURCE_DIR}/src"
 "${CMAKE_SOURCE_DIR}/Dependencies/glm_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/GLAD/include"
+"${CMAKE_SOURCE_DIR}/Dependencies/sol2_wrapper"
 )
 
 # --- PRIVATE API (ACCESS: ENGINE) ---
@@ -100,5 +101,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 glfw 
 assimp 
 nfd
+Lua
 ${PLATFORM_LIBS}
 )

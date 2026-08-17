@@ -60,6 +60,9 @@ add_subdirectory(Dependencies/Assimp)
 # --- Native File Dialog Extended (nfd) ---
 add_subdirectory(Dependencies/nfd)
 
+# --- Lua integration ---
+add_subdirectory(Dependencies/Lua)
+
 #  ========================= SUNTA MODULES ========================= 
 
 # --- PLATFORMS ---
