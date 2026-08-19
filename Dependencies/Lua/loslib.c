@@ -20,7 +20,6 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
-#include "llimits.h"
 
 
 /*
@@ -31,14 +30,23 @@
 */
 #if !defined(LUA_STRFTIMEOPTIONS)	/* { */
 
-#if defined(LUA_USE_WINDOWS)
-#define LUA_STRFTIMEOPTIONS  "aAbBcdHIjmMpSUwWxXyYzZ%" \
-    "||" "#c#x#d#H#I#j#m#M#S#U#w#W#y#Y"  /* two-char options */
-#elif defined(LUA_USE_C89)  /* C89 (only 1-char options) */
-#define LUA_STRFTIMEOPTIONS  "aAbBcdHIjmMpSUwWxXyYZ%"
-#else  /* C99 specification */
-#define LUA_STRFTIMEOPTIONS  "aAbBcCdDeFgGhHIjmMnprRStTuUVwWxXyYzZ%" \
+/* options for ANSI C 89 (only 1-char options) */
+#define L_STRFTIMEC89		"aAbBcdHIjmMpSUwWxXyYZ%"
+
+/* options for ISO C 99 and POSIX */
+#define L_STRFTIMEC99 "aAbBcCdDeFgGhHIjmMnprRStTuUVwWxXyYzZ%" \
     "||" "EcECExEXEyEY" "OdOeOHOIOmOMOSOuOUOVOwOWOy"  /* two-char options */
+
+/* options for Windows */
+#define L_STRFTIMEWIN "aAbBcdHIjmMpSUwWxXyYzZ%" \
+    "||" "#c#x#d#H#I#j#m#M#S#U#w#W#y#Y"  /* two-char options */
+
+#if defined(LUA_USE_WINDOWS)
+#define LUA_STRFTIMEOPTIONS	L_STRFTIMEWIN
+#elif defined(LUA_USE_C89)
+#define LUA_STRFTIMEOPTIONS	L_STRFTIMEC89
+#else  /* C99 specification */
+#define LUA_STRFTIMEOPTIONS	L_STRFTIMEC99
 #endif
 
 #endif					/* } */
@@ -130,21 +138,12 @@
 /* }================================================================== */
 
 
-#if !defined(l_system)
-#if defined(LUA_USE_IOS)
-/* Despite claiming to be ISO C, iOS does not implement 'system'. */
-#define l_system(cmd) ((cmd) == NULL ? 0 : -1)
-#else
-#define l_system(cmd)	system(cmd)  /* default definition */
-#endif
-#endif
-
 
 static int os_execute (lua_State *L) {
   const char *cmd = luaL_optstring(L, 1, NULL);
   int stat;
   errno = 0;
-  stat = l_system(cmd);
+  stat = system(cmd);
   if (cmd != NULL)
     return luaL_execresult(L, stat);
   else {
@@ -156,7 +155,6 @@ static int os_execute (lua_State *L) {
 
 static int os_remove (lua_State *L) {
   const char *filename = luaL_checkstring(L, 1);
-  errno = 0;
   return luaL_fileresult(L, remove(filename) == 0, filename);
 }
 
@@ -164,7 +162,6 @@ static int os_remove (lua_State *L) {
 static int os_rename (lua_State *L) {
   const char *fromname = luaL_checkstring(L, 1);
   const char *toname = luaL_checkstring(L, 2);
-  errno = 0;
   return luaL_fileresult(L, rename(fromname, toname) == 0, NULL);
 }
 
@@ -173,7 +170,7 @@ static int os_tmpname (lua_State *L) {
   char buff[LUA_TMPNAMBUFSIZE];
   int err;
   lua_tmpnam(buff, err);
-  if (l_unlikely(err))
+  if (err)
     return luaL_error(L, "unable to generate a unique filename");
   lua_pushstring(L, buff);
   return 1;
@@ -211,7 +208,7 @@ static int os_clock (lua_State *L) {
 */
 static void setfield (lua_State *L, const char *key, int value, int delta) {
   #if (defined(LUA_NUMTIME) && LUA_MAXINTEGER <= INT_MAX)
-    if (l_unlikely(value > LUA_MAXINTEGER - delta))
+    if (value > LUA_MAXINTEGER - delta)
       luaL_error(L, "field '%s' is out-of-bound", key);
   #endif
   lua_pushinteger(L, (lua_Integer)value + delta);
@@ -256,14 +253,16 @@ static int getfield (lua_State *L, const char *key, int d, int delta) {
   int t = lua_getfield(L, -1, key);  /* get field and its type */
   lua_Integer res = lua_tointegerx(L, -1, &isnum);
   if (!isnum) {  /* field is not an integer? */
-    if (l_unlikely(t != LUA_TNIL))  /* some other value? */
+    if (t != LUA_TNIL)  /* some other value? */
       return luaL_error(L, "field '%s' is not an integer", key);
-    else if (l_unlikely(d < 0))  /* absent field; no default? */
+    else if (d < 0)  /* absent field; no default? */
       return luaL_error(L, "field '%s' missing in date table", key);
     res = d;
   }
   else {
-    if (!(res >= 0 ? res - delta <= INT_MAX : INT_MIN + delta <= res))
+    /* unsigned avoids overflow when lua_Integer has 32 bits */
+    if (!(res >= 0 ? (lua_Unsigned)res <= (lua_Unsigned)INT_MAX + delta
+                   : (lua_Integer)INT_MIN + delta <= res))
       return luaL_error(L, "field '%s' is out-of-bound", key);
     res -= delta;
   }
@@ -273,9 +272,9 @@ static int getfield (lua_State *L, const char *key, int d, int delta) {
 
 
 static const char *checkoption (lua_State *L, const char *conv,
-                                size_t convlen, char *buff) {
+                                ptrdiff_t convlen, char *buff) {
   const char *option = LUA_STRFTIMEOPTIONS;
-  unsigned oplen = 1;  /* length of options being checked */
+  int oplen = 1;  /* length of options being checked */
   for (; *option != '\0' && oplen <= convlen; option += oplen) {
     if (*option == '|')  /* next block? */
       oplen++;  /* will check options with next length (+1) */
@@ -333,8 +332,7 @@ static int os_date (lua_State *L) {
         size_t reslen;
         char *buff = luaL_prepbuffsize(&b, SIZETIMEFMT);
         s++;  /* skip '%' */
-        /* copy specifier to 'cc' */
-        s = checkoption(L, s, ct_diff2sz(se - s), cc + 1);
+        s = checkoption(L, s, se - s, cc + 1);  /* copy specifier to 'cc' */
         reslen = strftime(buff, SIZETIMEFMT, cc, stm);
         luaL_addsize(&b, reslen);
       }

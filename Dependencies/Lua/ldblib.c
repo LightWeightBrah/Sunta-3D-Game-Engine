@@ -18,7 +18,6 @@
 
 #include "lauxlib.h"
 #include "lualib.h"
-#include "llimits.h"
 
 
 /*
@@ -34,7 +33,7 @@ static const char *const HOOKKEY = "_HOOKKEY";
 ** checked.
 */
 static void checkstack (lua_State *L, lua_State *L1, int n) {
-  if (l_unlikely(L != L1 && !lua_checkstack(L1, n)))
+  if (L != L1 && !lua_checkstack(L1, n))
     luaL_error(L, "stack overflow");
 }
 
@@ -153,7 +152,6 @@ static int db_getinfo (lua_State *L) {
   lua_State *L1 = getthread(L, &arg);
   const char *options = luaL_optstring(L, arg+2, "flnSrtu");
   checkstack(L, L1, 3);
-  luaL_argcheck(L, options[0] != '>', arg + 2, "invalid option '>'");
   if (lua_isfunction(L, arg + 1)) {  /* info about a function? */
     options = lua_pushfstring(L, ">%s", options);  /* add '>' to 'options' */
     lua_pushvalue(L, arg + 1);  /* move function to 'L1' stack */
@@ -191,10 +189,8 @@ static int db_getinfo (lua_State *L) {
     settabsi(L, "ftransfer", ar.ftransfer);
     settabsi(L, "ntransfer", ar.ntransfer);
   }
-  if (strchr(options, 't')) {
+  if (strchr(options, 't'))
     settabsb(L, "istailcall", ar.istailcall);
-    settabsi(L, "extraargs", ar.extraargs);
-  }
   if (strchr(options, 'L'))
     treatstackoption(L, L1, "activelines");
   if (strchr(options, 'f'))
@@ -216,7 +212,7 @@ static int db_getlocal (lua_State *L) {
     lua_Debug ar;
     const char *name;
     int level = (int)luaL_checkinteger(L, arg + 1);
-    if (l_unlikely(!lua_getstack(L1, level, &ar)))  /* out of range? */
+    if (!lua_getstack(L1, level, &ar))  /* out of range? */
       return luaL_argerror(L, arg+1, "level out of range");
     checkstack(L, L1, 1);
     name = lua_getlocal(L1, &ar, nvar);
@@ -241,7 +237,7 @@ static int db_setlocal (lua_State *L) {
   lua_Debug ar;
   int level = (int)luaL_checkinteger(L, arg + 1);
   int nvar = (int)luaL_checkinteger(L, arg + 2);
-  if (l_unlikely(!lua_getstack(L1, level, &ar)))  /* out of range? */
+  if (!lua_getstack(L1, level, &ar))  /* out of range? */
     return luaL_argerror(L, arg+1, "level out of range");
   luaL_checkany(L, arg+3);
   lua_settop(L, arg+3);
@@ -285,33 +281,25 @@ static int db_setupvalue (lua_State *L) {
 ** Check whether a given upvalue from a given closure exists and
 ** returns its index
 */
-static void *checkupval (lua_State *L, int argf, int argnup, int *pnup) {
-  void *id;
+static int checkupval (lua_State *L, int argf, int argnup) {
   int nup = (int)luaL_checkinteger(L, argnup);  /* upvalue index */
   luaL_checktype(L, argf, LUA_TFUNCTION);  /* closure */
-  id = lua_upvalueid(L, argf, nup);
-  if (pnup) {
-    luaL_argcheck(L, id != NULL, argnup, "invalid upvalue index");
-    *pnup = nup;
-  }
-  return id;
+  luaL_argcheck(L, (lua_getupvalue(L, argf, nup) != NULL), argnup,
+                   "invalid upvalue index");
+  return nup;
 }
 
 
 static int db_upvalueid (lua_State *L) {
-  void *id = checkupval(L, 1, 2, NULL);
-  if (id != NULL)
-    lua_pushlightuserdata(L, id);
-  else
-    luaL_pushfail(L);
+  int n = checkupval(L, 1, 2);
+  lua_pushlightuserdata(L, lua_upvalueid(L, 1, n));
   return 1;
 }
 
 
 static int db_upvaluejoin (lua_State *L) {
-  int n1, n2;
-  checkupval(L, 1, 2, &n1);
-  checkupval(L, 3, 4, &n2);
+  int n1 = checkupval(L, 1, 2);
+  int n2 = checkupval(L, 3, 4);
   luaL_argcheck(L, !lua_iscfunction(L, 1), 1, "Lua function expected");
   luaL_argcheck(L, !lua_iscfunction(L, 3), 3, "Lua function expected");
   lua_upvaluejoin(L, 1, n1, 3, n2);
@@ -381,7 +369,7 @@ static int db_sethook (lua_State *L) {
   }
   if (!luaL_getsubtable(L, LUA_REGISTRYINDEX, HOOKKEY)) {
     /* table just created; initialize it */
-    lua_pushliteral(L, "k");
+    lua_pushstring(L, "k");
     lua_setfield(L, -2, "__mode");  /** hooktable.__mode = "k" */
     lua_pushvalue(L, -1);
     lua_setmetatable(L, -2);  /* metatable(hooktable) = hooktable */
@@ -424,10 +412,10 @@ static int db_debug (lua_State *L) {
   for (;;) {
     char buffer[250];
     lua_writestringerror("%s", "lua_debug> ");
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL ||
+    if (fgets(buffer, sizeof(buffer), stdin) == 0 ||
         strcmp(buffer, "cont\n") == 0)
       return 0;
-    if (luaL_loadbufferx(L, buffer, strlen(buffer), "=(debug command)", "t") ||
+    if (luaL_loadbuffer(L, buffer, strlen(buffer), "=(debug command)") ||
         lua_pcall(L, 0, 0, 0))
       lua_writestringerror("%s\n", luaL_tolstring(L, -1, NULL));
     lua_settop(L, 0);  /* remove eventual returns */
@@ -449,6 +437,17 @@ static int db_traceback (lua_State *L) {
 }
 
 
+static int db_setcstacklimit (lua_State *L) {
+  int limit = (int)luaL_checkinteger(L, 1);
+  int res = lua_setcstacklimit(L, limit);
+  if (res == 0)
+    lua_pushboolean(L, 0);
+  else
+    lua_pushinteger(L, res);
+  return 1;
+}
+
+
 static const luaL_Reg dblib[] = {
   {"debug", db_debug},
   {"getuservalue", db_getuservalue},
@@ -466,6 +465,7 @@ static const luaL_Reg dblib[] = {
   {"setmetatable", db_setmetatable},
   {"setupvalue", db_setupvalue},
   {"traceback", db_traceback},
+  {"setcstacklimit", db_setcstacklimit},
   {NULL, NULL}
 };
 

@@ -21,12 +21,10 @@
 */
 #define LUA_TUPVAL	LUA_NUMTYPES  /* upvalues */
 #define LUA_TPROTO	(LUA_NUMTYPES+1)  /* function prototypes */
-#define LUA_TDEADKEY	(LUA_NUMTYPES+2)  /* removed keys in tables */
-
 
 
 /*
-** number of all possible types (including LUA_TNONE but excluding DEADKEY)
+** number of all possible types (including LUA_TNONE)
 */
 #define LUA_TOTALTYPES		(LUA_TPROTO + 2)
 
@@ -52,8 +50,6 @@ typedef union Value {
   lua_CFunction f; /* light C functions */
   lua_Integer i;   /* integer numbers */
   lua_Number n;    /* float numbers */
-  /* not used, but may avoid warnings for uninitialized value */
-  lu_byte ub;
 } Value;
 
 
@@ -70,7 +66,7 @@ typedef struct TValue {
 
 
 #define val_(o)		((o)->value_)
-#define valraw(o)	(val_(o))
+#define valraw(o)	(&val_(o))
 
 
 /* raw type tag of a TValue */
@@ -100,8 +96,7 @@ typedef struct TValue {
 /*
 ** Any value being manipulated by the program either is non
 ** collectable, or the collectable object has the right tag
-** and it is not dead. The option 'L == NULL' allows other
-** macros using this one to be used where L is not available.
+** and it is not dead.
 */
 #define checkliveness(L,obj) \
 	((void)L, lua_longassert(!iscollectable(obj) || \
@@ -114,7 +109,7 @@ typedef struct TValue {
 #define settt_(o,t)	((o)->tt_=(t))
 
 
-/* main macro to copy values (from 'obj2' to 'obj1') */
+/* main macro to copy values (from 'obj1' to 'obj2') */
 #define setobj(L,obj1,obj2) \
 	{ TValue *io1=(obj1); const TValue *io2=(obj2); \
           io1->value_ = io2->value_; settt_(io1, io2->tt_); \
@@ -138,35 +133,15 @@ typedef struct TValue {
 
 
 /*
-** Entries in a Lua stack. Field 'tbclist' forms a list of all
-** to-be-closed variables active in this stack. Dummy entries are
-** used when the distance between two tbc variables does not fit
-** in an unsigned short. They are represented by delta==0, and
-** their real delta is always the maximum value that fits in
-** that field.
+** Entries in the Lua stack
 */
 typedef union StackValue {
   TValue val;
-  struct {
-    TValuefields;
-    unsigned short delta;
-  } tbclist;
 } StackValue;
 
 
 /* index to stack elements */
 typedef StackValue *StkId;
-
-
-/*
-** When reallocating the stack, change all pointers to the stack into
-** proper offsets.
-*/
-typedef union {
-  StkId p;  /* actual pointer */
-  ptrdiff_t offset;  /* used while the stack is being reallocated */
-} StkIdRel;
-
 
 /* convert a 'StackValue' to a 'TValue' */
 #define s2v(o)	(&(o)->val)
@@ -188,28 +163,16 @@ typedef union {
 /* Value returned for a key not found in a table (absent key) */
 #define LUA_VABSTKEY	makevariant(LUA_TNIL, 2)
 
-/* Special variant to signal that a fast get is accessing a non-table */
-#define LUA_VNOTABLE    makevariant(LUA_TNIL, 3)
-
 
 /* macro to test for (any kind of) nil */
 #define ttisnil(v)		checktype((v), LUA_TNIL)
-
-/*
-** Macro to test the result of a table access. Formally, it should
-** distinguish between LUA_VEMPTY/LUA_VABSTKEY/LUA_VNOTABLE and
-** other tags. As currently nil is equivalent to LUA_VEMPTY, it is
-** simpler to just test whether the value is nil.
-*/
-#define tagisempty(tag)		(novariant(tag) == LUA_TNIL)
 
 
 /* macro to test for a standard nil */
 #define ttisstrictnil(o)	checktag((o), LUA_VNIL)
 
 
-#define setnilvalue(obj)	settt_(obj, LUA_VNIL)
-#define setnilvalue2s(stk)	setnilvalue(s2v(stk))
+#define setnilvalue(obj) settt_(obj, LUA_VNIL)
 
 
 #define isabstkey(v)		checktag((v), LUA_VABSTKEY)
@@ -257,8 +220,6 @@ typedef union {
 
 
 #define l_isfalse(o)	(ttisfalse(o) || ttisnil(o))
-#define tagisfalse(t)	((t) == LUA_VFALSE || novariant(t) == LUA_TNIL)
-
 
 
 #define setbfvalue(obj)		settt_(obj, LUA_VFALSE)
@@ -394,54 +355,37 @@ typedef struct GCObject {
 #define setsvalue2n	setsvalue
 
 
-/* Kinds of long strings (stored in 'shrlen') */
-#define LSTRREG		-1  /* regular long string */
-#define LSTRFIX		-2  /* fixed external long string */
-#define LSTRMEM		-3  /* external long string with deallocation */
-
-
 /*
 ** Header for a string value.
 */
 typedef struct TString {
   CommonHeader;
   lu_byte extra;  /* reserved words for short strings; "has hash" for longs */
-  ls_byte shrlen;  /* length for short strings, negative for long strings */
+  lu_byte shrlen;  /* length for short strings */
   unsigned int hash;
   union {
     size_t lnglen;  /* length for long strings */
     struct TString *hnext;  /* linked list for hash table */
   } u;
-  char *contents;  /* pointer to content in long strings */
-  lua_Alloc falloc;  /* deallocation function for external strings */
-  void *ud;  /* user data for external strings */
+  char contents[1];
 } TString;
 
 
-#define strisshr(ts)	((ts)->shrlen >= 0)
-#define isextstr(ts)	(ttislngstring(ts) && tsvalue(ts)->shrlen != LSTRREG)
-
 
 /*
-** Get the actual string (array of bytes) from a 'TString'. (Generic
-** version and specialized versions for long and short strings.)
+** Get the actual string (array of bytes) from a 'TString'.
 */
-#define rawgetshrstr(ts)  (cast_charp(&(ts)->contents))
-#define getshrstr(ts)	check_exp(strisshr(ts), rawgetshrstr(ts))
-#define getlngstr(ts)	check_exp(!strisshr(ts), (ts)->contents)
-#define getstr(ts) 	(strisshr(ts) ? rawgetshrstr(ts) : (ts)->contents)
+#define getstr(ts)  ((ts)->contents)
 
 
-/* get string length from 'TString *ts' */
-#define tsslen(ts)  \
-	(strisshr(ts) ? cast_sizet((ts)->shrlen) : (ts)->u.lnglen)
+/* get the actual string (array of bytes) from a Lua value */
+#define svalue(o)       getstr(tsvalue(o))
 
-/*
-** Get string and length */
-#define getlstr(ts, len)  \
-	(strisshr(ts) \
-	? (cast_void((len) = cast_sizet((ts)->shrlen)), rawgetshrstr(ts)) \
-	: (cast_void((len) = (ts)->u.lnglen), (ts)->contents))
+/* get string length from 'TString *s' */
+#define tsslen(s)	((s)->tt == LUA_VSHRSTR ? (s)->shrlen : (s)->u.lnglen)
+
+/* get string length from 'TValue *o' */
+#define vslen(o)	tsslen(tsvalue(o))
 
 /* }================================================================== */
 
@@ -519,8 +463,8 @@ typedef struct Udata0 {
 
 /* compute the offset of the memory area of a userdata */
 #define udatamemoffset(nuv) \
-       ((nuv) == 0 ? offsetof(Udata0, bindata)  \
-		   : offsetof(Udata, uv) + (sizeof(UValue) * (nuv)))
+	((nuv) == 0 ? offsetof(Udata0, bindata)  \
+                    : offsetof(Udata, uv) + (sizeof(UValue) * (nuv)))
 
 /* get the address of the memory block inside 'Udata' */
 #define getudatamem(u)	(cast_charp(u) + udatamemoffset((u)->nuvalue))
@@ -538,9 +482,6 @@ typedef struct Udata0 {
 */
 
 #define LUA_VPROTO	makevariant(LUA_TPROTO, 0)
-
-
-typedef l_uint32 Instruction;
 
 
 /*
@@ -580,30 +521,13 @@ typedef struct AbsLineInfo {
   int line;
 } AbsLineInfo;
 
-
-/*
-** Flags in Prototypes
-*/
-#define PF_VAHID	1  /* function has hidden vararg arguments */
-#define PF_VATAB	2  /* function has vararg table */
-#define PF_FIXED	4  /* prototype has parts in fixed memory */
-
-/* a vararg function either has hidden args. or a vararg table */
-#define isvararg(p)	((p)->flag & (PF_VAHID | PF_VATAB))
-
-/*
-** mark that a function needs a vararg table. (The flag PF_VAHID will
-** be cleared later.)
-*/
-#define needvatab(p)	((p)->flag |= PF_VATAB)
-
 /*
 ** Function Prototypes
 */
 typedef struct Proto {
   CommonHeader;
   lu_byte numparams;  /* number of fixed (named) parameters */
-  lu_byte flag;
+  lu_byte is_vararg;
   lu_byte maxstacksize;  /* number of registers needed by this function */
   int sizeupvalues;  /* size of 'upvalues' */
   int sizek;  /* size of 'k' */
@@ -630,7 +554,7 @@ typedef struct Proto {
 
 /*
 ** {==================================================================
-** Functions
+** Closures
 ** ===================================================================
 */
 
@@ -643,11 +567,10 @@ typedef struct Proto {
 #define LUA_VCCL	makevariant(LUA_TFUNCTION, 2)  /* C closure */
 
 #define ttisfunction(o)		checktype(o, LUA_TFUNCTION)
+#define ttisclosure(o)		((rawtt(o) & 0x1F) == LUA_VLCL)
 #define ttisLclosure(o)		checktag((o), ctb(LUA_VLCL))
 #define ttislcf(o)		checktag((o), LUA_VLCF)
 #define ttisCclosure(o)		checktag((o), ctb(LUA_VCCL))
-#define ttisclosure(o)         (ttisLclosure(o) || ttisCclosure(o))
-
 
 #define isLfunction(o)	ttisLclosure(o)
 
@@ -679,10 +602,8 @@ typedef struct Proto {
 */
 typedef struct UpVal {
   CommonHeader;
-  union {
-    TValue *p;  /* points to stack or to its own value */
-    ptrdiff_t offset;  /* used while the stack is being reallocated */
-  } v;
+  lu_byte tbc;  /* true if it represents a to-be-closed variable */
+  TValue *v;  /* points to stack or to its own value */
   union {
     struct {  /* (when open) */
       struct UpVal *next;  /* linked list */
@@ -761,9 +682,10 @@ typedef union Node {
 
 
 /* copy a value into a key */
-#define setnodekey(node,obj) \
+#define setnodekey(L,node,obj) \
 	{ Node *n_=(node); const TValue *io_=(obj); \
-	  n_->u.key_val = io_->value_; n_->u.key_tt = io_->tt_; }
+	  n_->u.key_val = io_->value_; n_->u.key_tt = io_->tt_; \
+	  checkliveness(L,io_); }
 
 
 /* copy a value from a key */
@@ -773,14 +695,27 @@ typedef union Node {
 	  checkliveness(L,io_); }
 
 
+/*
+** About 'alimit': if 'isrealasize(t)' is true, then 'alimit' is the
+** real size of 'array'. Otherwise, the real size of 'array' is the
+** smallest power of two not smaller than 'alimit' (or zero iff 'alimit'
+** is zero); 'alimit' is then used as a hint for #t.
+*/
+
+#define BITRAS		(1 << 7)
+#define isrealasize(t)		(!((t)->marked & BITRAS))
+#define setrealasize(t)		((t)->marked &= cast_byte(~BITRAS))
+#define setnorealasize(t)	((t)->marked |= BITRAS)
+
 
 typedef struct Table {
   CommonHeader;
   lu_byte flags;  /* 1<<p means tagmethod(p) is not present */
-  lu_byte lsizenode;  /* log2 of number of slots of 'node' array */
-  unsigned int asize;  /* number of slots in 'array' array */
-  Value *array;  /* array part */
+  lu_byte lsizenode;  /* log2 of size of 'node' array */
+  unsigned int alimit;  /* "limit" of 'array' array */
+  TValue *array;  /* array part */
   Node *node;
+  Node *lastfree;  /* any free position is before this position */
   struct Table *metatable;
   GCObject *gclist;
 } Table;
@@ -807,13 +742,13 @@ typedef struct Table {
 
 
 /*
-** Dead keys in tables have the tag DEADKEY but keep their original
-** gcvalue. This distinguishes them from regular keys but allows them to
-** be found when searched in a special way. ('next' needs that to find
-** keys removed from a table during a traversal.)
+** Use a "nil table" to mark dead keys in a table. Those keys serve
+** to keep space for removed entries, which may still be part of
+** chains. Note that the 'keytt' does not have the BIT_ISCOLLECTABLE
+** set, so these values are considered not collectable and are different
+** from any valid value.
 */
-#define setdeadkey(node)	(keytt(node) = LUA_TDEADKEY)
-#define keyisdead(node)		(keytt(node) == LUA_TDEADKEY)
+#define setdeadkey(n)	(keytt(n) = LUA_TTABLE, gckey(n) = NULL)
 
 /* }================================================================== */
 
@@ -823,37 +758,24 @@ typedef struct Table {
 ** 'module' operation for hashing (size is always a power of 2)
 */
 #define lmod(s,size) \
-	(check_exp((size&(size-1))==0, (cast_uint(s) & cast_uint((size)-1))))
+	(check_exp((size&(size-1))==0, (cast_int((s) & ((size)-1)))))
 
 
-#define twoto(x)	(1u<<(x))
+#define twoto(x)	(1<<(x))
 #define sizenode(t)	(twoto((t)->lsizenode))
 
 
 /* size of buffer for 'luaO_utf8esc' function */
 #define UTF8BUFFSZ	8
 
-
-/* macro to call 'luaO_pushvfstring' correctly */
-#define pushvfstring(L, argp, fmt, msg)	\
-  { va_start(argp, fmt); \
-  msg = luaO_pushvfstring(L, fmt, argp); \
-  va_end(argp); \
-  if (msg == NULL) luaD_throw(L, LUA_ERRMEM);  /* only after 'va_end' */ }
-
-
-LUAI_FUNC int luaO_utf8esc (char *buff, l_uint32 x);
-LUAI_FUNC lu_byte luaO_ceillog2 (unsigned int x);
-LUAI_FUNC lu_byte luaO_codeparam (unsigned int p);
-LUAI_FUNC l_mem luaO_applyparam (lu_byte p, l_mem x);
-
+LUAI_FUNC int luaO_utf8esc (char *buff, unsigned long x);
+LUAI_FUNC int luaO_ceillog2 (unsigned int x);
 LUAI_FUNC int luaO_rawarith (lua_State *L, int op, const TValue *p1,
                              const TValue *p2, TValue *res);
 LUAI_FUNC void luaO_arith (lua_State *L, int op, const TValue *p1,
                            const TValue *p2, StkId res);
 LUAI_FUNC size_t luaO_str2num (const char *s, TValue *o);
-LUAI_FUNC unsigned luaO_tostringbuff (const TValue *obj, char *buff);
-LUAI_FUNC lu_byte luaO_hexavalue (int c);
+LUAI_FUNC int luaO_hexavalue (int c);
 LUAI_FUNC void luaO_tostring (lua_State *L, TValue *obj);
 LUAI_FUNC const char *luaO_pushvfstring (lua_State *L, const char *fmt,
                                                        va_list argp);
