@@ -8,6 +8,7 @@
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
 #include "Core/Log.h"
+#include "Scripting/ScriptingEngine.h"
 
 namespace Sunta
 {
@@ -21,6 +22,7 @@ namespace SceneKeys
 
 	constexpr const char* TagComponent              = "tag";
 	constexpr const char* TransformComponent        = "transform";
+	constexpr const char* ScriptComponent           = "script";
 	constexpr const char* MeshComponent             = "mesh";
 	constexpr const char* DirectionalLightComponent = "directional_light";
 	constexpr const char* PointLightComponent	    = "point_light";
@@ -30,6 +32,7 @@ namespace SceneKeys
 	constexpr const char* Position                  = "position";
 	constexpr const char* Rotation                  = "rotation";
 	constexpr const char* Scale                     = "scale";
+	constexpr const char* ScriptPath                = "script_path";
 	constexpr const char* IsVisible                 = "is_visible";
 	constexpr const char* MeshName                  = "mesh_name";
 	constexpr const char* MaterialName              = "material_name";
@@ -119,6 +122,20 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 				{ SceneKeys::Rotation, SerializeVec3(transform->rotation) },
 				{ SceneKeys::Scale,    SerializeVec3(transform->scale)    }
 			};
+		}
+
+		if (auto* script = entityManager.GetComponent<ScriptComponent>(i))
+		{
+			if (!script->scripts.empty())
+			{
+				json scriptsArray = json::array();
+				for (const auto& container : script->scripts)
+				{
+					scriptsArray.push_back({ { SceneKeys::ScriptPath, container.scriptPath} });
+				}
+
+				entityJson[SceneKeys::ScriptComponent] = scriptsArray;
+			}
 		}
 
 		if (auto* mesh = entityManager.GetComponent<MeshComponent>(i))
@@ -246,6 +263,25 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 		}
 
 		entityManager.AddComponent<WorldMatrixComponent>(entity);
+
+		if (entityJson.contains(SceneKeys::ScriptComponent))
+		{
+			const auto& scriptData = entityJson[SceneKeys::ScriptComponent];
+
+			if (scriptData.is_array())
+			{
+				auto& scriptComponent = entityManager.AddComponent<ScriptComponent>(entity);
+				
+				for (const auto& scriptJson : scriptData)
+				{
+					std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
+					if (!path.empty())
+					{
+						scriptComponent.LoadScript(ScriptingEngine::GetState(), path, entity);
+					}
+				}
+			}
+		}
 
 		if (entityJson.contains(SceneKeys::MeshComponent))
 		{

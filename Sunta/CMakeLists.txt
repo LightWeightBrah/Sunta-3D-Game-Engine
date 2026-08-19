@@ -93,6 +93,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends"		# for internal imgui implementation (files from folder backends can see folder imgui)
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/nlohmann_wrapper"
+"${CMAKE_SOURCE_DIR}/Dependencies/Lua"
 )
 
 # =========================== LINKING ====================================   

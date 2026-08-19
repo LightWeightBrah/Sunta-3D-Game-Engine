@@ -359,8 +359,8 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			auto& data = currentMaterial->GetData();
 			bool changed = false;
 
-			changed |= ImGui::ColorEdit3("Ambient",  &data.ambientColor.r);
-			changed |= ImGui::ColorEdit3("Diffuse",  &data.diffuseColor.r);
+			changed |= ImGui::ColorEdit3("Ambient", &data.ambientColor.r);
+			changed |= ImGui::ColorEdit3("Diffuse", &data.diffuseColor.r);
 			changed |= ImGui::ColorEdit3("Specular", &data.specularColor.r);
 			changed |= ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f);
 
@@ -396,7 +396,7 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		}
 
 		return;
-		
+
 	}
 	else
 	{
@@ -424,9 +424,99 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 
 	DrawEntityComponentList(selectedEntity, entityManager);
 
+	ImGui::Separator();
+
+	//										-1.0f stretches X along whole width
+	if (ImGui::Button("Add Component", ImVec2(-1.0f, 30.0f)))
+	{
+		ImGui::OpenPopup("AddComponentPopup");
+	}
+
+	if(ImGui::BeginPopup("AddComponentPopup"))
+	{
+		struct ComponentAction
+		{
+			std::string name;
+			std::function<bool()> hasComponent;
+			std::function<void()> addComponent;
+		};
+
+		ComponentAction availableComponents[] =
+		{
+			{
+				"Mesh",
+				[&]() { return entityManager.GetComponent<MeshComponent>(selectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<MeshComponent>(selectedEntity); }
+			},
+
+			{
+				"Directional Light",
+				[&]() { return entityManager.GetComponent<DirectionalLightComponent>(selectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<DirectionalLightComponent>(selectedEntity); }
+			},
+
+			{
+				"Point Light",
+				[&]() { return entityManager.GetComponent<PointLightComponent>(selectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<PointLightComponent>(selectedEntity); }
+			},
+
+			{
+				"Spot Light",
+				[&]() { return entityManager.GetComponent<SpotLightComponent>(selectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<SpotLightComponent>(selectedEntity); }
+			},
+
+			{
+				"Script",
+				[&]() { return entityManager.GetComponent<ScriptComponent>(selectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<ScriptComponent>(selectedEntity); }
+			}
+		};
+
+		for (const auto& action : availableComponents)
+		{
+			if (!action.hasComponent())
+			{
+				if (ImGui::MenuItem(action.name.c_str()))
+				{
+					action.addComponent();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+
+		ImGui::EndPopup();
+	}
+
+
 	// here we stop using that uniqueID for ImGUI and we go back to defualt mode
 	ImGui::PopID();
 
+}
+
+void EditorGUI::DrawScriptComponentInspector(ScriptComponent& scriptComponent)
+{
+	if (ImGui::CollapsingHeader("Script Component"))
+	{
+		if (ImGui::Button("Add Script"))
+			scriptComponent.scripts.push_back(ScriptContainer{});
+
+		ImGui::Separator();
+
+		for (unsigned int i = 0; i < scriptComponent.scripts.size(); i++)
+		{
+			ImGui::PushID(static_cast<int>(i));
+
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			strcpy_s(buffer, scriptComponent.scripts[i].scriptPath.c_str());
+
+			if (ImGui::InputText("Script Path", buffer, sizeof(buffer)))
+				scriptComponent.scripts[i].scriptPath = std::string(buffer);
+
+		}
+	}
 }
 
 void EditorGUI::DrawFileBrowser()

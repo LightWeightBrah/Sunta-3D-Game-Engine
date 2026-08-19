@@ -1,5 +1,19 @@
 #pragma once
 
+namespace Sunta::Scripting
+{
+	namespace Fields
+	{
+		constexpr const char* EntityID = "entityID";
+	}
+
+	namespace Functions
+	{
+		constexpr const char* OnCreate = "OnCreate";
+		constexpr const char* OnUpdate = "OnUpdate";
+	}
+}
+
 namespace Sunta::EngineAssets
 {
 	namespace App

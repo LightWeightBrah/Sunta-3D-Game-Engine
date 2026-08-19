@@ -8,6 +8,7 @@
 #include "EntityManager.h"
 #include "Component.h"
 #include "Core/EngineAssets.h"
+#include "Scripting/ScriptingEngine.h"
 
 namespace Sunta
 {
@@ -75,9 +76,26 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 	{
 		for (auto& script : component.scripts)
 		{
-			if (script.instance && script.updateFunc)
+			if(script.scriptPath.empty())
+				continue;
+
+			if (std::filesystem::exists(script.scriptPath))
 			{
-				script.updateFunc(script.instance.get(), deltaTime);
+				auto currentWriteTime = std::filesystem::last_write_time(script.scriptPath).time_since_epoch().count();
+
+				if (currentWriteTime > script.lastWriteTime)
+				{
+					script.lastWriteTime = currentWriteTime;
+					auto& luaState = ScriptingEngine::GetState();
+					component.ReloadScript(luaState, script, component.entityID);
+
+					SUNTA_ENGINE_LOG_INFO("Hot-Reloaded script: '{0}'", script.scriptPath);
+				}
+			}
+
+			if (script.onUpdateFunc)
+			{
+				script.onUpdateFunc(deltaTime);
 			}
 		}
 	}

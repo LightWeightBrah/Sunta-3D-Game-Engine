@@ -20,6 +20,7 @@
 #include "Assert.h"
 #include "Platform.h"
 #include "ResourceLoader.h"
+#include "Scripting/ScriptingEngine.h"
 
 namespace Sunta
 {
@@ -63,6 +64,7 @@ namespace Sunta
 		Log::Init();
 		Platform::Init();
 		InputManager::Init();
+		ScriptingEngine::Init();
 
 		RendererAPI::SetAPI(RendererAPI::API::OpenGL);
 
@@ -151,6 +153,7 @@ namespace Sunta
 	void Application::Shutdown()
 	{
 		EditorGUIContext::Shutdown(window.get());
+		ScriptingEngine::Shutdown();
 		scene->Clear();
 	
 		if (window)

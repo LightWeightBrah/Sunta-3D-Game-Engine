@@ -4,7 +4,9 @@
 #include "ComponentLayout.h"
 
 #include "Core/EngineAssets.h"
+#include "Core/Log.h"
 #include "Renderer/LightingCommon.h"
+#include <sol/sol.hpp>
 
 namespace Sunta
 {
@@ -69,32 +71,72 @@ struct WorldMatrixComponent
 
 struct ScriptContainer
 {
-	std::string name;
-	std::shared_ptr<ScriptableEntity> instance;
-	std::function<void(ScriptableEntity*, float)> updateFunc;
+	std::string scriptPath;
+	std::time_t lastWriteTime = 0;
+
+	sol::environment environment;
+	sol::function onCreateFunc;
+	sol::function onUpdateFunc;
 };
 
 struct ScriptComponent
 {
+	unsigned int entityID = 0;
 	std::vector<ScriptContainer> scripts;
 
-	template<typename T>
-	void Add(const std::string& scriptName, unsigned int entityID, EntityManager* entityManager)
+	void LoadScript(sol::state& luaState, const std::string& filepath, unsigned int entityID)
 	{
-		auto script = std::make_shared<T>();
-		script->entityID = entityID;
-		script->entityManager = entityManager;
-		script->OnCreate();
+		if (filepath.empty())
+			return;
 
-		ScriptContainer container;
-		container.name = scriptName;
-		container.instance = script;
-		container.updateFunc = [](ScriptableEntity* scriptableEntity, float deltaTime)
-			{
-				static_cast<T*>(scriptableEntity)->OnUpdate(deltaTime);
-			};
+		this->entityID = entityID;
 
-		scripts.push_back(container);
+		ScriptContainer& container = scripts.emplace_back();
+		container.scriptPath = filepath;
+
+		ReloadScript(luaState, container, entityID);
+	}
+
+	void ReloadScript(sol::state& luaState, ScriptContainer& container, unsigned int entityID)
+	{
+		using namespace Scripting;
+
+		if (container.scriptPath.empty())
+			return;
+
+		// Create separated environment, so that every script we attach (e.g on enemy, player) have their own variables etc.
+		sol::environment scriptEnvironment(luaState, sol::create, luaState.globals());
+
+		// Add entityID to Lua script so script knows what entity its using
+		scriptEnvironment[Fields::EntityID] = entityID;
+		
+		// Load Lua text file
+		sol::protected_function_result result = luaState.script_file(container.scriptPath, scriptEnvironment);
+		if (!result.valid())
+		{
+			sol::error error = result;
+			SUNTA_ENGINE_LOG_ERROR("Error Loading Lua script '{0}': '{1}'", container.scriptPath, error.what());
+			return;
+		}
+
+		container.environment = scriptEnvironment;
+
+		if (std::filesystem::exists(container.scriptPath))
+			container.lastWriteTime = std::filesystem::last_write_time(container.scriptPath).time_since_epoch().count();
+
+		// assign OnCreate to container if it exists in Lua
+		if (scriptEnvironment[Functions::OnCreate].is<sol::function>())
+		{
+			container.onCreateFunc = scriptEnvironment[Functions::OnCreate];
+			container.onCreateFunc();
+		}
+
+		// assign OnUpdate to container if it exists in Lua
+		if (scriptEnvironment[Functions::OnUpdate].is<sol::function>())
+		{
+			container.onUpdateFunc = scriptEnvironment[Functions::OnUpdate];
+		}
+
 	}
 };
 

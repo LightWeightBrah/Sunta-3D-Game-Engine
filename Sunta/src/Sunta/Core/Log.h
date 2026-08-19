@@ -2,7 +2,8 @@
 
 #include "Logger.h"
 
-namespace Sunta {
+namespace Sunta 
+{
 
 class Log
 {

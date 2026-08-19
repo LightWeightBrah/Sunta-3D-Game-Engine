@@ -9,6 +9,9 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 option(SUNTA_COPY_ASSETS "Copy assets to bin directory for distribution" OFF)
 
+# Lua version
+add_compile_definitions(SOL_LUA_VERSION=50400)
+
 # ========================= OUTPUT SETTINGS ========================= 
 
 set(CONFIG_NAME "$<CONFIG>-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")

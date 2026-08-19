@@ -5,6 +5,11 @@ class Game : public Sunta::Application
 public:
 	Game()
 	{
+
+		/*unsigned int entityID = scene->GetEntityManager().CreateEntity();
+		auto& scriptComponent = scene->GetEntityManager().AddComponent<ScriptComponent>(entityID);
+		scriptComponent.LoadScript(ScriptingEngine::GetState(), "res/Scripts/player_test.lua", entityID);*/
+
 		/*using namespace Sunta::EngineAssets;
 
 		auto texturedMaterial = ResourceManager::GetMaterialData(Materials::Textured);

@@ -15,6 +15,7 @@ class Scene;
 class RendererDevice;
 class Material;
 class Texture;
+class ScriptComponent;
 
 struct FileDroppedEvent;
 
@@ -38,6 +39,7 @@ public:
 	static void DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight);
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
+	static void DrawScriptComponentInspector(ScriptComponent& scriptComponent);
 	static void DrawFileBrowser();
 	static void DrawSceneDropTarget(Scene& scene);
 
