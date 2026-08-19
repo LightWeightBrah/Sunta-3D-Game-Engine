@@ -61,10 +61,10 @@ namespace Sunta
 	
 	void Application::Init()
 	{
+		ScriptingEngine::Init();
 		Log::Init();
 		Platform::Init();
 		InputManager::Init();
-		ScriptingEngine::Init();
 
 		RendererAPI::SetAPI(RendererAPI::API::OpenGL);
 

@@ -12,7 +12,7 @@ public:
 	static void Init();
 	static void Shutdown();
 
-	static sol::state& GetState() { return *luaState; }
+	static sol::state& GetState();
 
 private:
 	inline static sol::state* luaState = nullptr;
