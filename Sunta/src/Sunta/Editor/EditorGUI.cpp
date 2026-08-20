@@ -595,7 +595,7 @@ void EditorGUI::DrawFileBrowser()
 			bool isSelected = (selectedFile == path);
 			bool isHovered = ImGui::IsItemHovered();
 
-			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
 				if (!isDirectory)
 				{
@@ -891,11 +891,11 @@ void EditorGUI::DrawFileBrowser()
 		ImGui::PopStyleColor(2);
 	}
 
-	/*if (IsClickingEmptySpace())
+	if (IsClickingEmptySpace())
 	{
 		selectedEntity = -1;
 		selectedFile = "";
-	}*/
+	}
 
 	if (!selectedFile.empty() && fileToRename.empty() && !pendingCreation.active)
 	{
@@ -1532,7 +1532,7 @@ void EditorGUI::HandleSelectionInteraction()
 	std::string windowName = hoveredWindow ? hoveredWindow->Name : "";
 
 	bool hoverInspector   = windowName.find("Inspector")    != std::string::npos;
-	bool hoverHierarchy   = windowName.find("Inspector")    != std::string::npos;
+	bool hoverHierarchy   = windowName.find("Hierarchy")    != std::string::npos;
 	bool hoverFileBrowser = windowName.find("File Browser") != std::string::npos;
 
 	bool hoverSceneBackground = (hoveredWindow == nullptr);
@@ -1565,6 +1565,9 @@ void EditorGUI::ClearFocus()
 
 bool EditorGUI::IsClickingEmptySpace()
 {
+	if (ImGui::IsDragDropActive())
+		return false;
+
 	return ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsAnyItemHovered();
 }
 
