@@ -1,6 +1,12 @@
 #include "Core/SuntaPreCompiled.h"
 #include "ScriptComponentDrawer.h"
 
+#include <imgui/imgui.h>
+#include <imgui_internal.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
+
+#include "ECS/Component.h"
+
 namespace Sunta
 {
 
@@ -18,7 +24,7 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID)
 
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 35.0f);
 
-		if (ImGui::InputText("##Path", &scriptComponent->scripts[i].scriptPath)
+		if (ImGui::InputText("##Path", &scriptComponent->scripts[i].scriptPath))
 			scriptComponent->ReloadScript(scriptComponent->scripts[i], entityID);
 
 		if (ImGui::BeginDragDropTarget())

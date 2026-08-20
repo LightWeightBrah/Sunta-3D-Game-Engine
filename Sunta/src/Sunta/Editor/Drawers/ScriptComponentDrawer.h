@@ -1,9 +1,8 @@
 #pragma once
+#include "ECS/IComponentDrawer.h"
 
 namespace Sunta
 {
-
-class IComponentDrawer;
 
 class ScriptComponentDrawer : public IComponentDrawer
 {
