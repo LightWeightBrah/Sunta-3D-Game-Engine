@@ -10,15 +10,18 @@
 #include "Renderer/RendererDevice.h"
 #include "Serialization/MaterialSerializer.h"
 #include "Utilities/FileSystemUtilities.h"
+#include "VirtualFileSystem.h"
 
 namespace Sunta
 {
 
 void ResourceManager::LoadEditorIcon(const std::string& name, const std::string& filepath)
 {
+	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
+
 	if (editorIconsRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadEditorIcon: Editor Icon with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadEditorIcon: Editor Icon with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, resolvedPath);
 		return;
 	}
 
@@ -28,18 +31,20 @@ void ResourceManager::LoadEditorIcon(const std::string& name, const std::string&
 		return;
 	}
 
-	auto iconTexture = rendererDevice->CreateTexture(filepath, false);
+	auto iconTexture = rendererDevice->CreateTexture(resolvedPath, false);
 	iconTexture->SetName(name);
 	editorIconsRegistered[name] = iconTexture;
 
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Editor Icon: '{0}' filepath: '{1}'", name, filepath);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Editor Icon: '{0}' filepath: '{1}'", name, resolvedPath);
 }
 
 void ResourceManager::LoadModel(const std::string& name, const std::string& filepath)
 {
+	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
+
 	if (modelsRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadModel: Model with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadModel: Model with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, resolvedPath);
 		return;
 	}
 
@@ -51,14 +56,14 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& file
 
 	auto data = std::make_shared<ModelData>();
 
-	data->model = std::make_shared<Model>(*rendererDevice, filepath, false);
+	data->model = std::make_shared<Model>(*rendererDevice, resolvedPath, false);
 
-	data->animations[AnimationType::IDLE]    = Animation(filepath, data->model.get(), 0);
-	data->animations[AnimationType::GESTURE] = Animation(filepath, data->model.get(), 1);
-	data->animations[AnimationType::RUNNING] = Animation(filepath, data->model.get(), 2);
+	data->animations[AnimationType::IDLE]    = Animation(resolvedPath, data->model.get(), 0);
+	data->animations[AnimationType::GESTURE] = Animation(resolvedPath, data->model.get(), 1);
+	data->animations[AnimationType::RUNNING] = Animation(resolvedPath, data->model.get(), 2);
 
 	modelsRegistered[name] = data;
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Model: '{0}' filepath: '{1}'", name, filepath);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Model: '{0}' filepath: '{1}'", name, resolvedPath);
 }
 
 void ResourceManager::LoadMesh(const std::string& name, std::function<std::shared_ptr<Mesh>()> primitiveFactory)
@@ -99,9 +104,11 @@ void ResourceManager::LoadMaterial(const std::string& name, std::shared_ptr<Mate
 
 void ResourceManager::LoadTexture(const std::string& name, const std::string& filepath)
 {
+	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
+
 	if (texturesRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadTexture: Texture with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadTexture: Texture with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, resolvedPath);
 		return;
 	}
 
@@ -111,18 +118,20 @@ void ResourceManager::LoadTexture(const std::string& name, const std::string& fi
 		return;
 	}
 
-	auto texture = rendererDevice->CreateTexture(filepath);
+	auto texture = rendererDevice->CreateTexture(resolvedPath);
 	texture->SetName(name);
 	texturesRegistered[name] = texture;
 
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture: '{0}' filepath: '{1}'", name, filepath);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Texture: '{0}' filepath: '{1}'", name, resolvedPath);
 }
 
 void ResourceManager::LoadShader(const std::string& name, const std::string& filepath)
 {
+	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
+
 	if (shadersRegistered.count(name))
 	{
-		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadShader: Shader with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, filepath);
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadShader: Shader with name '{0}' (filepath: '{1}') already exists! Cannot map multiple filepaths to the same name!", name, resolvedPath);
 		return;
 	}
 
@@ -132,11 +141,11 @@ void ResourceManager::LoadShader(const std::string& name, const std::string& fil
 		return;
 	}
 
-	auto shader = rendererDevice->CreateShader(filepath);
+	auto shader = rendererDevice->CreateShader(resolvedPath);
 	shader->SetName(name);
 	shadersRegistered[name] = shader;
 
-	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, filepath);
+	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Shader: '{0}' filepath: '{1}'", name, resolvedPath);
 }
 
 void ResourceManager::UnloadEditorIcon(const std::string& name)
@@ -329,27 +338,31 @@ std::shared_ptr<Material> ResourceManager::LoadOrGetMaterial(const std::string& 
 // For automatic textures e.g 3d Models
 std::shared_ptr<Texture> ResourceManager::LoadOrGetTexture(const std::string& filepath)
 {
-	auto it = texturesRegistered.find(filepath);
+	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
+
+	auto it = texturesRegistered.find(resolvedPath);
 	if (it != texturesRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetTexture: Loaded existing Texture '{0}'", filepath);
+		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetTexture: Loaded existing Texture '{0}'", resolvedPath);
 		return it->second;
 	}
 
-	LoadTexture(filepath, filepath);
-	return GetTextureData(filepath);
+	LoadTexture(resolvedPath, resolvedPath);
+	return GetTextureData(resolvedPath);
 }
 
 std::shared_ptr<Material> ResourceManager::LoadMaterialFromFile(const std::string& filepath)
 {
-	std::filesystem::path path(filepath);
+	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
+
+	std::filesystem::path path(resolvedPath);
 	std::string materialName = path.stem().string();
 
 	auto it = materialsRegistered.find(materialName);
 	if (it != materialsRegistered.end())
 		return it->second;
 
-	auto deserializedMaterial = MaterialSerializer::Deserialize(filepath);
+	auto deserializedMaterial = MaterialSerializer::Deserialize(resolvedPath);
 	if (deserializedMaterial)
 	{
 		LoadMaterial(materialName, deserializedMaterial);
