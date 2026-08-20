@@ -1,0 +1,27 @@
+{
+    "name": "EzMat",
+    "properties": {
+        "ambient": [
+            1.0,
+            0.0,
+            0.0
+        ],
+        "diffuse": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "shininess": 32.0,
+        "specular": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "use_alpha_cutout": false
+    },
+    "shader": "Lit",
+    "textures": {
+        "diffuse_maps": [],
+        "specular_maps": []
+    }
+}

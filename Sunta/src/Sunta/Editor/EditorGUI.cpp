@@ -595,10 +595,13 @@ void EditorGUI::DrawFileBrowser()
 			bool isSelected = (selectedFile == path);
 			bool isHovered = ImGui::IsItemHovered();
 
-			if (ImGui::IsItemClicked())
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			{
-				selectedFile = path;
-				selectedEntity = -1;
+				if (!isDirectory)
+				{
+					selectedFile = path;
+					//selectedEntity = -1;
+				}
 			}
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -888,11 +891,11 @@ void EditorGUI::DrawFileBrowser()
 		ImGui::PopStyleColor(2);
 	}
 
-	if (IsClickingEmptySpace())
+	/*if (IsClickingEmptySpace())
 	{
 		selectedEntity = -1;
 		selectedFile = "";
-	}
+	}*/
 
 	if (!selectedFile.empty() && fileToRename.empty() && !pendingCreation.active)
 	{
@@ -1516,13 +1519,30 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 
 void EditorGUI::HandleSelectionInteraction()
 {
-	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+	if (ImGui::IsDragDropActive() || ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+		return;
+	
+	if (!ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+		return;
+
+	if (ImGui::IsAnyItemHovered() || ImGui::IsAnyItemActive())
+		return;
+
+	ImGuiWindow* hoveredWindow = GImGui->HoveredWindow;
+	std::string windowName = hoveredWindow ? hoveredWindow->Name : "";
+
+	bool hoverInspector   = windowName.find("Inspector")    != std::string::npos;
+	bool hoverHierarchy   = windowName.find("Inspector")    != std::string::npos;
+	bool hoverFileBrowser = windowName.find("File Browser") != std::string::npos;
+
+	bool hoverSceneBackground = (hoveredWindow == nullptr);
+
+	if (hoverHierarchy || hoverFileBrowser || hoverSceneBackground)
 	{
-		if (!ImGui::GetIO().WantCaptureMouse)
-		{
-			ClearSelection();
-		}
+		selectedEntity = -1;
+		selectedFile = "";
 	}
+	
 }
 
 void EditorGUI::ClearSelection()
