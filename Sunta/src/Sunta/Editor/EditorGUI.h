@@ -22,6 +22,9 @@ struct FileDroppedEvent;
 class EditorGUI
 {
 public:
+	static void Init();
+	static void Shutdown();
+
 	static void Begin(const std::string& name);
 	static void End();
 
@@ -39,7 +42,6 @@ public:
 	static void DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight);
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
-	static void DrawScriptComponentInspector(ScriptComponent& scriptComponent);
 	static void DrawFileBrowser();
 	static void DrawSceneDropTarget(Scene& scene);
 

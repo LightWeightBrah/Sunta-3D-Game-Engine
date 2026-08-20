@@ -1,12 +1,13 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
+#include <sol/sol.hpp>
 #include "ComponentLayout.h"
 
 #include "Core/EngineAssets.h"
 #include "Core/Log.h"
 #include "Renderer/LightingCommon.h"
-#include <sol/sol.hpp>
+#include "Scripting/ScriptingEngine.h"
 
 namespace Sunta
 {
@@ -84,7 +85,7 @@ struct ScriptComponent
 	unsigned int entityID = 0;
 	std::vector<ScriptContainer> scripts;
 
-	void LoadScript(sol::state& luaState, const std::string& filepath, unsigned int entityID)
+	void LoadScript(const std::string& filepath, unsigned int entityID)
 	{
 		if (filepath.empty())
 			return;
@@ -94,15 +95,17 @@ struct ScriptComponent
 		ScriptContainer& container = scripts.emplace_back();
 		container.scriptPath = filepath;
 
-		ReloadScript(luaState, container, entityID);
+		ReloadScript(container, entityID);
 	}
 
-	void ReloadScript(sol::state& luaState, ScriptContainer& container, unsigned int entityID)
+	void ReloadScript(ScriptContainer& container, unsigned int entityID)
 	{
 		using namespace Scripting;
 
 		if (container.scriptPath.empty())
 			return;
+
+		auto& luaState = ScriptingEngine::GetState();
 
 		// Create separated environment, so that every script we attach (e.g on enemy, player) have their own variables etc.
 		sol::environment scriptEnvironment(luaState, sol::create, luaState.globals());
@@ -137,6 +140,11 @@ struct ScriptComponent
 			container.onUpdateFunc = scriptEnvironment[Functions::OnUpdate];
 		}
 
+	}
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<ScriptComponent>("Script", EngineAssets::Icons::CppFile,{ });
 	}
 };
 

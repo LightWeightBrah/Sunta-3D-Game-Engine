@@ -41,12 +41,16 @@ void EditorGUIContext::Init(Window* window)
 
 	std::string fontPath = VirtualFileSystem::Resolve("@engine/Fonts/Crimson_Text/CrimsonText-Regular.ttf");
 	mainFont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), fontSize);
+
+	EditorGUI::Init();
 }
 
 void EditorGUIContext::Shutdown(Window* window)
 {
 	if (!backend || !window)
 		return;
+
+	EditorGUI::Shutdown();
 
 	EventBus::Unsubscribe(engineModeChangeID);
 	EventBus::Unsubscribe(fileDroppedID);

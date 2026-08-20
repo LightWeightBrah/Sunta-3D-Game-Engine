@@ -49,6 +49,7 @@ struct PropertyDefinition
 
 struct ComponentType
 {
+	size_t hash = 0;
 	std::string name;
 	std::string iconKey;
 	std::vector<PropertyDefinition> properties;
@@ -73,6 +74,7 @@ public:
 	{
 		ComponentType newComponentType;
 
+		newComponentType.hash = typeid(T).hash_code();
 		newComponentType.name = name;
 		newComponentType.iconKey = iconKey;
 		newComponentType.properties = std::move(properties);

@@ -8,7 +8,6 @@
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
 #include "Core/Log.h"
-#include "Scripting/ScriptingEngine.h"
 
 namespace Sunta
 {
@@ -277,7 +276,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 					std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
 					if (!path.empty())
 					{
-						scriptComponent.LoadScript(ScriptingEngine::GetState(), path, entity);
+						scriptComponent.LoadScript(path, entity);
 					}
 				}
 			}

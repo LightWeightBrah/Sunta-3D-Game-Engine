@@ -96,6 +96,7 @@ namespace Sunta
 
 		TagComponent::RegisterToInspector();
 		TransformComponent::RegisterToInspector();
+		ScriptComponent::RegisterToInspector();
 		MeshComponent::RegisterToInspector();
 		DirectionalLightComponent::RegisterToInspector();
 		PointLightComponent::RegisterToInspector();

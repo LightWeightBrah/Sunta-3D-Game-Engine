@@ -23,9 +23,20 @@
 #include "Serialization/SceneSerializer.h"
 #include "Utilities/FileSystemUtilities.h"
 #include "Core/VirtualFileSystem.h"
+#include "ComponentDrawerFactory.h"
 
 namespace Sunta
 {
+
+void EditorGUI::Init()
+{
+	ComponentDrawerFactory::Init();
+}
+
+void EditorGUI::Shutdown()
+{
+
+}
 
 void EditorGUI::Begin(const std::string& name)
 {
@@ -495,30 +506,6 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 	// here we stop using that uniqueID for ImGUI and we go back to defualt mode
 	ImGui::PopID();
 
-}
-
-void EditorGUI::DrawScriptComponentInspector(ScriptComponent& scriptComponent)
-{
-	if (ImGui::CollapsingHeader("Script Component"))
-	{
-		if (ImGui::Button("Add Script"))
-			scriptComponent.scripts.push_back(ScriptContainer{});
-
-		ImGui::Separator();
-
-		for (unsigned int i = 0; i < scriptComponent.scripts.size(); i++)
-		{
-			ImGui::PushID(static_cast<int>(i));
-
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, scriptComponent.scripts[i].scriptPath.c_str());
-
-			if (ImGui::InputText("Script Path", buffer, sizeof(buffer)))
-				scriptComponent.scripts[i].scriptPath = std::string(buffer);
-
-		}
-	}
 }
 
 void EditorGUI::DrawFileBrowser()
@@ -1435,8 +1422,14 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* 
 		return;
 
 	void* componentData = storage->GetEntityComponentData(entityID);
-	bool anyPropertyChanged = false;
 
+	if (auto* drawer = ComponentDrawerFactory::GetDrawer(componentType->hash))
+	{
+		drawer->Draw(componentData, entityID);
+		return;
+	}
+
+	bool anyPropertyChanged = false;
 	for (const auto& property : componentType->properties)
 	{
 		void* propertyData = (char*)componentData + property.byteOffset;
