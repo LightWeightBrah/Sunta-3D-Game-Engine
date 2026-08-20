@@ -68,7 +68,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "
 
 # ========================= POST-BUILD ASSETS COPY ========================= 
 
-if(SUNTA_COPY_ASSETS)
+if(NOT SUNTA_DEV_MODE)
     set(FINAL_RES_DIR "${SUNTA_BIN_DIR}/res")
 
     add_custom_target(CopyAssets ALL

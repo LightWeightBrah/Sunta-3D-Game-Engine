@@ -21,6 +21,7 @@
 #include "Platform.h"
 #include "ResourceLoader.h"
 #include "Scripting/ScriptingEngine.h"
+#include "VirtualFileSystem.h"
 
 namespace Sunta
 {
@@ -62,6 +63,7 @@ namespace Sunta
 	void Application::Init()
 	{
 		ScriptingEngine::Init();
+		VirtualFileSystem::Init();
 		Log::Init();
 		Platform::Init();
 		InputManager::Init();

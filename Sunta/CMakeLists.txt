@@ -63,9 +63,17 @@ set(SUNTA_EXTERNAL_FILES ${ENGINE_SOURCES})
 list(FILTER SUNTA_EXTERNAL_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/.*")
 source_group("Dependencies" FILES ${SUNTA_EXTERNAL_FILES})
 
-# ========================= PRECOMPILED HEADER ===========================   
+# ========================= TARGET DEFINITIONS ===========================   
 
 add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC "SUNTA_ROOT_DIR=R\"(${CMAKE_SOURCE_DIR})\"")
+
+if(SUNTA_DEV_MODE)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
+endif()
+
+# ========================= PRECOMPILED HEADER ===========================   
 
 # --- GLAD FIX TO HIDE PRECOMPILED HEADER ---
 set_source_files_properties("${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c" 

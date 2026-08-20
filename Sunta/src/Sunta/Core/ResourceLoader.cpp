@@ -7,6 +7,7 @@
 #include "Renderer/Material.h"
 #include "EngineAssets.h"
 #include "Renderer/Shader.h"
+#include "VirtualFileSystem.h"
 
 namespace Sunta
 {
@@ -79,7 +80,8 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 		.SetShininess(32.0f);
 	ResourceManager::LoadMaterial(Materials::Textured, texturedMaterial);
 
-	LoadMaterialsFromDirectory("res");
+	LoadMaterialsFromDirectory(VirtualFileSystem::Resolve("@engine"));
+	LoadMaterialsFromDirectory(VirtualFileSystem::Resolve("@game"));
 }
 
 void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)

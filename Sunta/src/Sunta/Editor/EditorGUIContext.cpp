@@ -12,6 +12,7 @@
 #include "Scene/Scene.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
+#include "Core/VirtualFileSystem.h"
 
 namespace Sunta
 {
@@ -37,7 +38,9 @@ void EditorGUIContext::Init(Window* window)
 	fileDroppedID = EventBus::Subscribe<FileDroppedEvent>(EditorGUI::OnFileDropped);
 
 	ImGuiIO& io = ImGui::GetIO();
-	mainFont = io.Fonts->AddFontFromFileTTF("res/Sunta/Fonts/Crimson_Text/CrimsonText-Regular.ttf", fontSize);
+
+	std::string fontPath = VirtualFileSystem::Resolve("@engine/Fonts/Crimson_Text/CrimsonText-Regular.ttf");
+	mainFont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), fontSize);
 }
 
 void EditorGUIContext::Shutdown(Window* window)

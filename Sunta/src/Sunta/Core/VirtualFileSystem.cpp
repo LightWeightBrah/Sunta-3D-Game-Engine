@@ -14,12 +14,13 @@ void VirtualFileSystem::Init()
 {
 #if defined(SUNTA_DEVELOPMENT)
 	std::filesystem::path rootDirectory = SUNTA_ROOT_DIR;
-	Mount("@engine", rootDirectory / "Sunta" / "res")
-	Mount("@game"  , rootDirectory / "Game"  / "res")
+	Mount("@engine", rootDirectory / "Sunta" / "res");
+	Mount("@game"  , rootDirectory / "Game"  / "res");
 #else
-	Mount("@engine", "res" / "Sunta")
-	Mount("@game"  , "res" / "Game" )
-
+	std::filesystem::path baseDirectory = std::filesystem::current_path();
+	Mount("@engine", baseDirectory / "res" / "Sunta");
+	Mount("@game"  , baseDirectory / "res" / "Game" );
+#endif
 }
 
 void VirtualFileSystem::Mount(const std::string& virtualPrefix, const std::filesystem::path& physicalPath)

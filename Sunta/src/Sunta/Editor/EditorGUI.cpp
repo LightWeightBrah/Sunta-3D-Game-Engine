@@ -22,6 +22,7 @@
 #include "Events/EventTypes.h"
 #include "Serialization/SceneSerializer.h"
 #include "Utilities/FileSystemUtilities.h"
+#include "Core/VirtualFileSystem.h"
 
 namespace Sunta
 {
@@ -85,7 +86,8 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
 			{
-				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
+				std::string openDirectory = VirtualFileSystem::Resolve("@game/Scenes");
+				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, openDirectory);
 				if (!path.empty())
 					SceneSerializer::Deserialize(path, scene);
 			}
@@ -94,8 +96,8 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 			{
-				std::string path = "res/Game/Scenes/" + scene.GetName() + ".scene";
-				SceneSerializer::Serialize(path, scene);
+				std::string savePath = VirtualFileSystem::Resolve("@game/Scenes/" + scene.GetName() + ".scene");
+				SceneSerializer::Serialize(savePath, scene);
 			}
 
 			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
@@ -554,7 +556,7 @@ void EditorGUI::DrawFileBrowser()
 		// Sunta Engine Folder
 		if (ImGui::Button("[ENGINE]", ImVec2(cellSize - padding, cellSize - padding)))
 		{
-			currentDirectory = "res/Sunta";
+			currentDirectory = VirtualFileSystem::Resolve("@engine");
 			selectedFile = "";
 		}
 
@@ -564,7 +566,7 @@ void EditorGUI::DrawFileBrowser()
 		// Game Folder
 		if (ImGui::Button("[GAME]", ImVec2(cellSize - padding, cellSize - padding)))
 		{
-			currentDirectory =  "res/Game";
+			currentDirectory = VirtualFileSystem::Resolve("@game");
 			selectedFile = "";
 		}
 

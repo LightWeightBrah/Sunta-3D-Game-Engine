@@ -7,7 +7,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-option(SUNTA_COPY_ASSETS "Copy assets to bin directory for distribution" OFF)
+option(SUNTA_DEV_MODE "Enable development mode (reads assets directly from source folders)" ON)
+
+if(SUNTA_DEV_MODE)
+	message(STATUS "Sunta Engine: Running in DEVELOPMENT mode (Virtual File System points to source code")
+else()
+	message(STATUS "Sunta Engine: Running in RELEASE mode (Copy assets to bin directory for distribution")
+endif()
 
 # Lua version
 add_compile_definitions(SOL_LUA_VERSION=50400)
