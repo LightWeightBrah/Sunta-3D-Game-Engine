@@ -140,7 +140,7 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 	float borderThickness = 2.0f;
 
 	ImGuiWindowFlags toolbarFlags =
-		  ImGuiWindowFlags_NoDecoration
+		ImGuiWindowFlags_NoDecoration
 		| ImGuiWindowFlags_NoScrollbar
 		| ImGuiWindowFlags_NoScrollWithMouse
 		| ImGuiWindowFlags_NoDocking
@@ -167,24 +167,24 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 		float iconSize = availableHeight - (framePadding * 2);
 
 		auto DrawToolbarButton = [&](const char* iconKey, const char* id, const char* tooltip, auto action)
-		{
-			auto icon = ResourceManager::GetEditorIcon(iconKey);
-			if (icon)
 			{
-				ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
-				if (ImGui::ImageButton(id, textureID, ImVec2(iconSize, iconSize)))
-					action();
+				auto icon = ResourceManager::GetEditorIcon(iconKey);
+				if (icon)
+				{
+					ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
+					if (ImGui::ImageButton(id, textureID, ImVec2(iconSize, iconSize)))
+						action();
 
-				if (ImGui::IsItemHovered())
-					ImGui::SetTooltip("%s", tooltip);
+					if (ImGui::IsItemHovered())
+						ImGui::SetTooltip("%s", tooltip);
 
-				ImGui::SameLine();
-			}
-		};
+					ImGui::SameLine();
+				}
+			};
 
 		using namespace Sunta::EngineAssets;
 
-		DrawToolbarButton(Icons::Cube, "##CreateCube", "Create Cube Entity", [&]() 
+		DrawToolbarButton(Icons::Cube, "##CreateCube", "Create Cube Entity", [&]()
 			{
 				EntityFactory::CreateCube(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Cube");
 			});
@@ -213,7 +213,7 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 			{
 				EntityFactory::CreateDirectionalLight(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Directional Light");
 			});
-		
+
 		DrawToolbarButton(Icons::PointLight, "##CreatePointLight", "Create Point Light", [&]()
 			{
 				EntityFactory::CreatePointLight(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Point Light");
@@ -233,7 +233,7 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 		ImU32 borderColor = ImGui::GetColorU32(ImGuiCol_Border);
 
 		drawList->AddRectFilled(
-			ImVec2(pos.x,          pos.y + size.y - borderThickness),
+			ImVec2(pos.x, pos.y + size.y - borderThickness),
 			ImVec2(pos.x + size.x, pos.y + size.y),
 			borderColor);
 
@@ -280,7 +280,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		}
 		else
 		{
-			ImGuiTreeNodeFlags flags = (selectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
+			ImGuiTreeNodeFlags flags = (inspectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
 			flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 			ImGui::TreeNodeEx((label + uniqueID).c_str(), flags);
 
@@ -294,7 +294,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		ImGui::PushID(static_cast<int>(entityID));
 		if (ImGui::BeginPopupContextItem("EntityMenu"))
 		{
-			selectedEntity = static_cast<int>(entityID);
+			SetSelectedEntity(static_cast<int>(entityID));
 			selectedFile = "";
 
 			if (ImGui::MenuItem("Rename"))
@@ -308,7 +308,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 				// TODO: add implementation for Destroy Entity in entity Manager
 				//entityManager.DestroyEntity(entityID);
 				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
-				selectedEntity = -1;
+				SetSelectedEntity(-1);
 
 				ImGui::CloseCurrentPopup();
 			}
@@ -319,7 +319,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 				{
 					transform->position = glm::vec3(0.0f);
 					transform->rotation = glm::vec3(0.0f);
-					transform->scale    = glm::vec3(1.0f);
+					transform->scale = glm::vec3(1.0f);
 				}
 
 				ImGui::CloseCurrentPopup();
@@ -332,7 +332,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 
 		if (ImGui::IsItemClicked())
 		{
-			selectedEntity = static_cast<int>(entityID);
+			SetSelectedEntity(static_cast<int>(entityID));
 			selectedFile = "";
 		}
 
@@ -340,7 +340,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 
 	if (IsClickingEmptySpace())
 	{
-		selectedEntity = -1;
+		SetSelectedEntity(-1);
 		selectedFile = "";
 	}
 
@@ -349,22 +349,75 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
 		{
 			SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
-			selectedEntity = -1;
+			SetSelectedEntity(-1);
 		}
 	}
 }
 
 void EditorGUI::DrawInspector(EntityManager& entityManager)
 {
-	if (!selectedFile.empty() && selectedFile.extension() == ".material")
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+
+	ImRect barRect = (window->DockNode && window->DockNode->TabBar)
+		? window->DockNode->TabBar->BarRect
+		: window->TitleBarRect(); // fallback: window undocked (floating)
+
+	const char* lockIconKey = inspectorLocked
+		? Sunta::EngineAssets::Icons::DefaultFolder
+		: Sunta::EngineAssets::Icons::DefaultFile;
+
+	auto lockIcon = ResourceManager::GetEditorIcon(lockIconKey);
+
+	float buttonSize = 16.0f;
+	float rightMargin = 8.0f;
+
+	ImVec2 iconMin(barRect.Max.x - buttonSize - rightMargin,
+		barRect.Min.y + (barRect.GetHeight() - buttonSize) * 0.5f);
+	ImVec2 iconMax(iconMin.x + buttonSize, iconMin.y + buttonSize);
+
+	bool hovered = ImGui::IsMouseHoveringRect(iconMin, iconMax, false);
+	bool clicked = hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left);
+
+	ImDrawList* foregroundDrawList = ImGui::GetForegroundDrawList();
+
+	if (hovered)
 	{
-		ImGui::Text("Material Asset: %s", selectedFile.filename().string().c_str());
+		float hoverPad = 2.0f;
+		foregroundDrawList->AddRectFilled(
+			ImVec2(iconMin.x - hoverPad, iconMin.y - hoverPad),
+			ImVec2(iconMax.x + hoverPad, iconMax.y + hoverPad),
+			ImGui::GetColorU32(ImGuiCol_ButtonHovered), 3.0f);
+	}
+
+	if (lockIcon)
+	{
+		ImTextureID lockTextureID = (ImTextureID)(uintptr_t)lockIcon->GetID();
+		foregroundDrawList->AddImage(lockTextureID, iconMin, iconMax);
+	}
+
+	if (hovered)
+		ImGui::SetTooltip(inspectorLocked ? "Locked - click to unlock" : "Unlocked - click to lock");
+
+	if (clicked)
+	{
+		inspectorLocked = !inspectorLocked;
+
+		if (!inspectorLocked)
+		{
+			selectedEntity = inspectedEntity;
+			selectedFile = inspectedFile;
+		}
+	}
+
+	if (!inspectedFile.empty() && inspectedFile.extension() == ".material")
+	{
+		ImGui::Text("Material Asset: %s", inspectedFile.filename().string().c_str());
 		ImGui::Separator();
 
-		if (lastSelectedFile != selectedFile)
+		if (lastSelectedFile != inspectedFile)
 		{
-			lastSelectedFile = selectedFile;
-			currentMaterial = ResourceManager::LoadMaterialFromFile(selectedFile.string());
+			lastSelectedFile = inspectedFile;
+			currentMaterial = ResourceManager::LoadMaterialFromFile(inspectedFile.string());
 		}
 
 		if (currentMaterial)
@@ -405,7 +458,7 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			}
 
 			if (changed)
-				MaterialSerializer::Serialize(selectedFile.string(), currentMaterial);
+				MaterialSerializer::Serialize(inspectedFile.string(), currentMaterial);
 		}
 
 		return;
@@ -423,19 +476,19 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		selectedFile = "";
 	}
 
-	if (selectedEntity == -1)
+	if (inspectedEntity == -1)
 	{
 		return;
 	}
 
-	ImGui::Text("Selected Entity ID: %d", selectedEntity);
+	ImGui::Text("Selected Entity ID: %d", inspectedEntity);
 	ImGui::Separator();
 
 	// unique ID for ImGUI, so objects with same name can be in tree hierarchy
 	// PushID makes everything drawn below belongs to that unique ID
-	ImGui::PushID(selectedEntity);
+	ImGui::PushID(inspectedEntity);
 
-	DrawEntityComponentList(selectedEntity, entityManager);
+	DrawEntityComponentList(inspectedEntity, entityManager);
 
 	ImGui::Separator();
 
@@ -445,7 +498,7 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 
-	if(ImGui::BeginPopup("AddComponentPopup"))
+	if (ImGui::BeginPopup("AddComponentPopup"))
 	{
 		struct ComponentAction
 		{
@@ -458,32 +511,32 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		{
 			{
 				"Mesh",
-				[&]() { return entityManager.GetComponent<MeshComponent>(selectedEntity) != nullptr; },
-				[&]() { return entityManager.AddComponent<MeshComponent>(selectedEntity); }
+				[&]() { return entityManager.GetComponent<MeshComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<MeshComponent>(inspectedEntity); }
 			},
 
 			{
 				"Directional Light",
-				[&]() { return entityManager.GetComponent<DirectionalLightComponent>(selectedEntity) != nullptr; },
-				[&]() { return entityManager.AddComponent<DirectionalLightComponent>(selectedEntity); }
+				[&]() { return entityManager.GetComponent<DirectionalLightComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<DirectionalLightComponent>(inspectedEntity); }
 			},
 
 			{
 				"Point Light",
-				[&]() { return entityManager.GetComponent<PointLightComponent>(selectedEntity) != nullptr; },
-				[&]() { return entityManager.AddComponent<PointLightComponent>(selectedEntity); }
+				[&]() { return entityManager.GetComponent<PointLightComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<PointLightComponent>(inspectedEntity); }
 			},
 
 			{
 				"Spot Light",
-				[&]() { return entityManager.GetComponent<SpotLightComponent>(selectedEntity) != nullptr; },
-				[&]() { return entityManager.AddComponent<SpotLightComponent>(selectedEntity); }
+				[&]() { return entityManager.GetComponent<SpotLightComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<SpotLightComponent>(inspectedEntity); }
 			},
 
 			{
 				"Script",
-				[&]() { return entityManager.GetComponent<ScriptComponent>(selectedEntity) != nullptr; },
-				[&]() { return entityManager.AddComponent<ScriptComponent>(selectedEntity); }
+				[&]() { return entityManager.GetComponent<ScriptComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<ScriptComponent>(inspectedEntity); }
 			}
 		};
 
@@ -519,7 +572,6 @@ void EditorGUI::DrawFileBrowser()
 		if (ImGui::Button("<--- Back"))
 		{
 			currentDirectory = currentDirectory.parent_path();
-			//selectedFile = "";
 		}
 
 		ImGui::SameLine();
@@ -530,7 +582,7 @@ void EditorGUI::DrawFileBrowser()
 
 	float cellSize = 90.0f;
 	float panelWidth = ImGui::GetContentRegionAvail().x;
-	int padding	= 15;
+	int padding = 15;
 	int columns = static_cast<int>(panelWidth / cellSize);
 	if (columns < 1)
 		columns = 1;
@@ -599,13 +651,26 @@ void EditorGUI::DrawFileBrowser()
 			{
 				if (!isDirectory)
 				{
-					selectedFile = path;
-					//selectedEntity = -1;
+					if (selectedFile != path)
+					{
+						// Remember what was selected before this click, in case it
+						// turns out to be a drag rather than a click
+						preDragSelectedFile = selectedFile;
+					}
+					
 				}
+
+				selectedFile = path;
+				//selectedEntity = -1;
 			}
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
+				// Confirmed: this press is drag & drop, not a selection change
+				// Restore whatever file was selected before it (e.g. material open in the Inspector) 
+				if (!isDirectory)
+					selectedFile = preDragSelectedFile;
+
 				std::string pathString = path.string();
 				ImGui::SetDragDropPayload("FILE_PATH", pathString.c_str(), pathString.size() + 1);
 
@@ -644,7 +709,6 @@ void EditorGUI::DrawFileBrowser()
 					if (isDirectory)
 					{
 						currentDirectory /= path.filename();
-						selectedFile = "";
 					}
 					else
 					{
@@ -785,30 +849,30 @@ void EditorGUI::DrawFileBrowser()
 	if (ImGui::BeginPopupContextWindow("BrowserEmptyMenu", ImGuiPopupFlags_NoOpenOverItems))
 	{
 		auto StartCreation = [](const std::string& baseName, const std::string& extension, const std::string& icon, auto onCreateFunc)
-		{
-			std::string uniqueName = baseName;
-			int index = 1;
-
-			auto BuildTestPath = [&](const std::string& name)
 			{
-				std::filesystem::path path = currentDirectory / name;
-				if (!extension.empty() && path.extension() != extension)
-					path.replace_extension(extension);
+				std::string uniqueName = baseName;
+				int index = 1;
 
-				return path;
+				auto BuildTestPath = [&](const std::string& name)
+					{
+						std::filesystem::path path = currentDirectory / name;
+						if (!extension.empty() && path.extension() != extension)
+							path.replace_extension(extension);
+
+						return path;
+					};
+
+				while (std::filesystem::exists(BuildTestPath(uniqueName)))
+				{
+					uniqueName = baseName + "_" + std::to_string(index++);
+				}
+
+				pendingCreation.active = true;
+				snprintf(pendingCreation.nameBuffer, sizeof(pendingCreation.nameBuffer), "%s", uniqueName.c_str());
+				pendingCreation.extension = extension;
+				pendingCreation.iconKey = icon;
+				pendingCreation.onCreate = onCreateFunc;
 			};
-
-			while (std::filesystem::exists(BuildTestPath(uniqueName)))
-			{
-				uniqueName = baseName + "_" + std::to_string(index++);
-			}
-
-			pendingCreation.active = true;
-			snprintf(pendingCreation.nameBuffer, sizeof(pendingCreation.nameBuffer), "%s", uniqueName.c_str());
-			pendingCreation.extension = extension;
-			pendingCreation.iconKey = icon;
-			pendingCreation.onCreate = onCreateFunc;
-		};
 
 		if (ImGui::MenuItem("Create New Folder"))
 		{
@@ -893,7 +957,7 @@ void EditorGUI::DrawFileBrowser()
 
 	if (IsClickingEmptySpace())
 	{
-		selectedEntity = -1;
+		SetSelectedEntity(-1);
 		selectedFile = "";
 	}
 
@@ -904,6 +968,14 @@ void EditorGUI::DrawFileBrowser()
 			DeletePathAndUnloadResources(selectedFile);
 			selectedFile = "";
 		}
+	}
+
+	// Make sure that a click that turns into a drag & drop 
+	// never causes the Inspector to flash to the dragged file
+	// When the Inspector is locked, it doesn't catch up at all until unlocked
+	if (!inspectorLocked && !ImGui::IsDragDropActive() && !ImGui::IsMouseDown(ImGuiMouseButton_Left))
+	{
+		inspectedFile = selectedFile;
 	}
 
 	ImGui::Columns(1); // column reset
@@ -920,8 +992,8 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 	ImGui::SetNextWindowSize(viewport->Size);
 	ImGui::SetNextWindowBgAlpha(0.0f);
 
-	ImGuiWindowFlags flags = 
-		  ImGuiWindowFlags_NoTitleBar
+	ImGuiWindowFlags flags =
+		ImGuiWindowFlags_NoTitleBar
 		| ImGuiWindowFlags_NoResize
 		| ImGuiWindowFlags_NoMove
 		| ImGuiWindowFlags_NoScrollbar
@@ -974,7 +1046,7 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				{
 					// TODO: ADD HANDLING DROPPED MATERIAL
 					auto material = ResourceManager::GetMaterialData(entityName);
-					if(material)
+					if (material)
 						EntityFactory::CreateCube(scene, spawnPosition, entityName, material);
 
 					SUNTA_ENGINE_LOG_INFO("Dropped material: '{0}'", entityName);
@@ -992,9 +1064,9 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				else
 				{
 					SUNTA_ENGINE_LOG_WARNING("Unsuported file extension '{0}' dropped onto scene.", extension);
-						
+
 				}
-				
+
 			}
 
 			ImGui::EndDragDropTarget();
@@ -1101,7 +1173,7 @@ bool EditorGUI::DrawTextureSlot(const char* label, std::shared_ptr<Texture>& tex
 
 	if (ImGui::Button("Browse..."))
 	{
-		std::string selectedPath = Platform::Get().OpenFileDialog("Texture Files", {"png", "jpg", "jpeg", "tga", "bmp", "psd", "hdr"});
+		std::string selectedPath = Platform::Get().OpenFileDialog("Texture Files", { "png", "jpg", "jpeg", "tga", "bmp", "psd", "hdr" });
 
 		if (!selectedPath.empty())
 		{
@@ -1260,7 +1332,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 
 	if (isDirectory)
 	{
-		static const std::unordered_map<std::string, std::string> folderIcons = 
+		static const std::unordered_map<std::string, std::string> folderIcons =
 		{
 			{ "scripts",		"cpp_folder" },			{ "src",		  "cpp_folder" },		{ "cpp",	"cpp_folder" },
 			{ "models",			"3d_model_folder" },	{ "meshes",	 "3d_model_folder" },
@@ -1325,7 +1397,7 @@ void EditorGUI::DeletePathAndUnloadResources(const std::filesystem::path& path)
 
 	if (errorCode)
 	{
-		SUNTA_ENGINE_LOG_ERROR("EditorGUI::DeletePathAndUnloadResources: Error deleting '{0}': '{1}'", 
+		SUNTA_ENGINE_LOG_ERROR("EditorGUI::DeletePathAndUnloadResources: Error deleting '{0}': '{1}'",
 			path.string(), errorCode.message());
 	}
 	else
@@ -1402,7 +1474,7 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* 
 
 	float arrowOffset = style.FramePadding.x + fontSize + arrowToIconSpacing;
 	float currentX = cursorPosition.x + arrowOffset;
-	
+
 	if (icon)
 	{
 		float iconOffsetY = (frameHeight - iconSize) * 0.5f;
@@ -1417,8 +1489,8 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* 
 
 	float textOffsetY = (frameHeight - fontSize) * 0.5f;
 	drawList->AddText(
-		ImVec2(currentX, cursorPosition.y + textOffsetY), 
-		ImGui::GetColorU32(ImGuiCol_Text), 
+		ImVec2(currentX, cursorPosition.y + textOffsetY),
+		ImGui::GetColorU32(ImGuiCol_Text),
 		componentType->name.c_str());
 
 	if (!isOpen)
@@ -1451,8 +1523,8 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 
 	switch (property.dataType)
 	{
-	case PropertyDataType::Int:	
-		changed = ImGui::DragInt(property.label.c_str(), (int*)propertyData); 
+	case PropertyDataType::Int:
+		changed = ImGui::DragInt(property.label.c_str(), (int*)propertyData);
 		break;
 	case PropertyDataType::Bool:
 		changed = ImGui::Checkbox(property.label.c_str(), (bool*)propertyData);
@@ -1473,47 +1545,47 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 		changed = ImGui::InputText(property.label.c_str(), (std::string*)propertyData);
 		break;
 	case PropertyDataType::AssetPath:
+	{
+		std::string& currentPath = *(std::string*)propertyData;
+		std::vector<std::string> options;
+
+		if (property.assetType == AssetType::Mesh)
+			options = ResourceManager::GetMeshesNames();
+		else if (property.assetType == AssetType::Material)
+			options = ResourceManager::GetMaterialsNames();
+
+		if (ImGui::BeginCombo(property.label.c_str(), currentPath.c_str()))
 		{
-			std::string& currentPath = *(std::string*)propertyData;
-			std::vector<std::string> options;
-
-			if (property.assetType == AssetType::Mesh)
-				options = ResourceManager::GetMeshesNames();
-			else if (property.assetType == AssetType::Material)
-				options = ResourceManager::GetMaterialsNames();
-
-			if (ImGui::BeginCombo(property.label.c_str(), currentPath.c_str()))
+			for (const auto& option : options)
 			{
-				for (const auto& option : options)
+				bool isSelected = (currentPath == option);
+				if (ImGui::Selectable(option.c_str(), isSelected))
 				{
-					bool isSelected = (currentPath == option);
-					if (ImGui::Selectable(option.c_str(), isSelected))
-					{
-						currentPath = option;
-						changed = true;
-					}
-				}
-
-				ImGui::EndCombo();
-			}
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
-				{
-					std::string droppedPath = (const char*)payload->Data;
-
-					currentPath = droppedPath;
+					currentPath = option;
 					changed = true;
 				}
-
-				ImGui::EndDragDropTarget();
 			}
 
+			ImGui::EndCombo();
 		}
-		break;
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
+			{
+				std::string droppedPath = (const char*)payload->Data;
+
+				currentPath = droppedPath;
+				changed = true;
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 	}
-	
+	break;
+	}
+
 	return changed;
 }
 
@@ -1521,7 +1593,7 @@ void EditorGUI::HandleSelectionInteraction()
 {
 	if (ImGui::IsDragDropActive() || ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		return;
-	
+
 	if (!ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		return;
 
@@ -1539,15 +1611,15 @@ void EditorGUI::HandleSelectionInteraction()
 
 	if (hoverHierarchy || hoverFileBrowser || hoverSceneBackground)
 	{
-		selectedEntity = -1;
+		SetSelectedEntity(-1);
 		selectedFile = "";
 	}
-	
+
 }
 
 void EditorGUI::ClearSelection()
 {
-	selectedEntity = -1;
+	SetSelectedEntity(-1);
 	selectedFile = "";
 }
 
@@ -1555,7 +1627,7 @@ void EditorGUI::ClearFocus()
 {
 	if (!ImGui::GetCurrentContext())
 		return;
-	
+
 	//Removes foucs from the active widget (slider, button, color etc.)
 	ImGui::ClearActiveID();
 
@@ -1571,5 +1643,12 @@ bool EditorGUI::IsClickingEmptySpace()
 	return ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsAnyItemHovered();
 }
 
+void EditorGUI::SetSelectedEntity(int entityID)
+{
+	selectedEntity = entityID;
+
+	if (!inspectorLocked)
+		inspectedEntity = entityID;
+}
 
 }

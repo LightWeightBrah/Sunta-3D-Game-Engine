@@ -48,7 +48,7 @@ public:
 	static void OnFileDropped(const FileDroppedEvent& event);
 
 	static bool DrawTextureSlot(const char* label, std::shared_ptr<Texture>& texture);
-	
+
 	static void HandleSelectionInteraction();
 	static void ClearSelection();
 	static void ClearFocus();
@@ -69,8 +69,21 @@ private:
 
 	static inline int selectedEntity = -1;
 
+	// What the Inspector currently displays. Lags `selectedEntity` while locked -
+	// see the sync at the top of DrawInspector.
+	static inline int inspectedEntity = -1;
+
 	static inline std::filesystem::path currentDirectory = "";
-	static inline std::filesystem::path selectedFile	 = "";
+	static inline std::filesystem::path selectedFile = "";
+	static inline std::filesystem::path preDragSelectedFile = "";
+
+	// What the Inspector currently displays. Lags `selectedFile` briefly whenever a
+	// click could still turn into a drag - see the sync in DrawFileBrowser.
+	static inline std::filesystem::path inspectedFile = "";
+
+	// While true, the Inspector stops following `selectedFile`/`inspectedFile`
+	// changes entirely and keeps showing whatever was open when it was locked.
+	static inline bool inspectorLocked = false;
 
 	static inline int entityToRename = -1;
 	static inline char entityNameBuffer[256] = "";
@@ -83,7 +96,7 @@ private:
 
 	static inline std::filesystem::path lastSelectedFile;
 	static inline std::shared_ptr<Material> currentMaterial = nullptr;
-	
+
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
 	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
@@ -92,6 +105,12 @@ private:
 	static void DeletePathAndUnloadResources(const std::filesystem::path& path);
 
 	static bool IsClickingEmptySpace();
+
+	// Sets `selectedEntity` and, unless the Inspector is locked, keeps `inspectedEntity`
+	// in sync with it right away - use this instead of assigning `selectedEntity`
+	// directly, so the Hierarchy highlight (which follows `inspectedEntity`) never
+	// lags a frame behind a click.
+	static void SetSelectedEntity(int entityID);
 
 };
 
