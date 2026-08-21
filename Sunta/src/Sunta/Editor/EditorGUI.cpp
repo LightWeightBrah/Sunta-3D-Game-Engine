@@ -134,8 +134,8 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y));
-	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarHeight));
+	ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x, viewport->WorkPos.y));
+	ImGui::SetNextWindowSize(ImVec2(viewport->WorkSize.x, toolbarHeight));
 
 	float borderThickness = 2.0f;
 

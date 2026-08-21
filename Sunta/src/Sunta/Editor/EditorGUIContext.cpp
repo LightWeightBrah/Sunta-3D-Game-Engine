@@ -119,7 +119,7 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 
 	EditorGUI::DrawMainMenuBar(scene);
 
-	//EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
+	EditorGUI::DrawToolbar(scene, rendererDevice, toolbarHeight);
 	EditorGUIContext::BeginDockingSpace(window);
 
 	EditorGUI::DrawSceneDropTarget(scene);
