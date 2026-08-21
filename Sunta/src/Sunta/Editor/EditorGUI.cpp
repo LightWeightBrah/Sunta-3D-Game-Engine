@@ -83,8 +83,53 @@ bool EditorGUI::Button(const std::string& label)
 	return ImGui::Button(label.c_str());
 }
 
+void EditorGUI::DrawMainMenuBarAndToolbar(Scene& scene, float toolbarHeight)
+{
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	float menuBarHeight = ImGui::GetFrameHeight();
+
+	DrawTopBarsBackground("file_browser_bg",
+		glm::vec4(0.5f, 0.45f, 0.4f, 1.0f),
+		glm::vec2(viewport->Pos.x, viewport->Pos.y),
+		glm::vec2(viewport->Size.x, menuBarHeight + toolbarHeight));
+
+	DrawMainMenuBar(scene);
+	DrawToolbar(scene, toolbarHeight);
+
+}
+
+void EditorGUI::DrawTopBarsBackground(const std::string& texture, glm::vec4 tintColor, glm::vec2 backgroundPosition, glm::vec2 backgroundSize)
+{
+	const auto background = ResourceManager::GetEditorIcon(texture);
+	if (!background)
+		return;
+
+	ImTextureID textureID = (ImTextureID)(uintptr_t)background->GetID();
+
+	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+
+	ImVec2 position(backgroundPosition.x, backgroundPosition.y);
+	ImVec2 size(backgroundSize.x, backgroundSize.y);
+
+	float textureWidth  = static_cast<float>(background->GetWidth());
+	float textureHeight = static_cast<float>(background->GetHeight());
+
+	ImVec2 uv0(0.0f, 0.0f);
+	ImVec2 uv1(size.x / textureWidth, size.y / textureHeight);
+
+	ImVec4 imguiColor(tintColor.r, tintColor.g, tintColor.g, tintColor.a);
+
+	drawList->AddImage(textureID, position, ImVec2(position.x + size.x, position.y + size.y),
+		uv0, uv1,
+		ImGui::GetColorU32(imguiColor));
+
+}
+
 void EditorGUI::DrawMainMenuBar(Scene& scene)
 {
+	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg,  ImVec4(0, 0, 0, 0));
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -125,12 +170,26 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			ImGui::EndMenu();
 		}
 
+		// Draw bottom line of toolbar
+
+		/*ImVec2 pos = ImGui::GetWindowPos();
+		ImVec2 size = ImGui::GetWindowSize();
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+		ImU32 borderColor = ImGui::GetColorU32(ImGuiCol_Border);
+
+		drawList->AddRectFilled(
+			ImVec2(pos.x, pos.y + size.y - 2.0f),
+			ImVec2(pos.x + size.x, pos.y + size.y),
+			borderColor);*/
+
 		ImGui::EndMainMenuBar();
 	}
 
+	ImGui::PopStyleColor(2);
 }
 
-void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight)
+void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 
@@ -160,7 +219,7 @@ void EditorGUI::DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float 
 
 	if (ImGui::Begin("##Toolbar", nullptr, toolbarFlags))
 	{
-		DrawWindowBackground("file_browser_bg", glm::vec4(0.5f, 0.45f, 0.4f, 1.0f));
+		//DrawWindowBackground("file_browser_bg", glm::vec4(0.5f, 0.45f, 0.4f, 1.0f));
 		//DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
 
 		float availableHeight = ImGui::GetContentRegionAvail().y - borderThickness;

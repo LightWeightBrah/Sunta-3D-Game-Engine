@@ -38,8 +38,8 @@ public:
 	static void Text(const std::string& text);
 	static bool Button(const std::string& label);
 
-	static void DrawMainMenuBar(Scene& scene);
-	static void DrawToolbar(Scene& scene, RendererDevice& rendererDevice, float toolbarHeight);
+	static void DrawMainMenuBarAndToolbar(Scene& scene, float toolbarHeight);
+
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser();
@@ -96,6 +96,10 @@ private:
 
 	static inline std::filesystem::path lastSelectedFile;
 	static inline std::shared_ptr<Material> currentMaterial = nullptr;
+
+	static void DrawTopBarsBackground(const std::string& texture, glm::vec4 tintColor, glm::vec2 backgroundPosition, glm::vec2 backgroundSize);
+	static void DrawMainMenuBar(Scene& scene);
+	static void DrawToolbar(Scene& scene, float toolbarHeight);
 
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
 	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
