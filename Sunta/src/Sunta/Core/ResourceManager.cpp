@@ -55,12 +55,18 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& file
 	}
 
 	auto data = std::make_shared<ModelData>();
-
 	data->model = std::make_shared<Model>(*rendererDevice, resolvedPath, false);
 
-	data->animations[AnimationType::IDLE]    = Animation(resolvedPath, data->model.get(), 0);
-	data->animations[AnimationType::GESTURE] = Animation(resolvedPath, data->model.get(), 1);
-	data->animations[AnimationType::RUNNING] = Animation(resolvedPath, data->model.get(), 2);
+	auto TryLoadingAnimation = [&](AnimationType animationType, unsigned int index)
+		{
+			Animation animation(resolvedPath, data->model.get(), index);
+			if (animation.IsValid())
+				data->animations[animationType] = animation;
+		};
+
+	TryLoadingAnimation(AnimationType::IDLE,    0);
+	TryLoadingAnimation(AnimationType::GESTURE, 1);
+	TryLoadingAnimation(AnimationType::RUNNING, 2);
 
 	modelsRegistered[name] = data;
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Model: '{0}' filepath: '{1}'", name, resolvedPath);
@@ -379,6 +385,15 @@ std::vector<std::string> ResourceManager::GetMeshesNames()
 
 	return names;
 
+}
+
+std::vector<std::string> ResourceManager::GetModelsNames()
+{
+	std::vector<std::string> names;
+	for (const auto& [name, model] : modelsRegistered)
+		names.push_back(name);
+
+	return names;
 }
 
 std::vector<std::string> ResourceManager::GetMaterialsNames()

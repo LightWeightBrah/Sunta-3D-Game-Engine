@@ -8,6 +8,8 @@
 #include "Core/Log.h"
 #include "Renderer/LightingCommon.h"
 #include "Scripting/ScriptingEngine.h"
+#include "Core/ResourceManager.h"
+#include "Animation/Animator.h"
 
 namespace Sunta
 {
@@ -194,6 +196,47 @@ struct MeshComponent
 
 	}
 
+};
+
+struct ModelComponent
+{
+	static constexpr const char* NULL_ASSET_NAME = "None";
+
+	unsigned int entityID = 0;
+	bool isDirty = true;
+	bool isVisible = true;
+
+	std::string modelName = NULL_ASSET_NAME;
+	std::shared_ptr<ModelData> modelData;
+
+	ModelComponent(const std::string& modelName)
+		: modelName(modelName) { }
+
+	ModelComponent() = default;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<ModelComponent>("Model", EngineAssets::Icons::Skeleton,
+			{
+				ADD_PROPERTY(ModelComponent, isVisible, PropertyDataType::Bool),
+				ADD_ASSET(ModelComponent, modelName, AssetType::Model)
+			},
+			[](void* data)
+			{
+				static_cast<ModelComponent*>(data)->isDirty = true;
+			});
+	}
+};
+
+struct AnimatorComponent
+{
+	Animator animator;
+	AnimationType currentAnimationType = AnimationType::IDLE;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<AnimatorComponent>("Animator", EngineAssets::Icons::AnimationController, { });
+	}
 };
 
 struct DirectionalLightComponent

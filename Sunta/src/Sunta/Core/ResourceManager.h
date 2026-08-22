@@ -68,6 +68,7 @@ public:
 
 
 	static std::vector<std::string>	  GetMeshesNames();
+	static std::vector<std::string>	  GetModelsNames();
 	static std::vector<std::string>	  GetMaterialsNames();
 
 private:

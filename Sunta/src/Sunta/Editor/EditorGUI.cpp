@@ -283,6 +283,11 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 				EntityFactory::CreateSpotLight(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Spot Light");
 			});
 
+		DrawToolbarButton(Icons::Skeleton, "##CreateModel", "Create Model", [&]()
+			{
+				EntityFactory::CreateModel(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Solaire Of Astora");
+			});
+
 		// Draw bottom line of toolbar
 
 		ImVec2 pos = ImGui::GetWindowPos();
@@ -596,6 +601,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Script",
 				[&]() { return entityManager.GetComponent<ScriptComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<ScriptComponent>(inspectedEntity); }
+			},
+
+			{
+				"Model",
+				[&]() { return entityManager.GetComponent<ModelComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<ModelComponent>(inspectedEntity); }
 			}
 		};
 
@@ -1098,7 +1109,11 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				if (IsModelExtension(extension))
 				{
 					// TODO: ADD CREATING 3D MODEL
-					EntityFactory::CreateCube(scene, spawnPosition, entityName);
+
+					if (!ResourceManager::GetModelData(entityName))
+						ResourceManager::LoadModel(entityName, droppedPath.string());
+
+					EntityFactory::CreateModel(scene, spawnPosition, entityName, entityName);
 					SUNTA_ENGINE_LOG_INFO("Dropped 3D Model: '{0}' onto scene", droppedPath.string());
 				}
 				else if (IsMaterialExtension(extension))
@@ -1612,6 +1627,8 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 			options = ResourceManager::GetMeshesNames();
 		else if (property.assetType == AssetType::Material)
 			options = ResourceManager::GetMaterialsNames();
+		else if (property.assetType == AssetType::Model)
+			options = ResourceManager::GetModelsNames();
 
 		if (ImGui::BeginCombo(property.label.c_str(), currentPath.c_str()))
 		{

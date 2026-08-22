@@ -67,6 +67,43 @@ void Systems::SyncMeshComponents(EntityManager& entityManager)
 	}
 }
 
+void Systems::SyncModelComponents(EntityManager& entityManager)
+{
+	auto& modelComponents = entityManager.GetAllComponents<ModelComponent>();
+
+	for (auto& component : modelComponents)
+	{
+		if (!component.isDirty)
+			continue;
+
+		component.modelData = (component.modelName != ModelComponent::NULL_ASSET_NAME)
+			? ResourceManager::GetModelData(component.modelName)
+			: nullptr;
+
+		if (component.modelData && component.modelData->model)
+		{
+			if (auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(component.entityID))
+			{
+				animatorComponent->animator = Animator(component.modelData->model.get());
+
+				auto it = component.modelData->animations.find(animatorComponent->currentAnimationType);
+				if (it != component.modelData->animations.end())
+					animatorComponent->animator.PlayAnimation(&it->second);
+			}
+		}
+
+		component.isDirty = false;
+	}
+}
+
+void Systems::UpdateAnimators(EntityManager& entityManager, float deltaTime)
+{
+	auto& animatorComponents = entityManager.GetAllComponents<AnimatorComponent>();
+
+	for (auto& component : animatorComponents)
+		component.animator.UpdateAnimation(deltaTime);
+}
+
 void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 {
 	auto& scriptComponents = entityManager.GetAllComponents<ScriptComponent>();

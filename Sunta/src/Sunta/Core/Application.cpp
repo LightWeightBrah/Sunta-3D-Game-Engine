@@ -98,6 +98,8 @@ namespace Sunta
 		TransformComponent::RegisterToInspector();
 		ScriptComponent::RegisterToInspector();
 		MeshComponent::RegisterToInspector();
+		ModelComponent::RegisterToInspector();
+		AnimatorComponent::RegisterToInspector();
 		DirectionalLightComponent::RegisterToInspector();
 		PointLightComponent::RegisterToInspector();
 		SpotLightComponent::RegisterToInspector();

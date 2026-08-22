@@ -23,6 +23,7 @@ enum class AssetType
 {
 	None,
 	Mesh,
+	Model,
 	Texture,
 	Material,
 	Shader

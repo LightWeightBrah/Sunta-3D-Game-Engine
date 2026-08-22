@@ -18,6 +18,7 @@ void ResourceLoader::Init(RendererDevice& rendererDevice)
 	LoadTextures(rendererDevice);
 	LoadMaterials(rendererDevice);
 	LoadMeshes(rendererDevice);
+	LoadModels(rendererDevice);
 	LoadIcons(rendererDevice);
 	LoadUIAssets(rendererDevice);
 }
@@ -93,6 +94,11 @@ void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
 	ResourceManager::LoadMesh(Meshes::Sphere,   [&]() { return Primitives::CreateSphere(rendererDevice); });
 	ResourceManager::LoadMesh(Meshes::Capsule,  [&]() { return Primitives::CreateCapsule(rendererDevice); });
 	ResourceManager::LoadMesh(Meshes::Cone,     [&]() { return Primitives::CreateCone(rendererDevice); });
+}
+
+void ResourceLoader::LoadModels(RendererDevice& rendererDevice)
+{
+	ResourceManager::LoadModel("Solaire Of Astora", "@engine/Models/Solaire/Solaire All Animations.fbx");
 }
 
 void ResourceLoader::LoadIcons(RendererDevice& rendererDevice)

@@ -11,9 +11,9 @@ namespace Sunta
 	    Assimp::Importer importer;
 	    const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	
-	    if (!scene || !scene->mAnimations) 
+	    if (!scene || !scene->mAnimations || index >= scene->mNumAnimations) 
 	    {
-			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animations in {}", animationPath);
+			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animation at index '{0}' in '{1}'", index, animationPath);
 	        return;
 	    }
 	
@@ -23,6 +23,8 @@ namespace Sunta
 	
 	    CopyHierarchyToCustomNodeData(rootNode, scene->mRootNode);
 	    SetupBones(anim);
+
+		isValid = true;
 	}
 	
 	void Animation::CopyHierarchyToCustomNodeData(AssimpNodeData& dest, const aiNode* src)

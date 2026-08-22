@@ -13,6 +13,7 @@ class EntityFactory
 public:
 	static unsigned int CreateEmpty           (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Empty Entity");
 									          
+	static unsigned int CreateModel           (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Model",			 const std::string&		   modelName	  = "");
 	static unsigned int CreateCube            (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cube",              std::shared_ptr<Material> customMaterial = nullptr);
 	static unsigned int CreatePyramid         (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Pyramid",           std::shared_ptr<Material> customMaterial = nullptr);
 	static unsigned int CreateCone            (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cone",              std::shared_ptr<Material> customMaterial = nullptr);

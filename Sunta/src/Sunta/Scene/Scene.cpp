@@ -86,6 +86,8 @@ void Scene::Update()
 {
 	Systems::UpdateTransform(entityManager);
 	Systems::SyncMeshComponents(entityManager);
+	Systems::SyncModelComponents(entityManager);
+	Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
 	Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
 }
 	
@@ -99,96 +101,100 @@ void Scene::Render(Renderer& renderer)
 
 	unsigned int totalEntites = entityManager.GetEntityCount();
 
+	struct MeshRenderItem
+	{
+		Mesh* mesh;
+		Material* material;
+
+		glm::mat4 matrix;
+	};
+
+	struct ModelRenderItem
+	{
+		Model* model;
+		const Animator* animator;
+
+		glm::mat4 matrix;
+	};
+
+	std::vector<MeshRenderItem>  litQueue;
+	std::vector<MeshRenderItem>  unlitQueue;
+	std::vector<MeshRenderItem>  lightSourceQueue;
+	std::vector<ModelRenderItem> modelQueue;
+
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
-		auto* lightTransform = entityManager.GetComponent<TransformComponent>(i);
+		auto* transformComponent        = entityManager.GetComponent<TransformComponent>(i);
+		auto* matrixComponent           = entityManager.GetComponent<WorldMatrixComponent>(i);
 
-		if (auto* directionalLightComponent = entityManager.GetComponent<DirectionalLightComponent>(i))
+		auto* directionalLightComponent = entityManager.GetComponent<DirectionalLightComponent>(i);
+		auto* pointLightComponent       = entityManager.GetComponent<PointLightComponent>(i);
+		auto* spotLightComponent        = entityManager.GetComponent<SpotLightComponent>(i);
+
+		if (directionalLightComponent && transformComponent)
 		{
-			if (!lightTransform)
-				continue;
-
 			DirectionalLightData data;
 
-			data.direction = Sunta::Math::DegreesToDirection(lightTransform->rotation);
-			data.color	   = directionalLightComponent->color;
+			data.direction   = Sunta::Math::DegreesToDirection(transformComponent->rotation);
+			data.color       = directionalLightComponent->color;
 
 			sceneData.directionalLights.push_back(data);
 		}
 
-		if (auto* pointlightComponent = entityManager.GetComponent<PointLightComponent>(i))
+		if (pointLightComponent && transformComponent)
 		{
-			if (!lightTransform)
-				continue;
-
 			PointLightData data;
 
-			data.position	 = lightTransform->position;
+			data.position	 = transformComponent->position;
 
-			data.color		 = pointlightComponent->color;
-			data.attenuation = pointlightComponent->attenuation;
+			data.color		 = pointLightComponent->color;
+			data.attenuation = pointLightComponent->attenuation;
 
 			sceneData.pointLights.push_back(data);
 		}
 
-		if (auto* spotlightComponent = entityManager.GetComponent<SpotLightComponent>(i))
+		if (spotLightComponent && transformComponent)
 		{
-			if (!lightTransform)
-				continue;
-
 			SpotlightData data;
 
-			data.position		     = lightTransform->position;
-			data.spotlightDirection	 = Sunta::Math::DegreesToDirection(lightTransform->rotation);
+			data.position		     = transformComponent->position;
+			data.spotlightDirection	 = Sunta::Math::DegreesToDirection(transformComponent->rotation);
 
-			data.innercutOffAngle	 = spotlightComponent->innerCutOffAngle;
-			data.outerCutOffAngle	 = spotlightComponent->outerCutOffAngle;
+			data.innercutOffAngle	 = spotLightComponent->innerCutOffAngle;
+			data.outerCutOffAngle	 = spotLightComponent->outerCutOffAngle;
 
-			data.color               = spotlightComponent->color;
-			data.attenuation         = spotlightComponent->attenuation;
+			data.color               = spotLightComponent->color;
+			data.attenuation         = spotLightComponent->attenuation;
 			
 			sceneData.spotlights.push_back(data);
 		}
-	}
 
-	struct RenderItem 
-	{ 
-		Mesh* mesh; 
-		Material* material; 
-		glm::mat4 matrix; 
-	};
-
-	std::vector<RenderItem> litQueue;
-	std::vector<RenderItem> unlitQueue;
-	std::vector<RenderItem> lightSourceQueue;
-
-	for (unsigned int i = 0; i < totalEntites; i++)
-	{
-		auto* meshComponent = entityManager.GetComponent<MeshComponent>(i);
-		auto* matrixComponent = entityManager.GetComponent<WorldMatrixComponent>(i);
-
-		if (!meshComponent || !matrixComponent || !meshComponent->mesh || !meshComponent->material)
-			continue;
-
-		if (!meshComponent->isVisible)
-			continue;
-
-		bool isLightSource = entityManager.GetComponent<DirectionalLightComponent>(i) ||
-							 entityManager.GetComponent<PointLightComponent>(i)       ||
-							 entityManager.GetComponent<SpotLightComponent>(i);
-
-		RenderItem item = { meshComponent->mesh.get(), meshComponent->material.get(), matrixComponent->matrix };
-
-		if (isLightSource)
+		if (auto* meshComponent = entityManager.GetComponent<MeshComponent>(i))
 		{
-			lightSourceQueue.push_back(item);
+			if (matrixComponent && meshComponent->isVisible && meshComponent->mesh && meshComponent->material)
+			{
+				bool isLightSource = directionalLightComponent || pointLightComponent || spotLightComponent;
+
+				MeshRenderItem item = { meshComponent->mesh.get(), meshComponent->material.get(), matrixComponent->matrix };
+
+				if (isLightSource)
+					lightSourceQueue.push_back(item);
+				else if(item.material->GetShader()->HasFeature(ShaderFeature::Lighting))
+					litQueue.push_back(item);
+				else
+					unlitQueue.push_back(item);
+			}
 		}
-		else
+
+		if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(i))
 		{
-			if (item.material->GetShader()->HasFeature(ShaderFeature::Lighting))
-				litQueue.push_back(item);
-			else
-				unlitQueue.push_back(item);
+			if (matrixComponent && modelComponent->isVisible && modelComponent->modelData && modelComponent->modelData->model)
+			{
+				auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(i);
+				const Animator* animator = animatorComponent ? &animatorComponent->animator : nullptr;
+
+				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix });
+			}
 		}
 
 	}
@@ -202,31 +208,14 @@ void Scene::Render(Renderer& renderer)
 	for (const auto& item : unlitQueue)
 		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
 
+	for (const auto& item : modelQueue)
+		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator);
+
 }
 	
 void Scene::Clear()
 {
 	entityManager.Clear();
 }
-
-//void Scene::AddEntity(std::unique_ptr<Entity> entity)
-//{
-//	
-//	if (auto* light = dynamic_cast<LightSource*>(entity.get()))
-//		sceneLights.push_back(light);
-//
-//	sceneEntities.push_back(std::move(entity));
-//
-//}
-
-//std::vector<Inspectable*> Scene::GetInspectables()
-//{
-//	std::vector<Inspectable*> inspectables;
-//		
-//	for (auto& entity : sceneEntities)
-//		inspectables.push_back(entity.get());
-//
-//	return inspectables;
-//}
 
 }

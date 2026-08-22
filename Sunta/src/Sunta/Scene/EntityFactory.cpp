@@ -41,6 +41,21 @@ unsigned int EntityFactory::CreateEmpty(Scene& scene, const glm::vec3& position,
 	return entity;
 }
 
+unsigned int EntityFactory::CreateModel(Scene& scene, const glm::vec3& position, const std::string& name, const std::string& modelName)
+{
+	auto& entityManager = scene.GetEntityManager();
+	unsigned int entity = CreateEmpty(scene, position, name);
+
+	auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity, modelName);
+	modelComponent.entityID = entity;
+
+	auto modelData = ResourceManager::GetModelData(modelName);
+	if (modelData && modelData->model && modelData->model->HasAnimations())
+		entityManager.AddComponent<AnimatorComponent>(entity);
+
+	return entity;
+}
+
 unsigned int EntityFactory::CreateCube(Scene& scene, const glm::vec3& position, const std::string& name, std::shared_ptr<Material> customMaterial)
 {
 	using namespace Sunta::EngineAssets;

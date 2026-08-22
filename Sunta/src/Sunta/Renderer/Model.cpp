@@ -11,6 +11,7 @@
 #include "Core/ResourceManager.h"
 #include "Material.h"
 #include "RendererDevice.h"
+#include "Core/EngineAssets.h"
 
 namespace Sunta
 {
@@ -83,7 +84,7 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 		material->Get(AI_MATKEY_NAME, materialName);
 		std::string materialKey = this->directory + ":" + materialName.C_Str();
 
-		auto modelShader = ResourceManager::GetShaderData("Lit");
+		auto modelShader = ResourceManager::GetShaderData(Sunta::EngineAssets::Shaders::Lit);
 
 		meshMaterial = ResourceManager::LoadOrGetMaterial(materialKey, modelShader);
 

@@ -16,6 +16,7 @@ private:
 	static void LoadTextures(RendererDevice& rendererDevice);
 	static void LoadMaterials(RendererDevice& rendererDevice);
 	static void LoadMeshes(RendererDevice& rendererDevice);
+	static void LoadModels(RendererDevice& rendererDevice);
 	static void LoadIcons(RendererDevice& rendererDevice);
 	static void LoadUIAssets(RendererDevice& rendererDevice);
 
