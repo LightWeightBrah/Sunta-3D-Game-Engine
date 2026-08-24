@@ -37,6 +37,12 @@ namespace Sunta::EngineAssets
 		constexpr const char* Capsule  = "capsule";
 	}
 
+	namespace Models
+	{
+		constexpr const char* Solaire = "solaire";
+		constexpr const char* Backpack = "backpack";
+	}
+
 	namespace Materials
 	{
 		constexpr const char* Error     = "error_material";

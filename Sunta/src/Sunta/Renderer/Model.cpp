@@ -1,5 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 
 #include "Model.h"
@@ -26,9 +28,10 @@ void Model::LoadModel(std::string path, bool flipUV)
 {
 	SUNTA_ENGINE_LOG_INFO("Loading model: {}", path);
 	
-	unsigned int flags = aiProcess_Triangulate |
-		aiProcess_LimitBoneWeights |
-		aiProcess_PopulateArmatureData;
+	unsigned int flags = aiProcess_Triangulate 
+		| aiProcess_LimitBoneWeights 
+		| aiProcess_PopulateArmatureData
+		| aiProcess_GlobalScale;
 	
 	if (flipUV)
 		flags |= aiProcess_FlipUVs;
@@ -45,11 +48,12 @@ void Model::LoadModel(std::string path, bool flipUV)
 	
 	hasAnimations = scene->HasAnimations();
 	globalInverseTransform = glm::inverse(AssimpUtilities::ConvertAssimpMatrixToGLM(scene->mRootNode->mTransformation));
-	
+	// Make suere model isn't super big on scene
+	globalInverseTransform = glm::scale(globalInverseTransform, glm::vec3(0.05f));	
 	ProcessNode(scene->mRootNode);
-	
+
 	SUNTA_ENGINE_LOG_INFO("Model loaded successfully!");
-	
+
 }
 	
 void Model::ProcessNode(aiNode* node) 
@@ -93,9 +97,32 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 			LoadMaterialTextures(material, aiTextureType_DIFFUSE, meshMaterial);
 			LoadMaterialTextures(material, aiTextureType_SPECULAR, meshMaterial);
 
-			float shininess;
-			if (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS)
+			float shininess = 0.0f;
+			bool hasShininess = (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) && shininess > 1.0f;
+
+			if (hasShininess)
+			{
+				//SUNTA_ENGINE_LOG_WARNING("Material '{}' shininess from FBX = {}", materialName.C_Str(), shininess);
 				meshMaterial->SetShininess(shininess);
+			}
+			else
+			{
+				meshMaterial->SetShininess(1024.0f);
+			}
+
+			aiColor3D specColor(0.0f, 0.0f, 0.0f);
+			bool hasSpecColor = (material->Get(AI_MATKEY_COLOR_SPECULAR, specColor) == AI_SUCCESS)
+				&& (specColor.r + specColor.g + specColor.b) > 0.01f;
+
+			if (hasSpecColor)
+			{
+				meshMaterial->SetSpecular(glm::vec3(specColor.r, specColor.g, specColor.b));
+			}
+			else if (meshMaterial->GetSpecularMaps().empty())
+			{
+				// No texture & No Specular color in material => Don't add full white
+				meshMaterial->SetSpecular(glm::vec3(0.15f));
+			}
 		}
 	}
 		

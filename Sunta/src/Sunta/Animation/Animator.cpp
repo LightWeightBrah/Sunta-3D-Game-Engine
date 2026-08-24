@@ -2,13 +2,14 @@
 
 #include "Animator.h"
 #include "Utilities/AssimpUtilities.h"
+#include "Core/Log.h"
 
 namespace Sunta
 {
 	Animator::Animator(Model* model)
 	    : currentModel(model), currentTime(0.0f), currentAnimation(nullptr)
 	{
-	    finalBoneMatrices.assign(100, glm::mat4(1.0f));
+	    finalBoneMatrices.assign(200, glm::mat4(1.0f));
 	}
 	
 	void Animator::PlayAnimation(Animation* animation)
@@ -46,7 +47,7 @@ namespace Sunta
 	    auto& boneInfoMap = currentModel->GetBoneNameToInfo();
 	    if (boneInfoMap.count(nodeName))
 	    {
-	        const auto& info = boneInfoMap.at(nodeName);
+			const auto& info = boneInfoMap.at(nodeName);
 	        finalBoneMatrices[info.id] = currentModel->GetGlobalInverseTransform() * globalTransform * info.offset;
 	    }
 	

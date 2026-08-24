@@ -57,6 +57,7 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 	// Default Material (Lit)
 	auto litShader = ResourceManager::GetShaderData(Shaders::Lit);
 	litShader->AddFeature(ShaderFeature::Lighting);
+	litShader->AddFeature(ShaderFeature::Skinning);
 	auto defaultMaterial = std::make_shared<Material>(litShader);
 	defaultMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
 		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
@@ -98,7 +99,11 @@ void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
 
 void ResourceLoader::LoadModels(RendererDevice& rendererDevice)
 {
-	ResourceManager::LoadModel("Solaire Of Astora", "@engine/Models/Solaire/Solaire All Animations.fbx");
+	using namespace Sunta::EngineAssets;
+
+
+	ResourceManager::LoadModel(Models::Solaire, "@engine/Models/Solaire/Solaire All Animations.fbx");
+	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj");
 }
 
 void ResourceLoader::LoadIcons(RendererDevice& rendererDevice)

@@ -9,7 +9,11 @@ namespace Sunta
 	Animation::Animation(const std::string& animationPath, Model* model, unsigned int index)
 	{
 	    Assimp::Importer importer;
-	    const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
+	    const aiScene* scene = importer.ReadFile(
+			animationPath, 
+			  aiProcess_Triangulate 
+			| aiProcess_PopulateArmatureData
+			| aiProcess_GlobalScale);
 	
 	    if (!scene || !scene->mAnimations || index >= scene->mNumAnimations) 
 	    {

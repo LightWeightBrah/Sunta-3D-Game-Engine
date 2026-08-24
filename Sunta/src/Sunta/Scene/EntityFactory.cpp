@@ -49,7 +49,10 @@ unsigned int EntityFactory::CreateModel(Scene& scene, const glm::vec3& position,
 	auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity, modelName);
 	modelComponent.entityID = entity;
 
-	auto modelData = ResourceManager::GetModelData(modelName);
+	auto modelData = (!modelName.empty() && modelName != ModelComponent::NULL_ASSET_NAME)
+		? ResourceManager::GetModelData(modelName)
+		: nullptr;
+
 	if (modelData && modelData->model && modelData->model->HasAnimations())
 		entityManager.AddComponent<AnimatorComponent>(entity);
 

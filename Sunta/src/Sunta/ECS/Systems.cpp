@@ -76,7 +76,7 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 		if (!component.isDirty)
 			continue;
 
-		component.modelData = (component.modelName != ModelComponent::NULL_ASSET_NAME)
+		component.modelData = (!component.modelName.empty() && component.modelName != ModelComponent::NULL_ASSET_NAME)
 			? ResourceManager::GetModelData(component.modelName)
 			: nullptr;
 

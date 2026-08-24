@@ -285,7 +285,7 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 
 		DrawToolbarButton(Icons::Skeleton, "##CreateModel", "Create Model", [&]()
 			{
-				EntityFactory::CreateModel(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Solaire Of Astora");
+				EntityFactory::CreateModel(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Model");
 			});
 
 		// Draw bottom line of toolbar

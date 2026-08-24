@@ -11,19 +11,17 @@
             1.0,
             1.0
         ],
-        "shininess": 32.0,
+        "shininess": 235.0,
         "specular": [
             1.0,
             1.0,
             1.0
         ],
-        "use_alpha_cutout": true
+        "use_alpha_cutout": false
     },
     "shader": "Lit",
     "textures": {
-        "diffuse_maps": [
-            "C:\\Dev\\Sunta-3D-Game-Engine\\Sunta\\res\\Materials\\chad.png"
-        ],
+        "diffuse_maps": [],
         "specular_maps": []
     }
 }
