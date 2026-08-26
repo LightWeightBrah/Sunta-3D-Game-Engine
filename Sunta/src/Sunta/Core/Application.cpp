@@ -104,6 +104,8 @@ namespace Sunta
 		PointLightComponent::RegisterToInspector();
 		SpotLightComponent::RegisterToInspector();
 
+		window->Show();
+
 		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
 	}
 	

@@ -2,7 +2,7 @@
 
 project(Sunta)
 
-# ========================= ENGINE SOURCES ===============================   
+# ========================= ENGINE SOURCES ===============================    
 
 file(GLOB_RECURSE ENGINE_SOURCES CMAKE_CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 
@@ -13,6 +13,11 @@ list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Platform/.*") # . means any 
 
 file(GLOB_RECURSE OPENGL_SOURCES  "src/Sunta/Platform/OpenGL/*.cpp" "src/Sunta/Platform/OpenGL/*.h")
 list(APPEND ENGINE_SOURCES ${OPENGL_SOURCES})
+
+# ====================== GLFW WINDOWING SOURCES ============================      
+
+file(GLOB_RECURSE GLFW_SOURCES  "src/Sunta/Platform/GLFW/*.cpp" "src/Sunta/Platform/GLFW/*.h")
+list(APPEND ENGINE_SOURCES ${GLFW_SOURCES})
 
 # ========================= PLATFORM DETECTION ===========================  
 
