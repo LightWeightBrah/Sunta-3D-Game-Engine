@@ -10,6 +10,7 @@
 #include "Renderer/RendererAPI.h"
 #include "Core/Assert.h"
 #include "Core/EngineAssets.h"
+#include "Core/VirtualFileSystem.h"
 
 #include <stb/stb_image.h>
 
@@ -195,7 +196,10 @@ void GLFWWindowImplementation::SetWindowIcon()
 	int channels = 0;
 
 	stbi_set_flip_vertically_on_load(false);
-	icon.pixels = stbi_load(EngineAssets::App::EngineLogoPath, &icon.width, &icon.height, &channels, 4);
+
+	std::string resolvedEngineLogoPath = VirtualFileSystem::Resolve(EngineAssets::App::EngineLogoPath);
+
+	icon.pixels = stbi_load(resolvedEngineLogoPath.c_str(), &icon.width, &icon.height, &channels, 4);
 
 	if (icon.pixels)
 	{
