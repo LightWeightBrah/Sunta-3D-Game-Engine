@@ -57,6 +57,10 @@ private:
 	SubMesh ProcessSubMesh(aiMesh* mesh);
 	
 	void LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::shared_ptr<Material>& material);
+	void TryFillMissingTextureByNamingConvention(
+		const std::string& diffuseFilename,
+		const std::string& textureTypeName,
+		std::shared_ptr<Material>& material);
 
 	void ProcessMeshBones		(aiMesh* mesh, std::vector<SkinnedVertex>& vertices);
 	void ProcessMeshSingleBone	(aiMesh* mesh, std::vector<SkinnedVertex>& vertices, int boneIndex);

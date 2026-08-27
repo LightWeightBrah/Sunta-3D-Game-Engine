@@ -9,7 +9,7 @@ file(GLOB_RECURSE ENGINE_SOURCES CMAKE_CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 #								   REGEX "Regular Expressions"
 list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Platform/.*") # . means any sign (letter, number, / etc.); * means repeat previous sign n times
 
-# ====================== RENDERER API SOURCES ============================      
+# ====================== RENDERER API SOURCES ============================       
 
 file(GLOB_RECURSE OPENGL_SOURCES  "src/Sunta/Platform/OpenGL/*.cpp" "src/Sunta/Platform/OpenGL/*.h")
 list(APPEND ENGINE_SOURCES ${OPENGL_SOURCES})

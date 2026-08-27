@@ -89,7 +89,7 @@ namespace Sunta
 		
 		Renderer::Init();
 		ResourceManager::Init(Renderer::GetDevice());
-		ResourceLoader::Init(Renderer::GetDevice());
+		ResourceLoader::Init();
 
 		scene = std::make_unique<Scene>();
 		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());

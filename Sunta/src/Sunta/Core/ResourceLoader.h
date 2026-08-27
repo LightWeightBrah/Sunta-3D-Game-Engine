@@ -9,16 +9,17 @@ class RendererDevice;
 class ResourceLoader
 {
 public:
-	static void Init(RendererDevice& rendererDevice);
+	static void Init();
 
 private:
-	static void LoadShaders(RendererDevice& rendererDevice);
-	static void LoadTextures(RendererDevice& rendererDevice);
-	static void LoadMaterials(RendererDevice& rendererDevice);
-	static void LoadMeshes(RendererDevice& rendererDevice);
-	static void LoadModels(RendererDevice& rendererDevice);
-	static void LoadIcons(RendererDevice& rendererDevice);
-	static void LoadUIAssets(RendererDevice& rendererDevice);
+	static void LoadShaders();
+	static void LoadTextures();
+	static void LoadMaterials();
+	static void LoadMeshes();
+	static void LoadTexturesNamingConvention();
+	static void LoadModels();
+	static void LoadIcons();
+	static void LoadUIAssets();
 
 	static void LoadMaterialsFromDirectory(const std::filesystem::path& directoryPath);
 };

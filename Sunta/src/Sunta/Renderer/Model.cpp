@@ -14,6 +14,8 @@
 #include "Material.h"
 #include "RendererDevice.h"
 #include "Core/EngineAssets.h"
+#include <optional>
+#include "Utilities/TextureNamingConventionsUtilities.h"
 
 namespace Sunta
 {
@@ -97,6 +99,8 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 			LoadMaterialTextures(material, aiTextureType_DIFFUSE, meshMaterial);
 			LoadMaterialTextures(material, aiTextureType_SPECULAR, meshMaterial);
 
+			meshMaterial->SetAlphaCutout(true);
+
 			float shininess = 0.0f;
 			bool hasShininess = (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) && shininess > 1.0f;
 
@@ -107,12 +111,14 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 			}
 			else
 			{
-				meshMaterial->SetShininess(1024.0f);
+				meshMaterial->SetShininess(64.0f);
 			}
 
 			aiColor3D specColor(0.0f, 0.0f, 0.0f);
 			bool hasSpecColor = (material->Get(AI_MATKEY_COLOR_SPECULAR, specColor) == AI_SUCCESS)
 				&& (specColor.r + specColor.g + specColor.b) > 0.01f;
+
+			constexpr float defaultSpecularIntensity = 0.15f;
 
 			if (hasSpecColor)
 			{
@@ -121,7 +127,7 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 			else if (meshMaterial->GetSpecularMaps().empty())
 			{
 				// No texture & No Specular color in material => Don't add full white
-				meshMaterial->SetSpecular(glm::vec3(0.15f));
+				meshMaterial->SetSpecular(glm::vec3(defaultSpecularIntensity));
 			}
 		}
 	}
@@ -161,13 +167,52 @@ void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::share
 		auto texture = ResourceManager::LoadOrGetTexture(textureFullPath);
 
 		if (type == aiTextureType_DIFFUSE)
+		{
 			material->AddDiffuseMap(texture);
+			TryFillMissingTextureByNamingConvention(filename, "specular", material);
+		}
 		else if (type == aiTextureType_SPECULAR)
+		{
 			material->AddSpecularMap(texture);
+		}
 
 	}
 }
 	
+void Model::TryFillMissingTextureByNamingConvention(const std::string& diffuseFilename, const std::string& textureTypeName, std::shared_ptr<Material>& material)
+{
+	if (textureTypeName == "specular" && !material->GetSpecularMaps().empty())
+		return;
+
+	std::vector<std::string> candidates =
+		TextureNamingConventionsUtilities::TryResolveCandidates(diffuseFilename, textureTypeName);
+
+	for (const auto& candidateFilename : candidates)
+	{
+		std::string fullPath = directory + "/" + candidateFilename;
+
+		if(!std::filesystem::exists(fullPath))
+			continue;
+
+		auto texture = ResourceManager::LoadOrGetTexture(fullPath);
+
+		if (textureTypeName == "specular")
+			material->AddSpecularMap(texture);
+
+		SUNTA_ENGINE_LOG_INFO("Model '{0}': added '{1}' texture by naming convention -> '{2}'",
+			directory, textureTypeName, fullPath);
+
+		return;
+	}
+
+	if (!candidates.empty())
+	{
+		SUNTA_ENGINE_LOG_WARNING("Model '{0}': Tried {1} Texture naming-convention guess(es) for '{2}' (e.g. '{3}') but none of the files exist",
+			directory, candidates.size(), textureTypeName, directory + "/" + candidates.front());
+	}
+	
+}
+
 void Model::ProcessMeshBones(aiMesh* mesh, std::vector<SkinnedVertex>& vertices)
 {
 	for (int i = 0; i < mesh->mNumBones; i++)

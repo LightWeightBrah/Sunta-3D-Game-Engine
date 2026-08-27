@@ -8,22 +8,25 @@
 #include "EngineAssets.h"
 #include "Renderer/Shader.h"
 #include "VirtualFileSystem.h"
+#include "Utilities/TextureNamingConventionsUtilities.h"
+#include "Renderer/Renderer.h"
 
 namespace Sunta
 {
 
-void ResourceLoader::Init(RendererDevice& rendererDevice)
+void ResourceLoader::Init()
 {
-	LoadShaders(rendererDevice);
-	LoadTextures(rendererDevice);
-	LoadMaterials(rendererDevice);
-	LoadMeshes(rendererDevice);
-	LoadModels(rendererDevice);
-	LoadIcons(rendererDevice);
-	LoadUIAssets(rendererDevice);
+	LoadShaders();
+	LoadTextures();
+	LoadMaterials();
+	LoadMeshes();
+	LoadTexturesNamingConvention();
+	LoadModels();
+	LoadIcons();
+	LoadUIAssets();
 }
 
-void ResourceLoader::LoadShaders(RendererDevice& rendererDevice)
+void ResourceLoader::LoadShaders()
 {
 	using namespace Sunta::EngineAssets;
 	ResourceManager::LoadShader(Shaders::Lit,		"@engine/Shaders/Lit.shader");
@@ -31,7 +34,7 @@ void ResourceLoader::LoadShaders(RendererDevice& rendererDevice)
 	ResourceManager::LoadShader(Shaders::Error,		"@engine/Shaders/Error.shader");
 }
 
-void ResourceLoader::LoadTextures(RendererDevice& rendererDevice)
+void ResourceLoader::LoadTextures()
 {
 	using namespace Sunta::EngineAssets;
 
@@ -44,7 +47,7 @@ void ResourceLoader::LoadTextures(RendererDevice& rendererDevice)
 	ResourceManager::LoadTexture(Textures::CubeChad,			"@engine/Textures/chad.png");
 }
 
-void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
+void ResourceLoader::LoadMaterials()
 {
 	using namespace Sunta::EngineAssets;
 
@@ -86,9 +89,11 @@ void ResourceLoader::LoadMaterials(RendererDevice& rendererDevice)
 	LoadMaterialsFromDirectory(VirtualFileSystem::Resolve("@game"));
 }
 
-void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
+void ResourceLoader::LoadMeshes()
 {
 	using namespace Sunta::EngineAssets;
+
+	auto& rendererDevice = Renderer::GetDevice();
 
 	ResourceManager::LoadMesh(Meshes::Cube,     [&]() { return Primitives::CreateCube(rendererDevice); });
 	ResourceManager::LoadMesh(Meshes::Pyramid,  [&]() { return Primitives::CreatePyramide(rendererDevice); });
@@ -97,7 +102,12 @@ void ResourceLoader::LoadMeshes(RendererDevice& rendererDevice)
 	ResourceManager::LoadMesh(Meshes::Cone,     [&]() { return Primitives::CreateCone(rendererDevice); });
 }
 
-void ResourceLoader::LoadModels(RendererDevice& rendererDevice)
+void ResourceLoader::LoadTexturesNamingConvention()
+{
+	TextureNamingConventionsUtilities::LoadFromFile(VirtualFileSystem::Resolve("@engine/Textures/texture_naming.textureconfig"));
+}
+
+void ResourceLoader::LoadModels()
 {
 	using namespace Sunta::EngineAssets;
 
@@ -106,7 +116,7 @@ void ResourceLoader::LoadModels(RendererDevice& rendererDevice)
 	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj");
 }
 
-void ResourceLoader::LoadIcons(RendererDevice& rendererDevice)
+void ResourceLoader::LoadIcons()
 {
 	using namespace Sunta::EngineAssets;
 
@@ -170,7 +180,7 @@ void ResourceLoader::LoadIcons(RendererDevice& rendererDevice)
 	ResourceManager::LoadEditorIcon(Icons::StateMachine,        "@engine/Textures/Icons/state_machine_icon.png");
 }
 
-void ResourceLoader::LoadUIAssets(RendererDevice& rendererDevice)
+void ResourceLoader::LoadUIAssets()
 {
 	using namespace Sunta::EngineAssets;
 
