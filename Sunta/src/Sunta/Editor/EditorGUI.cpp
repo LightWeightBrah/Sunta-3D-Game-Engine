@@ -331,6 +331,9 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 
 	for (unsigned int entityID = 0; entityID < totalEntities; entityID++)
 	{
+		if(!entityManager.IsAlive(entityID))
+			continue;
+
 		std::string label = ("Entity " + std::to_string(entityID));
 
 		if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
@@ -385,9 +388,8 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 
 			if (ImGui::MenuItem("Delete"))
 			{
-				// TODO: add implementation for Destroy Entity in entity Manager
-				//entityManager.DestroyEntity(entityID);
-				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
+				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", entityID);
+				entityManager.DestroyEntity(entityID);
 				SetSelectedEntity(-1);
 
 				ImGui::CloseCurrentPopup();
@@ -429,6 +431,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
 		{
 			SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
+			entityManager.DestroyEntity(static_cast<unsigned int>(selectedEntity));
 			SetSelectedEntity(-1);
 		}
 	}
@@ -1559,6 +1562,21 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entity
 
 	std::string headerID = "###Header_" + componentType->name;
 	bool isOpen = ImGui::CollapsingHeader(headerID.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+	bool isRemovable = (componentType->hash != typeid(TagComponent).hash_code())
+		&& (componentType->hash != typeid(TransformComponent).hash_code());
+
+	if (isRemovable && ImGui::BeginPopupContextItem("ComponentContextMenu"))
+	{
+		if (ImGui::MenuItem("Remove Component"))
+		{
+			storage->Remove(entityID);
+			ImGui::EndPopup();
+			return;
+		}
+
+		ImGui::EndPopup();
+	}
 
 	ImDrawList* drawList = ImGui::GetWindowDrawList();
 
