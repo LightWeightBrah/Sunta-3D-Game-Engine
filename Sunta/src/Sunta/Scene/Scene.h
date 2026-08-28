@@ -23,10 +23,12 @@ public:
 	void Render(Renderer& renderer);
 	void Clear();
 
-	EntityManager& GetEntityManager()		{ return entityManager; }
-
-	const std::string& GetName()			{ return name; }
-	void SetName(const std::string& name)	{ this->name = name; }
+	EntityManager& GetEntityManager()		       { return entityManager; }
+											  
+	const std::string& GetName()             const { return name; }
+	const std::string& GetFilePath()         const { return filePath; }
+	void SetName(const std::string& name)	       { this->name = name; }
+	void SetFilePath(const std::string& path)      { this->filePath = path; }
 
 private:
 	EntityManager		entityManager;
@@ -34,6 +36,7 @@ private:
 
 	unsigned int		resizeEventID;
 	std::string			name = "Untitled_Scene";
+	std::string			filePath;
 };
 
 }

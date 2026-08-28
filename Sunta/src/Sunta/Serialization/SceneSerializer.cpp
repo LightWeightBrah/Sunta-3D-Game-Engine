@@ -23,6 +23,8 @@ namespace SceneKeys
 	constexpr const char* TransformComponent        = "transform";
 	constexpr const char* ScriptComponent           = "script";
 	constexpr const char* MeshComponent             = "mesh";
+	constexpr const char* ModelComponent            = "model";
+	constexpr const char* AnimatorComponent         = "animator";
 	constexpr const char* DirectionalLightComponent = "directional_light";
 	constexpr const char* PointLightComponent	    = "point_light";
 	constexpr const char* SpotLightComponent        = "spot_light";
@@ -35,6 +37,8 @@ namespace SceneKeys
 	constexpr const char* IsVisible                 = "is_visible";
 	constexpr const char* MeshName                  = "mesh_name";
 	constexpr const char* MaterialName              = "material_name";
+	constexpr const char* ModelName                 = "model_name";
+	constexpr const char* CurrentAnimationName      = "current_animation_name";
 												    
 	constexpr const char* Color						= "color";
 	constexpr const char* Attenuation               = "attenuation";
@@ -147,6 +151,23 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 			};
 		}
 
+		if (auto* model = entityManager.GetComponent<ModelComponent>(i))
+		{
+			entityJson[SceneKeys::ModelComponent] =
+			{
+				{ SceneKeys::IsVisible,    model->isVisible     },
+				{ SceneKeys::ModelName,    model->modelName     }
+			};
+		}
+
+		if (auto* animator = entityManager.GetComponent<AnimatorComponent>(i))
+		{
+			entityJson[SceneKeys::AnimatorComponent] =
+			{
+				{ SceneKeys::CurrentAnimationName, animator->currentAnimationName }
+			};
+		}
+
 		if (auto* directionalLight = entityManager.GetComponent<DirectionalLightComponent>(i))
 		{
 			entityJson[SceneKeys::DirectionalLightComponent] = SerializeLightColor(directionalLight->color);
@@ -215,6 +236,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 	inFile.close();
 
 	scene.Clear();
+	scene.SetFilePath(filepath);
 	
 	if (sceneJson.contains(SceneKeys::SceneName))
 	{
@@ -291,6 +313,25 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			meshComponent.meshName     = meshData.value(SceneKeys::MeshName,     MeshComponent::NULL_ASSET_NAME);
 			meshComponent.materialName = meshData.value(SceneKeys::MaterialName, MeshComponent::NULL_ASSET_NAME);
 			meshComponent.isDirty      = true;
+		}
+
+		if (entityJson.contains(SceneKeys::ModelComponent))
+		{
+			const auto& modelData = entityJson[SceneKeys::ModelComponent];
+			auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity);
+
+			modelComponent.entityID  = entity;
+			modelComponent.isVisible = modelData.value(SceneKeys::IsVisible, true);
+			modelComponent.modelName = modelData.value(SceneKeys::ModelName, ModelComponent::NULL_ASSET_NAME);
+			modelComponent.isDirty = true;
+		}
+
+		if (entityJson.contains(SceneKeys::AnimatorComponent))
+		{
+			const auto& animatorData = entityJson[SceneKeys::AnimatorComponent];
+			auto& animatorComponent = entityManager.AddComponent<AnimatorComponent>(entity);
+
+			animatorComponent.currentAnimationName = animatorData.value(SceneKeys::CurrentAnimationName, "");
 		}
 
 		if (entityJson.contains(SceneKeys::DirectionalLightComponent))

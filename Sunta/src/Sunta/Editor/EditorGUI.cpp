@@ -138,6 +138,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			{
 				scene.Clear();
 				scene.SetName("Untitled_Scene");
+				scene.SetFilePath("");
 			}
 
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
@@ -152,8 +153,22 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 			{
-				std::string savePath = VirtualFileSystem::Resolve("@game/Scenes/" + scene.GetName() + ".scene");
-				SceneSerializer::Serialize(savePath, scene);
+				if (scene.GetFilePath().empty())
+				{
+					std::string savePath = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
+					if (!savePath.empty())
+					{
+						std::filesystem::path filePath = std::filesystem::path(filePath).lexically_normal();
+						scene.SetName(filePath.stem().string());
+						scene.SetFilePath(filePath.string());
+						SceneSerializer::Serialize(filePath.string(), scene);
+					}
+				}
+				else
+				{
+					SceneSerializer::Serialize(scene.GetFilePath(), scene);
+				}
+				
 			}
 
 			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
@@ -161,9 +176,10 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 				std::string path = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
 				if (!path.empty())
 				{
-					std::filesystem::path filepath = std::filesystem::path(path).lexically_normal();
-					scene.SetName(filepath.stem().string());
-					SceneSerializer::Serialize(filepath.string(), scene);
+					std::filesystem::path filePath = std::filesystem::path(filePath).lexically_normal();
+					scene.SetName(filePath.stem().string());
+					scene.SetFilePath(filePath.string());
+					SceneSerializer::Serialize(filePath.string(), scene);
 				}
 			}
 
