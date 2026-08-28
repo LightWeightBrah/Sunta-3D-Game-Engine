@@ -18,6 +18,20 @@ struct AssimpNodeData
 	
 class Animation
 {
+
+public:
+	Animation() = default;
+	Animation(const std::string& path, Model* model, unsigned int index = 0);
+	
+	Bone* FindBone(const std::string& name);
+	
+	bool  IsValid()						const { return isValid; }
+	float GetTicksPerSecond()           const { return ticksPerSecond; }
+	float GetDuration()                 const { return duration; }
+	const AssimpNodeData& GetRootNode() const { return rootNode; }
+
+	static std::vector<std::string> GetAnimationsNames(const std::string& path);
+
 private:
 	float   duration       = 0.0f;
 	float   ticksPerSecond = 0.0f;
@@ -29,16 +43,6 @@ private:
 	void CopyHierarchyToCustomNodeData(AssimpNodeData& dest, const aiNode* src);
 	void SetupBones                   (const aiAnimation* animation);
 	
-public:
-	Animation() = default;
-	Animation(const std::string& path, Model* model, unsigned int index = 0);
-	
-	Bone* FindBone(const std::string& name);
-	
-	bool  IsValid()						const { return isValid; }
-	float GetTicksPerSecond()           const { return ticksPerSecond; }
-	float GetDuration()                 const { return duration; }
-	const AssimpNodeData& GetRootNode() const { return rootNode; }
 };
 
 }

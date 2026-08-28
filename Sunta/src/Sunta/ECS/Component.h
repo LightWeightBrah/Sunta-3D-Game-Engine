@@ -231,7 +231,7 @@ struct ModelComponent
 struct AnimatorComponent
 {
 	Animator animator;
-	AnimationType currentAnimationType = AnimationType::IDLE;
+	std::string currentAnimationName;
 
 	static void RegisterToInspector()
 	{

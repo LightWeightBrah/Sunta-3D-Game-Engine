@@ -102,7 +102,7 @@ private:
 	static void DrawToolbar(Scene& scene, float toolbarHeight);
 
 	static void DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager);
-	static void DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* pool);
+	static void DrawSingleComponent(unsigned int entityID, EntityManager& entityManager, const ComponentType* componentType, IInspectableStorage* pool);
 	static bool DrawPropertyWidget(const PropertyDefinition& property, void* propertyData);
 	static std::string GetIconKeyForPath(const std::filesystem::path& path, bool isDirectory);
 

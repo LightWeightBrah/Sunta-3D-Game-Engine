@@ -1491,7 +1491,7 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 	{
 		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(tagHash);
 		if (componentType)
-			DrawSingleComponent(entityID, componentType, tagIterator->second);
+			DrawSingleComponent(entityID, entityManager, componentType, tagIterator->second);
 	}
 
 	// Draw transform component second
@@ -1501,7 +1501,7 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 	{
 		const auto* componentType = InspectorComponentRegistry::GetComponentTypeByHash(transformHash);
 		if (componentType)
-			DrawSingleComponent(entityID, componentType, transformIterator->second);
+			DrawSingleComponent(entityID, entityManager, componentType, transformIterator->second);
 	}
 
 	// Draw rest of the components randomly
@@ -1519,12 +1519,12 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 		if (!componentType)
 			continue;
 
-		DrawSingleComponent(entityID, componentType, storage);
+		DrawSingleComponent(entityID, entityManager, componentType, storage);
 
 	}
 }
 
-void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* componentType, IInspectableStorage* storage)
+void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entityManager, const ComponentType* componentType, IInspectableStorage* storage)
 {
 	auto icon = ResourceManager::GetEditorIcon(componentType->iconKey);
 
@@ -1574,7 +1574,7 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, const ComponentType* 
 
 	if (auto* drawer = ComponentDrawerFactory::GetDrawer(componentType->hash))
 	{
-		drawer->Draw(componentData, entityID);
+		drawer->Draw(componentData, entityID, entityManager);
 		return;
 	}
 

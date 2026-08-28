@@ -10,7 +10,7 @@
 namespace Sunta
 {
 
-void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID)
+void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, EntityManager& entityManager)
 {
 	auto* scriptComponent = static_cast<ScriptComponent*>(componentData);
 

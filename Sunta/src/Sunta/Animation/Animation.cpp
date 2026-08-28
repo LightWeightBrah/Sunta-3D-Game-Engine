@@ -9,8 +9,7 @@ namespace Sunta
 	Animation::Animation(const std::string& animationPath, Model* model, unsigned int index)
 	{
 	    Assimp::Importer importer;
-	    const aiScene* scene = importer.ReadFile(
-			animationPath, 
+	    const aiScene* scene = importer.ReadFile(animationPath, 
 			  aiProcess_Triangulate 
 			| aiProcess_PopulateArmatureData
 			| aiProcess_GlobalScale);
@@ -62,4 +61,32 @@ namespace Sunta
 	
 	    return &bones.at(name);
 	}
+
+	std::vector<std::string> Animation::GetAnimationsNames(const std::string& path)
+	{
+		std::vector<std::string> names;
+
+		Assimp::Importer importer;
+		const aiScene* scene = importer.ReadFile(path,
+			  aiProcess_Triangulate
+			| aiProcess_PopulateArmatureData
+			| aiProcess_GlobalScale);
+
+		if (!scene || !scene->HasAnimations())
+			return names;
+
+		names.reserve(scene->mNumAnimations);
+
+		for (unsigned int i = 0; i < scene->mNumAnimations; i++)
+		{
+			std::string name = scene->mAnimations[i]->mName.C_Str();
+			if (name.empty())
+				name = "Animation_" + std::to_string(i);
+
+			names.push_back(name);
+		}
+
+		return names;
+	}
+
 }

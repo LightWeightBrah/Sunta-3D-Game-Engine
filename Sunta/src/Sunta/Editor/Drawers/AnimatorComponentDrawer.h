@@ -4,7 +4,7 @@
 namespace Sunta
 {
 
-class ScriptComponentDrawer : public IComponentDrawer
+class AnimatorComponentDrawer : public IComponentDrawer
 {
 public:
 	void Draw(void* componentData, unsigned int entityID, EntityManager& entityManager) override;

@@ -17,18 +17,11 @@ class Texture;
 class Shader;
 class Material;
 class Mesh;
-
-enum class AnimationType
-{
-	IDLE,
-	GESTURE,
-	RUNNING
-};
 	
 struct ModelData
 {
 	std::shared_ptr<Model>             model;
-	std::map<AnimationType, Animation> animations;
+	std::map<std::string, Animation> animations;
 };
 	
 class ResourceManager

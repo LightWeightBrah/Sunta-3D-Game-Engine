@@ -86,9 +86,23 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 			{
 				animatorComponent->animator = Animator(component.modelData->model.get());
 
-				auto it = component.modelData->animations.find(animatorComponent->currentAnimationType);
-				if (it != component.modelData->animations.end())
-					animatorComponent->animator.PlayAnimation(&it->second);
+				auto& animations = component.modelData->animations;
+
+				if (!animations.empty())
+				{
+					bool hasValidSelection = !animatorComponent->currentAnimationName.empty()
+						&& animations.find(animatorComponent->currentAnimationName) != animations.end();
+
+					if (!hasValidSelection)
+						animatorComponent->currentAnimationName = animations.begin()->first;
+
+					animatorComponent->animator.PlayAnimation(&animations.at(animatorComponent->currentAnimationName));
+				}
+				else
+				{
+					animatorComponent->currentAnimationName.clear();
+				}
+			
 			}
 		}
 

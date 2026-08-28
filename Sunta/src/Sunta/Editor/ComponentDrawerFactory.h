@@ -5,6 +5,7 @@
 #include "ECS/IComponentDrawer.h"
 #include "ECS/Component.h"
 #include "Drawers/ScriptComponentDrawer.h"
+#include "Drawers/AnimatorComponentDrawer.h"
 
 namespace Sunta
 {
@@ -15,6 +16,7 @@ public:
 	static void Init()
 	{
 		RegisterDrawer<ScriptComponent, ScriptComponentDrawer>();
+		RegisterDrawer<AnimatorComponent, AnimatorComponentDrawer>();
 	}
 
 	template<typename T, typename DrawerType>
