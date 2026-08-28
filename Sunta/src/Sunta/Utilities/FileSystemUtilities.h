@@ -23,7 +23,7 @@ inline bool IsModelExtension(std::string extension)
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 	static const std::unordered_set<std::string> possibleExtensions =
 	{
-		".obj", ".fbx", ".gltf", ".glb"
+		".obj", ".fbx", ".gltf", ".glb", ".dae"
 	};
 
 	return possibleExtensions.find(extension) != possibleExtensions.end();

@@ -626,6 +626,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Model",
 				[&]() { return entityManager.GetComponent<ModelComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<ModelComponent>(inspectedEntity); }
+			},
+
+			{
+				"Animator",
+				[&]() { return entityManager.GetComponent<AnimatorComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<AnimatorComponent>(inspectedEntity); }
 			}
 		};
 
@@ -1447,7 +1453,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 		static const std::unordered_map<std::string, std::string> fileIcons =
 		{
 			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
-			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},
+			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},  {".dae", "3d_model_file"},
 			{".shader",		"shader_file"},
 			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
 			{".material",	"image_file"},
@@ -1543,8 +1549,21 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 	}
 }
 
+namespace // Makes sure this struct name is only within this single file
+{
+
+struct ImGuiIDScope
+{
+	ImGuiIDScope(const char* id) { ImGui::PushID(id); }
+	~ImGuiIDScope()              { ImGui::PopID(); }
+};
+
+}
+
 void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entityManager, const ComponentType* componentType, IInspectableStorage* storage)
 {
+	ImGuiIDScope idScope(componentType->name.c_str());
+
 	auto icon = ResourceManager::GetEditorIcon(componentType->iconKey);
 
 	ImVec2 cursorPosition = ImGui::GetCursorScreenPos();
