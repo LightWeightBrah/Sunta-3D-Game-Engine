@@ -58,6 +58,13 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& file
 	data->model = std::make_shared<Model>(*rendererDevice, resolvedPath, false, importScale);
 
 	const aiScene* scene = data->model->GetScene();
+	if (!scene)
+	{
+		SUNTA_ENGINE_LOG_ERROR("ResourceManager::LoadModel: Failed to Load model '{0}' from: '{1}'! See Assimp error Above!", name, resolvedPath);
+		return;
+
+	}
+
 	auto animationNames = Animation::GetAnimationsNames(scene);
 
 	for (unsigned int i = 0; i < animationNames.size(); i++)
