@@ -34,6 +34,7 @@ public:
 	
 	inline const bool HasAnimations()				  const { return hasAnimations; }
 	inline const std::vector<SubMesh>& GetSubMeshes() const { return subMeshes;		}
+	inline const aiScene* GetScene()				  const { return scene;         }
 	
 	inline const std::map<std::string, BoneInfo> GetBoneNameToInfo() const { return boneNameToInfo;			}
 	inline const glm::mat4 GetGlobalInverseTransform()				 const { return globalInverseTransform; }
@@ -41,7 +42,9 @@ public:
 private:
 	RendererDevice*					rendererDevice;
 
+	Assimp::Importer				importer;
 	const aiScene*					scene;
+
 	std::string						directory;
 	
 	std::vector<SubMesh>			subMeshes;

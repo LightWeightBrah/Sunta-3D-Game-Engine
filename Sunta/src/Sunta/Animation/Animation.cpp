@@ -4,19 +4,17 @@
 #include "Utilities/AssimpUtilities.h"
 #include "Core/Log.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 namespace Sunta
 {
-	Animation::Animation(const std::string& animationPath, Model* model, unsigned int index)
+	Animation::Animation(const aiScene* scene, unsigned int index)
 	{
-	    Assimp::Importer importer;
-	    const aiScene* scene = importer.ReadFile(animationPath, 
-			  aiProcess_Triangulate 
-			| aiProcess_PopulateArmatureData
-			| aiProcess_GlobalScale);
-	
 	    if (!scene || !scene->mAnimations || index >= scene->mNumAnimations) 
 	    {
-			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animation at index '{0}' in '{1}'", index, animationPath);
+			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animation at index '{0}'", index);
 	        return;
 	    }
 	
@@ -62,15 +60,9 @@ namespace Sunta
 	    return &bones.at(name);
 	}
 
-	std::vector<std::string> Animation::GetAnimationsNames(const std::string& path)
+	std::vector<std::string> Animation::GetAnimationsNames(const aiScene* scene)
 	{
 		std::vector<std::string> names;
-
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path,
-			  aiProcess_Triangulate
-			| aiProcess_PopulateArmatureData
-			| aiProcess_GlobalScale);
 
 		if (!scene || !scene->HasAnimations())
 			return names;

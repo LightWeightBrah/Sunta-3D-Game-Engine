@@ -21,7 +21,7 @@ class Animation
 
 public:
 	Animation() = default;
-	Animation(const std::string& path, Model* model, unsigned int index = 0);
+	Animation(const aiScene* scene, unsigned int index = 0);
 	
 	Bone* FindBone(const std::string& name);
 	
@@ -30,7 +30,7 @@ public:
 	float GetDuration()                 const { return duration; }
 	const AssimpNodeData& GetRootNode() const { return rootNode; }
 
-	static std::vector<std::string> GetAnimationsNames(const std::string& path);
+	static std::vector<std::string> GetAnimationsNames(const aiScene* scene);
 
 private:
 	float   duration       = 0.0f;

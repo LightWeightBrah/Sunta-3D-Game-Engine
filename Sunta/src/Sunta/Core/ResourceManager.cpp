@@ -57,11 +57,12 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& file
 	auto data = std::make_shared<ModelData>();
 	data->model = std::make_shared<Model>(*rendererDevice, resolvedPath, false);
 
-	auto animationNames = Animation::GetAnimationsNames(resolvedPath);
+	const aiScene* scene = data->model->GetScene();
+	auto animationNames = Animation::GetAnimationsNames(scene);
 
 	for (unsigned int i = 0; i < animationNames.size(); i++)
 	{
-		Animation animation(resolvedPath, data->model.get(), i);
+		Animation animation(scene, i);
 			if (animation.IsValid())
 				data->animations[animationNames[i]] = animation;
 	}
