@@ -30,7 +30,7 @@ public:
 	static void Init(RendererDevice& device) { rendererDevice = &device; }
 
 	static void LoadEditorIcon  (const std::string& name, const std::string& filepath);
-	static void LoadModel       (const std::string& name, const std::string& filepath);
+	static void LoadModel       (const std::string& name, const std::string& filepath, float importScale = 1.0f);
 	static void LoadMesh		(const std::string& name, std::function<std::shared_ptr<Mesh>()> primitiveFactory);
 	static void LoadMaterial    (const std::string& name, std::shared_ptr<Material> material);
 	static void LoadTexture     (const std::string& name, const std::string& filepath);

@@ -9,13 +9,13 @@ namespace Sunta
 	class Animator 
 	{
 	private:
-	    float                  currentTime;
-	    float                  deltaTime;
+	    float                  currentTime = 0.0f;
+	    float                  deltaTime   = 0.0f;
 	
-	    Animation*             currentAnimation;
-	    Model*                 currentModel;
+	    Animation*             currentAnimation = nullptr;
+	    Model*                 currentModel     = nullptr;
 	
-	    std::vector<glm::mat4> finalBoneMatrices;
+		std::vector<glm::mat4> finalBoneMatrices = std::vector<glm::mat4>(200, glm::mat4(1.0f));
 	
 	public:
 	    Animator() = default;

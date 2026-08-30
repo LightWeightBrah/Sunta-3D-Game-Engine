@@ -47,7 +47,6 @@ unsigned int EntityFactory::CreateModel(Scene& scene, const glm::vec3& position,
 	unsigned int entity = CreateEmpty(scene, position, name);
 
 	auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity, modelName);
-	modelComponent.entityID = entity;
 
 	auto modelData = (!modelName.empty() && modelName != ModelComponent::NULL_ASSET_NAME)
 		? ResourceManager::GetModelData(modelName)

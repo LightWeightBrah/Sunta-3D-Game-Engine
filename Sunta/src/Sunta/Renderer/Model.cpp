@@ -20,13 +20,14 @@
 namespace Sunta
 {
 
-Model::Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV)
+Model::Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV, float importScale)
 	: rendererDevice(&rendererDevice)
+	, importScale(importScale)
 {
 	LoadModel(path, flipUV);
 }
 	
-void Model::LoadModel(std::string path, bool flipUV) 
+void Model::LoadModel(std::string path, bool flipUV)
 {
 	SUNTA_ENGINE_LOG_INFO("Loading model: {}", path);
 	
@@ -50,8 +51,14 @@ void Model::LoadModel(std::string path, bool flipUV)
 	hasAnimations = scene->HasAnimations();
 	globalInverseTransform = glm::inverse(AssimpUtilities::ConvertAssimpMatrixToGLM(scene->mRootNode->mTransformation));
 	// Make suere model isn't super big on scene
-	globalInverseTransform = glm::scale(globalInverseTransform, glm::vec3(0.05f));	
+	globalInverseTransform = glm::scale(globalInverseTransform, glm::vec3(importScale));	
 	ProcessNode(scene->mRootNode);
+
+	if (HasBones())
+	{
+		defaultBoneMatrices.assign(200, glm::mat4(1.0f));
+		CalculateDefaultBoneTransform(scene->mRootNode, glm::mat4(1.0f));
+	}
 
 	SUNTA_ENGINE_LOG_INFO("Model loaded successfully!");
 
@@ -274,5 +281,21 @@ unsigned int Model::GetBoneId(aiBone* bone)
 	
 	return id;
 }
-	
+
+void Model::CalculateDefaultBoneTransform(aiNode* node, glm::mat4 parentTransform)
+{
+	glm::mat4 nodeTransform = AssimpUtilities::ConvertAssimpMatrixToGLM(node->mTransformation);
+	glm::mat4 globalTransform = parentTransform * nodeTransform;
+
+	std::string nodeName = node->mName.C_Str();
+	auto it = boneNameToInfo.find(nodeName);
+	if (it != boneNameToInfo.end())
+		defaultBoneMatrices[it->second.id] = globalInverseTransform * globalTransform * it->second.offset;
+
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
+		CalculateDefaultBoneTransform(node->mChildren[i], globalTransform);
+
+}
+
+
 }

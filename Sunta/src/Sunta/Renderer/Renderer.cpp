@@ -62,8 +62,6 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	
 void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const
 {
-	bool hasAnimations = (animator && model.HasAnimations());
-
 	for (const auto& subMesh : model.GetSubMeshes())
 	{
 		if (!subMesh.mesh || !subMesh.material)
@@ -76,13 +74,19 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 		SetBaseLighting(*shader, sceneData);
 			
 		bool supportsSkinning = shader->HasFeature(ShaderFeature::Skinning);
-		bool hasAnimations = supportsSkinning && animator && model.HasAnimations();
+		bool isSkinnedMesh = supportsSkinning && model.HasBones();
 
 		if (supportsSkinning)
 		{
-			shader->SetUniform1i("hasAnimations", hasAnimations);
-			if (hasAnimations)
-				shader->TrySetBoneMatrices(animator->GetFinalBoneMatrices());
+			shader->SetUniform1i("hasAnimations", isSkinnedMesh);
+
+			if (isSkinnedMesh)
+			{
+				if(animator && animator->GetCurrentAnimation())
+					shader->TrySetBoneMatrices(animator->GetFinalBoneMatrices());
+				else
+					shader->TrySetBoneMatrices(model.GetDefaultBoneMatrices());
+			}
 		}
 
 		subMesh.material->Apply();

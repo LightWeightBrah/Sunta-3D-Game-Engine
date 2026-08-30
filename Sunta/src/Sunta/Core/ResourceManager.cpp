@@ -38,7 +38,7 @@ void ResourceManager::LoadEditorIcon(const std::string& name, const std::string&
 	SUNTA_ENGINE_LOG_INFO("Resource Manager: Registered Editor Icon: '{0}' filepath: '{1}'", name, resolvedPath);
 }
 
-void ResourceManager::LoadModel(const std::string& name, const std::string& filepath)
+void ResourceManager::LoadModel(const std::string& name, const std::string& filepath, float importScale)
 {
 	std::string resolvedPath = VirtualFileSystem::Resolve(filepath);
 
@@ -55,7 +55,7 @@ void ResourceManager::LoadModel(const std::string& name, const std::string& file
 	}
 
 	auto data = std::make_shared<ModelData>();
-	data->model = std::make_shared<Model>(*rendererDevice, resolvedPath, false);
+	data->model = std::make_shared<Model>(*rendererDevice, resolvedPath, false, importScale);
 
 	const aiScene* scene = data->model->GetScene();
 	auto animationNames = Animation::GetAnimationsNames(scene);

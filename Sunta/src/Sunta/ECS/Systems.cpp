@@ -73,40 +73,46 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 
 	for (auto& component : modelComponents)
 	{
-		if (!component.isDirty)
+		unsigned int entityID = entityManager.GetEntityIDForComponent(component);
+		auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(entityID);
+		bool needsAnimatorSync = animatorComponent && animatorComponent->needsModelSync;
+
+		if (!component.isDirty && !needsAnimatorSync)
 			continue;
 
-		component.modelData = (!component.modelName.empty() && component.modelName != ModelComponent::NULL_ASSET_NAME)
-			? ResourceManager::GetModelData(component.modelName)
-			: nullptr;
-
-		if (component.modelData && component.modelData->model)
+		if (component.isDirty)
 		{
-			if (auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(component.entityID))
-			{
-				animatorComponent->animator = Animator(component.modelData->model.get());
+			component.modelData = (!component.modelName.empty() && component.modelName != ModelComponent::NULL_ASSET_NAME)
+				? ResourceManager::GetModelData(component.modelName)
+				: nullptr;
 
-				auto& animations = component.modelData->animations;
-
-				if (!animations.empty())
-				{
-					bool hasValidSelection = !animatorComponent->currentAnimationName.empty()
-						&& animations.find(animatorComponent->currentAnimationName) != animations.end();
-
-					if (!hasValidSelection)
-						animatorComponent->currentAnimationName = animations.begin()->first;
-
-					animatorComponent->animator.PlayAnimation(&animations.at(animatorComponent->currentAnimationName));
-				}
-				else
-				{
-					animatorComponent->currentAnimationName.clear();
-				}
-			
-			}
+			component.isDirty = false;
 		}
 
-		component.isDirty = false;
+		if (component.modelData && component.modelData->model && animatorComponent)
+		{
+			animatorComponent->animator = Animator(component.modelData->model.get());
+
+			auto& animations = component.modelData->animations;
+
+			if (!animations.empty())
+			{
+				bool hasValidSelection = !animatorComponent->currentAnimationName.empty()
+					&& animations.find(animatorComponent->currentAnimationName) != animations.end();
+
+				if (!hasValidSelection)
+					animatorComponent->currentAnimationName = animations.begin()->first;
+
+				animatorComponent->animator.PlayAnimation(&animations.at(animatorComponent->currentAnimationName));
+			}
+			else
+			{
+				animatorComponent->currentAnimationName.clear();
+			}
+			
+			animatorComponent->needsModelSync = false;
+		}
+
 	}
 }
 
@@ -136,7 +142,9 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 				if (currentWriteTime > script.lastWriteTime)
 				{
 					script.lastWriteTime = currentWriteTime;
-					component.ReloadScript(script, component.entityID);
+
+					unsigned int entityID = entityManager.GetEntityIDForComponent(component);
+					component.ReloadScript(script, entityID);
 
 					SUNTA_ENGINE_LOG_INFO("Hot-Reloaded script: '{0}'", script.scriptPath);
 				}

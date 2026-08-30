@@ -112,8 +112,8 @@ void ResourceLoader::LoadModels()
 	using namespace Sunta::EngineAssets;
 
 
-	ResourceManager::LoadModel(Models::Solaire, "@engine/Models/Solaire/Solaire All Animations.fbx");
-	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj");
+	ResourceManager::LoadModel(Models::Solaire, "@engine/Models/Solaire/Solaire All Animations.fbx", 0.05f);
+	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj", 0.5f);
 }
 
 void ResourceLoader::LoadIcons()

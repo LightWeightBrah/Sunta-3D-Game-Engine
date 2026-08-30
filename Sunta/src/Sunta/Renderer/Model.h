@@ -30,14 +30,16 @@ class Model
 {
 public:
 	Model() = default;
-	Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV);
+	Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV, float importScale = 1.0f);
 	
 	inline const bool HasAnimations()				  const { return hasAnimations; }
+	inline const bool HasBones()				      const { return !boneNameToInfo.empty(); }
 	inline const std::vector<SubMesh>& GetSubMeshes() const { return subMeshes;		}
 	inline const aiScene* GetScene()				  const { return scene;         }
 	
 	inline const std::map<std::string, BoneInfo> GetBoneNameToInfo() const { return boneNameToInfo;			}
 	inline const glm::mat4 GetGlobalInverseTransform()				 const { return globalInverseTransform; }
+	inline const std::vector<glm::mat4> GetDefaultBoneMatrices()	 const { return defaultBoneMatrices; }
 	
 private:
 	RendererDevice*					rendererDevice;
@@ -51,8 +53,10 @@ private:
 	
 	std::map<std::string, BoneInfo> boneNameToInfo;
 	glm::mat4						globalInverseTransform;
+	std::vector<glm::mat4>			defaultBoneMatrices;
 	
 	bool							hasAnimations;
+	float							importScale = 1.0f;
 	
 	void LoadModel(std::string path, bool flipUV);
 		
@@ -89,11 +93,16 @@ private:
 					vertices[i].weights[j] = 0.0f;
 				}
 			}
+			else
+			{
+				vertices[i].Position *= importScale;
+			}
 		}
 	}
 	
 	unsigned int GetBoneId		(aiBone* bone);
-	
+	void CalculateDefaultBoneTransform(aiNode* node, glm::mat4 parentTransform);
+
 };
 
 }

@@ -202,7 +202,6 @@ struct ModelComponent
 {
 	static constexpr const char* NULL_ASSET_NAME = "None";
 
-	unsigned int entityID = 0;
 	bool isDirty = true;
 	bool isVisible = true;
 
@@ -232,6 +231,7 @@ struct AnimatorComponent
 {
 	Animator animator;
 	std::string currentAnimationName;
+	bool needsModelSync = true;
 
 	static void RegisterToInspector()
 	{

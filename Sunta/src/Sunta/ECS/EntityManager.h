@@ -141,6 +141,14 @@ public:
 		return GetOrCreateStorage<T>().components;
 	}
 
+	template<typename T>
+	unsigned int GetEntityIDForComponent(const T& component)
+	{
+		auto& storage = GetOrCreateStorage<T>();
+		size_t index = &component - storage.components.data();
+		return storage.componentToEntity[index];
+	}
+
 	unsigned int GetEntityCount() const
 	{
 		return nextID;

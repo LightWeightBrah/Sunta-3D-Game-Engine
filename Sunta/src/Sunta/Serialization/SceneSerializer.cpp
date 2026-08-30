@@ -320,7 +320,6 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			const auto& modelData = entityJson[SceneKeys::ModelComponent];
 			auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity);
 
-			modelComponent.entityID  = entity;
 			modelComponent.isVisible = modelData.value(SceneKeys::IsVisible, true);
 			modelComponent.modelName = modelData.value(SceneKeys::ModelName, ModelComponent::NULL_ASSET_NAME);
 			modelComponent.isDirty = true;
