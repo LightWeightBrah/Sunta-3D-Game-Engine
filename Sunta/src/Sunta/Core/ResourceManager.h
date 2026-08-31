@@ -44,7 +44,6 @@ public:
 	static void UnloadShader    (const std::string& name);
 		
 	static void UnloadResourceByPath(const std::filesystem::path& filePath);
-
 	static void RenameMaterial  (const std::string& oldName, const std::string& newName);
 
 	static std::shared_ptr<Texture>	  GetEditorIcon      (const std::string& name);
@@ -59,10 +58,12 @@ public:
 
 	static std::shared_ptr<Material>  LoadMaterialFromFile(const std::string& filepath);
 
-
 	static std::vector<std::string>	  GetMeshesNames();
 	static std::vector<std::string>	  GetModelsNames();
 	static std::vector<std::string>	  GetMaterialsNames();
+
+	static bool HasModel   (const std::string& name)    { return modelsRegistered.count(name) > 0; }
+	static bool HasMaterial(const std::string& name)    { return materialsRegistered.count(name) > 0; }
 
 private:
 	inline static RendererDevice* rendererDevice;

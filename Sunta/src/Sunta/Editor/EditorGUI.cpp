@@ -917,9 +917,9 @@ void EditorGUI::DrawFileBrowser()
 
 						ResourceManager::RenameMaterial(oldMaterialName, newMaterialName);
 
-						auto materialToUpdate = ResourceManager::GetMaterialData(newMaterialName);
-						if (materialToUpdate)
+						if (ResourceManager::HasMaterial(newMaterialName))
 						{
+							auto materialToUpdate = ResourceManager::GetMaterialData(newMaterialName);
 							MaterialSerializer::Serialize(newPath.string(), materialToUpdate);
 						}
 					}
@@ -1133,9 +1133,7 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 
 				if (IsModelExtension(extension))
 				{
-					// TODO: ADD CREATING 3D MODEL
-
-					if (!ResourceManager::GetModelData(entityName))
+					if (!ResourceManager::HasModel(entityName))
 						ResourceManager::LoadModel(entityName, droppedPath.string());
 
 					EntityFactory::CreateModel(scene, spawnPosition, entityName, entityName);
@@ -1143,7 +1141,9 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				}
 				else if (IsMaterialExtension(extension))
 				{
-					// TODO: ADD HANDLING DROPPED MATERIAL
+					if (!ResourceManager::HasMaterial(entityName))
+						ResourceManager::LoadMaterialFromFile(droppedPath.string());
+
 					auto material = ResourceManager::GetMaterialData(entityName);
 					if (material)
 						EntityFactory::CreateCube(scene, spawnPosition, entityName, material);
