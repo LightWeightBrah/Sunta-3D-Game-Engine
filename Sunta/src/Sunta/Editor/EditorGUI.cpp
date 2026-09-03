@@ -1437,7 +1437,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{ "models",			"3d_model_folder" },	{ "meshes",	 "3d_model_folder" },
 			{ "shaders",		"shader_folder" },
 			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
-			{ "materials",		"image_folder" },
+			{ "materials",		"material_folder" },
 			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" },
 			{ "fonts",			"fonts_folder" }
 		};
@@ -1456,7 +1456,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},  {".dae", "3d_model_file"},
 			{".shader",		"shader_file"},
 			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
-			{".material",	"image_file"},
+			{".material",	"material_file"},
 			{".wav",		"audio_file"},		{".ogg", "audio_file"},
 			{".ttf",		"font_file"}
 		};

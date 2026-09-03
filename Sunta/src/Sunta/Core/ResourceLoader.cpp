@@ -112,7 +112,7 @@ void ResourceLoader::LoadModels()
 	using namespace Sunta::EngineAssets;
 
 
-	ResourceManager::LoadModel(Models::Solaire, "@engine/Models/Solaire/Solaire All Animations.fbx", 0.05f);
+	ResourceManager::LoadModel(Models::Solaire,  "@engine/Models/Solaire/Solaire All Animations.fbx", 0.05f);
 	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj", 0.5f);
 }
 
@@ -127,6 +127,7 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::ImageFolder,         "@engine/Textures/Icons/image_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::AudioFolder,         "@engine/Textures/Icons/audio_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::FontsFolder,         "@engine/Textures/Icons/fonts_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::MaterialFolder,      "@engine/Textures/Icons/material_folder_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::DefaultFile,         "@engine/Textures/Icons/default_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::CppFile,             "@engine/Textures/Icons/cpp_file_icon.png");
@@ -135,6 +136,7 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::ImageFile,           "@engine/Textures/Icons/image_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::AudioFile,           "@engine/Textures/Icons/audio_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::FontFile,            "@engine/Textures/Icons/font_file_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::MaterialFile,        "@engine/Textures/Icons/material_file_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::Cube,                "@engine/Textures/Icons/cube_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::Capsule,             "@engine/Textures/Icons/capsule_icon.png");

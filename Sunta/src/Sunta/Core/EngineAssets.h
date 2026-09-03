@@ -70,6 +70,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* ImageFolder         = "image_folder";
 		constexpr const char* AudioFolder         = "audio_folder";
 		constexpr const char* FontsFolder         = "fonts_folder";
+		constexpr const char* MaterialFolder	  = "material_folder";
 											      
 		constexpr const char* DefaultFile         = "default_file";
 		constexpr const char* CppFile             = "cpp_file";
@@ -78,6 +79,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* ImageFile           = "image_file";
 		constexpr const char* AudioFile           = "audio_file";
 		constexpr const char* FontFile            = "font_file";
+		constexpr const char* MaterialFile		  = "material_file";
 
 		constexpr const char* Cube                = "cube";
 		constexpr const char* Capsule             = "capsule";
