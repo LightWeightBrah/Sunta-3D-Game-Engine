@@ -128,6 +128,7 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::AudioFolder,         "@engine/Textures/Icons/audio_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::FontsFolder,         "@engine/Textures/Icons/fonts_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::MaterialFolder,      "@engine/Textures/Icons/material_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::SceneFolder,			"@engine/Textures/Icons/scene_folder_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::DefaultFile,         "@engine/Textures/Icons/default_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::CppFile,             "@engine/Textures/Icons/cpp_file_icon.png");
@@ -137,6 +138,7 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::AudioFile,           "@engine/Textures/Icons/audio_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::FontFile,            "@engine/Textures/Icons/font_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::MaterialFile,        "@engine/Textures/Icons/material_file_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::SceneFile,			"@engine/Textures/Icons/scene_file_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::Cube,                "@engine/Textures/Icons/cube_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::Capsule,             "@engine/Textures/Icons/capsule_icon.png");
@@ -152,6 +154,8 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::PointLight,          "@engine/Textures/Icons/point_light_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::Spotlight,           "@engine/Textures/Icons/spotlight_icon.png");
 
+	ResourceManager::LoadEditorIcon(Icons::Locked,				"@engine/Textures/Icons/locked_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::Unlocked,            "@engine/Textures/Icons/unlocked_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::MoveTool,            "@engine/Textures/Icons/move_tool_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::RotateTool,          "@engine/Textures/Icons/rotate_tool_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::ScaleTool,           "@engine/Textures/Icons/scale_tool_icon.png");

@@ -71,6 +71,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* AudioFolder         = "audio_folder";
 		constexpr const char* FontsFolder         = "fonts_folder";
 		constexpr const char* MaterialFolder	  = "material_folder";
+		constexpr const char* SceneFolder		  = "scene_folder";
 											      
 		constexpr const char* DefaultFile         = "default_file";
 		constexpr const char* CppFile             = "cpp_file";
@@ -80,6 +81,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* AudioFile           = "audio_file";
 		constexpr const char* FontFile            = "font_file";
 		constexpr const char* MaterialFile		  = "material_file";
+		constexpr const char* SceneFile			  = "scene_file";
 
 		constexpr const char* Cube                = "cube";
 		constexpr const char* Capsule             = "capsule";
@@ -95,6 +97,8 @@ namespace Sunta::EngineAssets
 		constexpr const char* PointLight          = "point_light";
 		constexpr const char* Spotlight           = "spotlight";
 
+		constexpr const char* Locked              = "locked";
+		constexpr const char* Unlocked            = "unlocked";
 		constexpr const char* MoveTool            = "move_tool";
 		constexpr const char* RotateTool          = "rotate_tool";
 		constexpr const char* ScaleTool           = "scale_tool";

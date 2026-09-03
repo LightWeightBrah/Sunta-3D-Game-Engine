@@ -446,12 +446,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 		: window->TitleBarRect(); // fallback: window undocked (floating)
 
 	const char* lockIconKey = inspectorLocked
-		? Sunta::EngineAssets::Icons::DefaultFolder
-		: Sunta::EngineAssets::Icons::DefaultFile;
+		? Sunta::EngineAssets::Icons::Locked
+		: Sunta::EngineAssets::Icons::Unlocked;
 
 	auto lockIcon = ResourceManager::GetEditorIcon(lockIconKey);
 
-	float buttonSize = 16.0f;
+	float buttonSize = 24.0f;
 	float rightMargin = 8.0f;
 
 	ImVec2 iconMin(barRect.Max.x - buttonSize - rightMargin,
@@ -1439,7 +1439,8 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
 			{ "materials",		"material_folder" },
 			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" },
-			{ "fonts",			"fonts_folder" }
+			{ "fonts",			"fonts_folder" },
+			{ "scenes",			"scene_folder" }
 		};
 
 		std::string name = path.filename().string();
@@ -1458,7 +1459,8 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
 			{".material",	"material_file"},
 			{".wav",		"audio_file"},		{".ogg", "audio_file"},
-			{".ttf",		"font_file"}
+			{".ttf",		"font_file"},
+			{".scene",		"scene_file"}
 		};
 
 		std::string extension = path.extension().string();
