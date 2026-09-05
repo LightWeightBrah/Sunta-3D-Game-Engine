@@ -21,9 +21,7 @@
     },
     "shader": "Lit",
     "textures": {
-        "diffuse_maps": [
-            "C:\\Dev\\Sunta-3D-Game-Engine\\Sunta\\res\\Materials\\chad.png"
-        ],
+        "diffuse_maps": [],
         "specular_maps": []
     }
 }

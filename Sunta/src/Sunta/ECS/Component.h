@@ -10,6 +10,7 @@
 #include "Scripting/ScriptingEngine.h"
 #include "Core/ResourceManager.h"
 #include "Animation/Animator.h"
+#include "Physics/CollisionShapes.h"
 
 namespace Sunta
 {
@@ -236,6 +237,26 @@ struct AnimatorComponent
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<AnimatorComponent>("Animator", EngineAssets::Icons::AnimationController, { });
+	}
+};
+
+struct BoxColliderComponent
+{
+	glm::vec3 localOffset = glm::vec3(0.0f);
+	glm::vec3 halfExtents = glm::vec3(0.5f);
+
+	bool isTrigger = true;
+
+	OBB worldOBB;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<BoxColliderComponent>("Box Collider", EngineAssets::Icons::BoxCollider,
+			{
+				ADD_PROPERTY(BoxColliderComponent, localOffset,	 PropertyDataType::Float3),
+				ADD_PROPERTY(BoxColliderComponent, halfExtents,	 PropertyDataType::Float3),
+				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool),
+			});
 	}
 };
 

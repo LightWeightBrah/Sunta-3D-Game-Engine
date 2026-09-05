@@ -52,4 +52,16 @@ struct KeyReleasedEvent
 	int keyCode;
 };
 
+struct TriggerEnterEvent
+{
+	unsigned int triggerEntityID; // entity that has isTrigger = true
+	unsigned int otherEntityID;   // entity that entered trigger
+};
+
+struct TriggerExitEvent
+{
+	unsigned int triggerEntityID; // entity that has isTrigger = true
+	unsigned int otherEntityID;   // entity that exited trigger
+};
+
 }
