@@ -1,10 +1,9 @@
-#pragma once
+#include "Core/SuntaPreCompiled.h"
+#include "SAT.h"
 
 #include <array>
 #include <cmath>
 #include <glm/glm.hpp>
-
-#include "CollisionShapes.h"
 
 namespace Sunta
 {

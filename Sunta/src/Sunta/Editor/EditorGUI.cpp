@@ -24,6 +24,7 @@
 #include "Utilities/FileSystemUtilities.h"
 #include "Core/VirtualFileSystem.h"
 #include "ComponentDrawerFactory.h"
+#include "Renderer/DebugRenderer.h"
 
 namespace Sunta
 {
@@ -185,6 +186,31 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::BeginMenu("View"))
+		{
+			bool showAllGizmos = DebugRenderer::GetShowAllGizmos();
+			if (ImGui::MenuItem("Show Colliders Gizmos", nullptr, &showAllGizmos))
+			{
+				DebugRenderer::SetShowAllGizmos(showAllGizmos);
+
+				glm::vec3 gizmosColor = DebugRenderer::GetGizmosColor();
+				if (ImGui::ColorEdit3("Gizmos Color", &gizmosColor.x))
+					DebugRenderer::SetGizmosColor(gizmosColor);
+
+				glm::vec3 gizmosCollideColor = DebugRenderer::GetGizmosCollideColor();
+				if (ImGui::ColorEdit3("Gizmos Collide Color", &gizmosCollideColor.x))
+					DebugRenderer::SetGizmosCollideColor(gizmosCollideColor);
+
+				float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
+				if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
+					DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
+
+			}
+			
+			ImGui::EndMenu();
+		}
+
 
 		// Draw bottom line of toolbar
 
@@ -632,6 +658,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Animator",
 				[&]() { return entityManager.GetComponent<AnimatorComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<AnimatorComponent>(inspectedEntity); }
+			},
+
+			{
+				"Box Collider",
+				[&]() { return entityManager.GetComponent<BoxColliderComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<BoxColliderComponent>(inspectedEntity); }
 			}
 		};
 

@@ -24,11 +24,23 @@ void OpenGLDevice::SetViewport(int x, int y, int width, int height)
 	GLCall(glViewport(x, y, width, height));
 }
 
+void OpenGLDevice::SetLineWidth(float width)
+{
+	GLCall(glLineWidth(width));
+}
+
 void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 {
 	vertexArray.Bind();
 	unsigned int count = vertexArray.GetElementBuffer()->GetCount();
 	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
+}
+
+void OpenGLDevice::DrawLines(const VertexArray& vertexArray)
+{
+	vertexArray.Bind();
+	unsigned int count = vertexArray.GetElementBuffer()->GetCount();
+	GLCall(glDrawElements(GL_LINES, count, GL_UNSIGNED_INT, 0));
 }
 
 std::shared_ptr<VertexBuffer> OpenGLDevice::CreateVertexBuffer(const BufferDescriptor& descriptor)

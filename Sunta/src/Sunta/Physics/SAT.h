@@ -1,9 +1,5 @@
 #pragma once
 
-#include <array>
-#include <cmath>
-#include <glm/glm.hpp>
-
 #include "CollisionShapes.h"
 
 namespace Sunta

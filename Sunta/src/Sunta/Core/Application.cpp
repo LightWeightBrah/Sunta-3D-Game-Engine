@@ -22,6 +22,7 @@
 #include "ResourceLoader.h"
 #include "Scripting/ScriptingEngine.h"
 #include "VirtualFileSystem.h"
+#include "Renderer/DebugRenderer.h"
 
 namespace Sunta
 {
@@ -88,6 +89,7 @@ namespace Sunta
 		);
 		
 		Renderer::Init();
+		DebugRenderer::Init();
 		ResourceManager::Init(Renderer::GetDevice());
 		ResourceLoader::Init();
 
@@ -103,6 +105,7 @@ namespace Sunta
 		DirectionalLightComponent::RegisterToInspector();
 		PointLightComponent::RegisterToInspector();
 		SpotLightComponent::RegisterToInspector();
+		BoxColliderComponent::RegisterToInspector();
 
 		window->Show();
 

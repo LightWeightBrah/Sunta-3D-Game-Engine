@@ -35,7 +35,10 @@ public:
 
 	virtual void Clear(float r, float g, float b, float a) = 0;
 	virtual void SetViewport(int x, int y, int width, int height) = 0;
+	virtual void SetLineWidth(float width) = 0;
+
 	virtual void DrawElements(const VertexArray& vertexArray) = 0;
+	virtual void DrawLines(const VertexArray& vertexArray) = 0;
 
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) = 0;
 	virtual std::shared_ptr<ElementBuffer> CreateElementBuffer(const BufferDescriptor& descriptor) = 0;

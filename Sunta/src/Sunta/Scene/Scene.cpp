@@ -26,6 +26,9 @@
 #include "Renderer/Mesh.h"
 #include "Utilities/MathUtilities.h"
 #include "EntityFactory.h"
+#include "Renderer/DebugRenderer.h"
+#include "Physics/CollisionSystem.h"
+#include "Physics/CollisionShapes.h"
 
 namespace Sunta
 {
@@ -89,6 +92,9 @@ void Scene::Update()
 	Systems::SyncModelComponents(entityManager);
 	Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
 	Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
+
+	CollisionSystem::UpdateColliders(entityManager);
+	CollisionSystem::DetectTriggerEvents(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)
@@ -117,10 +123,18 @@ void Scene::Render(Renderer& renderer)
 		glm::mat4 matrix;
 	};
 
+	struct GizmosDrawItem
+	{
+		std::array<glm::vec3, BOX_CORNER_COUNT> corners;
+		glm::vec3 color;
+	};
+
 	std::vector<MeshRenderItem>  litQueue;
 	std::vector<MeshRenderItem>  unlitQueue;
 	std::vector<MeshRenderItem>  lightSourceQueue;
 	std::vector<ModelRenderItem> modelQueue;
+
+	std::vector<GizmosDrawItem>  colliderGizmosQueue;
 
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
@@ -197,6 +211,20 @@ void Scene::Render(Renderer& renderer)
 			}
 		}
 
+		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
+		{
+			bool shouldDrawThisGizmos = DebugRenderer::GetShowAllGizmos() || boxCollider->showGizmos;
+
+			if (shouldDrawThisGizmos)
+			{
+				bool isOverlapping = CollisionSystem::IsEntityOverlapping(i);
+				glm::vec3 color = isOverlapping ?
+					DebugRenderer::GetGizmosCollideColor() : DebugRenderer::GetGizmosCollideColor();
+
+				colliderGizmosQueue.push_back({ GetOBBCorners(boxCollider->worldOBB), color });
+			}
+		}
+
 	}
 
 	for (const auto& item : lightSourceQueue)
@@ -210,6 +238,9 @@ void Scene::Render(Renderer& renderer)
 
 	for (const auto& item : modelQueue)
 		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator);
+
+	for (const auto& item : colliderGizmosQueue)
+		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
 
 }
 	

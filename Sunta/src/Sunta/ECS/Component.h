@@ -242,6 +242,8 @@ struct AnimatorComponent
 
 struct BoxColliderComponent
 {
+	bool showGizmos = false;
+
 	glm::vec3 localOffset = glm::vec3(0.0f);
 	glm::vec3 halfExtents = glm::vec3(0.5f);
 
@@ -253,9 +255,10 @@ struct BoxColliderComponent
 	{
 		InspectorComponentRegistry::RegisterComponent<BoxColliderComponent>("Box Collider", EngineAssets::Icons::BoxCollider,
 			{
+				ADD_PROPERTY(BoxColliderComponent, showGizmos,	 PropertyDataType::Bool),
 				ADD_PROPERTY(BoxColliderComponent, localOffset,	 PropertyDataType::Float3),
 				ADD_PROPERTY(BoxColliderComponent, halfExtents,	 PropertyDataType::Float3),
-				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool),
+				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool)
 			});
 	}
 };
