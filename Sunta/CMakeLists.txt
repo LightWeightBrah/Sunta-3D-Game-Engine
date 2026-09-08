@@ -73,9 +73,16 @@ source_group("Dependencies" FILES ${SUNTA_EXTERNAL_FILES})
 add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC "SUNTA_ROOT_DIR=R\"(${CMAKE_SOURCE_DIR})\"")
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
 
 if(SUNTA_DEV_MODE)
 	target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
+endif()
+
+# MSVC's legacy preprocessor ##__VA_ARGS__ sometimes don't remove ',' comma sign 
+# in nested macros (GLCall + SUNTA_ASSERT), this fixes it so macros actually work with no errors
+if(MSVC)
+	target_compile_options(${PROJECT_NAME} PUBLIC /Zc:preprocessor)
 endif()
 
 # ========================= PRECOMPILED HEADER ===========================   

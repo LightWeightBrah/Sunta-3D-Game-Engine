@@ -18,12 +18,12 @@
 
 	#endif
 
-	//__VA_ARGS__ pastes everything what we passed as arguments in ... 
+	//##__VA_ARGS__ pastes everything what we passed as arguments in ... and ## makes sure it delees ',' before if no args are passed
 	#define SUNTA_ASSERT(x, ...) \
 	{ \
 		if(!(x)) \
 		{ \
-			SUNTA_ENGINE_LOG_ERROR("Assertion failed: {0} |  File: {1} Line: {2}", __VA_ARGS__, __FILE__, __LINE__); \
+			SUNTA_ENGINE_LOG_ERROR("Assertion failed: {0} |  File: {1} Line: {2}", ##__VA_ARGS__, __FILE__, __LINE__); \
 			SUNTA_DEBUGBREAK(); \
 		} \
 	}

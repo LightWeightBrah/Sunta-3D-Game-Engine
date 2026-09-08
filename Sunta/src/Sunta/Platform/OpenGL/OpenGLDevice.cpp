@@ -50,6 +50,9 @@ std::shared_ptr<VertexBuffer> OpenGLDevice::CreateVertexBuffer(const BufferDescr
 
 std::shared_ptr<ElementBuffer> OpenGLDevice::CreateElementBuffer(const BufferDescriptor& descriptor)
 {
+	// Make sure you create OpenGLElementBuffer only after binding VAO
+	// VAO stores Element Buffer
+
 	return std::make_shared<OpenGLElementBuffer>(descriptor);
 }
 

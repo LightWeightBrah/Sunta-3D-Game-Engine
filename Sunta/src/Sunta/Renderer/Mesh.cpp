@@ -13,6 +13,7 @@
 #include "VertexArray.h"
 #include "Core/Log.h"
 #include "RendererDevice.h"
+#include "ScopedVertexArrayBind.h"
 
 namespace Sunta
 {
@@ -26,6 +27,7 @@ Mesh::Mesh(RendererDevice& rendererDevice, const void* vertexData, unsigned int 
 	}
 	
 	vertexArray = rendererDevice.CreateVertexArray();
+	ScopedVertexArrayBind vertexArrayGuard(*vertexArray);
 
 	BufferDescriptor vertexBufferDescriptor;
 	vertexBufferDescriptor.data = vertexData;

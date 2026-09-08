@@ -10,6 +10,7 @@
 #include "VertexLayouts.h"
 #include "Scene/SceneData.h"
 #include "Core/VirtualFileSystem.h"
+#include "ScopedVertexArrayBind.h"
 
 namespace Sunta
 {
@@ -34,6 +35,7 @@ void DebugRenderer::Init()
 	RendererDevice& rendererDevice = Renderer::GetDevice();
 
 	vertexArray = rendererDevice.CreateVertexArray();
+	ScopedVertexArrayBind vertexArrayGuard(*vertexArray);
 
 	// No inital data, cause every corner gets overwritten every draw call
 	BufferDescriptor vertexBufferDescriptor;

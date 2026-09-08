@@ -219,7 +219,7 @@ void Scene::Render(Renderer& renderer)
 			{
 				bool isOverlapping = CollisionSystem::IsEntityOverlapping(i);
 				glm::vec3 color = isOverlapping ?
-					DebugRenderer::GetGizmosCollideColor() : DebugRenderer::GetGizmosCollideColor();
+					DebugRenderer::GetGizmosCollideColor() : DebugRenderer::GetGizmosColor();
 
 				colliderGizmosQueue.push_back({ GetOBBCorners(boxCollider->worldOBB), color });
 			}
