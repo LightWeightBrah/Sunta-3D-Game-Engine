@@ -8,6 +8,7 @@
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
 #include "Core/Log.h"
+#include "Physics/CollisionLayers.h"
 
 namespace Sunta
 {
@@ -25,6 +26,8 @@ namespace SceneKeys
 	constexpr const char* MeshComponent             = "mesh";
 	constexpr const char* ModelComponent            = "model";
 	constexpr const char* AnimatorComponent         = "animator";
+	constexpr const char* BoxColliderComponent      = "box_collider";
+	constexpr const char* PhysicsBodyComponent      = "physics_body";
 	constexpr const char* DirectionalLightComponent = "directional_light";
 	constexpr const char* PointLightComponent	    = "point_light";
 	constexpr const char* SpotLightComponent        = "spot_light";
@@ -39,6 +42,15 @@ namespace SceneKeys
 	constexpr const char* MaterialName              = "material_name";
 	constexpr const char* ModelName                 = "model_name";
 	constexpr const char* CurrentAnimationName      = "current_animation_name";
+
+	constexpr const char* LocalOffset               = "local_offset";
+	constexpr const char* HalfExtents               = "half_extents";
+	constexpr const char* IsTrigger                 = "is_trigger";
+	constexpr const char* Layer                     = "layer";
+	constexpr const char* CollidesWith              = "collides_with";
+	constexpr const char* IsKinematic               = "is_kinematic";
+	constexpr const char* UseGravity                = "use_gravity";
+	constexpr const char* Velocity                  = "velocity";
 												    
 	constexpr const char* Color						= "color";
 	constexpr const char* Attenuation               = "attenuation";
@@ -167,6 +179,29 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 				{ SceneKeys::CurrentAnimationName, animator->currentAnimationName }
 			};
 		}
+
+		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
+		{
+			entityJson[SceneKeys::BoxColliderComponent] =
+			{
+				{ SceneKeys::LocalOffset,       SerializeVec3(boxCollider->localOffset) },
+				{ SceneKeys::HalfExtents,       SerializeVec3(boxCollider->halfExtents) },
+				{ SceneKeys::IsTrigger,                       boxCollider->isTrigger    },
+				{ SceneKeys::Layer, static_cast<unsigned int>(boxCollider->layer)       },
+				{ SceneKeys::CollidesWith,                    boxCollider->collidesWith }
+			};
+		}
+
+		if (auto* physicsBody = entityManager.GetComponent<PhysicsBodyComponent>(i))
+		{
+			entityJson[SceneKeys::PhysicsBodyComponent] =
+			{
+				{ SceneKeys::IsKinematic,                    physicsBody->isKinematic   },
+				{ SceneKeys::UseGravity,                     physicsBody->useGravity    },
+				{ SceneKeys::Velocity,         SerializeVec3(physicsBody->velocity)     }
+			};
+		}
+
 
 		if (auto* directionalLight = entityManager.GetComponent<DirectionalLightComponent>(i))
 		{
@@ -331,6 +366,34 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			auto& animatorComponent = entityManager.AddComponent<AnimatorComponent>(entity);
 
 			animatorComponent.currentAnimationName = animatorData.value(SceneKeys::CurrentAnimationName, "");
+		}
+
+		if (entityJson.contains(SceneKeys::BoxColliderComponent))
+		{
+			const auto& boxColliderData = entityJson[SceneKeys::BoxColliderComponent];
+			auto& boxColliderComponent = entityManager.AddComponent<BoxColliderComponent>(entity);
+
+			if (boxColliderData.contains(SceneKeys::LocalOffset))
+				boxColliderComponent.localOffset = DeserializeVec3(boxColliderData[SceneKeys::LocalOffset]);
+
+			if (boxColliderData.contains(SceneKeys::HalfExtents))
+				boxColliderComponent.halfExtents = DeserializeVec3(boxColliderData[SceneKeys::HalfExtents], glm::vec3(0.5f));
+
+			boxColliderComponent.isTrigger    = boxColliderData.value(SceneKeys::IsTrigger, false);
+			boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(CollisionLayer::Environment)));
+			boxColliderComponent.collidesWith = boxColliderData.value(SceneKeys::CollidesWith, boxColliderComponent.collidesWith);
+		}
+
+		if (entityJson.contains(SceneKeys::PhysicsBodyComponent))
+		{
+			const auto& physicsBodyData = entityJson[SceneKeys::PhysicsBodyComponent];
+			auto& physicsBodyComponent = entityManager.AddComponent<PhysicsBodyComponent>(entity);
+
+			physicsBodyComponent.isKinematic = physicsBodyData.value(SceneKeys::IsKinematic, false);
+			physicsBodyComponent.useGravity  = physicsBodyData.value(SceneKeys::UseGravity,  true);
+
+			if (physicsBodyData.contains(SceneKeys::Velocity))
+				physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
 		}
 
 		if (entityJson.contains(SceneKeys::DirectionalLightComponent))

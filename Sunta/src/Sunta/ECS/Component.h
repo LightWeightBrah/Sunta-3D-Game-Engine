@@ -248,7 +248,7 @@ struct BoxColliderComponent
 	glm::vec3 localOffset = glm::vec3(0.0f);
 	glm::vec3 halfExtents = glm::vec3(0.5f);
 
-	bool isTrigger = true;
+	bool isTrigger = false;
 
 	CollisionLayer layer        = CollisionLayer::Environment;
 	CollisionMask  collidesWith = MakeMask(CollisionLayer::Environment, CollisionLayer::Player, CollisionLayer::Enemy);

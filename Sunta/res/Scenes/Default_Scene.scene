@@ -203,10 +203,34 @@
             }
         },
         {
+            "box_collider": {
+                "collides_with": 7,
+                "half_extents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
             "mesh": {
                 "is_visible": true,
                 "material_name": "FloorMaterial",
                 "mesh_name": "cube"
+            },
+            "physics_body": {
+                "is_kinematic": true,
+                "use_gravity": false,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
             },
             "tag": {
                 "name": "Floor"
@@ -233,9 +257,33 @@
             "animator": {
                 "current_animation_name": "Armature|Praise the Sun Gesture"
             },
+            "box_collider": {
+                "collides_with": 7,
+                "half_extents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.47699999809265137,
+                    0.0
+                ]
+            },
             "model": {
                 "is_visible": true,
                 "model_name": "solaire"
+            },
+            "physics_body": {
+                "is_kinematic": false,
+                "use_gravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
             },
             "tag": {
                 "name": "Player"
