@@ -29,6 +29,7 @@
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSystem.h"
 #include "Physics/CollisionShapes.h"
+#include "Physics/PhysicsSystem.h"
 
 namespace Sunta
 {
@@ -87,14 +88,15 @@ void Scene::ProcessInput()
 	
 void Scene::Update()
 {
+	PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
+
 	Systems::UpdateTransform(entityManager);
 	Systems::SyncMeshComponents(entityManager);
 	Systems::SyncModelComponents(entityManager);
 	Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
 	Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
 
-	CollisionSystem::UpdateColliders(entityManager);
-	CollisionSystem::DetectTriggerEvents(entityManager);
+	CollisionSystem::Update(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)

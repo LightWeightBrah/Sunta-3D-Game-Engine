@@ -191,22 +191,19 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 		{
 			bool showAllGizmos = DebugRenderer::GetShowAllGizmos();
 			if (ImGui::MenuItem("Show Colliders Gizmos", nullptr, &showAllGizmos))
-			{
 				DebugRenderer::SetShowAllGizmos(showAllGizmos);
 
-				glm::vec3 gizmosColor = DebugRenderer::GetGizmosColor();
-				if (ImGui::ColorEdit3("Gizmos Color", &gizmosColor.x))
-					DebugRenderer::SetGizmosColor(gizmosColor);
+			glm::vec3 gizmosColor = DebugRenderer::GetGizmosColor();
+			if (ImGui::ColorEdit3("Gizmos Color", &gizmosColor.x))
+				DebugRenderer::SetGizmosColor(gizmosColor);
 
-				glm::vec3 gizmosCollideColor = DebugRenderer::GetGizmosCollideColor();
-				if (ImGui::ColorEdit3("Gizmos Collide Color", &gizmosCollideColor.x))
-					DebugRenderer::SetGizmosCollideColor(gizmosCollideColor);
+			glm::vec3 gizmosCollideColor = DebugRenderer::GetGizmosCollideColor();
+			if (ImGui::ColorEdit3("Gizmos Collide Color", &gizmosCollideColor.x))
+				DebugRenderer::SetGizmosCollideColor(gizmosCollideColor);
 
-				float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
-				if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
-					DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
-
-			}
+			float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
+			if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
+				DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
 			
 			ImGui::EndMenu();
 		}
@@ -664,6 +661,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Box Collider",
 				[&]() { return entityManager.GetComponent<BoxColliderComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<BoxColliderComponent>(inspectedEntity); }
+			},
+
+			{
+				"Physics Body",
+				[&]() { return entityManager.GetComponent<PhysicsBodyComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<PhysicsBodyComponent>(inspectedEntity); }
 			}
 		};
 

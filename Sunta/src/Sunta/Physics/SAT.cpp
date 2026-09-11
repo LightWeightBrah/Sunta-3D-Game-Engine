@@ -28,7 +28,7 @@ namespace Sunta
 
 
 
-// this namespace makes code exists only in SAT.cpp file (INTERNAL LINKAGE, static keyword would work similar)
+// Anonymous namespace = INTERNAL LINKAGE, the code is visible only in SAT.cpp file (static keyword would work similar)
 namespace
 {
 
@@ -41,6 +41,14 @@ struct ProjectionInterval
 inline bool IntervalsOverlap(const ProjectionInterval& a, const ProjectionInterval& b)
 {
 	return a.min <= b.max && b.min <= a.max;
+}
+
+// How much 2 Projected Intervals Overlap on Test Axis
+// Negative value means they DON'T OVERLAP
+// Postive  value means they OVERLAP and shows how deep
+inline float GetOverlapAmount(const ProjectionInterval& a, const ProjectionInterval& b)
+{
+	return std::min(a.max, b.max) - std::max(a.min, b.min);
 }
 
 // Projects box onto axis and returns the [min, max] range it covers there
@@ -61,12 +69,17 @@ inline ProjectionInterval ProjectOBBOntoAxis(const OBB& box, const glm::vec3& ax
 	return { centerPositionOnAxis - halfRangeWidth, centerPositionOnAxis + halfRangeWidth };
 }
 
-inline bool IsSeparatingAxis(const OBB& a, const OBB& b, const glm::vec3& axis)
+inline bool IsAxisTooShortToCheck(const glm::vec3& axis)
 {
 	// Edge x edge cross product can come out near-zero for near-parallel edges -
 	// that carries no direction info, so treat it as "doesn't separate" and move on
-	constexpr float MIN_AXIS_LENGTH_SQUARED = 1e-8f;
-	if (glm::dot(axis, axis) < MIN_AXIS_LENGTH_SQUARED)
+	constexpr float SHORTEST_AXIS_TO_CHECK_LENGTH_SQUARED = 1e-8f;
+	return glm::dot(axis, axis) < SHORTEST_AXIS_TO_CHECK_LENGTH_SQUARED;
+}
+
+inline bool IsSeparatingAxis(const OBB& a, const OBB& b, const glm::vec3& axis)
+{
+	if (IsAxisTooShortToCheck(axis))
 		return false;
 
 	glm::vec3 normalizedAxis = glm::normalize(axis);
@@ -108,10 +121,6 @@ inline std::array<glm::vec3, OBB_VS_OBB_AXIS_COUNT> BuildBoxVsBoxAxes(const OBB&
 
 }
 
-// =======================================
-//        PUBLIC METHODS BELOW: 
-// =======================================
-
 bool Overlaps(const OBB& a, const OBB& b)
 {
 	std::array<glm::vec3, OBB_VS_OBB_AXIS_COUNT> testAxes = BuildBoxVsBoxAxes(a, b);
@@ -125,6 +134,56 @@ bool Overlaps(const OBB& a, const OBB& b)
 
 	// If none of the 15 candidates axes separated the boxes => THEY OVERLAP
 	return true;
+}
+
+SeparationInfo GetSeparationInfo(const OBB& a, const OBB& b)
+{
+	SeparationInfo result;
+
+	std::array<glm::vec3, OBB_VS_OBB_AXIS_COUNT> testAxes = BuildBoxVsBoxAxes(a, b);
+
+	float shallowestOverlapFound = std::numeric_limits<float>::max();
+	glm::vec3 axisOfShallowestOverlap = glm::vec3(0.0f);
+
+	for (const glm::vec3& axis : testAxes)
+	{
+		if(IsAxisTooShortToCheck(axis))
+			continue;
+
+		glm::vec3 normalizedAxis = glm::normalize(axis);
+
+		ProjectionInterval rangeA = ProjectOBBOntoAxis(a, normalizedAxis);
+		ProjectionInterval rangeB = ProjectOBBOntoAxis(b, normalizedAxis);
+
+		float overlapAmount = GetOverlapAmount(rangeA, rangeB);
+
+		if (overlapAmount < 0.0f)
+		{
+			// this axis separates the boxes, so colliders don't overlap
+			// if at least 1 axis separates, then there's no overlap
+			result.areOverlapping = false;
+			return result;
+		}
+
+		if (overlapAmount < shallowestOverlapFound)
+		{
+			shallowestOverlapFound = overlapAmount;
+			axisOfShallowestOverlap = normalizedAxis;
+		}
+	}
+
+	result.areOverlapping = true;
+	result.overlapDepth = shallowestOverlapFound;
+
+	// Axis came from a face normal or cross product (it doesn't have direction we need)
+	// so it could point towards A or towards B (WE DON'T KNOW)
+	// We want push direction to ALWAYS go from A to B, so flip the axis if it's pointing the wrong way
+	glm::vec3 directionFromCenterAToCenterB = b.center - a.center;
+	bool axisAlreadyPointTowardsB = glm::dot(directionFromCenterAToCenterB, axisOfShallowestOverlap) >= 0.0f;
+
+	result.pushDirectionFromAToB = axisAlreadyPointTowardsB ? axisOfShallowestOverlap : -axisOfShallowestOverlap;
+
+	return result;
 }
 
 }

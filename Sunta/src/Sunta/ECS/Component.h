@@ -11,6 +11,7 @@
 #include "Core/ResourceManager.h"
 #include "Animation/Animator.h"
 #include "Physics/CollisionShapes.h"
+#include "Physics/CollisionLayers.h"
 
 namespace Sunta
 {
@@ -249,6 +250,9 @@ struct BoxColliderComponent
 
 	bool isTrigger = true;
 
+	CollisionLayer layer        = CollisionLayer::Environment;
+	CollisionMask  collidesWith = MakeMask(CollisionLayer::Environment, CollisionLayer::Player, CollisionLayer::Enemy);
+
 	OBB worldOBB;
 
 	static void RegisterToInspector()
@@ -259,6 +263,27 @@ struct BoxColliderComponent
 				ADD_PROPERTY(BoxColliderComponent, localOffset,	 PropertyDataType::Float3),
 				ADD_PROPERTY(BoxColliderComponent, halfExtents,	 PropertyDataType::Float3),
 				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool)
+			});
+	}
+};
+
+struct PhysicsBodyComponent
+{
+	// Kinematic body ISN'T MOVED BY GRAVITY NOR COLLISIONS
+	// Kinmeatic body controls its own movement (e.g Player controlled by keyboard input)
+	// Kinematic body STILL WORKS WITH COLLISIONS, it's just nothing "pushes it" automatically 
+	bool isKinematic = false;
+	bool useGravity  = true;
+
+	glm::vec3 velocity = glm::vec3(0.0f);
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<PhysicsBodyComponent>("Physics Body", EngineAssets::Icons::Physics,
+			{
+				ADD_PROPERTY(PhysicsBodyComponent, isKinematic,	 PropertyDataType::Bool),
+				ADD_PROPERTY(PhysicsBodyComponent, useGravity,	 PropertyDataType::Bool),
+				ADD_PROPERTY(PhysicsBodyComponent, velocity,	 PropertyDataType::Float3),
 			});
 	}
 };

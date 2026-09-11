@@ -23,6 +23,15 @@ namespace Sunta
 //   - 9 cross products of (edge of A) x (edge of B)
 // This is a known geometric fact for boxes specifically
 
+struct SeparationInfo
+{
+	bool      areOverlapping        = false;
+
+	glm::vec3 pushDirectionFromAToB = glm::vec3(0.0f);
+	float     overlapDepth          = 0.0f;
+};
+
 bool Overlaps(const OBB& a, const OBB& b);
+SeparationInfo GetSeparationInfo(const OBB& a, const OBB& b);
 
 }

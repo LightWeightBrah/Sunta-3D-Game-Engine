@@ -106,6 +106,7 @@ namespace Sunta
 		PointLightComponent::RegisterToInspector();
 		SpotLightComponent::RegisterToInspector();
 		BoxColliderComponent::RegisterToInspector();
+		PhysicsBodyComponent::RegisterToInspector();
 
 		window->Show();
 

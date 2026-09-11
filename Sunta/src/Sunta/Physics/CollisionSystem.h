@@ -19,14 +19,19 @@ enum class TriggerEventType
 class CollisionSystem
 {
 public:
+	static void Update(EntityManager& entityManager);
+
 	static void UpdateColliders(EntityManager& entityManager);
+	static void ResolveSolidCollisions(EntityManager& entityManager);
 	static void DetectTriggerEvents(EntityManager& entityManager);
+
 	static void Reset() { previousOverlaps.clear(); }
 
 	static bool IsEntityOverlapping(unsigned int enityID);
 
 private:
 	static inline std::vector<OverlapPair> previousOverlaps;
+	
 };
 
 }
