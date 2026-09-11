@@ -65,6 +65,7 @@ namespace Sunta::EngineAssets
 	{
 		constexpr const char* DefaultFolder       = "default_folder";
 		constexpr const char* CppFolder		      = "cpp_folder";
+		constexpr const char* LuaFolder		      = "lua_folder";
 		constexpr const char* ModelFolder         = "3d_model_folder";
 		constexpr const char* ShaderFolder        = "shader_folder";
 		constexpr const char* ImageFolder         = "image_folder";

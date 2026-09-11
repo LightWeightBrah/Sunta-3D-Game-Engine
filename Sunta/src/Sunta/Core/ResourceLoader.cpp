@@ -122,6 +122,7 @@ void ResourceLoader::LoadIcons()
 
 	ResourceManager::LoadEditorIcon(Icons::DefaultFolder,       "@engine/Textures/Icons/default_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::CppFolder,           "@engine/Textures/Icons/cpp_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::LuaFolder,           "@engine/Textures/Icons/lua_scripts_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::ModelFolder,         "@engine/Textures/Icons/3d_model_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::ShaderFolder,        "@engine/Textures/Icons/shader_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::ImageFolder,         "@engine/Textures/Icons/image_folder_icon.png");

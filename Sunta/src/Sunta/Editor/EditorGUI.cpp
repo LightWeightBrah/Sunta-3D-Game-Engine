@@ -1468,7 +1468,8 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 	{
 		static const std::unordered_map<std::string, std::string> folderIcons =
 		{
-			{ "scripts",		"cpp_folder" },			{ "src",		  "cpp_folder" },		{ "cpp",	"cpp_folder" },
+			{ "src",		    "cpp_folder" },		    { "cpp",	      "cpp_folder" },
+			{ "scripts",		"lua_folder" },
 			{ "models",			"3d_model_folder" },	{ "meshes",	 "3d_model_folder" },
 			{ "shaders",		"shader_folder" },
 			{ "textures",		"image_folder" },		{ "sprites",	"image_folder" },		{ "images", "image_folder" },
@@ -1489,6 +1490,7 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 		static const std::unordered_map<std::string, std::string> fileIcons =
 		{
 			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
+			{".lua",		"cpp_file"},
 			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},  {".dae", "3d_model_file"},
 			{".shader",		"shader_file"},
 			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
