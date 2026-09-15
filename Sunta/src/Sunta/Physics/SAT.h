@@ -22,6 +22,34 @@ namespace Sunta
 //   - 3 face-normal axes of box B (local X, Y, Z)
 //   - 9 cross products of (edge of A) x (edge of B)
 // This is a known geometric fact for boxes specifically
+//
+// CONTACT MANIFOLD (needed to make a hit realistically spin an object):
+// Knowing THAT two boxes overlap, and BY HOW MUCH, isn't enough to make an
+// impact spin an object correctly, we also need to know WHERE exactly the
+// boxes touch (torque depends on how far the contact point is from the
+// object's center). Finding that point is called "contact manifold
+// generation". For boxes:
+// 
+//   - IF THE SHALLOWEST-OVERLAP AXIS WAS A FACE AXIS:
+// 
+//	   This means the boxes collided flat against each other 
+//     (e.g. a box resting flat on the floor). 
+// 
+//	   The algorithm "clips" the other box's closest face against this box's face
+//     Whatever survives the clip IS the touching area (up to 4 points) 
+//     (e.g. a box resting flat touches at all 4 of its bottom corners)
+// 
+//     Algorithm: "Sutherland-Hodgman polygon clipping"
+// 
+//   - IF THE SHALLOWEST-OVERLAP AXIS WAS AN EDGE AXIS:
+//     This means the boxes did NOT collide flat, but rather hit "edge-to-edge" 
+//     or "corner-to-corner" at an angle.
+// 
+//	   The algorithm takes one edge from each box and finds the closest point 
+//     between those 2 edges (3D line segments) that are touching (ALWAYS 1 point)
+//
+//	   Algorithm: "Shortest distance between two skew lines in 3D space"
+//
 
 struct SeparationInfo
 {
@@ -31,7 +59,24 @@ struct SeparationInfo
 	float     overlapDepth          = 0.0f;
 };
 
+struct ContactPoint
+{
+	glm::vec3 worldPosition = glm::vec3(0.0f);
+};
+
+struct ContactManifold
+{
+	bool      areOverlapping            = false;
+									    
+	glm::vec3 pushDirectionFromAToB     = glm::vec3(0.0f);
+	float     overlapDepth              = 0.0f;
+	std::vector<ContactPoint> contacts;
+
+
+};
+
 bool Overlaps(const OBB& a, const OBB& b);
 SeparationInfo GetSeparationInfo(const OBB& a, const OBB& b);
+ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b);
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <sol/sol.hpp>
 #include "ComponentLayout.h"
 
@@ -46,12 +47,19 @@ struct TransformComponent
 	glm::vec3 rotation = glm::vec3(0.0f);
 	glm::vec3 scale	   = glm::vec3(1.0f);
 
+	glm::quat rotationQuaternion = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+
 	bool isDirty = true;
 
 	TransformComponent(const glm::vec3& position)
 		: position(position) { }
 
 	TransformComponent() = default;
+
+	void SyncQuaternionFromEuler()
+	{
+		rotationQuaternion = glm::quat(glm::radians(rotation));
+	}
 
 	static void RegisterToInspector()
 	{
@@ -64,6 +72,7 @@ struct TransformComponent
 			[](void* data)
 			{
 				auto* transform = static_cast<TransformComponent*>(data);
+				transform->SyncQuaternionFromEuler();
 				transform->isDirty = true;
 			});
 	}
@@ -275,15 +284,28 @@ struct PhysicsBodyComponent
 	bool isKinematic = false;
 	bool useGravity  = true;
 
-	glm::vec3 velocity = glm::vec3(0.0f);
+	glm::vec3 velocity        = glm::vec3(0.0f);
+
+	// Angular Velocity         = how the object spins
+	// Direction of this vector = the axis it spins around
+	// Length of this vector    = spin speed in radians / second
+	// E.g. (0, 3.14, 0)		= spinning around the up-axis at half a turn per secound
+	glm::vec3 angularVelocity = glm::vec3(0.0f);
+
+	// restitution = how bouncy object is when it hits something
+	float mass = 1.0f;
+	float restitution = 0.2f; // 0 = no bounce (sandbag), 1 = SUPER BOUNCY (rubber ball)
 
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PhysicsBodyComponent>("Physics Body", EngineAssets::Icons::Physics,
 			{
-				ADD_PROPERTY(PhysicsBodyComponent, isKinematic,	 PropertyDataType::Bool),
-				ADD_PROPERTY(PhysicsBodyComponent, useGravity,	 PropertyDataType::Bool),
-				ADD_PROPERTY(PhysicsBodyComponent, velocity,	 PropertyDataType::Float3),
+				ADD_PROPERTY(PhysicsBodyComponent, isKinematic,	     PropertyDataType::Bool),
+				ADD_PROPERTY(PhysicsBodyComponent, useGravity,	     PropertyDataType::Bool),
+				ADD_PROPERTY(PhysicsBodyComponent, velocity,	     PropertyDataType::Float3),
+				ADD_PROPERTY(PhysicsBodyComponent, angularVelocity,	 PropertyDataType::Float3),
+				ADD_PROPERTY(PhysicsBodyComponent, mass,		     PropertyDataType::Float),
+				ADD_PROPERTY(PhysicsBodyComponent, restitution,		 PropertyDataType::Float),
 			});
 	}
 };

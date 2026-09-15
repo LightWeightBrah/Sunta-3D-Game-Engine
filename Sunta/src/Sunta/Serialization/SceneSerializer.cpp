@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "Scene/Scene.h"
 #include "ECS/EntityManager.h"
@@ -36,6 +37,7 @@ namespace SceneKeys
 	constexpr const char* Position                  = "position";
 	constexpr const char* Rotation                  = "rotation";
 	constexpr const char* Scale                     = "scale";
+	constexpr const char* RotationQuaternion        = "rotation_quaternion";
 	constexpr const char* ScriptPath                = "script_path";
 	constexpr const char* IsVisible                 = "is_visible";
 	constexpr const char* MeshName                  = "mesh_name";
@@ -74,6 +76,19 @@ static glm::vec3 DeserializeVec3(const json& j, const glm::vec3& defaultValue = 
 {
 	if (j.is_array() && j.size() == 3)
 		return glm::vec3(j[0].get<float>(), j[1].get<float>(), j[2].get<float>());
+
+	return defaultValue;
+}
+
+static json SerializeQuaternion(const glm::quat& quaternion)
+{
+	return { quaternion.w, quaternion.x, quaternion.y, quaternion.z };
+}
+
+static glm::quat DeserializeQuaternion(const json& j, const glm::quat& defaultValue = glm::quat(1.0f, 0.0f, 0.0f, 0.0f))
+{
+	if (j.is_array() && j.size() == 4)
+		return glm::quat(j[0].get<float>(), j[1].get<float>(), j[2].get<float>(), j[3].get<float>());
 
 	return defaultValue;
 }
@@ -135,7 +150,8 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 			{
 				{ SceneKeys::Position, SerializeVec3(transform->position) },
 				{ SceneKeys::Rotation, SerializeVec3(transform->rotation) },
-				{ SceneKeys::Scale,    SerializeVec3(transform->scale)    }
+				{ SceneKeys::Scale,    SerializeVec3(transform->scale)    },
+				{ SceneKeys::RotationQuaternion, SerializeQuaternion(transform->rotationQuaternion) }
 			};
 		}
 
@@ -313,6 +329,11 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			
 			if (transformData.contains(SceneKeys::Scale))
 				transform.scale    = DeserializeVec3(transformData[SceneKeys::Scale], glm::vec3(1.0f));
+
+			if (transformData.contains(SceneKeys::RotationQuaternion))
+				transform.rotationQuaternion = DeserializeQuaternion(transformData[SceneKeys::RotationQuaternion]);
+			else
+				transform.SyncQuaternionFromEuler();
 
 
 			transform.isDirty  = true;

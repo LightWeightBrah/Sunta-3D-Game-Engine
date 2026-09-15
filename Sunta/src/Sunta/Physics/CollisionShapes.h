@@ -83,4 +83,40 @@ inline std::array<glm::vec3, BOX_CORNER_COUNT> GetOBBCorners(const OBB& box)
 }
 
 
+// MOMENT OF INERTIA - how hard it is to make a shape SPIN, the same way mass
+// is how hard it is to make it MOVE in a straight line. A long thin plank is
+// much easier to spin end-over-end than side-over-side, this shows that
+// per-axis difference
+inline glm::vec3 ComputeBoxInertiaTensorLocal(const glm::vec3& halfExtents, float mass)
+{
+	glm::vec3 fullExtents = halfExtents * 2.0f;
+
+	// Reference for return equation:
+	// https://en.wikipedia.org/wiki/List_of_moments_of_inertia
+	// See "rectangular cuboid"
+
+	return glm::vec3(
+		(mass / 12.0f) * (fullExtents.y * fullExtents.y + fullExtents.z * fullExtents.z), // resistance to spin around X
+		(mass / 12.0f) * (fullExtents.x * fullExtents.x + fullExtents.z * fullExtents.z), // resistance to spin around Y
+		(mass / 12.0f) * (fullExtents.x * fullExtents.x + fullExtents.y * fullExtents.y)  // resistance to spin around Z
+	);
+}
+
+// Moment of inertia values only make sense measured along the box's OWN
+// (possibly rotated) axes, but angular velocity is always in WORLD space
+// 
+// This "rotates" the per-axis resistance values into world space:
+// first un-rotate a point back into the box's local space (orientation^T),
+// apply the resistance there, then rotate the result back to world space
+inline glm::mat3 ComputeInverseInertiaTensorWorld(const glm::vec3& inverseInertiaLocal, const glm::mat3& orientation)
+{
+	glm::mat3 inverseInertiaLocalMatrix = glm::mat3(
+		inverseInertiaLocal.x, 0.0f, 0.0f,
+		0.0f, inverseInertiaLocal.y, 0.0f,
+		0.0f, 0.0f, inverseInertiaLocal.z
+	);
+
+	return orientation * inverseInertiaLocalMatrix * glm::transpose(orientation);
+}
+
 }
