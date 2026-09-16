@@ -22,16 +22,14 @@ void Systems::UpdateTransform(EntityManager& entityManager)
 		if (transforms[i].isDirty)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, transforms[i].position);
 
-			model = glm::rotate(model, glm::radians(transforms[i].rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::rotate(model, glm::radians(transforms[i].rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			model = glm::rotate(model, glm::radians(transforms[i].rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			glm::mat4 translation = glm::translate(model, transforms[i].position);
+			glm::mat4 rotation    = glm::mat4_cast(transforms[i].rotationQuaternion);
+			glm::mat4 scale       = glm::scale(model, transforms[i].scale);
 
-			model = glm::scale(model, transforms[i].scale);
+			model = translation * rotation * scale;
 
 			matrices[i].matrix = model;
-
 			transforms[i].isDirty = false;
 		}
 

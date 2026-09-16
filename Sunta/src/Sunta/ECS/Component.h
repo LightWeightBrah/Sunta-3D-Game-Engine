@@ -296,6 +296,10 @@ struct PhysicsBodyComponent
 	float mass = 1.0f;
 	float restitution = 0.2f; // 0 = no bounce (sandbag), 1 = SUPER BOUNCY (rubber ball)
 
+	// How much the surface resists sliding: 0 = ice (frictionless), 1 = rubber (strong grip)
+	// When two bodies touch, their frictions combine as sqrt(frictionA * frictionB)
+	float friction = 0.5f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PhysicsBodyComponent>("Physics Body", EngineAssets::Icons::Physics,
@@ -306,6 +310,7 @@ struct PhysicsBodyComponent
 				ADD_PROPERTY(PhysicsBodyComponent, angularVelocity,	 PropertyDataType::Float3),
 				ADD_PROPERTY(PhysicsBodyComponent, mass,		     PropertyDataType::Float),
 				ADD_PROPERTY(PhysicsBodyComponent, restitution,		 PropertyDataType::Float),
+				ADD_PROPERTY(PhysicsBodyComponent, friction,		 PropertyDataType::Float),
 			});
 	}
 };
