@@ -9,10 +9,10 @@
 namespace Sunta
 {
 
-void CollisionSystem::Update(EntityManager& entityManager)
+void CollisionSystem::Update(EntityManager& entityManager, float deltaTime)
 {
 	UpdateColliders(entityManager);
-	ResolveSolidCollisions(entityManager);
+	ResolveSolidCollisions(entityManager, deltaTime);
 	DetectTriggerEvents(entityManager);
 }
 
@@ -35,6 +35,81 @@ void CollisionSystem::UpdateColliders(EntityManager& entityManager)
 
 namespace
 {
+
+// Friction happens when two surfaces slide against each other. Sliding can
+// go ANY direction along the surface, so we describe it with two directions
+// that both lie flat on it (the same way a map needs "east" and "north"
+// to describe any spot)
+//
+// These are NOT world X and Z. They depend on how the surface is tilted:
+// on a floor they end up being X and Z, on a wall they end up being Y and Z
+struct SurfaceSlideDirections
+{
+	glm::vec3 firstSlideDirection  = glm::vec3(0.0f);
+	glm::vec3 secondSlideDirection = glm::vec3(0.0f);
+};
+
+// ONE spot where two boxes touch each other
+// A box landing flat on the floor touches at 4 spots (its 4 bottom corners)
+// A box landing on its corner touches at 1
+struct CollisionPoint
+{
+	glm::vec3 worldPosition = glm::vec3(0.0f);
+	
+	// How deep this particular point is pushed into the other box
+	// A tilted box has one corner buried deep and the opposite one barely touching
+	float penetrationDepth = 0.0f;
+
+	// Distance from each body's center out to this spot
+	// Pushing far from the center makes a body spin (like a door handle)
+	// Pushing through the center only makes it slide
+	glm::vec3 leverArmFromCenterA = glm::vec3(0.0f);
+	glm::vec3 leverArmFromCenterB = glm::vec3(0.0f);
+
+	// "One unit of push here changes the speed by this much"
+	// Heavy, hard-to-spin bodies give a small number: they need a big push
+	// Worked out once per step so the solver loop stays cheap
+	float speedGainPerUnitOfNormalPush      = 0.0f;
+	float speedGainPerUnitOfFirstSlidePush  = 0.0f;
+	float speedGainPerUnitOfSecondSlidePush = 0.0f;
+
+	// How fast this spot should end up moving APART (0 = no bounce)
+	float targetBounceSpeed = 0.0f;
+
+	// We remember how much we have pushed in total, not just in this pass,
+	// so a later pass can take back a push that an earlier one overdid
+	float totalNormalPush = 0.0f;
+	float totalFirstSlidePush = 0.0f;
+	float totalSecondSlidePush = 0.0f;
+};
+
+// 2 boxes touching, plus everything that is the same for all their
+// touching spots (material, which way is "out of the surface" etc.)
+struct CollisionPair
+{
+	PhysicsBodyComponent* bodyA = nullptr;
+	PhysicsBodyComponent* bodyB = nullptr;
+
+	glm::vec3 centerOfA = glm::vec3(0.0f);
+	glm::vec3 centerOfB = glm::vec3(0.0f);
+
+	float inverseMassOfA = 0.0f;
+	float inverseMassOfB = 0.0f;
+
+	glm::mat3 inverseInertiaOfA = glm::mat3(0.0f);
+	glm::mat3 inverseInertiaOfB = glm::mat3(0.0f);
+
+	glm::vec3 pushDirectionFromAToB = glm::vec3(0.0f);
+
+	// Flat along the surface (this is where sliding and friction happen)
+	SurfaceSlideDirections slideDirections;
+
+	float bounciness = 0.0f;
+	float friction   = 0.0f;
+
+	std::vector<CollisionPoint> points;
+};
+
 
 // Resolve as solid only collisions without any trigger in pair, which layers see each other
 bool ShouldResolveAsSolid(const BoxColliderComponent& a, const BoxColliderComponent& b)
@@ -67,64 +142,79 @@ glm::mat3 GetInverseInertiaTensorWorld(const PhysicsBodyComponent* physicsBody, 
 	if (!CanBePushed(physicsBody))
 		return glm::mat3(0.0f);
 
-	glm::vec3 inertiaLocal = ComputeBoxInertiaTensorLocal(collider.halfExtents, physicsBody->mass);
-	glm::vec3 inverseInertiaLocal = 1.0f / inertiaLocal;
+	glm::vec3 inertiaLocal = ComputeBoxInertiaTensorLocal(collider.worldOBB.halfExtents, physicsBody->mass);
+	
+	// prevent divide by zero exception, just in case
+	constexpr float SMALLEST_USABLE_INERTIA = 1e-8f;
+	glm::vec3 inverseInertiaLocal = glm::vec3(
+		inertiaLocal.x > SMALLEST_USABLE_INERTIA ? 1.0f / inertiaLocal.x : 0.0f,
+		inertiaLocal.y > SMALLEST_USABLE_INERTIA ? 1.0f / inertiaLocal.y : 0.0f,
+		inertiaLocal.z > SMALLEST_USABLE_INERTIA ? 1.0f / inertiaLocal.z : 0.0f
+	);
 
 	return ComputeInverseInertiaTensorWorld(inverseInertiaLocal, collider.worldOBB.orientation);
 }
 
-constexpr float EQUAL_PUSH_SHARE_BETWEEN_TWO_MOVABLE_BODIES = 0.5f;
-
-void MoveEntityAndKeepColliderInSync(EntityManager& entityManager, unsigned int entityID,
-	BoxColliderComponent& collider, const glm::vec3& movement)
+// A material property doesn't belong to one body alone
+// It's a combination of both surfaces touching
+//
+// Restitution ("bounciness"): the LEAST bouncy of the two wins
+// A rubber ball dropped on a bed of sand does not bounce much either,
+// even though the ball itself is very bouncy
+float CombineRestitution(const PhysicsBodyComponent* bodyA, const PhysicsBodyComponent* bodyB)
 {
-	auto* transform = entityManager.GetComponent<TransformComponent>(entityID);
-	if (!transform)
-		return;
+	if (bodyA && bodyB)
+		return std::min(bodyA->restitution, bodyB->restitution);
 
-	transform->position += movement;
-	transform->isDirty = true;
-
-	collider.worldOBB.center += movement;
+	return bodyA ? bodyA->restitution : (bodyB ? bodyB->restitution : 0.0f);
 }
 
-// Push 2 boxes aparat so they stop overlapping on collision, 
-// NO VELOCITY OR ROTATION APPLIED HERE
-void SeparateOverlappingBodies(EntityManager& entityManager,
-	BoxColliderComponent& colliderA, unsigned int entityA, float inverseMassA,
-	BoxColliderComponent& colliderB, unsigned int entityB, float inverseMassB,
-	const ContactManifold& manifold
-)
+// A material property doesn't belong to one body alone
+// It's a combination of both surfaces touching
+//
+// Friction: combined with a square root so that "ice touching anything"
+// stays close to frictionless, instead of averaging away the ice's slipperiness
+float CombineFriction(const PhysicsBodyComponent* bodyA, const PhysicsBodyComponent* bodyB)
 {
-	float totalInverseMass = inverseMassA + inverseMassB;
-	if (totalInverseMass <= 0.0f)
-		return;
+	if (bodyA && bodyB)
+		return std::sqrt(bodyA->friction * bodyB->friction);
 
-	// The lighter object (bigger inverse mass) gets pushed further
-	// E.g. bowling ball barely moves when a ping-pong ball bounces off it
-
-
-	// "For every action (force) in nature there is an equal and opposite reaction" ~Sir Isaac Newton~
-	float shareA = inverseMassA / totalInverseMass;
-	float shareB = inverseMassB / totalInverseMass;
-
-	if (inverseMassA > 0.0f)
-		MoveEntityAndKeepColliderInSync(entityManager, entityA, colliderA, -manifold.pushDirectionFromAToB * manifold.overlapDepth * shareA);
-
-	if (inverseMassB > 0.0f)
-		MoveEntityAndKeepColliderInSync(entityManager, entityB, colliderB,  manifold.pushDirectionFromAToB * manifold.overlapDepth * shareB);
-
+	return bodyA ? bodyA->friction : (bodyB ? bodyB->friction : 0.0f);
 }
 
-// Velocity of the contact point ITSELF, not the whole object's center
-// If something spins, points further from the center move faster than
-// points near it (think of a ceiling fan blade tip vs its middle) 
-// so even if the object's center isn't moving, a spinning point CAN BE MOVING
-// cross(angularVelocity, leverArm) calculates that extra motion
-// added by the spin
-glm::vec3 GetVelocityAtPoint(const glm::vec3& velocity, const glm::vec3& angularVelocity, const glm::vec3& leverArm)
+// Returns whichever world axis (X, Y or Z) points the LEAST like the given
+// direction. Used to pick a safe helper axis: cross product of two directions that
+// point the same way gives a zero vector, which would break everything
+glm::vec3 GetWorldAxisPointingLeastLike(const glm::vec3& direction)
 {
-	return velocity + glm::cross(angularVelocity, leverArm);
+	float howMuchItPointsAlongX = std::abs(direction.x);
+	float howMuchItPointsAlongY = std::abs(direction.y);
+	float howMuchItPointsAlongZ = std::abs(direction.z);
+
+	bool xIsTheLeastSimilar = howMuchItPointsAlongX <= howMuchItPointsAlongY
+		&& howMuchItPointsAlongX <= howMuchItPointsAlongZ;
+
+	if (xIsTheLeastSimilar)
+		return glm::vec3(1.0f, 0.0f, 0.0f);
+
+	bool yIsTheLeastSimilar = howMuchItPointsAlongY <= howMuchItPointsAlongZ;
+
+	if (yIsTheLeastSimilar)
+		return glm::vec3(0.0f, 1.0f, 0.0f);
+
+	return glm::vec3(0.0f, 0.0f, 1.0f);
+}
+
+SurfaceSlideDirections BuildSlideDirections(const glm::vec3& surfaceNormal)
+{
+	SurfaceSlideDirections directions;
+
+	glm::vec3 helperAxis = GetWorldAxisPointingLeastLike(surfaceNormal);
+
+	directions.firstSlideDirection = glm::normalize(glm::cross(surfaceNormal, helperAxis));
+	directions.secondSlideDirection = glm::normalize(glm::cross(surfaceNormal, directions.firstSlideDirection));
+
+	return directions;
 }
 
 // How much 1 UNIT of push along direction would change the separating velocity
@@ -151,18 +241,41 @@ float GetImpulseResponse(const glm::vec3& direction,
 	glm::vec3 angularResponseB = glm::cross(inverseInertiaB * glm::cross(leverArmB, direction), leverArmB);
 
 	float impulseDenominator = inverseMassA + inverseMassB + glm::dot(angularResponseA + angularResponseB, direction);
-	
+
 	return impulseDenominator;
 }
 
-void ApplyImpulseToBothBodies(
-	PhysicsBodyComponent* physicsBodyA, float inverseMassA, const glm::mat3& inverseInertiaA, const glm::vec3& leverArmA,
-	PhysicsBodyComponent* physicsBodyB, float inverseMassB, const glm::mat3& inverseInertiaB, const glm::vec3& leverArmB,
-	const glm::vec3& impulse)
+glm::vec3 GetVelocityOfBodyAtPoint(const PhysicsBodyComponent* body, const glm::vec3& leverArm)
 {
-	if (physicsBodyA && inverseMassA > 0.0f)
+	if (!body)
+		return glm::vec3(0.0f);
+
+	// Linear velocity from rotation (v = w x r). (E.g. a spinning wheel's edge moves faster than its center)
+	// Cross product calculates the correct direction (sideways along the circle "direction tangent to the circle")
+	glm::vec3 extraSpeedFromSpinning = glm::cross(body->angularVelocity, leverArm);
+
+	return body->velocity + extraSpeedFromSpinning;
+}
+
+// How fast the two touching spots are moving relative to each other
+// We only ever care about the DIFFERENCE, never the absolute speeds:
+// two boxes flying side by side at 100 km/h are not colliding at all
+glm::vec3 GetSpeedDifferenceAtPoint(const CollisionPair& pair, const CollisionPoint& point)
+{
+	glm::vec3 speedOfA = GetVelocityOfBodyAtPoint(pair.bodyA, point.leverArmFromCenterA);
+	glm::vec3 speedOfB = GetVelocityOfBodyAtPoint(pair.bodyB, point.leverArmFromCenterB);
+
+	return speedOfB - speedOfA;
+}
+
+// An "impulse" is an INSTANT push: it changes speed right now, instead of
+// pushing over time the way a force does. Collisions happen too fast to be
+// worth simulating as forces, so everything here works in impulses
+void PushBothBodiesApart(const CollisionPair& pair, const CollisionPoint& point, const glm::vec3& impulse)
+{
+	if (pair.bodyA && pair.inverseMassOfA > 0.0f)
 	{
-		physicsBodyA->velocity -= impulse * inverseMassA;
+		pair.bodyA->velocity -= impulse * pair.inverseMassOfA;
 
 		// Angular velocity apply explanation for both physicsBodyA && physicsBodyB:
 		//
@@ -178,185 +291,272 @@ void ApplyImpulseToBothBodies(
 		// it's biggest when impulse is perpendicular to leverArm (pure "sideways"
 		// push, like a door handle), and drops to ZERO when impulse points straight
 		// along leverArm (pushing straight through the center never causes a spin)
-		physicsBodyA->angularVelocity -= inverseInertiaA * glm::cross(leverArmA, impulse);
+		pair.bodyA->angularVelocity -= pair.inverseInertiaOfA * glm::cross(point.leverArmFromCenterA, impulse);
 	}
 
-	if (physicsBodyB && inverseMassB > 0.0f)
+	if (pair.bodyB && pair.inverseMassOfB > 0.0f)
 	{
-		physicsBodyB->velocity += impulse * inverseMassB;
-		physicsBodyB->angularVelocity += inverseInertiaB * glm::cross(leverArmB, impulse);
+		pair.bodyB->velocity += impulse * pair.inverseMassOfB;
+		pair.bodyB->angularVelocity += pair.inverseInertiaOfB * glm::cross(point.leverArmFromCenterB, impulse);
 	}
 }
 
-glm::vec3 GetSlidingDirection(const glm::vec3& relativeVelocity, const glm::vec3& normal)
+// Turns "how easily does this pair react" into "how much push do I need",
+// by flipping it upside down once instead of dividing inside every loop pass
+float GetSpeedGainPerUnitOfPush(const CollisionPair& pair, const CollisionPoint& point, const glm::vec3& pushDirection)
 {
-	glm::vec3 approachingVelocity = normal * glm::dot(relativeVelocity, normal);
-	glm::vec3 slidingVelocity = relativeVelocity - approachingVelocity;
+	// Calculate how easily the objects react to a push at this specific contact point 
+	// (If you push a light cardboard box,  it flies away instantly)
+	// (If you push a heavy concrete block, it barely moves)
+	// This takes into account both their weight (mass) and where you hit them (leverage/rotation)
+	float howEasilyItReacts = GetImpulseResponse(pushDirection,
+		point.leverArmFromCenterA, pair.inverseMassOfA, pair.inverseInertiaOfA,
+		point.leverArmFromCenterB, pair.inverseMassOfB, pair.inverseInertiaOfB);
 
-	constexpr float MIN_SLIDING_SPEED = 1e-5f;
-	float slidingSpeed = glm::length(slidingVelocity);
+	constexpr float MIN_REACTION_THRESHOLD = 1e-8f;
 
-	if (slidingSpeed <= MIN_SLIDING_SPEED)
-		return glm::vec3(0.0f);
-
-	return slidingVelocity / slidingSpeed;
-}
-
-float GetFrictionImpulseMagnitude(
-	const glm::vec3& relativeVelocity, const glm::vec3& slidingDirection,
-	const glm::vec3& leverArmA, float inverseMassA, const glm::mat3& inverseInertiaA,
-	const glm::vec3& leverArmB, float inverseMassB, const glm::mat3& inverseInertiaB,
-	float bounceImpulseMagnitude, float friction
-)
-{
-	float response = GetImpulseResponse(slidingDirection,
-		leverArmA, inverseMassA, inverseInertiaA,
-		leverArmB, inverseMassB, inverseInertiaB);
-
-	if (response <= 0.0f)
+	if (howEasilyItReacts < MIN_REACTION_THRESHOLD)
 		return 0.0f;
 
-	float impulseToFullyStopSliding = -glm::dot(relativeVelocity, slidingDirection) / response;
-	float maxAllowedImpulseByFriction = friction * bounceImpulseMagnitude;
-
-	return glm::clamp(impulseToFullyStopSliding, -maxAllowedImpulseByFriction, maxAllowedImpulseByFriction);
+	// Flip it upside down (1 / reaction) so the solver can use fast (for CPU) multiplication 
+	// instead of doing slow (for CPU) divisions in every single loop pass
+	return 1.0f / howEasilyItReacts;
 }
 
-float ApplyNormalImpulse(
-	PhysicsBodyComponent* physicsBodyA, float inverseMassA, const glm::mat3& inverseInertiaA, const glm::vec3& leverArmA,
-	PhysicsBodyComponent* physicsBodyB, float inverseMassB, const glm::mat3& inverseInertiaB, const glm::vec3& leverArmB,
-	const glm::vec3& relativeVelocity, const glm::vec3& normal, float restitution)
+float CalculateTargetBounceSpeed(const CollisionPair& pair, const CollisionPoint& point)
 {
-	// How fast the two contact points are moving apart (along the normal)
-	// Negative = still approaching (there's still collision to resolve)
-	float separatingVelocity = glm::dot(relativeVelocity, normal);
+	glm::vec3 speedDifference = GetSpeedDifferenceAtPoint(pair, point);
 
-	if (separatingVelocity > 0.0f)
-		return 0.0f; // colliders are already separating, so nothing to do
+	// Negative means the two spots are still moving INTO each other
+	float approachSpeed = glm::dot(speedDifference, pair.pushDirectionFromAToB);
 
-	// Restitution: after the hit, separating speed should be restitution
-	// times what it was before (0 = stops, 1 = bounces back as fast as it hit).
-	float desiredSeparatingVelocity = -restitution * separatingVelocity;
-	float deltaVelocity = desiredSeparatingVelocity - separatingVelocity;
+	// Below this impact speed nothing bounces. Without this rule a box resting
+	// on the floor keeps making tiny hops forever, because gravity gives it a
+	// small downward speed on every single step, and every one of those would
+	// be treated as a fresh little impact.
+	constexpr float SLOWEST_IMPACT_THAT_STILL_BOUNCES = 1.0f; // meters / second
 
-	float normalResponse = GetImpulseResponse(normal,
-		leverArmA, inverseMassA, inverseInertiaA,
-		leverArmB, inverseMassB, inverseInertiaB);
+	bool hitHardEnoughToBounce = approachSpeed < -SLOWEST_IMPACT_THAT_STILL_BOUNCES;
 
-	if (normalResponse <= 0.0f)
+	if (!hitHardEnoughToBounce)
 		return 0.0f;
 
-	float normalImpulseMagnitude = deltaVelocity / normalResponse;
-	glm::vec3 normalImpulse = normalImpulseMagnitude * normal;
-
-	ApplyImpulseToBothBodies(
-		physicsBodyA, inverseMassA, inverseInertiaA, leverArmA,
-		physicsBodyB, inverseMassB, inverseInertiaB, leverArmB,
-		normalImpulse);
-
-	return normalImpulseMagnitude;
+	// Bounciness 0.2 means "leave with 20% of the speed you arrived with"
+	// The minus flips "coming in" into "going out"
+	return -pair.bounciness * approachSpeed;
 }
 
-void ApplyFrictionImpulse(
-	PhysicsBodyComponent* physicsBodyA, float inverseMassA, const glm::mat3& inverseInertiaA, const glm::vec3& leverArmA,
-	PhysicsBodyComponent* physicsBodyB, float inverseMassB, const glm::mat3& inverseInertiaB, const glm::vec3& leverArmB,
-	const glm::vec3& relativeVelocity, const glm::vec3& normal, float normalImpulseMagnitude, float friction)
+void PrepareCollisionPoint(const CollisionPair& pair, CollisionPoint& point)
 {
-	glm::vec3 slidingDirection = GetSlidingDirection(relativeVelocity, normal);
-	if (slidingDirection == glm::vec3(0.0f)) // No sliding, so nothing for friction to do
-		return;
+	point.leverArmFromCenterA = point.worldPosition - pair.centerOfA;
+	point.leverArmFromCenterB = point.worldPosition - pair.centerOfB;
 
-	float frictionImpulseMagnitude = GetFrictionImpulseMagnitude(relativeVelocity, slidingDirection,
-		leverArmA, inverseMassA, inverseInertiaA,
-		leverArmB, inverseMassB, inverseInertiaB,
-		normalImpulseMagnitude, friction);
+	point.speedGainPerUnitOfNormalPush = GetSpeedGainPerUnitOfPush(pair, point, pair.pushDirectionFromAToB);
+	point.speedGainPerUnitOfFirstSlidePush = GetSpeedGainPerUnitOfPush(pair, point, pair.slideDirections.firstSlideDirection);
+	point.speedGainPerUnitOfSecondSlidePush = GetSpeedGainPerUnitOfPush(pair, point, pair.slideDirections.secondSlideDirection);
 
-	glm::vec3 frictionImpulse = frictionImpulseMagnitude * slidingDirection;
-
-	ApplyImpulseToBothBodies(
-		physicsBodyA, inverseMassA, inverseInertiaA, leverArmA,
-		physicsBodyB, inverseMassB, inverseInertiaB, leverArmB,
-		frictionImpulse);
+	point.targetBounceSpeed = CalculateTargetBounceSpeed(pair, point);
 }
 
-void ApplyCollisionImpulse(
-	PhysicsBodyComponent* physicsBodyA, const glm::vec3& centerA, 
-	float inverseMassA,                 const glm::mat3& inverseInertiaA,
-
-	PhysicsBodyComponent* physicsBodyB, const glm::vec3& centerB,
-	float inverseMassB, const glm::mat3& inverseInertiaB,
-
-	const glm::vec3& normal, const glm::vec3& contactPoint, float restitution, float friction)
+// Instead of teleporting overlapping bodies apart, we quietly ask them to
+// move apart a little. Teleporting is invisible to the rest of the
+// simulation and causes jitter (speed is something the solver understands)
+float CalculateMoveApartSpeed(const CollisionPoint& point, float deltaTime)
 {
-	if (inverseMassA <= 0.0f && inverseMassB <= 0.0f)
-		return;
+	// We let bodies sink into each other by this much and simply ignore it
+	// Chasing the last fraction of a millimeter is exactly what makes resting
+	// boxes vibrate instead of sitting still.
+	constexpr float ACCEPTABLE_OVERLAP = 0.005f;
 
-	glm::vec3 velocityA = physicsBodyA ? physicsBodyA->velocity : glm::vec3(0.0f);
-	glm::vec3 velocityB = physicsBodyB ? physicsBodyB->velocity : glm::vec3(0.0f);
+	// What share of the leftover overlap we undo per step
+	// 1.0 would fix it instantly, but that makes objects visibly pop
+	// 0.2 spreads the fix over several steps and looks calm
+	constexpr float OVERLAP_FIX_PER_STEP = 0.2f;
 
-	glm::vec3 angularVelocityA = physicsBodyA ? physicsBodyA->angularVelocity : glm::vec3(0.0f);
-	glm::vec3 angularVelocityB = physicsBodyB ? physicsBodyB->angularVelocity : glm::vec3(0.0f);
+	float overlapWorthFixing = std::max(point.penetrationDepth - ACCEPTABLE_OVERLAP, 0.0f);
 
-	// "Lever Arm" - the offset from each object's center to the actual
-	// contact point. The further the contact point is from the center, the
-	// more torque (spin)
-	glm::vec3 leverArmA = contactPoint - centerA;
-	glm::vec3 leverArmB = contactPoint - centerB;
-
-	glm::vec3 contactVelocityA = GetVelocityAtPoint(velocityA, angularVelocityA, leverArmA);
-	glm::vec3 contactVelocityB = GetVelocityAtPoint(velocityB, angularVelocityB, leverArmB);
-
-	// How fast the two contact points are moving apart (along the normal)
-	// Negative = still approaching (there's still collision to resolve)
-	glm::vec3 relativeVelocity = contactVelocityB - contactVelocityA;
-
-	float bounceImpulseMagnitude = ApplyNormalImpulse(
-		physicsBodyA, inverseMassA, inverseInertiaA, leverArmA,
-		physicsBodyB, inverseMassB, inverseInertiaB, leverArmB,
-		relativeVelocity, normal, restitution);
-	
-	if (bounceImpulseMagnitude <= 0.0f)
-		return; //already separating or nothing to resolve (skip friction)
-
-	ApplyFrictionImpulse(
-		physicsBodyA, inverseMassA, inverseInertiaA, leverArmA,
-		physicsBodyB, inverseMassB, inverseInertiaB, leverArmB,
-		relativeVelocity, normal, bounceImpulseMagnitude, friction);
+	// meters to fix, spread over 1 step
+	return (OVERLAP_FIX_PER_STEP * overlapWorthFixing) / deltaTime;
 }
 
-
-// Stops velocity from pushing object into a surface it's touching (e.g. floor)
-// while keeping the part of velocity that slides along the surface
-// Without this gravity would keep pushing the object into the floor every frame
-// and PushEntitiesApart would keep pushing it back out, causing jittering
-glm::vec3 StopVelocityGoingIntoSurface(const glm::vec3& velocity, const glm::vec3& surfaceNormal)
+void SolvePushApartDirection(const CollisionPair& pair, CollisionPoint& point, float deltaTime)
 {
-	// Dot product tells us how much velocity points toward the surface
-	// Positive (+) = moving away from surface
-	// Negative (-) = moving into the surface
-	float velocityTowardsSurface = glm::dot(velocity, surfaceNormal);
+	// STEP 1: where are we, and where do we want to be?
+	glm::vec3 speedDifference = GetSpeedDifferenceAtPoint(pair, point);
+	float currentSeparatingSpeed = glm::dot(speedDifference, pair.pushDirectionFromAToB);
 
-	// postive dot product = moving away from surface (so don't do anything)
-	if (velocityTowardsSurface >= 0.0f)
-		return velocity;
+	// Plain "stop moving into each other" would be a target of 0
+	// We aim slightly above 0 for two separate reasons, added together:
+	float wantedSeparatingSpeed = point.targetBounceSpeed					 // so it bounces
+		+ CalculateMoveApartSpeed(point, deltaTime); // so it stops overlapping
 
-	// Subtract only the "into surface" part of velocity , keep the rest untouched (slinding along surface)
-	return velocity - surfaceNormal * velocityTowardsSurface;
+	// STEP 2: how much push covers that gap?
+	float missingSpeed = wantedSeparatingSpeed - currentSeparatingSpeed;
+	float pushToAddNow = missingSpeed * point.speedGainPerUnitOfNormalPush;
+
+	// STEP 3: clamp the TOTAL, not this one pass
+	//
+	// A surface can only PUSH bodies apart  
+	// A floor never sucks a box downwards
+	// so the running total must stay at 0 or above
+	//
+	// But this single pass is allowed to come out NEGATIVE, as long as the
+	// total stays positive. That is what lets a later corner take back push
+	// that an earlier corner overdid. Without it, whichever corner happens
+	// to be solved first always wins, and a box dropped perfectly flat
+	// still flips over
+	float pushBefore = point.totalNormalPush;
+	point.totalNormalPush = std::max(pushBefore + pushToAddNow, 0.0f);
+
+	float pushActuallyAdded = point.totalNormalPush - pushBefore;
+
+	PushBothBodiesApart(pair, point, pair.pushDirectionFromAToB * pushActuallyAdded);
 }
 
-// Applies StopVelocityGoingIntoSurface to whichever of the two bodies can actually move,
-// using the manifold's push direction as each body's local "surface normal"
-// (pushDirectionFromAToB points from A to B, so B's surface normal faces towards it while A's faces away)
-void StopBodiesFromRegainingTheirOverlap(
-	PhysicsBodyComponent* physicsBodyA, float inverseMassA,
-	PhysicsBodyComponent* physicsBodyB, float inverseMassB,
-	const glm::vec3& pushDirectionFromAToB)
+void SolveOneSlideDirection(const CollisionPair& pair, CollisionPoint& point,
+	const glm::vec3& slideDirection, float speedGainPerUnitOfPush, float& totalSlidePush)
 {
-	if (inverseMassA > 0.0f)
-		physicsBodyA->velocity = StopVelocityGoingIntoSurface(physicsBodyA->velocity, -pushDirectionFromAToB);
+	glm::vec3 speedDifference = GetSpeedDifferenceAtPoint(pair, point);
+	float currentSlideSpeed = glm::dot(speedDifference, slideDirection);
 
-	if (inverseMassB > 0.0f)
-		physicsBodyB->velocity = StopVelocityGoingIntoSurface(physicsBodyB->velocity, pushDirectionFromAToB);
+	// Friction always wants to stop the sliding completely
+	// So unlike the push-apart direction, the target here is plain 0
+	float pushToAddNow = -currentSlideSpeed * speedGainPerUnitOfPush;
+
+	// Friction can never be stronger than how hard the surfaces are pressed together
+	// Rest a book on a table and it slides easily
+	// Press down hard and it will not move
+	// "How hard pressed" is exactly totalNormalPush
+	float strongestFrictionAllowed = pair.friction * point.totalNormalPush;
+
+	// Sliding can go either way along this direction, so the limit is symmetric
+	float pushBefore = totalSlidePush;
+	totalSlidePush = glm::clamp(pushBefore + pushToAddNow, -strongestFrictionAllowed, strongestFrictionAllowed);
+
+	float pushActuallyAdded = totalSlidePush - pushBefore;
+
+	PushBothBodiesApart(pair, point, slideDirection * pushActuallyAdded);
+}
+
+void SolveFriction(const CollisionPair& pair, CollisionPoint& point)
+{
+	SolveOneSlideDirection(pair, point,
+		pair.slideDirections.firstSlideDirection,
+		point.speedGainPerUnitOfFirstSlidePush,
+		point.totalFirstSlidePush);
+
+	SolveOneSlideDirection(pair, point,
+		pair.slideDirections.secondSlideDirection,
+		point.speedGainPerUnitOfSecondSlidePush,
+		point.totalSecondSlidePush);
+}
+
+CollisionPair BuildCollisionPair(
+	PhysicsBodyComponent* bodyA, const BoxColliderComponent& colliderA, float inverseMassA,
+	PhysicsBodyComponent* bodyB, const BoxColliderComponent& colliderB, float inverseMassB,
+	const ContactManifold& manifold)
+{
+	CollisionPair pair;
+
+	pair.bodyA = bodyA;
+	pair.bodyB = bodyB;
+
+	pair.centerOfA = colliderA.worldOBB.center;
+	pair.centerOfB = colliderB.worldOBB.center;
+
+	pair.inverseMassOfA = inverseMassA;
+	pair.inverseMassOfB = inverseMassB;
+
+	pair.inverseInertiaOfA = GetInverseInertiaTensorWorld(bodyA, colliderA);
+	pair.inverseInertiaOfB = GetInverseInertiaTensorWorld(bodyB, colliderB);
+
+	pair.bounciness = CombineRestitution(bodyA, bodyB);
+	pair.friction = CombineFriction(bodyA, bodyB);
+
+	pair.pushDirectionFromAToB = manifold.pushDirectionFromAToB;
+	pair.slideDirections = BuildSlideDirections(pair.pushDirectionFromAToB);
+
+	for (const ContactPoint& geometricContact : manifold.contacts)
+	{
+		CollisionPoint point;
+
+		point.worldPosition = geometricContact.worldPosition;
+		point.penetrationDepth = geometricContact.penetrationDepth;
+
+		pair.points.push_back(point);
+	}
+
+	return pair;
+}
+
+std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
+{
+	std::vector<CollisionPair> pairs;
+
+	auto& colliders = entityManager.GetAllComponents<BoxColliderComponent>();
+
+	for (unsigned int i = 0; i < colliders.size(); i++)
+	{
+		for (unsigned int j = i + 1; j < colliders.size(); j++)
+		{
+			if(!ShouldResolveAsSolid(colliders[i], colliders[j]))
+				continue;
+
+			ContactManifold manifold = GetContactManifoldBoxVsBox(colliders[i].worldOBB, colliders[j].worldOBB);
+
+			if (!manifold.areOverlapping || manifold.contacts.empty())
+				continue;
+
+			unsigned int entityA = entityManager.GetEntityIDForComponent(colliders[i]);
+			unsigned int entityB = entityManager.GetEntityIDForComponent(colliders[j]);
+
+			auto* bodyA = entityManager.GetComponent<PhysicsBodyComponent>(entityA);
+			auto* bodyB = entityManager.GetComponent<PhysicsBodyComponent>(entityB);
+
+			float inverseMassA = GetInverseMass(bodyA);
+			float inverseMassB = GetInverseMass(bodyB);
+
+			bool bothAreImmovable = inverseMassA <= 0.0f && inverseMassB <= 0.0f;
+			if(bothAreImmovable)
+				continue;
+
+			pairs.push_back(BuildCollisionPair(
+				bodyA, colliders[i], inverseMassA,
+				bodyB, colliders[j], inverseMassB,
+				manifold));
+		}
+	}
+
+	return pairs;
+}
+
+void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
+{
+	for (CollisionPair& pair : pairs)
+		for (CollisionPoint& point : pair.points)
+			PrepareCollisionPoint(pair, point);
+
+	// Fixing one touching point always slightly disturbs the others 
+	// Push one corner of a box down and the opposite corner lifts a little
+	// So we go over every point again and again
+	// Each pass the leftover error gets smaller, until everything settles
+	// More passes = steadier stacks of boxes, but more CPU time
+	// 10 is a solid default
+
+	constexpr int SOLVER_PASSES = 10;
+
+	for (unsigned int pass = 0; pass < SOLVER_PASSES; pass++)
+	{
+		for (CollisionPair& pair : pairs)
+		{
+			for (CollisionPoint& point : pair.points)
+			{
+				SolvePushApartDirection(pair, point, deltaTime);
+				SolveFriction(pair, point);
+			}
+		}
+	}
+
 }
 
 }
@@ -378,76 +578,10 @@ void SnapMinimalMotionToZero(EntityManager& entityManager)
 	}
 }
 
-void CollisionSystem::ResolveSolidCollisions(EntityManager& entityManager)
+void CollisionSystem::ResolveSolidCollisions(EntityManager& entityManager, float deltaTime)
 {
-	auto& colliders = entityManager.GetAllComponents<BoxColliderComponent>();
-
-	for (unsigned int i = 0; i < colliders.size(); i++)
-	{
-		for (unsigned int j = i + 1; j < colliders.size(); j++)
-		{
-			if (!ShouldResolveAsSolid(colliders[i], colliders[j]))
-				continue;
-
-			ContactManifold manifold = GetContactManifoldBoxVsBox(colliders[i].worldOBB, colliders[j].worldOBB);
-
-			if (!manifold.areOverlapping)
-				continue;
-
-			unsigned int entityI = entityManager.GetEntityIDForComponent(colliders[i]);
-			unsigned int entityJ = entityManager.GetEntityIDForComponent(colliders[j]);
-
-			auto* physicsBodyI = entityManager.GetComponent<PhysicsBodyComponent>(entityI);
-			auto* physicsBodyJ = entityManager.GetComponent<PhysicsBodyComponent>(entityJ);
-
-			float inverseMassI = GetInverseMass(physicsBodyI);
-			float inverseMassJ = GetInverseMass(physicsBodyJ);
-
-			if(inverseMassI <= 0.0f && inverseMassJ <= 0.0f)
-				continue;
-
-			SeparateOverlappingBodies(entityManager, 
-				colliders[i], entityI, inverseMassI,
-				colliders[j], entityJ, inverseMassJ, manifold);
-
-			glm::mat3 inverseInertiaI = GetInverseInertiaTensorWorld(physicsBodyI, colliders[i]);
-			glm::mat3 inverseInertiaJ = GetInverseInertiaTensorWorld(physicsBodyJ, colliders[j]);
-
-			float restitution = physicsBodyI && physicsBodyJ
-				? std::min(physicsBodyI->restitution, physicsBodyJ->restitution)
-				: (physicsBodyI ? physicsBodyI->restitution : physicsBodyJ->restitution);
-
-			float friction = physicsBodyI && physicsBodyJ
-				? std::sqrt(physicsBodyI->friction * physicsBodyJ->friction)
-				: (physicsBodyI ? physicsBodyI->friction : physicsBodyJ->friction);
-
-
-			// Iterative impulse solver:
-			// When objects touch in multiple contact points at once, fixing the force at one point
-			// messes up the others. Doing this in a loop makes each of the contact point
-			// adjustments smoother, step by step, until everything settles down nicely without shaking
-			constexpr int SOLVER_ITERATIONS = 8;
-
-			for (unsigned int iteration = 0; iteration < SOLVER_ITERATIONS; iteration++)
-			{
-				for (const ContactPoint& contact : manifold.contacts)
-				{
-					ApplyCollisionImpulse(
-						physicsBodyI, colliders[i].worldOBB.center, inverseMassI, inverseInertiaI,
-						physicsBodyJ, colliders[j].worldOBB.center, inverseMassJ, inverseInertiaJ,
-						manifold.pushDirectionFromAToB, contact.worldPosition, restitution, friction);
-				}
-			}
-
-			StopBodiesFromRegainingTheirOverlap(
-				physicsBodyI, inverseMassI,
-				physicsBodyJ, inverseMassJ,
-				manifold.pushDirectionFromAToB);
-
-		}
-	}
-
-	SnapMinimalMotionToZero(entityManager);
+	std::vector<CollisionPair> pairs = CollectCollisionPairs(entityManager);
+	SolveCollisionPairs(pairs, deltaTime);
 }
 
 namespace

@@ -7,14 +7,40 @@
 
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
+#include "ECS/Systems.h"
+#include "CollisionSystem.h"
 
 namespace Sunta
 {
 
-void PhysicsSystem::UpdatePhysics(EntityManager& entityManager, float deltaTime)
+void PhysicsSystem::UpdatePhysics(EntityManager& entityManager, float frameDeltaTime)
+{
+	// Cap the frame time so sudden lags don't trigger a loop of 
+	// too many expensive physics calculations that could freeze the game again
+	// It's called "spiral of death" in Physics Engines
+	constexpr float LONGEST_ACCEPTABLE_FRAME = 0.25f;
+	frameDeltaTime = std::min(frameDeltaTime, LONGEST_ACCEPTABLE_FRAME);
+
+	timeAccumulator += frameDeltaTime;
+
+	// Run physics in steady, fixed-size steps 
+	// This ensures movement is smooth, stable, and predictable, 
+	// regardless of how fast or slow the computer is running (FPS)
+	while (timeAccumulator >= FIXED_TIME_STAMP)
+	{
+		RunSingleStep(entityManager, FIXED_TIME_STAMP);
+		timeAccumulator -= FIXED_TIME_STAMP;
+	}
+}
+
+void PhysicsSystem::RunSingleStep(EntityManager& entityManager, float deltaTime)
 {
 	ApplyLinearMotion(entityManager, deltaTime);
 	ApplyAngularMotion(entityManager, deltaTime);
+	ApplyDamping(entityManager, deltaTime);
+
+	Systems::UpdateTransform(entityManager);
+	CollisionSystem::Update(entityManager, deltaTime);
 }
 
 namespace
@@ -37,6 +63,11 @@ glm::quat ApplyAngularVelocity(const glm::quat& currentRotation, const glm::vec3
 	glm::quat newRotation  = currentRotation + rateOfChange * (0.5f * deltaTime);
 
 	return glm::normalize(newRotation);
+}
+
+float GetDampingFactor(float damping, float deltaTime)
+{
+	return 1.0f / (1.0f + damping * deltaTime);
 }
 
 }
@@ -87,8 +118,24 @@ void PhysicsSystem::ApplyAngularMotion(EntityManager& entityManager, float delta
 
 		transform->rotationQuaternion = ApplyAngularVelocity(transform->rotationQuaternion, 
 			physicsBody.angularVelocity, deltaTime);
+		transform->SyncEulerFromQuaternion();
 		transform->isDirty = true;
 	}
+}
+
+void PhysicsSystem::ApplyDamping(EntityManager& entityManager, float deltaTime)
+{
+	auto& physicsBodies = entityManager.GetAllComponents<PhysicsBodyComponent>();
+
+	for (auto& physicsBody : physicsBodies)
+	{
+		if(physicsBody.isKinematic)
+			continue;
+
+		physicsBody.velocity	   *= GetDampingFactor(physicsBody.linearDamping,  deltaTime);
+		physicsBody.angularDamping *= GetDampingFactor(physicsBody.angularDamping, deltaTime);
+	}
+
 }
 
 }

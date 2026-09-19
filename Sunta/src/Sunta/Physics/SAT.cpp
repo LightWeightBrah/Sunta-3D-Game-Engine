@@ -318,7 +318,7 @@ inline std::vector<ContactPoint> KeepOnlyThePenetratingPoints(
 
 		bool isPenetratingPoint = howFarBehindTheFace >= 0.0f;
 		if (isPenetratingPoint)
-			contacts.push_back({ point });
+			contacts.push_back({ point, howFarBehindTheFace });
 	}
 
 	return contacts;
@@ -753,7 +753,8 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b)
 		Segment edgeOnA = GetBoxEdgeSegment(a, axisOfA,  directionFromCenterAToCenterB);
 		Segment edgeOnB = GetBoxEdgeSegment(b, axisOfB, -directionFromCenterAToCenterB);
 
-		manifold.contacts.push_back({ ClosestPointBetweenSegments(edgeOnA, edgeOnB) });
+		glm::vec3 contactPoint = ClosestPointBetweenSegments(edgeOnA, edgeOnB);
+		manifold.contacts.push_back({ contactPoint, manifold.overlapDepth });
 	}
 
 	return manifold;

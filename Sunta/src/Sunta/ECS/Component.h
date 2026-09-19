@@ -61,6 +61,11 @@ struct TransformComponent
 		rotationQuaternion = glm::quat(glm::radians(rotation));
 	}
 
+	void SyncEulerFromQuaternion()
+	{
+		rotation = glm::degrees(glm::eulerAngles(rotationQuaternion));
+	}
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<TransformComponent>("Transform", EngineAssets::Icons::Transform,
@@ -299,6 +304,11 @@ struct PhysicsBodyComponent
 	// How much the surface resists sliding: 0 = ice (frictionless), 1 = rubber (strong grip)
 	// When two bodies touch, their frictions combine as sqrt(frictionA * frictionB)
 	float friction = 0.5f;
+
+	// How quickly motion fades away on its own (like air resistance etc.)
+	// 0 = nothing slows down, higher = stops sooner
+	float linearDamping = 0.05f;
+	float angularDamping = 0.05f;
 
 	static void RegisterToInspector()
 	{

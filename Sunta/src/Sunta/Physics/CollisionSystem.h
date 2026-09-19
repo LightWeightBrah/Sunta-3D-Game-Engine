@@ -19,10 +19,10 @@ enum class TriggerEventType
 class CollisionSystem
 {
 public:
-	static void Update(EntityManager& entityManager);
+	static void Update(EntityManager& entityManager, float deltaTime);
 
 	static void UpdateColliders(EntityManager& entityManager);
-	static void ResolveSolidCollisions(EntityManager& entityManager);
+	static void ResolveSolidCollisions(EntityManager& entityManager, float deltaTime);
 	static void DetectTriggerEvents(EntityManager& entityManager);
 
 	static void Reset() { previousOverlaps.clear(); }

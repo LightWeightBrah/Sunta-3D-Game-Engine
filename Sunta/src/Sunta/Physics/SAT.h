@@ -62,6 +62,10 @@ struct SeparationInfo
 struct ContactPoint
 {
 	glm::vec3 worldPosition = glm::vec3(0.0f);
+
+	// How deep THIS corner is pushed into the other box
+	// Each corner can be pushed in by a different amount when a box lands tilted
+	float penetrationDepth = 0.0f;
 };
 
 struct ContactManifold

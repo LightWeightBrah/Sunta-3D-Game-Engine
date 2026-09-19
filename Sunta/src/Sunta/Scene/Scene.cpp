@@ -90,13 +90,13 @@ void Scene::Update()
 {
 	PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 
-	Systems::UpdateTransform(entityManager);
+	//Systems::UpdateTransform(entityManager);
 	Systems::SyncMeshComponents(entityManager);
 	Systems::SyncModelComponents(entityManager);
 	Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
 	Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
 
-	CollisionSystem::Update(entityManager);
+	//CollisionSystem::Update(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)
