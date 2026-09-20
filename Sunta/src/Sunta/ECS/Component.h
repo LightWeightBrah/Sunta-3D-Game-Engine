@@ -310,6 +310,13 @@ struct PhysicsBodyComponent
 	float linearDamping = 0.05f;
 	float angularDamping = 0.05f;
 
+	// Skips all physics updates when true, stopping tiny leftover values 
+	// from causing endless jittering and Inspector flickering
+	// Without this, a box resting on the floor would keep getting moved by
+	// tiny leftover numbers forever
+	bool  isSleeping		   = false;
+	float timeSpentAlmostStill = 0.0f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PhysicsBodyComponent>("Physics Body", EngineAssets::Icons::Physics,

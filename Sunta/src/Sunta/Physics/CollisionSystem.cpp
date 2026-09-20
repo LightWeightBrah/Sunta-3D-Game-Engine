@@ -182,6 +182,22 @@ float CombineFriction(const PhysicsBodyComponent* bodyA, const PhysicsBodyCompon
 	return bodyA ? bodyA->friction : (bodyB ? bodyB->friction : 0.0f);
 }
 
+bool IsBodyAlmostStill(const PhysicsBodyComponent& body)
+{
+	// Speed below these is treated as body NOT MOVING
+	constexpr float STILL_LINEAR_SPEED  = 0.05f; // meters  / second
+	constexpr float STILL_ANGULAR_SPEED = 0.10f; // radians / second
+
+	return glm::length(body.velocity)        < STILL_LINEAR_SPEED
+		&& glm::length(body.angularVelocity) < STILL_ANGULAR_SPEED;
+}
+
+void WakeUp(PhysicsBodyComponent& body)
+{
+	body.isSleeping           = false;
+	body.timeSpentAlmostStill = 0.0f;
+}
+
 // Returns whichever world axis (X, Y or Z) points the LEAST like the given
 // direction. Used to pick a safe helper axis: cross product of two directions that
 // point the same way gives a zero vector, which would break everything
@@ -559,29 +575,82 @@ void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
 
 }
 
+// If a sleeping box gets bumped by something awake and moving, 
+// it SHOULD NOT stay still/frozen
+// So before solving, we check every pair and wake up both
+// sides whenever at least one of them is awake and moving
+void WakeTouchingPairIfNeeded(CollisionPair& pair)
+{
+	bool eitherSideIsAwakeAndMoving =
+		(pair.bodyA && !pair.bodyA->isSleeping && !IsBodyAlmostStill(*pair.bodyA))
+		|| (pair.bodyB && !pair.bodyB->isSleeping && !IsBodyAlmostStill(*pair.bodyB));
+
+	if (!eitherSideIsAwakeAndMoving)
+		return;
+
+	if (pair.bodyA)
+		WakeUp(*pair.bodyA);
+	if (pair.bodyB)
+		WakeUp(*pair.bodyB);
 }
 
-void SnapMinimalMotionToZero(EntityManager& entityManager)
+// Puts bodies to sleep if they stay almost still/frozen while touching something 
+// for long enough. Requires contact with a pair so objects flying freely in 
+// mid-air never freeze
+void UpdateSleepStates(EntityManager& entityManager, const std::vector<CollisionPair>& pairs, float deltaTime)
 {
-	constexpr float SLEEP_LINEAR_SPEED_THRESHOLD = 0.15f;  // meters/second
-	constexpr float SLEEP_ANGULAR_SPEED_THRESHOLD = 0.25f; // radians/second
+	std::unordered_set<PhysicsBodyComponent*> bodiesTouchingSomething;
+
+	for (const CollisionPair& pair : pairs)
+	{
+		if (pair.bodyA)
+			bodiesTouchingSomething.insert(pair.bodyA);
+		if (pair.bodyB)
+			bodiesTouchingSomething.insert(pair.bodyB);
+	}
 
 	auto& physicsBodies = entityManager.GetAllComponents<PhysicsBodyComponent>();
 
-	for (auto& physicsBody : physicsBodies)
+	for (auto& body : physicsBodies)
 	{
-		if (glm::length(physicsBody.velocity) < SLEEP_LINEAR_SPEED_THRESHOLD)
-			physicsBody.velocity = glm::vec3(0.0f);
+		// A kinematic body (e.g. player) is moved by something else
+		// (input, script, etc.), "sleeping" has no meaning for it
+		if(body.isKinematic)
+			continue;
 
-		if (glm::length(physicsBody.angularVelocity) < SLEEP_ANGULAR_SPEED_THRESHOLD)
-			physicsBody.angularVelocity = glm::vec3(0.0f);
+		bool isTouchingSomething = bodiesTouchingSomething.count(&body) > 0;
+
+		if (!isTouchingSomething || !IsBodyAlmostStill(body))
+		{
+			body.timeSpentAlmostStill = 0.0f;
+			continue;
+		}
+
+		body.timeSpentAlmostStill += deltaTime;
+
+		constexpr float TIME_NEEDED_TO_FALL_ASLEEP = 0.5f;
+		if (body.timeSpentAlmostStill >= TIME_NEEDED_TO_FALL_ASLEEP)
+		{
+			body.isSleeping = true;
+
+			body.velocity        = glm::vec3(0.0f);
+			body.angularVelocity = glm::vec3(0.0f);
+		}
+
 	}
+}
+
 }
 
 void CollisionSystem::ResolveSolidCollisions(EntityManager& entityManager, float deltaTime)
 {
 	std::vector<CollisionPair> pairs = CollectCollisionPairs(entityManager);
+
+	for (CollisionPair& pair : pairs)
+		WakeTouchingPairIfNeeded(pair);
+
 	SolveCollisionPairs(pairs, deltaTime);
+	UpdateSleepStates(entityManager, pairs, deltaTime);
 }
 
 namespace

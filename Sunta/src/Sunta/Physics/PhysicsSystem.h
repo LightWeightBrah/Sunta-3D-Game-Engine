@@ -8,7 +8,7 @@ class EntityManager;
 class PhysicsSystem
 {
 public:
-	static constexpr float FIXED_TIME_STAMP = 1.0f / 60.0f;
+	static constexpr float FIXED_TIME_STEP = 1.0f / 60.0f;
 
 	static void UpdatePhysics(EntityManager& entityManager, float deltaTime);
 

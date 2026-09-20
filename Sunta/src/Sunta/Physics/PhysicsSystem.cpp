@@ -26,10 +26,10 @@ void PhysicsSystem::UpdatePhysics(EntityManager& entityManager, float frameDelta
 	// Run physics in steady, fixed-size steps 
 	// This ensures movement is smooth, stable, and predictable, 
 	// regardless of how fast or slow the computer is running (FPS)
-	while (timeAccumulator >= FIXED_TIME_STAMP)
+	while (timeAccumulator >= FIXED_TIME_STEP)
 	{
-		RunSingleStep(entityManager, FIXED_TIME_STAMP);
-		timeAccumulator -= FIXED_TIME_STAMP;
+		RunSingleStep(entityManager, FIXED_TIME_STEP);
+		timeAccumulator -= FIXED_TIME_STEP;
 	}
 }
 
@@ -78,7 +78,7 @@ void PhysicsSystem::ApplyLinearMotion(EntityManager& entityManager, float deltaT
 
 	for (auto& physicsBody : physicsBodies)
 	{
-		if (physicsBody.isKinematic)
+		if (physicsBody.isKinematic || physicsBody.isSleeping)
 			continue;
 
 		if (physicsBody.useGravity)
@@ -104,7 +104,7 @@ void PhysicsSystem::ApplyAngularMotion(EntityManager& entityManager, float delta
 
 	for (auto& physicsBody : physicsBodies)
 	{
-		if (physicsBody.isKinematic)
+		if (physicsBody.isKinematic || physicsBody.isSleeping)
 			continue;
 
 		if (physicsBody.angularVelocity == glm::vec3(0.0f))
@@ -129,11 +129,11 @@ void PhysicsSystem::ApplyDamping(EntityManager& entityManager, float deltaTime)
 
 	for (auto& physicsBody : physicsBodies)
 	{
-		if(physicsBody.isKinematic)
+		if(physicsBody.isKinematic || physicsBody.isSleeping)
 			continue;
 
-		physicsBody.velocity	   *= GetDampingFactor(physicsBody.linearDamping,  deltaTime);
-		physicsBody.angularDamping *= GetDampingFactor(physicsBody.angularDamping, deltaTime);
+		physicsBody.velocity	    *= GetDampingFactor(physicsBody.linearDamping,  deltaTime);
+		physicsBody.angularVelocity *= GetDampingFactor(physicsBody.angularDamping, deltaTime);
 	}
 
 }
