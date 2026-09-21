@@ -51,12 +51,77 @@ namespace Sunta
 //	   Algorithm: "Shortest distance between two skew lines in 3D space"
 //
 
+enum class CollisionContactType
+{
+	FaceToFace,
+	EdgeToEdge
+};
+
+// A contact point on a clipped face always sits at the crossing of two
+// straight lines. This says WHICH TYPE of line one of those is
+enum class BoundaryLineType
+{
+	IncidentFaceEdge,  // one of the 4 edges of the box that's poking in
+	ReferenceFaceWall  // one of the 4 side walls used to clip it
+};
+
+// One specific straight line bounding the touching area
+// Example: { IncidentFaceEdge, 2 } means "incident face's edge number 2"
+struct BoundaryLine
+{
+	BoundaryLineType type  = BoundaryLineType::IncidentFaceEdge;
+	int	             index = -1; // which one, 0-3
+
+	bool operator==(const BoundaryLine& other) const
+	{
+		return type == other.type && index == other.index;
+	}
+};
+
+struct ContactFeatureID
+{
+	CollisionContactType type = CollisionContactType::FaceToFace;
+
+	// used when type == FaceToFace
+	int referenceFaceIndex = -1;
+	int incidentFaceIndex  = -1;
+	BoundaryLine lineA;
+	BoundaryLine lineB;
+
+	// used when type == EdgeToEdge
+	int edgeAxisOnBoxA = -1; // which local axis (0=X, 1=Y, 2=Z) box A's edge runs along
+	int edgeAxisOnBoxB = -1; // which local axis (0=X, 1=Y, 2=Z) box B's edge runs along
+
+	bool operator==(const ContactFeatureID& other) const
+	{
+		if (type != other.type)
+			return false;
+
+		if (type == CollisionContactType::EdgeToEdge)
+			return edgeAxisOnBoxA == other.edgeAxisOnBoxA
+			    && edgeAxisOnBoxB == other.edgeAxisOnBoxB;
+
+		bool touchingSameFaces = referenceFaceIndex == other.referenceFaceIndex
+			                   && incidentFaceIndex == other.incidentFaceIndex;
+
+		// lineA/lineB can be listed in either order and still mean the same
+		// crossing point, so both orders count as a match
+		bool linesMatch = (lineA == other.lineA && lineB == other.lineB)
+			           || (lineA == other.lineB && lineB == other.lineA);
+
+		return touchingSameFaces && linesMatch;
+	}
+
+	bool operator!=(const ContactFeatureID& other) const { return !(*this == other); }
+
+};
+
 struct SeparationInfo
 {
-	bool      areOverlapping        = false;
+	bool      areOverlapping = false;
 
 	glm::vec3 pushDirectionFromAToB = glm::vec3(0.0f);
-	float     overlapDepth          = 0.0f;
+	float     overlapDepth = 0.0f;
 };
 
 struct ContactPoint
@@ -66,14 +131,17 @@ struct ContactPoint
 	// How deep THIS corner is pushed into the other box
 	// Each corner can be pushed in by a different amount when a box lands tilted
 	float penetrationDepth = 0.0f;
+
+	// Which real corner/crossing this is (not where it is)
+	ContactFeatureID featureID;
 };
 
 struct ContactManifold
 {
-	bool      areOverlapping            = false;
-									    
-	glm::vec3 pushDirectionFromAToB     = glm::vec3(0.0f);
-	float     overlapDepth              = 0.0f;
+	bool      areOverlapping = false;
+
+	glm::vec3 pushDirectionFromAToB = glm::vec3(0.0f);
+	float     overlapDepth = 0.0f;
 	std::vector<ContactPoint> contacts;
 
 

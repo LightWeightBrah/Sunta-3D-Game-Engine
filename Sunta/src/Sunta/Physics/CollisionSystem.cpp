@@ -60,6 +60,8 @@ struct CollisionPoint
 	// A tilted box has one corner buried deep and the opposite one barely touching
 	float penetrationDepth = 0.0f;
 
+	ContactFeatureID featureID; // which real corner/crossing this is (see SAT.h)
+
 	// Distance from each body's center out to this spot
 	// Pushing far from the center makes a body spin (like a door handle)
 	// Pushing through the center only makes it slide
@@ -78,8 +80,8 @@ struct CollisionPoint
 
 	// We remember how much we have pushed in total, not just in this pass,
 	// so a later pass can take back a push that an earlier one overdid
-	float totalNormalPush = 0.0f;
-	float totalFirstSlidePush = 0.0f;
+	float totalNormalPush      = 0.0f;
+	float totalFirstSlidePush  = 0.0f;
 	float totalSecondSlidePush = 0.0f;
 };
 
@@ -87,6 +89,9 @@ struct CollisionPoint
 // touching spots (material, which way is "out of the surface" etc.)
 struct CollisionPair
 {
+	unsigned int entityA = 0;
+	unsigned int entityB = 0;
+
 	PhysicsBodyComponent* bodyA = nullptr;
 	PhysicsBodyComponent* bodyB = nullptr;
 
@@ -110,6 +115,68 @@ struct CollisionPair
 	std::vector<CollisionPoint> points;
 };
 
+// One remembered push from last frame at 1 specific contact point
+struct RememberedContactImpulse
+{
+	ContactFeatureID featureID; // WHICH real corner/crossing this was
+
+	float normalPush = 0.0f; // how hard we pushed the bodies apart
+	float firstSlidePush = 0.0f; // how hard we pushed sideways, direction 1
+	float secondSlidePush = 0.0f; // how hard we pushed sideways, direction 2
+
+};
+
+struct EntityPairKey
+{
+	unsigned int entityA;
+	unsigned int entityB;
+
+	bool operator==(const EntityPairKey& other) const
+	{
+		return (entityA == other.entityA && entityB == other.entityB)
+			|| (entityA == other.entityB && entityB == other.entityA);
+	}
+};
+
+// Turns an EntityPairKey into 1 number, so it can be used as a map key
+struct EntityPairKeyHash
+{
+	size_t operator()(const EntityPairKey& key) const
+	{
+		unsigned int smallerID = std::min(key.entityA, key.entityB);
+		unsigned int biggerID  = std::max(key.entityA, key.entityB);
+
+		// GOAL: squash two 32-bit numbers into one 64-bit number, with each
+		// one living in its own separate "half", so they can never collide
+		//
+		// STEP 1: "<<" (left shift) slides smallerID's bits 32 places to
+		// the LEFT. This moves smallerID into the UPPER half of a 64-bit
+		// number, and fills the newly-empty LOWER half with zeros:
+		//
+		//   smallerID (say, 5):        ...00000101
+		//   after << 32:  00000101 00000000000000000000000000000000
+		//                 (smallerID)  (32 empty zero bits)
+		//
+		// STEP 2: "|" (bitwise OR) combines that with biggerID. Since the
+		// lower 32 bits are all zero, OR-ing just drops biggerID straight
+		// into that empty space, without touching smallerID's half at all:
+		//
+		//   biggerID (say, 7):                            ...00000111
+		//   combined:     00000101 00000000000000000000000000000111
+		//                 (smallerID lives here) (biggerID lives here)
+		//
+		// RESULT: one 64-bit number with both IDs sitting side by side,
+		// never overlapping - which we can now hash like any other number
+		unsigned long long combinedID = (static_cast<unsigned long long>(smallerID) << 32) | biggerID;
+
+		return std::hash<unsigned long long>()(combinedID);
+	}
+};
+
+// "for this pair of entities, here's how hard each of their touching points
+// was pushing last frame". Rebuilt fresh every frame, a pair that stops
+// touching is simply not written again, so it silently falls out of here
+std::unordered_map<EntityPairKey, std::vector<RememberedContactImpulse>, EntityPairKeyHash> previousFrameContacts;
 
 // Resolve as solid only collisions without any trigger in pair, which layers see each other
 bool ShouldResolveAsSolid(const BoxColliderComponent& a, const BoxColliderComponent& b)
@@ -468,11 +535,14 @@ void SolveFriction(const CollisionPair& pair, CollisionPoint& point)
 }
 
 CollisionPair BuildCollisionPair(
-	PhysicsBodyComponent* bodyA, const BoxColliderComponent& colliderA, float inverseMassA,
-	PhysicsBodyComponent* bodyB, const BoxColliderComponent& colliderB, float inverseMassB,
+	unsigned int entityA, PhysicsBodyComponent* bodyA, const BoxColliderComponent& colliderA, float inverseMassA,
+	unsigned int entityB, PhysicsBodyComponent* bodyB, const BoxColliderComponent& colliderB, float inverseMassB,
 	const ContactManifold& manifold)
 {
 	CollisionPair pair;
+
+	pair.entityA = entityA;
+	pair.entityB = entityB;
 
 	pair.bodyA = bodyA;
 	pair.bodyB = bodyB;
@@ -496,8 +566,9 @@ CollisionPair BuildCollisionPair(
 	{
 		CollisionPoint point;
 
-		point.worldPosition = geometricContact.worldPosition;
+		point.worldPosition    = geometricContact.worldPosition;
 		point.penetrationDepth = geometricContact.penetrationDepth;
+		point.featureID        = geometricContact.featureID;
 
 		pair.points.push_back(point);
 	}
@@ -537,8 +608,8 @@ std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 				continue;
 
 			pairs.push_back(BuildCollisionPair(
-				bodyA, colliders[i], inverseMassA,
-				bodyB, colliders[j], inverseMassB,
+				entityA, bodyA, colliders[i], inverseMassA,
+				entityB, bodyB, colliders[j], inverseMassB,
 				manifold));
 		}
 	}
@@ -546,11 +617,103 @@ std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 	return pairs;
 }
 
+// Looks through last frame's remembered points for this SAME pair and finds
+// the one that is the exact same real corner (matched by featureID, not by
+// position). Returns nullptr if this corner is brand new this frame
+const RememberedContactImpulse* FindMatchingRememberedImpulse(
+	const std::vector<RememberedContactImpulse>& rememberedPoints,
+	const ContactFeatureID& featureID)
+{
+	for (const RememberedContactImpulse& remembered : rememberedPoints)
+	{
+		if (remembered.featureID == featureID)
+			return &remembered;
+	}
+
+	return nullptr;
+}
+
+// For every touching point in this pair, checks whether it existed last
+// frame too, and if so, starts it from last frame's push amounts instead
+// of zero. This is the "remembering" half of warm starting
+void LoadRememberedImpulses(CollisionPair& pair)
+{
+	auto cachedPairIt = previousFrameContacts.find({ pair.entityA, pair.entityB });
+	if (cachedPairIt == previousFrameContacts.end())
+		return; // this pair did not exist last frame (new collision, everything starts at zero, as normal)
+
+	const std::vector<RememberedContactImpulse>& rememberedPoints = cachedPairIt->second;
+
+	for (CollisionPoint& point : pair.points)
+	{
+		const RememberedContactImpulse* match = FindMatchingRememberedImpulse(rememberedPoints, point.featureID);
+		if(!match)
+			continue; // new corner this frame (starts at zero)
+
+		point.totalNormalPush      = match->normalPush;
+		point.totalFirstSlidePush  = match->firstSlidePush;
+		point.totalSecondSlidePush = match->secondSlidePush;
+	}
+}
+
+// Turns one point's three remembered numbers (push apart + 2 slide directions) 
+// into one real push, and applies it to both bodies right now
+void ApplyRememberedImpulse(const CollisionPair& pair, const CollisionPoint& point)
+{
+	glm::vec3 combinedPush =
+		  pair.pushDirectionFromAToB                * point.totalNormalPush
+		+ pair.slideDirections.firstSlideDirection  * point.totalFirstSlidePush
+		+ pair.slideDirections.secondSlideDirection * point.totalSecondSlidePush;
+
+	PushBothBodiesApart(pair, point, combinedPush);
+}
+
+// Saves this frame's final push amounts so NEXT frame can start from them
+// Replacing the whole cache (rather than editing it) means a pair that
+// stopped touching is automatically forgotten (nothing to clean up by hand)
+void SaveImpulsesForNextFrame(const std::vector<CollisionPair>& pairs)
+{
+	std::unordered_map<EntityPairKey, std::vector<RememberedContactImpulse>, EntityPairKeyHash> newCache;
+
+	for (const CollisionPair& pair : pairs)
+	{
+		std::vector<RememberedContactImpulse> remembered;
+		remembered.reserve(pair.points.size());
+
+		for (const CollisionPoint& point : pair.points)
+		{
+			remembered.push_back({
+				point.featureID,
+				point.totalNormalPush,
+				point.totalFirstSlidePush,
+				point.totalSecondSlidePush
+			});
+		}
+
+		newCache[{ pair.entityA, pair.entityB }] = std::move(remembered);
+	}
+
+	previousFrameContacts = std::move(newCache);
+}
+
 void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
 {
+	// For every point, work out how bouncy it should be, how easily it
+	// reacts to a push, etc. based on THIS frame's real impact speed
 	for (CollisionPair& pair : pairs)
 		for (CollisionPoint& point : pair.points)
 			PrepareCollisionPoint(pair, point);
+
+	// WARM START: recall last frame's push for each point, and apply it now 
+	// So the solver below starts close to the right answer
+	// instead of from a blank slate
+	for (CollisionPair& pair : pairs)
+	{
+		LoadRememberedImpulses(pair);
+
+		for (CollisionPoint& point : pair.points)
+			ApplyRememberedImpulse(pair, point);
+	}
 
 	// Fixing one touching point always slightly disturbs the others 
 	// Push one corner of a box down and the opposite corner lifts a little
@@ -558,9 +721,9 @@ void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
 	// Each pass the leftover error gets smaller, until everything settles
 	// More passes = steadier stacks of boxes, but more CPU time
 	// 10 is a solid default
-
 	constexpr int SOLVER_PASSES = 10;
 
+	// Refine that warm-starting guess over several passes, until it settles
 	for (unsigned int pass = 0; pass < SOLVER_PASSES; pass++)
 	{
 		for (CollisionPair& pair : pairs)
@@ -573,6 +736,8 @@ void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
 		}
 	}
 
+	// Remember this frame's result, so NEXT frame can warm-start from it
+	SaveImpulsesForNextFrame(pairs);
 }
 
 // If a sleeping box gets bumped by something awake and moving, 

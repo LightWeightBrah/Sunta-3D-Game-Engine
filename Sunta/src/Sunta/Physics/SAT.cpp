@@ -18,6 +18,15 @@ struct ProjectionInterval
 	float max;
 };
 
+// Every point on the clipped polygon's boundary sits at the crossing of
+// exactly two straight lines
+struct PolygonVertex
+{
+	glm::vec3    position;
+	BoundaryLine definingLineA;
+	BoundaryLine definingLineB;
+};
+
 inline bool IntervalsOverlap(const ProjectionInterval& a, const ProjectionInterval& b)
 {
 	return a.min <= b.max && b.min <= a.max;
@@ -29,6 +38,17 @@ inline bool IntervalsOverlap(const ProjectionInterval& a, const ProjectionInterv
 inline float GetOverlapAmount(const ProjectionInterval& a, const ProjectionInterval& b)
 {
 	return std::min(a.max, b.max) - std::max(a.min, b.min);
+}
+
+// Two consecutive polygon vertices always share exactly one of their two
+// defining lines, this finds it
+inline BoundaryLine FindSharedBoundaryLine(const PolygonVertex& first, const PolygonVertex& second)
+{
+	if (first.definingLineA == second.definingLineA || first.definingLineA == second.definingLineB)
+		return first.definingLineA;
+
+	// Geometry guarantees it has to be line B if it wasn't line A
+	return first.definingLineB;
 }
 
 // Projects box onto axis and returns the [min, max] range it covers there
@@ -224,22 +244,22 @@ inline float GetSignedDistanceToPlane(const Plane& plane, const glm::vec3& point
 //   - If the edge CROSSES the wall (one end inside, one outside) -> find the
 //     exact crossing point and add THAT
 
-inline std::vector<glm::vec3> TrimPolygonToInsideOfPlane(const std::vector<glm::vec3>& polygon, const Plane& plane)
+inline std::vector<PolygonVertex> TrimPolygonToInsideOfPlane(const std::vector<PolygonVertex>& polygon, const Plane& plane, int wallIndex)
 {
-	std::vector<glm::vec3> trimmedPolygon;
+	std::vector<PolygonVertex> trimmedPolygon;
 	if (polygon.empty())
 		return trimmedPolygon;
 
 	for (unsigned int i = 0; i < polygon.size(); i++)
 	{
-		const glm::vec3& edgeStart = polygon[i];
-		const glm::vec3& edgeEnd = polygon[(i + 1) % polygon.size()];
+		const PolygonVertex& edgeStart = polygon[i];
+		const PolygonVertex& edgeEnd   = polygon[(i + 1) % polygon.size()];
 
-		float edgeStartDistance = GetSignedDistanceToPlane(plane, edgeStart);
-		float edgeEndDistance = GetSignedDistanceToPlane(plane, edgeEnd);
+		float edgeStartDistance = GetSignedDistanceToPlane(plane, edgeStart.position);
+		float edgeEndDistance   = GetSignedDistanceToPlane(plane, edgeEnd.position);
 
 		bool edgeStartIsInside = edgeStartDistance <= 0.0f;
-		bool edgeEndIsInside = edgeEndDistance <= 0.0f;
+		bool edgeEndIsInside   = edgeEndDistance   <= 0.0f;
 
 		if (edgeStartIsInside)
 			trimmedPolygon.push_back(edgeStart);
@@ -249,9 +269,12 @@ inline std::vector<glm::vec3> TrimPolygonToInsideOfPlane(const std::vector<glm::
 		{
 			// How far along the edge (0 = start, 1 = end) does it cross the wall
 			float crossingFraction = edgeStartDistance / (edgeStartDistance - edgeEndDistance);
-			glm::vec3 crossingPoint = edgeStart + crossingFraction * (edgeEnd - edgeStart);
+			glm::vec3 crossingPoint = edgeStart.position + crossingFraction * (edgeEnd.position - edgeStart.position);
 
-			trimmedPolygon.push_back(crossingPoint);
+			BoundaryLine sharedLine = FindSharedBoundaryLine(edgeStart, edgeEnd);
+			BoundaryLine clippingWall{ BoundaryLineType::ReferenceFaceWall, wallIndex };
+
+			trimmedPolygon.push_back({ crossingPoint, sharedLine, clippingWall });
 		}
 	}
 
@@ -277,22 +300,34 @@ inline Plane BuildSidePlaneForReferenceEdge(
 
 // STEP 3 (the "cookie cutter" step): 
 // trims the incident face down to only the part that falls within the reference face's 4 edges
-inline std::vector<glm::vec3> TrimBoxIncidentFaceToReferenceFaceBoundary(
+inline std::vector<PolygonVertex> TrimBoxIncidentFaceToReferenceFaceBoundary(
 	const std::array<glm::vec3, BOX_FACE_CORNER_COUNT>& referenceFaceCorners,
 	const glm::vec3& referenceFaceNormal,
 	const std::array<glm::vec3, BOX_FACE_CORNER_COUNT>& incidentFaceCorners)
 {
-	std::vector<glm::vec3> remainingPolygon(incidentFaceCorners.begin(), incidentFaceCorners.end());
+	std::vector<PolygonVertex> remainingPolygon;
+	remainingPolygon.reserve(BOX_FACE_CORNER_COUNT);
+
+	for (int i = 0; i < BOX_FACE_CORNER_COUNT; i++)
+	{
+		int previousEdgeIndex = (i + BOX_FACE_CORNER_COUNT - 1) % BOX_FACE_CORNER_COUNT;
+
+		remainingPolygon.push_back({
+			incidentFaceCorners[i],
+			BoundaryLine{ BoundaryLineType::IncidentFaceEdge, previousEdgeIndex },
+			BoundaryLine{ BoundaryLineType::IncidentFaceEdge, i }
+		});
+	}
 
 	glm::vec3 referenceFaceCenter = GetBoxPolygonCenter(referenceFaceCorners);
 
-	for (unsigned int i = 0; i < BOX_FACE_CORNER_COUNT && !remainingPolygon.empty(); i++)
+	for (int wallIndex = 0; wallIndex < BOX_FACE_CORNER_COUNT && !remainingPolygon.empty(); wallIndex++)
 	{
-		glm::vec3 edgeStart = referenceFaceCorners[i];
-		glm::vec3 edgeEnd = referenceFaceCorners[(i + 1) % BOX_FACE_CORNER_COUNT];
+		glm::vec3 edgeStart = referenceFaceCorners[wallIndex];
+		glm::vec3 edgeEnd   = referenceFaceCorners[(wallIndex + 1) % BOX_FACE_CORNER_COUNT];
 
 		Plane sideWall = BuildSidePlaneForReferenceEdge(edgeStart, edgeEnd, referenceFaceNormal, referenceFaceCenter);
-		remainingPolygon = TrimPolygonToInsideOfPlane(remainingPolygon, sideWall);
+		remainingPolygon = TrimPolygonToInsideOfPlane(remainingPolygon, sideWall, wallIndex);
 	}
 
 	return remainingPolygon;
@@ -305,20 +340,31 @@ inline std::vector<glm::vec3> TrimBoxIncidentFaceToReferenceFaceBoundary(
 // touching it. This keeps only the points that are behind the face 
 // (along its normal) and removes the rest
 inline std::vector<ContactPoint> KeepOnlyThePenetratingPoints(
-	const std::vector<glm::vec3>& candidatePoints,
+	const std::vector<PolygonVertex>& candidatePoints,
 	const glm::vec3& referenceFaceNormal,
 	const glm::vec3& referenceFaceCenter
 )
 {
 	std::vector<ContactPoint> contacts;
 
-	for (const glm::vec3& point : candidatePoints)
+	for (const PolygonVertex& vertex : candidatePoints)
 	{
-		float howFarBehindTheFace = -glm::dot(referenceFaceNormal, point - referenceFaceCenter);
+		float howFarBehindTheFace = -glm::dot(referenceFaceNormal, vertex.position - referenceFaceCenter);
 
 		bool isPenetratingPoint = howFarBehindTheFace >= 0.0f;
 		if (isPenetratingPoint)
-			contacts.push_back({ point, howFarBehindTheFace });
+		{
+			ContactPoint contactPoint;
+			contactPoint.worldPosition    = vertex.position;
+			contactPoint.penetrationDepth = howFarBehindTheFace;
+			contactPoint.featureID.lineA  = vertex.definingLineA;
+			contactPoint.featureID.lineB  = vertex.definingLineB;
+
+			// referenceFaceIndex/incidentFaceIndex filled in by the caller,
+			// which is the only place that actually knows those
+			contacts.push_back(contactPoint);
+
+		}
 	}
 
 	return contacts;
@@ -337,11 +383,20 @@ inline std::vector<ContactPoint> FindFaceContactPoints(const OBB& referenceBox, 
 	std::array<glm::vec3, BOX_FACE_CORNER_COUNT> incidentFaceCorners = GetBoxCornersOfFace(incidentBox, incidentFaceIndex);
 
 	// STEP 3
-	std::vector<glm::vec3> clippedPolygon = TrimBoxIncidentFaceToReferenceFaceBoundary(referenceFaceCorners, referenceFaceNormal, incidentFaceCorners);
+	std::vector<PolygonVertex> clippedPolygon = TrimBoxIncidentFaceToReferenceFaceBoundary(referenceFaceCorners, referenceFaceNormal, incidentFaceCorners);
 
 	// STEP 4
 	glm::vec3 referenceFaceCenter = GetBoxPolygonCenter(referenceFaceCorners);
-	return KeepOnlyThePenetratingPoints(clippedPolygon, referenceFaceNormal, referenceFaceCenter);
+	std::vector<ContactPoint> contactPoints = KeepOnlyThePenetratingPoints(clippedPolygon, referenceFaceNormal, referenceFaceCenter);
+
+	for (ContactPoint& contact : contactPoints)
+	{
+		contact.featureID.type				 = CollisionContactType::FaceToFace;
+		contact.featureID.referenceFaceIndex = referenceFaceIndex;
+		contact.featureID.incidentFaceIndex  = incidentFaceIndex;
+	}
+
+	return contactPoints;
 }
 
 // EDGE-EDGE contact
@@ -754,7 +809,16 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b)
 		Segment edgeOnB = GetBoxEdgeSegment(b, axisOfB, -directionFromCenterAToCenterB);
 
 		glm::vec3 contactPoint = ClosestPointBetweenSegments(edgeOnA, edgeOnB);
-		manifold.contacts.push_back({ contactPoint, manifold.overlapDepth });
+
+		ContactPoint contact;
+		contact.worldPosition    = contactPoint;
+		contact.penetrationDepth = manifold.overlapDepth;
+
+		contact.featureID.type           = CollisionContactType::EdgeToEdge;
+		contact.featureID.edgeAxisOnBoxA = axisOfA;
+		contact.featureID.edgeAxisOnBoxB = axisOfB;
+
+		manifold.contacts.push_back(contact);
 	}
 
 	return manifold;
