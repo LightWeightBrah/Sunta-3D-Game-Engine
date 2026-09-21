@@ -106,6 +106,11 @@ struct CollisionPair
 
 	glm::vec3 pushDirectionFromAToB = glm::vec3(0.0f);
 
+	// Which one of candidate axis (15 axis for box) was used 
+	// to build contact of this pair
+	// We remember this for next frame, so SAT can still use same axis 
+	int usedAxisIndex = -1;
+
 	// Flat along the surface (this is where sliding and friction happen)
 	SurfaceSlideDirections slideDirections;
 
@@ -124,6 +129,15 @@ struct RememberedContactImpulse
 	float firstSlidePush = 0.0f; // how hard we pushed sideways, direction 1
 	float secondSlidePush = 0.0f; // how hard we pushed sideways, direction 2
 
+};
+
+// Everything we remember about ONE pair of touching entities,
+// so solver in next frame can continue where he ended:
+// used SAT axis & impulses in every contact point
+struct RememberedPairState
+{
+	int usedAxisIndex = -1;
+	std::vector<RememberedContactImpulse> contactImpulses;
 };
 
 struct EntityPairKey
@@ -176,7 +190,7 @@ struct EntityPairKeyHash
 // "for this pair of entities, here's how hard each of their touching points
 // was pushing last frame". Rebuilt fresh every frame, a pair that stops
 // touching is simply not written again, so it silently falls out of here
-std::unordered_map<EntityPairKey, std::vector<RememberedContactImpulse>, EntityPairKeyHash> previousFrameContacts;
+std::unordered_map<EntityPairKey, RememberedPairState, EntityPairKeyHash> previousFrameContacts;
 
 // Resolve as solid only collisions without any trigger in pair, which layers see each other
 bool ShouldResolveAsSolid(const BoxColliderComponent& a, const BoxColliderComponent& b)
@@ -561,6 +575,7 @@ CollisionPair BuildCollisionPair(
 
 	pair.pushDirectionFromAToB = manifold.pushDirectionFromAToB;
 	pair.slideDirections = BuildSlideDirections(pair.pushDirectionFromAToB);
+	pair.usedAxisIndex = manifold.usedAxisIndex;
 
 	for (const ContactPoint& geometricContact : manifold.contacts)
 	{
@@ -576,6 +591,20 @@ CollisionPair BuildCollisionPair(
 	return pair;
 }
 
+// Checks which of the 15 candidate SAT axes was used for this pair 
+// in the previous frame so we can ask the SAT to stick with it
+// Returns -1 if this pair is completely new (they have never touched 
+// or stopped touching), meaning "no preference, choose whatever is actually
+// best in this frame"
+int GetPreviousUsedAxisIndex(unsigned int entityA, unsigned int entityB)
+{
+	auto cachedPairIt = previousFrameContacts.find({ entityA, entityB });
+	if (cachedPairIt == previousFrameContacts.end())
+		return -1;
+
+	return cachedPairIt->second.usedAxisIndex;
+}
+
 std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 {
 	std::vector<CollisionPair> pairs;
@@ -589,13 +618,16 @@ std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 			if(!ShouldResolveAsSolid(colliders[i], colliders[j]))
 				continue;
 
-			ContactManifold manifold = GetContactManifoldBoxVsBox(colliders[i].worldOBB, colliders[j].worldOBB);
+			unsigned int entityA = entityManager.GetEntityIDForComponent(colliders[i]);
+			unsigned int entityB = entityManager.GetEntityIDForComponent(colliders[j]);
+
+			int preferredAxisIndex = GetPreviousUsedAxisIndex(entityA, entityB);
+
+			ContactManifold manifold = GetContactManifoldBoxVsBox(colliders[i].worldOBB, 
+				colliders[j].worldOBB, preferredAxisIndex);
 
 			if (!manifold.areOverlapping || manifold.contacts.empty())
 				continue;
-
-			unsigned int entityA = entityManager.GetEntityIDForComponent(colliders[i]);
-			unsigned int entityB = entityManager.GetEntityIDForComponent(colliders[j]);
 
 			auto* bodyA = entityManager.GetComponent<PhysicsBodyComponent>(entityA);
 			auto* bodyB = entityManager.GetComponent<PhysicsBodyComponent>(entityB);
@@ -642,7 +674,7 @@ void LoadRememberedImpulses(CollisionPair& pair)
 	if (cachedPairIt == previousFrameContacts.end())
 		return; // this pair did not exist last frame (new collision, everything starts at zero, as normal)
 
-	const std::vector<RememberedContactImpulse>& rememberedPoints = cachedPairIt->second;
+	const std::vector<RememberedContactImpulse>& rememberedPoints = cachedPairIt->second.contactImpulses;
 
 	for (CollisionPoint& point : pair.points)
 	{
@@ -673,16 +705,17 @@ void ApplyRememberedImpulse(const CollisionPair& pair, const CollisionPoint& poi
 // stopped touching is automatically forgotten (nothing to clean up by hand)
 void SaveImpulsesForNextFrame(const std::vector<CollisionPair>& pairs)
 {
-	std::unordered_map<EntityPairKey, std::vector<RememberedContactImpulse>, EntityPairKeyHash> newCache;
+	std::unordered_map<EntityPairKey, RememberedPairState, EntityPairKeyHash> newCache;
 
 	for (const CollisionPair& pair : pairs)
 	{
-		std::vector<RememberedContactImpulse> remembered;
-		remembered.reserve(pair.points.size());
+		RememberedPairState state;
+		state.usedAxisIndex = pair.usedAxisIndex;
+		state.contactImpulses.reserve(pair.points.size());
 
 		for (const CollisionPoint& point : pair.points)
 		{
-			remembered.push_back({
+			state.contactImpulses.push_back({
 				point.featureID,
 				point.totalNormalPush,
 				point.totalFirstSlidePush,
@@ -690,7 +723,7 @@ void SaveImpulsesForNextFrame(const std::vector<CollisionPair>& pairs)
 			});
 		}
 
-		newCache[{ pair.entityA, pair.entityB }] = std::move(remembered);
+		newCache[{ pair.entityA, pair.entityB }] = std::move(state);
 	}
 
 	previousFrameContacts = std::move(newCache);

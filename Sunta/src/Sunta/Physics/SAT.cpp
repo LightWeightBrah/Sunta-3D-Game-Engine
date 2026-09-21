@@ -18,6 +18,7 @@ struct ProjectionInterval
 	float max;
 };
 
+// FOR FACE-FACE contact
 // Every point on the clipped polygon's boundary sits at the crossing of
 // exactly two straight lines
 struct PolygonVertex
@@ -661,6 +662,67 @@ inline glm::vec3 ClosestPointBetweenSegments(const Segment& segmentA, const Segm
 	return (P + Q) * 0.5f;
 }
 
+ContactManifold BuildManifoldFromChosenAxis(
+	const OBB& a, const OBB& b,
+	int chosenAxisIndex, float overlapDepth, const glm::vec3& normalizedAxis)
+{
+	ContactManifold manifold;
+	manifold.areOverlapping = true;
+	manifold.overlapDepth = overlapDepth;
+	manifold.usedAxisIndex = chosenAxisIndex;
+
+	// Axis came from a face normal or cross product (it doesn't have direction we need)
+	// so it could point towards A or towards B (WE DON'T KNOW)
+	// We want push direction to ALWAYS go from A to B, so flip the axis if it's pointing the wrong way
+	glm::vec3 directionFromCenterAToCenterB = b.center - a.center;
+	bool axisAlreadyPointsTowardsB = glm::dot(directionFromCenterAToCenterB, normalizedAxis) >= 0.0f;
+	manifold.pushDirectionFromAToB = axisAlreadyPointsTowardsB ? normalizedAxis : -normalizedAxis;
+
+	// We can do this cause first we got 6 face axis, then we got 9 edge axis
+	bool chosenAxisIsFaceAxis = chosenAxisIndex < OBB_VS_OBB_FACE_AXIS_COUNT;
+
+	if (chosenAxisIsFaceAxis)
+	{
+		bool referenceIsA = chosenAxisIndex < OBB_AXES_PER_BOX;
+		const OBB& referenceBox = referenceIsA ? a : b;
+		const OBB& incidentBox  = referenceIsA ? b : a;
+
+		glm::vec3 referenceFaceNormal = referenceIsA ? manifold.pushDirectionFromAToB : -manifold.pushDirectionFromAToB;
+
+		manifold.contacts = FindFaceContactPoints(referenceBox, incidentBox, referenceFaceNormal);
+	}
+	else
+	{
+		// Edge box A, box B axis placement (from BuildBoxVsBoxAxes)
+		// 
+		//                 axisOfB=0   axisOfB=1   axisOfB=2
+		// axisOfA = 0         0           1           2
+		// axisOfA = 1         3           4           5
+		// axisOfA = 2         6           7           8
+		// 
+		int edgeSlot = chosenAxisIndex - OBB_VS_OBB_FACE_AXIS_COUNT;
+		int axisOfA  = edgeSlot / OBB_AXES_PER_BOX; // which row    (which of box A's 3 axes)
+		int axisOfB  = edgeSlot % OBB_AXES_PER_BOX; // which column (which of box B's 3 axes)
+
+		Segment edgeOnA = GetBoxEdgeSegment(a, axisOfA,  directionFromCenterAToCenterB);
+		Segment edgeOnB = GetBoxEdgeSegment(b, axisOfB, -directionFromCenterAToCenterB);
+
+		glm::vec3 contactPoint = ClosestPointBetweenSegments(edgeOnA, edgeOnB);
+
+		ContactPoint contact;
+		contact.worldPosition    = contactPoint;
+		contact.penetrationDepth = overlapDepth;
+
+		contact.featureID.type           = CollisionContactType::EdgeToEdge;
+		contact.featureID.edgeAxisOnBoxA = axisOfA;
+		contact.featureID.edgeAxisOnBoxB = axisOfB;
+
+		manifold.contacts.push_back(contact);
+	}
+
+	return manifold;
+}
+
 }
 
 bool Overlaps(const OBB& a, const OBB& b)
@@ -728,7 +790,7 @@ SeparationInfo GetSeparationInfo(const OBB& a, const OBB& b)
 	return result;
 }
 
-ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b)
+ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b, int preferredAxisIndex)
 {
 	ContactManifold manifold;
 
@@ -738,7 +800,11 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b)
 	int shallowestAxisIndex = -1;
 	glm::vec3 shallowestOverlapAxis = glm::vec3(0.0f);
 
-	for (unsigned int i = 0; i < OBB_VS_OBB_AXIS_COUNT; i++)
+	bool preferredAxisIsStillValid = false;
+	float preferredAxisOverlap = 0.0f;
+	glm::vec3 preferredAxisDirection = glm::vec3(0.0f);
+
+	for (int i = 0; i < OBB_VS_OBB_AXIS_COUNT; i++)
 	{
 		const glm::vec3& axis = testAxes[i];
 
@@ -766,62 +832,37 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b)
 			shallowestAxisIndex = i;
 			shallowestOverlapAxis = normalizedAxis;
 		}
+
+		if (i == preferredAxisIndex)
+		{
+			preferredAxisIsStillValid = true;
+			preferredAxisOverlap = overlapAmount;
+			preferredAxisDirection = normalizedAxis;
+		}
 	}
 
 	manifold.areOverlapping = true;
-	manifold.overlapDepth = shallowestOverlapFound;
 
-	// Axis came from a face normal or cross product (it doesn't have direction we need)
-	// so it could point towards A or towards B (WE DON'T KNOW)
-	// We want push direction to ALWAYS go from A to B, so flip the axis if it's pointing the wrong way
-	glm::vec3 directionFromCenterAToCenterB = b.center - a.center;
-	bool axisAlreadyPointTowardsB = glm::dot(directionFromCenterAToCenterB, shallowestOverlapAxis) >= 0.0f;
+	// STICKY AXIS:
+	// We are measuring box overlap on 15 different axes and picking the one 
+	// with the LEAST overlap as the natural push-apart direction
+	// 
+	// Problem: When boxes are still, two axes often show a nearly identical tiny 
+	// result (e.g. 0.00311 vs 0.00309). Which one wins can flip frame-to-frame 
+	// just due to float rounding errors even though the boxes didn't move at all
+	// 
+	// This changes the reference face and contact type, making the solver lose its 
+	// impulse memory (RememberedContactImpulse) and restart calculations from scratch, 
+	// which shows up as jitter
+	// 
+	// SOLUTION: Stick to the axis that won in the PREVIOUS frame for this pair 
+	// (preferredAxisIndex) as long as it still shows overlap, ignoring tiny 
+	// precision fluctuations. We only switch axis when the old axis 
+	// actually stops fitting (boxes actually moved or rotated)
+	if (preferredAxisIsStillValid)
+		return BuildManifoldFromChosenAxis(a, b, preferredAxisIndex, preferredAxisOverlap, preferredAxisDirection);
 
-	manifold.pushDirectionFromAToB = axisAlreadyPointTowardsB ? shallowestOverlapAxis : -shallowestOverlapAxis;
-
-	// We can do this cause first we got 6 face axis, then we got 9 edge axis
-	bool shallowestWasFaceAxis = shallowestAxisIndex < OBB_VS_OBB_FACE_AXIS_COUNT;
-
-	if (shallowestWasFaceAxis)
-	{
-		bool referenceIsA = shallowestAxisIndex < OBB_AXES_PER_BOX;
-		const OBB& referenceBox = referenceIsA ? a : b;
-		const OBB& incidentBox  = referenceIsA ? b : a;
-
-		glm::vec3 referenceFaceNormal = referenceIsA ? manifold.pushDirectionFromAToB : -manifold.pushDirectionFromAToB;
-
-		manifold.contacts = FindFaceContactPoints(referenceBox, incidentBox, referenceFaceNormal);
-	}
-	else
-	{
-		// Edge box A, box B axis placement (from BuildBoxVsBoxAxes)
-		// 
-		//                 axisOfB=0   axisOfB=1   axisOfB=2
-		// axisOfA = 0         0           1           2
-		// axisOfA = 1         3           4           5
-		// axisOfA = 2         6           7           8
-		// 
-		int edgeSlot = shallowestAxisIndex - OBB_VS_OBB_FACE_AXIS_COUNT;
-		int axisOfA = edgeSlot / OBB_AXES_PER_BOX; // which row    (which of box A's 3 axes)
-		int axisOfB = edgeSlot % OBB_AXES_PER_BOX; // which column (which of box B's 3 axes)
-
-		Segment edgeOnA = GetBoxEdgeSegment(a, axisOfA,  directionFromCenterAToCenterB);
-		Segment edgeOnB = GetBoxEdgeSegment(b, axisOfB, -directionFromCenterAToCenterB);
-
-		glm::vec3 contactPoint = ClosestPointBetweenSegments(edgeOnA, edgeOnB);
-
-		ContactPoint contact;
-		contact.worldPosition    = contactPoint;
-		contact.penetrationDepth = manifold.overlapDepth;
-
-		contact.featureID.type           = CollisionContactType::EdgeToEdge;
-		contact.featureID.edgeAxisOnBoxA = axisOfA;
-		contact.featureID.edgeAxisOnBoxB = axisOfB;
-
-		manifold.contacts.push_back(contact);
-	}
-
-	return manifold;
+	return BuildManifoldFromChosenAxis(a, b, shallowestAxisIndex, shallowestOverlapFound, shallowestOverlapAxis);
 }
 
 }

@@ -144,11 +144,13 @@ struct ContactManifold
 	float     overlapDepth = 0.0f;
 	std::vector<ContactPoint> contacts;
 
-
+	// which of the SAT candidate axis (1 from 15 axis for Box) 
+	// was used to build this manifold
+	int usedAxisIndex = -1;
 };
 
 bool Overlaps(const OBB& a, const OBB& b);
 SeparationInfo GetSeparationInfo(const OBB& a, const OBB& b);
-ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b);
+ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b, int preferredAxisIndex = -1);
 
 }
