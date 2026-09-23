@@ -61,9 +61,38 @@ struct TransformComponent
 		rotationQuaternion = glm::quat(glm::radians(rotation));
 	}
 
+	// Syncs Euler angles from the quaternion while preventing abrupt 180° representation flips
+	//
+	// Quaternions have multiple equivalent Euler representations. Standard glm::eulerAngles()
+	// can flip between them, causing huge visual jumps in inspector values or interpolation
+	//
+	// We check both candidates, measure their wrapped angle distance to the current rotation,
+	// and pick whichever representation is closest
 	void SyncEulerFromQuaternion()
 	{
-		rotation = glm::degrees(glm::eulerAngles(rotationQuaternion));
+		glm::vec3 newRotation = glm::degrees(glm::eulerAngles(rotationQuaternion));
+
+		// Every 3D orientation has exactly TWO unique Euler representations (ignoring 360° wraps)
+		// 'newRotation' is the first, and 'flippedAlternative' is the second valid way to write it
+		glm::vec3 flippedAlternative = glm::vec3(
+			newRotation.x + 180.0f,
+			180.0f - newRotation.y,
+			newRotation.z + 180.0f
+		);
+
+		// glm::mod is floating-point modulo
+		// Wrapping deltas into [-180, 180] degrees handles all 360° multiples automatically,
+		// so we only ever need to compare these two representations
+		auto wrapDelta = [](const glm::vec3& delta)
+			{
+				return glm::mod(delta + 180.0f, 360.0f) - 180.0f;
+			};
+
+		float distToNew     = glm::length(wrapDelta(newRotation - rotation));
+		float distToFlipped = glm::length(wrapDelta(flippedAlternative - rotation));
+
+		// Pick whichever representation is closer to the current rotation to maintain continuity
+		rotation = (distToFlipped < distToNew) ? flippedAlternative : newRotation;
 	}
 
 	static void RegisterToInspector()
@@ -299,7 +328,7 @@ struct PhysicsBodyComponent
 
 	// restitution = how bouncy object is when it hits something
 	float mass = 1.0f;
-	float restitution = 0.2f; // 0 = no bounce (sandbag), 1 = SUPER BOUNCY (rubber ball)
+	float restitution = 0.0f; // 0 = no bounce (sandbag), 1 = SUPER BOUNCY (rubber ball)
 
 	// How much the surface resists sliding: 0 = ice (frictionless), 1 = rubber (strong grip)
 	// When two bodies touch, their frictions combine as sqrt(frictionA * frictionB)

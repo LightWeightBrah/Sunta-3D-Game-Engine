@@ -25,6 +25,7 @@
 #include "Core/VirtualFileSystem.h"
 #include "ComponentDrawerFactory.h"
 #include "Renderer/DebugRenderer.h"
+#include "Physics/CollisionSystem.h"
 
 namespace Sunta
 {
@@ -169,7 +170,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 				{
 					SceneSerializer::Serialize(scene.GetFilePath(), scene);
 				}
-				
+
 			}
 
 			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
@@ -204,7 +205,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
 			if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
 				DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
-			
+
 			ImGui::EndMenu();
 		}
 
@@ -412,6 +413,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 			if (ImGui::MenuItem("Delete"))
 			{
 				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", entityID);
+				CollisionSystem::ForgetEntity(entityID);
 				entityManager.DestroyEntity(entityID);
 				SetSelectedEntity(-1);
 
@@ -422,9 +424,15 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 			{
 				if (auto* transform = entityManager.GetComponent<TransformComponent>(entityID))
 				{
+					// Teleport, not real movement. Clear any remembered contact
+					// state for this entity, otherwise next physics step warm-starts
+					// the solver with impulses computed for the old geometry
+					CollisionSystem::ForgetEntity(entityID);
+
 					transform->position = glm::vec3(0.0f);
 					transform->rotation = glm::vec3(0.0f);
 					transform->scale = glm::vec3(1.0f);
+					transform->isDirty = true;
 				}
 
 				ImGui::CloseCurrentPopup();
@@ -454,6 +462,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
 		{
 			SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
+			CollisionSystem::ForgetEntity(static_cast<unsigned int>(selectedEntity));
 			entityManager.DestroyEntity(static_cast<unsigned int>(selectedEntity));
 			SetSelectedEntity(-1);
 		}
@@ -787,7 +796,7 @@ void EditorGUI::DrawFileBrowser()
 						// turns out to be a drag rather than a click
 						preDragSelectedFile = selectedFile;
 					}
-					
+
 				}
 
 				selectedFile = path;
@@ -1671,16 +1680,32 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entity
 	}
 
 	bool anyPropertyChanged = false;
+	bool stoppedChangingValues = false;
+
 	for (const auto& property : componentType->properties)
 	{
 		void* propertyData = (char*)componentData + property.byteOffset;
 
 		if (DrawPropertyWidget(property, propertyData))
 			anyPropertyChanged = true;
+
+		if (ImGui::IsItemDeactivatedAfterEdit())
+			stoppedChangingValues = true;
 	}
 
-	if (anyPropertyChanged && componentType->onChanged)
-		componentType->onChanged(componentData);
+	if (anyPropertyChanged)
+	{
+		// Moving via Inspector teleports the entity instead of moving it via velocity
+		// If it was touching anything before being moved,
+		// the physics engine solver still contains old impulses calculated 
+		// for that previous position, causing a visible kick/jitter
+		// So just Forget that Entity to avoid weird physics jitter
+		if (componentType->hash == typeid(TransformComponent).hash_code() && stoppedChangingValues)
+			CollisionSystem::ForgetEntity(entityID);
+
+		if (componentType->onChanged)
+			componentType->onChanged(componentData);
+	}
 }
 
 bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* propertyData)

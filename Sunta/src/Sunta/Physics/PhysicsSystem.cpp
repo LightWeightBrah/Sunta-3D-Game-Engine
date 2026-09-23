@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <algorithm>
+#include <cmath>
 
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
@@ -41,6 +42,8 @@ void PhysicsSystem::RunSingleStep(EntityManager& entityManager, float deltaTime)
 
 	Systems::UpdateTransform(entityManager);
 	CollisionSystem::Update(entityManager, deltaTime);
+
+	SnapNegligibleVelocities(entityManager);
 }
 
 namespace
@@ -68,6 +71,24 @@ glm::quat ApplyAngularVelocity(const glm::quat& currentRotation, const glm::vec3
 float GetDampingFactor(float damping, float deltaTime)
 {
 	return 1.0f / (1.0f + damping * deltaTime);
+}
+
+// Floating point math never lands on a perfect, clean 0. A body that
+// SHOULD be resting still ends up with a velocity like 0.00003, which
+// then flips sign every step or two from tiny rounding differences,
+// visible in the editor as values flickering endlessly, and enough to
+// keep the sleep system from ever considering the body "still enough".
+// Anything below this speed is treated as noise, not real motion, and
+// clamped straight to zero
+glm::vec3 SnapTinyVelocityToZero(const glm::vec3& velocity)
+{
+	constexpr float NEGLIGIBLE_SPEED = 0.0005f; // meters (or radians) / second
+
+	return glm::vec3(
+		std::abs(velocity.x) < NEGLIGIBLE_SPEED ? 0.0f : velocity.x,
+		std::abs(velocity.y) < NEGLIGIBLE_SPEED ? 0.0f : velocity.y,
+		std::abs(velocity.z) < NEGLIGIBLE_SPEED ? 0.0f : velocity.z
+	);
 }
 
 }
@@ -116,7 +137,7 @@ void PhysicsSystem::ApplyAngularMotion(EntityManager& entityManager, float delta
 		if (!transform)
 			continue;
 
-		transform->rotationQuaternion = ApplyAngularVelocity(transform->rotationQuaternion, 
+		transform->rotationQuaternion = ApplyAngularVelocity(transform->rotationQuaternion,
 			physicsBody.angularVelocity, deltaTime);
 		transform->SyncEulerFromQuaternion();
 		transform->isDirty = true;
@@ -136,6 +157,17 @@ void PhysicsSystem::ApplyDamping(EntityManager& entityManager, float deltaTime)
 		physicsBody.angularVelocity *= GetDampingFactor(physicsBody.angularDamping, deltaTime);
 	}
 
+}
+
+void PhysicsSystem::SnapNegligibleVelocities(EntityManager& entityManager)
+{
+	auto& physicsBodies = entityManager.GetAllComponents<PhysicsBodyComponent>();
+
+	for (auto& physicsBody : physicsBodies)
+	{
+		physicsBody.velocity        = SnapTinyVelocityToZero(physicsBody.velocity);
+		physicsBody.angularVelocity = SnapTinyVelocityToZero(physicsBody.angularVelocity);
+	}
 }
 
 }

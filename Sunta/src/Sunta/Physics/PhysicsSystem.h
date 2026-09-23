@@ -20,6 +20,7 @@ private:
 	static void ApplyLinearMotion(EntityManager& entityManager, float deltaTime);
 	static void ApplyAngularMotion(EntityManager& entityManager, float deltaTime);
 	static void ApplyDamping(EntityManager& entityManager, float deltaTime);
+	static void SnapNegligibleVelocities(EntityManager& entityManager);
 };
 
 }

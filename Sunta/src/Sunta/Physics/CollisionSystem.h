@@ -29,6 +29,8 @@ public:
 
 	static bool IsEntityOverlapping(unsigned int enityID);
 
+	static void ForgetEntity(unsigned int entityID);
+
 private:
 	static inline std::vector<OverlapPair> previousOverlaps;
 	

@@ -5,6 +5,7 @@
 #include "ECS/Component.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
+#include <limits>
 
 namespace Sunta
 {
@@ -55,7 +56,7 @@ struct SurfaceSlideDirections
 struct CollisionPoint
 {
 	glm::vec3 worldPosition = glm::vec3(0.0f);
-	
+
 	// How deep this particular point is pushed into the other box
 	// A tilted box has one corner buried deep and the opposite one barely touching
 	float penetrationDepth = 0.0f;
@@ -224,7 +225,7 @@ glm::mat3 GetInverseInertiaTensorWorld(const PhysicsBodyComponent* physicsBody, 
 		return glm::mat3(0.0f);
 
 	glm::vec3 inertiaLocal = ComputeBoxInertiaTensorLocal(collider.worldOBB.halfExtents, physicsBody->mass);
-	
+
 	// prevent divide by zero exception, just in case
 	constexpr float SMALLEST_USABLE_INERTIA = 1e-8f;
 	glm::vec3 inverseInertiaLocal = glm::vec3(
@@ -455,37 +456,152 @@ void PrepareCollisionPoint(const CollisionPair& pair, CollisionPoint& point)
 	point.targetBounceSpeed = CalculateTargetBounceSpeed(pair, point);
 }
 
-// Instead of teleporting overlapping bodies apart, we quietly ask them to
-// move apart a little. Teleporting is invisible to the rest of the
-// simulation and causes jitter (speed is something the solver understands)
-float CalculateMoveApartSpeed(const CollisionPoint& point, float deltaTime)
+// =====================================================================
+// OVERLAP FIXING (Direct Position Correction)
+// =====================================================================
+// THE PROBLEM WITH VELOCITY:
+// Pushing objects apart via velocity makes them bounce and jitter forever, because 
+// the solver mistakes the "push" for real speed that leaks into the next frame
+//
+// THE SOLUTION:
+// We modify TransformComponent::position directly and leave velocity completely alone
+// Nudges are queued in 'pendingPositionCorrections' during solver passes and applied 
+// all at once at the end of the step
+
+// Total position displacement per entity for this step, accumulated across all passes
+// Applied to Transforms at the end of the step and then cleared
+std::unordered_map<unsigned int, glm::vec3> pendingPositionCorrections;
+
+void AddPositionCorrection(unsigned int entityID, const glm::vec3& nudge)
 {
-	// We let bodies sink into each other by this much and simply ignore it
-	// Chasing the last fraction of a millimeter is exactly what makes resting
-	// boxes vibrate instead of sitting still.
-	constexpr float ACCEPTABLE_OVERLAP = 0.005f;
-
-	// What share of the leftover overlap we undo per step
-	// 1.0 would fix it instantly, but that makes objects visibly pop
-	// 0.2 spreads the fix over several steps and looks calm
-	constexpr float OVERLAP_FIX_PER_STEP = 0.2f;
-
-	float overlapWorthFixing = std::max(point.penetrationDepth - ACCEPTABLE_OVERLAP, 0.0f);
-
-	// meters to fix, spread over 1 step
-	return (OVERLAP_FIX_PER_STEP * overlapWorthFixing) / deltaTime;
+	pendingPositionCorrections[entityID] += nudge;
 }
 
-void SolvePushApartDirection(const CollisionPair& pair, CollisionPoint& point, float deltaTime)
+glm::vec3 GetQueuedCorrectionSoFar(unsigned int entityID)
+{
+	auto found = pendingPositionCorrections.find(entityID);
+	return (found != pendingPositionCorrections.end()) ? found->second : glm::vec3(0.0f);
+}
+
+// Calculates how much these two objects are STILL overlapping right now
+//
+// WHAT IT DOES:
+// Takes the starting overlap and subtracts any pushes we ALREADY 
+// applied to these objects in this step.
+//
+// WHY WE NEED IT:
+// In a stack (tower) of boxes, pushing Box 1 also moves Box 2
+// If Box 3 doesn't know Box 2 moved, it uses OLD positions to fix its collision
+// This makes towers wobble and shake
+float GetRemainingOverlap(const CollisionPair& pair, const CollisionPoint& point)
+{
+	glm::vec3 correctionOfA = GetQueuedCorrectionSoFar(pair.entityA);
+	glm::vec3 correctionOfB = GetQueuedCorrectionSoFar(pair.entityB);
+
+	float alreadyFixedAlongPushAxis = glm::dot(correctionOfB - correctionOfA, pair.pushDirectionFromAToB);
+
+	return std::max(point.penetrationDepth - alreadyFixedAlongPushAxis, 0.0f);
+}
+
+// How many meters (combined, for both bodies) this one contact point wants
+// to push apart in THIS pass (NOT a velocity)
+float CalculatePositionCorrectionAmount(float effectivePenetration)
+{
+	// We let bodies sink into each other by this much and simply ignore it.
+	// Chasing the last fraction of a millimeter is exactly what makes
+	// resting boxes vibrate instead of sitting still
+	constexpr float ACCEPTABLE_OVERLAP = 0.005f;
+
+	// What share of the leftover overlap we undo per pass
+	// 1.0 would fix it instantly, but that makes objects visibly pop
+	// 0.2 spreads the fix over several passes/steps and looks calm
+	constexpr float OVERLAP_FIX_PER_PASS = 0.2f;
+
+	float overlapWorthFixing = std::max(effectivePenetration - ACCEPTABLE_OVERLAP, 0.0f);
+
+	return OVERLAP_FIX_PER_PASS * overlapWorthFixing;
+}
+
+bool BothSidesAreSleepingOrStatic(const CollisionPair& pair)
+{
+	bool aIsSettled = !pair.bodyA || pair.bodyA->isSleeping;
+	bool bIsSettled = !pair.bodyB || pair.bodyB->isSleeping;
+
+	return aIsSettled && bIsSettled;
+}
+
+// Calculates position correction for a single contact point during the CURRENT solver pass
+// Running this iteratively across multiple passes (see POSITION_SOLVER_PASSES) allows stacked
+// objects (tower from cubes etc.) to find their stable position in a single frame
+// rather than propagating corrections over multiple frames
+void QueuePositionCorrectionsForPair(const CollisionPair& pair, const CollisionPoint& point)
+{
+	if (BothSidesAreSleepingOrStatic(pair))
+		return;
+
+	float remainingOverlap = GetRemainingOverlap(pair, point);
+	float correctionMeters = CalculatePositionCorrectionAmount(remainingOverlap);
+	if (correctionMeters <= 0.0f)
+		return; // no overlap worth fixing here
+
+	float totalInverseMass = pair.inverseMassOfA + pair.inverseMassOfB;
+	if (totalInverseMass <= 0.0f)
+		return; // both sides immovable
+
+	// Split the fix between the two bodies according to how heavy they are
+	float shareForA = pair.inverseMassOfA / totalInverseMass;
+	float shareForB = pair.inverseMassOfB / totalInverseMass;
+
+	// Stops one huge overlap (e.g. something teleported/spawned
+	// inside a wall) from popping out an object instantly across the level
+	// in a single pass
+	constexpr float MAX_CORRECTION_PER_PASS = 0.2f; // meters
+	correctionMeters = std::min(correctionMeters, MAX_CORRECTION_PER_PASS);
+
+	glm::vec3 positionImpulse = pair.pushDirectionFromAToB * correctionMeters;
+
+	if (pair.inverseMassOfA > 0.0f)
+	{
+		glm::vec3 pushOnA = -positionImpulse * shareForA;
+		AddPositionCorrection(pair.entityA, pushOnA);
+	}
+
+	if (pair.inverseMassOfB > 0.0f)
+	{
+		glm::vec3 pushOnB = positionImpulse * shareForB;
+		AddPositionCorrection(pair.entityB, pushOnB);
+	}
+}
+
+// Applies every queued nudge straight onto the real transform and clears
+// the queue for next step. This is the only place overlap-fixing ever
+// touches the entity (never through PhysicsBodyComponent::velocity)
+void ApplyQueuedPositionCorrections(EntityManager& entityManager)
+{
+	for (auto& [entityID, nudge] : pendingPositionCorrections)
+	{
+		auto* transform = entityManager.GetComponent<TransformComponent>(entityID);
+		if (!transform)
+			continue;
+
+		transform->position += nudge;
+		transform->isDirty = true;
+	}
+
+	pendingPositionCorrections.clear();
+}
+
+void SolvePushApartDirection(const CollisionPair& pair, CollisionPoint& point)
 {
 	// STEP 1: where are we, and where do we want to be?
 	glm::vec3 speedDifference = GetSpeedDifferenceAtPoint(pair, point);
 	float currentSeparatingSpeed = glm::dot(speedDifference, pair.pushDirectionFromAToB);
 
-	// Plain "stop moving into each other" would be a target of 0
-	// We aim slightly above 0 for two separate reasons, added together:
-	float wantedSeparatingSpeed = point.targetBounceSpeed					 // so it bounces
-		+ CalculateMoveApartSpeed(point, deltaTime); // so it stops overlapping
+	// Target is JUST the bounce speed (0 whenever restitution is 0)
+	// Overlap is fixed entirely separately (QueuePositionCorrectionForPoint) 
+	// So it never gets baked into
+	// real velocity and can't leak into next frame
+	float wantedSeparatingSpeed = point.targetBounceSpeed;
 
 	// STEP 2: how much push covers that gap?
 	float missingSpeed = wantedSeparatingSpeed - currentSeparatingSpeed;
@@ -605,6 +721,62 @@ int GetPreviousUsedAxisIndex(unsigned int entityA, unsigned int entityB)
 	return cachedPairIt->second.usedAxisIndex;
 }
 
+// Breadth First Search (BFS)
+// Learned it from:
+// https://www.youtube.com/watch?v=xlVX7dXLS64
+// Very nice
+// 
+// This allow us to create stack/tower of cubes (CollisionPairs) one on another more stable
+// cause we know which depth each cube (CollisionPair) is
+std::unordered_map<unsigned int, int> ComputeStackSupportDepth(const std::vector<CollisionPair>& pairs)
+{
+	std::unordered_map<unsigned int, int> entityToDepth;
+	std::queue<unsigned int> toVisit;
+
+	// START: every entity touching with something inmovable (inverseMass <= 0) has depth 0
+	for (const CollisionPair& pair : pairs)
+	{
+		// A is inmovable in this case (we can move B)
+		if (pair.inverseMassOfA <= 0.0f && entityToDepth.find(pair.entityB) == entityToDepth.end())
+		{
+			entityToDepth[pair.entityB] = 0; // depth 0
+			toVisit.push(pair.entityB);
+		}
+
+		// B is inmovable in this case (we can move A)
+		if (pair.inverseMassOfB <= 0.0f && entityToDepth.find(pair.entityA) == entityToDepth.end())
+		{
+			entityToDepth[pair.entityA] = 0; // depth 0
+			toVisit.push(pair.entityA);
+		}
+	}
+
+	while (!toVisit.empty())
+	{
+		unsigned int currentEntity = toVisit.front();
+		toVisit.pop();
+		int currentDepth = entityToDepth[currentEntity];
+
+		for (const CollisionPair& pair : pairs)
+		{
+			unsigned int otherEntity = (pair.entityA == currentEntity) ? pair.entityB
+									 : (pair.entityB == currentEntity) ? pair.entityA
+									 : std::numeric_limits<unsigned int>::max(); // max (No currentEntity found)
+
+			if(otherEntity == std::numeric_limits<unsigned int>::max())
+				continue;
+
+			if (entityToDepth.find(otherEntity) == entityToDepth.end())
+			{
+				entityToDepth[otherEntity] = currentDepth + 1;
+				toVisit.push(otherEntity);
+			}
+		}
+	}
+
+	return entityToDepth;
+}
+
 std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 {
 	std::vector<CollisionPair> pairs;
@@ -623,7 +795,7 @@ std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 
 			int preferredAxisIndex = GetPreviousUsedAxisIndex(entityA, entityB);
 
-			ContactManifold manifold = GetContactManifoldBoxVsBox(colliders[i].worldOBB, 
+			ContactManifold manifold = GetContactManifoldBoxVsBox(colliders[i].worldOBB,
 				colliders[j].worldOBB, preferredAxisIndex);
 
 			if (!manifold.areOverlapping || manifold.contacts.empty())
@@ -636,7 +808,7 @@ std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 			float inverseMassB = GetInverseMass(bodyB);
 
 			bool bothAreImmovable = inverseMassA <= 0.0f && inverseMassB <= 0.0f;
-			if(bothAreImmovable)
+			if (bothAreImmovable)
 				continue;
 
 			pairs.push_back(BuildCollisionPair(
@@ -645,6 +817,29 @@ std::vector<CollisionPair> CollectCollisionPairs(EntityManager& entityManager)
 				manifold));
 		}
 	}
+
+	// For tower/stack of cubes (Collisions)
+	// Solver processes pairs sequentially. If a contact HIGHER in a tower/stack 
+	// is resolved before the contact BELOW has provided support,
+	// the top box briefly "floats" in mid-air and receives an impulse 
+	// calculated as if it were freely falling
+	// Sorting from bottom to top ensures every contact is resolved with a solid foundation 
+	// already underneath
+	std::unordered_map<unsigned int, int> supportDepth = ComputeStackSupportDepth(pairs);
+
+	auto depthOf = [&](unsigned int entityID)
+		{
+			auto found = supportDepth.find(entityID);
+			return found != supportDepth.end() ? found->second : 0;
+		};
+
+	std::sort(pairs.begin(), pairs.end(), [&](const CollisionPair& a, const CollisionPair& b)
+		{
+			int minDepthA = std::min(depthOf(a.entityA), depthOf(a.entityB));
+			int minDepthB = std::min(depthOf(b.entityA), depthOf(b.entityB));
+
+			return minDepthA < minDepthB;
+		});
 
 	return pairs;
 }
@@ -720,7 +915,7 @@ void SaveImpulsesForNextFrame(const std::vector<CollisionPair>& pairs)
 				point.totalNormalPush,
 				point.totalFirstSlidePush,
 				point.totalSecondSlidePush
-			});
+				});
 		}
 
 		newCache[{ pair.entityA, pair.entityB }] = std::move(state);
@@ -729,7 +924,7 @@ void SaveImpulsesForNextFrame(const std::vector<CollisionPair>& pairs)
 	previousFrameContacts = std::move(newCache);
 }
 
-void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
+void SolveCollisionPairs(std::vector<CollisionPair>& pairs)
 {
 	// For every point, work out how bouncy it should be, how easily it
 	// reacts to a push, etc. based on THIS frame's real impact speed
@@ -763,7 +958,7 @@ void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
 		{
 			for (CollisionPoint& point : pair.points)
 			{
-				SolvePushApartDirection(pair, point, deltaTime);
+				SolvePushApartDirection(pair, point);
 				SolveFriction(pair, point);
 			}
 		}
@@ -771,6 +966,19 @@ void SolveCollisionPairs(std::vector<CollisionPair>& pairs, float deltaTime)
 
 	// Remember this frame's result, so NEXT frame can warm-start from it
 	SaveImpulsesForNextFrame(pairs);
+
+	// Fixes positions AFTER velocities are done, so we don't affect movement
+	// Runs multiple passes so stacked objects (like boxes) can pass position 
+	// fixes up to each other and stop shaking in one frame
+	//
+	// Fewer passes = faster, but towers wobble longer
+	// More  passes = towers stay still immediately, but uses more CPU
+	constexpr int POSITION_SOLVER_PASSES = 4;
+
+	for (int pass = 0; pass < POSITION_SOLVER_PASSES; pass++)
+		for (CollisionPair& pair : pairs)
+			for (CollisionPoint& point : pair.points)
+				QueuePositionCorrectionsForPair(pair, point);
 }
 
 // If a sleeping box gets bumped by something awake and moving, 
@@ -813,7 +1021,7 @@ void UpdateSleepStates(EntityManager& entityManager, const std::vector<Collision
 	{
 		// A kinematic body (e.g. player) is moved by something else
 		// (input, script, etc.), "sleeping" has no meaning for it
-		if(body.isKinematic)
+		if (body.isKinematic)
 			continue;
 
 		bool isTouchingSomething = bodiesTouchingSomething.count(&body) > 0;
@@ -844,10 +1052,41 @@ void CollisionSystem::ResolveSolidCollisions(EntityManager& entityManager, float
 {
 	std::vector<CollisionPair> pairs = CollectCollisionPairs(entityManager);
 
-	for (CollisionPair& pair : pairs)
-		WakeTouchingPairIfNeeded(pair);
+	// Wakes up entire stacks (tower) of touching objects in a single frame
+	// 
+	// If Box A wakes up Box B, Box B needs to wake up Box C in the same step
+	// We repeat this loop until no new objects wake up, ensuring the wake-up signal 
+	// passes through whole towers immediately, regardless of pair order
+	//
+	// Without this, wake-up moves only 1 stack level per frame, and a sleeping 
+	// body receives impulses before it actually wakes up
 
-	SolveCollisionPairs(pairs, deltaTime);
+	bool somethingWokeUp = true;
+	while (somethingWokeUp)
+	{
+		somethingWokeUp = false;
+
+		for (CollisionPair& pair : pairs)
+		{
+			bool aWasAsleep = pair.bodyA && pair.bodyA->isSleeping;
+			bool bWasAsleep = pair.bodyB && pair.bodyB->isSleeping;
+
+			WakeTouchingPairIfNeeded(pair);
+
+			if ((aWasAsleep && pair.bodyA && !pair.bodyA->isSleeping) ||
+				(bWasAsleep && pair.bodyB && !pair.bodyB->isSleeping))
+				somethingWokeUp = true;
+		}
+	}
+
+	SolveCollisionPairs(pairs);
+
+	// Apply the overlap fixes queued during the solve above, directly to
+	// position. Must happen AFTER solving (so it uses this step's final
+	// penetration depths) and BEFORE sleeping (so a box that just got
+	// nudged doesn't get judged on its pre-nudge position)
+	ApplyQueuedPositionCorrections(entityManager);
+
 	UpdateSleepStates(entityManager, pairs, deltaTime);
 }
 
@@ -872,7 +1111,7 @@ void PublishTriggerEvent(EntityManager& entityManager, const OverlapPair& pair, 
 	bool isEntityATrigger = colliderA && colliderA->isTrigger;
 
 	unsigned int triggerEntityID = isEntityATrigger ? pair.entityA : pair.entityB;
-	unsigned int otherEntityID   = isEntityATrigger ? pair.entityB : pair.entityA;
+	unsigned int otherEntityID = isEntityATrigger ? pair.entityB : pair.entityA;
 
 	if (eventType == TriggerEventType::Enter)
 		EventBus::Publish(TriggerEnterEvent{ triggerEntityID, otherEntityID });
@@ -895,13 +1134,13 @@ void CollisionSystem::DetectTriggerEvents(EntityManager& entityManager)
 		{
 			bool pairContainsTrigger = colliders[i].isTrigger || colliders[j].isTrigger;
 
-			if(!pairContainsTrigger)
+			if (!pairContainsTrigger)
 				continue;
 
 			bool layersCanInteract = LayersCanInteract(colliders[i].layer, colliders[i].collidesWith,
-											           colliders[j].layer, colliders[j].collidesWith);
+				colliders[j].layer, colliders[j].collidesWith);
 
-			if(!layersCanInteract)
+			if (!layersCanInteract)
 				continue;
 
 			if (Overlaps(colliders[i].worldOBB, colliders[j].worldOBB))
@@ -940,6 +1179,22 @@ bool CollisionSystem::IsEntityOverlapping(unsigned int enityID)
 	}
 
 	return false;
+}
+
+void CollisionSystem::ForgetEntity(unsigned int entityID)
+{
+	for (auto it = previousFrameContacts.begin(); it != previousFrameContacts.end();)
+	{
+		if (it->first.entityA == entityID || it->first.entityB == entityID)
+			it = previousFrameContacts.erase(it);
+		else
+			++it; // ++it is better practice than it++ for iterators in c++
+	}
+
+	// In case this frame's solve is currently in progress, clear any unapplied
+	// nudges as well. Otherwise the entity will still receive a "late" correction
+	// calculated from the old geometry
+	pendingPositionCorrections.erase(entityID);
 }
 
 }

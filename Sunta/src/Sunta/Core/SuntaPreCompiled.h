@@ -36,6 +36,7 @@
 #include <any>
 
 #include <memory>
+#include <limits>
 #include <utility>
 #include <functional>
 #include <algorithm>
