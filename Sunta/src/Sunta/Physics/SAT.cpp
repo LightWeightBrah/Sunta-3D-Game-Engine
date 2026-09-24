@@ -145,7 +145,7 @@ namespace
 //                                                       poking INTO the reference face
 // 
 
-constexpr int BOX_FACE_COUNT        = 6;
+constexpr int BOX_FACE_COUNT = 6;
 constexpr int BOX_FACE_CORNER_COUNT = 4;
 
 // Local Corner indicesfor each FACE (matching CollisionShapes.h BOX_CORNER_SIGNS)
@@ -238,13 +238,20 @@ inline float GetSignedDistanceToPlane(const Plane& plane, const glm::vec3& point
 	return glm::dot(plane.outwardNormal, point) - plane.offsetFromWorldOrigin;
 }
 
+// We use a small epsilon to prevent floating-point inaccuracies 
+// from rejecting valid contact points
+// If a point is exactly on the surface, math precision might 
+// calculate it as slightly outside (e.g. +0.000001)
+// This epsilon ensures boxes maintain stable 4-point contacts instead of 
+// jittering (randomly flipping a point between inside/outside frame-to-frame)
+constexpr float CONTACT_CLIP_EPSILON = 1e-4f;
+
 // Algorithm: "Sutherland-Hodgman polygon clipping"
 // 
 // HOW IT WORKS : Go through the polygon's edges one at a time
 //   - If the edge's START point is inside -> keep it
 //   - If the edge CROSSES the wall (one end inside, one outside) -> find the
 //     exact crossing point and add THAT
-
 inline std::vector<PolygonVertex> TrimPolygonToInsideOfPlane(const std::vector<PolygonVertex>& polygon, const Plane& plane, int wallIndex)
 {
 	std::vector<PolygonVertex> trimmedPolygon;
@@ -259,8 +266,8 @@ inline std::vector<PolygonVertex> TrimPolygonToInsideOfPlane(const std::vector<P
 		float edgeStartDistance = GetSignedDistanceToPlane(plane, edgeStart.position);
 		float edgeEndDistance   = GetSignedDistanceToPlane(plane, edgeEnd.position);
 
-		bool edgeStartIsInside = edgeStartDistance <= 0.0f;
-		bool edgeEndIsInside   = edgeEndDistance   <= 0.0f;
+		bool edgeStartIsInside = edgeStartDistance <= CONTACT_CLIP_EPSILON;
+		bool edgeEndIsInside   = edgeEndDistance   <= CONTACT_CLIP_EPSILON;
 
 		if (edgeStartIsInside)
 			trimmedPolygon.push_back(edgeStart);
@@ -317,7 +324,7 @@ inline std::vector<PolygonVertex> TrimBoxIncidentFaceToReferenceFaceBoundary(
 			incidentFaceCorners[i],
 			BoundaryLine{ BoundaryLineType::IncidentFaceEdge, previousEdgeIndex },
 			BoundaryLine{ BoundaryLineType::IncidentFaceEdge, i }
-		});
+			});
 	}
 
 	glm::vec3 referenceFaceCenter = GetBoxPolygonCenter(referenceFaceCorners);
@@ -352,7 +359,8 @@ inline std::vector<ContactPoint> KeepOnlyThePenetratingPoints(
 	{
 		float howFarBehindTheFace = -glm::dot(referenceFaceNormal, vertex.position - referenceFaceCenter);
 
-		bool isPenetratingPoint = howFarBehindTheFace >= 0.0f;
+		// Same epsilon as above so a point right on the face still counts as touching
+		bool isPenetratingPoint = howFarBehindTheFace >= -CONTACT_CLIP_EPSILON;
 		if (isPenetratingPoint)
 		{
 			ContactPoint contactPoint;
@@ -804,6 +812,11 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b, int prefe
 	float preferredAxisOverlap = 0.0f;
 	glm::vec3 preferredAxisDirection = glm::vec3(0.0f);
 
+	// Edge-edge contact is a single wobbly point vs face-face's stable 4 points,
+	// so edge axes get penalized here to prefer face axes
+	constexpr float EDGE_AXIS_PENALTY  = 0.01f; // edge-edge contacs will be deeper by this amount
+	float shallowestOverlapUnpenalized = 0.0f;
+
 	for (int i = 0; i < OBB_VS_OBB_AXIS_COUNT; i++)
 	{
 		const glm::vec3& axis = testAxes[i];
@@ -826,9 +839,14 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b, int prefe
 			return manifold;
 		}
 
-		if (overlapAmount < shallowestOverlapFound)
+		bool isEdgeAxis = i >= OBB_VS_OBB_FACE_AXIS_COUNT;
+		// Add penalty if it's an edge axis
+		float penalizedOverlap = isEdgeAxis ? overlapAmount + EDGE_AXIS_PENALTY : overlapAmount;
+
+		if (penalizedOverlap < shallowestOverlapFound)
 		{
-			shallowestOverlapFound = overlapAmount;
+			shallowestOverlapFound = penalizedOverlap;
+			shallowestOverlapUnpenalized = overlapAmount; // real depth, used for the actual push-apart
 			shallowestAxisIndex = i;
 			shallowestOverlapAxis = normalizedAxis;
 		}
@@ -859,10 +877,19 @@ ContactManifold GetContactManifoldBoxVsBox(const OBB& a, const OBB& b, int prefe
 	// (preferredAxisIndex) as long as it still shows overlap, ignoring tiny 
 	// precision fluctuations. We only switch axis when the old axis 
 	// actually stops fitting (boxes actually moved or rotated)
-	if (preferredAxisIsStillValid)
+
+	// Keep using the axis from the previous frame
+	// unless a newly found axis is SIGNIFICANTLY better This prevents the collision normal 
+	// from jittering (flip-flopping) between frames due to microscopic box movements
+	constexpr float AXIS_SWITCH_TOLERANCE = 0.002f;
+
+	bool preferredAxisCloseEnough = preferredAxisIsStillValid
+		&& preferredAxisOverlap <= shallowestOverlapFound + AXIS_SWITCH_TOLERANCE;
+
+	if (preferredAxisCloseEnough)
 		return BuildManifoldFromChosenAxis(a, b, preferredAxisIndex, preferredAxisOverlap, preferredAxisDirection);
 
-	return BuildManifoldFromChosenAxis(a, b, shallowestAxisIndex, shallowestOverlapFound, shallowestOverlapAxis);
+	return BuildManifoldFromChosenAxis(a, b, shallowestAxisIndex, shallowestOverlapUnpenalized, shallowestOverlapAxis);
 }
 
 }
