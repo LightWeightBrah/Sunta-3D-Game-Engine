@@ -10,6 +10,14 @@ namespace Sunta
 class Renderer;
 class RendererDevice;
 
+struct TriggerEnterEvent;
+struct TriggerStayEvent;
+struct TriggerExitEvent;
+
+struct CollisionEnterEvent;
+struct CollisionStayEvent;
+struct CollisionExitEvent;
+
 class Scene
 {
 public:
@@ -17,7 +25,6 @@ public:
 	~Scene();
 
 	void Init(RendererDevice& rendererDevice, float windowWidth, float windowHeight);
-	void OnWindowResize(float windowWidth, float windowHeight);
 	void ProcessInput();
 	void Update();
 	void Render(Renderer& renderer);
@@ -35,8 +42,27 @@ private:
 	Camera				camera;
 
 	unsigned int		resizeEventID;
+
+	unsigned int		triggerEnterEventID = 0;
+	unsigned int		triggerStayEventID  = 0;
+	unsigned int		triggerExitEventID  = 0;
+
+	unsigned int		collisionEnterEventID = 0;
+	unsigned int		collisionStayEventID  = 0;
+	unsigned int		collisionExitEventID  = 0;
+
 	std::string			name = "Untitled_Scene";
 	std::string			filePath;
+
+	void OnWindowResize(float windowWidth, float windowHeight);
+
+	void OnTriggerEnter(const TriggerEnterEvent& event);
+	void OnTriggerStay (const TriggerStayEvent& event);
+	void OnTriggerExit (const TriggerExitEvent&  event);
+
+	void OnCollisionEnter(const CollisionEnterEvent& event);
+	void OnCollisionStay (const CollisionStayEvent&  event);
+	void OnCollisionExit (const CollisionExitEvent&  event);
 };
 
 }

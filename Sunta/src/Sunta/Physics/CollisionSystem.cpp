@@ -5,7 +5,9 @@
 #include "ECS/Component.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
+
 #include <limits>
+#include <unordered_set>
 
 namespace Sunta
 {
@@ -1104,20 +1106,30 @@ bool ContainsPair(const std::vector<OverlapPair>& pairs, const OverlapPair& targ
 	return false;
 }
 
-void PublishTriggerEvent(EntityManager& entityManager, const OverlapPair& pair, TriggerEventType eventType)
+void PublishTriggerEvent(EntityManager& entityManager, const OverlapPair& pair, OverlapEventType eventType)
 {
-	auto* colliderA = entityManager.GetComponent<BoxColliderComponent>(pair.entityA);
-
-	bool isEntityATrigger = colliderA && colliderA->isTrigger;
+	auto* colliderA        = entityManager.GetComponent<BoxColliderComponent>(pair.entityA);
+	bool  isEntityATrigger = colliderA && colliderA->isTrigger;
 
 	unsigned int triggerEntityID = isEntityATrigger ? pair.entityA : pair.entityB;
-	unsigned int otherEntityID = isEntityATrigger ? pair.entityB : pair.entityA;
+	unsigned int otherEntityID   = isEntityATrigger ? pair.entityB : pair.entityA;
 
-	if (eventType == TriggerEventType::Enter)
-		EventBus::Publish(TriggerEnterEvent{ triggerEntityID, otherEntityID });
-	else
-		EventBus::Publish(TriggerExitEvent{ triggerEntityID, otherEntityID });
+	switch (eventType)
+	{
+	case OverlapEventType::Enter: EventBus::Publish(TriggerEnterEvent{ triggerEntityID, otherEntityID }); break;
+	case OverlapEventType::Stay:  EventBus::Publish(TriggerStayEvent { triggerEntityID, otherEntityID }); break;
+	case OverlapEventType::Exit:  EventBus::Publish(TriggerExitEvent { triggerEntityID, otherEntityID }); break;
+	}
+}
 
+void PublishCollisionEvent(const OverlapPair& pair, OverlapEventType eventType)
+{
+	switch (eventType)
+	{
+	case OverlapEventType::Enter: EventBus::Publish(CollisionEnterEvent{ pair.entityA, pair.entityB }); break;
+	case OverlapEventType::Stay:  EventBus::Publish(CollisionStayEvent { pair.entityA, pair.entityB }); break;
+	case OverlapEventType::Exit:  EventBus::Publish(CollisionExitEvent { pair.entityA, pair.entityB }); break;
+	}
 }
 
 }
@@ -1126,59 +1138,80 @@ void CollisionSystem::DetectTriggerEvents(EntityManager& entityManager)
 {
 	auto& colliders = entityManager.GetAllComponents<BoxColliderComponent>();
 
-	std::vector<OverlapPair> currentOverlaps;
+	std::vector<OverlapPair> currentTriggerOverlapPairs;
+	std::vector<OverlapPair> currentSolidOverlapPairs;
+	entitiesWithAnyOverlap.clear();
 
 	for (unsigned int i = 0; i < colliders.size(); i++)
 	{
 		for (unsigned int j = i + 1; j < colliders.size(); j++)
 		{
-			bool pairContainsTrigger = colliders[i].isTrigger || colliders[j].isTrigger;
-
-			if (!pairContainsTrigger)
-				continue;
-
 			bool layersCanInteract = LayersCanInteract(colliders[i].layer, colliders[i].collidesWith,
 				colliders[j].layer, colliders[j].collidesWith);
 
 			if (!layersCanInteract)
 				continue;
 
-			if (Overlaps(colliders[i].worldOBB, colliders[j].worldOBB))
-			{
-				unsigned int entityI = entityManager.GetEntityIDForComponent(colliders[i]);
-				unsigned int entityJ = entityManager.GetEntityIDForComponent(colliders[j]);
+			if (!Overlaps(colliders[i].worldOBB, colliders[j].worldOBB))
+				continue;
 
-				currentOverlaps.push_back({ entityI, entityJ });
-			}
+			unsigned int entityI = entityManager.GetEntityIDForComponent(colliders[i]);
+			unsigned int entityJ = entityManager.GetEntityIDForComponent(colliders[j]);
+
+			entitiesWithAnyOverlap.insert(entityI);
+			entitiesWithAnyOverlap.insert(entityJ);
+
+			bool pairContainsTrigger = colliders[i].isTrigger || colliders[j].isTrigger;
+			if (pairContainsTrigger)
+				currentTriggerOverlapPairs.push_back({ entityI, entityJ });
+			else
+				currentSolidOverlapPairs.push_back({ entityI, entityJ });
 		}
 	}
 
-	// Overlapping NOW but NOT LAST FRAME => pair just started touching
-	for (const auto& pair : currentOverlaps)
+	// Triggers: Enter / Stay / Exit
+	for (const auto& pair : currentTriggerOverlapPairs)
 	{
-		if (!ContainsPair(previousOverlaps, pair))
-			PublishTriggerEvent(entityManager, pair, TriggerEventType::Enter);
+		bool wasOverlappingLastFrame = ContainsPair(previousTriggerOverlapPairs, pair);
+		PublishTriggerEvent(entityManager, pair, wasOverlappingLastFrame ? OverlapEventType::Stay : OverlapEventType::Enter);;
 	}
 
-	// Overlapping LAST FRAME but NOT NOW => pair just stopped touching
-	for (const auto& pair : previousOverlaps)
+	for (const auto& pair : previousTriggerOverlapPairs)
 	{
-		if (!ContainsPair(currentOverlaps, pair))
-			PublishTriggerEvent(entityManager, pair, TriggerEventType::Exit);
+		bool stoppedOverlappingThisFrame = !ContainsPair(currentTriggerOverlapPairs, pair);
+		if (stoppedOverlappingThisFrame)
+			PublishTriggerEvent(entityManager, pair, OverlapEventType::Exit);
 	}
 
-	previousOverlaps = std::move(currentOverlaps);
+	previousTriggerOverlapPairs = std::move(currentTriggerOverlapPairs);
+
+	// Solids: Enter / Stay / Exit
+	for (const auto& pair : currentSolidOverlapPairs)
+	{
+		bool wasOverlappingLastFrame = ContainsPair(previousSolidOverlapPairs, pair);
+		PublishCollisionEvent(pair, wasOverlappingLastFrame ? OverlapEventType::Stay : OverlapEventType::Enter);;
+	}
+
+	for (const auto& pair : previousSolidOverlapPairs)
+	{
+		bool stoppedOverlappingThisFrame = !ContainsPair(currentSolidOverlapPairs, pair);
+		if (stoppedOverlappingThisFrame)
+			PublishCollisionEvent(pair, OverlapEventType::Exit);
+	}
+
+	previousSolidOverlapPairs = std::move(currentSolidOverlapPairs);
 }
 
-bool CollisionSystem::IsEntityOverlapping(unsigned int enityID)
+void CollisionSystem::Reset()
 {
-	for (const auto& pair : previousOverlaps)
-	{
-		if (pair.entityA == enityID || pair.entityB == enityID)
-			return true;
-	}
+	previousTriggerOverlapPairs.clear();
+	previousSolidOverlapPairs.clear();
+	entitiesWithAnyOverlap.clear();
+}
 
-	return false;
+bool CollisionSystem::IsEntityOverlapping(unsigned int entityID)
+{
+	return entitiesWithAnyOverlap.count(entityID) > 0;
 }
 
 void CollisionSystem::ForgetEntity(unsigned int entityID)

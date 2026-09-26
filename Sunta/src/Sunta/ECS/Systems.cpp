@@ -156,4 +156,59 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 	}
 }
 
+void Systems::DispatchTriggerEnter(EntityManager& entityManager, unsigned int triggerEntityID, unsigned int otherEntityID)
+{
+	if (auto* triggerScript = entityManager.GetComponent<ScriptComponent>(triggerEntityID))
+		triggerScript->InvokeOnTriggerEnter(otherEntityID);
+
+	if (auto* otherScript = entityManager.GetComponent<ScriptComponent>(otherEntityID))
+		otherScript->InvokeOnTriggerEnter(triggerEntityID);
+}
+
+void Systems::DispatchTriggerStay(EntityManager& entityManager, unsigned int triggerEntityID, unsigned int otherEntityID)
+{
+	if (auto* triggerScript = entityManager.GetComponent<ScriptComponent>(triggerEntityID))
+		triggerScript->InvokeOnTriggerStay(otherEntityID);
+
+	if (auto* otherScript = entityManager.GetComponent<ScriptComponent>(otherEntityID))
+		otherScript->InvokeOnTriggerStay(triggerEntityID);
+}
+
+void Systems::DispatchTriggerExit(EntityManager& entityManager, unsigned int triggerEntityID, unsigned int otherEntityID)
+{
+	if (auto* triggerScript = entityManager.GetComponent<ScriptComponent>(triggerEntityID))
+		triggerScript->InvokeOnTriggerExit(otherEntityID);
+
+	if (auto* otherScript = entityManager.GetComponent<ScriptComponent>(otherEntityID))
+		otherScript->InvokeOnTriggerExit(triggerEntityID);
+}
+
+void Systems::DispatchCollisionEnter(EntityManager& entityManager, unsigned int collisionEntityID, unsigned int otherEntityID)
+{
+	if (auto* scriptA = entityManager.GetComponent<ScriptComponent>(collisionEntityID))
+		scriptA->InvokeOnCollisionEnter(otherEntityID);
+
+	if (auto* scriptB = entityManager.GetComponent<ScriptComponent>(otherEntityID))
+		scriptB->InvokeOnCollisionEnter(collisionEntityID);
+}
+
+void Systems::DispatchCollisionStay(EntityManager& entityManager, unsigned int collisionEntityID, unsigned int otherEntityID)
+{
+
+	if (auto* scriptA = entityManager.GetComponent<ScriptComponent>(collisionEntityID))
+		scriptA->InvokeOnCollisionStay(otherEntityID);
+
+	if (auto* scriptB = entityManager.GetComponent<ScriptComponent>(otherEntityID))
+		scriptB->InvokeOnCollisionStay(collisionEntityID);
+}
+
+void Systems::DispatchCollisionExit(EntityManager& entityManager, unsigned int collisionEntityID, unsigned int otherEntityID)
+{
+	if (auto* scriptA = entityManager.GetComponent<ScriptComponent>(collisionEntityID))
+		scriptA->InvokeOnCollisionExit(otherEntityID);
+
+	if (auto* scriptB = entityManager.GetComponent<ScriptComponent>(otherEntityID))
+		scriptB->InvokeOnCollisionExit(collisionEntityID);
+}
+
 }

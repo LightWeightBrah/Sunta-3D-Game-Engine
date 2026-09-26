@@ -42,6 +42,14 @@ Scene::Scene()
 Scene::~Scene()
 {
 	EventBus::Unsubscribe(resizeEventID);
+
+	EventBus::Unsubscribe(triggerEnterEventID);
+	EventBus::Unsubscribe(triggerStayEventID);
+	EventBus::Unsubscribe(triggerExitEventID);
+
+	EventBus::Unsubscribe(collisionEnterEventID);
+	EventBus::Unsubscribe(collisionStayEventID);
+	EventBus::Unsubscribe(collisionExitEventID);
 }
 	
 void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float windowHeight)
@@ -51,6 +59,30 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	resizeEventID = EventBus::Subscribe<WindowResizeEvent>(
 		[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
 	);
+
+	// Trigger Events
+
+	triggerEnterEventID = EventBus::Subscribe<TriggerEnterEvent>(
+		[this](const TriggerEnterEvent& event) { OnTriggerEnter(event); }
+	);
+	triggerStayEventID = EventBus::Subscribe<TriggerStayEvent>(
+		[this](const TriggerStayEvent& event) { OnTriggerStay(event); }
+	);
+	triggerExitEventID = EventBus::Subscribe<TriggerExitEvent>(
+		[this](const TriggerExitEvent& event) { OnTriggerExit(event); }
+	);
+
+	// Collision Events
+
+	collisionEnterEventID = EventBus::Subscribe<CollisionEnterEvent>(
+		[this](const CollisionEnterEvent& event) { OnCollisionEnter(event); }
+	);
+	collisionStayEventID = EventBus::Subscribe<CollisionStayEvent>(
+		[this](const CollisionStayEvent& event) { OnCollisionStay(event); }
+	);
+	collisionExitEventID = EventBus::Subscribe<CollisionExitEvent>(
+		[this](const CollisionExitEvent& event) { OnCollisionExit(event); }
+	);
 }
 	
 void Scene::OnWindowResize(float windowWidth, float windowHeight)
@@ -58,6 +90,40 @@ void Scene::OnWindowResize(float windowWidth, float windowHeight)
 	camera.SetViewportSize(windowWidth, windowHeight);
 }
 	
+// Trigger Events
+
+void Scene::OnTriggerEnter(const TriggerEnterEvent& event)
+{
+	Systems::DispatchTriggerEnter(entityManager, event.triggerEntityID, event.otherEntityID);
+}
+
+void Scene::OnTriggerStay(const TriggerStayEvent& event)
+{
+	Systems::DispatchTriggerStay(entityManager, event.triggerEntityID, event.otherEntityID);
+}
+
+void Scene::OnTriggerExit(const TriggerExitEvent& event)
+{
+	Systems::DispatchTriggerExit(entityManager, event.triggerEntityID, event.otherEntityID);
+}
+
+// Collision Events
+
+void Scene::OnCollisionEnter(const CollisionEnterEvent& event)
+{
+	Systems::DispatchCollisionEnter(entityManager, event.collisionEntityID, event.otherEntityID);
+}
+
+void Scene::OnCollisionStay(const CollisionStayEvent& event)
+{
+	Systems::DispatchCollisionStay(entityManager, event.collisionEntityID, event.otherEntityID);
+}
+
+void Scene::OnCollisionExit(const CollisionExitEvent& event)
+{
+	Systems::DispatchCollisionExit(entityManager, event.collisionEntityID, event.otherEntityID);
+}
+
 void Scene::ProcessInput()
 {
 	float deltaTime				= EngineTime::deltaTime;

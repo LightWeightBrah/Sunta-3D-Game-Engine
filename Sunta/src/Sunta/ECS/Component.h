@@ -61,7 +61,7 @@ struct TransformComponent
 		rotationQuaternion = glm::quat(glm::radians(rotation));
 	}
 
-	// Syncs Euler angles from the quaternion while preventing abrupt 180° representation flips
+	// Syncs Euler angles from the quaternion while preventing abrupt 180 degree representation flips
 	//
 	// Quaternions have multiple equivalent Euler representations. Standard glm::eulerAngles()
 	// can flip between them, causing huge visual jumps in inspector values or interpolation
@@ -125,6 +125,14 @@ struct ScriptContainer
 	sol::environment environment;
 	sol::function onCreateFunc;
 	sol::function onUpdateFunc;
+
+	sol::function onTriggerEnterFunc;
+	sol::function onTriggerStayFunc;
+	sol::function onTriggerExitFunc;
+
+	sol::function onCollisionEnterFunc;
+	sol::function onCollisionStayFunc;
+	sol::function onCollisionExitFunc;
 };
 
 struct ScriptComponent
@@ -187,6 +195,68 @@ struct ScriptComponent
 			container.onUpdateFunc = scriptEnvironment[Functions::OnUpdate];
 		}
 
+		// Trigger Funcs
+		if (scriptEnvironment[Functions::OnTriggerEnter].is<sol::function>())
+			container.onTriggerEnterFunc = scriptEnvironment[Functions::OnTriggerEnter];
+
+		if (scriptEnvironment[Functions::OnTriggerStay].is<sol::function>())
+			container.onTriggerStayFunc = scriptEnvironment[Functions::OnTriggerStay];
+
+		if (scriptEnvironment[Functions::OnTriggerExit].is<sol::function>())
+			container.onTriggerExitFunc = scriptEnvironment[Functions::OnTriggerExit];
+
+		// Collision Funcs
+		if (scriptEnvironment[Functions::OnCollisionEnter].is<sol::function>())
+			container.onCollisionEnterFunc = scriptEnvironment[Functions::OnCollisionEnter];
+
+		if (scriptEnvironment[Functions::OnCollisionStay].is<sol::function>())
+			container.onCollisionStayFunc = scriptEnvironment[Functions::OnCollisionStay];
+
+		if (scriptEnvironment[Functions::OnCollisionExit].is<sol::function>())
+			container.onCollisionExitFunc = scriptEnvironment[Functions::OnCollisionExit];
+
+	}
+
+	void InvokeOnTriggerEnter(unsigned int otherEntityID)
+	{
+		for (auto& script : scripts)
+			if (script.onTriggerEnterFunc.valid())
+				script.onTriggerEnterFunc(otherEntityID);
+	}
+
+	void InvokeOnTriggerStay(unsigned int otherEntityID)
+	{
+		for (auto& script : scripts)
+			if (script.onTriggerStayFunc.valid())
+				script.onTriggerStayFunc(otherEntityID);
+	}
+
+	void InvokeOnTriggerExit(unsigned int otherEntityID)
+	{
+		for (auto& script : scripts)
+			if (script.onTriggerExitFunc.valid())
+				script.onTriggerExitFunc(otherEntityID);
+	}
+
+	void InvokeOnCollisionEnter(unsigned int otherEntityID)
+	{
+		for (auto& script : scripts)
+			if (script.onCollisionEnterFunc.valid())
+				script.onCollisionEnterFunc(otherEntityID);
+	}
+
+	void InvokeOnCollisionStay(unsigned int otherEntityID)
+	{
+		for (auto& script : scripts)
+			if (script.onCollisionStayFunc.valid())
+				script.onCollisionStayFunc(otherEntityID);
+	}
+
+	void InvokeOnCollisionExit(unsigned int otherEntityID)
+	{
+		for (auto& script : scripts)
+			if (script.onCollisionExitFunc.valid())
+				script.onCollisionExitFunc(otherEntityID);
 	}
 
 	static void RegisterToInspector()
