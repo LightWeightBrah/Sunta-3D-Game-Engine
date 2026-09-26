@@ -84,6 +84,7 @@ namespace Sunta::EngineAssets
 											      
 		constexpr const char* DefaultFile         = "default_file";
 		constexpr const char* CppFile             = "cpp_file";
+		constexpr const char* LuaFile             = "lua_file";
 		constexpr const char* ModelFile           = "3d_model_file";
 		constexpr const char* ShaderFile          = "shader_file";
 		constexpr const char* ImageFile           = "image_file";

@@ -261,7 +261,7 @@ struct ScriptComponent
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<ScriptComponent>("Script", EngineAssets::Icons::CppFile,{ });
+		InspectorComponentRegistry::RegisterComponent<ScriptComponent>("Script", EngineAssets::Icons::LuaFile,{ });
 	}
 };
 
