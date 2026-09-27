@@ -49,7 +49,7 @@ public:
 
 	static bool DrawTextureSlot(const char* label, std::shared_ptr<Texture>& texture);
 
-	static void HandleSelectionInteraction();
+	static void HandleSelectionInteraction(Scene& scene);
 	static void ClearSelection();
 	static void ClearFocus();
 

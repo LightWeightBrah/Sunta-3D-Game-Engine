@@ -16,6 +16,25 @@
 #include "Core/EngineAssets.h"
 #include <optional>
 #include "Utilities/TextureNamingConventionsUtilities.h"
+#include <limits>
+
+namespace
+{
+
+template<typename TVertex>
+void ComputeVertexBounds(const std::vector<TVertex>& vertices, glm::vec3& outMin, glm::vec3& outMax)
+{
+	outMin = glm::vec3(std::numeric_limits<float>::max());
+	outMax = glm::vec3(-std::numeric_limits<float>::max());
+
+	for (const auto& vertex : vertices)
+	{
+		outMin = glm::min(outMin, vertex.Position);
+		outMax = glm::max(outMax, vertex.Position);
+	}
+}
+
+}
 
 namespace Sunta
 {
@@ -26,33 +45,45 @@ Model::Model(RendererDevice& rendererDevice, const std::string& path, bool flipU
 {
 	LoadModel(path, flipUV);
 }
-	
+
 void Model::LoadModel(std::string path, bool flipUV)
 {
 	SUNTA_ENGINE_LOG_INFO("Loading model: {}", path);
-	
-	unsigned int flags = aiProcess_Triangulate 
-		| aiProcess_LimitBoneWeights 
+
+	unsigned int flags = aiProcess_Triangulate
+		| aiProcess_LimitBoneWeights
 		| aiProcess_PopulateArmatureData
 		| aiProcess_GlobalScale;
-	
+
 	if (flipUV)
 		flags |= aiProcess_FlipUVs;
-	
+
 	scene = importer.ReadFile(path, flags);
-		
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
+
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		SUNTA_ENGINE_LOG_ERROR("ASSIMP ERROR: {}", importer.GetErrorString());
 		return;
 	}
 	directory = path.substr(0, path.find_last_of("\\/"));
-	
+
 	hasAnimations = scene->HasAnimations();
 	globalInverseTransform = glm::inverse(AssimpUtilities::ConvertAssimpMatrixToGLM(scene->mRootNode->mTransformation));
 	// Make suere model isn't super big on scene
-	globalInverseTransform = glm::scale(globalInverseTransform, glm::vec3(importScale));	
+	globalInverseTransform = glm::scale(globalInverseTransform, glm::vec3(importScale));
 	ProcessNode(scene->mRootNode);
+
+	localBoundsMin = glm::vec3( std::numeric_limits<float>::max());
+	localBoundsMax = glm::vec3(-std::numeric_limits<float>::max());
+
+	for (const auto& subMesh : subMeshes)
+	{
+		if (!subMesh.mesh)
+			continue;
+
+		localBoundsMin = glm::min(localBoundsMin, subMesh.mesh->GetLocalBoundsMin());
+		localBoundsMax = glm::max(localBoundsMax, subMesh.mesh->GetLocalBoundsMax());
+	}
 
 	if (HasBones())
 	{
@@ -63,32 +94,32 @@ void Model::LoadModel(std::string path, bool flipUV)
 	SUNTA_ENGINE_LOG_INFO("Model loaded successfully!");
 
 }
-	
-void Model::ProcessNode(aiNode* node) 
+
+void Model::ProcessNode(aiNode* node)
 {
-	for (unsigned int i = 0; i < node->mNumMeshes; i++) 
+	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		subMeshes.emplace_back(ProcessSubMesh(mesh));
 	}
-	
-	for (unsigned int i = 0; i < node->mNumChildren; i++) 
+
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
 		ProcessNode(node->mChildren[i]);
 	}
 }
-	
+
 SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 {
 	std::vector<unsigned int> indices;
 	std::shared_ptr<Material> meshMaterial;
-	
+
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
 		for (unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
 			indices.push_back(mesh->mFaces[i].mIndices[j]);
 	}
-	
+
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -137,24 +168,30 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 			}
 		}
 	}
-		
+
 	if (mesh->HasBones())
 	{
 		std::vector<SkinnedVertex> vertices(mesh->mNumVertices);
 		SetVertexData(mesh, vertices);
 		ProcessMeshBones(mesh, vertices);
-	
+
+		glm::vec3 boundsMin, boundsMax;
+		ComputeVertexBounds(vertices, boundsMin, boundsMax);
+
 		auto skinnedMesh = std::make_shared<Mesh>(*rendererDevice, vertices.data(), vertices.size() * sizeof(SkinnedVertex),
-			indices, VertexLayouts::GetSkinnedLayout());
+			indices, VertexLayouts::GetSkinnedLayout(), boundsMin, boundsMax);
 
 		return { skinnedMesh, meshMaterial };
 	}
-	
+
 	std::vector<StaticVertex> vertices(mesh->mNumVertices);
 	SetVertexData(mesh, vertices);
-	
+
+	glm::vec3 boundsMin, boundsMax;
+	ComputeVertexBounds(vertices, boundsMin, boundsMax);
+
 	auto staticMesh = std::make_shared<Mesh>(*rendererDevice, vertices.data(), vertices.size() * sizeof(StaticVertex),
-		indices, VertexLayouts::GetStaticLayout());
+		indices, VertexLayouts::GetStaticLayout(), boundsMin, boundsMax);
 
 	return { staticMesh, meshMaterial };
 }
@@ -184,7 +221,7 @@ void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::share
 
 	}
 }
-	
+
 void Model::TryFillMissingTextureByNamingConvention(const std::string& diffuseFilename, const std::string& textureTypeName, std::shared_ptr<Material>& material)
 {
 	if (textureTypeName == "specular" && !material->GetSpecularMaps().empty())
@@ -216,7 +253,7 @@ void Model::TryFillMissingTextureByNamingConvention(const std::string& diffuseFi
 		SUNTA_ENGINE_LOG_WARNING("Model '{0}': Tried {1} Texture naming-convention guess(es) for '{2}' (e.g. '{3}') but none of the files exist",
 			directory, candidates.size(), textureTypeName, directory + "/" + candidates.front());
 	}
-	
+
 }
 
 void Model::ProcessMeshBones(aiMesh* mesh, std::vector<SkinnedVertex>& vertices)
@@ -224,36 +261,36 @@ void Model::ProcessMeshBones(aiMesh* mesh, std::vector<SkinnedVertex>& vertices)
 	for (int i = 0; i < mesh->mNumBones; i++)
 		ProcessMeshSingleBone(mesh, vertices, i);
 }
-	
+
 void Model::ProcessMeshSingleBone(aiMesh* mesh, std::vector<SkinnedVertex>& vertices, int boneIndex)
 {
-	aiBone* bone		= mesh->mBones[boneIndex];
+	aiBone* bone	= mesh->mBones[boneIndex];
 	unsigned int id = GetBoneId(bone);
-	
+
 	/*std::cout << "\nBone: " << boneIndex << " " << bone->mName.C_Str()
 		<< "\nNumber of vertices affected by this bone: " << bone->mNumWeights << std::endl;*/
-	
-		
+
+
 	for (int i = 0; i < bone->mNumWeights; i++)
 	{
 		aiVertexWeight& vertexWeight = bone->mWeights[i];
-	
+
 		unsigned int vertexId = vertexWeight.mVertexId;
 		float        weight   = vertexWeight.mWeight;
-			
+
 		SetBonesForVertex(vertices, vertexId, id, weight);
-	
-		/*std::cout << "\nVertex id: " << vertexWeight.mVertexId << "\nWeight: " 
+
+		/*std::cout << "\nVertex id: " << vertexWeight.mVertexId << "\nWeight: "
 			<< vertexWeight.mWeight << std::endl;*/
 	}
 }
-	
+
 void Model::SetBonesForVertex(std::vector<SkinnedVertex>& vertices, unsigned int vertexId, unsigned int id, float weight)
 {
 	for (unsigned int i = 0; i < MAX_NUM_BONES_PER_VERTEX; i++)
 	{
 		SkinnedVertex& vertex = vertices[vertexId];
-	
+
 		if (vertex.weights[i] == 0.0)
 		{
 			vertex.boneIDs[i] = id;
@@ -262,12 +299,12 @@ void Model::SetBonesForVertex(std::vector<SkinnedVertex>& vertices, unsigned int
 		}
 	}
 }
-	
+
 unsigned int Model::GetBoneId(aiBone* bone)
 {
 	unsigned int id = 0;
 	std::string boneName(bone->mName.C_Str());
-	
+
 	if (boneNameToInfo.find(boneName) == boneNameToInfo.end())
 	{
 		id							= boneNameToInfo.size();
@@ -278,7 +315,7 @@ unsigned int Model::GetBoneId(aiBone* bone)
 	{
 		id = boneNameToInfo[boneName].id;
 	}
-	
+
 	return id;
 }
 

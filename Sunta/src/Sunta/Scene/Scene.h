@@ -30,6 +30,8 @@ public:
 	void Render(Renderer& renderer);
 	void Clear();
 
+	int GetEntityViaRaycast(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
+
 	EntityManager& GetEntityManager()		       { return entityManager; }
 											  
 	const std::string& GetName()             const { return name; }

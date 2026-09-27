@@ -38,8 +38,8 @@ private:
 	static inline std::shared_ptr<Shader>       debugShader;
 
 	static inline bool      showAllGizmos           = true;
-	static inline glm::vec3 gizmosColor             = glm::vec3(1.0f, 0.0f, 0.0f);
-	static inline glm::vec3 gizmosCollideColor      = glm::vec3(1.0f, 1.0f, 0.0f);
+	static inline glm::vec3 gizmosColor             = glm::vec3(0.0f, 1.0f, 0.0f);
+	static inline glm::vec3 gizmosCollideColor      = glm::vec3(1.0f, 0.0f, 0.0f);
 	static inline float     gizmosLineWidth         = 1.0f;
 
 };

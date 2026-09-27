@@ -10,6 +10,28 @@
 namespace Sunta
 {
 
+namespace
+{
+
+// vertexData is (position.xyz, normal.xyz, uv.xy)
+// We only care about the first 3 floats (the position) of each vertex
+void ComputeBoundsFromPositions(const float* vertexData, unsigned int vertexCount, unsigned int floatsPerVertex, glm::vec3& outMin, glm::vec3& outMax)
+{
+	outMin = glm::vec3( std::numeric_limits<float>::max());
+	outMax = glm::vec3(-std::numeric_limits<float>::max());
+
+	for (unsigned int i = 0; i < vertexCount; i++)
+	{
+		const float* position = vertexData + i * floatsPerVertex;
+		glm::vec3 point(position[0], position[1], position[2]);
+
+		outMin = glm::min(outMin, point);
+		outMax = glm::max(outMax, point);
+	}
+}
+
+}
+
 class TextureItem;
 	
 std::unique_ptr<Mesh> Primitives::CreateCube(RendererDevice& rendererDevice)
@@ -78,6 +100,13 @@ std::unique_ptr<Mesh> Primitives::CreateCube(RendererDevice& rendererDevice)
 		20, 21, 22,
 		22, 23, 20,
 	};
+
+	glm::vec3 boundsMin, boundsMax;
+	ComputeBoundsFromPositions(
+		cubeVertices,
+		sizeof(cubeVertices) / sizeof(float) / floatsPerVertex, 
+		floatsPerVertex, 
+		boundsMin, boundsMax);
 	
 	return std::make_unique<Mesh>
 	(
@@ -85,7 +114,9 @@ std::unique_ptr<Mesh> Primitives::CreateCube(RendererDevice& rendererDevice)
 		cubeVertices,
 		sizeof(cubeVertices),
 		std::move(cubeIndices),
-		VertexLayouts::GetStaticLayout()
+		VertexLayouts::GetStaticLayout(),
+		boundsMin,
+		boundsMax
 	);
 }
 
@@ -137,13 +168,23 @@ std::unique_ptr<Mesh> Primitives::CreatePyramide(RendererDevice& rendererDevice)
 		12,  14, 13, // base triangle 2
 	};
 
+	glm::vec3 boundsMin, boundsMax;
+	ComputeBoundsFromPositions(
+		pyramidVertices, 
+		sizeof(pyramidVertices) / sizeof(float) / floatsPerVertex,
+		floatsPerVertex, 
+		boundsMin, 
+		boundsMax);
+
 	return std::make_unique<Mesh>
 	(
 		rendererDevice,
 		pyramidVertices,
 		sizeof(pyramidVertices),
 		std::move(pyramidIndices),
-		VertexLayouts::GetStaticLayout()
+		VertexLayouts::GetStaticLayout(),
+		boundsMin,
+		boundsMax
 	);
 }
 
@@ -266,13 +307,22 @@ std::unique_ptr<Mesh> Primitives::CreateSphere(RendererDevice& rendererDevice)
 		}
 	}
 	
+	glm::vec3 boundsMin, boundsMax;
+	ComputeBoundsFromPositions(
+		sphereVertices.data(),
+		sphereVertices.size() / floatsPerVertex,
+		floatsPerVertex,
+		boundsMin, boundsMax);
+
 	return std::make_unique<Mesh>
 	(
 		rendererDevice,
 		sphereVertices.data(),
 		static_cast<unsigned int>(sphereVertices.size() * sizeof(float)),
 		std::move(sphereIndices),
-		VertexLayouts::GetStaticLayout()
+		VertexLayouts::GetStaticLayout(),
+		boundsMin,
+		boundsMax
 	);
 }
 
@@ -445,13 +495,22 @@ std::unique_ptr<Mesh> Primitives::CreateCapsule(RendererDevice& rendererDevice)
 		}
 	}
 
+	glm::vec3 boundsMin, boundsMax;
+	ComputeBoundsFromPositions(
+		capsuleVertices.data(),
+		capsuleVertices.size() / floatsPerVertex,
+		floatsPerVertex,
+		boundsMin, boundsMax);
+
 	return std::make_unique<Mesh>
 	(
 		rendererDevice,
 		capsuleVertices.data(),
 		static_cast<unsigned int>(capsuleVertices.size() * sizeof(float)),
 		std::move(capsuleIndices),
-		VertexLayouts::GetStaticLayout()
+		VertexLayouts::GetStaticLayout(),
+		boundsMin,
+		boundsMax
 	);
 }
 
@@ -588,13 +647,22 @@ std::unique_ptr<Mesh> Primitives::CreateCone(RendererDevice& rendererDevice)
 		coneIndices.push_back(baseRingStartIndex + i);
 	}
 
+	glm::vec3 boundsMin, boundsMax;
+	ComputeBoundsFromPositions(
+		coneVertices.data(),
+		coneVertices.size() / floatsPerVertex,
+		floatsPerVertex,
+		boundsMin, boundsMax);
+
 	return std::make_unique<Mesh>
 	(
 		rendererDevice,
 		coneVertices.data(),
 		static_cast<unsigned int>(coneVertices.size() * sizeof(float)),
 		std::move(coneIndices),
-		VertexLayouts::GetStaticLayout()
+		VertexLayouts::GetStaticLayout(),
+		boundsMin,
+		boundsMax
 	);
 
 }

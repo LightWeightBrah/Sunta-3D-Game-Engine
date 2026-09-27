@@ -41,6 +41,11 @@ public:
 	inline const glm::mat4 GetGlobalInverseTransform()				 const { return globalInverseTransform; }
 	inline const std::vector<glm::mat4> GetDefaultBoneMatrices()	 const { return defaultBoneMatrices; }
 	
+	// Local-space bounding box (union of every submesh's bounds), used by the
+	// editor for mouse-picking (ray vs box)
+	inline const glm::vec3& GetLocalBoundsMin()						 const { return localBoundsMin; }
+	inline const glm::vec3& GetLocalBoundsMax()						 const { return localBoundsMax; }
+
 private:
 	RendererDevice*					rendererDevice;
 
@@ -57,6 +62,9 @@ private:
 	
 	bool							hasAnimations;
 	float							importScale = 1.0f;
+
+	glm::vec3						localBoundsMin = glm::vec3(0.0f);
+	glm::vec3						localBoundsMax = glm::vec3(0.0f);
 	
 	void LoadModel(std::string path, bool flipUV);
 		

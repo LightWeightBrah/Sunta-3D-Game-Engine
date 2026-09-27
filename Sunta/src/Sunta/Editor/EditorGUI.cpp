@@ -1603,7 +1603,7 @@ namespace // Makes sure this struct name is only within this single file
 struct ImGuiIDScope
 {
 	ImGuiIDScope(const char* id) { ImGui::PushID(id); }
-	~ImGuiIDScope()              { ImGui::PopID(); }
+	~ImGuiIDScope() { ImGui::PopID(); }
 };
 
 }
@@ -1656,7 +1656,7 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entity
 		ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
 
 		drawList->AddImage(textureID,
-			ImVec2(currentX           , cursorPosition.y + iconOffsetY),
+			ImVec2(currentX, cursorPosition.y + iconOffsetY),
 			ImVec2(currentX + iconSize, cursorPosition.y + iconOffsetY + iconSize));
 
 		currentX += iconSize + iconToTextSpacing;
@@ -1782,7 +1782,7 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 	return changed;
 }
 
-void EditorGUI::HandleSelectionInteraction()
+void EditorGUI::HandleSelectionInteraction(Scene& scene)
 {
 	if (ImGui::IsDragDropActive() || ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		return;
@@ -1802,10 +1802,25 @@ void EditorGUI::HandleSelectionInteraction()
 
 	bool hoverSceneBackground = (hoveredWindow == nullptr);
 
-	if (hoverHierarchy || hoverFileBrowser || hoverSceneBackground)
+	if (hoverHierarchy || hoverFileBrowser)
 	{
 		SetSelectedEntity(-1);
 		selectedFile = "";
+		return;
+	}
+
+	// Clicked directly on the 3D viewport (no ImGui window under the cursor)
+	// Raycast into the scene and select whatever entity is under the mouse,
+	// or deselect if the click didn't hit anything
+	if (hoverSceneBackground)
+	{
+		selectedFile = "";
+
+		ImGuiIO& io = ImGui::GetIO();
+		ImVec2 mousePosition = ImGui::GetMousePos();
+
+		int pickedEntity = scene.GetEntityViaRaycast(glm::vec2(mousePosition.x, mousePosition.y), io.DisplaySize.x, io.DisplaySize.y);
+		SetSelectedEntity(pickedEntity);
 	}
 
 }

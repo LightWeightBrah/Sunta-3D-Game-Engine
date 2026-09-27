@@ -18,7 +18,9 @@
 namespace Sunta
 {
 
-Mesh::Mesh(RendererDevice& rendererDevice, const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout)
+Mesh::Mesh(RendererDevice& rendererDevice, const void* vertexData, unsigned int dataSize, std::vector<unsigned int> indices, const BufferLayout& bufferLayout, const glm::vec3& localBoundsMin, const glm::vec3& localBoundsMax)
+	: localBoundsMin(localBoundsMin)
+	, localBoundsMax(localBoundsMax)
 {
 	if (indices.empty())
 	{

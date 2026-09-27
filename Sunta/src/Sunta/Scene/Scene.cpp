@@ -311,6 +311,63 @@ void Scene::Render(Renderer& renderer)
 		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
 
 }
+
+int Scene::GetEntityViaRaycast(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
+{
+	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+
+	int   closestEntityID = -1;
+	float closestDistance = std::numeric_limits<float>::max();
+
+	unsigned int totalEntities = entityManager.GetEntityCount();
+
+	for (unsigned int i = 0; i < totalEntities; i++)
+	{
+		auto* matrixComponent = entityManager.GetComponent<WorldMatrixComponent>(i);
+		if (!matrixComponent)
+			continue;
+
+		glm::vec3 localBoundsMin;
+		glm::vec3 localBoundsMax;
+		bool hasBounds = false;
+
+		if (auto* meshComponent = entityManager.GetComponent<MeshComponent>(i))
+		{
+			if (meshComponent->isVisible && meshComponent->mesh)
+			{
+				localBoundsMin = meshComponent->mesh->GetLocalBoundsMin();
+				localBoundsMax = meshComponent->mesh->GetLocalBoundsMax();
+				hasBounds = true;
+			}
+		}
+		else if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(i))
+		{
+			if (modelComponent->isVisible && modelComponent->modelData && modelComponent->modelData->model)
+			{
+				localBoundsMin = modelComponent->modelData->model->GetLocalBoundsMin();
+				localBoundsMax = modelComponent->modelData->model->GetLocalBoundsMax();
+				hasBounds = true;
+			}
+		}
+
+		if (!hasBounds)
+			continue;
+
+		glm::vec3 boundsCenter      = (localBoundsMin + localBoundsMax) * 0.5f;
+		glm::vec3 boundsHalfExtents = (localBoundsMax - localBoundsMin) * 0.5f;
+
+		OBB worldOBB = MakeWorldOBB(matrixComponent->matrix, boundsCenter, boundsHalfExtents);
+
+		float hitDistance = 0.0f;
+		if (RayIntersectsOBB(ray, worldOBB, hitDistance) && hitDistance < closestDistance)
+		{
+			closestDistance = hitDistance;
+			closestEntityID = static_cast<int>(i);
+		}
+	}
+
+	return closestEntityID;
+}
 	
 void Scene::Clear()
 {
