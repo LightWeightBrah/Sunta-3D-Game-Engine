@@ -65,11 +65,17 @@ private:
 
 	glm::vec3						localBoundsMin = glm::vec3(0.0f);
 	glm::vec3						localBoundsMax = glm::vec3(0.0f);
-	
+	std::vector<SkinnedVertex>	    skinnedVerticesForBounds;
+
+
 	void LoadModel(std::string path, bool flipUV);
 		
 	void ProcessNode(aiNode* node);
 	SubMesh ProcessSubMesh(aiMesh* mesh);
+
+	// Applies the same weighted bone-matrix the GPU does in the
+    // vertex shader, so we can measure where a vertex actually ends up
+	static glm::vec3 SkinVertexPositionForBounds(const SkinnedVertex& vertex, const std::vector<glm::mat4>& boneMatrices);
 	
 	void LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::shared_ptr<Material>& material);
 	void TryFillMissingTextureByNamingConvention(

@@ -1819,7 +1819,17 @@ void EditorGUI::HandleSelectionInteraction(Scene& scene)
 		ImGuiIO& io = ImGui::GetIO();
 		ImVec2 mousePosition = ImGui::GetMousePos();
 
-		int pickedEntity = scene.GetEntityViaRaycast(glm::vec2(mousePosition.x, mousePosition.y), io.DisplaySize.x, io.DisplaySize.y);
+		// Because ImGuiConfigFlags_ViewportsEnable is on, GetMousePos() gives us
+	    // the mouse position on the whole desktop (as if our window's top-left
+	    // corner was the desktop's top-left corner), not the position inside our
+	    // own window. The raycast needs mouse coordinates relative to our
+	    // window, with (0,0) at the window's top-left corner, so we subtract
+	    // the window's position on the desktop to convert "desktop position" into
+	    // "position inside our window"
+		ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+		glm::vec2 mouseInWindow(mousePosition.x - mainViewport->Pos.x, mousePosition.y - mainViewport->Pos.y);
+
+		int pickedEntity = scene.GetEntityViaRaycast(mouseInWindow, io.DisplaySize.x, io.DisplaySize.y);
 		SetSelectedEntity(pickedEntity);
 	}
 

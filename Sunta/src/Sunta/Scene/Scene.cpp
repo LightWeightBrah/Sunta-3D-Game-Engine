@@ -266,6 +266,15 @@ void Scene::Render(Renderer& renderer)
 				else
 					unlitQueue.push_back(item);
 			}
+
+			// --- DEBUG: RAYCAST ---
+			if (matrixComponent && meshComponent->mesh)
+			{
+				glm::vec3 center = (meshComponent->mesh->GetLocalBoundsMin() + meshComponent->mesh->GetLocalBoundsMax()) * 0.5f;
+				glm::vec3 halfExtents = (meshComponent->mesh->GetLocalBoundsMax() - meshComponent->mesh->GetLocalBoundsMin()) * 0.5f;
+				OBB pickOBB = MakeWorldOBB(matrixComponent->matrix, center, halfExtents);
+				colliderGizmosQueue.push_back({ GetOBBCorners(pickOBB), glm::vec3(1.0f, 1.0f, 0.0f) });
+			}
 		}
 
 		if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(i))
@@ -276,6 +285,16 @@ void Scene::Render(Renderer& renderer)
 				const Animator* animator = animatorComponent ? &animatorComponent->animator : nullptr;
 
 				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix });
+			}
+
+			// --- DEBUG: RAYCAST ---
+			if (matrixComponent && modelComponent->modelData && modelComponent->modelData->model)
+			{
+				auto* model = modelComponent->modelData->model.get();
+				glm::vec3 center = (model->GetLocalBoundsMin() + model->GetLocalBoundsMax()) * 0.5f;
+				glm::vec3 halfExtents = (model->GetLocalBoundsMax() - model->GetLocalBoundsMin()) * 0.5f;
+				OBB pickOBB = MakeWorldOBB(matrixComponent->matrix, center, halfExtents);
+				colliderGizmosQueue.push_back({ GetOBBCorners(pickOBB), glm::vec3(1.0f, 1.0f, 0.0f) });
 			}
 		}
 
