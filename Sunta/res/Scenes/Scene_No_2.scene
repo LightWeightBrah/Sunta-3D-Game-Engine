@@ -356,7 +356,139 @@
                     1.0
                 ]
             }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "EzMat",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "EzMat"
+            },
+            "transform": {
+                "position": [
+                    1.4007245302200317,
+                    8.905388832092285,
+                    4.00654411315918
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "EzMat",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "EzMat"
+            },
+            "transform": {
+                "position": [
+                    14.77705192565918,
+                    -0.10000038146972656,
+                    -24.370464324951172
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "EzMat",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "EzMat"
+            },
+            "transform": {
+                "position": [
+                    -2.076491355895996,
+                    5.0,
+                    0.4096193313598633
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         }
     ],
-    "scene_name": "Default_Scene"
+    "scene_name": "Scene_No_2"
 }

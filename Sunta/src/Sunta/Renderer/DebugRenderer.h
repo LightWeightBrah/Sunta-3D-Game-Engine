@@ -24,11 +24,15 @@ public:
 	static       bool       GetShowAllGizmos()      { return showAllGizmos;      }
 	static const glm::vec3& GetGizmosColor()        { return gizmosColor;        }
 	static const glm::vec3& GetGizmosCollideColor() { return gizmosCollideColor; }
+	static       bool       GetShowBoundsGizmos()	{ return showBoundsGizmos;   }
+	static const glm::vec3& GetBoundsGizmoColor()	{ return boundsGizmoColor;   }
 	static       float      GetGizmosLineWidth()    { return gizmosLineWidth;    }
 
 	static void SetShowAllGizmos(bool show)                   { showAllGizmos      = show;  }
 	static void SetGizmosColor(const glm::vec3& color)        { gizmosColor        = color; }
 	static void SetGizmosCollideColor(const glm::vec3& color) { gizmosCollideColor = color; }
+	static void SetShowBoundsGizmos(bool show)                { showBoundsGizmos   = show;  }
+	static void SetBoundsGizmoColor(const glm::vec3& color)	  { boundsGizmoColor   = color; }
 	static void SetGizmosLineWidth(float width)               { gizmosLineWidth    = width; }
 
 private:
@@ -40,6 +44,10 @@ private:
 	static inline bool      showAllGizmos           = true;
 	static inline glm::vec3 gizmosColor             = glm::vec3(0.0f, 1.0f, 0.0f);
 	static inline glm::vec3 gizmosCollideColor      = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	static inline bool      showBoundsGizmos		= true;
+	static inline glm::vec3 boundsGizmoColor		= glm::vec3(0.0f, 1.0f, 1.0f);
+
 	static inline float     gizmosLineWidth         = 1.0f;
 
 };

@@ -127,6 +127,33 @@ void EditorGUI::DrawTopBarsBackground(const std::string& texture, glm::vec4 tint
 
 }
 
+namespace
+{
+
+// Folder where the scene dialogs (open / save) start
+// make_preferred() gives "C:\Dev\..." instead of a mix of '/' and '\', which Windows dialogs expect
+std::string GetSceneDialogStartDirectory()
+{
+	return std::filesystem::path(VirtualFileSystem::Resolve("@engine/Scenes")).make_preferred().string();
+}
+
+// Asks the user where to save the scene, then saves it there
+// Does nothing if the user cancels the dialog
+void SaveSceneViaDialog(Scene& scene)
+{
+	std::string chosenPath = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, GetSceneDialogStartDirectory());
+	if (chosenPath.empty())
+		return;
+
+	std::filesystem::path normalizedPath = std::filesystem::path(chosenPath).lexically_normal();
+
+	scene.SetName(normalizedPath.stem().string());
+	scene.SetFilePath(normalizedPath.string());
+	SceneSerializer::Serialize(normalizedPath.string(), scene);
+}
+
+}
+
 void EditorGUI::DrawMainMenuBar(Scene& scene)
 {
 	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0, 0, 0, 0));
@@ -145,8 +172,8 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
 			{
-				std::string openDirectory = VirtualFileSystem::Resolve("@game/Scenes");
-				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, openDirectory);
+				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, GetSceneDialogStartDirectory());
+
 				if (!path.empty())
 					SceneSerializer::Deserialize(path, scene);
 			}
@@ -156,42 +183,25 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
 			{
 				if (scene.GetFilePath().empty())
-				{
-					std::string savePath = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
-					if (!savePath.empty())
-					{
-						std::filesystem::path filePath = std::filesystem::path(filePath).lexically_normal();
-						scene.SetName(filePath.stem().string());
-						scene.SetFilePath(filePath.string());
-						SceneSerializer::Serialize(filePath.string(), scene);
-					}
-				}
+					SaveSceneViaDialog(scene);
 				else
-				{
 					SceneSerializer::Serialize(scene.GetFilePath(), scene);
-				}
-
 			}
 
 			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
-			{
-				std::string path = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, "res/Game/Scenes");
-				if (!path.empty())
-				{
-					std::filesystem::path filePath = std::filesystem::path(filePath).lexically_normal();
-					scene.SetName(filePath.stem().string());
-					scene.SetFilePath(filePath.string());
-					SceneSerializer::Serialize(filePath.string(), scene);
-				}
-			}
+				SaveSceneViaDialog(scene);
 
 			ImGui::EndMenu();
 		}
 
 		if (ImGui::BeginMenu("View"))
 		{
+			float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
+			if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
+				DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
+
 			bool showAllGizmos = DebugRenderer::GetShowAllGizmos();
-			if (ImGui::MenuItem("Show Colliders Gizmos", nullptr, &showAllGizmos))
+			if (ImGui::Checkbox("Show Colliders Gizmos", &showAllGizmos))
 				DebugRenderer::SetShowAllGizmos(showAllGizmos);
 
 			glm::vec3 gizmosColor = DebugRenderer::GetGizmosColor();
@@ -202,9 +212,15 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			if (ImGui::ColorEdit3("Gizmos Collide Color", &gizmosCollideColor.x))
 				DebugRenderer::SetGizmosCollideColor(gizmosCollideColor);
 
-			float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
-			if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
-				DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
+			ImGui::Separator();
+
+			bool showBoundsGizmos = DebugRenderer::GetShowBoundsGizmos();
+			if (ImGui::Checkbox("Show Bounding Boxes", &showBoundsGizmos))
+				DebugRenderer::SetShowBoundsGizmos(showBoundsGizmos);
+
+			glm::vec3 boundsColor = DebugRenderer::GetBoundsGizmoColor();
+			if (ImGui::ColorEdit3("Bounding Box Color", &boundsColor.x))
+				DebugRenderer::SetBoundsGizmoColor(boundsColor);
 
 			ImGui::EndMenu();
 		}
@@ -700,7 +716,7 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 
 }
 
-void EditorGUI::DrawFileBrowser()
+void EditorGUI::DrawFileBrowser(Scene& scene)
 {
 	if (currentDirectory.empty())
 	{
@@ -848,6 +864,11 @@ void EditorGUI::DrawFileBrowser()
 					if (isDirectory)
 					{
 						currentDirectory /= path.filename();
+					}
+					else if(IsSceneExtension(path.extension().string()))
+					{
+						SceneSerializer::Deserialize(path.string(), scene);
+						ClearSelection(); // old entity IDs don't exist in the new scene
 					}
 					else
 					{
@@ -1156,20 +1177,15 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 				const char* pathString = static_cast<const char*>(payload->Data);
 				std::filesystem::path droppedPath(pathString);
 
-				std::string extension = droppedPath.extension().string();
-				std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+				const std::string extension  = droppedPath.extension().string();
+				const std::string entityName = droppedPath.stem().string();
 
-				// ===================================================================================
-				// TODO: ADD RAYCASTING BASED ON MOUSE POSITON AND THEN CREATE ENTITY IN THAT POSITION
-				// ===================================================================================
-				ImVec2 mousePosition = ImGui::GetMousePos();
+				ImGuiIO& io = ImGui::GetIO();
+				glm::vec2 mousePositionInWindow = GetMousePositionInMainWindow();
+				glm::vec3 spawnPosition = scene.GetWorldPositionUnderMouse(mousePositionInWindow, io.DisplaySize.x, io.DisplaySize.y);
+
 				SUNTA_ENGINE_LOG_INFO("Dropped file '{0}' onto Scene background at screen position: ({1}, {2})",
-					droppedPath.string(), mousePosition.x, mousePosition.y);
-				// ===================================================================================
-				// ===================================================================================
-
-				glm::vec3 spawnPosition = glm::vec3(0.0f, 0.0f, 0.0f);
-				std::string entityName = droppedPath.stem().string();
+					droppedPath.string(), mousePositionInWindow.x, mousePositionInWindow.y);
 
 				// ===================================================================================
 				// TODO: ADD DIFFERENT EXTENSIONS HANDLING 
@@ -1553,6 +1569,23 @@ void EditorGUI::DeletePathAndUnloadResources(const std::filesystem::path& path)
 	}
 }
 
+glm::vec2 EditorGUI::GetMousePositionInMainWindow()
+{
+	ImVec2 mousePosition = ImGui::GetMousePos();
+
+	// Because ImGuiConfigFlags_ViewportsEnable is on, GetMousePos() gives us
+	// the mouse position on the whole desktop (as if our window's top-left
+	// corner was the desktop's top-left corner), not the position inside our
+	// own window. The raycast needs mouse coordinates relative to our
+	// window, with (0,0) at the window's top-left corner, so we subtract
+	// the window's position on the desktop to convert "desktop position" into
+	// "position inside our window"
+	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+	glm::vec2 mouseInWindow(mousePosition.x - mainViewport->Pos.x, mousePosition.y - mainViewport->Pos.y);
+
+	return mouseInWindow;
+}
+
 void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& entityManager)
 {
 	auto& inspectableMap = entityManager.GetInspectableMap();
@@ -1817,19 +1850,9 @@ void EditorGUI::HandleSelectionInteraction(Scene& scene)
 		selectedFile = "";
 
 		ImGuiIO& io = ImGui::GetIO();
-		ImVec2 mousePosition = ImGui::GetMousePos();
+		glm::vec2 mouseInMainWindow = GetMousePositionInMainWindow();
 
-		// Because ImGuiConfigFlags_ViewportsEnable is on, GetMousePos() gives us
-	    // the mouse position on the whole desktop (as if our window's top-left
-	    // corner was the desktop's top-left corner), not the position inside our
-	    // own window. The raycast needs mouse coordinates relative to our
-	    // window, with (0,0) at the window's top-left corner, so we subtract
-	    // the window's position on the desktop to convert "desktop position" into
-	    // "position inside our window"
-		ImGuiViewport* mainViewport = ImGui::GetMainViewport();
-		glm::vec2 mouseInWindow(mousePosition.x - mainViewport->Pos.x, mousePosition.y - mainViewport->Pos.y);
-
-		int pickedEntity = scene.GetEntityViaRaycast(mouseInWindow, io.DisplaySize.x, io.DisplaySize.y);
+		int pickedEntity = scene.GetEntityUnderMouse(mouseInMainWindow, io.DisplaySize.x, io.DisplaySize.y);
 		SetSelectedEntity(pickedEntity);
 	}
 
@@ -1861,6 +1884,10 @@ bool EditorGUI::IsClickingEmptySpace()
 	return ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsAnyItemHovered();
 }
 
+// Sets `selectedEntity` and, unless the Inspector is locked, keeps `inspectedEntity`
+// in sync with it right away. Use this instead of assigning `selectedEntity`
+// directly, so the Hierarchy highlight (which follows `inspectedEntity`) never
+// lags a frame behind a click
 void EditorGUI::SetSelectedEntity(int entityID)
 {
 	selectedEntity = entityID;

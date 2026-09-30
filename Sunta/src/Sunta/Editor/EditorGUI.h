@@ -42,7 +42,7 @@ public:
 
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
-	static void DrawFileBrowser();
+	static void DrawFileBrowser(Scene& scene);
 	static void DrawSceneDropTarget(Scene& scene);
 
 	static void OnFileDropped(const FileDroppedEvent& event);
@@ -108,12 +108,9 @@ private:
 
 	static void DeletePathAndUnloadResources(const std::filesystem::path& path);
 
+	static glm::vec2 GetMousePositionInMainWindow();
 	static bool IsClickingEmptySpace();
 
-	// Sets `selectedEntity` and, unless the Inspector is locked, keeps `inspectedEntity`
-	// in sync with it right away - use this instead of assigning `selectedEntity`
-	// directly, so the Hierarchy highlight (which follows `inspectedEntity`) never
-	// lags a frame behind a click.
 	static void SetSelectedEntity(int entityID);
 
 };

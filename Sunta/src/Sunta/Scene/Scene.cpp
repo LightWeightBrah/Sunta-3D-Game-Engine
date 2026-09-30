@@ -167,6 +167,9 @@ void Scene::Update()
 	
 void Scene::Render(Renderer& renderer)
 {
+	const bool      showBoundsGizmos = DebugRenderer::GetShowBoundsGizmos();
+	const glm::vec3 boundsGizmoColor = DebugRenderer::GetBoundsGizmoColor();
+
 	SceneData sceneData = camera.GetSceneData();
 
 	sceneData.directionalLights.clear();
@@ -202,7 +205,7 @@ void Scene::Render(Renderer& renderer)
 	std::vector<MeshRenderItem>  lightSourceQueue;
 	std::vector<ModelRenderItem> modelQueue;
 
-	std::vector<GizmosDrawItem>  colliderGizmosQueue;
+	std::vector<GizmosDrawItem>  gizmosQueue;
 
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
@@ -266,15 +269,6 @@ void Scene::Render(Renderer& renderer)
 				else
 					unlitQueue.push_back(item);
 			}
-
-			// --- DEBUG: RAYCAST ---
-			if (matrixComponent && meshComponent->mesh)
-			{
-				glm::vec3 center = (meshComponent->mesh->GetLocalBoundsMin() + meshComponent->mesh->GetLocalBoundsMax()) * 0.5f;
-				glm::vec3 halfExtents = (meshComponent->mesh->GetLocalBoundsMax() - meshComponent->mesh->GetLocalBoundsMin()) * 0.5f;
-				OBB pickOBB = MakeWorldOBB(matrixComponent->matrix, center, halfExtents);
-				colliderGizmosQueue.push_back({ GetOBBCorners(pickOBB), glm::vec3(1.0f, 1.0f, 0.0f) });
-			}
 		}
 
 		if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(i))
@@ -286,16 +280,14 @@ void Scene::Render(Renderer& renderer)
 
 				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix });
 			}
+		}
 
-			// --- DEBUG: RAYCAST ---
-			if (matrixComponent && modelComponent->modelData && modelComponent->modelData->model)
-			{
-				auto* model = modelComponent->modelData->model.get();
-				glm::vec3 center = (model->GetLocalBoundsMin() + model->GetLocalBoundsMax()) * 0.5f;
-				glm::vec3 halfExtents = (model->GetLocalBoundsMax() - model->GetLocalBoundsMin()) * 0.5f;
-				OBB pickOBB = MakeWorldOBB(matrixComponent->matrix, center, halfExtents);
-				colliderGizmosQueue.push_back({ GetOBBCorners(pickOBB), glm::vec3(1.0f, 1.0f, 0.0f) });
-			}
+		// --- DEBUG: Bounding box used for mouse picking ---
+		if (showBoundsGizmos)
+		{
+			OBB pickingBox;
+			if (TryGetEntityWorldPickingBox(i, pickingBox))
+				gizmosQueue.push_back({ GetOBBCorners(pickingBox), boundsGizmoColor });
 		}
 
 		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
@@ -308,7 +300,7 @@ void Scene::Render(Renderer& renderer)
 				glm::vec3 color = isOverlapping ?
 					DebugRenderer::GetGizmosCollideColor() : DebugRenderer::GetGizmosColor();
 
-				colliderGizmosQueue.push_back({ GetOBBCorners(boxCollider->worldOBB), color });
+				gizmosQueue.push_back({ GetOBBCorners(boxCollider->worldOBB), color });
 			}
 		}
 
@@ -326,68 +318,103 @@ void Scene::Render(Renderer& renderer)
 	for (const auto& item : modelQueue)
 		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator);
 
-	for (const auto& item : colliderGizmosQueue)
+	for (const auto& item : gizmosQueue)
 		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
 
 }
 
-int Scene::GetEntityViaRaycast(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
+bool Scene::TryGetEntityWorldPickingBox(unsigned int entity, OBB& outBox)
 {
-	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+	auto* worldMatrixComponent = entityManager.GetComponent<WorldMatrixComponent>(entity);
+	if (!worldMatrixComponent)
+		return false;
 
-	int   closestEntityID = -1;
-	float closestDistance = std::numeric_limits<float>::max();
+	glm::vec3 localBoundsMin;
+	glm::vec3 localBoundsMax;
+
+	if (auto* meshComponent = entityManager.GetComponent<MeshComponent>(entity))
+	{
+		if (!meshComponent->isVisible || !meshComponent->mesh)
+			return false;
+
+		localBoundsMin = meshComponent->mesh->GetLocalBoundsMin();
+		localBoundsMax = meshComponent->mesh->GetLocalBoundsMax();
+	}
+	else if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(entity))
+	{
+		if (!modelComponent->isVisible || !modelComponent->modelData || !modelComponent->modelData->model)
+			return false;
+
+		localBoundsMin = modelComponent->modelData->model->GetLocalBoundsMin();
+		localBoundsMax = modelComponent->modelData->model->GetLocalBoundsMax();
+	}
+	else
+	{
+		return false;
+	}
+
+	glm::vec3 localCenter      = (localBoundsMin + localBoundsMax) * 0.5f;
+	glm::vec3 localHalfExtents = (localBoundsMax - localBoundsMin) * 0.5f;
+
+	outBox = MakeWorldOBB(worldMatrixComponent->matrix, localCenter, localHalfExtents);
+	return true;
+}
+
+bool Scene::TryFindClosestEntityHitByRay(const Ray& ray, unsigned int& outEntityID, float& outDistance)
+{
+	bool hitAnyEntity = false;
+	outDistance = std::numeric_limits<float>::max();
 
 	unsigned int totalEntities = entityManager.GetEntityCount();
-
-	for (unsigned int i = 0; i < totalEntities; i++)
+	for (unsigned int entity = 0; entity < totalEntities; entity++)
 	{
-		auto* matrixComponent = entityManager.GetComponent<WorldMatrixComponent>(i);
-		if (!matrixComponent)
+		OBB pickingBox;
+		if (!TryGetEntityWorldPickingBox(entity, pickingBox))
 			continue;
-
-		glm::vec3 localBoundsMin;
-		glm::vec3 localBoundsMax;
-		bool hasBounds = false;
-
-		if (auto* meshComponent = entityManager.GetComponent<MeshComponent>(i))
-		{
-			if (meshComponent->isVisible && meshComponent->mesh)
-			{
-				localBoundsMin = meshComponent->mesh->GetLocalBoundsMin();
-				localBoundsMax = meshComponent->mesh->GetLocalBoundsMax();
-				hasBounds = true;
-			}
-		}
-		else if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(i))
-		{
-			if (modelComponent->isVisible && modelComponent->modelData && modelComponent->modelData->model)
-			{
-				localBoundsMin = modelComponent->modelData->model->GetLocalBoundsMin();
-				localBoundsMax = modelComponent->modelData->model->GetLocalBoundsMax();
-				hasBounds = true;
-			}
-		}
-
-		if (!hasBounds)
-			continue;
-
-		glm::vec3 boundsCenter      = (localBoundsMin + localBoundsMax) * 0.5f;
-		glm::vec3 boundsHalfExtents = (localBoundsMax - localBoundsMin) * 0.5f;
-
-		OBB worldOBB = MakeWorldOBB(matrixComponent->matrix, boundsCenter, boundsHalfExtents);
 
 		float hitDistance = 0.0f;
-		if (RayIntersectsOBB(ray, worldOBB, hitDistance) && hitDistance < closestDistance)
+		if (!RayIntersectsOBB(ray, pickingBox, hitDistance))
+			continue;
+
+		if (hitDistance < outDistance)
 		{
-			closestDistance = hitDistance;
-			closestEntityID = static_cast<int>(i);
+			outDistance = hitDistance;
+			outEntityID = entity;
+			hitAnyEntity = true;
 		}
 	}
 
-	return closestEntityID;
+	return hitAnyEntity;
 }
-	
+
+int Scene::GetEntityUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
+{
+	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+
+	unsigned int hitEntityID = 0;
+	float        hitDistance = 0.0f;
+
+	if (TryFindClosestEntityHitByRay(ray, hitEntityID, hitDistance))
+		return static_cast<int>(hitEntityID);
+
+	return -1;
+}
+
+glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
+{
+	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+
+	// The mouse is over an entity: use the point on its surface
+	unsigned int hitEntityID = 0;
+	float        hitDistance = 0.0f;
+	if (TryFindClosestEntityHitByRay(ray, hitEntityID, hitDistance))
+		return ray.origin + ray.direction * hitDistance;
+
+	// The mouse is over empty space: use a point at a fixed distance from the camera, along the ray
+	constexpr float DISTANCE_WHEN_NOTHING_IS_HIT = 10.0f;
+	return ray.origin + ray.direction * DISTANCE_WHEN_NOTHING_IS_HIT;
+}
+
 void Scene::Clear()
 {
 	entityManager.Clear();

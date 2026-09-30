@@ -18,6 +18,8 @@ struct CollisionEnterEvent;
 struct CollisionStayEvent;
 struct CollisionExitEvent;
 
+struct OBB;
+
 class Scene
 {
 public:
@@ -30,7 +32,8 @@ public:
 	void Render(Renderer& renderer);
 	void Clear();
 
-	int GetEntityViaRaycast(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
+	int       GetEntityUnderMouse       (const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
+	glm::vec3 GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 
 	EntityManager& GetEntityManager()		       { return entityManager; }
 											  
@@ -65,6 +68,10 @@ private:
 	void OnCollisionEnter(const CollisionEnterEvent& event);
 	void OnCollisionStay (const CollisionStayEvent&  event);
 	void OnCollisionExit (const CollisionExitEvent&  event);
+
+	bool TryGetEntityWorldPickingBox(unsigned int entity, OBB& outBox);
+	bool TryFindClosestEntityHitByRay(const Ray& ray, unsigned int& outEntityID, float& outDistance);
+
 };
 
 }

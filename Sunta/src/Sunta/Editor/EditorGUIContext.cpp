@@ -134,7 +134,7 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 
 	EditorGUI::Begin(fileBrowserName);
 	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
-	EditorGUI::DrawFileBrowser();
+	EditorGUI::DrawFileBrowser(scene);
 	EditorGUI::End();
 
 	if (mainFont)
