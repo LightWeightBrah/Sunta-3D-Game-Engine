@@ -17,6 +17,8 @@
 #include <optional>
 #include "Utilities/TextureNamingConventionsUtilities.h"
 #include <limits>
+#include "Animation/Animator.h"
+#include "Animation/Animation.h"
 
 namespace
 {
@@ -90,38 +92,69 @@ void Model::LoadModel(std::string path, bool flipUV)
 		defaultBoneMatrices.assign(200, glm::mat4(1.0f));
 		CalculateDefaultBoneTransform(scene->mRootNode, glm::mat4(1.0f));
 
-		// Now that bind-pose bone matrices are known, skin each collected vertex
-	    // the same way the GPU would and measure the result, so we 
-	    // get a bounding box that actually matches the rendered model
 		localBoundsMin = glm::vec3(std::numeric_limits<float>::max());
 		localBoundsMax = glm::vec3(-std::numeric_limits<float>::max());
 
-		for (const auto& vertex : skinnedVerticesForBounds)
+		if (hasAnimations)
 		{
-			glm::vec3 skinnedPosition = SkinVertexPositionForBounds(vertex, defaultBoneMatrices);
+			// Bind pose (no animation) as a reference, so we know what size of model makes sense
+			glm::vec3 rawBindMin, rawBindMax;
+			ComputeVertexBounds(skinnedVerticesForBounds, rawBindMin, rawBindMax);
+			float bindPoseRadius = glm::length(rawBindMax - rawBindMin);
 
-			localBoundsMin = glm::min(localBoundsMin, skinnedPosition);
-			localBoundsMax = glm::max(localBoundsMax, skinnedPosition);
+			// Single corrupted frames in animation files (an FBX data bug, not in
+			// our code) can create physically impossible vertex positions
+			// We reject samples that clearly differ from the normal model size
+			// instead of letting them stretch the entire bounding box
+			constexpr float MAX_REASONABLE_SIZE_MULTIPLIER = 4.2f;
+			float maxReasonableDistance = bindPoseRadius * MAX_REASONABLE_SIZE_MULTIPLIER;
+
+			for (unsigned int animIndex = 0; animIndex < scene->mNumAnimations; animIndex++)
+			{
+				Animation animation(scene, animIndex);
+				if (!animation.IsValid())
+					continue;
+
+				Animator sampler(this);
+				sampler.PlayAnimation(&animation);
+
+				std::string animName = scene->mAnimations[animIndex]->mName.C_Str();
+
+				constexpr int SAMPLES_PER_ANIMATION = 15;
+				float duration = animation.GetDuration();
+
+				for (int sampleIndex = 0; sampleIndex <= SAMPLES_PER_ANIMATION; sampleIndex++)
+				{
+					float sampleTime = duration * (float)sampleIndex / (float)SAMPLES_PER_ANIMATION;
+					sampler.SampleAtTime(sampleTime);
+
+					for (const auto& vertex : skinnedVerticesForBounds)
+					{
+						glm::vec3 skinnedPosition = SkinVertexPositionForBounds(vertex, sampler.GetFinalBoneMatrices());
+
+						if (glm::length(skinnedPosition) > maxReasonableDistance)
+							continue; // skip, this is an animation data glitch, not a real pose   
+
+						localBoundsMin = glm::min(localBoundsMin, skinnedPosition);
+						localBoundsMax = glm::max(localBoundsMax, skinnedPosition);
+					}
+				}
+			}
+		}
+		else
+		{
+			// Skeleton without clips: bind pose is the only available pose
+			// We skin the same way as the GPU so the bounds are in the same space as the render
+			for (const auto& vertex : skinnedVerticesForBounds)
+			{
+				glm::vec3 skinnedPosition = SkinVertexPositionForBounds(vertex, defaultBoneMatrices);
+				localBoundsMin = glm::min(localBoundsMin, skinnedPosition);
+				localBoundsMax = glm::max(localBoundsMax, skinnedPosition);
+			}
 		}
 
 		skinnedVerticesForBounds.clear();
 		skinnedVerticesForBounds.shrink_to_fit();
-	}
-	else
-	{
-		// Static model: submesh vertices are already scaled correctly,
-		// so just check each submesh's own bounds
-		localBoundsMin = glm::vec3(std::numeric_limits<float>::max());
-		localBoundsMax = glm::vec3(-std::numeric_limits<float>::max());
-
-		for (const auto& subMesh : subMeshes)
-		{
-			if (!subMesh.mesh)
-				continue;
-
-			localBoundsMin = glm::min(localBoundsMin, subMesh.mesh->GetLocalBoundsMin());
-			localBoundsMax = glm::max(localBoundsMax, subMesh.mesh->GetLocalBoundsMax());
-		}
 	}
 
 	SUNTA_ENGINE_LOG_INFO("Model loaded successfully!");

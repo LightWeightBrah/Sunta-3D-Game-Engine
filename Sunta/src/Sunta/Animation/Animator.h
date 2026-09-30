@@ -24,7 +24,10 @@ namespace Sunta
 	    void UpdateAnimation       (float deltaTime);
 	    void PlayAnimation         (Animation* animation);
 	    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
-	
+
+		// For Raycasting Boundding Box fixes
+		void SampleAtTime(float time);
+
 	    const std::vector<glm::mat4>& GetFinalBoneMatrices() const { return finalBoneMatrices; }
 	    inline const Animation*       GetCurrentAnimation () const { return currentAnimation;  }
 	};
