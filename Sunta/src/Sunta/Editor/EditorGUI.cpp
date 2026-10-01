@@ -217,7 +217,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			ImGui::Separator();
 
 			bool showBoundsGizmos = DebugRenderer::GetShowBoundsGizmos();
-			if (ImGui::Checkbox("Show Bounding Boxes", &showBoundsGizmos))
+			if (ImGui::Checkbox("Show Raycast Bounding Boxes", &showBoundsGizmos))
 				DebugRenderer::SetShowBoundsGizmos(showBoundsGizmos);
 
 			glm::vec3 boundsColor = DebugRenderer::GetBoundsGizmoColor();
