@@ -47,6 +47,9 @@ namespace Sunta
 	template<typename T>
 	unsigned int GetKeyIndex(float animTime, const std::vector<T>& keys)
 	{
+		if (keys.size() < 2)
+			return 0;
+
 	    for (unsigned int i = 0; i < keys.size() - 1; i++) 
 	    {
 	        if (animTime < keys[i + 1].timeStamp)
@@ -58,11 +61,17 @@ namespace Sunta
 	float GetFactor(float animTime, float frameTime, float nextFrameTime)
 	{
 	    float deltaTime = nextFrameTime - frameTime;
-	    return (animTime - frameTime) / deltaTime;
+		if (deltaTime < 1e-6f)
+			return 0.0f;
+		float factor = (animTime - frameTime) / deltaTime;
+		return glm::clamp(factor, 0.0f, 1.0f);
 	}
 	
 	glm::mat4 Bone::InterpolatePosition(float animationTime)
 	{
+		if (positions.empty())
+			return glm::mat4(1.0f);
+
 	    if (positions.size() == 1)
 	        return glm::translate(glm::mat4(1.0f), positions[0].position);
 	
@@ -76,6 +85,9 @@ namespace Sunta
 	
 	glm::mat4 Bone::InterpolateRotation(float animationTime)
 	{
+		if (rotations.empty())
+			return glm::mat4(1.0f);
+
 	    if (rotations.size() == 1)
 	        return glm::toMat4(glm::normalize(rotations[0].orientation));
 	
@@ -89,6 +101,9 @@ namespace Sunta
 	
 	glm::mat4 Bone::InterpolateScale(float animationTime)
 	{
+		if (scales.empty())
+			return glm::mat4(1.0f);
+
 	    if (scales.size() == 1)
 	        return glm::scale(glm::mat4(1.0f), scales[0].scale);
 	

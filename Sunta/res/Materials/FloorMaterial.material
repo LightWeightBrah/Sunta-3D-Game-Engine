@@ -1,0 +1,27 @@
+{
+    "name": "FloorMaterial",
+    "properties": {
+        "ambient": [
+            0.1733301877975464,
+            0.23748980462551117,
+            0.2830769419670105
+        ],
+        "diffuse": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "shininess": 65.5,
+        "specular": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "use_alpha_cutout": false
+    },
+    "shader": "Lit",
+    "textures": {
+        "diffuse_maps": [],
+        "specular_maps": []
+    }
+}

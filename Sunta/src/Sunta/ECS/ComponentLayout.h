@@ -15,7 +15,18 @@ enum class PropertyDataType
 	Float,
 	Float3,
 	Color,
-	String
+	String,
+	AssetPath
+};
+
+enum class AssetType
+{
+	None,
+	Mesh,
+	Model,
+	Texture,
+	Material,
+	Shader
 };
 
 struct PropertyDefinition
@@ -23,6 +34,9 @@ struct PropertyDefinition
 	std::string label;
 	unsigned int byteOffset;
 	PropertyDataType dataType;
+
+	// Metadata for assets
+	AssetType assetType = AssetType::None;
 
 	float minValue = -std::numeric_limits<float>::infinity();
 	float maxValue =  std::numeric_limits<float>::infinity();
@@ -36,7 +50,9 @@ struct PropertyDefinition
 
 struct ComponentType
 {
+	size_t hash = 0;
 	std::string name;
+	std::string iconKey;
 	std::vector<PropertyDefinition> properties;
 	std::function<void(void*)> onChanged = nullptr;
 };
@@ -47,18 +63,23 @@ struct ComponentType
 #define ADD_PROPERTY_RANGED(ComponentStruct, PropertyName, PropertyType, MinValue, MaxValue) \
 	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyType, MinValue, MaxValue }
 
+#define ADD_ASSET(ComponentStruct, PropertyName, AssetTypeValue) \
+	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyDataType::AssetPath, AssetTypeValue }
+
 
 class InspectorComponentRegistry
 {
 public:
 	template<typename T>
-	static void RegisterComponent(const std::string& name, std::vector<PropertyDefinition> properties, std::function<void(void*)> onChanged = nullptr)
+	static void RegisterComponent(const std::string& name, const std::string& iconKey, std::vector<PropertyDefinition> properties, std::function<void(void*)> onChanged = nullptr)
 	{
 		ComponentType newComponentType;
 
+		newComponentType.hash = typeid(T).hash_code();
 		newComponentType.name = name;
-		newComponentType.properties = properties;
-		newComponentType.onChanged = onChanged;
+		newComponentType.iconKey = iconKey;
+		newComponentType.properties = std::move(properties);
+		newComponentType.onChanged = std::move(onChanged);
 
 		GetComponentsMap()[typeid(T).hash_code()] = newComponentType;
 	}

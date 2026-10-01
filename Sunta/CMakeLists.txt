@@ -1,18 +1,23 @@
-# ========================= SUNTA ENGINE CORE ============================  
+# ========================= SUNTA ENGINE CORE ============================     
 
 project(Sunta)
 
-# ========================= ENGINE SOURCES ===============================  
+# ========================= ENGINE SOURCES ===============================    
 
-file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp" "src/*.h")
+file(GLOB_RECURSE ENGINE_SOURCES CMAKE_CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 
 #								   REGEX "Regular Expressions"
 list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Platform/.*") # . means any sign (letter, number, / etc.); * means repeat previous sign n times
 
-# ====================== RENDERER API SOURCES ============================      
+# ====================== RENDERER API SOURCES ============================       
 
 file(GLOB_RECURSE OPENGL_SOURCES  "src/Sunta/Platform/OpenGL/*.cpp" "src/Sunta/Platform/OpenGL/*.h")
 list(APPEND ENGINE_SOURCES ${OPENGL_SOURCES})
+
+# ====================== GLFW WINDOWING SOURCES ============================      
+
+file(GLOB_RECURSE GLFW_SOURCES  "src/Sunta/Platform/GLFW/*.cpp" "src/Sunta/Platform/GLFW/*.h")
+list(APPEND ENGINE_SOURCES ${GLFW_SOURCES})
 
 # ========================= PLATFORM DETECTION ===========================  
 
@@ -63,9 +68,24 @@ set(SUNTA_EXTERNAL_FILES ${ENGINE_SOURCES})
 list(FILTER SUNTA_EXTERNAL_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/.*")
 source_group("Dependencies" FILES ${SUNTA_EXTERNAL_FILES})
 
-# ========================= PRECOMPILED HEADER ===========================   
+# ========================= TARGET DEFINITIONS ===========================   
 
 add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC "SUNTA_ROOT_DIR=R\"(${CMAKE_SOURCE_DIR})\"")
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
+
+if(SUNTA_DEV_MODE)
+	target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
+endif()
+
+# MSVC's legacy preprocessor ##__VA_ARGS__ sometimes don't remove ',' comma sign 
+# in nested macros (GLCall + SUNTA_ASSERT), this fixes it so macros actually work with no errors
+if(MSVC)
+	target_compile_options(${PROJECT_NAME} PUBLIC /Zc:preprocessor)
+endif()
+
+# ========================= PRECOMPILED HEADER ===========================   
 
 # --- GLAD FIX TO HIDE PRECOMPILED HEADER ---
 set_source_files_properties("${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c" 
@@ -82,6 +102,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 "${CMAKE_CURRENT_SOURCE_DIR}/src"
 "${CMAKE_SOURCE_DIR}/Dependencies/glm_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/GLAD/include"
+"${CMAKE_SOURCE_DIR}/Dependencies/sol2_wrapper"
 )
 
 # --- PRIVATE API (ACCESS: ENGINE) ---
@@ -91,12 +112,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui"				# for internal imgui implementation fixes (searching imgui_internal.h)
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends"		# for internal imgui implementation (files from folder backends can see folder imgui)
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
+"${CMAKE_SOURCE_DIR}/Dependencies/nlohmann_wrapper"
+"${CMAKE_SOURCE_DIR}/Dependencies/Lua"
 )
 
-# =========================== LINKING ====================================  
+# =========================== LINKING ====================================   
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
 glfw 
 assimp 
+nfd
+Lua
 ${PLATFORM_LIBS}
 )

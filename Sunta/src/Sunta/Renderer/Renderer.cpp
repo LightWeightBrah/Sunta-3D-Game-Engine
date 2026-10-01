@@ -52,6 +52,9 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	SetBaseTransform(*shader, modelMatrix, sceneData);
 	SetBaseLighting(*shader, sceneData);
 
+	if (shader->HasFeature(ShaderFeature::Skinning))
+		shader->SetUniform1i("hasAnimations", false);
+
 	material.Apply();
 	mesh.Bind();
 	rendererDevice->DrawElements(mesh.GetVertexArray());
@@ -59,8 +62,6 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	
 void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const
 {
-	bool hasAnimations = (animator && model.HasAnimations());
-
 	for (const auto& subMesh : model.GetSubMeshes())
 	{
 		if (!subMesh.mesh || !subMesh.material)
@@ -72,9 +73,21 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 		SetBaseTransform(*shader, modelMatrix, sceneData);
 		SetBaseLighting(*shader, sceneData);
 			
-		shader->SetUniform1i("hasAnimations", hasAnimations);
-		if (hasAnimations)
-			shader->SetBoneMatrices(animator->GetFinalBoneMatrices());
+		bool supportsSkinning = shader->HasFeature(ShaderFeature::Skinning);
+		bool isSkinnedMesh = supportsSkinning && model.HasBones();
+
+		if (supportsSkinning)
+		{
+			shader->SetUniform1i("hasAnimations", isSkinnedMesh);
+
+			if (isSkinnedMesh)
+			{
+				if(animator && animator->GetCurrentAnimation())
+					shader->TrySetBoneMatrices(animator->GetFinalBoneMatrices());
+				else
+					shader->TrySetBoneMatrices(model.GetDefaultBoneMatrices());
+			}
+		}
 
 		subMesh.material->Apply();
 		subMesh.mesh->Bind();
@@ -102,6 +115,9 @@ void Renderer::SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, co
 
 void Renderer::SetBaseLighting(Shader& shader, const SceneData& sceneData) const
 {
+	if (!shader.HasFeature(ShaderFeature::Lighting))
+		return;
+
 	shader.SetUniform3f("viewerPosition", sceneData.cameraPosition);
 
 	SetDirectionalLights(shader, sceneData);

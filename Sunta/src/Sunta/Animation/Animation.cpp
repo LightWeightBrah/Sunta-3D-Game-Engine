@@ -4,16 +4,17 @@
 #include "Utilities/AssimpUtilities.h"
 #include "Core/Log.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 namespace Sunta
 {
-	Animation::Animation(const std::string& animationPath, Model* model, unsigned int index)
+	Animation::Animation(const aiScene* scene, unsigned int index)
 	{
-	    Assimp::Importer importer;
-	    const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
-	
-	    if (!scene || !scene->mAnimations) 
+	    if (!scene || !scene->mAnimations || index >= scene->mNumAnimations) 
 	    {
-			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animations in {}", animationPath);
+			SUNTA_ENGINE_LOG_ERROR("ANIMATION ERROR: No animation at index '{0}'", index);
 	        return;
 	    }
 	
@@ -23,6 +24,8 @@ namespace Sunta
 	
 	    CopyHierarchyToCustomNodeData(rootNode, scene->mRootNode);
 	    SetupBones(anim);
+
+		isValid = true;
 	}
 	
 	void Animation::CopyHierarchyToCustomNodeData(AssimpNodeData& dest, const aiNode* src)
@@ -56,4 +59,26 @@ namespace Sunta
 	
 	    return &bones.at(name);
 	}
+
+	std::vector<std::string> Animation::GetAnimationsNames(const aiScene* scene)
+	{
+		std::vector<std::string> names;
+
+		if (!scene || !scene->HasAnimations())
+			return names;
+
+		names.reserve(scene->mNumAnimations);
+
+		for (unsigned int i = 0; i < scene->mNumAnimations; i++)
+		{
+			std::string name = scene->mAnimations[i]->mName.C_Str();
+			if (name.empty())
+				name = "Animation_" + std::to_string(i);
+
+			names.push_back(name);
+		}
+
+		return names;
+	}
+
 }

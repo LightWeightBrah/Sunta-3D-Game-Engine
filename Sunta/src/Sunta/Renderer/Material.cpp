@@ -5,117 +5,176 @@
 #include "Shader.h"
 #include "Core/ResourceManager.h"
 #include "Core/Log.h"
+#include "Core/EngineAssets.h"
 
 namespace Sunta
 {
-	Material::Material(std::shared_ptr<Shader> shader)
-		: shader(std::move(shader))
-	{
 
+Material::Material(std::shared_ptr<Shader> shader)
+	: shader(std::move(shader))
+{
+
+}
+
+Material::Material(
+	std::shared_ptr<Shader> shader, std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap)
+	: shader(std::move(shader))
+{
+	this->AddDiffuseMap(diffuseMap);
+	this->AddSpecularMap(specularMap);
+}
+	
+//DESTUCTOR: now compiler can see how to delete Shader shared_ptr member
+Material::~Material() = default;
+	
+Material& Material::Apply()
+{
+	if (!shader )
+	{
+		SUNTA_ENGINE_LOG_ERROR("Material: Material has no shader!");
+		return *this;
 	}
 
-	Material::Material(
-		std::shared_ptr<Shader> shader, std::shared_ptr<Texture> diffuseMap, std::shared_ptr<Texture> specularMap)
-		: shader(std::move(shader))
-	{
-		this->AddDiffuseMap(diffuseMap);
-		this->AddSpecularMap(specularMap);
-	}
-	
-	//DESTUCTOR: now compiler can see how to delete Shader shared_ptr member
-	Material::~Material() = default;
-	
-	Material& Material::Apply()
-	{
-		if (!shader )
-		{
-			SUNTA_ENGINE_LOG_ERROR("Material: Material has no shader!");
-			return *this;
-		}
+	shader->Bind();
+	unsigned int textureSlot = 0;
 
-		shader->Bind();
-		unsigned int textureSlot = 0;
-
-		ApplyTextures(diffuseMaps, "materialDiffuseMap", textureSlot);
-		ApplyTextures(specularMaps, "materialSpecularMap", textureSlot);
+	ApplyTextures(diffuseMaps,  "materialDiffuseMap",  textureSlot);
+	ApplyTextures(specularMaps, "materialSpecularMap", textureSlot);
 		
-		shader->SetUniform3f("material.ambientColor",	data.ambientColor);
-		shader->SetUniform3f("material.diffuseColor",	data.diffuseColor);
-		shader->SetUniform3f("material.specularColor",	data.specularColor);
-		shader->SetUniform1f("material.shininess",		data.shininess);
+	shader->TrySetUniform3f("material.ambientColor", data.ambientColor);
+	shader->TrySetUniform3f("material.diffuseColor", data.diffuseColor);
+	shader->TrySetUniform3f("material.specularColor", data.specularColor);
+	shader->TrySetUniform1f("material.shininess", data.shininess);
 
-		return *this;
+	shader->TrySetUniformBool("material.useAlphaCutout", data.useAlphaCutout);
+
+	for (const auto& [name, value] : customVec3Uniforms)
+	{
+		shader->TrySetUniform3f(name, value);
 	}
 
-	void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, const std::string& baseName, unsigned int& textureSlot)
+	return *this;
+}
+
+void Material::ApplyTextures(const std::vector<std::shared_ptr<Texture>>& maps, const std::string& baseName, unsigned int& textureSlot)
+{
+	using namespace Sunta::EngineAssets;
+
+	if (maps.empty())
 	{
-		if (maps.empty())
+		if (auto whiteTexture = ResourceManager::GetTextureData(Textures::WhiteTexture))
 		{
-			if (auto whiteTexture = ResourceManager::GetTextureData("whiteTexture"))
-			{
-				whiteTexture->Bind(textureSlot);
-				shader->SetUniform1i(baseName + "1", textureSlot++);
-			}
+			whiteTexture->Bind(textureSlot);
+			shader->TrySetUniform1i(baseName + "1", textureSlot++);
+		}
 			
-			return;
-		}
+		return;
+	}
 
-		for (unsigned int i = 0; i < maps.size(); i++)
+	for (unsigned int i = 0; i < maps.size(); i++)
+	{
+		if (!maps[i])
 		{
-			if (!maps[i])
-			{
-				SUNTA_ENGINE_LOG_ERROR("Material: Texture map {0} at index {1} is null", baseName, i);
+			SUNTA_ENGINE_LOG_ERROR("Material: Texture map {0} at index {1} is null", baseName, i);
 				
-				if (auto errorTexture = ResourceManager::GetTextureData("errorTexture"))
-				{
-					errorTexture->Bind(textureSlot);
-					shader->SetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
-				}
-
-				continue;
+			if (auto errorTexture = ResourceManager::GetTextureData(Textures::ErrorTexture))
+			{
+				errorTexture->Bind(textureSlot);
+				shader->TrySetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
 			}
 
-			maps[i]->Bind(textureSlot);
-			shader->SetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
+			continue;
 		}
+
+		maps[i]->Bind(textureSlot);
+		shader->TrySetUniform1i(baseName + std::to_string(i + 1), textureSlot++);
 	}
+}
 	
-	Material& Material::SetAmbient(const glm::vec3& color)
-	{
-		data.ambientColor = color;
-		return *this;
-	}
+Material& Material::SetAmbient(const glm::vec3& color)
+{
+	data.ambientColor = color;
+	return *this;
+}
 	
-	Material& Material::SetDiffuse(const glm::vec3& color)
-	{
-		data.diffuseColor = color;
-		return *this;
-	}
+Material& Material::SetDiffuse(const glm::vec3& color)
+{
+	data.diffuseColor = color;
+	return *this;
+}
 	
-	Material& Material::SetSpecular(const glm::vec3& color)
-	{
-		data.specularColor = color;
-		return *this;
-	}
+Material& Material::SetSpecular(const glm::vec3& color)
+{
+	data.specularColor = color;
+	return *this;
+}
 	
-	Material& Material::SetShininess(float shininess)
+Material& Material::SetShininess(float shininess)
+{
+	data.shininess = shininess;
+	return *this;
+}
+
+Material& Material::SetAlphaCutout(bool useAlphaCutout)
+{
+	data.useAlphaCutout = useAlphaCutout;
+	return *this;
+}
+
+Material& Material::AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap)
+{
+	this->diffuseMaps.push_back(diffuseMap);
+	return *this;
+}
+
+Material& Material::AddSpecularMap(const std::shared_ptr<Texture> specularMap)
+{
+	this->specularMaps.push_back(specularMap);
+	return *this;
+}
+	
+Material& Material::SetDiffuseMap(const std::shared_ptr<Texture> diffuseMap, unsigned int index)
+{
+	// if we pass null texture, remove texture from this slot
+	if (diffuseMap == nullptr)
 	{
-		data.shininess = shininess;
+		if (index < diffuseMaps.size())
+			diffuseMaps.erase(diffuseMaps.begin() + index);
+
 		return *this;
 	}
 
-	Material& Material::AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap)
+	if (index >= diffuseMaps.size())
+		diffuseMaps.resize(index + 1);
+
+	diffuseMaps[index] = diffuseMap;
+	return *this;
+}
+
+Material& Material::SetSpecularMap(const std::shared_ptr<Texture> specularMap, unsigned int index)
+{
+	// if we pass null texture, remove texture from this slot
+	if (specularMap == nullptr)
 	{
-		this->diffuseMaps.push_back(diffuseMap);
+		if (index < specularMaps.size())
+			specularMaps.erase(specularMaps.begin() + index);
+		
 		return *this;
 	}
 
-	Material& Material::AddSpecularMap(const std::shared_ptr<Texture> specularMap)
-	{
-		this->specularMaps.push_back(specularMap);
-		return *this;
-	}
-	
-	std::shared_ptr<Shader> Material::GetShader() const { return shader; }
+	if (index >= specularMaps.size())
+		specularMaps.resize(index + 1);
+
+	specularMaps[index] = specularMap;
+	return *this;
+}
+
+Material& Material::SetUniform3f(const std::string& name, const glm::vec3& value)
+{
+	customVec3Uniforms[name] = value;
+	return *this;
+}
+
+std::shared_ptr<Shader> Material::GetShader() const { return shader; }
 
 }

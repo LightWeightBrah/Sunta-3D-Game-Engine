@@ -1,0 +1,31 @@
+{
+    "name": "EzMat",
+    "properties": {
+        "ambient": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "diffuse": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "shininess": 246.0,
+        "specular": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "use_alpha_cutout": true
+    },
+    "shader": "Lit",
+    "textures": {
+        "diffuse_maps": [
+            "C:\\Dev\\Sunta-3D-Game-Engine\\Sunta\\res\\Materials\\chad.png"
+        ],
+        "specular_maps": [
+            "C:\\Dev\\Sunta-3D-Game-Engine\\Sunta\\res\\Materials\\chad.png"
+        ]
+    }
+}

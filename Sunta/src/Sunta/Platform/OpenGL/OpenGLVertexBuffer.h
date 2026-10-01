@@ -7,6 +7,7 @@ namespace Sunta
 {
 
 struct BufferDescriptor;
+enum class BufferUsage;
 
 class OpenGLVertexBuffer : public VertexBuffer
 {
@@ -20,9 +21,13 @@ public:
 	virtual void SetLayout(const BufferLayout& layout) override { this->layout = layout; }
 	virtual const BufferLayout& GetLayout()	const	   override	{ return layout;		 }
 
+	virtual void UpdateDynamicData(const void* data, unsigned int size) override;
+
+
 private:
 	unsigned int id;
 	BufferLayout layout;
+	BufferUsage usage;
 };
 
 }

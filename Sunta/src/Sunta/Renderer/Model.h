@@ -30,33 +30,58 @@ class Model
 {
 public:
 	Model() = default;
-	Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV);
+	Model(RendererDevice& rendererDevice, const std::string& path, bool flipUV, float importScale = 1.0f);
 	
 	inline const bool HasAnimations()				  const { return hasAnimations; }
+	inline const bool HasBones()				      const { return !boneNameToInfo.empty(); }
 	inline const std::vector<SubMesh>& GetSubMeshes() const { return subMeshes;		}
+	inline const aiScene* GetScene()				  const { return scene;         }
 	
 	inline const std::map<std::string, BoneInfo> GetBoneNameToInfo() const { return boneNameToInfo;			}
 	inline const glm::mat4 GetGlobalInverseTransform()				 const { return globalInverseTransform; }
+	inline const std::vector<glm::mat4> GetDefaultBoneMatrices()	 const { return defaultBoneMatrices; }
 	
+	// Local-space bounding box (union of every submesh's bounds), used by the
+	// editor for mouse-picking (ray vs box)
+	inline const glm::vec3& GetLocalBoundsMin()						 const { return localBoundsMin; }
+	inline const glm::vec3& GetLocalBoundsMax()						 const { return localBoundsMax; }
+
 private:
 	RendererDevice*					rendererDevice;
 
+	Assimp::Importer				importer;
 	const aiScene*					scene;
+
 	std::string						directory;
 	
 	std::vector<SubMesh>			subMeshes;
 	
 	std::map<std::string, BoneInfo> boneNameToInfo;
 	glm::mat4						globalInverseTransform;
+	std::vector<glm::mat4>			defaultBoneMatrices;
 	
 	bool							hasAnimations;
-	
+	float							importScale = 1.0f;
+
+	glm::vec3						localBoundsMin = glm::vec3(0.0f);
+	glm::vec3						localBoundsMax = glm::vec3(0.0f);
+	std::vector<SkinnedVertex>	    skinnedVerticesForBounds;
+
+
 	void LoadModel(std::string path, bool flipUV);
 		
 	void ProcessNode(aiNode* node);
 	SubMesh ProcessSubMesh(aiMesh* mesh);
+
+	// Applies the same weighted bone-matrix the GPU does in the
+    // vertex shader, so we can measure where a vertex actually ends up
+	static glm::vec3 SkinVertexPositionForBounds(const SkinnedVertex& vertex, const std::vector<glm::mat4>& boneMatrices);
 	
 	void LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::shared_ptr<Material>& material);
+	void TryFillMissingTextureByNamingConvention(
+		const std::string& diffuseFilename,
+		const std::string& textureTypeName,
+		std::shared_ptr<Material>& material);
 
 	void ProcessMeshBones		(aiMesh* mesh, std::vector<SkinnedVertex>& vertices);
 	void ProcessMeshSingleBone	(aiMesh* mesh, std::vector<SkinnedVertex>& vertices, int boneIndex);
@@ -82,11 +107,16 @@ private:
 					vertices[i].weights[j] = 0.0f;
 				}
 			}
+			else
+			{
+				vertices[i].Position *= importScale;
+			}
 		}
 	}
 	
 	unsigned int GetBoneId		(aiBone* bone);
-	
+	void CalculateDefaultBoneTransform(aiNode* node, glm::mat4 parentTransform);
+
 };
 
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include "Editor/EditorGUIBackend.h"
-
+#include "Platform/GLFW/GLFWOpenGLEditorGUIBackend.h"
 
 namespace Sunta
 {
@@ -15,6 +15,9 @@ public:
 	virtual void NewFrame(void* window)		 override;
 	virtual void EndFrame(void* window)		 override;
 	virtual void Render  (void* window)		 override;
+
+private:
+	GLFWOpenGLEditorGUIBackend implementation;
 };
 
 }

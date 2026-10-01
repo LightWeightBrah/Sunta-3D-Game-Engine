@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=@PROJECT_NAME@
+Comment=Built with Sunta Engine
+Exec=bash -c 'cd "$(dirname "%k")" && ./@PROJECT_NAME@'
+Icon=./res/Sunta/App/engine_logo.png
+Terminal=false
+Categories=Game;

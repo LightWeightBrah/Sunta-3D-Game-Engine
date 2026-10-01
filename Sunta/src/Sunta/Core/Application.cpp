@@ -17,126 +17,163 @@
 #include "ECS/Component.h"
 #include "ResourceManager.h"
 #include "Renderer/RendererAPI.h"
+#include "Assert.h"
+#include "Platform.h"
+#include "ResourceLoader.h"
+#include "Scripting/ScriptingEngine.h"
+#include "VirtualFileSystem.h"
+#include "Renderer/DebugRenderer.h"
 
 namespace Sunta
 {
-	Application::Application()
-		: window(nullptr)
+
+Application::Application()
+	: window(nullptr)
+{
+	Init();
+}
+Application::~Application()
+{
+
+}
+
+void Application::Run()
+{
+	while (isRunning)
 	{
-		Init();
+		EngineTime::Update();
+
+		window->Update();
+
+		if (!isRunning)
+			break;
+
+		if (isMinimized)
+			continue;
+
+		ProcessInput();
+		Update(EngineTime::deltaTime);
+		Render();
+
+		InputManager::Clear();
+
 	}
-	Application::~Application()
-	{
-	
-	}
-	
-	void Application::Run()
-	{
-		while (isRunning)
+
+	Shutdown();
+}
+
+void Application::Init()
+{
+	ScriptingEngine::Init();
+	VirtualFileSystem::Init();
+	Log::Init();
+	Platform::Init();
+	InputManager::Init();
+
+	RendererAPI::SetAPI(RendererAPI::API::OpenGL);
+
+	window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
+	EditorGUIContext::Init(window.get());
+	EditorGUI::SetDarkTheme();
+
+	EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
+	EventBus::Subscribe<WindowResizeEvent>([this](const WindowResizeEvent& event)
 		{
-			EngineTime::Update();
-	
-			window->Update();
-
-			ProcessInput();
-	
-			Update(EngineTime::deltaTime);
-	
-			Render();
-
-			InputManager::Clear();
-	
-		}
-	
-		Shutdown();
-	}
-	
-	void Application::Init()
-	{
-		Log::Init();
-		InputManager::Init();
-
-		RendererAPI::SetAPI(RendererAPI::API::OpenGL);
-
-		window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
-		EditorGUIContext::Init(window.get());
-
-		EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
-
-		Renderer::Init();
-		ResourceManager::Init(Renderer::GetDevice());
-
-		scene = std::make_unique<Scene>();
-		scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
-
-		TagComponent::RegisterToInspector();
-		TransformComponent::RegisterToInspector();
-		DirectionalLightComponent::RegisterToInspector();
-		PointLightComponent::RegisterToInspector();
-		SpotlightComponent::RegisterToInspector();
-
-		SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
-	}
-	
-	void Application::Update(float deltaTime)
-	{
-		scene->Update();
-	}
-	
-	void Application::ProcessInput()
-	{
-		if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
-			isRunning = false;
-	
-		if (InputManager::IsKeyDown(GLFW_KEY_TAB))
-		{
-			currentEngineMode = (currentEngineMode == EngineMode::Game) ? EngineMode::Editor : EngineMode::Game;
-
-			if (currentEngineMode == EngineMode::Game)
+			if (event.width == 0 || event.height == 0)
 			{
-				EditorGUI::ClearFocus();
-				InputManager::SetFirstMouse(true);
+				isMinimized = true;
+				return;
 			}
 
-			EventBus::Publish<EngineModeChangedEvent>({ currentEngineMode });
+			isMinimized = false;
 		}
-	
-		scene->ProcessInput();
-	}
-	
-	void Application::Render()
-	{
-		Renderer::Clear(0.05f, 0.05f, 0.05f, 1.0f);
-	
-		if (!scene)
-		{
-			SUNTA_ENGINE_LOG_ERROR("ERROR: Scene is NULL during Render");
-			return;
-		}
-	
-		scene->Render(renderer);
+	);
 
-		EditorGUIContext::NewFrame(window.get());
-		
-		EditorGUIContext::BeginDockingSpace(window.get());
-		
-		EditorGUI::Begin(EditorGUIContext::GetInspectorName());
-		
-		EditorGUI::DrawInspector(scene->GetEntityManager());
-		
-		EditorGUI::End();
-		EditorGUIContext::EndFrame(window.get());
-	}
-	
-	void Application::Shutdown()
+	Renderer::Init();
+	DebugRenderer::Init();
+	ResourceManager::Init(Renderer::GetDevice());
+	ResourceLoader::Init();
+
+	scene = std::make_unique<Scene>();
+	scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
+
+	TagComponent::RegisterToInspector();
+	TransformComponent::RegisterToInspector();
+	ScriptComponent::RegisterToInspector();
+	MeshComponent::RegisterToInspector();
+	ModelComponent::RegisterToInspector();
+	AnimatorComponent::RegisterToInspector();
+	DirectionalLightComponent::RegisterToInspector();
+	PointLightComponent::RegisterToInspector();
+	SpotLightComponent::RegisterToInspector();
+	BoxColliderComponent::RegisterToInspector();
+	PhysicsBodyComponent::RegisterToInspector();
+
+	window->Show();
+
+	SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
+}
+
+void Application::Update(float deltaTime)
+{
+	scene->Update();
+}
+
+void Application::ProcessInput()
+{
+	if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
+		isRunning = false;
+
+	if (InputManager::IsKeyDown(GLFW_KEY_TAB))
 	{
-		EditorGUIContext::Shutdown(window.get());
-		scene->Clear();
-	
-		if (window)
-			window.reset();
-	
-		glfwTerminate();
+		currentEngineMode = (currentEngineMode == EngineMode::Game) ? EngineMode::Editor : EngineMode::Game;
+
+		if (currentEngineMode == EngineMode::Game)
+		{
+			EditorGUI::ClearFocus();
+			EditorGUI::ClearSelection();
+			InputManager::SetFirstMouse(true);
+		}
+
+		EventBus::Publish<EngineModeChangedEvent>({ currentEngineMode });
 	}
-	
+
+	scene->ProcessInput();
+}
+
+void Application::Render()
+{
+	SUNTA_ASSERT(scene, "CRITIC ERROR: Scene CAN'T BE NULL during Render");
+
+	Renderer::Clear(0.02f, 0.01f, 0.01f, 1.0f);
+
+	scene->Render(renderer);
+	EditorGUIContext::RenderUI(window.get(), *scene, Renderer::GetDevice());
+
+	EditorGUI::HandleSelectionInteraction(*scene);
+
+	//EditorGUIContext::BeginDockingSpace(window.get());
+	//
+	//EditorGUI::Begin(EditorGUIContext::GetInspectorName());
+	//
+	//EditorGUI::DrawInspector(scene->GetEntityManager());
+	//
+	//EditorGUI::End();
+	//EditorGUIContext::EndFrame(window.get());
+}
+
+void Application::Shutdown()
+{
+	EditorGUIContext::Shutdown(window.get());
+	ScriptingEngine::Shutdown();
+	scene->Clear();
+
+	if (window)
+		window.reset();
+
+	Platform::Shutdown();
+
+	glfwTerminate();
+}
+
 }

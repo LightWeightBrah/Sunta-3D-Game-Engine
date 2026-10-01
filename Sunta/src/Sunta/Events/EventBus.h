@@ -24,7 +24,7 @@ public:
 		return newID;
 	}
 
-	static void Unsubsribe(unsigned int id)
+	static void Unsubscribe(unsigned int id)
 	{
 		for (auto& [type, handlers] : allSubscribers)
 		{

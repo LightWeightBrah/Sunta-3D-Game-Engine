@@ -9,7 +9,7 @@ namespace Sunta
 	{
 		resources = ResourceManager::GetModelData(filepath);
 		animator  = Animator(resources->model.get());
-		animator.PlayAnimation(&resources->animations.at(AnimationType::IDLE));
+		//animator.PlayAnimation(&resources->animations.at(AnimationType::IDLE));
 	}
 	
 	void Solaire::SetPath(std::vector<GridPoint> gridPoints)
@@ -40,7 +40,7 @@ namespace Sunta
 			if (movingPoints.empty())
 			{
 				rotation = 0.0f;
-				animator.PlayAnimation(&resources->animations.at(AnimationType::GESTURE));
+				//animator.PlayAnimation(&resources->animations.at(AnimationType::GESTURE));
 			}
 		}
 		else
@@ -55,7 +55,7 @@ namespace Sunta
 		position	 = startPoisiton;
 		movingPoints = std::queue<glm::vec3>();
 		rotation	 = 0.0f;
-		animator.PlayAnimation(&resources->animations.at(AnimationType::IDLE));
+		//animator.PlayAnimation(&resources->animations.at(AnimationType::IDLE));
 	}
 	
 	glm::mat4 Solaire::GetModelMatrix()
@@ -72,7 +72,7 @@ namespace Sunta
 	{
 		bool isMoving = !movingPoints.empty();
 	
-		Animation* gestureAnim = &resources->animations.at(AnimationType::GESTURE);
+		/*Animation* gestureAnim = &resources->animations.at(AnimationType::GESTURE);
 		if (animator.GetCurrentAnimation() == gestureAnim && !isMoving)
 		{
 			animator.UpdateAnimation(deltaTime);
@@ -84,6 +84,6 @@ namespace Sunta
 		if(animator.GetCurrentAnimation() != animationtoPlay)
 			animator.PlayAnimation(animationtoPlay);
 	
-		animator.UpdateAnimation(deltaTime);
+		animator.UpdateAnimation(deltaTime);*/
 	}
 }

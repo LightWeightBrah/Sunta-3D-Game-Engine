@@ -1,16 +1,14 @@
 #pragma once
 
-#include "Core/Window.h"
 #include <memory>
 
-struct GLFWwindow;
+#include "Core/Window.h"
+#include "Platform/GLFW/GLFWWindowImplementation.h"
 
 namespace Sunta
 {
 
-struct EngineModeChangedEvent;
 class EditorGUIBackend;
-class GraphicsContext;
 
 class MacWindow : public Window
 {
@@ -21,22 +19,17 @@ public:
 	virtual void Update() override;
 	virtual void EnableMouseCursor(bool enabled) override;
 	virtual void SetAsGraphicsTarget() override;
+	virtual void Show() override;
 
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() override;
 
-	virtual unsigned int GetWidth()  const override { return width;  }
-	virtual unsigned int GetHeight() const override { return height; }
-	virtual void* GetNativeWindow() const override  { return window; }
+	virtual unsigned int GetWidth()  const override  { return implementation.GetWidth();        }
+	virtual unsigned int GetHeight() const override  { return implementation.GetHeight();       }
+	virtual void* GetNativeWindow()  const override  { return implementation.GetNativeWindow(); }
 
 private:
-	GLFWwindow* window;
-	std::unique_ptr<GraphicsContext> graphicsContext;
-	unsigned int engineModeChangedID;
+	GLFWWindowImplementation implementation;
 
-	void Init();
-	void SetCallbacks();
-	void Shutdown();
-	void OnEngineModeChanged(const EngineModeChangedEvent& event);
 };
 
 }

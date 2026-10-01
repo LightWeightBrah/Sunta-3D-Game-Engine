@@ -1,0 +1,8 @@
+{
+  "diffuse":   [ "_dd", "_d", "diffuse", "albedo", "basecolor", "color" ],
+  "specular":  [ "_s", "specular", "spec" ],
+  "normal":    [ "_n", "normal", "normalmap" ],
+  "roughness": [ "_r", "roughness", "rough" ],
+  "metallic":  [ "_m", "metallic", "metal" ],
+  "ao":        [ "ao", "ambientocclusion", "occlusion" ]
+}

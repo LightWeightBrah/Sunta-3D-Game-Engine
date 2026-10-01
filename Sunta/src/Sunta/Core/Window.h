@@ -9,9 +9,6 @@ class EditorGUIBackend;
 
 class Window
 {
-protected:
-	int width, height;
-	std::string title;
 
 public:
 	//DESTRUCTOR: makes sure every class that dervies from Window 
@@ -21,6 +18,7 @@ public:
 	virtual void Update() = 0;
 	virtual void EnableMouseCursor(bool enabled) = 0;
 	virtual void SetAsGraphicsTarget() = 0;
+	virtual void Show() = 0;
 
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() = 0;
 

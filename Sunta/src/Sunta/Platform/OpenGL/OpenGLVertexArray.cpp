@@ -33,7 +33,7 @@ namespace Sunta
 	
 	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
-		SUNTA_ASSERT(vertexBuffer.GetLayout().GetBufferLayoutElements().size(), "VERTEX BUFFER HAS NO LAYOUT!!!");
+		SUNTA_ASSERT(vertexBuffer->GetLayout().GetBufferLayoutElements().size(), "VERTEX BUFFER HAS NO LAYOUT!!!");
 
 		GLCall(glBindVertexArray(id));
 		vertexBuffer->Bind();

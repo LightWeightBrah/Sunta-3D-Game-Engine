@@ -7,6 +7,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+option(SUNTA_DEV_MODE "Enable development mode (reads assets directly from source folders)" ON)
+
+if(SUNTA_DEV_MODE)
+	message(STATUS "Sunta Engine: Running in DEVELOPMENT mode (Virtual File System points to source code")
+else()
+	message(STATUS "Sunta Engine: Running in RELEASE mode (Copy assets to bin directory for distribution")
+endif()
+
+# Lua version
+add_compile_definitions(SOL_LUA_VERSION=50400)
+
 # ========================= OUTPUT SETTINGS ========================= 
 
 set(CONFIG_NAME "$<CONFIG>-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
@@ -53,7 +64,14 @@ set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
+set(ASSIMP_BUILD_COLLADA_IMPORTER ON CACHE BOOL "" FORCE)
 add_subdirectory(Dependencies/Assimp)
+
+# --- Native File Dialog Extended (nfd) ---
+add_subdirectory(Dependencies/nfd)
+
+# --- Lua integration ---
+add_subdirectory(Dependencies/Lua)
 
 #  ========================= SUNTA MODULES ========================= 
 

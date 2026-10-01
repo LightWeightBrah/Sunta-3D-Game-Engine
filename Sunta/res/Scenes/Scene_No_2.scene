@@ -1,0 +1,494 @@
+{
+    "entities": [
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    7.5,
+                    5.0,
+                    3.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "textured_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Textured Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    5.0,
+                    -0.5
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "directional_light": {
+                "ambient": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                ],
+                "diffuse": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "specular": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Directional Light"
+            },
+            "transform": {
+                "position": [
+                    3.0,
+                    6.0,
+                    2.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.09000000357627869,
+                    "attenuation_quadratic": 0.03200000151991844
+                },
+                "color": {
+                    "ambient": [
+                        0.20000000298023224,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "diffuse": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "specular": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Point Light"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "spot_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.09000000357627869,
+                    "attenuation_quadratic": 0.03200000151991844
+                },
+                "color": {
+                    "ambient": [
+                        0.20000000298023224,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "diffuse": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "specular": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                "inner_cut_off": 12.5,
+                "outer_cut_off": 17.5
+            },
+            "tag": {
+                "name": "Spot Light"
+            },
+            "transform": {
+                "position": [
+                    -2.5,
+                    4.5,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "collides_with": 7,
+                "half_extents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "mesh": {
+                "is_visible": true,
+                "material_name": "FloorMaterial",
+                "mesh_name": "cube"
+            },
+            "physics_body": {
+                "is_kinematic": true,
+                "use_gravity": false,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "tag": {
+                "name": "Floor"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -1.100000023841858,
+                    -2.700000047683716
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    162.0,
+                    2.0,
+                    129.0
+                ]
+            }
+        },
+        {
+            "animator": {
+                "current_animation_name": "Armature|Praise the Sun Gesture"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "solaire"
+            },
+            "tag": {
+                "name": "Player"
+            },
+            "transform": {
+                "position": [
+                    3.0,
+                    -0.0820789560675621,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "EzMat",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "EzMat"
+            },
+            "transform": {
+                "position": [
+                    1.4007245302200317,
+                    8.905388832092285,
+                    4.00654411315918
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "EzMat",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "EzMat"
+            },
+            "transform": {
+                "position": [
+                    14.77705192565918,
+                    -0.10000038146972656,
+                    -24.370464324951172
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "EzMat",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "EzMat"
+            },
+            "transform": {
+                "position": [
+                    -2.076491355895996,
+                    5.0,
+                    0.4096193313598633
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        }
+    ],
+    "scene_name": "Scene_No_2"
+}

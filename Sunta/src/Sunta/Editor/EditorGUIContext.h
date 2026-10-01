@@ -1,11 +1,16 @@
 #pragma once
 #include <memory>
 
+// ImFont is ImGui's struct so it needs to be in global scope not Sunta namespace
+struct ImFont;
+
 namespace Sunta
 {
 
 class Window;
 class EditorGUIBackend;
+class Scene;
+class RendererDevice;
 struct EngineModeChangedEvent;
 
 class EditorGUIContext
@@ -24,13 +29,27 @@ public:
 
 	inline static const char* GetInspectorName() { return inspectorName; }
 
+	static void RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice);
 private:
 	static std::unique_ptr<EditorGUIBackend> backend;
-	static unsigned int engineModeChangeID;
+	inline static unsigned int engineModeChangeID;
+	inline static unsigned int fileDroppedID;
 
-	static constexpr float defaultSidebarRatio		= 0.3f; //30% screen width
+	static constexpr float fontSize					= 24.0f;
 
-	static constexpr const char* inspectorName		= "Sunta Engine Editor";
+	static inline ImFont* mainFont = nullptr;
+	static constexpr float toolbarHeight			= 36.0f;
+
+	static constexpr float defaultFileBrowserRatio	= 0.25f; // 25% screen height
+
+	static constexpr float defaultHierarchyRatio	= 0.2f;	 // 20% screen width
+	static constexpr float defaultInspectorRatio	= 0.25f; // 20% screen width
+	//								from 80% take 25% so we have 60% viewport from initial screen
+
+	static constexpr const char* viewportName		= "Viewport";
+	static constexpr const char* fileBrowserName    = "File Browser";
+	static constexpr const char* inspectorName		= "Inspector";
+	static constexpr const char* hierarchyName		= "Hierarchy";
 	static constexpr const char* rootWindowID		= "Main Viewport Docking Window";
 	static constexpr const char* mainDockingSpaceID = "Editor Docking Space";
 	

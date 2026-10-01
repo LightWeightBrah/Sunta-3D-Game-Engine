@@ -24,11 +24,23 @@ void OpenGLDevice::SetViewport(int x, int y, int width, int height)
 	GLCall(glViewport(x, y, width, height));
 }
 
+void OpenGLDevice::SetLineWidth(float width)
+{
+	GLCall(glLineWidth(width));
+}
+
 void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 {
 	vertexArray.Bind();
 	unsigned int count = vertexArray.GetElementBuffer()->GetCount();
 	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
+}
+
+void OpenGLDevice::DrawLines(const VertexArray& vertexArray)
+{
+	vertexArray.Bind();
+	unsigned int count = vertexArray.GetElementBuffer()->GetCount();
+	GLCall(glDrawElements(GL_LINES, count, GL_UNSIGNED_INT, 0));
 }
 
 std::shared_ptr<VertexBuffer> OpenGLDevice::CreateVertexBuffer(const BufferDescriptor& descriptor)
@@ -38,6 +50,9 @@ std::shared_ptr<VertexBuffer> OpenGLDevice::CreateVertexBuffer(const BufferDescr
 
 std::shared_ptr<ElementBuffer> OpenGLDevice::CreateElementBuffer(const BufferDescriptor& descriptor)
 {
+	// Make sure you create OpenGLElementBuffer only after binding VAO
+	// VAO stores Element Buffer
+
 	return std::make_shared<OpenGLElementBuffer>(descriptor);
 }
 
@@ -46,9 +61,9 @@ std::shared_ptr<VertexArray> OpenGLDevice::CreateVertexArray()
 	return std::make_shared<OpenGLVertexArray>();
 }
 
-std::shared_ptr<Texture> OpenGLDevice::CreateTexture(const std::string& filepath)
+std::shared_ptr<Texture> OpenGLDevice::CreateTexture(const std::string& filepath, bool flip, bool isPixelArt)
 {
-	return std::make_shared<OpenGLTexture>(filepath);
+	return std::make_shared<OpenGLTexture>(filepath, flip, isPixelArt);
 }
 
 std::shared_ptr<Shader> OpenGLDevice::CreateShader(const std::string& filepath)

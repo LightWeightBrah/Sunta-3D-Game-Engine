@@ -8,6 +8,7 @@ namespace Sunta
 {
 
 struct EngineModeChangedEvent;
+struct Ray;
 
 enum class MOVEMENT
 {
@@ -38,6 +39,7 @@ public:
 	inline float			GetFov()				const { return fov; }
 		
 	SceneData				GetSceneData()			const;
+	Ray                     GetMouseScreenPositionToPointRay(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight) const;
 		
 	inline void				HandleStayOnHeight(bool stayOnHeight) { this->stayOnHeight = stayOnHeight; }
 private:
@@ -56,7 +58,7 @@ private:
 	bool		 stayOnHeight		=  false;
 				 							   
 	glm::mat4	 projectionMatrix	=  glm::mat4(1.0f);
-	float		 aspectRatio		=  0.0f;
+	float		 aspectRatio		=  16.0 / 9.0f; // safety for first frame
 				 
 	bool		 isLocked			=  false;
 	unsigned int subscriptionID;

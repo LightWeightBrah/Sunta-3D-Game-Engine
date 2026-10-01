@@ -1,18 +1,23 @@
 #include "Core/SuntaPreCompiled.h"
-
 #include "EditorGUIContext.h"
+
 #include <imgui/imgui.h>
-#include "Core/Window.h"
+#include <imgui_internal.h>
+
 #include "EditorGUIBackend.h"
+#include "EditorGUI.h"
+
+#include "Core/Window.h"
+#include "Renderer/RendererDevice.h"
+#include "Scene/Scene.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-#include <imgui_internal.h>
+#include "Core/VirtualFileSystem.h"
 
 namespace Sunta
 {
 
 std::unique_ptr<EditorGUIBackend> EditorGUIContext::backend;
-unsigned int EditorGUIContext::engineModeChangeID;
 
 EditorGUIContext::~EditorGUIContext() = default;
 
@@ -30,6 +35,14 @@ void EditorGUIContext::Init(Window* window)
 	window->SetAsGraphicsTarget();
 
 	engineModeChangeID = EventBus::Subscribe<EngineModeChangedEvent>(EditorGUIContext::OnEngineModeChanged);
+	fileDroppedID = EventBus::Subscribe<FileDroppedEvent>(EditorGUI::OnFileDropped);
+
+	ImGuiIO& io = ImGui::GetIO();
+
+	std::string fontPath = VirtualFileSystem::Resolve("@engine/Fonts/Crimson_Text/CrimsonText-Regular.ttf");
+	mainFont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), fontSize);
+
+	EditorGUI::Init();
 }
 
 void EditorGUIContext::Shutdown(Window* window)
@@ -37,7 +50,10 @@ void EditorGUIContext::Shutdown(Window* window)
 	if (!backend || !window)
 		return;
 
-	EventBus::Unsubsribe(engineModeChangeID);
+	EditorGUI::Shutdown();
+
+	EventBus::Unsubscribe(engineModeChangeID);
+	EventBus::Unsubscribe(fileDroppedID);
 	backend->Shutdown(window->GetNativeWindow());
 	backend.reset();
 }
@@ -67,15 +83,21 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	if (!backend || !window)
 		return;
 
-	MatchWindowSizeToViewport();
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	ImVec2 dockPos = ImVec2(viewport->WorkPos.x, viewport->WorkPos.y + toolbarHeight);
+	ImVec2 dockSize = ImVec2(viewport->WorkSize.x, viewport->WorkSize.y - toolbarHeight);
+
+	ImGui::SetNextWindowPos(dockPos);
+	ImGui::SetNextWindowSize(dockSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
 	ApplyInvisibleWindowStyle();
-
 	ImGui::Begin(rootWindowID, nullptr, GetRootWindowFlags());
-
 	RestoreNormalWindowStyle();
 
 	unsigned int dockspaceID = ImGui::GetID(mainDockingSpaceID);
-	//creates docking space							passthru flag so  we can interact with scene
+	// creates docking space						 passthru flag so  we can interact with scene
 	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	static bool firstInit = true;
@@ -86,6 +108,39 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	}
 
 	ImGui::End();
+}
+
+void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice)
+{
+	EditorGUIContext::NewFrame(window);
+
+	if (mainFont)
+		ImGui::PushFont(mainFont);
+
+	EditorGUI::DrawMainMenuBarAndToolbar(scene, toolbarHeight);
+	EditorGUIContext::BeginDockingSpace(window);
+
+	EditorGUI::DrawSceneDropTarget(scene);
+
+	EditorGUI::Begin(inspectorName);
+	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
+	EditorGUI::DrawInspector(scene.GetEntityManager());
+	EditorGUI::End();
+
+	EditorGUI::Begin(hierarchyName);
+	EditorGUI::DrawWindowBackground("editor_window_bg", glm::vec4(0.85f, 0.85f, 0.85f, 1.0f));
+	EditorGUI::DrawHierarchy(scene.GetEntityManager());
+	EditorGUI::End();
+
+	EditorGUI::Begin(fileBrowserName);
+	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
+	EditorGUI::DrawFileBrowser(scene);
+	EditorGUI::End();
+
+	if (mainFont)
+		ImGui::PopFont();
+
+	EditorGUIContext::EndFrame(window);
 }
 
 void EditorGUIContext::MatchWindowSizeToViewport()
@@ -113,7 +168,6 @@ int EditorGUIContext::GetRootWindowFlags()
 		 | ImGuiWindowFlags_NoMove
 		 | ImGuiWindowFlags_NoBringToFrontOnFocus
 		 | ImGuiWindowFlags_NoNavFocus
-		 | ImGuiWindowFlags_MenuBar
 		 | ImGuiWindowFlags_NoBackground;
 }
 
@@ -125,14 +179,20 @@ void EditorGUIContext::RestoreNormalWindowStyle()
 
 void EditorGUIContext::SetupInitialLayout(unsigned int dockspaceID)
 {
-	ImGui::DockBuilderRemoveNode(dockspaceID); //clears panel layout from .ini file
-	ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace); //creates main grid panel
-	ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size); //sets main grid panel size to whole viewport
+	ImGui::DockBuilderRemoveNode(dockspaceID); // clears panel layout from .ini file
+	ImGui::DockBuilderAddNode(dockspaceID, ImGuiDockNodeFlags_DockSpace); // creates main grid panel
+	ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size); // sets main grid panel size to whole viewport
 
-	//splits main panel to 2 panels, 30% left docking for inspector and 70% for game
-	unsigned int leftPanelID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left, defaultSidebarRatio, nullptr, &dockspaceID);
+	// splits main panel to 4 panels: hierarchy, inspector, viewport, fileBrowser
+	unsigned int hierarchyPanelID   = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Left,  defaultHierarchyRatio,   nullptr, &dockspaceID);
+	unsigned int inspectorPanelID   = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, defaultInspectorRatio,   nullptr, &dockspaceID);
+	unsigned int fileBrowserPanelID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Down, defaultFileBrowserRatio, nullptr, &dockspaceID);
 
-	ImGui::DockBuilderDockWindow(inspectorName, leftPanelID); //sets inspector to left panel
+	ImGui::DockBuilderDockWindow(hierarchyName,   hierarchyPanelID);
+	ImGui::DockBuilderDockWindow(inspectorName,   inspectorPanelID);
+	ImGui::DockBuilderDockWindow(fileBrowserName, fileBrowserPanelID);
+	ImGui::DockBuilderDockWindow(viewportName,    dockspaceID);
+	
 	ImGui::DockBuilderFinish(dockspaceID);
 }
 
@@ -142,12 +202,12 @@ void EditorGUIContext::SetInputCapture(bool enabled)
 
 	if (enabled)
 	{
-		//enable mouse interaction, remove noMouse flag
+		// enable mouse interaction, remove noMouse flag
 		io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 	}
 	else
 	{
-		//disable interactions, add noMouse flag and set mouse pos outside window
+		// disable interactions, add noMouse flag and set mouse pos outside window
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 		io.MousePos = ImVec2(-1.0f, -1.0f);
 	}

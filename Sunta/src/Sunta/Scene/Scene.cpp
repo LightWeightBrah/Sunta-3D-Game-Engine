@@ -19,11 +19,17 @@
 #include "Core/Log.h"
 #include "Events/EventBus.h"
 #include "Core/KeyCodes.h"
+#include "Core/EngineAssets.h"
 #include "ECS/Component.h"
 #include "ECS/Systems.h"
 #include "Renderer/RendererDevice.h"
 #include "Renderer/Mesh.h"
 #include "Utilities/MathUtilities.h"
+#include "EntityFactory.h"
+#include "Renderer/DebugRenderer.h"
+#include "Physics/CollisionSystem.h"
+#include "Physics/CollisionShapes.h"
+#include "Physics/PhysicsSystem.h"
 
 namespace Sunta
 {
@@ -35,7 +41,15 @@ Scene::Scene()
 	
 Scene::~Scene()
 {
-	EventBus::Unsubsribe(resizeEventID);
+	EventBus::Unsubscribe(resizeEventID);
+
+	EventBus::Unsubscribe(triggerEnterEventID);
+	EventBus::Unsubscribe(triggerStayEventID);
+	EventBus::Unsubscribe(triggerExitEventID);
+
+	EventBus::Unsubscribe(collisionEnterEventID);
+	EventBus::Unsubscribe(collisionStayEventID);
+	EventBus::Unsubscribe(collisionExitEventID);
 }
 	
 void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float windowHeight)
@@ -45,69 +59,30 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	resizeEventID = EventBus::Subscribe<WindowResizeEvent>(
 		[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
 	);
-	
-	ResourceManager::LoadTexture("container2Diffuse",	"res/Sunta/Textures/container2.png");
-	ResourceManager::LoadTexture("container2Specular",	"res/Sunta/Textures/container2_specular.png");
-	ResourceManager::LoadTexture("whiteTexture",		"res/Sunta/Textures/whitePixel.png");
-	ResourceManager::LoadTexture("errorTexture",		"res/Sunta/Textures/errorTexture.png");
 
-	ResourceManager::LoadTexture("cube_container",		"res/Sunta/Textures/container.jpg");
-	ResourceManager::LoadTexture("cube_chad",			"res/Sunta/Textures/chad.png");
+	// Trigger Events
 
-	ResourceManager::LoadShader ("Lit",					"res/Sunta/Shaders/Lit.shader");
-	ResourceManager::LoadShader ("Unlit",				"res/Sunta/Shaders/Unlit.shader");
-	
-	auto cubeDiffuseMap		= ResourceManager::GetTextureData("container2Diffuse");
-	auto cubeSpecularMap	= ResourceManager::GetTextureData("container2Specular");
+	triggerEnterEventID = EventBus::Subscribe<TriggerEnterEvent>(
+		[this](const TriggerEnterEvent& event) { OnTriggerEnter(event); }
+	);
+	triggerStayEventID = EventBus::Subscribe<TriggerStayEvent>(
+		[this](const TriggerStayEvent& event) { OnTriggerStay(event); }
+	);
+	triggerExitEventID = EventBus::Subscribe<TriggerExitEvent>(
+		[this](const TriggerExitEvent& event) { OnTriggerExit(event); }
+	);
 
-	auto texturedShader		= ResourceManager::GetShaderData("Lit");
-	auto cubeShader			= ResourceManager::GetShaderData("Lit");
-	auto lightShader		= ResourceManager::GetShaderData("Unlit");
+	// Collision Events
 
-	auto texturedMaterial	= std::make_shared<Material>(texturedShader, cubeDiffuseMap, cubeSpecularMap);
-	auto cubeMaterial		= std::make_shared<Material>(cubeShader);
-	auto lightMaterial		= std::make_shared<Material>(lightShader);
-
-	cubeMaterial->SetAmbient(glm::vec3(0.25f, 0.2f, 0.05f))
-		.SetDiffuse(glm::vec3(0.75f, 0.6f, 0.24f))
-		.SetSpecular(glm::vec3(0.63, 0.56f, 0.37f))
-		.SetShininess(128.0f);
-
-	unsigned int cube = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(cube).name = "Cube";
-	entityManager.AddComponent<TransformComponent>(cube, glm::vec3(7.5f, 5.0f, 3.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(cube);
-	entityManager.AddComponent<MeshComponent>(cube, Primitives::CreateCube(rendererDevice), cubeMaterial);
-
-	unsigned int texturedCube = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(texturedCube).name = "Textured Cube";
-	entityManager.AddComponent<TransformComponent>(texturedCube, glm::vec3(0.0f, 5.0f, -0.5));
-	entityManager.AddComponent<WorldMatrixComponent>(texturedCube);
-	entityManager.AddComponent<MeshComponent>(texturedCube, Primitives::CreateCube(rendererDevice), texturedMaterial);
-
-	unsigned int sun = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(sun).name = "Directional Light";
-	entityManager.AddComponent<TransformComponent>(sun, glm::vec3(3.0f, 6.0f, 2.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(sun);
-	entityManager.AddComponent<MeshComponent>(sun, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<DirectionalLightComponent>(sun);
-
-	unsigned int pointLight = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(pointLight).name = "Point Light";
-	entityManager.AddComponent<TransformComponent>(pointLight, glm::vec3(-4.0f, 2.0f, 0.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(pointLight);
-	entityManager.AddComponent<MeshComponent>(pointLight, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<PointLightComponent>(pointLight);
-
-	unsigned int spotLight = entityManager.CreateEntity();
-	entityManager.AddComponent<TagComponent>(spotLight).name = "Spot Light";
-	entityManager.AddComponent<TransformComponent>(spotLight, glm::vec3(-2.5f, 4.5f, 0.0f));
-	entityManager.AddComponent<WorldMatrixComponent>(spotLight);
-	entityManager.AddComponent<MeshComponent>(spotLight, Primitives::CreateCube(rendererDevice), lightMaterial);
-	entityManager.AddComponent<SpotlightComponent>(spotLight);
-
-	//AddEntity(std::move(cubeEntity));
-	//AddEntity(std::move(lightSource));
+	collisionEnterEventID = EventBus::Subscribe<CollisionEnterEvent>(
+		[this](const CollisionEnterEvent& event) { OnCollisionEnter(event); }
+	);
+	collisionStayEventID = EventBus::Subscribe<CollisionStayEvent>(
+		[this](const CollisionStayEvent& event) { OnCollisionStay(event); }
+	);
+	collisionExitEventID = EventBus::Subscribe<CollisionExitEvent>(
+		[this](const CollisionExitEvent& event) { OnCollisionExit(event); }
+	);
 }
 	
 void Scene::OnWindowResize(float windowWidth, float windowHeight)
@@ -115,6 +90,40 @@ void Scene::OnWindowResize(float windowWidth, float windowHeight)
 	camera.SetViewportSize(windowWidth, windowHeight);
 }
 	
+// Trigger Events
+
+void Scene::OnTriggerEnter(const TriggerEnterEvent& event)
+{
+	Systems::DispatchTriggerEnter(entityManager, event.triggerEntityID, event.otherEntityID);
+}
+
+void Scene::OnTriggerStay(const TriggerStayEvent& event)
+{
+	Systems::DispatchTriggerStay(entityManager, event.triggerEntityID, event.otherEntityID);
+}
+
+void Scene::OnTriggerExit(const TriggerExitEvent& event)
+{
+	Systems::DispatchTriggerExit(entityManager, event.triggerEntityID, event.otherEntityID);
+}
+
+// Collision Events
+
+void Scene::OnCollisionEnter(const CollisionEnterEvent& event)
+{
+	Systems::DispatchCollisionEnter(entityManager, event.collisionEntityID, event.otherEntityID);
+}
+
+void Scene::OnCollisionStay(const CollisionStayEvent& event)
+{
+	Systems::DispatchCollisionStay(entityManager, event.collisionEntityID, event.otherEntityID);
+}
+
+void Scene::OnCollisionExit(const CollisionExitEvent& event)
+{
+	Systems::DispatchCollisionExit(entityManager, event.collisionEntityID, event.otherEntityID);
+}
+
 void Scene::ProcessInput()
 {
 	float deltaTime				= EngineTime::deltaTime;
@@ -145,12 +154,22 @@ void Scene::ProcessInput()
 	
 void Scene::Update()
 {
-	Systems::UpdateTransform(entityManager);
+	PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
+
+	//Systems::UpdateTransform(entityManager);
+	Systems::SyncMeshComponents(entityManager);
+	Systems::SyncModelComponents(entityManager);
+	Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
+	Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
+
+	//CollisionSystem::Update(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)
 {
-	renderer.Clear(0.05f, 0.15f, 0.25f, 1.0f);
+	const bool      showBoundsGizmos = DebugRenderer::GetShowBoundsGizmos();
+	const glm::vec3 boundsGizmoColor = DebugRenderer::GetBoundsGizmoColor();
+
 	SceneData sceneData = camera.GetSceneData();
 
 	sceneData.directionalLights.clear();
@@ -159,114 +178,246 @@ void Scene::Render(Renderer& renderer)
 
 	unsigned int totalEntites = entityManager.GetEntityCount();
 
+	struct MeshRenderItem
+	{
+		Mesh* mesh;
+		Material* material;
+
+		glm::mat4 matrix;
+	};
+
+	struct ModelRenderItem
+	{
+		Model* model;
+		const Animator* animator;
+
+		glm::mat4 matrix;
+	};
+
+	struct GizmosDrawItem
+	{
+		std::array<glm::vec3, BOX_CORNER_COUNT> corners;
+		glm::vec3 color;
+	};
+
+	std::vector<MeshRenderItem>  litQueue;
+	std::vector<MeshRenderItem>  unlitQueue;
+	std::vector<MeshRenderItem>  lightSourceQueue;
+	std::vector<ModelRenderItem> modelQueue;
+
+	std::vector<GizmosDrawItem>  gizmosQueue;
+
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
-		auto* lightTransform = entityManager.GetComponent<TransformComponent>(i);
+		auto* transformComponent        = entityManager.GetComponent<TransformComponent>(i);
+		auto* matrixComponent           = entityManager.GetComponent<WorldMatrixComponent>(i);
 
-		if (auto* directionalLightComponent = entityManager.GetComponent<DirectionalLightComponent>(i))
+		auto* directionalLightComponent = entityManager.GetComponent<DirectionalLightComponent>(i);
+		auto* pointLightComponent       = entityManager.GetComponent<PointLightComponent>(i);
+		auto* spotLightComponent        = entityManager.GetComponent<SpotLightComponent>(i);
+
+		if (directionalLightComponent && transformComponent)
 		{
 			DirectionalLightData data;
 
-			data.direction = Sunta::Math::DegreesToDirection(lightTransform->rotation);
-			data.color	   = directionalLightComponent->color;
+			data.direction   = Sunta::Math::DegreesToDirection(transformComponent->rotation);
+			data.color       = directionalLightComponent->color;
 
 			sceneData.directionalLights.push_back(data);
 		}
 
-		if (auto* pointlightComponent = entityManager.GetComponent<PointLightComponent>(i))
+		if (pointLightComponent && transformComponent)
 		{
-			if (!lightTransform)
-				continue;
-
 			PointLightData data;
 
-			data.position	 = lightTransform->position;
+			data.position	 = transformComponent->position;
 
-			data.color		 = pointlightComponent->color;
-			data.attenuation = pointlightComponent->attenuation;
+			data.color		 = pointLightComponent->color;
+			data.attenuation = pointLightComponent->attenuation;
 
 			sceneData.pointLights.push_back(data);
 		}
 
-		if (auto* spotlightComponent = entityManager.GetComponent<SpotlightComponent>(i))
+		if (spotLightComponent && transformComponent)
 		{
-			if (!lightTransform)
-				continue;
-
 			SpotlightData data;
 
-			data.position		     = lightTransform->position;
-			data.spotlightDirection	 = Sunta::Math::DegreesToDirection(lightTransform->rotation);
+			data.position		     = transformComponent->position;
+			data.spotlightDirection	 = Sunta::Math::DegreesToDirection(transformComponent->rotation);
 
-			data.innercutOffAngle	 = spotlightComponent->innerCutOffAngle;
-			data.outerCutOffAngle	 = spotlightComponent->outerCutOffAngle;
+			data.innercutOffAngle	 = spotLightComponent->innerCutOffAngle;
+			data.outerCutOffAngle	 = spotLightComponent->outerCutOffAngle;
 
-			data.color               = spotlightComponent->color;
-			data.attenuation         = spotlightComponent->attenuation;
+			data.color               = spotLightComponent->color;
+			data.attenuation         = spotLightComponent->attenuation;
 			
 			sceneData.spotlights.push_back(data);
 		}
+
+		if (auto* meshComponent = entityManager.GetComponent<MeshComponent>(i))
+		{
+			if (matrixComponent && meshComponent->isVisible && meshComponent->mesh && meshComponent->material)
+			{
+				bool isLightSource = directionalLightComponent || pointLightComponent || spotLightComponent;
+
+				MeshRenderItem item = { meshComponent->mesh.get(), meshComponent->material.get(), matrixComponent->matrix };
+
+				if (isLightSource)
+					lightSourceQueue.push_back(item);
+				else if(item.material->GetShader()->HasFeature(ShaderFeature::Lighting))
+					litQueue.push_back(item);
+				else
+					unlitQueue.push_back(item);
+			}
+		}
+
+		if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(i))
+		{
+			if (matrixComponent && modelComponent->isVisible && modelComponent->modelData && modelComponent->modelData->model)
+			{
+				auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(i);
+				const Animator* animator = animatorComponent ? &animatorComponent->animator : nullptr;
+
+				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix });
+			}
+		}
+
+		// --- DEBUG: Bounding box used for mouse picking ---
+		if (showBoundsGizmos)
+		{
+			OBB pickingBox;
+			if (TryGetEntityWorldPickingBox(i, pickingBox))
+				gizmosQueue.push_back({ GetOBBCorners(pickingBox), boundsGizmoColor });
+		}
+
+		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
+		{
+			bool shouldDrawThisGizmos = DebugRenderer::GetShowAllGizmos() || boxCollider->showGizmos;
+
+			if (shouldDrawThisGizmos)
+			{
+				bool isOverlapping = CollisionSystem::IsEntityOverlapping(i);
+				glm::vec3 color = isOverlapping ?
+					DebugRenderer::GetGizmosCollideColor() : DebugRenderer::GetGizmosColor();
+
+				gizmosQueue.push_back({ GetOBBCorners(boxCollider->worldOBB), color });
+			}
+		}
+
 	}
 
-	
+	for (const auto& item : lightSourceQueue)
+		renderer.DrawLigthSource(*item.mesh, *item.material->GetShader(), item.matrix, sceneData);
 
-	/*auto& meshes = entityManager.GetAllComponents<MeshComponent>();
-	auto& matricies = entityManager.GetAllComponents<WorldMatrixComponent>();
+	for (const auto& item : litQueue)
+		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
 
-	for (int i = 0; i < meshes.size(); i++)
+	for (const auto& item : unlitQueue)
+		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
+
+	for (const auto& item : modelQueue)
+		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator);
+
+	for (const auto& item : gizmosQueue)
+		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
+
+}
+
+bool Scene::TryGetEntityWorldPickingBox(unsigned int entity, OBB& outBox)
+{
+	auto* worldMatrixComponent = entityManager.GetComponent<WorldMatrixComponent>(entity);
+	if (!worldMatrixComponent)
+		return false;
+
+	glm::vec3 localBoundsMin;
+	glm::vec3 localBoundsMax;
+
+	if (auto* meshComponent = entityManager.GetComponent<MeshComponent>(entity))
 	{
-		if (meshes[i].mesh && meshes[i].material)
-			renderer.DrawMesh(*meshes[i].mesh, *meshes[i].material, matricies[i].matrix, sceneData);
-	}*/
+		if (!meshComponent->isVisible || !meshComponent->mesh)
+			return false;
 
-	//2ND JIRA COMMIT TEST
-	//INITIAL CUBE LIGHT MAP TEST - JIRA
-	for (unsigned int i = 0; i < totalEntites; i++)
+		localBoundsMin = meshComponent->mesh->GetLocalBoundsMin();
+		localBoundsMax = meshComponent->mesh->GetLocalBoundsMax();
+	}
+	else if (auto* modelComponent = entityManager.GetComponent<ModelComponent>(entity))
 	{
-		auto* meshComponent = entityManager.GetComponent<MeshComponent>(i);
-		auto* matrixComponent = entityManager.GetComponent<WorldMatrixComponent>(i);
+		if (!modelComponent->isVisible || !modelComponent->modelData || !modelComponent->modelData->model)
+			return false;
 
-		if (!(meshComponent && matrixComponent && meshComponent->mesh && meshComponent->material))
+		localBoundsMin = modelComponent->modelData->model->GetLocalBoundsMin();
+		localBoundsMax = modelComponent->modelData->model->GetLocalBoundsMax();
+	}
+	else
+	{
+		return false;
+	}
+
+	glm::vec3 localCenter      = (localBoundsMin + localBoundsMax) * 0.5f;
+	glm::vec3 localHalfExtents = (localBoundsMax - localBoundsMin) * 0.5f;
+
+	outBox = MakeWorldOBB(worldMatrixComponent->matrix, localCenter, localHalfExtents);
+	return true;
+}
+
+bool Scene::TryFindClosestEntityHitByRay(const Ray& ray, unsigned int& outEntityID, float& outDistance)
+{
+	bool hitAnyEntity = false;
+	outDistance = std::numeric_limits<float>::max();
+
+	unsigned int totalEntities = entityManager.GetEntityCount();
+	for (unsigned int entity = 0; entity < totalEntities; entity++)
+	{
+		OBB pickingBox;
+		if (!TryGetEntityWorldPickingBox(entity, pickingBox))
 			continue;
 
-		bool isLightSource = entityManager.GetComponent<DirectionalLightComponent>(i) ||
-							 entityManager.GetComponent<PointLightComponent>(i)       ||
-							 entityManager.GetComponent<SpotlightComponent>(i);
+		float hitDistance = 0.0f;
+		if (!RayIntersectsOBB(ray, pickingBox, hitDistance))
+			continue;
 
-		if (isLightSource)
+		if (hitDistance < outDistance)
 		{
-			renderer.DrawLigthSource(*meshComponent->mesh, *meshComponent->material->GetShader(), matrixComponent->matrix, sceneData);
-		}
-		else
-		{
-			renderer.DrawMesh(*meshComponent->mesh, *meshComponent->material, matrixComponent->matrix, sceneData);
+			outDistance = hitDistance;
+			outEntityID = entity;
+			hitAnyEntity = true;
 		}
 	}
+
+	return hitAnyEntity;
 }
-	
+
+int Scene::GetEntityUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
+{
+	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+
+	unsigned int hitEntityID = 0;
+	float        hitDistance = 0.0f;
+
+	if (TryFindClosestEntityHitByRay(ray, hitEntityID, hitDistance))
+		return static_cast<int>(hitEntityID);
+
+	return -1;
+}
+
+glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
+{
+	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+
+	// The mouse is over an entity: use the point on its surface
+	unsigned int hitEntityID = 0;
+	float        hitDistance = 0.0f;
+	if (TryFindClosestEntityHitByRay(ray, hitEntityID, hitDistance))
+		return ray.origin + ray.direction * hitDistance;
+
+	// The mouse is over empty space: use a point at a fixed distance from the camera, along the ray
+	constexpr float DISTANCE_WHEN_NOTHING_IS_HIT = 10.0f;
+	return ray.origin + ray.direction * DISTANCE_WHEN_NOTHING_IS_HIT;
+}
+
 void Scene::Clear()
 {
-	
+	entityManager.Clear();
 }
-
-//void Scene::AddEntity(std::unique_ptr<Entity> entity)
-//{
-//	
-//	if (auto* light = dynamic_cast<LightSource*>(entity.get()))
-//		sceneLights.push_back(light);
-//
-//	sceneEntities.push_back(std::move(entity));
-//
-//}
-
-//std::vector<Inspectable*> Scene::GetInspectables()
-//{
-//	std::vector<Inspectable*> inspectables;
-//		
-//	for (auto& entity : sceneEntities)
-//		inspectables.push_back(entity.get());
-//
-//	return inspectables;
-//}
 
 }
