@@ -32,7 +32,7 @@ jobs:
                                  libwayland-dev wayland-protocols libxkbcommon-dev
 
             - name: "Configuration: CMake Generate"
-              run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DSUNTA_DEV_MODE=ON
+              run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DSUNTA_DEV_MODE=OFF
 
             - name: "Compilation: Build Engine & Executables"
               run: cmake --build build --config Debug

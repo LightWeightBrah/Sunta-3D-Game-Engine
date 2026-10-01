@@ -19,6 +19,15 @@ class ScriptComponent;
 
 struct FileDroppedEvent;
 
+struct PendingCreationState
+{
+	bool active           = false;
+	char nameBuffer[256]  = "";
+	std::string extension = "";
+	std::string iconKey   = "";
+	std::function<void(const std::filesystem::path& fullPath)> onCreate;
+};
+
 class EditorGUI
 {
 public:
@@ -56,14 +65,6 @@ public:
 	static void SetDarkTheme();
 	static void DrawWindowBackground(const std::string& textureKey, glm::vec4 tintColor = glm::vec4(1.0f));
 private:
-	struct PendingCreationState
-	{
-		bool active = false;
-		char nameBuffer[256] = "";
-		std::string extension = "";
-		std::string iconKey = "";
-		std::function<void(const std::filesystem::path& fullPath)> onCreate;
-	};
 
 	static inline PendingCreationState pendingCreation;
 
