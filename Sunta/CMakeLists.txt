@@ -55,6 +55,7 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/misc/cpp/imgui_stdlib.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends/imgui_impl_glfw.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends/imgui_impl_opengl3.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper/imguizmo/ImGuizmo.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image.cpp"
 )
 
@@ -111,6 +112,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper"					# for #include <imgui/imgui.h>
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui"				# for internal imgui implementation fixes (searching imgui_internal.h)
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends"		# for internal imgui implementation (files from folder backends can see folder imgui)
+"${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/nlohmann_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/Lua"
