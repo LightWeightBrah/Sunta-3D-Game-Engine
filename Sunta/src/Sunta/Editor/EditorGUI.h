@@ -19,6 +19,19 @@ class ScriptComponent;
 
 struct FileDroppedEvent;
 
+enum class GizmoOperation 
+{ 
+	Translate, 
+	Rotate, 
+	Scale 
+};
+
+enum class GizmoSpace 
+{ 
+	World, 
+	Local 
+};
+
 struct PendingCreationState
 {
 	bool active           = false;
@@ -52,6 +65,7 @@ public:
 	static void DrawHierarchy(EntityManager& entityManager);
 	static void DrawInspector(EntityManager& entityManager);
 	static void DrawFileBrowser(Scene& scene);
+	static void DrawTransformGizmo(Scene& scene);
 	static void DrawSceneDropTarget(Scene& scene);
 
 	static void OnFileDropped(const FileDroppedEvent& event);
@@ -65,13 +79,15 @@ public:
 	static void SetDarkTheme();
 	static void DrawWindowBackground(const std::string& textureKey, glm::vec4 tintColor = glm::vec4(1.0f));
 private:
+	static inline bool           showTransformGizmo = true;
+	static inline GizmoOperation gizmoOperation     = GizmoOperation::Translate;
+	static inline GizmoSpace     gizmoSpace			= GizmoSpace::World;
 
 	static inline PendingCreationState pendingCreation;
 
 	static inline int selectedEntity = -1;
 
-	// What the Inspector currently displays. Lags `selectedEntity` while locked -
-	// see the sync at the top of DrawInspector.
+	// What the Inspector currently displays. Lags `selectedEntity` while locked
 	static inline int inspectedEntity = -1;
 
 	static inline std::filesystem::path currentDirectory = "";
@@ -79,11 +95,11 @@ private:
 	static inline std::filesystem::path preDragSelectedFile = "";
 
 	// What the Inspector currently displays. Lags `selectedFile` briefly whenever a
-	// click could still turn into a drag - see the sync in DrawFileBrowser.
+	// click could still turn into a drag
 	static inline std::filesystem::path inspectedFile = "";
 
 	// While true, the Inspector stops following `selectedFile`/`inspectedFile`
-	// changes entirely and keeps showing whatever was open when it was locked.
+	// changes entirely and keeps showing whatever was open when it was locked
 	static inline bool inspectorLocked = false;
 
 	static inline int entityToRename = -1;

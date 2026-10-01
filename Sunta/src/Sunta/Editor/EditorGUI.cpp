@@ -4,6 +4,8 @@
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include <imguizmo/ImGuizmo.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
 
@@ -221,6 +223,30 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			glm::vec3 boundsColor = DebugRenderer::GetBoundsGizmoColor();
 			if (ImGui::ColorEdit3("Bounding Box Color", &boundsColor.x))
 				DebugRenderer::SetBoundsGizmoColor(boundsColor);
+
+			ImGui::Separator();
+
+			ImGui::Checkbox("Show Transform Gizmo", &showTransformGizmo);
+
+			if (showTransformGizmo)
+			{
+				if (ImGui::RadioButton("Translate (W)", gizmoOperation == GizmoOperation::Translate)) 
+					gizmoOperation = GizmoOperation::Translate;
+
+				if (ImGui::RadioButton("Rotate (E)",    gizmoOperation == GizmoOperation::Rotate))    
+					gizmoOperation = GizmoOperation::Rotate;
+
+				if (ImGui::RadioButton("Scale (R)",     gizmoOperation == GizmoOperation::Scale))     
+					gizmoOperation = GizmoOperation::Scale;
+
+				ImGui::Separator();
+
+				if (ImGui::RadioButton("World", gizmoSpace == GizmoSpace::World)) 
+					gizmoSpace = GizmoSpace::World;
+
+				if (ImGui::RadioButton("Local", gizmoSpace == GizmoSpace::Local)) 
+					gizmoSpace = GizmoSpace::Local;
+			}
 
 			ImGui::EndMenu();
 		}
@@ -1141,6 +1167,127 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 	ImGui::Columns(1); // column reset
 }
 
+void EditorGUI::DrawTransformGizmo(Scene& scene)
+{
+	// Nothing to do if the gizmo is off or no entity is selected
+	if (!showTransformGizmo || selectedEntity < 0)
+		return;
+
+	EntityManager& entityManager = scene.GetEntityManager();
+	unsigned int entityID = static_cast<unsigned int>(selectedEntity);
+
+	auto* transform = entityManager.GetComponent<TransformComponent>(entityID);
+	if (!transform)
+		return;
+
+	ImGuiIO& io = ImGui::GetIO();
+
+	// Keys to switch the gizmo mode (ignored while typing in a text field)
+	if (!io.WantTextInput)
+	{
+		if (ImGui::IsKeyPressed(ImGuiKey_W, false)) 
+			gizmoOperation = GizmoOperation::Translate;
+
+		if (ImGui::IsKeyPressed(ImGuiKey_E, false)) 
+			gizmoOperation = GizmoOperation::Rotate;
+
+		if (ImGui::IsKeyPressed(ImGuiKey_R, false)) 
+			gizmoOperation = GizmoOperation::Scale;
+	}
+
+	// The scene is rendered on the whole window (no framebuffer), so the gizmo
+	// rect must cover the whole window too, or it won't line up with the objects
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList(viewport)); // above the scene, below the panels
+	ImGuizmo::SetRect(viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y);
+
+	glm::mat4 view = scene.GetCamera().GetViewMatrix();
+	glm::mat4 projection = scene.GetCamera().GetProjectionMatrix();
+
+	// Build the matrix straight from the transform (not from WorldMatrixComponent),
+	// so it is never one frame behind when isDirty is still true
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->position)
+		* glm::mat4_cast(transform->rotationQuaternion)
+		* glm::scale(glm::mat4(1.0f), transform->scale);
+
+	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+	float snapValue = 0.5f;
+
+	switch (gizmoOperation)
+	{
+	case GizmoOperation::Translate: 
+		operation = ImGuizmo::TRANSLATE; 
+		snapValue = 0.5f; // units  
+		break; 
+
+	case GizmoOperation::Rotate:   
+		operation = ImGuizmo::ROTATE;    
+		snapValue = 15.0f; // degrees
+		break;
+
+	case GizmoOperation::Scale:     
+		operation = ImGuizmo::SCALE;     
+		snapValue = 0.1f; // factor
+		break; 
+	}
+
+	// ImGuizmo can only scale along local axes, so Scale always uses Local
+	ImGuizmo::MODE mode = (gizmoSpace == GizmoSpace::Local || gizmoOperation == GizmoOperation::Scale)
+		? ImGuizmo::LOCAL : ImGuizmo::WORLD;
+
+	// Hold Ctrl to snap to fixed steps
+	float snap[3] = { snapValue, snapValue, snapValue };
+
+	// By default ImGuizmo flips axes when switching between left/right side
+	// Disabled: the axes keep a fixed direction (+X, +Y, +Z) from every side
+	ImGuizmo::AllowAxisFlip(false);
+
+	// Draws the gizmo and modifies 'model' in place while the user drags it
+	ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
+		operation, mode, glm::value_ptr(model),
+		nullptr, io.KeyCtrl ? snap : nullptr);
+
+	// Not dragging, nothing changed, don't touch the transform
+	if (!ImGuizmo::IsUsing())
+		return;
+
+	// Split the edited matrix back into position / scale / rotation
+	glm::vec3 newPosition = glm::vec3(model[3]);
+
+	// Scale = length of each basis axis
+	glm::vec3 newScale(
+		glm::length(glm::vec3(model[0])),
+		glm::length(glm::vec3(model[1])),
+		glm::length(glm::vec3(model[2]))
+	);
+
+	// Rotation = basis axes with the scale divided out
+	glm::mat3 rotationMatrix(
+		glm::vec3(model[0]) / newScale.x,
+		glm::vec3(model[1]) / newScale.y,
+		glm::vec3(model[2]) / newScale.z
+	);
+
+	switch (gizmoOperation)
+	{
+	case GizmoOperation::Translate:
+		transform->position = newPosition;
+		break;
+
+	case GizmoOperation::Rotate:
+		transform->rotationQuaternion = glm::normalize(glm::quat_cast(rotationMatrix));
+		transform->SyncEulerFromQuaternion(); // keeps the Inspector values up to date
+		break;
+
+	case GizmoOperation::Scale:
+		transform->scale = newScale;
+		break;
+	}
+
+	transform->isDirty = true;
+}
+
 void EditorGUI::DrawSceneDropTarget(Scene& scene)
 {
 	if (!ImGui::IsDragDropActive())
@@ -1817,6 +1964,11 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 
 void EditorGUI::HandleSelectionInteraction(Scene& scene)
 {
+	// Clicking a gizmo handle looks like a click on the empty viewport to ImGui
+	// Skip picking, otherwise we would select another object (or deselect) mid-drag
+	if (showTransformGizmo && (ImGuizmo::IsOver() || ImGuizmo::IsUsing()))
+		return;
+
 	if (ImGui::IsDragDropActive() || ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		return;
 

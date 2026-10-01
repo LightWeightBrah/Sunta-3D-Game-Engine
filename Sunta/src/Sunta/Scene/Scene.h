@@ -36,7 +36,8 @@ public:
 	glm::vec3 GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 
 	EntityManager& GetEntityManager()		       { return entityManager; }
-											  
+
+	const Camera&  GetCamera()               const { return camera; }
 	const std::string& GetName()             const { return name; }
 	const std::string& GetFilePath()         const { return filePath; }
 	void SetName(const std::string& name)	       { this->name = name; }
