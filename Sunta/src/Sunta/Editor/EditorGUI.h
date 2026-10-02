@@ -60,6 +60,9 @@ public:
 	static void Text(const std::string& text);
 	static bool Button(const std::string& label);
 
+	static void StartPlayMode(Scene& scene);
+	static void StopPlayMode(Scene& scene);
+
 	static void DrawMainMenuBarAndToolbar(Scene& scene, float toolbarHeight);
 
 	static void DrawHierarchy(EntityManager& entityManager);

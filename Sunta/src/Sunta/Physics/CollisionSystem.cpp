@@ -1207,6 +1207,8 @@ void CollisionSystem::Reset()
 	previousTriggerOverlapPairs.clear();
 	previousSolidOverlapPairs.clear();
 	entitiesWithAnyOverlap.clear();
+	previousFrameContacts.clear();
+	pendingPositionCorrections.clear();
 }
 
 bool CollisionSystem::IsEntityOverlapping(unsigned int entityID)

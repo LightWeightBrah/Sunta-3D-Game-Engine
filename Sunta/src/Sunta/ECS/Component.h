@@ -122,8 +122,10 @@ struct ScriptContainer
 	std::string scriptPath;
 	std::time_t lastWriteTime = 0;
 
+	bool isStarted = false;
+
 	sol::environment environment;
-	sol::function onCreateFunc;
+	sol::function onStartFunc;
 	sol::function onUpdateFunc;
 
 	sol::function onTriggerEnterFunc;
@@ -149,8 +151,6 @@ struct ScriptComponent
 
 		ScriptContainer& container = scripts.emplace_back();
 		container.scriptPath = filepath;
-
-		ReloadScript(container, entityID);
 	}
 
 	void ReloadScript(ScriptContainer& container, unsigned int entityID)
@@ -182,11 +182,11 @@ struct ScriptComponent
 		if (std::filesystem::exists(container.scriptPath))
 			container.lastWriteTime = std::filesystem::last_write_time(container.scriptPath).time_since_epoch().count();
 
-		// assign OnCreate to container if it exists in Lua
-		if (scriptEnvironment[Functions::OnCreate].is<sol::function>())
+		// assign OnStart to container if it exists in Lua
+		if (scriptEnvironment[Functions::OnStart].is<sol::function>())
 		{
-			container.onCreateFunc = scriptEnvironment[Functions::OnCreate];
-			container.onCreateFunc();
+			container.onStartFunc = scriptEnvironment[Functions::OnStart];
+			container.onStartFunc();
 		}
 
 		// assign OnUpdate to container if it exists in Lua

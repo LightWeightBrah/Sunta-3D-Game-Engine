@@ -102,6 +102,10 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 					animatorComponent->currentAnimationName = animations.begin()->first;
 
 				animatorComponent->animator.PlayAnimation(&animations.at(animatorComponent->currentAnimationName));
+
+				// Bone matrices are only filled by UpdateAnimation (runs in Play)
+				// Sample frame 0 once, so the model isn't drawn with identity matrices in the editor
+				animatorComponent->animator.SampleAtTime(0.0f);
 			}
 			else
 			{
@@ -133,6 +137,21 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 			if(script.scriptPath.empty())
 				continue;
 
+			unsigned int entityID = entityManager.GetEntityIDForComponent(component);
+
+			// First update after Play: run the Lua file + OnCreate now,
+			// not when the script was attached in the editor
+			if (!script.isStarted)
+			{
+				script.isStarted = true;
+
+				// Set before loading, so the hot-reload check below doesn't reload it again
+				if (std::filesystem::exists(script.scriptPath))
+					script.lastWriteTime = std::filesystem::last_write_time(script.scriptPath).time_since_epoch().count();
+
+				component.ReloadScript(script, entityID);
+			}
+
 			if (std::filesystem::exists(script.scriptPath))
 			{
 				auto currentWriteTime = std::filesystem::last_write_time(script.scriptPath).time_since_epoch().count();
@@ -141,7 +160,6 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 				{
 					script.lastWriteTime = currentWriteTime;
 
-					unsigned int entityID = entityManager.GetEntityIDForComponent(component);
 					component.ReloadScript(script, entityID);
 
 					SUNTA_ENGINE_LOG_INFO("Hot-Reloaded script: '{0}'", script.scriptPath);

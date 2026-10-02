@@ -9,7 +9,7 @@ namespace Sunta::Scripting
 
 	namespace Functions
 	{
-		constexpr const char* OnCreate       = "OnCreate";
+		constexpr const char* OnStart        = "OnStart";
 		constexpr const char* OnUpdate       = "OnUpdate";
 
 		constexpr const char* OnTriggerEnter = "OnTriggerEnter";

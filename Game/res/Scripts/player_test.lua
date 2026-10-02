@@ -1,5 +1,5 @@
-function OnCreate()
-	print("Hey! Script is working from entity with ID: ", entityID)
+function OnStart()
+	print("Script Started working from entity with ID: ", entityID)
 end
 
 function OnUpdate(deltaTime)

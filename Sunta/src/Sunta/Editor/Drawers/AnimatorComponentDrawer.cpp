@@ -45,6 +45,9 @@ void AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, E
 				{
 					animatorComponent->currentAnimationName = animationName;
 					animatorComponent->animator.PlayAnimation(&modelComponent->modelData->animations.at(animationName));
+
+					// Show the first frame of the new animation in the editor (bones are only updated during Play)
+					animatorComponent->animator.SampleAtTime(0.0f);
 				}
 			}
 

@@ -86,6 +86,57 @@ bool EditorGUI::Button(const std::string& label)
 {
 	return ImGui::Button(label.c_str());
 }
+	
+namespace
+{
+
+// Where we store a copy of the scene as it looked in the editor right before Play
+// Stop loads it back, so everything the game changed (physics, scripts) is undone
+std::filesystem::path GetEditorSceneBackupPath()
+{
+	return std::filesystem::temp_directory_path() / "sunta_editor_scene_backup.scene";
+}
+
+}
+
+void EditorGUI::StartPlayMode(Scene& scene)
+{
+	if (scene.IsPlaying())
+		return;
+
+	// Remember the scene exactly as it looks in the editor
+	SceneSerializer::Serialize(GetEditorSceneBackupPath().string(), scene);
+
+	CollisionSystem::Reset();
+	scene.SetPlayState(PlayState::Playing);
+}
+
+void EditorGUI::StopPlayMode(Scene& scene)
+{
+	if (!scene.IsPlaying())
+		return;
+
+	scene.SetPlayState(PlayState::Stopped);
+
+	// Deserialize() sets the scene's file path to the file it loads from
+	// Here that is the temp snapshot, so we remember the real path and restore it afterwards
+	// Otherwise "Save Scene" would write to the temp file instead of the user's scene file
+	const std::string sceneName = scene.GetName();
+	const std::string scenePath = scene.GetFilePath();
+
+	// Entity IDs may not survive the reload
+	ClearSelection();
+
+	SceneSerializer::Deserialize(GetEditorSceneBackupPath().string(), scene);
+
+	scene.SetName(sceneName);
+	scene.SetFilePath(scenePath);
+
+	CollisionSystem::Reset();
+
+	std::error_code errorCode;
+	std::filesystem::remove(GetEditorSceneBackupPath(), errorCode);
+}
 
 void EditorGUI::DrawMainMenuBarAndToolbar(Scene& scene, float toolbarHeight)
 {
@@ -161,18 +212,22 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_WindowBg,  ImVec4(0, 0, 0, 0));
 
+	// While playing, the scene is in a temporary state (physics, scripts changed it)
+	// Saving would store that state, and Open/New would break the Stop backup
+	const bool canEditScene = !scene.IsPlaying();
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New Scene"))
+			if (ImGui::MenuItem("New Scene", nullptr, false, canEditScene))
 			{
 				scene.Clear();
 				scene.SetName("Untitled_Scene");
 				scene.SetFilePath("");
 			}
 
-			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+			if (ImGui::MenuItem("Open Scene", "Ctrl+O", false, canEditScene))
 			{
 				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, GetSceneDialogStartDirectory());
 
@@ -182,7 +237,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+			if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene))
 			{
 				if (scene.GetFilePath().empty())
 					SaveSceneViaDialog(scene);
@@ -190,7 +245,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 					SceneSerializer::Serialize(scene.GetFilePath(), scene);
 			}
 
-			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
+			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S", false, canEditScene))
 				SaveSceneViaDialog(scene);
 
 			ImGui::EndMenu();
@@ -369,6 +424,22 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 			{
 				EntityFactory::CreateModel(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Model");
 			});
+
+		// Play / Stop, centered in the toolbar
+		float buttonWidth = iconSize + framePadding * 2.0f;
+		float groupWidth = buttonWidth * 2.0f + ImGui::GetStyle().ItemSpacing.x;
+		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - groupWidth) * 0.5f);
+
+		const bool isPlaying = scene.IsPlaying();
+
+		// Play is greyed out while playing, Stop while stopped
+		ImGui::BeginDisabled(isPlaying);
+		DrawToolbarButton(Icons::PlayButton, "##Play", "Play", [&]() { StartPlayMode(scene); });
+		ImGui::EndDisabled();
+
+		ImGui::BeginDisabled(!isPlaying);
+		DrawToolbarButton(Icons::StopButton, "##Stop", "Stop", [&]() { StopPlayMode(scene); });
+		ImGui::EndDisabled();
 
 		// Draw bottom line of toolbar
 
@@ -893,8 +964,12 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 					}
 					else if(IsSceneExtension(path.extension().string()))
 					{
-						SceneSerializer::Deserialize(path.string(), scene);
-						ClearSelection(); // old entity IDs don't exist in the new scene
+						// Loading a scene while playing would break the Play/Stop backup
+						if (!scene.IsPlaying())
+						{
+							SceneSerializer::Deserialize(path.string(), scene);
+							ClearSelection(); // old entity IDs don't exist in the new scene
+						}
 					}
 					else
 					{
