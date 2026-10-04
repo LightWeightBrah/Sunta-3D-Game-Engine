@@ -22,6 +22,8 @@ void PhysicsSystem::UpdatePhysics(EntityManager& entityManager, float frameDelta
 	constexpr float LONGEST_ACCEPTABLE_FRAME = 0.25f;
 	frameDeltaTime = std::min(frameDeltaTime, LONGEST_ACCEPTABLE_FRAME);
 
+	UpdateKinematicVelocities(entityManager, frameDeltaTime);
+
 	timeAccumulator += frameDeltaTime;
 
 	// Run physics in steady, fixed-size steps 
@@ -34,8 +36,55 @@ void PhysicsSystem::UpdatePhysics(EntityManager& entityManager, float frameDelta
 	}
 }
 
+void PhysicsSystem::WakeUp(PhysicsBodyComponent& physicsBody)
+{
+	physicsBody.isSleeping = false;
+	physicsBody.timeSpentAlmostStill = 0.0f;
+}
+
+void PhysicsSystem::AddImpulse(PhysicsBodyComponent& physicsBody, const glm::vec3& impulse)
+{
+	// Protects from dividing by zero for a body with mass 0
+	constexpr float SMALLEST_USABLE_MASS = 0.001f;
+
+	AddVelocityChange(physicsBody, impulse / std::max(physicsBody.mass, SMALLEST_USABLE_MASS));
+}
+
+void PhysicsSystem::AddVelocityChange(PhysicsBodyComponent& physicsBody, const glm::vec3& velocityChange)
+{
+	if (physicsBody.isKinematic)
+		return;
+
+	physicsBody.velocity += velocityChange;
+	WakeUp(physicsBody);
+}
+
+// Two ways to change the position of a kinematic body:
+//
+//  1. MovePosition(target) = REAL MOVEMENT
+//     The body travels to the target and gets a velocity from the distance it covered,
+//     so it can push other bodies that are in its way
+//
+//  2. Setting transform.position directly = TELEPORT
+//     The body just appears at the new place. Its velocity stays 0, so it pushes nothing
+//
+// The caller chooses which one it wants, so physics never has to guess it from the distance
+void PhysicsSystem::MovePosition(PhysicsBodyComponent& physicsBody, const glm::vec3& targetPosition)
+{
+	// Only kinematic bodies are moved by the caller
+	// Normal bodies are moved by physics (use velocity or AddImpulse for them)
+	if (!physicsBody.isKinematic)
+		return;
+
+	// If this is called more than once before the next update, the last call wins
+	physicsBody.kinematicTarget = targetPosition;
+	physicsBody.hasKinematicTarget = true;
+}
+
 void PhysicsSystem::RunSingleStep(EntityManager& entityManager, float deltaTime)
 {
+	RemoveSpinAroundFrozenAxes(entityManager);
+
 	ApplyLinearMotion(entityManager, deltaTime);
 	ApplyAngularMotion(entityManager, deltaTime);
 	ApplyDamping(entityManager, deltaTime);
@@ -91,6 +140,82 @@ glm::vec3 SnapTinyVelocityToZero(const glm::vec3& velocity)
 	);
 }
 
+}
+
+// A kinematic body is moved by scripts, not by physics, so its 'velocity' would always stay 0
+// Collisions are solved from velocities, so physics would see the body as standing still:
+// it would never push or spin the bodies it hits, and it wouldn't wake up sleeping ones
+//
+// Here we carry out the move requested by MovePosition and set the velocity from it:
+//     velocity = distance travelled / time
+//
+// If nobody requested a move this frame (the body is idle, or it was teleported), the velocity is 0
+// Only straight movement is handled, spinning a kinematic body doesn't give it angular velocity
+void PhysicsSystem::UpdateKinematicVelocities(EntityManager& entityManager, float frameDeltaTime)
+{
+	auto& physicsBodies = entityManager.GetAllComponents<PhysicsBodyComponent>();
+
+	for (auto& physicsBody : physicsBodies)
+	{
+		if (!physicsBody.isKinematic)
+		{
+			// Forget any old request, so it can't be used if kinematic is turned on later
+			physicsBody.hasKinematicTarget = false;
+			continue;
+		}
+
+		glm::vec3 velocity = glm::vec3(0.0f);
+
+		if (physicsBody.hasKinematicTarget && frameDeltaTime > 0.0f)
+		{
+			unsigned int entityID = entityManager.GetEntityIDForComponent(physicsBody);
+
+			if (auto* transform = entityManager.GetComponent<TransformComponent>(entityID))
+			{
+				velocity = (physicsBody.kinematicTarget - transform->position) / frameDeltaTime;
+
+				transform->position = physicsBody.kinematicTarget;
+				transform->isDirty = true;
+			}
+		}
+
+		// The request is used up, a new one is needed for the next move
+		physicsBody.hasKinematicTarget = false;
+		physicsBody.velocity = velocity;
+	}
+}
+
+// Freeze Rotation: removes spin around the frozen axes (e.g. a player that must not fall over)
+// Impacts can't ADD such spin (see GetInverseInertiaTensorWorld in CollisionSystem.cpp),
+// so this only cleans values that were set from outside: the Inspector or a script
+void PhysicsSystem::RemoveSpinAroundFrozenAxes(EntityManager& entityManager)
+{
+	auto& physicsBodies = entityManager.GetAllComponents<PhysicsBodyComponent>();
+
+	for (auto& physicsBody : physicsBodies)
+	{
+		bool hasFrozenAxis = physicsBody.freezeRotationX || physicsBody.freezeRotationY || physicsBody.freezeRotationZ;
+
+		if (!hasFrozenAxis || physicsBody.isKinematic || physicsBody.isSleeping)
+			continue;
+
+		unsigned int entityID = entityManager.GetEntityIDForComponent(physicsBody);
+
+		auto* transform = entityManager.GetComponent<TransformComponent>(entityID);
+		if (!transform)
+			continue;
+
+		// Angular velocity is in world space, but the frozen axes are the body's own,
+		// so we move to the body's space, zero the frozen axes and move back
+		glm::quat bodyRotation = transform->rotationQuaternion;
+		glm::vec3 spinInBodySpace = glm::inverse(bodyRotation) * physicsBody.angularVelocity;
+
+		if (physicsBody.freezeRotationX) spinInBodySpace.x = 0.0f;
+		if (physicsBody.freezeRotationY) spinInBodySpace.y = 0.0f;
+		if (physicsBody.freezeRotationZ) spinInBodySpace.z = 0.0f;
+
+		physicsBody.angularVelocity = bodyRotation * spinInBodySpace;
+	}
 }
 
 void PhysicsSystem::ApplyLinearMotion(EntityManager& entityManager, float deltaTime)

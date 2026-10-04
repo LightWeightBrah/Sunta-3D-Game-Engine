@@ -20,6 +20,14 @@ struct CollisionExitEvent;
 
 struct OBB;
 
+// Whether the game simulation (physics, animations, scripts) is running
+// Separate from EngineMode (Editor/Game), which only controls camera and cursor
+enum class PlayState 
+{
+	Stopped, 
+	Playing 
+};
+
 class Scene
 {
 public:
@@ -35,16 +43,24 @@ public:
 	int       GetEntityUnderMouse       (const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 	glm::vec3 GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 
-	EntityManager& GetEntityManager()		       { return entityManager; }
-											  
-	const std::string& GetName()             const { return name; }
-	const std::string& GetFilePath()         const { return filePath; }
-	void SetName(const std::string& name)	       { this->name = name; }
-	void SetFilePath(const std::string& path)      { this->filePath = path; }
+	bool      IsPlaying()					 const { return playState == PlayState::Playing; }
+	
+	EntityManager& GetEntityManager()		       { return entityManager;    }
+	PlayState      GetPlayState()			 const { return playState;        }
+
+	const Camera&      GetCamera()           const { return camera;           }
+	const std::string& GetName()             const { return name;             }
+	const std::string& GetFilePath()         const { return filePath;         }
+
+	void SetName(const std::string& name)	       { this->name      = name;  }
+	void SetFilePath(const std::string& path)      { this->filePath  = path;  }
+	void SetPlayState(PlayState state)			   { this->playState = state; }
+
 
 private:
 	EntityManager		entityManager;
 	Camera				camera;
+	PlayState			playState			= PlayState::Stopped;
 
 	unsigned int		resizeEventID;
 

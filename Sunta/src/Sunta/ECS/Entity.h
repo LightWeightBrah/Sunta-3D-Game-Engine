@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Scene/Scene.h"
-#include "ECS/Component.h"
-#include "Scripting/ScriptingEngine.h"
+#include <utility>
+
+#include "ECS/EntityManager.h"
 
 namespace Sunta
 {
@@ -11,38 +11,37 @@ class Entity
 {
 public:
 	Entity() = default;
-	Entity(unsigned int entityID, Scene* scene)
+	Entity(unsigned int entityID, EntityManager* entityManager)
 		: entityID(entityID)
-		, scene(scene) { }
+		, entityManager(entityManager) { }
+
+	unsigned int GetID() const { return entityID; }
+
+	// False for a default-constructed Entity or one that has been destroyed
+	bool IsValid() const { return entityManager && entityManager->IsAlive(entityID); }
 
 	template<typename T, typename... Args>
 	T& AddComponent(Args&&... args)
 	{
-		return scene->GetEntityManager().AddComponent<T>(entityID, std::forward<Args>(args)...);
+		return entityManager->AddComponent<T>(entityID, std::forward<Args>(args)...);
+	}
+
+	// Returns nullptr when the entity doesn't have this component
+	template<typename T>
+	T* GetComponent() const
+	{
+		return entityManager ? entityManager->GetComponent<T>(entityID) : nullptr;
 	}
 
 	template<typename T>
-	T* GetComponent()
-	{
-		return scene->GetEntityManager().GetComponent<T>(entityID);
+	bool HasComponent() const 
+	{ 
+		return GetComponent<T>() != nullptr; 
 	}
-
-	void AttachScript(const std::string& filepath)
-	{
-		auto* scriptComponent = scene->GetEntityManager().GetComponent<ScriptComponent>(entityID);
-		if (!scriptComponent)
-		{
-			scriptComponent = &scene->GetEntityManager().AddComponent<ScriptComponent>(entityID);
-		}
-
-		scriptComponent->LoadScript(ScriptingEngine::GetState(), filepath, entityID);
-	}
-
-	unsigned int GetID() const { return entityID; }
 
 private:
-	unsigned int entityID = 0;
-	Scene* scene = nullptr;
+	unsigned int entityID		 = 0;
+	EntityManager* entityManager = nullptr;
 };
 
 

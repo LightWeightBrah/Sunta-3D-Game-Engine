@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CollisionSystem.h"
+#include "PhysicsSystem.h"
 
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
@@ -236,6 +237,12 @@ glm::mat3 GetInverseInertiaTensorWorld(const PhysicsBodyComponent* physicsBody, 
 		inertiaLocal.z > SMALLEST_USABLE_INERTIA ? 1.0f / inertiaLocal.z : 0.0f
 	);
 
+	// Freeze Rotation: an axis the body can't rotate around is an axis with infinite resistance to spinning
+	// (inverse inertia 0), so no impact can spin the body around it
+	if (physicsBody->freezeRotationX) inverseInertiaLocal.x = 0.0f;
+	if (physicsBody->freezeRotationY) inverseInertiaLocal.y = 0.0f;
+	if (physicsBody->freezeRotationZ) inverseInertiaLocal.z = 0.0f;
+
 	return ComputeInverseInertiaTensorWorld(inverseInertiaLocal, collider.worldOBB.orientation);
 }
 
@@ -269,17 +276,11 @@ float CombineFriction(const PhysicsBodyComponent* bodyA, const PhysicsBodyCompon
 bool IsBodyAlmostStill(const PhysicsBodyComponent& body)
 {
 	// Speed below these is treated as body NOT MOVING
-	constexpr float STILL_LINEAR_SPEED  = 0.05f; // meters  / second
+	constexpr float STILL_LINEAR_SPEED = 0.05f; // meters  / second
 	constexpr float STILL_ANGULAR_SPEED = 0.10f; // radians / second
 
-	return glm::length(body.velocity)        < STILL_LINEAR_SPEED
+	return glm::length(body.velocity) < STILL_LINEAR_SPEED
 		&& glm::length(body.angularVelocity) < STILL_ANGULAR_SPEED;
-}
-
-void WakeUp(PhysicsBodyComponent& body)
-{
-	body.isSleeping           = false;
-	body.timeSpentAlmostStill = 0.0f;
 }
 
 // Returns whichever world axis (X, Y or Z) points the LEAST like the given
@@ -762,8 +763,8 @@ std::unordered_map<unsigned int, int> ComputeStackSupportDepth(const std::vector
 		for (const CollisionPair& pair : pairs)
 		{
 			unsigned int otherEntity = (pair.entityA == currentEntity) ? pair.entityB
-									 : (pair.entityB == currentEntity) ? pair.entityA
-									 : std::numeric_limits<unsigned int>::max(); // max (No currentEntity found)
+				: (pair.entityB == currentEntity) ? pair.entityA
+				: std::numeric_limits<unsigned int>::max(); // max (No currentEntity found)
 
 			if(otherEntity == std::numeric_limits<unsigned int>::max())
 				continue;
@@ -997,9 +998,9 @@ void WakeTouchingPairIfNeeded(CollisionPair& pair)
 		return;
 
 	if (pair.bodyA)
-		WakeUp(*pair.bodyA);
+		PhysicsSystem::WakeUp(*pair.bodyA);
 	if (pair.bodyB)
-		WakeUp(*pair.bodyB);
+		PhysicsSystem::WakeUp(*pair.bodyB);
 }
 
 // Puts bodies to sleep if they stay almost still/frozen while touching something 
@@ -1207,6 +1208,8 @@ void CollisionSystem::Reset()
 	previousTriggerOverlapPairs.clear();
 	previousSolidOverlapPairs.clear();
 	entitiesWithAnyOverlap.clear();
+	previousFrameContacts.clear();
+	pendingPositionCorrections.clear();
 }
 
 bool CollisionSystem::IsEntityOverlapping(unsigned int entityID)

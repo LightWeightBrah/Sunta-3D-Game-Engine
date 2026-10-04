@@ -165,8 +165,8 @@ void Application::Render()
 void Application::Shutdown()
 {
 	EditorGUIContext::Shutdown(window.get());
-	ScriptingEngine::Shutdown();
 	scene->Clear();
+	ScriptingEngine::Shutdown();
 
 	if (window)
 		window.reset();

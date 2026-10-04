@@ -13,19 +13,13 @@
 #include "Animation/Animator.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/CollisionLayers.h"
+#include "ECS/Entity.h"
 
 namespace Sunta
 {
 
-class Entity;
 class Mesh;
 class Material;
-
-struct Component
-{
-	virtual ~Component() = default;
-	Entity* owner = nullptr;
-};
 
 struct TagComponent
 {
@@ -38,7 +32,7 @@ struct TagComponent
 				ADD_PROPERTY(TagComponent, name, PropertyDataType::String)
 			});
 	}
-	
+
 };
 
 struct TransformComponent
@@ -72,7 +66,7 @@ struct TransformComponent
 	{
 		glm::vec3 newRotation = glm::degrees(glm::eulerAngles(rotationQuaternion));
 
-		// Every 3D orientation has exactly TWO unique Euler representations (ignoring 360° wraps)
+		// Every 3D orientation has exactly TWO unique Euler representations (ignoring 360 degrees wraps)
 		// 'newRotation' is the first, and 'flippedAlternative' is the second valid way to write it
 		glm::vec3 flippedAlternative = glm::vec3(
 			newRotation.x + 180.0f,
@@ -81,18 +75,20 @@ struct TransformComponent
 		);
 
 		// glm::mod is floating-point modulo
-		// Wrapping deltas into [-180, 180] degrees handles all 360° multiples automatically,
+		// Wrapping angles into [-180, 180] degrees handles all 360 degrees multiples automatically,
 		// so we only ever need to compare these two representations
-		auto wrapDelta = [](const glm::vec3& delta)
+		auto wrapAngles = [](const glm::vec3& angles)
 			{
-				return glm::mod(delta + 180.0f, 360.0f) - 180.0f;
+				return glm::mod(angles + 180.0f, 360.0f) - 180.0f;
 			};
 
-		float distToNew     = glm::length(wrapDelta(newRotation - rotation));
-		float distToFlipped = glm::length(wrapDelta(flippedAlternative - rotation));
+		float distToNew     = glm::length(wrapAngles(newRotation        - rotation));
+		float distToFlipped = glm::length(wrapAngles(flippedAlternative - rotation));
 
 		// Pick whichever representation is closer to the current rotation to maintain continuity
-		rotation = (distToFlipped < distToNew) ? flippedAlternative : newRotation;
+		glm::vec3 closerRotation = (distToFlipped < distToNew) ? flippedAlternative : newRotation;
+
+		rotation = wrapAngles(closerRotation);
 	}
 
 	static void RegisterToInspector()
@@ -122,17 +118,40 @@ struct ScriptContainer
 	std::string scriptPath;
 	std::time_t lastWriteTime = 0;
 
+	bool isStarted = false;
+	Entity owner;
+
 	sol::environment environment;
-	sol::function onCreateFunc;
-	sol::function onUpdateFunc;
 
-	sol::function onTriggerEnterFunc;
-	sol::function onTriggerStayFunc;
-	sol::function onTriggerExitFunc;
+	// protected_function = a Lua error comes back as a result we can log,
+	// instead of being silently lost
+	sol::protected_function onStartFunc;
+	sol::protected_function onUpdateFunc;
 
-	sol::function onCollisionEnterFunc;
-	sol::function onCollisionStayFunc;
-	sol::function onCollisionExitFunc;
+	sol::protected_function onTriggerEnterFunc;
+	sol::protected_function onTriggerStayFunc;
+	sol::protected_function onTriggerExitFunc;
+
+	sol::protected_function onCollisionEnterFunc;
+	sol::protected_function onCollisionStayFunc;
+	sol::protected_function onCollisionExitFunc;
+
+	// Calls one Lua callback. If the script has an error, we log the script, the function and the Lua message
+	// (it contains the line number), then disable that callback until the script is saved (hot-reloaded) again
+	// Without disabling it, the same error would be logged every frame
+	template<typename... Args>
+	void CallFunction(sol::protected_function& function, std::string_view functionName, Args&&... args)
+	{
+		sol::protected_function_result result = function(std::forward<Args>(args)...);
+		if (result.valid())
+			return;
+
+		sol::error error = result;
+		SUNTA_ENGINE_LOG_ERROR("Lua error in '{0}', function {1}: {2}", scriptPath, functionName, error.what());
+		SUNTA_ENGINE_LOG_ERROR("{0} is disabled until you save '{1}' again", functionName, scriptPath);
+
+		function = sol::protected_function();
+	}
 };
 
 struct ScriptComponent
@@ -140,20 +159,16 @@ struct ScriptComponent
 	unsigned int entityID = 0;
 	std::vector<ScriptContainer> scripts;
 
-	void LoadScript(const std::string& filepath, unsigned int entityID)
+	void AddScript(const std::string& filepath)
 	{
 		if (filepath.empty())
 			return;
 
-		this->entityID = entityID;
-
 		ScriptContainer& container = scripts.emplace_back();
 		container.scriptPath = filepath;
-
-		ReloadScript(container, entityID);
 	}
 
-	void ReloadScript(ScriptContainer& container, unsigned int entityID)
+	void ReloadScript(ScriptContainer& container, const Entity& entity)
 	{
 		using namespace Scripting;
 
@@ -162,12 +177,15 @@ struct ScriptComponent
 
 		auto& luaState = ScriptingEngine::GetState();
 
-		// Create separated environment, so that every script we attach (e.g on enemy, player) have their own variables etc.
+		// Create separated environment, so that every script we attach (e.g on enemy, player) have their own variables
 		sol::environment scriptEnvironment(luaState, sol::create, luaState.globals());
 
-		// Add entityID to Lua script so script knows what entity its using
-		scriptEnvironment[Fields::EntityID] = entityID;
-		
+		container.owner = entity;
+
+		// Tell the script which entity it belongs to (available in Lua as 'this')
+		scriptEnvironment[Fields::This] = entity; // the entity of this script, with its components (this.name, this.transform, ...)
+
+
 		// Load Lua text file
 		sol::protected_function_result result = luaState.script_file(container.scriptPath, scriptEnvironment);
 		if (!result.valid())
@@ -182,11 +200,11 @@ struct ScriptComponent
 		if (std::filesystem::exists(container.scriptPath))
 			container.lastWriteTime = std::filesystem::last_write_time(container.scriptPath).time_since_epoch().count();
 
-		// assign OnCreate to container if it exists in Lua
-		if (scriptEnvironment[Functions::OnCreate].is<sol::function>())
+		// assign OnStart to container if it exists in Lua
+		if (scriptEnvironment[Functions::OnStart].is<sol::function>())
 		{
-			container.onCreateFunc = scriptEnvironment[Functions::OnCreate];
-			container.onCreateFunc();
+			container.onStartFunc = scriptEnvironment[Functions::OnStart];
+			container.CallFunction(container.onStartFunc, Functions::OnStart);
 		}
 
 		// assign OnUpdate to container if it exists in Lua
@@ -215,53 +233,71 @@ struct ScriptComponent
 		if (scriptEnvironment[Functions::OnCollisionExit].is<sol::function>())
 			container.onCollisionExitFunc = scriptEnvironment[Functions::OnCollisionExit];
 
+		WarnAboutUnknownCallbacks(scriptEnvironment, container.scriptPath);
 	}
 
-	void InvokeOnTriggerEnter(unsigned int otherEntityID)
-	{
-		for (auto& script : scripts)
-			if (script.onTriggerEnterFunc.valid())
-				script.onTriggerEnterFunc(otherEntityID);
-	}
+	void InvokeOnTriggerEnter  (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onTriggerEnterFunc,   Scripting::Functions::OnTriggerEnter,   other); }
+	void InvokeOnTriggerStay   (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onTriggerStayFunc,    Scripting::Functions::OnTriggerStay,    other); }
+	void InvokeOnTriggerExit   (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onTriggerExitFunc,    Scripting::Functions::OnTriggerExit,    other); }
 
-	void InvokeOnTriggerStay(unsigned int otherEntityID)
-	{
-		for (auto& script : scripts)
-			if (script.onTriggerStayFunc.valid())
-				script.onTriggerStayFunc(otherEntityID);
-	}
+	void InvokeOnCollisionEnter(const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onCollisionEnterFunc, Scripting::Functions::OnCollisionEnter, other); }
+	void InvokeOnCollisionStay (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onCollisionStayFunc,  Scripting::Functions::OnCollisionStay,  other); }
+	void InvokeOnCollisionExit (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onCollisionExitFunc,  Scripting::Functions::OnCollisionExit,  other); }
 
-	void InvokeOnTriggerExit(unsigned int otherEntityID)
-	{
-		for (auto& script : scripts)
-			if (script.onTriggerExitFunc.valid())
-				script.onTriggerExitFunc(otherEntityID);
-	}
-
-	void InvokeOnCollisionEnter(unsigned int otherEntityID)
-	{
-		for (auto& script : scripts)
-			if (script.onCollisionEnterFunc.valid())
-				script.onCollisionEnterFunc(otherEntityID);
-	}
-
-	void InvokeOnCollisionStay(unsigned int otherEntityID)
-	{
-		for (auto& script : scripts)
-			if (script.onCollisionStayFunc.valid())
-				script.onCollisionStayFunc(otherEntityID);
-	}
-
-	void InvokeOnCollisionExit(unsigned int otherEntityID)
-	{
-		for (auto& script : scripts)
-			if (script.onCollisionExitFunc.valid())
-				script.onCollisionExitFunc(otherEntityID);
-	}
 
 	static void RegisterToInspector()
 	{
-		InspectorComponentRegistry::RegisterComponent<ScriptComponent>("Script", EngineAssets::Icons::LuaFile,{ });
+		InspectorComponentRegistry::RegisterComponent<ScriptComponent>("Script", EngineAssets::Icons::LuaFile, { });
+	}
+
+private:
+	// Calls one Lua callback on every script of this component (if the script defines it)
+	//
+	// 'callback' is a pointer to a MEMBER of ScriptContainer (e.g. &ScriptContainer::onTriggerEnterFunc)
+	// It doesn't point to a function or to a specific object, it only says WHICH field to use
+	//
+	// 'script.*callback' then means: take that field from this specific 'script' object
+	// So with callback = &ScriptContainer::onTriggerEnterFunc, 'script.*callback' is the same as 'script.onTriggerEnterFunc'
+	//
+	// This lets us write the loop once and reuse it for all 6 callbacks (trigger/collision enter/stay/exit)
+	template<typename... Args>
+	void InvokeOnAllScripts(sol::protected_function ScriptContainer::* callback, std::string_view functionName, Args&&... args)
+	{
+		for (auto& script : scripts)
+		{
+			sol::protected_function& function = script.*callback;
+			if (function.valid())
+				script.CallFunction(function, functionName, std::forward<Args>(args)...);
+		}
+	}
+
+	static bool IsKnownCallbackName(std::string_view name)
+	{
+		using namespace Scripting;
+
+		return name == std::string_view(Functions::OnStart)
+			|| name == std::string_view(Functions::OnUpdate)
+			|| name == std::string_view(Functions::OnTriggerEnter)
+			|| name == std::string_view(Functions::OnTriggerStay)
+			|| name == std::string_view(Functions::OnTriggerExit)
+			|| name == std::string_view(Functions::OnCollisionEnter)
+			|| name == std::string_view(Functions::OnCollisionStay)
+			|| name == std::string_view(Functions::OnCollisionExit);
+	}
+
+	// A misspelled callback (e.g. 'OnUpdte') is valid Lua, so nothing would fail and nothing would happen
+	// Every function a script defines that starts with "On" but isn't a known callback gets a warning
+	static void WarnAboutUnknownCallbacks(const sol::environment& scriptEnvironment, const std::string& scriptPath)
+	{
+		scriptEnvironment.for_each([&](const sol::object& key, const sol::object& value)
+			{
+				if (!key.is<std::string>() || !value.is<sol::function>())
+					return;
+
+				std::string name = key.as<std::string>();
+				if (name.rfind("On", 0) == 0 && !IsKnownCallbackName(name))
+					SUNTA_ENGINE_LOG_WARNING("Script '{0}' defines '{1}', but the engine has no such callback (typo?)", scriptPath, name);
+			});
 	}
 };
 
@@ -285,7 +321,7 @@ struct MeshComponent
 		, isDirty(false) { }
 
 	// Constructor for Init via asset name
-	MeshComponent(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, 
+	MeshComponent(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material,
 		const std::string& meshName, const std::string& materialName)
 		: mesh(mesh)
 		, material(material)
@@ -385,6 +421,9 @@ struct PhysicsBodyComponent
 	// Kinematic body ISN'T MOVED BY GRAVITY NOR COLLISIONS
 	// Kinmeatic body controls its own movement (e.g Player controlled by keyboard input)
 	// Kinematic body STILL WORKS WITH COLLISIONS, it's just nothing "pushes it" automatically 
+	// Kinematic body gets its velocity from the distance it travelled with MovePosition,
+	// so it can push other bodies it hits (setting transform.position directly is a teleport and gives no velocity)
+
 	bool isKinematic = false;
 	bool useGravity  = true;
 
@@ -396,9 +435,16 @@ struct PhysicsBodyComponent
 	// E.g. (0, 3.14, 0)		= spinning around the up-axis at half a turn per secound
 	glm::vec3 angularVelocity = glm::vec3(0.0f);
 
+	// Freeze Rotation = the body can't spin around the chosen axis (e.g. a player that must not fall over)
+	// For an upright player freeze X and Z, and leave Y free so it can still turn left and right
+	// The axes are the body's OWN (local) axes, the same as in Unity
+	bool freezeRotationX = false;
+	bool freezeRotationY = false;
+	bool freezeRotationZ = false;
+
 	// restitution = how bouncy object is when it hits something
 	float mass = 1.0f;
-	float restitution = 0.0f; // 0 = no bounce (sandbag), 1 = SUPER BOUNCY (rubber ball)
+	float restitution = 0.2f; // 0 = no bounce (sandbag), 1 = SUPER BOUNCY (rubber ball)
 
 	// How much the surface resists sliding: 0 = ice (frictionless), 1 = rubber (strong grip)
 	// When two bodies touch, their frictions combine as sqrt(frictionA * frictionB)
@@ -416,6 +462,12 @@ struct PhysicsBodyComponent
 	bool  isSleeping		   = false;
 	float timeSpentAlmostStill = 0.0f;
 
+	// Only for kinematic bodies: where a script asked the body to move to (see PhysicsSystem::MovePosition)
+	// Physics moves the body there during the next update and works out its velocity from the distance
+	// travelled, so the body can push other bodies on the way
+	glm::vec3 kinematicTarget = glm::vec3(0.0f);
+	bool hasKinematicTarget = false;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PhysicsBodyComponent>("Physics Body", EngineAssets::Icons::Physics,
@@ -427,6 +479,9 @@ struct PhysicsBodyComponent
 				ADD_PROPERTY(PhysicsBodyComponent, mass,		     PropertyDataType::Float),
 				ADD_PROPERTY(PhysicsBodyComponent, restitution,		 PropertyDataType::Float),
 				ADD_PROPERTY(PhysicsBodyComponent, friction,		 PropertyDataType::Float),
+				ADD_PROPERTY(PhysicsBodyComponent, freezeRotationX,	 PropertyDataType::Bool),
+				ADD_PROPERTY(PhysicsBodyComponent, freezeRotationY,	 PropertyDataType::Bool),
+				ADD_PROPERTY(PhysicsBodyComponent, freezeRotationZ,	 PropertyDataType::Bool),
 			});
 	}
 };

@@ -154,15 +154,27 @@ void Scene::ProcessInput()
 	
 void Scene::Update()
 {
-	PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
+	const bool isPlaying = IsPlaying();
 
-	//Systems::UpdateTransform(entityManager);
+	if (isPlaying)
+	{
+		Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
+		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
+	}
+
 	Systems::SyncMeshComponents(entityManager);
 	Systems::SyncModelComponents(entityManager);
-	Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
-	Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
 
-	//CollisionSystem::Update(entityManager);
+	if (isPlaying)
+	{
+		Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
+	}
+
+	Systems::UpdateTransform(entityManager);
+
+	// Keeps collider gizmos following their entities while stopped
+	if (!isPlaying)
+		CollisionSystem::UpdateColliders(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)

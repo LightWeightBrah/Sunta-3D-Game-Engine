@@ -41,11 +41,11 @@ private:
 	static inline std::shared_ptr<VertexBuffer> vertexBuffer;
 	static inline std::shared_ptr<Shader>       debugShader;
 
-	static inline bool      showAllGizmos           = true;
+	static inline bool      showAllGizmos           = false;
 	static inline glm::vec3 gizmosColor             = glm::vec3(0.0f, 1.0f, 0.0f);
 	static inline glm::vec3 gizmosCollideColor      = glm::vec3(1.0f, 0.0f, 0.0f);
 
-	static inline bool      showBoundsGizmos		= true;
+	static inline bool      showBoundsGizmos		= false;
 	static inline glm::vec3 boundsGizmoColor		= glm::vec3(0.0f, 1.0f, 1.0f);
 
 	static inline float     gizmosLineWidth         = 1.0f;

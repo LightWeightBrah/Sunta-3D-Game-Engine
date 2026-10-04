@@ -4,6 +4,8 @@
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include <imguizmo/ImGuizmo.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <algorithm>
 
@@ -84,6 +86,57 @@ bool EditorGUI::Button(const std::string& label)
 {
 	return ImGui::Button(label.c_str());
 }
+	
+namespace
+{
+
+// Where we store a copy of the scene as it looked in the editor right before Play
+// Stop loads it back, so everything the game changed (physics, scripts) is undone
+std::filesystem::path GetEditorSceneBackupPath()
+{
+	return std::filesystem::temp_directory_path() / "sunta_editor_scene_backup.scene";
+}
+
+}
+
+void EditorGUI::StartPlayMode(Scene& scene)
+{
+	if (scene.IsPlaying())
+		return;
+
+	// Remember the scene exactly as it looks in the editor
+	SceneSerializer::Serialize(GetEditorSceneBackupPath().string(), scene);
+
+	CollisionSystem::Reset();
+	scene.SetPlayState(PlayState::Playing);
+}
+
+void EditorGUI::StopPlayMode(Scene& scene)
+{
+	if (!scene.IsPlaying())
+		return;
+
+	scene.SetPlayState(PlayState::Stopped);
+
+	// Deserialize() sets the scene's file path to the file it loads from
+	// Here that is the temp snapshot, so we remember the real path and restore it afterwards
+	// Otherwise "Save Scene" would write to the temp file instead of the user's scene file
+	const std::string sceneName = scene.GetName();
+	const std::string scenePath = scene.GetFilePath();
+
+	// Entity IDs may not survive the reload
+	ClearSelection();
+
+	SceneSerializer::Deserialize(GetEditorSceneBackupPath().string(), scene);
+
+	scene.SetName(sceneName);
+	scene.SetFilePath(scenePath);
+
+	CollisionSystem::Reset();
+
+	std::error_code errorCode;
+	std::filesystem::remove(GetEditorSceneBackupPath(), errorCode);
+}
 
 void EditorGUI::DrawMainMenuBarAndToolbar(Scene& scene, float toolbarHeight)
 {
@@ -159,18 +212,22 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_WindowBg,  ImVec4(0, 0, 0, 0));
 
+	// While playing, the scene is in a temporary state (physics, scripts changed it)
+	// Saving would store that state, and Open/New would break the Stop backup
+	const bool canEditScene = !scene.IsPlaying();
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New Scene"))
+			if (ImGui::MenuItem("New Scene", nullptr, false, canEditScene))
 			{
 				scene.Clear();
 				scene.SetName("Untitled_Scene");
 				scene.SetFilePath("");
 			}
 
-			if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+			if (ImGui::MenuItem("Open Scene", "Ctrl+O", false, canEditScene))
 			{
 				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, GetSceneDialogStartDirectory());
 
@@ -180,7 +237,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+			if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene))
 			{
 				if (scene.GetFilePath().empty())
 					SaveSceneViaDialog(scene);
@@ -188,7 +245,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 					SceneSerializer::Serialize(scene.GetFilePath(), scene);
 			}
 
-			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
+			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S", false, canEditScene))
 				SaveSceneViaDialog(scene);
 
 			ImGui::EndMenu();
@@ -215,12 +272,36 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			ImGui::Separator();
 
 			bool showBoundsGizmos = DebugRenderer::GetShowBoundsGizmos();
-			if (ImGui::Checkbox("Show Bounding Boxes", &showBoundsGizmos))
+			if (ImGui::Checkbox("Show Raycast Bounding Boxes", &showBoundsGizmos))
 				DebugRenderer::SetShowBoundsGizmos(showBoundsGizmos);
 
 			glm::vec3 boundsColor = DebugRenderer::GetBoundsGizmoColor();
 			if (ImGui::ColorEdit3("Bounding Box Color", &boundsColor.x))
 				DebugRenderer::SetBoundsGizmoColor(boundsColor);
+
+			ImGui::Separator();
+
+			ImGui::Checkbox("Show Transform Gizmo", &showTransformGizmo);
+
+			if (showTransformGizmo)
+			{
+				if (ImGui::RadioButton("Translate (W)", gizmoOperation == GizmoOperation::Translate)) 
+					gizmoOperation = GizmoOperation::Translate;
+
+				if (ImGui::RadioButton("Rotate (E)",    gizmoOperation == GizmoOperation::Rotate))    
+					gizmoOperation = GizmoOperation::Rotate;
+
+				if (ImGui::RadioButton("Scale (R)",     gizmoOperation == GizmoOperation::Scale))     
+					gizmoOperation = GizmoOperation::Scale;
+
+				ImGui::Separator();
+
+				if (ImGui::RadioButton("World", gizmoSpace == GizmoSpace::World)) 
+					gizmoSpace = GizmoSpace::World;
+
+				if (ImGui::RadioButton("Local", gizmoSpace == GizmoSpace::Local)) 
+					gizmoSpace = GizmoSpace::Local;
+			}
 
 			ImGui::EndMenu();
 		}
@@ -343,6 +424,22 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 			{
 				EntityFactory::CreateModel(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Model");
 			});
+
+		// Play / Stop, centered in the toolbar
+		float buttonWidth = iconSize + framePadding * 2.0f;
+		float groupWidth = buttonWidth * 2.0f + ImGui::GetStyle().ItemSpacing.x;
+		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - groupWidth) * 0.5f);
+
+		const bool isPlaying = scene.IsPlaying();
+
+		// Play is greyed out while playing, Stop while stopped
+		ImGui::BeginDisabled(isPlaying);
+		DrawToolbarButton(Icons::PlayButton, "##Play", "Play", [&]() { StartPlayMode(scene); });
+		ImGui::EndDisabled();
+
+		ImGui::BeginDisabled(!isPlaying);
+		DrawToolbarButton(Icons::StopButton, "##Stop", "Stop", [&]() { StopPlayMode(scene); });
+		ImGui::EndDisabled();
 
 		// Draw bottom line of toolbar
 
@@ -867,8 +964,12 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 					}
 					else if(IsSceneExtension(path.extension().string()))
 					{
-						SceneSerializer::Deserialize(path.string(), scene);
-						ClearSelection(); // old entity IDs don't exist in the new scene
+						// Loading a scene while playing would break the Play/Stop backup
+						if (!scene.IsPlaying())
+						{
+							SceneSerializer::Deserialize(path.string(), scene);
+							ClearSelection(); // old entity IDs don't exist in the new scene
+						}
 					}
 					else
 					{
@@ -1139,6 +1240,127 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 	}
 
 	ImGui::Columns(1); // column reset
+}
+
+void EditorGUI::DrawTransformGizmo(Scene& scene)
+{
+	// Nothing to do if the gizmo is off or no entity is selected
+	if (!showTransformGizmo || selectedEntity < 0)
+		return;
+
+	EntityManager& entityManager = scene.GetEntityManager();
+	unsigned int entityID = static_cast<unsigned int>(selectedEntity);
+
+	auto* transform = entityManager.GetComponent<TransformComponent>(entityID);
+	if (!transform)
+		return;
+
+	ImGuiIO& io = ImGui::GetIO();
+
+	// Keys to switch the gizmo mode (ignored while typing in a text field)
+	if (!io.WantTextInput)
+	{
+		if (ImGui::IsKeyPressed(ImGuiKey_W, false)) 
+			gizmoOperation = GizmoOperation::Translate;
+
+		if (ImGui::IsKeyPressed(ImGuiKey_E, false)) 
+			gizmoOperation = GizmoOperation::Rotate;
+
+		if (ImGui::IsKeyPressed(ImGuiKey_R, false)) 
+			gizmoOperation = GizmoOperation::Scale;
+	}
+
+	// The scene is rendered on the whole window (no framebuffer), so the gizmo
+	// rect must cover the whole window too, or it won't line up with the objects
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGuizmo::SetOrthographic(false);
+	ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList(viewport)); // above the scene, below the panels
+	ImGuizmo::SetRect(viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y);
+
+	glm::mat4 view = scene.GetCamera().GetViewMatrix();
+	glm::mat4 projection = scene.GetCamera().GetProjectionMatrix();
+
+	// Build the matrix straight from the transform (not from WorldMatrixComponent),
+	// so it is never one frame behind when isDirty is still true
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->position)
+		* glm::mat4_cast(transform->rotationQuaternion)
+		* glm::scale(glm::mat4(1.0f), transform->scale);
+
+	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+	float snapValue = 0.5f;
+
+	switch (gizmoOperation)
+	{
+	case GizmoOperation::Translate: 
+		operation = ImGuizmo::TRANSLATE; 
+		snapValue = 0.5f; // units  
+		break; 
+
+	case GizmoOperation::Rotate:   
+		operation = ImGuizmo::ROTATE;    
+		snapValue = 15.0f; // degrees
+		break;
+
+	case GizmoOperation::Scale:     
+		operation = ImGuizmo::SCALE;     
+		snapValue = 0.1f; // factor
+		break; 
+	}
+
+	// ImGuizmo can only scale along local axes, so Scale always uses Local
+	ImGuizmo::MODE mode = (gizmoSpace == GizmoSpace::Local || gizmoOperation == GizmoOperation::Scale)
+		? ImGuizmo::LOCAL : ImGuizmo::WORLD;
+
+	// Hold Ctrl to snap to fixed steps
+	float snap[3] = { snapValue, snapValue, snapValue };
+
+	// By default ImGuizmo flips axes when switching between left/right side
+	// Disabled: the axes keep a fixed direction (+X, +Y, +Z) from every side
+	ImGuizmo::AllowAxisFlip(false);
+
+	// Draws the gizmo and modifies 'model' in place while the user drags it
+	ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
+		operation, mode, glm::value_ptr(model),
+		nullptr, io.KeyCtrl ? snap : nullptr);
+
+	// Not dragging, nothing changed, don't touch the transform
+	if (!ImGuizmo::IsUsing())
+		return;
+
+	// Split the edited matrix back into position / scale / rotation
+	glm::vec3 newPosition = glm::vec3(model[3]);
+
+	// Scale = length of each basis axis
+	glm::vec3 newScale(
+		glm::length(glm::vec3(model[0])),
+		glm::length(glm::vec3(model[1])),
+		glm::length(glm::vec3(model[2]))
+	);
+
+	// Rotation = basis axes with the scale divided out
+	glm::mat3 rotationMatrix(
+		glm::vec3(model[0]) / newScale.x,
+		glm::vec3(model[1]) / newScale.y,
+		glm::vec3(model[2]) / newScale.z
+	);
+
+	switch (gizmoOperation)
+	{
+	case GizmoOperation::Translate:
+		transform->position = newPosition;
+		break;
+
+	case GizmoOperation::Rotate:
+		transform->rotationQuaternion = glm::normalize(glm::quat_cast(rotationMatrix));
+		transform->SyncEulerFromQuaternion(); // keeps the Inspector values up to date
+		break;
+
+	case GizmoOperation::Scale:
+		transform->scale = newScale;
+		break;
+	}
+
+	transform->isDirty = true;
 }
 
 void EditorGUI::DrawSceneDropTarget(Scene& scene)
@@ -1817,6 +2039,11 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 
 void EditorGUI::HandleSelectionInteraction(Scene& scene)
 {
+	// Clicking a gizmo handle looks like a click on the empty viewport to ImGui
+	// Skip picking, otherwise we would select another object (or deselect) mid-drag
+	if (showTransformGizmo && (ImGuizmo::IsOver() || ImGuizmo::IsUsing()))
+		return;
+
 	if (ImGui::IsDragDropActive() || ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		return;
 

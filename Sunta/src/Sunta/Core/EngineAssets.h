@@ -5,11 +5,12 @@ namespace Sunta::Scripting
 	namespace Fields
 	{
 		constexpr const char* EntityID = "entityID";
+		constexpr const char* This     = "this";
 	}
 
 	namespace Functions
 	{
-		constexpr const char* OnCreate       = "OnCreate";
+		constexpr const char* OnStart        = "OnStart";
 		constexpr const char* OnUpdate       = "OnUpdate";
 
 		constexpr const char* OnTriggerEnter = "OnTriggerEnter";

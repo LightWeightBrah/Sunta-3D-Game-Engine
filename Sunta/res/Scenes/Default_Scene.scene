@@ -246,7 +246,8 @@
                     0.0,
                     0.0,
                     0.0
-                ]
+                ],
+                "show_gizmos": false
             },
             "mesh": {
                 "is_visible": true,
@@ -254,7 +255,20 @@
                 "mesh_name": "cube"
             },
             "physics_body": {
+                "angular_damping": 0.05000000074505806,
+                "angular_velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "freeze_rotation_x": false,
+                "freeze_rotation_y": false,
+                "freeze_rotation_z": false,
+                "friction": 0.5,
                 "is_kinematic": true,
+                "linear_damping": 0.05000000074505806,
+                "mass": 1.0,
+                "restitution": 0.20000000298023224,
                 "use_gravity": false,
                 "velocity": [
                     0.0,
@@ -325,19 +339,62 @@
             }
         },
         {
+            "box_collider": {
+                "collides_with": 7,
+                "half_extents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
             "mesh": {
                 "is_visible": true,
                 "material_name": "default_material",
                 "mesh_name": "cube"
             },
+            "physics_body": {
+                "angular_damping": 0.05000000074505806,
+                "angular_velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "freeze_rotation_x": true,
+                "freeze_rotation_y": true,
+                "freeze_rotation_z": true,
+                "friction": 0.5,
+                "is_kinematic": false,
+                "linear_damping": 0.05000000074505806,
+                "mass": 1.0,
+                "restitution": 0.20000000298023224,
+                "use_gravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "script": [
+                {
+                    "script_path": "C:\\Dev\\Sunta-3D-Game-Engine\\Sunta\\res\\Scripts\\test_script.lua"
+                }
+            ],
             "tag": {
-                "name": "Cube"
+                "name": "Cube Controller"
             },
             "transform": {
                 "position": [
-                    0.0,
-                    2.0,
-                    0.0
+                    -1.6012852191925049,
+                    2.7950000762939453,
+                    2.200000047683716
                 ],
                 "rotation": [
                     0.0,
@@ -349,6 +406,193 @@
                     0.0,
                     0.0,
                     0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "collides_with": 7,
+                "half_extents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "physics_body": {
+                "angular_damping": 0.05000000074505806,
+                "angular_velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "freeze_rotation_x": false,
+                "freeze_rotation_y": false,
+                "freeze_rotation_z": false,
+                "friction": 0.5,
+                "is_kinematic": false,
+                "linear_damping": 0.05000000074505806,
+                "mass": 1.0,
+                "restitution": 0.20000000298023224,
+                "use_gravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.5190063118934631,
+                    3.8420000076293945,
+                    2.068833351135254
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.09000000357627869,
+                    "attenuation_quadratic": 0.03200000151991844
+                },
+                "color": {
+                    "ambient": [
+                        0.20000000298023224,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "diffuse": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "specular": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Point Light"
+            },
+            "transform": {
+                "position": [
+                    3.239077091217041,
+                    3.3245949745178223,
+                    -3.8189306259155273
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "unlit_material",
+                "mesh_name": "cube"
+            },
+            "spot_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.09000000357627869,
+                    "attenuation_quadratic": 0.03200000151991844
+                },
+                "color": {
+                    "ambient": [
+                        0.20000000298023224,
+                        0.20000000298023224,
+                        0.20000000298023224
+                    ],
+                    "diffuse": [
+                        0.5,
+                        0.5,
+                        0.5
+                    ],
+                    "specular": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                },
+                "inner_cut_off": 33.20000076293945,
+                "outer_cut_off": 41.79999923706055
+            },
+            "tag": {
+                "name": "Spot Light"
+            },
+            "transform": {
+                "position": [
+                    -10.51248550415039,
+                    7.836913585662842,
+                    -8.665367126464844
+                ],
+                "rotation": [
+                    -42.599998474121094,
+                    32.099998474121094,
+                    -2.200000047683716
+                ],
+                "rotation_quaternion": [
+                    0.8971377015113831,
+                    -0.3440825641155243,
+                    0.26424455642700195,
+                    0.08322285860776901
                 ],
                 "scale": [
                     1.0,

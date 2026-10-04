@@ -3,6 +3,7 @@
 
 #include <imgui/imgui.h>
 #include <imgui_internal.h>
+#include <imguizmo/ImGuizmo.h>
 
 #include "EditorGUIBackend.h"
 #include "EditorGUI.h"
@@ -64,6 +65,7 @@ void EditorGUIContext::NewFrame(Window* window)
 		return;
 
 	backend->NewFrame(window->GetNativeWindow());
+	ImGuizmo::BeginFrame();
 }
 
 void EditorGUIContext::EndFrame(Window* window)
@@ -136,6 +138,8 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
 	EditorGUI::DrawFileBrowser(scene);
 	EditorGUI::End();
+
+	EditorGUI::DrawTransformGizmo(scene);
 
 	if (mainFont)
 		ImGui::PopFont();

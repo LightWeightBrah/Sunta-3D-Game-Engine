@@ -14,7 +14,7 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 {
 	auto* scriptComponent = static_cast<ScriptComponent*>(componentData);
 
-	ImGui::TextDisabled("Drag & Drop .lua files anywhere below to auto-add script");
+	ImGui::TextDisabled("Drag & Drop .lua file on a slot, or on the Add button");
 
 	int slotToRemove = -1;
 
@@ -25,7 +25,7 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 35.0f);
 
 		if (ImGui::InputText("##Path", &scriptComponent->scripts[i].scriptPath))
-			scriptComponent->ReloadScript(scriptComponent->scripts[i], entityID);
+			scriptComponent->scripts[i].isStarted = false;
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -35,7 +35,7 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 				if (std::filesystem::path(droppedPath).extension() == ".lua")
 				{
 					scriptComponent->scripts[i].scriptPath = droppedPath;
-					scriptComponent->ReloadScript(scriptComponent->scripts[i], entityID);
+					scriptComponent->scripts[i].isStarted = false;
 				}
 			}
 
@@ -59,17 +59,12 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 	if (ImGui::Button("+ Add Empty Slot"))
 		scriptComponent->scripts.push_back(ScriptContainer{});
 
-	ImVec2 contentAvailable = ImGui::GetContentRegionAvail();
-	if (contentAvailable.y < 30.0f)
-		contentAvailable.y = 30.0f;
-
-	ImGui::Dummy(contentAvailable);
-
+	// Dropping a .lua file on the button adds it as a new script
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_PATH"))
 		{
-			std::string droppedPath = (const char*)payload->Data;
+			std::string droppedPath = static_cast<const char*>(payload->Data);
 			if (std::filesystem::path(droppedPath).extension() == ".lua")
 			{
 				bool exists = false;
@@ -87,7 +82,6 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 					ScriptContainer newScript;
 					newScript.scriptPath = droppedPath;
 					scriptComponent->scripts.push_back(newScript);
-					scriptComponent->ReloadScript(scriptComponent->scripts.back(), entityID);
 				}
 			}
 		}
