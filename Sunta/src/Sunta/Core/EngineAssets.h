@@ -5,6 +5,7 @@ namespace Sunta::Scripting
 	namespace Fields
 	{
 		constexpr const char* EntityID = "entityID";
+		constexpr const char* This     = "this";
 	}
 
 	namespace Functions

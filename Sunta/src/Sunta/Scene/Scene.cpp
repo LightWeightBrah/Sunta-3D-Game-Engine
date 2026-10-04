@@ -157,7 +157,10 @@ void Scene::Update()
 	const bool isPlaying = IsPlaying();
 
 	if (isPlaying)
+	{
+		Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
+	}
 
 	Systems::SyncMeshComponents(entityManager);
 	Systems::SyncModelComponents(entityManager);
@@ -165,7 +168,6 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
-		Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
 	}
 
 	Systems::UpdateTransform(entityManager);

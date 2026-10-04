@@ -24,8 +24,8 @@ void Systems::UpdateTransform(EntityManager& entityManager)
 			glm::mat4 model = glm::mat4(1.0f);
 
 			glm::mat4 translation = glm::translate(model, transforms[i].position);
-			glm::mat4 rotation    = glm::mat4_cast(transforms[i].rotationQuaternion);
-			glm::mat4 scale       = glm::scale(model, transforms[i].scale);
+			glm::mat4 rotation = glm::mat4_cast(transforms[i].rotationQuaternion);
+			glm::mat4 scale = glm::scale(model, transforms[i].scale);
 
 			model = translation * rotation * scale;
 
@@ -50,14 +50,14 @@ void Systems::SyncMeshComponents(EntityManager& entityManager)
 		if (component.isDirty)
 		{
 			std::shared_ptr<Mesh> mesh = nullptr;
-			if(component.meshName != MeshComponent::NULL_ASSET_NAME)
+			if (component.meshName != MeshComponent::NULL_ASSET_NAME)
 				mesh = ResourceManager::GetMeshData(component.meshName);
 
 			std::shared_ptr<Material> material = nullptr;
-			if(component.materialName != MeshComponent::NULL_ASSET_NAME)
+			if (component.materialName != MeshComponent::NULL_ASSET_NAME)
 				material = ResourceManager::GetMaterialData(component.materialName);
 
-			component.mesh	   = (mesh != nullptr)     ? mesh     : errorMesh;
+			component.mesh = (mesh != nullptr) ? mesh : errorMesh;
 			component.material = (material != nullptr) ? material : errorMaterial;
 
 			component.isDirty = false;
@@ -111,7 +111,7 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 			{
 				animatorComponent->currentAnimationName.clear();
 			}
-			
+
 			animatorComponent->needsModelSync = false;
 		}
 
@@ -132,12 +132,12 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 
 	for (auto& component : scriptComponents)
 	{
+		Entity owner(entityManager.GetEntityIDForComponent(component), &entityManager);
+
 		for (auto& script : component.scripts)
 		{
-			if(script.scriptPath.empty())
+			if (script.scriptPath.empty())
 				continue;
-
-			unsigned int entityID = entityManager.GetEntityIDForComponent(component);
 
 			// First update after Play: run the Lua file + OnCreate now,
 			// not when the script was attached in the editor
@@ -149,7 +149,7 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 				if (std::filesystem::exists(script.scriptPath))
 					script.lastWriteTime = std::filesystem::last_write_time(script.scriptPath).time_since_epoch().count();
 
-				component.ReloadScript(script, entityID);
+				component.ReloadScript(script, owner);
 			}
 
 			if (std::filesystem::exists(script.scriptPath))
@@ -160,73 +160,72 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 				{
 					script.lastWriteTime = currentWriteTime;
 
-					component.ReloadScript(script, entityID);
+					component.ReloadScript(script, owner);
 
 					SUNTA_ENGINE_LOG_INFO("Hot-Reloaded script: '{0}'", script.scriptPath);
 				}
 			}
 
-			if (script.onUpdateFunc)
-			{
-				script.onUpdateFunc(deltaTime);
-			}
+			if (script.onUpdateFunc.valid())
+				script.CallFunction(script.onUpdateFunc, Scripting::Functions::OnUpdate, deltaTime);
 		}
 	}
 }
 
+namespace
+{
+
+// Runs 'notify' on the script of entity A and B (if they have one)
+// each time passing the OTHER entity as the argument
+template<typename NotifyFunction>
+void NotifyBothScripts(EntityManager& entityManager, unsigned int firstID, unsigned int secondID, NotifyFunction notify)
+{
+	Entity first(firstID, &entityManager);
+	Entity second(secondID, &entityManager);
+
+	if (auto* firstScript = first.GetComponent<ScriptComponent>())
+		notify(*firstScript, second);
+
+	if (auto* secondScript = second.GetComponent<ScriptComponent>())
+		notify(*secondScript, first);
+}
+
+}
+
 void Systems::DispatchTriggerEnter(EntityManager& entityManager, unsigned int triggerEntityID, unsigned int otherEntityID)
 {
-	if (auto* triggerScript = entityManager.GetComponent<ScriptComponent>(triggerEntityID))
-		triggerScript->InvokeOnTriggerEnter(otherEntityID);
-
-	if (auto* otherScript = entityManager.GetComponent<ScriptComponent>(otherEntityID))
-		otherScript->InvokeOnTriggerEnter(triggerEntityID);
+	NotifyBothScripts(entityManager, triggerEntityID, otherEntityID,
+		[](ScriptComponent& script, const Entity& other) { script.InvokeOnTriggerEnter(other); });
 }
 
 void Systems::DispatchTriggerStay(EntityManager& entityManager, unsigned int triggerEntityID, unsigned int otherEntityID)
 {
-	if (auto* triggerScript = entityManager.GetComponent<ScriptComponent>(triggerEntityID))
-		triggerScript->InvokeOnTriggerStay(otherEntityID);
-
-	if (auto* otherScript = entityManager.GetComponent<ScriptComponent>(otherEntityID))
-		otherScript->InvokeOnTriggerStay(triggerEntityID);
+	NotifyBothScripts(entityManager, triggerEntityID, otherEntityID,
+		[](ScriptComponent& script, const Entity& other) { script.InvokeOnTriggerStay(other); });
 }
 
 void Systems::DispatchTriggerExit(EntityManager& entityManager, unsigned int triggerEntityID, unsigned int otherEntityID)
 {
-	if (auto* triggerScript = entityManager.GetComponent<ScriptComponent>(triggerEntityID))
-		triggerScript->InvokeOnTriggerExit(otherEntityID);
-
-	if (auto* otherScript = entityManager.GetComponent<ScriptComponent>(otherEntityID))
-		otherScript->InvokeOnTriggerExit(triggerEntityID);
+	NotifyBothScripts(entityManager, triggerEntityID, otherEntityID,
+		[](ScriptComponent& script, const Entity& other) { script.InvokeOnTriggerExit(other); });
 }
 
 void Systems::DispatchCollisionEnter(EntityManager& entityManager, unsigned int collisionEntityID, unsigned int otherEntityID)
 {
-	if (auto* scriptA = entityManager.GetComponent<ScriptComponent>(collisionEntityID))
-		scriptA->InvokeOnCollisionEnter(otherEntityID);
-
-	if (auto* scriptB = entityManager.GetComponent<ScriptComponent>(otherEntityID))
-		scriptB->InvokeOnCollisionEnter(collisionEntityID);
+	NotifyBothScripts(entityManager, collisionEntityID, otherEntityID,
+		[](ScriptComponent& script, const Entity& other) { script.InvokeOnCollisionEnter(other); });
 }
 
 void Systems::DispatchCollisionStay(EntityManager& entityManager, unsigned int collisionEntityID, unsigned int otherEntityID)
 {
-
-	if (auto* scriptA = entityManager.GetComponent<ScriptComponent>(collisionEntityID))
-		scriptA->InvokeOnCollisionStay(otherEntityID);
-
-	if (auto* scriptB = entityManager.GetComponent<ScriptComponent>(otherEntityID))
-		scriptB->InvokeOnCollisionStay(collisionEntityID);
+	NotifyBothScripts(entityManager, collisionEntityID, otherEntityID,
+		[](ScriptComponent& script, const Entity& other) { script.InvokeOnCollisionStay(other); });
 }
 
 void Systems::DispatchCollisionExit(EntityManager& entityManager, unsigned int collisionEntityID, unsigned int otherEntityID)
 {
-	if (auto* scriptA = entityManager.GetComponent<ScriptComponent>(collisionEntityID))
-		scriptA->InvokeOnCollisionExit(otherEntityID);
-
-	if (auto* scriptB = entityManager.GetComponent<ScriptComponent>(otherEntityID))
-		scriptB->InvokeOnCollisionExit(collisionEntityID);
+	NotifyBothScripts(entityManager, collisionEntityID, otherEntityID,
+		[](ScriptComponent& script, const Entity& other) { script.InvokeOnCollisionExit(other); });
 }
 
 }

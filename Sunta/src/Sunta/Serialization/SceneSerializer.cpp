@@ -45,14 +45,25 @@ namespace SceneKeys
 	constexpr const char* ModelName                 = "model_name";
 	constexpr const char* CurrentAnimationName      = "current_animation_name";
 
+	constexpr const char* ShowGizmos				= "show_gizmos";
 	constexpr const char* LocalOffset               = "local_offset";
 	constexpr const char* HalfExtents               = "half_extents";
 	constexpr const char* IsTrigger                 = "is_trigger";
 	constexpr const char* Layer                     = "layer";
 	constexpr const char* CollidesWith              = "collides_with";
+
 	constexpr const char* IsKinematic               = "is_kinematic";
 	constexpr const char* UseGravity                = "use_gravity";
 	constexpr const char* Velocity                  = "velocity";
+	constexpr const char* AngularVelocity			= "angular_velocity";
+	constexpr const char* FreezeRotationX			= "freeze_rotation_x";
+	constexpr const char* FreezeRotationY			= "freeze_rotation_y";
+	constexpr const char* FreezeRotationZ			= "freeze_rotation_z";
+	constexpr const char* Mass						= "mass";
+	constexpr const char* Restitution				= "restitution";
+	constexpr const char* Friction					= "friction";
+	constexpr const char* LinearDamping				= "linear_damping";
+	constexpr const char* AngularDamping			= "angular_damping";
 												    
 	constexpr const char* Color						= "color";
 	constexpr const char* Attenuation               = "attenuation";
@@ -200,6 +211,7 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 		{
 			entityJson[SceneKeys::BoxColliderComponent] =
 			{
+				{ SceneKeys::ShowGizmos,                      boxCollider->showGizmos   },
 				{ SceneKeys::LocalOffset,       SerializeVec3(boxCollider->localOffset) },
 				{ SceneKeys::HalfExtents,       SerializeVec3(boxCollider->halfExtents) },
 				{ SceneKeys::IsTrigger,                       boxCollider->isTrigger    },
@@ -212,9 +224,20 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 		{
 			entityJson[SceneKeys::PhysicsBodyComponent] =
 			{
-				{ SceneKeys::IsKinematic,                    physicsBody->isKinematic   },
-				{ SceneKeys::UseGravity,                     physicsBody->useGravity    },
-				{ SceneKeys::Velocity,         SerializeVec3(physicsBody->velocity)     }
+				{ SceneKeys::IsKinematic,                    physicsBody->isKinematic     },
+				{ SceneKeys::UseGravity,                     physicsBody->useGravity      },
+				{ SceneKeys::Velocity,         SerializeVec3(physicsBody->velocity)       },
+				{ SceneKeys::AngularVelocity,  SerializeVec3(physicsBody->angularVelocity)},
+
+				{ SceneKeys::FreezeRotationX,                physicsBody->freezeRotationX },
+				{ SceneKeys::FreezeRotationY,                physicsBody->freezeRotationY },
+				{ SceneKeys::FreezeRotationZ,                physicsBody->freezeRotationZ },
+
+				{ SceneKeys::Mass,                           physicsBody->mass            },
+				{ SceneKeys::Restitution,                    physicsBody->restitution     },
+				{ SceneKeys::Friction,                       physicsBody->friction        },
+				{ SceneKeys::LinearDamping,                  physicsBody->linearDamping   },
+				{ SceneKeys::AngularDamping,                 physicsBody->angularDamping  }
 			};
 		}
 
@@ -354,7 +377,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 					std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
 					if (!path.empty())
 					{
-						scriptComponent.LoadScript(path, entity);
+						scriptComponent.AddScript(path);
 					}
 				}
 			}
@@ -400,6 +423,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			if (boxColliderData.contains(SceneKeys::HalfExtents))
 				boxColliderComponent.halfExtents = DeserializeVec3(boxColliderData[SceneKeys::HalfExtents], glm::vec3(0.5f));
 
+			boxColliderComponent.showGizmos   = boxColliderData.value(SceneKeys::ShowGizmos, false);
 			boxColliderComponent.isTrigger    = boxColliderData.value(SceneKeys::IsTrigger, false);
 			boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(CollisionLayer::Environment)));
 			boxColliderComponent.collidesWith = boxColliderData.value(SceneKeys::CollidesWith, boxColliderComponent.collidesWith);
@@ -412,6 +436,23 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			physicsBodyComponent.isKinematic = physicsBodyData.value(SceneKeys::IsKinematic, false);
 			physicsBodyComponent.useGravity  = physicsBodyData.value(SceneKeys::UseGravity,  true);
+
+			if (physicsBodyData.contains(SceneKeys::Velocity))
+				physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
+
+			if (physicsBodyData.contains(SceneKeys::AngularVelocity))
+				physicsBodyComponent.angularVelocity = DeserializeVec3(physicsBodyData[SceneKeys::AngularVelocity]);
+
+			physicsBodyComponent.freezeRotationX = physicsBodyData.value(SceneKeys::FreezeRotationX, false);
+			physicsBodyComponent.freezeRotationY = physicsBodyData.value(SceneKeys::FreezeRotationY, false);
+			physicsBodyComponent.freezeRotationZ = physicsBodyData.value(SceneKeys::FreezeRotationZ, false);
+
+			// The fallback is the component's own default, so the default values live in ONE place (Component.h)
+			physicsBodyComponent.mass           = physicsBodyData.value(SceneKeys::Mass,		   physicsBodyComponent.mass);
+			physicsBodyComponent.restitution    = physicsBodyData.value(SceneKeys::Restitution,	   physicsBodyComponent.restitution);
+			physicsBodyComponent.friction       = physicsBodyData.value(SceneKeys::Friction,	   physicsBodyComponent.friction);
+			physicsBodyComponent.linearDamping  = physicsBodyData.value(SceneKeys::LinearDamping,  physicsBodyComponent.linearDamping);
+			physicsBodyComponent.angularDamping = physicsBodyData.value(SceneKeys::AngularDamping, physicsBodyComponent.angularDamping);
 
 			if (physicsBodyData.contains(SceneKeys::Velocity))
 				physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
