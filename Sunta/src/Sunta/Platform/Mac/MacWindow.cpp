@@ -33,6 +33,16 @@ void MacWindow::Show()
 	implementation.Show();
 }
 
+void MacWindow::Hide()
+{
+	implementation.Hide();
+}
+
+void MacWindow::SetTitle(const std::string& title)
+{
+	implementation.SetTitle(title);
+}
+
 bool MacWindow::SetIcon(const std::string& imagePath)
 {
 	return implementation.SetIcon(imagePath);

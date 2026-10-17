@@ -8,121 +8,123 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
 
-	constexpr int    PixelBytes            = 4;
-	constexpr size_t MaxStoredBlockBytes   = 65535;
-	constexpr size_t AdlerModulus          = 65521;
-	constexpr unsigned char PngColorTypeRgba = 6;
-	constexpr unsigned char PngBitDepth      = 8;
-	constexpr unsigned char PngFilterNone    = 0;
+namespace fs = std::filesystem;
 
-	const unsigned char PngSignature[] = { 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
+constexpr int    PixelBytes            = 4;
+constexpr size_t MaxStoredBlockBytes   = 65535;
+constexpr size_t AdlerModulus          = 65521;
+constexpr unsigned char PngColorTypeRgba = 6;
+constexpr unsigned char PngBitDepth      = 8;
+constexpr unsigned char PngFilterNone    = 0;
 
-	unsigned char ToByte(float value)
+const unsigned char PngSignature[] = { 0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A };
+
+unsigned char ToByte(float value)
+{
+	return static_cast<unsigned char>(std::clamp(std::lround(value), 0L, 255L));
+}
+
+void AppendBigEndian32(std::vector<unsigned char>& bytes, uint32_t value)
+{
+	bytes.push_back(static_cast<unsigned char>(value >> 24));
+	bytes.push_back(static_cast<unsigned char>(value >> 16));
+	bytes.push_back(static_cast<unsigned char>(value >> 8));
+	bytes.push_back(static_cast<unsigned char>(value));
+}
+
+uint32_t UpdateCrc32(uint32_t crc, const unsigned char* data, size_t length)
+{
+	static const std::vector<uint32_t> table = []
 	{
-		return static_cast<unsigned char>(std::clamp(std::lround(value), 0L, 255L));
-	}
-
-	void AppendBigEndian32(std::vector<unsigned char>& bytes, uint32_t value)
-	{
-		bytes.push_back(static_cast<unsigned char>(value >> 24));
-		bytes.push_back(static_cast<unsigned char>(value >> 16));
-		bytes.push_back(static_cast<unsigned char>(value >> 8));
-		bytes.push_back(static_cast<unsigned char>(value));
-	}
-
-	uint32_t UpdateCrc32(uint32_t crc, const unsigned char* data, size_t length)
-	{
-		static const std::vector<uint32_t> table = []
+		std::vector<uint32_t> values(256);
+		for (uint32_t index = 0; index < 256; ++index)
 		{
-			std::vector<uint32_t> values(256);
-			for (uint32_t index = 0; index < 256; ++index)
-			{
-				uint32_t value = index;
-				for (int bit = 0; bit < 8; ++bit)
-					value = (value & 1) ? (0xEDB88320u ^ (value >> 1)) : (value >> 1);
-				values[index] = value;
-			}
-			return values;
-		}();
-
-		for (size_t index = 0; index < length; ++index)
-			crc = table[(crc ^ data[index]) & 0xFF] ^ (crc >> 8);
-
-		return crc;
-	}
-
-	uint32_t CalculateAdler32(const std::vector<unsigned char>& data)
-	{
-		size_t low = 1, high = 0;
-
-		for (unsigned char byte : data)
-		{
-			low  = (low + byte) % AdlerModulus;
-			high = (high + low) % AdlerModulus;
+			uint32_t value = index;
+			for (int bit = 0; bit < 8; ++bit)
+				value = (value & 1) ? (0xEDB88320u ^ (value >> 1)) : (value >> 1);
+			values[index] = value;
 		}
+		return values;
+	}();
 
-		return static_cast<uint32_t>((high << 16) | low);
-	}
+	for (size_t index = 0; index < length; ++index)
+		crc = table[(crc ^ data[index]) & 0xFF] ^ (crc >> 8);
 
-	// PNG chunk: length, type, data, CRC of type and data
-	void AppendChunk(std::vector<unsigned char>& png, const char (&type)[5], const std::vector<unsigned char>& data)
+	return crc;
+}
+
+uint32_t CalculateAdler32(const std::vector<unsigned char>& data)
+{
+	size_t low = 1, high = 0;
+
+	for (unsigned char byte : data)
 	{
-		AppendBigEndian32(png, static_cast<uint32_t>(data.size()));
-
-		const size_t typeStart = png.size();
-		png.insert(png.end(), type, type + 4);
-		png.insert(png.end(), data.begin(), data.end());
-
-		const uint32_t crc = UpdateCrc32(0xFFFFFFFFu, png.data() + typeStart, png.size() - typeStart) ^ 0xFFFFFFFFu;
-		AppendBigEndian32(png, crc);
+		low  = (low + byte) % AdlerModulus;
+		high = (high + low) % AdlerModulus;
 	}
 
-	// Every row starts with a filter byte (none), then the R, G, B, A of its pixels
-	std::vector<unsigned char> CreateFilteredRows(const SquareImage& image)
+	return static_cast<uint32_t>((high << 16) | low);
+}
+
+// PNG chunk: length, type, data, CRC of type and data
+void AppendChunk(std::vector<unsigned char>& png, const char (&type)[5], const std::vector<unsigned char>& data)
+{
+	AppendBigEndian32(png, static_cast<uint32_t>(data.size()));
+
+	const size_t typeStart = png.size();
+	png.insert(png.end(), type, type + 4);
+	png.insert(png.end(), data.begin(), data.end());
+
+	const uint32_t crc = UpdateCrc32(0xFFFFFFFFu, png.data() + typeStart, png.size() - typeStart) ^ 0xFFFFFFFFu;
+	AppendBigEndian32(png, crc);
+}
+
+// Every row starts with a filter byte (none), then the R, G, B, A of its pixels
+std::vector<unsigned char> CreateFilteredRows(const SquareImage& image)
+{
+	const size_t rowBytes = static_cast<size_t>(image.size) * PixelBytes;
+
+	std::vector<unsigned char> rows;
+	rows.reserve((rowBytes + 1) * image.size);
+
+	for (int row = 0; row < image.size; ++row)
 	{
-		const size_t rowBytes = static_cast<size_t>(image.size) * PixelBytes;
+		rows.push_back(PngFilterNone);
 
-		std::vector<unsigned char> rows;
-		rows.reserve((rowBytes + 1) * image.size);
-
-		for (int row = 0; row < image.size; ++row)
-		{
-			rows.push_back(PngFilterNone);
-
-			const unsigned char* source = &image.pixels[row * rowBytes];
-			rows.insert(rows.end(), source, source + rowBytes);
-		}
-
-		return rows;
+		const unsigned char* source = &image.pixels[row * rowBytes];
+		rows.insert(rows.end(), source, source + rowBytes);
 	}
 
-	// zlib stream made of "stored" deflate blocks (no compression)
-	std::vector<unsigned char> CreateZlibStream(const std::vector<unsigned char>& data)
+	return rows;
+}
+
+// zlib stream made of "stored" deflate blocks (no compression)
+std::vector<unsigned char> CreateZlibStream(const std::vector<unsigned char>& data)
+{
+	std::vector<unsigned char> stream = { 0x78, 0x01 };
+
+	size_t offset = 0;
+	do
 	{
-		std::vector<unsigned char> stream = { 0x78, 0x01 };
+		const size_t blockSize = std::min(MaxStoredBlockBytes, data.size() - offset);
+		const bool   isLast    = (offset + blockSize == data.size());
 
-		size_t offset = 0;
-		do
-		{
-			const size_t blockSize = std::min(MaxStoredBlockBytes, data.size() - offset);
-			const bool   isLast    = (offset + blockSize == data.size());
+		stream.push_back(isLast ? 1 : 0);
+		stream.push_back(static_cast<unsigned char>(blockSize & 0xFF));
+		stream.push_back(static_cast<unsigned char>(blockSize >> 8));
+		stream.push_back(static_cast<unsigned char>(~blockSize & 0xFF));
+		stream.push_back(static_cast<unsigned char>((~blockSize >> 8) & 0xFF));
 
-			stream.push_back(isLast ? 1 : 0);
-			stream.push_back(static_cast<unsigned char>(blockSize & 0xFF));
-			stream.push_back(static_cast<unsigned char>(blockSize >> 8));
-			stream.push_back(static_cast<unsigned char>(~blockSize & 0xFF));
-			stream.push_back(static_cast<unsigned char>((~blockSize >> 8) & 0xFF));
-
-			stream.insert(stream.end(), data.begin() + offset, data.begin() + offset + blockSize);
-			offset += blockSize;
-		}
-		while (offset < data.size());
-
-		AppendBigEndian32(stream, CalculateAdler32(data));
-		return stream;
+		stream.insert(stream.end(), data.begin() + offset, data.begin() + offset + blockSize);
+		offset += blockSize;
 	}
+	while (offset < data.size());
+
+	AppendBigEndian32(stream, CalculateAdler32(data));
+	return stream;
+}
+
 }
 
 bool IconImage::ReadFileBytes(const fs::path& path, std::vector<unsigned char>& outBytes)

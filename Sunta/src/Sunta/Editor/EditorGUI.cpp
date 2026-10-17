@@ -26,6 +26,10 @@
 #include "Utilities/FileSystemUtilities.h"
 #include "Core/VirtualFileSystem.h"
 #include "ProjectSettingsWindow.h" 
+#include "SceneDocument.h"
+#include "UnsavedChangesDialog.h"
+#include "SceneCommands.h"
+#include "AssetTemplates.h"
 #include "ComponentDrawerFactory.h"
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSystem.h"
@@ -98,6 +102,21 @@ std::filesystem::path GetEditorSceneBackupPath()
 	return std::filesystem::temp_directory_path() / "sunta_editor_scene_backup.scene";
 }
 
+// The top folders of the File Browser ([ENGINE] and [GAME]). Back from them goes to the page with both, not above them
+bool IsResourcesRoot(const std::filesystem::path& directory)
+{
+	for (const char* mount : { "@engine", "@game" })
+	{
+		const std::filesystem::path root = VirtualFileSystem::Resolve(mount);
+
+		std::error_code errorCode;
+		if (directory == root || std::filesystem::equivalent(directory, root, errorCode))
+			return true;
+	}
+
+	return false;
+}
+
 }
 
 void EditorGUI::StartPlayMode(Scene& scene)
@@ -111,6 +130,8 @@ void EditorGUI::StartPlayMode(Scene& scene)
 	scene.BeginPlay();
 	// CollisionSystem::Reset();
 	// scene.SetPlayState(PlayState::Playing);
+
+	SceneDocument::NotifyChanged();
 }
 
 void EditorGUI::StopPlayMode(Scene& scene)
@@ -138,6 +159,8 @@ void EditorGUI::StopPlayMode(Scene& scene)
 
 	std::error_code errorCode;
 	std::filesystem::remove(GetEditorSceneBackupPath(), errorCode);
+
+	SceneDocument::NotifyChanged();
 }
 
 void EditorGUI::DrawMainMenuBarAndToolbar(Scene& scene, float toolbarHeight)
@@ -182,33 +205,6 @@ void EditorGUI::DrawTopBarsBackground(const std::string& texture, glm::vec4 tint
 
 }
 
-namespace
-{
-
-// Folder where the scene dialogs (open / save) start
-// make_preferred() gives "C:\Dev\..." instead of a mix of '/' and '\', which Windows dialogs expect
-std::string GetSceneDialogStartDirectory()
-{
-	return std::filesystem::path(VirtualFileSystem::Resolve("@game/Scenes")).make_preferred().string();
-}
-
-// Asks the user where to save the scene, then saves it there
-// Does nothing if the user cancels the dialog
-void SaveSceneViaDialog(Scene& scene)
-{
-	std::string chosenPath = Platform::Get().SaveFileDialog("Scene Files", { "scene" }, GetSceneDialogStartDirectory());
-	if (chosenPath.empty())
-		return;
-
-	std::filesystem::path normalizedPath = std::filesystem::path(chosenPath).lexically_normal();
-
-	scene.SetName(normalizedPath.stem().string());
-	scene.SetFilePath(normalizedPath.string());
-	SceneSerializer::Serialize(normalizedPath.string(), scene);
-}
-
-}
-
 void EditorGUI::DrawMainMenuBar(Scene& scene)
 {
 	ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0, 0, 0, 0));
@@ -222,33 +218,19 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New Scene", nullptr, false, canEditScene))
-			{
-				scene.Clear();
-				scene.SetName("Untitled_Scene");
-				scene.SetFilePath("");
-			}
+			if (ImGui::MenuItem("New Scene", SceneCommands::NewShortcutLabel, false, canEditScene))
+				SceneCommands::New();
 
-			if (ImGui::MenuItem("Open Scene", "Ctrl+O", false, canEditScene))
-			{
-				std::string path = Platform::Get().OpenFileDialog("Scene Files", { "scene" }, GetSceneDialogStartDirectory());
-
-				if (!path.empty())
-					SceneSerializer::Deserialize(path, scene);
-			}
+			if (ImGui::MenuItem("Open Scene", SceneCommands::OpenShortcutLabel, false, canEditScene))
+				SceneCommands::Open();
 
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Save Scene", "Ctrl+S", false, canEditScene))
-			{
-				if (scene.GetFilePath().empty())
-					SaveSceneViaDialog(scene);
-				else
-					SceneSerializer::Serialize(scene.GetFilePath(), scene);
-			}
+			if (ImGui::MenuItem("Save Scene", SceneCommands::SaveShortcutLabel, false, canEditScene))
+				SceneCommands::Save();
 
-			if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S", false, canEditScene))
-				SaveSceneViaDialog(scene);
+			if (ImGui::MenuItem("Save Scene As", SceneCommands::SaveAsShortcutLabel, false, canEditScene))
+				SceneCommands::SaveAs();
 
 			ImGui::EndMenu();
 		}
@@ -262,17 +244,25 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 		if (ImGui::BeginMenu("Entity"))
 		{
-			const bool hasSelectedEntity = (selectedEntity >= 0);
+			// The Hierarchy highlights the inspected entity. It stays put while the Inspector is locked, even when the
+			// selection moved on (or was cleared), so the menu acts on what the user sees highlighted
+			const bool hasHighlightedEntity = inspectedEntity >= 0
+				&& scene.GetEntityManager().IsAlive(static_cast<unsigned int>(inspectedEntity));
 
+			// The camera starts exactly where the free camera is, so you fly to a nice view and create it there
 			if (ImGui::MenuItem("Create Camera From View", nullptr, false, canEditScene))
 			{
 				const unsigned int cameraEntity = EntityFactory::CreateCamera(scene, scene.GetCamera().GetPosition(), "Camera");
 				scene.AlignEntityWithEditorCamera(cameraEntity);
 				SetSelectedEntity(static_cast<int>(cameraEntity));
+				SceneDocument::NotifyChanged();
 			}
 
-			if (ImGui::MenuItem("Align Selected With View", nullptr, false, canEditScene && hasSelectedEntity))
-				scene.AlignEntityWithEditorCamera(static_cast<unsigned int>(selectedEntity));
+			if (ImGui::MenuItem("Align Selected With View", nullptr, false, canEditScene && hasHighlightedEntity))
+			{
+				scene.AlignEntityWithEditorCamera(static_cast<unsigned int>(inspectedEntity));
+				SceneDocument::NotifyChanged();
+			}
 
 			ImGui::EndMenu();
 		}
@@ -360,6 +350,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 	ImGui::PopStyleColor(2);
 	ProjectSettingsWindow::Draw();
+	UnsavedChangesDialog::Draw();
 }
 
 void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
@@ -405,7 +396,12 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 				{
 					ImTextureID textureID = (ImTextureID)(uintptr_t)icon->GetID();
 					if (ImGui::ImageButton(id, textureID, ImVec2(iconSize, iconSize)))
+					{
 						action();
+
+						// Every button here changes the scene: creates an entity, or starts / stops Play
+						SceneDocument::NotifyChanged();
+					}
 
 					if (ImGui::IsItemHovered())
 						ImGui::SetTooltip("%s", tooltip);
@@ -528,6 +524,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 				if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
 					tag->name = entityNameBuffer;
 
+				SceneDocument::NotifyChanged();
 				entityToRename = -1;
 			}
 
@@ -564,6 +561,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", entityID);
 				CollisionSystem::ForgetEntity(entityID);
 				entityManager.DestroyEntity(entityID);
+				SceneDocument::NotifyChanged();
 				SetSelectedEntity(-1);
 
 				ImGui::CloseCurrentPopup();
@@ -582,6 +580,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 					transform->rotation = glm::vec3(0.0f);
 					transform->scale = glm::vec3(1.0f);
 					transform->isDirty = true;
+					SceneDocument::NotifyChanged();
 				}
 
 				ImGui::CloseCurrentPopup();
@@ -613,6 +612,7 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 			SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
 			CollisionSystem::ForgetEntity(static_cast<unsigned int>(selectedEntity));
 			entityManager.DestroyEntity(static_cast<unsigned int>(selectedEntity));
+			SceneDocument::NotifyChanged();
 			SetSelectedEntity(-1);
 		}
 	}
@@ -841,6 +841,7 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				if (ImGui::MenuItem(action.name.c_str()))
 				{
 					action.addComponent();
+					SceneDocument::NotifyChanged();
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -865,7 +866,7 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 	{
 		if (ImGui::Button("<--- Back"))
 		{
-			currentDirectory = currentDirectory.parent_path();
+			currentDirectory = IsResourcesRoot(currentDirectory) ? std::filesystem::path() : currentDirectory.parent_path();
 		}
 
 		ImGui::SameLine();
@@ -1009,8 +1010,8 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 						// Loading a scene while playing would break the Play/Stop backup
 						if (!scene.IsPlaying())
 						{
-							SceneSerializer::Deserialize(path.string(), scene);
-							ClearSelection(); // old entity IDs don't exist in the new scene
+							const std::string scenePath = path.string();
+							UnsavedChangesDialog::RunAfterAsking([scenePath]() { SceneDocument::Open(scenePath); });
 						}
 					}
 					else
@@ -1177,7 +1178,10 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 				pendingCreation.onCreate = onCreateFunc;
 			};
 
-		if (ImGui::MenuItem("Create New Folder"))
+		// New files go into the folder that is open, and the root page ([ENGINE] / [GAME] buttons) is no folder
+		const bool canCreateHere = !currentDirectory.empty();
+
+		if (ImGui::MenuItem("Create New Folder", nullptr, false, canCreateHere))
 		{
 			StartCreation("New Folder", "", Sunta::EngineAssets::Icons::DefaultFolder, [](const std::filesystem::path& path)
 				{
@@ -1189,7 +1193,7 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 				});
 		}
 
-		if (ImGui::MenuItem("Create New Material"))
+		if (ImGui::MenuItem("Create New Material", nullptr, false, canCreateHere))
 		{
 			StartCreation("New Material", ".material", Sunta::EngineAssets::Icons::DefaultFile, [](const std::filesystem::path& path)
 				{
@@ -1206,6 +1210,40 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 				});
 
 		}
+
+		// Every new type of file only needs a row here and a function in AssetTemplates
+		struct NewFileType
+		{
+			const char* menuLabel;
+			const char* baseName;
+			const char* extension;
+			const char* iconKey;
+			bool (*writeFile)(const std::filesystem::path& path);
+		};
+
+		static const NewFileType newFileTypes[] =
+		{
+			{ "Create New Scene",      "New Scene",  ".scene",  Sunta::EngineAssets::Icons::SceneFile,  AssetTemplates::WriteScene     },
+			{ "Create New Lua Script", "New Script", ".lua",    Sunta::EngineAssets::Icons::LuaFile,    AssetTemplates::WriteLuaScript },
+			{ "Create New Shader",     "New Shader", ".shader", Sunta::EngineAssets::Icons::ShaderFile, AssetTemplates::WriteShader    }
+		};
+
+		for (const NewFileType& fileType : newFileTypes)
+		{
+			if (!ImGui::MenuItem(fileType.menuLabel, nullptr, false, canCreateHere))
+				continue;
+
+			StartCreation(fileType.baseName, fileType.extension, fileType.iconKey, [fileType](const std::filesystem::path& path)
+				{
+					if (!std::filesystem::exists(path) && fileType.writeFile(path))
+						selectedFile = path;
+				});
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Open In Explorer", nullptr, false, canCreateHere))
+			Platform::Get().OpenInExplorer(currentDirectory.string());
 
 		ImGui::EndPopup();
 	}
@@ -1403,6 +1441,7 @@ void EditorGUI::DrawTransformGizmo(Scene& scene)
 	}
 
 	transform->isDirty = true;
+	SceneDocument::NotifyChanged();
 }
 
 void EditorGUI::DrawSceneDropTarget(Scene& scene)
@@ -1489,6 +1528,9 @@ void EditorGUI::DrawSceneDropTarget(Scene& scene)
 					SUNTA_ENGINE_LOG_WARNING("Unsuported file extension '{0}' dropped onto scene.", extension);
 
 				}
+
+				// A dropped file may have created an entity
+				SceneDocument::NotifyChanged();
 
 			}
 
@@ -1935,6 +1977,7 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entity
 		if (ImGui::MenuItem("Remove Component"))
 		{
 			storage->Remove(entityID);
+			SceneDocument::NotifyChanged();
 			ImGui::EndPopup();
 			return;
 		}
@@ -1972,7 +2015,9 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entity
 
 	if (auto* drawer = ComponentDrawerFactory::GetDrawer(componentType->hash))
 	{
-		drawer->Draw(componentData, entityID, entityManager);
+		if (drawer->Draw(componentData, entityID, entityManager))
+			SceneDocument::NotifyChanged();
+
 		return;
 	}
 
@@ -1992,6 +2037,8 @@ void EditorGUI::DrawSingleComponent(unsigned int entityID, EntityManager& entity
 
 	if (anyPropertyChanged)
 	{
+		SceneDocument::NotifyChanged();
+
 		// Moving via Inspector teleports the entity instead of moving it via velocity
 		// If it was touching anything before being moved,
 		// the physics engine solver still contains old impulses calculated 

@@ -19,6 +19,8 @@ public:
 	virtual void EnableMouseCursor(bool enabled) = 0;
 	virtual void SetAsGraphicsTarget() = 0;
 	virtual void Show() = 0;
+	virtual void Hide() = 0;
+	virtual void SetTitle(const std::string& title) = 0;
 
 	// Sets the icon of the window (title bar, taskbar) from an image file (PNG)
 	// Returns false and keeps the current icon if the image can't be loaded

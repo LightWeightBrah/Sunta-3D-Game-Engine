@@ -20,31 +20,33 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
 
-	constexpr const char* WindowName         = "Project Launcher";
-	constexpr const char* RecentListName     = "RecentProjects";
-	constexpr const char* NewProjectPopup    = "New Project";
+namespace fs = std::filesystem;
 
-	constexpr float TitleFontScale   = 1.8f;
-	constexpr float ButtonsAreaWidth = 190.0f;   // "Open" + "Remove" buttons of a row
-	constexpr float FooterLines      = 4.0f;     // space under the list for the buttons and the status
+constexpr const char* WindowName         = "Project Launcher";
+constexpr const char* RecentListName     = "RecentProjects";
+constexpr const char* NewProjectPopup    = "New Project";
 
-	constexpr ImGuiWindowFlags FullWindowFlags = ImGuiWindowFlags_NoDecoration
-											   | ImGuiWindowFlags_NoMove
-											   | ImGuiWindowFlags_NoSavedSettings
-											   | ImGuiWindowFlags_NoBringToFrontOnFocus;
+constexpr float TitleFontScale   = 1.8f;
+constexpr float ButtonsAreaWidth = 190.0f;   // "Open" + "Remove" buttons of a row
+constexpr float FooterLines      = 4.0f;     // space under the list for the buttons and the status
 
-	const ImVec4 ErrorColor = ImVec4(1.0f, 0.45f, 0.4f, 1.0f);
+constexpr ImGuiWindowFlags FullWindowFlags = ImGuiWindowFlags_NoDecoration
+										   | ImGuiWindowFlags_NoMove
+										   | ImGuiWindowFlags_NoSavedSettings
+										   | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-	fs::path sampleProjectDirectory;
+const ImVec4 ErrorColor = ImVec4(1.0f, 0.45f, 0.4f, 1.0f);
 
-	// EditorGUIContext::Init adds the editor font as the last one, the first is the tiny default font of ImGui
-	ImFont* GetEditorFont()
-	{
-		ImFontAtlas* fonts = ImGui::GetIO().Fonts;
-		return (fonts->Fonts.Size > 1) ? fonts->Fonts.back() : nullptr;
-	}
+fs::path sampleProjectDirectory;
+
+// EditorGUIContext::Init adds the editor font as the last one, the first is the tiny default font of ImGui
+ImFont* GetEditorFont()
+{
+	ImFontAtlas* fonts = ImGui::GetIO().Fonts;
+	return (fonts->Fonts.Size > 1) ? fonts->Fonts.back() : nullptr;
+}
+
 }
 
 ProjectLauncherLayer::ProjectLauncherLayer(Application& application)

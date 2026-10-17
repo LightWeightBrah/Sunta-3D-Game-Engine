@@ -139,7 +139,9 @@ void GLFWWindowImplementation::SetCallbacks()
 
 	glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
-			glfwHideWindow(window);
+			// GLFW already marked the window as closing. It stays open until the application agrees to close,
+			// because the editor may ask about unsaved changes first (Application hides the window when it closes)
+			glfwSetWindowShouldClose(window, GLFW_FALSE);
 			EventBus::Publish(WindowCloseEvent{});
 
 		});
@@ -181,6 +183,17 @@ void GLFWWindowImplementation::SetAsGraphicsTarget()
 void GLFWWindowImplementation::Show()
 {
 	glfwShowWindow(window);
+}
+
+void GLFWWindowImplementation::Hide()
+{
+	glfwHideWindow(window);
+}
+
+void GLFWWindowImplementation::SetTitle(const std::string& newTitle)
+{
+	title = newTitle;
+	glfwSetWindowTitle(window, title.c_str());
 }
 
 void GLFWWindowImplementation::OnEngineModeChanged(const EngineModeChangedEvent& event)

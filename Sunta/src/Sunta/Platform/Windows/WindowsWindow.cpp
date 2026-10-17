@@ -34,6 +34,16 @@ void WindowsWindow::Show()
 	implementation.Show();
 }
 
+void WindowsWindow::Hide()
+{
+	implementation.Hide();
+}
+
+void WindowsWindow::SetTitle(const std::string& title)
+{
+	implementation.SetTitle(title);
+}
+
 bool WindowsWindow::SetIcon(const std::string& imagePath)
 {
 	return implementation.SetIcon(imagePath);

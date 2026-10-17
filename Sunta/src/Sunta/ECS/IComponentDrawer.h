@@ -9,7 +9,9 @@ class IComponentDrawer
 {
 public:
 	virtual ~IComponentDrawer() = default;
-	virtual void Draw(void* componentData, unsigned int entityID, EntityManager& entityManager) = 0;
+
+	// True when the user edited the component in this frame
+	virtual bool Draw(void* componentData, unsigned int entityID, EntityManager& entityManager) = 0;
 };
 
 }

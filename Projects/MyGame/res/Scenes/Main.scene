@@ -874,6 +874,205 @@
                     1.0
                 ]
             }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "pyramid"
+            },
+            "tag": {
+                "name": "Pyramid"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "mesh": {
+                "is_visible": true,
+                "material_name": "default_material",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "camera": {
+                "far_plane": 100.0,
+                "field_of_view": 45.0,
+                "is_active": true,
+                "near_plane": 0.10000000149011612
+            },
+            "tag": {
+                "name": "Camera"
+            },
+            "transform": {
+                "position": [
+                    11.26888656616211,
+                    10.182618141174316,
+                    26.6119384765625
+                ],
+                "rotation": [
+                    -18.5999755859375,
+                    14.199996948242188,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.9792885184288025,
+                    -0.16036437451839447,
+                    0.12197676301002502,
+                    0.01997442916035652
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
         }
     ],
     "scene_name": "Main"

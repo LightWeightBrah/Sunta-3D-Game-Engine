@@ -14,45 +14,47 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
 
-	constexpr const char* DefaultSceneName        = "Main";
-	constexpr const char* DefaultSceneVirtualPath = "@game/Scenes/Main.scene";
+namespace fs = std::filesystem;
 
-	constexpr float FloorSize      = 20.0f;
-	constexpr float FloorThickness = 0.5f;
-	constexpr float CubeSize       = 1.0f;
+constexpr const char* DefaultSceneName        = "Main";
+constexpr const char* DefaultSceneVirtualPath = "@game/Scenes/Main.scene";
 
-	const glm::vec3 SunPosition        = glm::vec3(0.0f, 5.0f, 0.0f);
-	const glm::vec3 SunRotationDegrees = glm::vec3(-50.0f, -30.0f, 0.0f);
+constexpr float FloorSize      = 20.0f;
+constexpr float FloorThickness = 0.5f;
+constexpr float CubeSize       = 1.0f;
 
-	// Behind the cube and a bit above it, tilted down so the cube is in the middle of the screen
-	const glm::vec3 CameraPosition        = glm::vec3(0.0f, 4.0f, 9.0f);
-	const glm::vec3 CameraRotationDegrees = glm::vec3(-20.0f, 0.0f, 0.0f);
+const glm::vec3 SunPosition        = glm::vec3(0.0f, 5.0f, 0.0f);
+const glm::vec3 SunRotationDegrees = glm::vec3(-50.0f, -30.0f, 0.0f);
 
-	bool FileExists(const std::string& path)
-	{
-		std::error_code error;
-		return fs::exists(path, error);
-	}
+// Behind the cube and a bit above it, tilted down so the cube is in the middle of the screen
+const glm::vec3 CameraPosition        = glm::vec3(0.0f, 4.0f, 9.0f);
+const glm::vec3 CameraRotationDegrees = glm::vec3(-20.0f, 0.0f, 0.0f);
 
-	// The factory creates the entity at the end of the list, so the newest entity is the last one
-	unsigned int GetNewestEntity(Scene& scene)
-	{
-		return scene.GetEntityManager().GetEntityCount() - 1;
-	}
+bool FileExists(const std::string& path)
+{
+	std::error_code error;
+	return fs::exists(path, error);
+}
 
-	void SetTransform(Scene& scene, unsigned int entity, const glm::vec3& rotationDegrees, const glm::vec3& scale)
-	{
-		auto* transform = scene.GetEntityManager().GetComponent<TransformComponent>(entity);
-		if (!transform)
-			return;
+// The factory creates the entity at the end of the list, so the newest entity is the last one
+unsigned int GetNewestEntity(Scene& scene)
+{
+	return scene.GetEntityManager().GetEntityCount() - 1;
+}
 
-		transform->rotation = rotationDegrees;
-		transform->scale    = scale;
-		transform->SyncQuaternionFromEuler();
-		transform->isDirty  = true;
-	}
+void SetTransform(Scene& scene, unsigned int entity, const glm::vec3& rotationDegrees, const glm::vec3& scale)
+{
+	auto* transform = scene.GetEntityManager().GetComponent<TransformComponent>(entity);
+	if (!transform)
+		return;
+
+	transform->rotation = rotationDegrees;
+	transform->scale    = scale;
+	transform->SyncQuaternionFromEuler();
+	transform->isDirty  = true;
+}
+
 }
 
 void StartScene::OpenInEditor(Scene& scene)

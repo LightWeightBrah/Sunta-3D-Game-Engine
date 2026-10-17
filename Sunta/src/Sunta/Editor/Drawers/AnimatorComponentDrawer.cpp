@@ -11,7 +11,7 @@
 namespace Sunta
 {
 
-void AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, EntityManager& entityManager)
+bool AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, EntityManager& entityManager)
 {
 	auto* animatorComponent = static_cast<AnimatorComponent*>(componentData);
 
@@ -19,7 +19,7 @@ void AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, E
 	if (!modelComponent || !modelComponent->modelData)
 	{
 		ImGui::TextDisabled("No Model assigned - Add a Model Component first!");
-		return;
+		return false;
 	}
 
 	auto& animations = modelComponent->modelData->animations;
@@ -27,11 +27,13 @@ void AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, E
 	if (animations.empty())
 	{
 		ImGui::TextDisabled("This Model has NO ANIMATIONS!");
-		return;
+		return false;
 	}
 
 	std::string previewName = animatorComponent->currentAnimationName.empty()
 		? "None" : animatorComponent->currentAnimationName;
+
+	bool edited = false;
 
 	if (ImGui::BeginCombo("Animation", previewName.c_str()))
 	{
@@ -48,6 +50,8 @@ void AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, E
 
 					// Show the first frame of the new animation in the editor (bones are only updated during Play)
 					animatorComponent->animator.SampleAtTime(0.0f);
+
+					edited = true;
 				}
 			}
 
@@ -57,6 +61,8 @@ void AnimatorComponentDrawer::Draw(void* componentData, unsigned int entityID, E
 
 		ImGui::EndCombo();
 	}
+
+	return edited;
 }
 
 }

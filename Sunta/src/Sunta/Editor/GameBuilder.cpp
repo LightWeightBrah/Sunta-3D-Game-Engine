@@ -13,46 +13,48 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
 
-	constexpr const char* RuntimeExecutableName = "SuntaRuntime";
-	constexpr const char* BuildFolderName       = "Build";
+namespace fs = std::filesystem;
 
-	// Resources only the editor uses (relative to Sunta/res), the shipped game doesn't need them
-	const std::vector<std::string> EditorOnlyResourceFolders = { "Textures/Icons/", "Textures/ui/" };
+constexpr const char* RuntimeExecutableName = "SuntaRuntime";
+constexpr const char* BuildFolderName       = "Build";
 
-	std::string GetExecutableSuffix()
-	{
+// Resources only the editor uses (relative to Sunta/res), the shipped game doesn't need them
+const std::vector<std::string> EditorOnlyResourceFolders = { "Textures/Icons/", "Textures/ui/" };
+
+std::string GetExecutableSuffix()
+{
 #if defined(SUNTA_PLATFORM_WINDOWS)
-		return ".exe";
+	return ".exe";
 #else
-		return "";
+	return "";
 #endif
-	}
+}
 
-	// A game without a start scene would open as an empty window
-	bool HasStartScene(const GameConfig& gameConfig)
+// A game without a start scene would open as an empty window
+bool HasStartScene(const GameConfig& gameConfig)
+{
+	if (gameConfig.startScene.empty())
+		return false;
+
+	std::error_code error;
+	return fs::exists(VirtualFileSystem::Resolve(gameConfig.startScene), error);
+}
+
+// The game name becomes a file and folder name, so characters Windows doesn't allow are replaced
+std::string MakeFileNameSafe(std::string name)
+{
+	const std::string forbiddenCharacters = "<>:\"/\\|?*";
+
+	for (char& character : name)
 	{
-		if (gameConfig.startScene.empty())
-			return false;
-
-		std::error_code error;
-		return fs::exists(VirtualFileSystem::Resolve(gameConfig.startScene), error);
+		if (forbiddenCharacters.find(character) != std::string::npos)
+			character = '_';
 	}
 
-	// The game name becomes a file and folder name, so characters Windows doesn't allow are replaced
-	std::string MakeFileNameSafe(std::string name)
-	{
-		const std::string forbiddenCharacters = "<>:\"/\\|?*";
+	return name;
+}
 
-		for (char& character : name)
-		{
-			if (forbiddenCharacters.find(character) != std::string::npos)
-				character = '_';
-		}
-
-		return name;
-	}
 }
 
 bool GameBuilder::BuildGame()

@@ -11,7 +11,9 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
+
+namespace fs = std::filesystem;
+
 }
 
 bool ExecutableIcon::TryReadImageSize(const fs::path& imagePath, int& outWidth, int& outHeight)
@@ -28,182 +30,184 @@ bool ExecutableIcon::TryReadImageSize(const fs::path& imagePath, int& outWidth, 
 
 namespace
 {
-	// Sizes Windows shows in the explorer, taskbar, alt-tab... Bigger than the source image are skipped (no blurry upscaling)
-	const std::vector<int> IconSizes = { 16, 24, 32, 48, 64, 128, 256 };
 
-	constexpr WORD  IconResourceType  = 1;       // value of the "type" field in icon directories
-	constexpr WORD  DefaultGroupId    = 1;
-	constexpr int   MaxIconDirectoryEntrySize = 256; // a size of 256 is stored as 0 in the directory
+// Sizes Windows shows in the explorer, taskbar, alt-tab... Bigger than the source image are skipped (no blurry upscaling)
+const std::vector<int> IconSizes = { 16, 24, 32, 48, 64, 128, 256 };
+
+constexpr WORD  IconResourceType  = 1;       // value of the "type" field in icon directories
+constexpr WORD  DefaultGroupId    = 1;
+constexpr int   MaxIconDirectoryEntrySize = 256; // a size of 256 is stored as 0 in the directory
 
 #pragma pack(push, 2)
-	struct GroupIconHeader
-	{
-		WORD reserved;
-		WORD type;
-		WORD count;
-	};
+struct GroupIconHeader
+{
+	WORD reserved;
+	WORD type;
+	WORD count;
+};
 
-	struct GroupIconEntry
-	{
-		BYTE  width;
-		BYTE  height;
-		BYTE  colorCount;
-		BYTE  reserved;
-		WORD  planes;
-		WORD  bitCount;
-		DWORD bytesInResource;
-		WORD  id;
-	};
+struct GroupIconEntry
+{
+	BYTE  width;
+	BYTE  height;
+	BYTE  colorCount;
+	BYTE  reserved;
+	WORD  planes;
+	WORD  bitCount;
+	DWORD bytesInResource;
+	WORD  id;
+};
 #pragma pack(pop)
 
-	// RT_ICON and RT_GROUP_ICON expand to narrow strings when the project is not built with UNICODE
-	const LPCWSTR kIconResourceType      = MAKEINTRESOURCEW(3);    // RT_ICON
-	const LPCWSTR kIconGroupResourceType = MAKEINTRESOURCEW(14);   // RT_GROUP_ICON
+// RT_ICON and RT_GROUP_ICON expand to narrow strings when the project is not built with UNICODE
+const LPCWSTR kIconResourceType      = MAKEINTRESOURCEW(3);    // RT_ICON
+const LPCWSTR kIconGroupResourceType = MAKEINTRESOURCEW(14);   // RT_GROUP_ICON
 
-	// Resource name can be a number or a text, the icon of Sunta executables is named by text ("IDI_ICON1")
-	struct ResourceName
+// Resource name can be a number or a text, the icon of Sunta executables is named by text ("IDI_ICON1")
+struct ResourceName
+{
+	std::wstring text;
+	WORD         id       = 0;
+	bool         isNumber = false;
+
+	LPCWSTR Get() const { return isNumber ? MAKEINTRESOURCEW(id) : text.c_str(); }
+};
+
+struct ResourceEntry
+{
+	ResourceName name;
+	WORD         language = 0;
+};
+
+struct EnumerationContext
+{
+	std::vector<ResourceEntry> entries;
+	ResourceName               currentName;
+};
+
+BOOL CALLBACK CollectLanguage(HMODULE, LPCWSTR, LPCWSTR, WORD language, LONG_PTR parameter)
+{
+	auto* context = reinterpret_cast<EnumerationContext*>(parameter);
+	context->entries.push_back({ context->currentName, language });
+	return TRUE;
+}
+
+BOOL CALLBACK CollectName(HMODULE module, LPCWSTR type, LPWSTR name, LONG_PTR parameter)
+{
+	auto* context = reinterpret_cast<EnumerationContext*>(parameter);
+
+	context->currentName = ResourceName();
+	if (IS_INTRESOURCE(name))
 	{
-		std::wstring text;
-		WORD         id       = 0;
-		bool         isNumber = false;
-
-		LPCWSTR Get() const { return isNumber ? MAKEINTRESOURCEW(id) : text.c_str(); }
-	};
-
-	struct ResourceEntry
+		context->currentName.isNumber = true;
+		context->currentName.id       = static_cast<WORD>(reinterpret_cast<ULONG_PTR>(name));
+	}
+	else
 	{
-		ResourceName name;
-		WORD         language = 0;
-	};
-
-	struct EnumerationContext
-	{
-		std::vector<ResourceEntry> entries;
-		ResourceName               currentName;
-	};
-
-	BOOL CALLBACK CollectLanguage(HMODULE, LPCWSTR, LPCWSTR, WORD language, LONG_PTR parameter)
-	{
-		auto* context = reinterpret_cast<EnumerationContext*>(parameter);
-		context->entries.push_back({ context->currentName, language });
-		return TRUE;
+		context->currentName.text = name;
 	}
 
-	BOOL CALLBACK CollectName(HMODULE module, LPCWSTR type, LPWSTR name, LONG_PTR parameter)
-	{
-		auto* context = reinterpret_cast<EnumerationContext*>(parameter);
+	EnumResourceLanguagesW(module, type, name, CollectLanguage, parameter);
+	return TRUE;
+}
 
-		context->currentName = ResourceName();
-		if (IS_INTRESOURCE(name))
-		{
-			context->currentName.isNumber = true;
-			context->currentName.id       = static_cast<WORD>(reinterpret_cast<ULONG_PTR>(name));
-		}
-		else
-		{
-			context->currentName.text = name;
-		}
+std::vector<ResourceEntry> ReadResources(const fs::path& executablePath, LPCWSTR type)
+{
+	EnumerationContext context;
 
-		EnumResourceLanguagesW(module, type, name, CollectLanguage, parameter);
-		return TRUE;
-	}
-
-	std::vector<ResourceEntry> ReadResources(const fs::path& executablePath, LPCWSTR type)
-	{
-		EnumerationContext context;
-
-		HMODULE module = LoadLibraryExW(executablePath.c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE);
-		if (!module)
-			return context.entries;
-
-		EnumResourceNamesW(module, type, CollectName, reinterpret_cast<LONG_PTR>(&context));
-
-		// Has to be released before the file is updated
-		FreeLibrary(module);
+	HMODULE module = LoadLibraryExW(executablePath.c_str(), nullptr, LOAD_LIBRARY_AS_DATAFILE);
+	if (!module)
 		return context.entries;
-	}
 
-	// The content of one RT_ICON resource: a bitmap with a header, rows from the BOTTOM, pixels as B, G, R, A,
-	// followed by a 1-bit mask (all zeros, the alpha channel does the transparency)
-	std::vector<unsigned char> EncodeBitmap(const SquareImage& image)
+	EnumResourceNamesW(module, type, CollectName, reinterpret_cast<LONG_PTR>(&context));
+
+	// Has to be released before the file is updated
+	FreeLibrary(module);
+	return context.entries;
+}
+
+// The content of one RT_ICON resource: a bitmap with a header, rows from the BOTTOM, pixels as B, G, R, A,
+// followed by a 1-bit mask (all zeros, the alpha channel does the transparency)
+std::vector<unsigned char> EncodeBitmap(const SquareImage& image)
+{
+	const int    size          = image.size;
+	const size_t pixelBytes    = static_cast<size_t>(size) * size * 4;
+	const size_t maskRowBytes  = static_cast<size_t>((size + 31) / 32) * 4;
+	const size_t maskBytes     = maskRowBytes * size;
+
+	BITMAPINFOHEADER header = {};
+	header.biSize        = sizeof(BITMAPINFOHEADER);
+	header.biWidth       = size;
+	header.biHeight      = size * 2;       // the image and the mask together
+	header.biPlanes      = 1;
+	header.biBitCount    = 32;
+	header.biCompression = BI_RGB;
+	header.biSizeImage   = static_cast<DWORD>(pixelBytes + maskBytes);
+
+	std::vector<unsigned char> data(sizeof(header) + pixelBytes + maskBytes, 0);
+	std::memcpy(data.data(), &header, sizeof(header));
+
+	unsigned char* target = data.data() + sizeof(header);
+	for (int row = size - 1; row >= 0; --row)
 	{
-		const int    size          = image.size;
-		const size_t pixelBytes    = static_cast<size_t>(size) * size * 4;
-		const size_t maskRowBytes  = static_cast<size_t>((size + 31) / 32) * 4;
-		const size_t maskBytes     = maskRowBytes * size;
+		const unsigned char* sourceRow = &image.pixels[static_cast<size_t>(row) * size * 4];
 
-		BITMAPINFOHEADER header = {};
-		header.biSize        = sizeof(BITMAPINFOHEADER);
-		header.biWidth       = size;
-		header.biHeight      = size * 2;       // the image and the mask together
-		header.biPlanes      = 1;
-		header.biBitCount    = 32;
-		header.biCompression = BI_RGB;
-		header.biSizeImage   = static_cast<DWORD>(pixelBytes + maskBytes);
-
-		std::vector<unsigned char> data(sizeof(header) + pixelBytes + maskBytes, 0);
-		std::memcpy(data.data(), &header, sizeof(header));
-
-		unsigned char* target = data.data() + sizeof(header);
-		for (int row = size - 1; row >= 0; --row)
+		for (int column = 0; column < size; ++column)
 		{
-			const unsigned char* sourceRow = &image.pixels[static_cast<size_t>(row) * size * 4];
-
-			for (int column = 0; column < size; ++column)
-			{
-				const unsigned char* pixel = sourceRow + column * 4;
-				target[0] = pixel[2];
-				target[1] = pixel[1];
-				target[2] = pixel[0];
-				target[3] = pixel[3];
-				target += 4;
-			}
+			const unsigned char* pixel = sourceRow + column * 4;
+			target[0] = pixel[2];
+			target[1] = pixel[1];
+			target[2] = pixel[0];
+			target[3] = pixel[3];
+			target += 4;
 		}
-
-		return data;
 	}
 
-	std::vector<SquareImage> CreateIconImages(const SquareImage& source)
+	return data;
+}
+
+std::vector<SquareImage> CreateIconImages(const SquareImage& source)
+{
+	std::vector<SquareImage> images;
+
+	for (int size : IconSizes)
 	{
-		std::vector<SquareImage> images;
-
-		for (int size : IconSizes)
-		{
-			if (size <= source.size)
-				images.push_back(IconImage::Resize(source, size));
-		}
-
-		// A tiny source image still gets an icon (the smallest size)
-		if (images.empty())
-			images.push_back(IconImage::Resize(source, IconSizes.front()));
-
-		return images;
+		if (size <= source.size)
+			images.push_back(IconImage::Resize(source, size));
 	}
 
-	std::vector<unsigned char> BuildGroupIconDirectory(const std::vector<SquareImage>& images, const std::vector<std::vector<unsigned char>>& bitmaps)
+	// A tiny source image still gets an icon (the smallest size)
+	if (images.empty())
+		images.push_back(IconImage::Resize(source, IconSizes.front()));
+
+	return images;
+}
+
+std::vector<unsigned char> BuildGroupIconDirectory(const std::vector<SquareImage>& images, const std::vector<std::vector<unsigned char>>& bitmaps)
+{
+	std::vector<unsigned char> directory(sizeof(GroupIconHeader) + sizeof(GroupIconEntry) * images.size());
+
+	GroupIconHeader header = { 0, IconResourceType, static_cast<WORD>(images.size()) };
+	std::memcpy(directory.data(), &header, sizeof(header));
+
+	for (size_t index = 0; index < images.size(); ++index)
 	{
-		std::vector<unsigned char> directory(sizeof(GroupIconHeader) + sizeof(GroupIconEntry) * images.size());
+		const bool isMaxSize = images[index].size >= MaxIconDirectoryEntrySize;
 
-		GroupIconHeader header = { 0, IconResourceType, static_cast<WORD>(images.size()) };
-		std::memcpy(directory.data(), &header, sizeof(header));
+		GroupIconEntry entry = {};
+		entry.width           = isMaxSize ? 0 : static_cast<BYTE>(images[index].size);
+		entry.height          = entry.width;
+		entry.planes          = 1;
+		entry.bitCount        = 32;
+		entry.bytesInResource = static_cast<DWORD>(bitmaps[index].size());
+		entry.id              = static_cast<WORD>(index + 1);   // id of the RT_ICON resource
 
-		for (size_t index = 0; index < images.size(); ++index)
-		{
-			const bool isMaxSize = images[index].size >= MaxIconDirectoryEntrySize;
-
-			GroupIconEntry entry = {};
-			entry.width           = isMaxSize ? 0 : static_cast<BYTE>(images[index].size);
-			entry.height          = entry.width;
-			entry.planes          = 1;
-			entry.bitCount        = 32;
-			entry.bytesInResource = static_cast<DWORD>(bitmaps[index].size());
-			entry.id              = static_cast<WORD>(index + 1);   // id of the RT_ICON resource
-
-			std::memcpy(directory.data() + sizeof(header) + sizeof(entry) * index, &entry, sizeof(entry));
-		}
-
-		return directory;
+		std::memcpy(directory.data() + sizeof(header) + sizeof(entry) * index, &entry, sizeof(entry));
 	}
+
+	return directory;
+}
+
 }
 
 bool ExecutableIcon::Apply(const fs::path& executablePath, const fs::path& imagePath)

@@ -33,6 +33,16 @@ void LinuxWindow::Show()
 	implementation.Show();
 }
 
+void LinuxWindow::Hide()
+{
+	implementation.Hide();
+}
+
+void LinuxWindow::SetTitle(const std::string& title)
+{
+	implementation.SetTitle(title);
+}
+
 bool LinuxWindow::SetIcon(const std::string& imagePath)
 {
 	return implementation.SetIcon(imagePath);

@@ -81,6 +81,7 @@ private:
 	void LoadGameConfig();
 	void ApplyGameWindowIcon();
 	void SubscribeToWindowEvents();
+	void RequestClose();
 
 	void ProcessInput();
 	void Update(float deltaTime);

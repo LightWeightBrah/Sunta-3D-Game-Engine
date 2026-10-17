@@ -21,6 +21,8 @@ public:
 	void EnableMouseCursor(bool enabled);
 	void SetAsGraphicsTarget();
 	void Show();
+	void Hide();
+	void SetTitle(const std::string& newTitle);
 	bool SetIcon(const std::string& imagePath);
 
 	unsigned int GetWidth()  const { return width; }

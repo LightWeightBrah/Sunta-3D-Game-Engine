@@ -57,6 +57,9 @@ void Application::Run()
 		InputManager::Clear();
 	}
 
+	// Shutdown takes a moment, the window shouldn't sit there frozen in the meantime
+	window->Hide();
+
 	Shutdown();
 }
 
@@ -118,9 +121,21 @@ void Application::ApplyGameWindowIcon()
 	window->SetIcon(iconPath);
 }
 
+// The user closed the window: closes at once, unless a layer wants to ask something first
+void Application::RequestClose()
+{
+	for (auto& layer : layers)
+	{
+		if (!layer->OnCloseRequested())
+			return;
+	}
+
+	Close();
+}
+
 void Application::SubscribeToWindowEvents()
 {
-	EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { Close(); });
+	EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { RequestClose(); });
 
 	EventBus::Subscribe<WindowResizeEvent>([this](const WindowResizeEvent& event)
 		{

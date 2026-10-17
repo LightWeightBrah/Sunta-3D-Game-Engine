@@ -143,7 +143,7 @@ static void DeserializeAttenuation(const json& j, Attenuation& attenuation)
 	if (j.contains(SceneKeys::AttenuationQuadratic)) attenuation.quadratic = j[SceneKeys::AttenuationQuadratic];
 }
 
-bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
+std::string SceneSerializer::SerializeToString(Scene& scene)
 {
 	auto& entityManager = scene.GetEntityManager();
 	unsigned int totalEntities = entityManager.GetEntityCount();
@@ -292,6 +292,11 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 
 	sceneJson[SceneKeys::Entities] = entitiesArray;
 
+	return sceneJson.dump(4);
+}
+
+bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
+{
 	std::ofstream outFile(filepath);
 	if (!outFile.is_open())
 	{
@@ -299,7 +304,7 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 		return false;
 	}
 
-	outFile << sceneJson.dump(4);
+	outFile << SerializeToString(scene);
 	outFile.close();
 
 	SUNTA_ENGINE_LOG_INFO("SceneSerializer::Serialize: Successfully Saved Scene to: '{0}'", filepath);

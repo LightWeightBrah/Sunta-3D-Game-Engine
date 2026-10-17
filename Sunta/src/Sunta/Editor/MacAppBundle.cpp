@@ -9,106 +9,108 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
 
-	// Entries of an .icns file: the type tells the size, the data is a PNG (the Finder reads these since macOS 10.7)
-	struct IcnsEntry
+namespace fs = std::filesystem;
+
+// Entries of an .icns file: the type tells the size, the data is a PNG (the Finder reads these since macOS 10.7)
+struct IcnsEntry
+{
+	const char* type;
+	int         size;
+};
+
+// Sizes bigger than the source image are skipped (no blurry upscaling)
+const std::vector<IcnsEntry> IcnsEntries =
+{
+	{ "icp4",   16 },
+	{ "icp5",   32 },
+	{ "icp6",   64 },
+	{ "ic07",  128 },
+	{ "ic08",  256 },
+	{ "ic09",  512 },
+	{ "ic10", 1024 },
+};
+
+constexpr int         IcnsHeaderBytes = 8;   // 4 characters of type + 4 bytes of length
+constexpr const char* IcnsFileMagic   = "icns";
+constexpr const char* ContentsFolder  = "Contents";
+
+void AppendBigEndian32(std::vector<unsigned char>& bytes, uint32_t value)
+{
+	bytes.push_back(static_cast<unsigned char>(value >> 24));
+	bytes.push_back(static_cast<unsigned char>(value >> 16));
+	bytes.push_back(static_cast<unsigned char>(value >> 8));
+	bytes.push_back(static_cast<unsigned char>(value));
+}
+
+void AppendIcnsEntry(std::vector<unsigned char>& icns, const char* type, const std::vector<unsigned char>& png)
+{
+	icns.insert(icns.end(), type, type + 4);
+	AppendBigEndian32(icns, static_cast<uint32_t>(IcnsHeaderBytes + png.size()));
+	icns.insert(icns.end(), png.begin(), png.end());
+}
+
+std::vector<unsigned char> CreateIcns(const SquareImage& source)
+{
+	std::vector<unsigned char> icns(IcnsFileMagic, IcnsFileMagic + 4);
+	AppendBigEndian32(icns, 0);   // the total length is known at the end
+
+	bool hasEntry = false;
+	for (const IcnsEntry& entry : IcnsEntries)
 	{
-		const char* type;
-		int         size;
-	};
+		if (entry.size > source.size)
+			continue;
 
-	// Sizes bigger than the source image are skipped (no blurry upscaling)
-	const std::vector<IcnsEntry> IcnsEntries =
-	{
-		{ "icp4",   16 },
-		{ "icp5",   32 },
-		{ "icp6",   64 },
-		{ "ic07",  128 },
-		{ "ic08",  256 },
-		{ "ic09",  512 },
-		{ "ic10", 1024 },
-	};
-
-	constexpr int         IcnsHeaderBytes = 8;   // 4 characters of type + 4 bytes of length
-	constexpr const char* IcnsFileMagic   = "icns";
-	constexpr const char* ContentsFolder  = "Contents";
-
-	void AppendBigEndian32(std::vector<unsigned char>& bytes, uint32_t value)
-	{
-		bytes.push_back(static_cast<unsigned char>(value >> 24));
-		bytes.push_back(static_cast<unsigned char>(value >> 16));
-		bytes.push_back(static_cast<unsigned char>(value >> 8));
-		bytes.push_back(static_cast<unsigned char>(value));
+		AppendIcnsEntry(icns, entry.type, IconImage::EncodePng(IconImage::Resize(source, entry.size)));
+		hasEntry = true;
 	}
 
-	void AppendIcnsEntry(std::vector<unsigned char>& icns, const char* type, const std::vector<unsigned char>& png)
-	{
-		icns.insert(icns.end(), type, type + 4);
-		AppendBigEndian32(icns, static_cast<uint32_t>(IcnsHeaderBytes + png.size()));
-		icns.insert(icns.end(), png.begin(), png.end());
-	}
+	// A tiny source image still gets an icon (the smallest size)
+	if (!hasEntry)
+		AppendIcnsEntry(icns, IcnsEntries.front().type, IconImage::EncodePng(IconImage::Resize(source, IcnsEntries.front().size)));
 
-	std::vector<unsigned char> CreateIcns(const SquareImage& source)
-	{
-		std::vector<unsigned char> icns(IcnsFileMagic, IcnsFileMagic + 4);
-		AppendBigEndian32(icns, 0);   // the total length is known at the end
+	const uint32_t totalLength = static_cast<uint32_t>(icns.size());
+	icns[4] = static_cast<unsigned char>(totalLength >> 24);
+	icns[5] = static_cast<unsigned char>(totalLength >> 16);
+	icns[6] = static_cast<unsigned char>(totalLength >> 8);
+	icns[7] = static_cast<unsigned char>(totalLength);
 
-		bool hasEntry = false;
-		for (const IcnsEntry& entry : IcnsEntries)
+	return icns;
+}
+
+std::string EscapeXml(const std::string& text)
+{
+	std::string escaped;
+
+	for (char character : text)
+	{
+		switch (character)
 		{
-			if (entry.size > source.size)
-				continue;
-
-			AppendIcnsEntry(icns, entry.type, IconImage::EncodePng(IconImage::Resize(source, entry.size)));
-			hasEntry = true;
+			case '&': escaped += "&amp;";  break;
+			case '<': escaped += "&lt;";   break;
+			case '>': escaped += "&gt;";   break;
+			case '"': escaped += "&quot;"; break;
+			default:  escaped += character;
 		}
-
-		// A tiny source image still gets an icon (the smallest size)
-		if (!hasEntry)
-			AppendIcnsEntry(icns, IcnsEntries.front().type, IconImage::EncodePng(IconImage::Resize(source, IcnsEntries.front().size)));
-
-		const uint32_t totalLength = static_cast<uint32_t>(icns.size());
-		icns[4] = static_cast<unsigned char>(totalLength >> 24);
-		icns[5] = static_cast<unsigned char>(totalLength >> 16);
-		icns[6] = static_cast<unsigned char>(totalLength >> 8);
-		icns[7] = static_cast<unsigned char>(totalLength);
-
-		return icns;
 	}
 
-	std::string EscapeXml(const std::string& text)
+	return escaped;
+}
+
+// Bundle identifiers allow only letters, digits, '.' and '-'
+std::string MakeBundleIdentifier(const std::string& gameName)
+{
+	std::string identifier = "com.sunta.";
+
+	for (char character : gameName)
 	{
-		std::string escaped;
-
-		for (char character : text)
-		{
-			switch (character)
-			{
-				case '&': escaped += "&amp;";  break;
-				case '<': escaped += "&lt;";   break;
-				case '>': escaped += "&gt;";   break;
-				case '"': escaped += "&quot;"; break;
-				default:  escaped += character;
-			}
-		}
-
-		return escaped;
+		const bool isAllowed = std::isalnum(static_cast<unsigned char>(character)) != 0;
+		identifier += isAllowed ? character : '-';
 	}
 
-	// Bundle identifiers allow only letters, digits, '.' and '-'
-	std::string MakeBundleIdentifier(const std::string& gameName)
-	{
-		std::string identifier = "com.sunta.";
+	return identifier;
+}
 
-		for (char character : gameName)
-		{
-			const bool isAllowed = std::isalnum(static_cast<unsigned char>(character)) != 0;
-			identifier += isAllowed ? character : '-';
-		}
-
-		return identifier;
-	}
 }
 
 fs::path MacAppBundle::GetExecutableDirectory(const fs::path& bundleDirectory)

@@ -10,124 +10,126 @@ namespace Sunta
 
 namespace
 {
-	namespace fs = std::filesystem;
 
-	constexpr size_t MaxRecentProjects = 10;
+namespace fs = std::filesystem;
 
-	constexpr const char* SettingsFolderName = "SuntaEngine";
-	constexpr const char* SettingsFileName   = "editor_settings.json";
+constexpr size_t MaxRecentProjects = 10;
 
-	namespace Keys
-	{
-		constexpr const char* RecentProjects          = "recent_projects";
-		constexpr const char* OpenLastProjectOnStart  = "open_last_project_on_startup";
-		constexpr const char* BuildConfiguration      = "build_configuration";
-		constexpr const char* CameraSpeed             = "camera_speed";
-	}
+constexpr const char* SettingsFolderName = "SuntaEngine";
+constexpr const char* SettingsFileName   = "editor_settings.json";
 
-	struct SettingsData
-	{
-		std::vector<std::string> recentProjects;   // UTF-8, newest first
-		bool        openLastProjectOnStartup = false;
-		std::string buildConfiguration;
-		float       cameraSpeed = 0.0f;
-	};
+namespace Keys
+{
+	constexpr const char* RecentProjects          = "recent_projects";
+	constexpr const char* OpenLastProjectOnStart  = "open_last_project_on_startup";
+	constexpr const char* BuildConfiguration      = "build_configuration";
+	constexpr const char* CameraSpeed             = "camera_speed";
+}
 
-	fs::path GetUserConfigDirectory()
-	{
+struct SettingsData
+{
+	std::vector<std::string> recentProjects;   // UTF-8, newest first
+	bool        openLastProjectOnStartup = false;
+	std::string buildConfiguration;
+	float       cameraSpeed = 0.0f;
+};
+
+fs::path GetUserConfigDirectory()
+{
 #if defined(SUNTA_PLATFORM_WINDOWS)
-		char*  appData = nullptr;
-		size_t length  = 0;
-		_dupenv_s(&appData, &length, "APPDATA");
+	char*  appData = nullptr;
+	size_t length  = 0;
+	_dupenv_s(&appData, &length, "APPDATA");
 
-		fs::path directory = appData ? fs::path(appData) : fs::temp_directory_path();
-		free(appData);
-		return directory;
+	fs::path directory = appData ? fs::path(appData) : fs::temp_directory_path();
+	free(appData);
+	return directory;
 
 #elif defined(SUNTA_PLATFORM_MAC)
-		const char* home = std::getenv("HOME");
-		return home ? fs::path(home) / "Library" / "Application Support" : fs::temp_directory_path();
+	const char* home = std::getenv("HOME");
+	return home ? fs::path(home) / "Library" / "Application Support" : fs::temp_directory_path();
 
 #else
-		if (const char* configHome = std::getenv("XDG_CONFIG_HOME"))
-			return fs::path(configHome);
+	if (const char* configHome = std::getenv("XDG_CONFIG_HOME"))
+		return fs::path(configHome);
 
-		const char* home = std::getenv("HOME");
-		return home ? fs::path(home) / ".config" : fs::temp_directory_path();
+	const char* home = std::getenv("HOME");
+	return home ? fs::path(home) / ".config" : fs::temp_directory_path();
 #endif
-	}
+}
 
-	fs::path GetSettingsFilePath()
-	{
-		return GetUserConfigDirectory() / SettingsFolderName / SettingsFileName;
-	}
+fs::path GetSettingsFilePath()
+{
+	return GetUserConfigDirectory() / SettingsFolderName / SettingsFileName;
+}
 
-	// One form of the path for comparing and storing: absolute, with '/' and without "..", UTF-8
-	std::string ToStoredPath(const fs::path& path)
-	{
-		return fs::absolute(path).lexically_normal().generic_u8string();
-	}
+// One form of the path for comparing and storing: absolute, with '/' and without "..", UTF-8
+std::string ToStoredPath(const fs::path& path)
+{
+	return fs::absolute(path).lexically_normal().generic_u8string();
+}
 
-	fs::path FromStoredPath(const std::string& storedPath)
-	{
-		return fs::u8path(storedPath);
-	}
+fs::path FromStoredPath(const std::string& storedPath)
+{
+	return fs::u8path(storedPath);
+}
 
-	SettingsData LoadSettings()
-	{
-		SettingsData data;
+SettingsData LoadSettings()
+{
+	SettingsData data;
 
-		std::ifstream file(GetSettingsFilePath());
-		if (!file.is_open())
-			return data;
-
-		try
-		{
-			nlohmann::json json;
-			file >> json;
-
-			data.recentProjects          = json.value(Keys::RecentProjects, std::vector<std::string>{});
-			data.openLastProjectOnStartup = json.value(Keys::OpenLastProjectOnStart, false);
-			data.buildConfiguration      = json.value(Keys::BuildConfiguration, std::string());
-			data.cameraSpeed             = json.value(Keys::CameraSpeed, 0.0f);
-		}
-		catch (const nlohmann::json::exception& error)
-		{
-			SUNTA_ENGINE_LOG_WARNING("EditorSettings: Ignoring broken settings file: {0}", error.what());
-			return SettingsData();
-		}
-
+	std::ifstream file(GetSettingsFilePath());
+	if (!file.is_open())
 		return data;
-	}
 
-	void SaveSettings(const SettingsData& data)
+	try
 	{
-		nlohmann::ordered_json json;
-		json[Keys::RecentProjects]         = data.recentProjects;
-		json[Keys::OpenLastProjectOnStart] = data.openLastProjectOnStartup;
-		json[Keys::BuildConfiguration]     = data.buildConfiguration;
-		json[Keys::CameraSpeed]            = data.cameraSpeed;
+		nlohmann::json json;
+		file >> json;
 
-		const fs::path settingsPath = GetSettingsFilePath();
-
-		std::error_code error;
-		fs::create_directories(settingsPath.parent_path(), error);
-
-		std::ofstream file(settingsPath);
-		if (!file.is_open())
-		{
-			SUNTA_ENGINE_LOG_WARNING("EditorSettings: Couldn't save '{0}'", settingsPath.string());
-			return;
-		}
-
-		file << json.dump(1, '\t') << '\n';
+		data.recentProjects          = json.value(Keys::RecentProjects, std::vector<std::string>{});
+		data.openLastProjectOnStartup = json.value(Keys::OpenLastProjectOnStart, false);
+		data.buildConfiguration      = json.value(Keys::BuildConfiguration, std::string());
+		data.cameraSpeed             = json.value(Keys::CameraSpeed, 0.0f);
 	}
-
-	SettingsData& GetData()
+	catch (const nlohmann::json::exception& error)
 	{
-		static SettingsData data = LoadSettings();
-		return data;
+		SUNTA_ENGINE_LOG_WARNING("EditorSettings: Ignoring broken settings file: {0}", error.what());
+		return SettingsData();
 	}
+
+	return data;
+}
+
+void SaveSettings(const SettingsData& data)
+{
+	nlohmann::ordered_json json;
+	json[Keys::RecentProjects]         = data.recentProjects;
+	json[Keys::OpenLastProjectOnStart] = data.openLastProjectOnStartup;
+	json[Keys::BuildConfiguration]     = data.buildConfiguration;
+	json[Keys::CameraSpeed]            = data.cameraSpeed;
+
+	const fs::path settingsPath = GetSettingsFilePath();
+
+	std::error_code error;
+	fs::create_directories(settingsPath.parent_path(), error);
+
+	std::ofstream file(settingsPath);
+	if (!file.is_open())
+	{
+		SUNTA_ENGINE_LOG_WARNING("EditorSettings: Couldn't save '{0}'", settingsPath.string());
+		return;
+	}
+
+	file << json.dump(1, '\t') << '\n';
+}
+
+SettingsData& GetData()
+{
+	static SettingsData data = LoadSettings();
+	return data;
+}
+
 }
 
 std::vector<fs::path> EditorSettings::GetRecentProjects()

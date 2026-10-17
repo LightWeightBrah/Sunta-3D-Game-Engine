@@ -15,19 +15,21 @@ namespace Sunta
 
 namespace
 {
+
 #if defined(SUNTA_PLATFORM_WINDOWS)
-	std::string WideToUtf8(const std::wstring& wide)
-	{
-		if (wide.empty())
-			return std::string();
+std::string WideToUtf8(const std::wstring& wide)
+{
+	if (wide.empty())
+		return std::string();
 
-		const int size = WideCharToMultiByte(CP_UTF8, 0, wide.data(), static_cast<int>(wide.size()), nullptr, 0, nullptr, nullptr);
+	const int size = WideCharToMultiByte(CP_UTF8, 0, wide.data(), static_cast<int>(wide.size()), nullptr, 0, nullptr, nullptr);
 
-		std::string utf8(size, '\0');
-		WideCharToMultiByte(CP_UTF8, 0, wide.data(), static_cast<int>(wide.size()), utf8.data(), size, nullptr, nullptr);
-		return utf8;
-	}
+	std::string utf8(size, '\0');
+	WideCharToMultiByte(CP_UTF8, 0, wide.data(), static_cast<int>(wide.size()), utf8.data(), size, nullptr, nullptr);
+	return utf8;
+}
 #endif
+
 }
 
 std::vector<std::string> ProcessLauncher::GetCommandLineArguments(int argc, char** argv)

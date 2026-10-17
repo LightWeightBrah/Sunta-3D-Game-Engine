@@ -16,6 +16,10 @@ public:
 	virtual void OnProcessInput()          {}
 	virtual void OnUpdate(float deltaTime) {}
 	virtual void OnRender()                {}
+
+	// The user closed the window (X button). Return false to keep the application open, e.g. to ask about
+	// unsaved work first, and call Application::Close() later, when closing is fine
+	virtual bool OnCloseRequested()        { return true; }
 };
 
 }

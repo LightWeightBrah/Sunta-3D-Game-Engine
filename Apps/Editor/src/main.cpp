@@ -15,80 +15,82 @@
 //   SuntaEditor --launcher       always shows the project launcher
 namespace
 {
-	constexpr unsigned int LauncherWindowWidth  = 1100;
-	constexpr unsigned int LauncherWindowHeight = 680;
 
-	struct LaunchOptions
+constexpr unsigned int LauncherWindowWidth  = 1100;
+constexpr unsigned int LauncherWindowHeight = 680;
+
+struct LaunchOptions
+{
+	std::filesystem::path projectDirectory;
+	bool                  forceLauncher = false;
+};
+
+LaunchOptions ParseLaunchOptions(const std::vector<std::string>& arguments)
+{
+	LaunchOptions options;
+
+	// arguments[0] is the program itself
+	for (size_t index = 1; index < arguments.size(); ++index)
 	{
-		std::filesystem::path projectDirectory;
-		bool                  forceLauncher = false;
-	};
-
-	LaunchOptions ParseLaunchOptions(const std::vector<std::string>& arguments)
-	{
-		LaunchOptions options;
-
-		// arguments[0] is the program itself
-		for (size_t index = 1; index < arguments.size(); ++index)
-		{
-			if (arguments[index] == Sunta::ProcessLauncher::LauncherArgument)
-				options.forceLauncher = true;
-			else
-				options.projectDirectory = std::filesystem::u8path(arguments[index]);
-		}
-
-		return options;
+		if (arguments[index] == Sunta::ProcessLauncher::LauncherArgument)
+			options.forceLauncher = true;
+		else
+			options.projectDirectory = std::filesystem::u8path(arguments[index]);
 	}
 
-	// Project to open without asking, empty when the user has to choose
-	std::filesystem::path FindProjectToOpen(const LaunchOptions& options)
-	{
-		using Sunta::ProjectManager;
+	return options;
+}
 
-		if (!options.projectDirectory.empty() && ProjectManager::IsProjectDirectory(options.projectDirectory))
-			return options.projectDirectory;
+// Project to open without asking, empty when the user has to choose
+std::filesystem::path FindProjectToOpen(const LaunchOptions& options)
+{
+	using Sunta::ProjectManager;
 
-		if (options.forceLauncher || !Sunta::EditorSettings::ShouldOpenLastProjectOnStartup())
-			return std::filesystem::path();
+	if (!options.projectDirectory.empty() && ProjectManager::IsProjectDirectory(options.projectDirectory))
+		return options.projectDirectory;
 
-		for (const std::filesystem::path& recentProject : Sunta::EditorSettings::GetRecentProjects())
-		{
-			if (ProjectManager::IsProjectDirectory(recentProject))
-				return recentProject;
-		}
-
+	if (options.forceLauncher || !Sunta::EditorSettings::ShouldOpenLastProjectOnStartup())
 		return std::filesystem::path();
-	}
 
-	void RunEditor(const std::filesystem::path& projectDirectory)
+	for (const std::filesystem::path& recentProject : Sunta::EditorSettings::GetRecentProjects())
 	{
-		Sunta::ApplicationSpecification specification;
-		specification.windowTitle      = "Sunta Editor";
-		specification.assetSource      = Sunta::AssetSource::SourceTree;
-		specification.projectDirectory = projectDirectory;
-
-		Sunta::Application application(specification);
-		application.PushLayer<Sunta::EditorLayer>();
-		application.Run();
+		if (ProjectManager::IsProjectDirectory(recentProject))
+			return recentProject;
 	}
 
-	void RunProjectLauncher()
-	{
-		const std::filesystem::path sampleProject = SUNTA_DEFAULT_PROJECT_DIR;
-		Sunta::ProjectLauncherLayer::SetSampleProjectDirectory(sampleProject);
+	return std::filesystem::path();
+}
 
-		Sunta::ApplicationSpecification specification;
-		specification.windowTitle      = "Sunta Engine";
-		specification.windowWidth      = LauncherWindowWidth;
-		specification.windowHeight     = LauncherWindowHeight;
-		specification.assetSource      = Sunta::AssetSource::SourceTree;
-		specification.projectDirectory = sampleProject;   // the engine needs some project folder to start, nothing of it is used
-		specification.loadEngineResources = false;        // the launcher draws only ImGui, the editor loads the resources when a project opens
+void RunEditor(const std::filesystem::path& projectDirectory)
+{
+	Sunta::ApplicationSpecification specification;
+	specification.windowTitle      = "Sunta Editor";
+	specification.assetSource      = Sunta::AssetSource::SourceTree;
+	specification.projectDirectory = projectDirectory;
 
-		Sunta::Application application(specification);
-		application.PushLayer<Sunta::ProjectLauncherLayer>();
-		application.Run();
-	}
+	Sunta::Application application(specification);
+	application.PushLayer<Sunta::EditorLayer>();
+	application.Run();
+}
+
+void RunProjectLauncher()
+{
+	const std::filesystem::path sampleProject = SUNTA_DEFAULT_PROJECT_DIR;
+	Sunta::ProjectLauncherLayer::SetSampleProjectDirectory(sampleProject);
+
+	Sunta::ApplicationSpecification specification;
+	specification.windowTitle      = "Sunta Engine";
+	specification.windowWidth      = LauncherWindowWidth;
+	specification.windowHeight     = LauncherWindowHeight;
+	specification.assetSource      = Sunta::AssetSource::SourceTree;
+	specification.projectDirectory = sampleProject;   // the engine needs some project folder to start, nothing of it is used
+	specification.loadEngineResources = false;        // the launcher draws only ImGui, the editor loads the resources when a project opens
+
+	Sunta::Application application(specification);
+	application.PushLayer<Sunta::ProjectLauncherLayer>();
+	application.Run();
+}
+
 }
 
 int main(int argc, char** argv)
