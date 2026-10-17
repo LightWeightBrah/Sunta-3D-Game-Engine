@@ -7,13 +7,19 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-option(SUNTA_DEV_MODE "Enable development mode (reads assets directly from source folders)" ON)
+option(SUNTA_DEV_MODE "Development mode: the game build reads assets from the source folders when there is no 'res' next to it" ON)
 
 if(SUNTA_DEV_MODE)
-	message(STATUS "Sunta Engine: Running in DEVELOPMENT mode (Virtual File System points to source code")
+	message(STATUS "Sunta Engine: DEVELOPMENT mode (game build falls back to the source folders when it has no 'res' folder)")
 else()
-	message(STATUS "Sunta Engine: Running in RELEASE mode (Copy assets to bin directory for distribution")
+	message(STATUS "Sunta Engine: RELEASE mode (game build needs the 'res' folder next to it, build target 'Package')")
 endif()
+
+# The game project the editor opens by default and the game executable is built from
+# A project is a folder with "res/" inside (and "res/game.config"), see Projects/
+set(SUNTA_PROJECT "Projects/MyGame" CACHE STRING "Game project (folder with 'res'), relative to the repository or absolute")
+cmake_path(ABSOLUTE_PATH SUNTA_PROJECT BASE_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE SUNTA_PROJECT_DIR NORMALIZE)
+message(STATUS "Sunta Engine: Game project: ${SUNTA_PROJECT_DIR}")
 
 # Lua version
 add_compile_definitions(SOL_LUA_VERSION=50400)
@@ -24,6 +30,7 @@ set(CONFIG_NAME "$<CONFIG>-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 
 set(SUNTA_BIN_DIR "${CMAKE_SOURCE_DIR}/bin/${CONFIG_NAME}")
 set(SUNTA_INT_DIR "${CMAKE_SOURCE_DIR}/bin-intermediates/${CONFIG_NAME}")
+set(SUNTA_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/distribution")
 
 # for single-config generators (e.g. Makefiles)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SUNTA_BIN_DIR})
@@ -96,6 +103,9 @@ endif()
 
 # --- PROJECTS ---
 
+# Sunta            - engine core (static library, no editor)
+# SuntaEditor      - editor program: core + editor module
+# SuntaRuntime     - game program: core only. Content of the game lies in <project>/res
 add_subdirectory(Sunta)
-add_subdirectory(Game)
-
+add_subdirectory(Apps/Editor)
+add_subdirectory(Apps/Runtime)

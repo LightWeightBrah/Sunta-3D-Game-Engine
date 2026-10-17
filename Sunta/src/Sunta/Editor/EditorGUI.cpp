@@ -107,8 +107,9 @@ void EditorGUI::StartPlayMode(Scene& scene)
 	// Remember the scene exactly as it looks in the editor
 	SceneSerializer::Serialize(GetEditorSceneBackupPath().string(), scene);
 
-	CollisionSystem::Reset();
-	scene.SetPlayState(PlayState::Playing);
+	scene.BeginPlay();
+	// CollisionSystem::Reset();
+	// scene.SetPlayState(PlayState::Playing);
 }
 
 void EditorGUI::StopPlayMode(Scene& scene)

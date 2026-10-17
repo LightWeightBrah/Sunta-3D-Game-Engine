@@ -40,6 +40,10 @@ public:
 	void Render(Renderer& renderer);
 	void Clear();
 
+	// Starts the game simulation from the current state of the scene
+	// Used by the game build on start and by the editor's Play button
+	void BeginPlay();
+
 	int       GetEntityUnderMouse       (const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 	glm::vec3 GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 

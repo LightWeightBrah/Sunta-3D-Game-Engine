@@ -19,6 +19,7 @@ CMakeSettings.json
 
 bin/
 bin-intermediates/
+distribution/
 
 *.lib
 *.dll

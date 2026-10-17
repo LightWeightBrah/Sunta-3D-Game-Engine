@@ -427,6 +427,12 @@ glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, floa
 	return ray.origin + ray.direction * DISTANCE_WHEN_NOTHING_IS_HIT;
 }
 
+void Scene::BeginPlay()
+{
+	CollisionSystem::Reset();
+	playState = PlayState::Playing;
+}
+
 void Scene::Clear()
 {
 	entityManager.Clear();

@@ -1,0 +1,27 @@
+{
+    "name": "PlayerCube",
+    "properties": {
+        "ambient": [
+            0.2915976345539093,
+            0.5540357232093811,
+            0.947692334651947
+        ],
+        "diffuse": [
+            0.24920238554477692,
+            0.4218955934047699,
+            0.9876922965049744
+        ],
+        "shininess": 32.0,
+        "specular": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "use_alpha_cutout": false
+    },
+    "shader": "Lit",
+    "textures": {
+        "diffuse_maps": [],
+        "specular_maps": []
+    }
+}

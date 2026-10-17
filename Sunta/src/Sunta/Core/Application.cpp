@@ -1,44 +1,43 @@
 #include "SuntaPreCompiled.h"
-
-#include <assimp/version.h>
-
 #include "Application.h"
+
 #include "Scene/Scene.h"
 #include "Renderer/Renderer.h"
+#include "Renderer/RendererAPI.h"
+#include "Renderer/DebugRenderer.h"
 #include "EngineTime.h"
 #include "InputManager.h"
-
 #include "Log.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
-#include "Editor/EditorGUIContext.h"
-#include "Editor/EditorGUI.h"
-#include "ECS/ComponentLayout.h"
-#include "ECS/Component.h"
 #include "ResourceManager.h"
-#include "Renderer/RendererAPI.h"
-#include "Assert.h"
-#include "Platform.h"
 #include "ResourceLoader.h"
+#include "Platform.h"
 #include "Scripting/ScriptingEngine.h"
-#include "VirtualFileSystem.h"
-#include "Renderer/DebugRenderer.h"
 
 namespace Sunta
 {
 
-Application::Application()
-	: window(nullptr)
+Application::Application(const ApplicationSpecification& specification)
+	: specification(specification)
+	, window(nullptr)
 {
 	Init();
 }
-Application::~Application()
-{
 
+Application::~Application() = default;
+
+Scene& Application::GetScene()
+{
+	return *scene;
 }
 
 void Application::Run()
 {
+	// Shown here, not in Init(), so the window doesn't appear empty while layers are still loading
+	window->Show();
+	SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
+
 	while (isRunning)
 	{
 		EngineTime::Update();
@@ -56,7 +55,6 @@ void Application::Run()
 		Render();
 
 		InputManager::Clear();
-
 	}
 
 	Shutdown();
@@ -64,30 +62,24 @@ void Application::Run()
 
 void Application::Init()
 {
-	ScriptingEngine::Init();
-	VirtualFileSystem::Init();
 	Log::Init();
+	VirtualFileSystem::Init(specification.assetSource, specification.projectDirectory);
+
+	const std::string gameResourcesDirectory = VirtualFileSystem::Resolve("@game");
+	if (!std::filesystem::exists(gameResourcesDirectory))
+		SUNTA_ENGINE_LOG_ERROR("Application: Game resources folder '{0}' doesn't exist", gameResourcesDirectory);
+
+	if (specification.loadGameConfig)
+		LoadGameConfig();
+
+	ScriptingEngine::Init();
 	Platform::Init();
 	InputManager::Init();
 
 	RendererAPI::SetAPI(RendererAPI::API::OpenGL);
 
-	window = Window::CreateWindow("Sunta Engine", WINDOW_WIDTH, WINDOW_HEIGHT);
-	EditorGUIContext::Init(window.get());
-	EditorGUI::SetDarkTheme();
-
-	EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { isRunning = false; });
-	EventBus::Subscribe<WindowResizeEvent>([this](const WindowResizeEvent& event)
-		{
-			if (event.width == 0 || event.height == 0)
-			{
-				isMinimized = true;
-				return;
-			}
-
-			isMinimized = false;
-		}
-	);
+	window = Window::CreateWindow(specification.windowTitle, specification.windowWidth, specification.windowHeight);
+	SubscribeToWindowEvents();
 
 	Renderer::Init();
 	DebugRenderer::Init();
@@ -96,75 +88,66 @@ void Application::Init()
 
 	scene = std::make_unique<Scene>();
 	scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
+}
 
-	TagComponent::RegisterToInspector();
-	TransformComponent::RegisterToInspector();
-	ScriptComponent::RegisterToInspector();
-	MeshComponent::RegisterToInspector();
-	ModelComponent::RegisterToInspector();
-	AnimatorComponent::RegisterToInspector();
-	DirectionalLightComponent::RegisterToInspector();
-	PointLightComponent::RegisterToInspector();
-	SpotLightComponent::RegisterToInspector();
-	BoxColliderComponent::RegisterToInspector();
-	PhysicsBodyComponent::RegisterToInspector();
+void Application::LoadGameConfig()
+{
+	if (!GameConfig::TryLoad(GameConfig::DefaultPath, gameConfig))
+	{
+		SUNTA_ENGINE_LOG_WARNING("Application: Using default game settings");
+		return;
+	}
 
-	window->Show();
+	specification.windowTitle  = gameConfig.name;
+	specification.windowWidth  = gameConfig.windowWidth;
+	specification.windowHeight = gameConfig.windowHeight;
+}
 
-	SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
+void Application::SubscribeToWindowEvents()
+{
+	EventBus::Subscribe<WindowCloseEvent>([this](const auto& event) { Close(); });
+
+	EventBus::Subscribe<WindowResizeEvent>([this](const WindowResizeEvent& event)
+		{
+			isMinimized = (event.width == 0 || event.height == 0);
+		}
+	);
+}
+
+void Application::ProcessInput()
+{
+	for (auto& layer : layers)
+		layer->OnProcessInput();
+
+	scene->ProcessInput();
 }
 
 void Application::Update(float deltaTime)
 {
 	scene->Update();
-}
 
-void Application::ProcessInput()
-{
-	if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
-		isRunning = false;
-
-	if (InputManager::IsKeyDown(GLFW_KEY_TAB))
-	{
-		currentEngineMode = (currentEngineMode == EngineMode::Game) ? EngineMode::Editor : EngineMode::Game;
-
-		if (currentEngineMode == EngineMode::Game)
-		{
-			EditorGUI::ClearFocus();
-			EditorGUI::ClearSelection();
-			InputManager::SetFirstMouse(true);
-		}
-
-		EventBus::Publish<EngineModeChangedEvent>({ currentEngineMode });
-	}
-
-	scene->ProcessInput();
+	for (auto& layer : layers)
+		layer->OnUpdate(deltaTime);
 }
 
 void Application::Render()
 {
-	SUNTA_ASSERT(scene, "CRITIC ERROR: Scene CAN'T BE NULL during Render");
-
 	Renderer::Clear(0.02f, 0.01f, 0.01f, 1.0f);
 
 	scene->Render(renderer);
-	EditorGUIContext::RenderUI(window.get(), *scene, Renderer::GetDevice());
 
-	EditorGUI::HandleSelectionInteraction(*scene);
-
-	//EditorGUIContext::BeginDockingSpace(window.get());
-	//
-	//EditorGUI::Begin(EditorGUIContext::GetInspectorName());
-	//
-	//EditorGUI::DrawInspector(scene->GetEntityManager());
-	//
-	//EditorGUI::End();
-	//EditorGUIContext::EndFrame(window.get());
+	for (auto& layer : layers)
+		layer->OnRender();
 }
 
 void Application::Shutdown()
 {
-	EditorGUIContext::Shutdown(window.get());
+	// Last attached layer is detached first
+	for (auto layerIterator = layers.rbegin(); layerIterator != layers.rend(); ++layerIterator)
+		(*layerIterator)->OnDetach();
+
+	layers.clear();
+
 	scene->Clear();
 	ScriptingEngine::Shutdown();
 

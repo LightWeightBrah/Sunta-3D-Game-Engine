@@ -10,6 +10,7 @@
 #include "ECS/Component.h"
 #include "Core/Log.h"
 #include "Physics/CollisionLayers.h"
+#include "Core/VirtualFileSystem.h"
 
 namespace Sunta
 {
@@ -173,7 +174,8 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 				json scriptsArray = json::array();
 				for (const auto& container : script->scripts)
 				{
-					scriptsArray.push_back({ { SceneKeys::ScriptPath, container.scriptPath} });
+					// Saved as a virtual path ("@game/Scripts/a.lua"), because the physical path differs on every machine and in the packaged game
+					scriptsArray.push_back({ { SceneKeys::ScriptPath, VirtualFileSystem::ToVirtualPath(container.scriptPath) } });
 				}
 
 				entityJson[SceneKeys::ScriptComponent] = scriptsArray;
@@ -377,7 +379,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 					std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
 					if (!path.empty())
 					{
-						scriptComponent.AddScript(path);
+						scriptComponent.AddScript(VirtualFileSystem::Resolve(path));
 					}
 				}
 			}
