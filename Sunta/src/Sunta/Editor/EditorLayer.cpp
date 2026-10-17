@@ -6,6 +6,7 @@
 #include "EditorSettings.h"
 #include "ProcessLauncher.h"
 #include "ProjectManager.h"
+#include "StartScene.h"
 #include "Core/Application.h"
 #include "Core/InputManager.h"
 #include "Core/ResourceLoader.h"
@@ -32,6 +33,8 @@ void EditorLayer::OnAttach()
 	EditorGUI::SetDarkTheme();
 
 	RegisterComponentsToInspector();
+
+	StartScene::OpenInEditor(application.GetScene());
 
 	// Puts the project on top of the list in the project launcher
 	EditorSettings::AddRecentProject(ProjectManager::GetCurrentProjectDirectory());

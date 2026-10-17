@@ -29,6 +29,10 @@ struct ApplicationSpecification
 
 	// When true, window title and size are taken from "@game/game.config"
 	bool loadGameConfig = false;
+
+	// Shaders, textures, materials, meshes and models are loaded once, by the program that draws them
+	// A program with nothing to draw (the project launcher) turns this off and starts much faster
+	bool loadEngineResources = true;
 };
 
 // The engine core: window, renderer, scene and the main loop

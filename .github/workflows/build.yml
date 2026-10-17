@@ -1,6 +1,5 @@
-name: "CI: Platform Validation"
+name: "CI: Build"
 
-# Defines when action happens 
 on:
     push:
         branches: [ "main", "master" ]
@@ -8,41 +7,57 @@ on:
         branches: [ "main", "master" ]
 
 jobs:
-    build: 
-        name: "${{ matrix.os }} | x64 Debug"
+    build:
+        name: "${{ matrix.os }} | Release"
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
             matrix:
-              os: [ windows-latest, ubuntu-latest, macos-latest ] 
+                include:
+                    - os: windows-latest
+                      preset: x64-Release
+                    - os: ubuntu-latest
+                      preset: linux-release
+                    - os: macos-latest
+                      preset: macos-release
 
         steps:
             - name: "Setup: Fetch Sources & Submodules"
               uses: actions/checkout@v4
               with:
-                submodules: recursive # for .gitmodules if added in future
-                    
+                  submodules: recursive
+
+            - name: "Windows: Load the MSVC compiler environment"
+              if: runner.os == 'Windows'
+              uses: ilammy/msvc-dev-cmd@v1
+              with:
+                  arch: x64
+
             - name: "Linux: Install Dependencies"
               if: runner.os == 'Linux'
               run: |
-                sudo apt-get update
-                sudo apt-get install -y libgtk-3-dev libx11-dev libxcursor-dev libxinerama-dev \
-                                 libxrandr-dev libxi-dev libgl1-mesa-dev \
-                                 libglu1-mesa-dev mesa-common-dev \
-                                 libwayland-dev wayland-protocols libxkbcommon-dev
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build libgtk-3-dev libx11-dev libxcursor-dev libxinerama-dev \
+                                   libxrandr-dev libxi-dev libgl1-mesa-dev \
+                                   libglu1-mesa-dev mesa-common-dev \
+                                   libwayland-dev wayland-protocols libxkbcommon-dev
+
+            - name: "macOS: Install Dependencies"
+              if: runner.os == 'macOS'
+              run: brew install ninja
 
             - name: "Configuration: CMake Generate"
-              run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DSUNTA_DEV_MODE=OFF
+              run: cmake --preset ${{ matrix.preset }}
 
-            - name: "Compilation: Build Engine & Executables"
-              run: cmake --build build --config Debug
+            - name: "Compilation: Build Editor & Runtime"
+              run: cmake --build --preset ${{ matrix.preset }}
 
             - name: "Distribution: Upload Build Artifacts"
               uses: actions/upload-artifact@v4
-              with: 
-                name: Sunta-Engine-${{ matrix.os }}-x64-Debug
-                path: |
-                  bin/**/Game* # Game, Game.exe, Game.pdb, Linux and Mac just uses Game without .exe
-                  bin/**/res/
-                if-no-files-found: error
-                retention-days: 5
+              with:
+                  name: Sunta-Engine-${{ matrix.os }}-Release
+                  path: |
+                      bin/Release-*/SuntaEditor*
+                      bin/Release-*/SuntaRuntime*
+                  if-no-files-found: error
+                  retention-days: 5

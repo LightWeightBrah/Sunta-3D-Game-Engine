@@ -87,7 +87,8 @@ void Application::Init()
 	Renderer::Init();
 	DebugRenderer::Init();
 	ResourceManager::Init(Renderer::GetDevice());
-	ResourceLoader::Init();
+	if (specification.loadEngineResources)
+		ResourceLoader::Init();
 
 	scene = std::make_unique<Scene>();
 	scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());

@@ -189,7 +189,7 @@ namespace
 // make_preferred() gives "C:\Dev\..." instead of a mix of '/' and '\', which Windows dialogs expect
 std::string GetSceneDialogStartDirectory()
 {
-	return std::filesystem::path(VirtualFileSystem::Resolve("@engine/Scenes")).make_preferred().string();
+	return std::filesystem::path(VirtualFileSystem::Resolve("@game/Scenes")).make_preferred().string();
 }
 
 // Asks the user where to save the scene, then saves it there

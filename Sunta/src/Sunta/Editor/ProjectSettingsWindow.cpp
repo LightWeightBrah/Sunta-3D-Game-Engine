@@ -11,7 +11,9 @@
 #include "Core/GameConfig.h"
 #include "Core/Log.h"
 #include "Core/Platform.h"
+#include "Core/ResourceManager.h"
 #include "Core/VirtualFileSystem.h"
+#include "Renderer/Texture.h"
 
 namespace Sunta
 {
@@ -22,12 +24,15 @@ namespace
 
 	constexpr const char* WindowTitle           = "Project Settings";
 	constexpr const char* ProjectIconVirtualPath = "@game/App/window_icon.png";
+	constexpr const char* EngineIconVirtualPath  = "@engine/App/engine_logo.png";
+	constexpr const char* IconPreviewName        = "project_settings_icon_preview";
 
 	constexpr float WindowWidth        = 640.0f;
 	constexpr int   MinWindowSize      = 320;
 	constexpr int   MaxWindowSize      = 7680;
 	constexpr int   RecommendedIconSize = 256;
 	constexpr int   MinIconSize         = 16;
+	constexpr float IconPreviewSize     = 96.0f;
 
 	const ImVec4 ErrorColor   = ImVec4(1.0f, 0.45f, 0.4f, 1.0f);
 	const ImVec4 SuccessColor = ImVec4(0.5f, 0.9f, 0.5f, 1.0f);
@@ -48,9 +53,26 @@ namespace
 
 		int iconWidth  = 0;
 		int iconHeight = 0;
+
+		// Set when the icon file changed, the preview is rebuilt at the start of the next frame
+		bool needsIconRefresh = false;
+
+		// What the player gets: the icon of the project, or the icon of the engine when the project has none
+		std::shared_ptr<Texture> iconPreview;
 	};
 
 	WindowState state;
+
+	// While it lives, text breaks into lines at the right edge of the window instead of running out of it
+	class TextWrapScope
+	{
+	public:
+		TextWrapScope()  { ImGui::PushTextWrapPos(0.0f); }
+		~TextWrapScope() { ImGui::PopTextWrapPos(); }
+
+		TextWrapScope(const TextWrapScope&)            = delete;
+		TextWrapScope& operator=(const TextWrapScope&) = delete;
+	};
 
 	void SetStatus(const std::string& message, const ImVec4& color)
 	{
@@ -63,8 +85,19 @@ namespace
 		return fs::path(VirtualFileSystem::Resolve(state.config.windowIcon));
 	}
 
+	void LoadIconPreview(const std::string& iconPath)
+	{
+		// The old texture is released first, the editor icon is registered under one fixed name
+		state.iconPreview.reset();
+		ResourceManager::UnloadEditorIcon(IconPreviewName);
+
+		ResourceManager::LoadEditorIcon(IconPreviewName, iconPath);
+		state.iconPreview = ResourceManager::GetEditorIcon(IconPreviewName);
+	}
+
 	void RefreshIconInfo()
 	{
+		state.needsIconRefresh = false;
 		state.iconWidth  = 0;
 		state.iconHeight = 0;
 
@@ -73,6 +106,9 @@ namespace
 		std::error_code error;
 		if (fs::exists(iconPath, error))
 			ExecutableIcon::TryReadImageSize(iconPath, state.iconWidth, state.iconHeight);
+
+		const bool hasProjectIcon = (state.iconWidth != 0);
+		LoadIconPreview(hasProjectIcon ? iconPath.string() : EngineIconVirtualPath);
 	}
 
 	// Release is the version to share, but when only the configuration of the editor was compiled that one is chosen
@@ -173,7 +209,7 @@ namespace
 		}
 
 		state.config.windowIcon = ProjectIconVirtualPath;
-		RefreshIconInfo();
+		state.needsIconRefresh = true;
 		Save();
 	}
 
@@ -182,7 +218,7 @@ namespace
 		std::error_code error;
 		fs::remove(GetProjectIconPath(), error);
 
-		RefreshIconInfo();
+		state.needsIconRefresh = true;
 		SetStatus("Icon removed, the game will use the icon of the engine", SuccessColor);
 	}
 
@@ -223,9 +259,11 @@ namespace
 
 	void DrawIconStatus()
 	{
+		TextWrapScope wrapText;
+
 		if (state.iconWidth == 0)
 		{
-			ImGui::TextDisabled("No icon. The game uses the icon of the engine.");
+			ImGui::TextDisabled("No icon chosen. The game uses the icon of the engine (shown on the left).");
 			return;
 		}
 
@@ -237,10 +275,29 @@ namespace
 			ImGui::TextColored(WarningColor, "Use at least %d x %d pixels for a sharp icon.", RecommendedIconSize, RecommendedIconSize);
 	}
 
+	// Fits the icon into a square of IconPreviewSize, keeping its proportions
+	void DrawIconPreview()
+	{
+		if (!state.iconPreview)
+			return;
+
+		const float largerSide = static_cast<float>(std::max(state.iconPreview->GetWidth(), state.iconPreview->GetHeight()));
+		const float scale      = (largerSide > 0.0f) ? IconPreviewSize / largerSide : 1.0f;
+
+		const ImVec2 size(state.iconPreview->GetWidth() * scale, state.iconPreview->GetHeight() * scale);
+		const ImVec4 borderColor(1.0f, 1.0f, 1.0f, 0.25f);
+
+		ImGui::Image((ImTextureID)(uintptr_t)state.iconPreview->GetID(), size, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(1, 1, 1, 1), borderColor);
+	}
+
 	void DrawIconSection()
 	{
 		DrawSectionTitle("Icon");
 
+		DrawIconPreview();
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
 		DrawIconStatus();
 
 		if (ImGui::Button("Choose icon (PNG)..."))
@@ -252,9 +309,12 @@ namespace
 			if (ImGui::Button("Remove icon"))
 				RemoveIcon();
 		}
+		ImGui::EndGroup();
 
-		ImGui::TextDisabled("The window of the game gets the icon at runtime. The icon of the game file is made from this PNG while building:");
-		ImGui::TextDisabled("the .exe on Windows, the .icns inside the .app on macOS, the PNG itself on Linux.");
+		TextWrapScope wrapText;
+
+		ImGui::TextDisabled("The window of the game gets the icon at runtime. The icon of the game file is made from this PNG while building: "
+							"the .exe on Windows, the .icns inside the .app on macOS, the PNG itself on Linux.");
 		ImGui::TextDisabled("Windows may show the old icon for a while: it keeps icons in a cache.");
 	}
 
@@ -279,13 +339,9 @@ namespace
 		ImGui::EndCombo();
 	}
 
-	void DrawBuildSection()
+	void DrawBuildHint(bool isAvailable)
 	{
-		DrawSectionTitle("Build");
-
-		DrawConfigurationCombo();
-
-		const bool isAvailable = GameBuilder::IsConfigurationAvailable(state.configuration);
+		TextWrapScope wrapText;
 
 		if (!isAvailable)
 		{
@@ -296,6 +352,16 @@ namespace
 		{
 			ImGui::TextDisabled("Debug is slow and needs the debug runtime of the compiler. Use Release for the version you share.");
 		}
+	}
+
+	void DrawBuildSection()
+	{
+		DrawSectionTitle("Build");
+
+		DrawConfigurationCombo();
+
+		const bool isAvailable = GameBuilder::IsConfigurationAvailable(state.configuration);
+		DrawBuildHint(isAvailable);
 
 		if (ImGui::Button("Save"))
 			Save();
@@ -341,6 +407,8 @@ void ProjectSettingsWindow::Draw()
 
 	if (state.needsReload)
 		Reload();
+	else if (state.needsIconRefresh)
+		RefreshIconInfo();
 
 	ImGui::SetNextWindowSize(ImVec2(WindowWidth, 0.0f), ImGuiCond_Appearing);
 
@@ -355,6 +423,8 @@ void ProjectSettingsWindow::Draw()
 		if (!state.statusMessage.empty())
 		{
 			ImGui::Spacing();
+
+			TextWrapScope wrapText;
 			ImGui::TextColored(state.statusColor, "%s", state.statusMessage.c_str());
 		}
 	}

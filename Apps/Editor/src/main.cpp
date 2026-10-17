@@ -83,6 +83,7 @@ namespace
 		specification.windowHeight     = LauncherWindowHeight;
 		specification.assetSource      = Sunta::AssetSource::SourceTree;
 		specification.projectDirectory = sampleProject;   // the engine needs some project folder to start, nothing of it is used
+		specification.loadEngineResources = false;        // the launcher draws only ImGui, the editor loads the resources when a project opens
 
 		Sunta::Application application(specification);
 		application.PushLayer<Sunta::ProjectLauncherLayer>();

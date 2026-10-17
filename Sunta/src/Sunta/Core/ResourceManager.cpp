@@ -338,7 +338,6 @@ std::shared_ptr<Material> ResourceManager::LoadOrGetMaterial(const std::string& 
 	auto it = materialsRegistered.find(name);
 	if (it != materialsRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetMaterial: Loaded existing Material '{0}'", name);
 		return it->second;
 	}
 
@@ -355,7 +354,6 @@ std::shared_ptr<Texture> ResourceManager::LoadOrGetTexture(const std::string& fi
 	auto it = texturesRegistered.find(resolvedPath);
 	if (it != texturesRegistered.end())
 	{
-		SUNTA_ENGINE_LOG_INFO("ResourceManager::LoadOrGetTexture: Loaded existing Texture '{0}'", resolvedPath);
 		return it->second;
 	}
 

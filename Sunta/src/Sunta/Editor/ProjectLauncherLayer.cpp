@@ -12,7 +12,6 @@
 #include "Core/Application.h"
 #include "Core/InputManager.h"
 #include "Core/Log.h"
-#include "Core/ResourceLoader.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
 
@@ -61,8 +60,6 @@ void ProjectLauncherLayer::SetSampleProjectDirectory(const fs::path& directory)
 
 void ProjectLauncherLayer::OnAttach()
 {
-	ResourceLoader::InitEditorAssets();
-
 	EditorGUIContext::Init(&application.GetWindow());
 	EditorGUI::SetDarkTheme();
 

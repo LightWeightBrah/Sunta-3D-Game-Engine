@@ -30,6 +30,16 @@ namespace
 #endif
 	}
 
+	// A game without a start scene would open as an empty window
+	bool HasStartScene(const GameConfig& gameConfig)
+	{
+		if (gameConfig.startScene.empty())
+			return false;
+
+		std::error_code error;
+		return fs::exists(VirtualFileSystem::Resolve(gameConfig.startScene), error);
+	}
+
 	// The game name becomes a file and folder name, so characters Windows doesn't allow are replaced
 	std::string MakeFileNameSafe(std::string name)
 	{
@@ -60,6 +70,12 @@ bool GameBuilder::BuildGame(BuildConfiguration configuration)
 	const fs::path   gameExecutable  = packageDirectory / (gameName + GetExecutableSuffix());
 
 	SUNTA_ENGINE_LOG_INFO("GameBuilder: Building '{0}' ({1}) to '{2}'", gameName, GetConfigurationName(configuration), outputDirectory.string());
+
+	if (!HasStartScene(gameConfig))
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: The start scene '{0}' doesn't exist. Save a scene and choose it as the start scene in Project Settings", gameConfig.startScene);
+		return false;
+	}
 
 	if (!IsConfigurationAvailable(configuration))
 	{
