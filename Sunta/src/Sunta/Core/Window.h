@@ -20,6 +20,10 @@ public:
 	virtual void SetAsGraphicsTarget() = 0;
 	virtual void Show() = 0;
 
+	// Sets the icon of the window (title bar, taskbar) from an image file (PNG)
+	// Returns false and keeps the current icon if the image can't be loaded
+	virtual bool SetIcon(const std::string& imagePath) = 0;
+
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() = 0;
 
 	virtual unsigned int GetWidth() const = 0;

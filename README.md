@@ -72,6 +72,13 @@ The engine includes a built-in editor designed to simplify scene creation and re
   <p><i>A professional workspace interface that allows windows to be dragged, snapped, and organized into custom layouts.</i></p>
 </div>
 
+<br />
+
+#### Project Launcher, Settings and One-Click Game Build
+* **Project Launcher:** `SuntaEditor` starts with a window that lists recent projects and lets you create a new project or open an existing one, before the editor opens. A checkbox can skip it and open the last project at startup. `Project > Switch Project` returns to it.
+* **Project Settings:** game name, start scene, window size and game icon are edited in the editor (`Project > Project Settings`) and stored in the project's `game.config`.
+* **Build Game:** packages the project into a folder for players with one click, no compiler needed. The configuration (Debug or Release) is chosen from a dropdown, and the icon of the game is written into the `.exe` on Windows.
+
 ---
 
 ## Engine Architecture
@@ -91,22 +98,18 @@ The engine is built on a modular architecture that separates low-level API calls
 * **Primitive Factory:** A specialized class for instant generation of standard 3D shapes like Cubes and Spheres.
 * **Custom Logger:** A built-in diagnostic tool for real-time error tracking and performance monitoring.
 
+### Gameplay Systems
+* **Components:** Tag, Transform, Script, Mesh, Model, Animator, Directional / Point / Spot Light, Box Collider and Physics Body.
+* **Lua Scripting:** gameplay is written in Lua (sol2) with hot-reload in the editor.
+* **Physics:** collisions, triggers (enter, stay and exit events) and raycasts.
+* **Scenes:** serialized to JSON. Resource paths are virtual (`@engine/...`, `@game/...`), so projects can be moved between computers.
+* **Models:** OBJ, FBX, glTF and Collada through Assimp.
+
 ---
 
-## Project Management
-I manage the development process using industry-standard tools to maintain a clear roadmap and code quality.
-
-* **Jira Roadmap:** Every feature and refactor is tracked as a technical task on a Kanban Board.
-* **Continuous Integration (CI):** Automated build pipelines verify code stability on every commit.
-* **Build System:** Managed via CMake for consistent cross-platform configuration.
-
-<div align="center">
-  <a href="https://julianlabanowski.atlassian.net/jira/software/c/projects/SUN/issues/">
-    <img src="https://github.com/user-attachments/assets/9ac6ac7e-f0c1-4642-b00f-6ad443dc1172" width="1200" alt="Jira Kanban board" />
-  </a>
-  <br />
-  <em><b>Interactive Roadmap:</b> Click the image to view real-time project progress and technical tasks on Jira.</em>
-</div>
+## Build System and CI
+* **Build System:** CMake with presets (`CMakePresets.json`) for Windows, Linux and macOS.
+* **Continuous Integration (CI):** automated build pipelines verify code stability on every commit.
 
 ---
 
@@ -116,9 +119,13 @@ Sunta Engine integrates several industry-standard libraries:
 * [**GLFW**](https://www.glfw.org/) - Window and context management.
 * [**GLAD**](https://glad.dav1d.de/) - OpenGL function loading.
 * [**GLM**](https://github.com/g-truc/glm) - Linear algebra and mathematics.
-* [**ImGui**](https://github.com/ocornut/imgui) - Editor interface and tooling.
+* [**ImGui**](https://github.com/ocornut/imgui) - Editor interface and tooling (docking and viewports).
+* [**ImGuizmo**](https://github.com/CedricGuillemet/ImGuizmo) - Transform gizmos in the editor.
 * [**Assimp**](https://www.assimp.org/) - 3D model and animation loading.
 * [**stb_image**](https://github.com/nothings/stb) - Texture and image parsing.
+* [**Lua**](https://www.lua.org/) and [**sol2**](https://github.com/ThePhD/sol2) - Gameplay scripting.
+* [**nlohmann/json**](https://github.com/nlohmann/json) - Scene and config serialization.
+* [**nativefiledialog-extended**](https://github.com/btzy/nativefiledialog-extended) - Native file and folder dialogs.
 
 ---
 
@@ -134,26 +141,156 @@ The following resources were used to study and implement the core systems of Sun
 ---
 
 ## Project Structure
-The repository is split into two distinct projects:
-1. **Sunta:** The core engine containing all rendering and systems logic.
-2. **Game:** A separate application built upon the Sunta core, demonstrating its use as a standalone product.
+```text
+Sunta/                    the engine (static library) and engine resources (Sunta/res)
+  src/Sunta/
+    Core/ Scene/ ECS/ Renderer/ Physics/ Serialization/ Scripting/ Events/ Utilities/
+    Editor/               editor code (separate library, SuntaEditorModule)
+    Runtime/              layer that runs a game
+    Platform/             Windows, Linux, Mac, GLFW, OpenGL
+Apps/Editor/              SuntaEditor (the editor program)
+Apps/Runtime/             SuntaRuntime (the game executable template)
+Projects/MyGame/          sample game project
+cmake/                    CMake helpers (program icons)
+Dependencies/             third-party libraries
+bin/  out/                build output (git-ignored)
+```
+CMake targets: `Sunta` (engine core), `SuntaEditorModule` (editor code), `SuntaEditor` and `SuntaRuntime`.
 
 ---
 
-## Build Instructions (Visual Studio 2022)
+## Building the Engine
+
+**Requirements:** CMake 3.21+, a C++17 compiler (Visual Studio 2022 on Windows, GCC or Clang on Linux and macOS) and Ninja. Third-party libraries are in `Dependencies/`.
+
 ```bash
-# 1. Clone the repository
 git clone https://github.com/LightWeightBrah/Sunta-3D-Game-Engine.git
-
-# 2. Open Project
-Launch Visual Studio 2022 and select Open a local folder
-
-# 3. Select Directory
-Choose the root Sunta-3D-Game-Engine folder. Visual Studio will automatically detect CMakeLists.txt and begin the configuration process
-
-# 4. Set Startup Item
-Once configuration is complete, locate the Select Startup Item dropdown in the top toolbar (next to the green play button) and select Game.exe
-
-# 5. Build and Run
-Press F5 or click the Start button to compile and launch the application
+cd Sunta-3D-Game-Engine
 ```
+
+`CMakePresets.json` defines these presets:
+
+| Preset | System | Configuration |
+|---|---|---|
+| `x64-Debug`, `x64-Release` | Windows | Debug, Release |
+| `linux-debug`, `linux-release` | Linux | Debug, Release |
+| `macos-debug`, `macos-release` | macOS | Debug, Release |
+
+Output goes to `bin/<Configuration>-<System>-<Processor>/`, for example `bin/Release-Windows-AMD64/` or `bin/Release-Linux-x86_64/`. It contains `SuntaEditor` and `SuntaRuntime`.
+Debug is much slower (debug heap, no optimizations), so judge performance in Release.
+
+### Windows: Visual Studio 2022
+1. `File > Open > Folder` and choose the repository root. Visual Studio detects `CMakeLists.txt` and `CMakePresets.json`.
+2. Select the `x64-Debug` or `x64-Release` preset in the toolbar and wait for CMake to configure.
+3. Select `SuntaEditor.exe` as the startup item and press F5.
+
+### Windows: command line
+Open "x64 Native Tools Command Prompt for VS 2022" (the `cl` compiler needs its environment):
+```bat
+cmake --preset x64-Release
+cmake --build --preset x64-Release
+bin\Release-Windows-AMD64\SuntaEditor.exe
+```
+
+### Linux
+Packages for Ubuntu / Debian (use the equivalents on other distributions):
+```bash
+sudo apt install build-essential cmake ninja-build pkg-config \
+    libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev \
+    libgtk-3-dev
+```
+`libgtk-3-dev` is needed for the native file and folder dialogs. If CMake reports missing Wayland or xkbcommon, also install `libwayland-dev libxkbcommon-dev wayland-protocols extra-cmake-modules`.
+
+```bash
+cmake --preset linux-release
+cmake --build --preset linux-release
+./bin/Release-Linux-x86_64/SuntaEditor
+```
+For Debug use `linux-debug` and the `Debug-Linux-x86_64` folder. Without Ninja:
+`cmake -S . -B out/build/linux-release -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release && cmake --build out/build/linux-release -j`
+
+> The Linux port is not well tested yet. If something fails to build, the cause is most likely a missing system package or a file in `Sunta/src/Sunta/Platform/Linux`.
+
+### macOS
+Use the same commands with the `macos-debug` and `macos-release` presets. The macOS port exists in the code but has never been compiled.
+
+### CMake options
+| Option | Default | Meaning |
+|---|---|---|
+| `SUNTA_PROJECT` | `Projects/MyGame` | Project that `SuntaRuntime` opens when started straight from the IDE, and the sample project of the launcher |
+| `SUNTA_DEV_MODE` | `ON` | A game started from the IDE (no `res` folder next to it) reads assets from the source folders |
+
+Example: `cmake --preset linux-release -DSUNTA_PROJECT=/home/me/MyGame`
+
+---
+
+## Running the Editor
+```text
+SuntaEditor                      shows the project launcher (or opens the last project, if you enabled that)
+SuntaEditor <project folder>     opens the project at once
+SuntaEditor --launcher           always shows the project launcher
+```
+The launcher remembers projects in per-user settings (`%APPDATA%/SuntaEngine/editor_settings.json` on Windows, `~/.config/SuntaEngine/` on Linux). Enabling "Open the last project at startup" skips the launcher, which is handy when starting from an IDE.
+
+---
+
+## Game Projects
+A project is a folder with a `res` folder inside:
+```text
+MyGame/
+  res/
+    game.config      game settings (JSON)
+    Scenes/          scenes (.scene)
+    Scripts/         Lua scripts
+    App/             game icon (window_icon.png)
+    ...              models, textures, materials
+  Build/             where the editor builds the game
+```
+`game.config`:
+```json
+{
+	"name": "My Game",
+	"start_scene": "@game/Scenes/Main.scene",
+	"window_width": 1600,
+	"window_height": 900,
+	"window_icon": "@game/App/window_icon.png"
+}
+```
+All of these fields can be edited in the editor (`Project > Project Settings`). New projects are created in the launcher (`New Project...`). A sample project lives in `Projects/MyGame`.
+
+---
+
+## Building a Game
+In the editor open `Project > Project Settings`, choose the **Configuration** (Debug or Release) and click **Save and Build Game**. `Project > Build Game` builds with the last chosen configuration.
+The editor needs no CMake and no compiler, it assembles a ready folder:
+```text
+<project>/Build/<GameName>/
+  <GameName>.exe        copy of SuntaRuntime with the name and icon of the game
+  res/Sunta/            engine resources (without icons and images used only by the editor)
+  res/Game/             project resources
+```
+Zip this folder and send it to players. A Debug build goes to `<GameName>_Debug`, so it is not mistaken for the version to share.
+
+**Debug and Release.** The game is a copy of the `SuntaRuntime` program compiled by CMake, so the editor can only build with a configuration that was compiled. The configuration of the editor itself is always available. Compile the other one with:
+```bash
+cmake --preset x64-Release                              # or linux-release
+cmake --build --preset x64-Release --target SuntaRuntime
+```
+(and the same with `x64-Debug`). The editor finds it in the neighbouring `bin/` folder. A Debug game needs the compiler's debug runtime on the player's computer, so use Release to share a game.
+
+**Game icon.** `Project Settings > Icon > Choose icon (PNG)...` copies the image to `res/App/window_icon.png`. The game window gets the icon at runtime. When building on Windows, the editor also writes the icon into the `.exe` (sizes 16 to 256 px from one image, ideally square and at least 256x256). Windows caches icons, so the old one may stay visible for a while. On Linux a `.desktop` file with the icon is created next to the game.
+
+---
+
+## Commit Convention
+```text
+SUN-11 Commit description
+```
+
+---
+
+## Roadmap
+* Camera component (the game currently uses a free WASD camera)
+* Fullscreen, vsync and more window settings in `game.config`
+* Executable icon on Linux and macOS, macOS packaging
+* Compiling and testing on Linux and macOS, CI on all three systems

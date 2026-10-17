@@ -52,31 +52,44 @@ std::filesystem::path VirtualFileSystem::GetPackagedResourcesDirectory()
 	return GetExecutableDirectory() / "res";
 }
 
-// Not current_path(): that is the folder the game was launched FROM (shortcut, terminal), not where it lies
-std::filesystem::path VirtualFileSystem::GetExecutableDirectory()
+// Not current_path(): that is the folder the program was launched FROM (shortcut, terminal), not where it lies
+std::filesystem::path VirtualFileSystem::GetExecutablePath()
 {
 #if defined(SUNTA_PLATFORM_WINDOWS)
 	std::wstring executablePath(32768, L'\0');
 	const DWORD length = GetModuleFileNameW(nullptr, executablePath.data(), static_cast<DWORD>(executablePath.size()));
 	executablePath.resize(length);
-	return std::filesystem::path(executablePath).parent_path();
+	return std::filesystem::path(executablePath);
 
 #elif defined(SUNTA_PLATFORM_LINUX)
 	std::error_code error;
-	return std::filesystem::read_symlink("/proc/self/exe", error).parent_path();
+	return std::filesystem::read_symlink("/proc/self/exe", error);
 
 #elif defined(SUNTA_PLATFORM_MAC)
 	char executablePath[4096];
 	uint32_t size = sizeof(executablePath);
 	if (_NSGetExecutablePath(executablePath, &size) != 0)
-		return std::filesystem::current_path();
+		return std::filesystem::current_path() / "SuntaProgram";
 
 	std::error_code error;
-	return std::filesystem::canonical(executablePath, error).parent_path();
+	return std::filesystem::canonical(executablePath, error);
 
 #else
-	return std::filesystem::current_path();
+	return std::filesystem::current_path() / "SuntaProgram";
 #endif
+}
+
+std::filesystem::path VirtualFileSystem::GetExecutableDirectory()
+{
+	return GetExecutablePath().parent_path();
+}
+
+std::filesystem::path VirtualFileSystem::GetMountPath(const std::string& virtualPrefix)
+{
+	const auto& mounts = GetMounts();
+	const auto mountIterator = mounts.find(virtualPrefix);
+
+	return (mountIterator != mounts.end()) ? mountIterator->second : std::filesystem::path();
 }
 
 void VirtualFileSystem::Mount(const std::string& virtualPrefix, const std::filesystem::path& physicalPath)

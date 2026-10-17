@@ -75,6 +75,7 @@ private:
 
 	void Init();
 	void LoadGameConfig();
+	void ApplyGameWindowIcon();
 	void SubscribeToWindowEvents();
 
 	void ProcessInput();

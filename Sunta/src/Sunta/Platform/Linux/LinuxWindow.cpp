@@ -33,6 +33,11 @@ void LinuxWindow::Show()
 	implementation.Show();
 }
 
+bool LinuxWindow::SetIcon(const std::string& imagePath)
+{
+	return implementation.SetIcon(imagePath);
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> LinuxWindow::CreateGUIBackend()
 {
 	return std::make_unique<LinuxOpenGLEditorGUIBackend>();

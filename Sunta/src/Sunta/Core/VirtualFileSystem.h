@@ -28,7 +28,13 @@ public:
 	// Returns the path unchanged if it isn't inside any mount
 	static std::string ToVirtualPath(const std::string& physicalPath);
 
+	// Full path of the running program e.g. "C:/Dev/Sunta/bin/Release-Windows-AMD64/SuntaEditor.exe"
+	static std::filesystem::path GetExecutablePath();
+
 	static std::filesystem::path GetExecutableDirectory();
+
+	// Physical folder of a mount e.g. "@game" => "C:/Dev/Sunta/Projects/MyGame/res" (empty if not mounted)
+	static std::filesystem::path GetMountPath(const std::string& virtualPrefix);
 
 private:
 	static std::unordered_map<std::string, std::filesystem::path>& GetMounts();

@@ -1,0 +1,307 @@
+#include "Core/SuntaPreCompiled.h"
+#include "GameBuilder.h"
+
+#include "ExecutableIcon.h"
+#include "Core/Log.h"
+#include "Core/Platform.h"
+#include "Core/VirtualFileSystem.h"
+
+namespace Sunta
+{
+
+namespace
+{
+	namespace fs = std::filesystem;
+
+	constexpr const char* RuntimeExecutableName = "SuntaRuntime";
+	constexpr const char* BuildFolderName       = "Build";
+	constexpr const char* DebugFolderSuffix     = "_Debug";
+
+	// Resources only the editor uses (relative to Sunta/res), the shipped game doesn't need them
+	const std::vector<std::string> EditorOnlyResourceFolders = { "Textures/Icons/", "Textures/ui/" };
+
+	std::string GetExecutableSuffix()
+	{
+#if defined(SUNTA_PLATFORM_WINDOWS)
+		return ".exe";
+#else
+		return "";
+#endif
+	}
+
+	// The game name becomes a file and folder name, so characters Windows doesn't allow are replaced
+	std::string MakeFileNameSafe(std::string name)
+	{
+		const std::string forbiddenCharacters = "<>:\"/\\|?*";
+
+		for (char& character : name)
+		{
+			if (forbiddenCharacters.find(character) != std::string::npos)
+				character = '_';
+		}
+
+		return name;
+	}
+}
+
+bool GameBuilder::BuildGame()
+{
+	return BuildGame(GetEditorConfiguration());
+}
+
+bool GameBuilder::BuildGame(BuildConfiguration configuration)
+{
+	const GameConfig gameConfig      = LoadGameConfig();
+	const std::string gameName       = GetGameName(gameConfig);
+	const fs::path   outputDirectory = GetOutputDirectory(gameName, configuration);
+	const fs::path   runtimePath     = GetRuntimeTemplatePath(configuration);
+	const fs::path   gameExecutable  = outputDirectory / (gameName + GetExecutableSuffix());
+
+	SUNTA_ENGINE_LOG_INFO("GameBuilder: Building '{0}' ({1}) to '{2}'", gameName, GetConfigurationName(configuration), outputDirectory.string());
+
+	if (!IsConfigurationAvailable(configuration))
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: There is no game executable for {0} (expected '{1}'). Compile the SuntaRuntime target in the {0} configuration first",
+							   GetConfigurationName(configuration), runtimePath.string());
+		return false;
+	}
+
+	const bool isBuilt = PrepareOutputDirectory(outputDirectory)
+					  && CopyRuntimeExecutable(runtimePath, gameExecutable)
+					  && CopyEngineResources(outputDirectory)
+					  && CopyGameResources(outputDirectory);
+
+	if (!isBuilt)
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Build of '{0}' FAILED", gameName);
+		return false;
+	}
+
+	ApplyGameIcon(gameExecutable, gameConfig);
+	WriteLinuxDesktopEntry(outputDirectory, gameName);
+
+	SUNTA_ENGINE_LOG_INFO("GameBuilder: Build of '{0}' finished", gameName);
+	Platform::Get().OpenInExplorer(outputDirectory.string());
+
+	return true;
+}
+
+bool GameBuilder::IsConfigurationAvailable(BuildConfiguration configuration)
+{
+	const fs::path runtimePath = GetRuntimeTemplatePath(configuration);
+
+	std::error_code error;
+	return !runtimePath.empty() && fs::exists(runtimePath, error);
+}
+
+BuildConfiguration GameBuilder::GetEditorConfiguration()
+{
+	// SUNTA_DEBUG is defined by CMake for the Debug configuration only
+#if defined(SUNTA_DEBUG)
+	return BuildConfiguration::Debug;
+#else
+	return BuildConfiguration::Release;
+#endif
+}
+
+const char* GameBuilder::GetConfigurationName(BuildConfiguration configuration)
+{
+	return (configuration == BuildConfiguration::Debug) ? "Debug" : "Release";
+}
+
+BuildConfiguration GameBuilder::ParseConfiguration(const std::string& name, BuildConfiguration fallback)
+{
+	if (name == GetConfigurationName(BuildConfiguration::Debug))
+		return BuildConfiguration::Debug;
+
+	if (name == GetConfigurationName(BuildConfiguration::Release))
+		return BuildConfiguration::Release;
+
+	return fallback;
+}
+
+GameConfig GameBuilder::LoadGameConfig()
+{
+	// Without a readable config the defaults of GameConfig stay
+	GameConfig gameConfig;
+	GameConfig::TryLoad(GameConfig::DefaultPath, gameConfig);
+
+	return gameConfig;
+}
+
+std::string GameBuilder::GetGameName(const GameConfig& gameConfig)
+{
+	return MakeFileNameSafe(gameConfig.name);
+}
+
+fs::path GameBuilder::GetProjectDirectory()
+{
+	// "@game" points to <project>/res
+	return VirtualFileSystem::GetMountPath("@game").parent_path();
+}
+
+fs::path GameBuilder::GetOutputDirectory(const std::string& gameName, BuildConfiguration configuration)
+{
+	const std::string folderName = (configuration == BuildConfiguration::Debug) ? gameName + DebugFolderSuffix : gameName;
+	return GetProjectDirectory() / BuildFolderName / folderName;
+}
+
+fs::path GameBuilder::GetRuntimeDirectory(BuildConfiguration configuration)
+{
+	const fs::path editorDirectory = VirtualFileSystem::GetExecutableDirectory();
+
+	if (configuration == GetEditorConfiguration())
+		return editorDirectory;
+
+	// CMake names the folders "<Configuration>-<System>-<Processor>" e.g. "Release-Windows-AMD64"
+	// The other configuration lies next to ours, with only the first part of the name changed
+	const std::string folderName = editorDirectory.filename().string();
+	const size_t      separator  = folderName.find('-');
+
+	if (separator == std::string::npos)
+		return fs::path();
+
+	return editorDirectory.parent_path() / (std::string(GetConfigurationName(configuration)) + folderName.substr(separator));
+}
+
+fs::path GameBuilder::GetRuntimeTemplatePath(BuildConfiguration configuration)
+{
+	const fs::path runtimeDirectory = GetRuntimeDirectory(configuration);
+	if (runtimeDirectory.empty())
+		return fs::path();
+
+	return runtimeDirectory / (std::string(RuntimeExecutableName) + GetExecutableSuffix());
+}
+
+bool GameBuilder::PrepareOutputDirectory(const fs::path& outputDirectory)
+{
+	std::error_code error;
+
+	// Removes files of the previous build, so deleted assets don't stay in the package
+	fs::remove_all(outputDirectory, error);
+	fs::create_directories(outputDirectory, error);
+
+	if (error)
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Couldn't prepare '{0}': {1}", outputDirectory.string(), error.message());
+		return false;
+	}
+
+	return true;
+}
+
+bool GameBuilder::CopyRuntimeExecutable(const fs::path& runtimePath, const fs::path& gameExecutablePath)
+{
+	std::error_code error;
+	fs::copy_file(runtimePath, gameExecutablePath, fs::copy_options::overwrite_existing, error);
+
+	if (error)
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Couldn't copy the game executable: {0}", error.message());
+		return false;
+	}
+
+	return true;
+}
+
+bool GameBuilder::CopyEngineResources(const fs::path& outputDirectory)
+{
+	const fs::path source      = VirtualFileSystem::GetMountPath("@engine");
+	const fs::path destination = outputDirectory / "res" / "Sunta";
+
+	return CopyDirectory(source, destination, true);
+}
+
+bool GameBuilder::CopyGameResources(const fs::path& outputDirectory)
+{
+	const fs::path source      = VirtualFileSystem::GetMountPath("@game");
+	const fs::path destination = outputDirectory / "res" / "Game";
+
+	return CopyDirectory(source, destination, false);
+}
+
+void GameBuilder::ApplyGameIcon([[maybe_unused]] const fs::path& gameExecutablePath, const GameConfig& gameConfig)
+{
+	const fs::path iconPath = VirtualFileSystem::Resolve(gameConfig.windowIcon);
+
+	// No icon in the project: the game keeps the icon of the engine
+	std::error_code error;
+	if (!fs::exists(iconPath, error))
+		return;
+
+#if defined(SUNTA_PLATFORM_WINDOWS)
+	if (!ExecutableIcon::Apply(gameExecutablePath, iconPath))
+		SUNTA_ENGINE_LOG_WARNING("GameBuilder: The game was built, but it has the icon of the engine (changing the icon failed)");
+#endif
+}
+
+void GameBuilder::WriteLinuxDesktopEntry(const fs::path& outputDirectory, const std::string& gameName)
+{
+#if defined(SUNTA_PLATFORM_LINUX)
+	// Linux has no icon inside an executable, the file manager takes it from a .desktop file instead
+	std::ofstream desktopFile(outputDirectory / (gameName + ".desktop"));
+	if (!desktopFile.is_open())
+		return;
+
+	desktopFile << "[Desktop Entry]\n"
+				<< "Type=Application\n"
+				<< "Name=" << gameName << "\n"
+				<< "Comment=Built with Sunta Engine\n"
+				<< "Exec=bash -c 'cd \"$(dirname \"%k\")\" && ./\"" << gameName << "\"'\n"
+				<< "Icon=./res/Game/App/window_icon.png\n"
+				<< "Terminal=false\n"
+				<< "Categories=Game;\n";
+#endif
+}
+
+bool GameBuilder::CopyDirectory(const fs::path& source, const fs::path& destination, bool skipEditorOnlyResources)
+{
+	if (!fs::exists(source))
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Folder '{0}' doesn't exist", source.string());
+		return false;
+	}
+
+	try
+	{
+		fs::create_directories(destination);
+
+		for (const auto& entry : fs::recursive_directory_iterator(source))
+		{
+			const fs::path relativePath = fs::relative(entry.path(), source);
+
+			if (skipEditorOnlyResources && IsEditorOnlyResource(relativePath))
+				continue;
+
+			const fs::path targetPath = destination / relativePath;
+
+			if (entry.is_directory())
+				fs::create_directories(targetPath);
+			else
+				fs::copy_file(entry.path(), targetPath, fs::copy_options::overwrite_existing);
+		}
+	}
+	catch (const fs::filesystem_error& error)
+	{
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Copying '{0}' failed: {1}", source.string(), error.what());
+		return false;
+	}
+
+	return true;
+}
+
+bool GameBuilder::IsEditorOnlyResource(const fs::path& pathInsideEngineResources)
+{
+	// The trailing "/" makes the folder itself match too, not only the files inside it
+	const std::string pathWithSlash = pathInsideEngineResources.generic_string() + "/";
+
+	for (const std::string& editorOnlyFolder : EditorOnlyResourceFolders)
+	{
+		if (pathWithSlash.rfind(editorOnlyFolder, 0) == 0)
+			return true;
+	}
+
+	return false;
+}
+
+}

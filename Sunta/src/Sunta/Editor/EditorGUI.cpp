@@ -25,6 +25,7 @@
 #include "Serialization/SceneSerializer.h"
 #include "Utilities/FileSystemUtilities.h"
 #include "Core/VirtualFileSystem.h"
+#include "ProjectSettingsWindow.h" 
 #include "ComponentDrawerFactory.h"
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSystem.h"
@@ -252,6 +253,13 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			ImGui::EndMenu();
 		}
 
+		// zamiast starego bloku "Build":
+		if (ImGui::BeginMenu("Project"))
+		{
+			ProjectSettingsWindow::DrawProjectMenuItems();
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("View"))
 		{
 			float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
@@ -325,6 +333,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 	}
 
 	ImGui::PopStyleColor(2);
+	ProjectSettingsWindow::Draw();
 }
 
 void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)

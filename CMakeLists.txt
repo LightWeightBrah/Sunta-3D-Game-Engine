@@ -12,7 +12,7 @@ option(SUNTA_DEV_MODE "Development mode: the game build reads assets from the so
 if(SUNTA_DEV_MODE)
 	message(STATUS "Sunta Engine: DEVELOPMENT mode (game build falls back to the source folders when it has no 'res' folder)")
 else()
-	message(STATUS "Sunta Engine: RELEASE mode (game build needs the 'res' folder next to it, build target 'Package')")
+	message(STATUS "Sunta Engine: RELEASE mode (game build needs the 'res' folder next to it, the editor's Build menu creates it)")
 endif()
 
 # The game project the editor opens by default and the game executable is built from
@@ -30,7 +30,6 @@ set(CONFIG_NAME "$<CONFIG>-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 
 set(SUNTA_BIN_DIR "${CMAKE_SOURCE_DIR}/bin/${CONFIG_NAME}")
 set(SUNTA_INT_DIR "${CMAKE_SOURCE_DIR}/bin-intermediates/${CONFIG_NAME}")
-set(SUNTA_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/distribution")
 
 # for single-config generators (e.g. Makefiles)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SUNTA_BIN_DIR})

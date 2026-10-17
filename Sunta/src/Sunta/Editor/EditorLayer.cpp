@@ -3,6 +3,9 @@
 
 #include "EditorGUI.h"
 #include "EditorGUIContext.h"
+#include "EditorSettings.h"
+#include "ProcessLauncher.h"
+#include "ProjectManager.h"
 #include "Core/Application.h"
 #include "Core/InputManager.h"
 #include "Core/ResourceLoader.h"
@@ -29,6 +32,9 @@ void EditorLayer::OnAttach()
 	EditorGUI::SetDarkTheme();
 
 	RegisterComponentsToInspector();
+
+	// Puts the project on top of the list in the project launcher
+	EditorSettings::AddRecentProject(ProjectManager::GetCurrentProjectDirectory());
 }
 
 void EditorLayer::OnDetach()
@@ -43,6 +49,13 @@ void EditorLayer::OnProcessInput()
 
 	if (InputManager::IsKeyDown(GLFW_KEY_TAB))
 		ToggleEngineMode();
+}
+
+void EditorLayer::OnUpdate(float deltaTime)
+{
+	// "Project > Switch Project" in the menu: the launcher is a new process, so this editor can close
+	if (ProjectManager::ConsumeSwitchProjectRequest() && ProcessLauncher::StartEditorLauncher())
+		application.Close();
 }
 
 void EditorLayer::OnRender()

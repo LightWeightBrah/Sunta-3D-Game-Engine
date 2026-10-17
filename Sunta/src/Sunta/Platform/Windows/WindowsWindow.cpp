@@ -34,6 +34,11 @@ void WindowsWindow::Show()
 	implementation.Show();
 }
 
+bool WindowsWindow::SetIcon(const std::string& imagePath)
+{
+	return implementation.SetIcon(imagePath);
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
 {
 	return std::make_unique<WindowsOpenGLEditorGUIBackend>();

@@ -81,6 +81,9 @@ void Application::Init()
 	window = Window::CreateWindow(specification.windowTitle, specification.windowWidth, specification.windowHeight);
 	SubscribeToWindowEvents();
 
+	if (specification.loadGameConfig)
+		ApplyGameWindowIcon();
+
 	Renderer::Init();
 	DebugRenderer::Init();
 	ResourceManager::Init(Renderer::GetDevice());
@@ -101,6 +104,17 @@ void Application::LoadGameConfig()
 	specification.windowTitle  = gameConfig.name;
 	specification.windowWidth  = gameConfig.windowWidth;
 	specification.windowHeight = gameConfig.windowHeight;
+}
+
+void Application::ApplyGameWindowIcon()
+{
+	const std::string iconPath = VirtualFileSystem::Resolve(gameConfig.windowIcon);
+
+	// No icon in the project: the window keeps the default engine icon
+	if (!std::filesystem::exists(iconPath))
+		return;
+
+	window->SetIcon(iconPath);
 }
 
 void Application::SubscribeToWindowEvents()

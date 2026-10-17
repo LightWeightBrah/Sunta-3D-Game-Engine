@@ -33,6 +33,11 @@ void MacWindow::Show()
 	implementation.Show();
 }
 
+bool MacWindow::SetIcon(const std::string& imagePath)
+{
+	return implementation.SetIcon(imagePath);
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> MacWindow::CreateGUIBackend()
 {
 	return std::make_unique<MacOpenGLEditorGUIBackend>();

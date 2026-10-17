@@ -16,6 +16,7 @@ public:
 	void OnAttach() override;
 	void OnDetach() override;
 	void OnProcessInput() override;
+	void OnUpdate(float deltaTime) override;
 	void OnRender() override;
 
 private:

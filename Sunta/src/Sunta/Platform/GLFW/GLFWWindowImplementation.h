@@ -21,6 +21,7 @@ public:
 	void EnableMouseCursor(bool enabled);
 	void SetAsGraphicsTarget();
 	void Show();
+	bool SetIcon(const std::string& imagePath);
 
 	unsigned int GetWidth()  const { return width; }
 	unsigned int GetHeight() const { return height; }
@@ -39,7 +40,7 @@ private:
 	void Shutdown();
 	void OnEngineModeChanged(const EngineModeChangedEvent& event);
 
-	void SetWindowIcon();
+	void SetDefaultIcon();
 };
 
 }

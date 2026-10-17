@@ -71,7 +71,7 @@ void GLFWWindowImplementation::Init()
 		return;
 	}
 
-	SetWindowIcon();
+	SetDefaultIcon();
 
 	graphicsContext = GraphicsContext::Create(window);
 	graphicsContext->Init();
@@ -190,27 +190,31 @@ void GLFWWindowImplementation::OnEngineModeChanged(const EngineModeChangedEvent&
 }
 
 
-void GLFWWindowImplementation::SetWindowIcon()
+void GLFWWindowImplementation::SetDefaultIcon()
+{
+	const std::string engineLogoPath = VirtualFileSystem::Resolve(EngineAssets::App::EngineLogoPath);
+	SetIcon(engineLogoPath);
+}
+
+bool GLFWWindowImplementation::SetIcon(const std::string& imagePath)
 {
 	GLFWimage icon;
 	int channels = 0;
 
 	stbi_set_flip_vertically_on_load(false);
+	icon.pixels = stbi_load(imagePath.c_str(), &icon.width, &icon.height, &channels, 4);
 
-	std::string resolvedEngineLogoPath = VirtualFileSystem::Resolve(EngineAssets::App::EngineLogoPath);
-
-	icon.pixels = stbi_load(resolvedEngineLogoPath.c_str(), &icon.width, &icon.height, &channels, 4);
-
-	if (icon.pixels)
+	if (!icon.pixels)
 	{
-		glfwSetWindowIcon(window, 1, &icon);
-		stbi_image_free(icon.pixels);
-		SUNTA_ENGINE_LOG_INFO("Window icon successfully updated!");
+		SUNTA_ENGINE_LOG_WARNING("Failed to load Window icon from '{0}'", imagePath);
+		return false;
 	}
-	else
-	{
-		SUNTA_ENGINE_LOG_WARNING("Failed to load Window icon!");
-	}
+
+	glfwSetWindowIcon(window, 1, &icon);
+	stbi_image_free(icon.pixels);
+
+	SUNTA_ENGINE_LOG_INFO("Window icon successfully updated!");
+	return true;
 }
 
 }

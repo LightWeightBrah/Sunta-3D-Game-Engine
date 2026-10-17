@@ -11,6 +11,9 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${EDITOR_APP_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SuntaEditorModule)
 
+# The editor's Build menu copies SuntaRuntime.exe, so it has to be built together with the editor
+add_dependencies(${PROJECT_NAME} SuntaRuntime)
+
 # Project opened when no folder is given on the command line
 target_compile_definitions(${PROJECT_NAME} PRIVATE "SUNTA_DEFAULT_PROJECT_DIR=R\"(${SUNTA_PROJECT_DIR})\"")
 
