@@ -34,6 +34,11 @@ void EditorLayer::OnAttach()
 
 	RegisterComponentsToInspector();
 
+	// The free camera flies at the speed the user chose last time
+	const float savedCameraSpeed = EditorSettings::GetCameraSpeed();
+	if (savedCameraSpeed > 0.0f)
+		application.GetScene().SetEditorCameraSpeed(savedCameraSpeed);
+
 	StartScene::OpenInEditor(application.GetScene());
 
 	// Puts the project on top of the list in the project launcher
@@ -42,6 +47,8 @@ void EditorLayer::OnAttach()
 
 void EditorLayer::OnDetach()
 {
+	EditorSettings::SetCameraSpeed(application.GetScene().GetEditorCameraSpeed());
+
 	EditorGUIContext::Shutdown(&application.GetWindow());
 }
 
@@ -94,6 +101,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	DirectionalLightComponent::RegisterToInspector();
 	PointLightComponent::RegisterToInspector();
 	SpotLightComponent::RegisterToInspector();
+	CameraComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
 	PhysicsBodyComponent::RegisterToInspector();
 }

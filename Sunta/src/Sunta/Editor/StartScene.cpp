@@ -26,6 +26,10 @@ namespace
 	const glm::vec3 SunPosition        = glm::vec3(0.0f, 5.0f, 0.0f);
 	const glm::vec3 SunRotationDegrees = glm::vec3(-50.0f, -30.0f, 0.0f);
 
+	// Behind the cube and a bit above it, tilted down so the cube is in the middle of the screen
+	const glm::vec3 CameraPosition        = glm::vec3(0.0f, 4.0f, 9.0f);
+	const glm::vec3 CameraRotationDegrees = glm::vec3(-20.0f, 0.0f, 0.0f);
+
 	bool FileExists(const std::string& path)
 	{
 		std::error_code error;
@@ -91,6 +95,10 @@ void StartScene::CreateDefaultScene(Scene& scene)
 	// Stands on the floor: its center is half of its height above the floor's top side
 	EntityFactory::CreateCube(scene, glm::vec3(0.0f, CubeSize * 0.5f, 0.0f), "Cube");
 	SetTransform(scene, GetNewestEntity(scene), glm::vec3(0.0f), glm::vec3(CubeSize));
+
+	// Without a camera the game would fly around on the free camera of the editor
+	EntityFactory::CreateCamera(scene, CameraPosition, "Camera");
+	SetTransform(scene, GetNewestEntity(scene), CameraRotationDegrees, glm::vec3(1.0f));
 }
 
 void StartScene::SaveAsStartScene(const std::string& virtualPath, Scene& scene, GameConfig& gameConfig)

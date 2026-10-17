@@ -547,5 +547,32 @@ struct SpotLightComponent
 	}
 };
 
+// The point of view the game is drawn from
+// The Transform of the entity decides where the camera stands and where it looks:
+// the camera looks along the -Z axis of the entity, +Y is up
+// While the game plays, the first active camera replaces the free camera of the editor
+struct CameraComponent
+{
+	static constexpr float MinFieldOfView = 1.0f;
+	static constexpr float MaxFieldOfView = 179.0f;
+	static constexpr float MinNearPlane   = 0.01f;
+
+	float fieldOfView = 45.0f; // vertical, in degrees
+	float nearPlane   = 0.1f;
+	float farPlane    = 100.0f;
+	bool  isActive    = true;
+
+	static void RegisterToInspector()
+	{
+		InspectorComponentRegistry::RegisterComponent<CameraComponent>("Camera", EngineAssets::Icons::Transform,
+			{
+				ADD_PROPERTY_RANGED(CameraComponent, fieldOfView, PropertyDataType::Float, MinFieldOfView, MaxFieldOfView),
+				ADD_PROPERTY(CameraComponent, nearPlane, PropertyDataType::Float),
+				ADD_PROPERTY(CameraComponent, farPlane,  PropertyDataType::Float),
+				ADD_PROPERTY(CameraComponent, isActive,  PropertyDataType::Bool)
+			});
+	}
+};
+
 
 }

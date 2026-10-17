@@ -41,6 +41,15 @@ unsigned int EntityFactory::CreateEmpty(Scene& scene, const glm::vec3& position,
 	return entity;
 }
 
+unsigned int EntityFactory::CreateCamera(Scene& scene, const glm::vec3& position, const std::string& name)
+{
+	unsigned int entity = CreateEmpty(scene, position, name);
+
+	scene.GetEntityManager().AddComponent<CameraComponent>(entity);
+
+	return entity;
+}
+
 unsigned int EntityFactory::CreateModel(Scene& scene, const glm::vec3& position, const std::string& name, const std::string& modelName)
 {
 	auto& entityManager = scene.GetEntityManager();

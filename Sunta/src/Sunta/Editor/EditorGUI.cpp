@@ -260,8 +260,34 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Entity"))
+		{
+			const bool hasSelectedEntity = (selectedEntity >= 0);
+
+			if (ImGui::MenuItem("Create Camera From View", nullptr, false, canEditScene))
+			{
+				const unsigned int cameraEntity = EntityFactory::CreateCamera(scene, scene.GetCamera().GetPosition(), "Camera");
+				scene.AlignEntityWithEditorCamera(cameraEntity);
+				SetSelectedEntity(static_cast<int>(cameraEntity));
+			}
+
+			if (ImGui::MenuItem("Align Selected With View", nullptr, false, canEditScene && hasSelectedEntity))
+				scene.AlignEntityWithEditorCamera(static_cast<unsigned int>(selectedEntity));
+
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("View"))
 		{
+			float cameraSpeed = scene.GetEditorCameraSpeed();
+			if (ImGui::SliderFloat("Camera Speed", &cameraSpeed, Camera::MinMovementSpeed, Camera::MaxMovementSpeed, "%.1f", ImGuiSliderFlags_Logarithmic))
+				scene.SetEditorCameraSpeed(cameraSpeed);
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("How fast the free camera flies. The mouse wheel changes it too while you fly");
+
+			ImGui::Separator();
+
 			float gizmosLineWidth = DebugRenderer::GetGizmosLineWidth();
 			if (ImGui::SliderFloat("Gizmos Line Width", &gizmosLineWidth, 1.0f, 8.0f))
 				DebugRenderer::SetGizmosLineWidth(gizmosLineWidth);
@@ -769,6 +795,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Spot Light",
 				[&]() { return entityManager.GetComponent<SpotLightComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<SpotLightComponent>(inspectedEntity); }
+			},
+
+			{
+				"Camera",
+				[&]() { return entityManager.GetComponent<CameraComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<CameraComponent>(inspectedEntity); }
 			},
 
 			{
@@ -1287,8 +1319,8 @@ void EditorGUI::DrawTransformGizmo(Scene& scene)
 	ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList(viewport)); // above the scene, below the panels
 	ImGuizmo::SetRect(viewport->Pos.x, viewport->Pos.y, viewport->Size.x, viewport->Size.y);
 
-	glm::mat4 view = scene.GetCamera().GetViewMatrix();
-	glm::mat4 projection = scene.GetCamera().GetProjectionMatrix();
+	glm::mat4 view = scene.GetViewMatrix();
+	glm::mat4 projection = scene.GetProjectionMatrix();
 
 	// Build the matrix straight from the transform (not from WorldMatrixComponent),
 	// so it is never one frame behind when isDirty is still true
@@ -1986,7 +2018,10 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 		changed = ImGui::Checkbox(property.label.c_str(), (bool*)propertyData);
 		break;
 	case PropertyDataType::Float:
-		changed = ImGui::DragFloat(property.label.c_str(), (float*)propertyData, 0.1f);
+		if (property.HasRange())
+			changed = ImGui::SliderFloat(property.label.c_str(), (float*)propertyData, property.minValue, property.maxValue);
+		else
+			changed = ImGui::DragFloat(property.label.c_str(), (float*)propertyData, 0.1f);
 		break;
 	case PropertyDataType::Float3:
 		if (property.HasRange())

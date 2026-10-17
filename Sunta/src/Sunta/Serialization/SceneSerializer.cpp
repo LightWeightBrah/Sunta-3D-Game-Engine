@@ -33,6 +33,7 @@ namespace SceneKeys
 	constexpr const char* DirectionalLightComponent = "directional_light";
 	constexpr const char* PointLightComponent	    = "point_light";
 	constexpr const char* SpotLightComponent        = "spot_light";
+	constexpr const char* CameraComponent           = "camera";
 
 	constexpr const char* Name                      = "name";
 	constexpr const char* Position                  = "position";
@@ -76,6 +77,11 @@ namespace SceneKeys
 	constexpr const char* AttenuationQuadratic      = "attenuation_quadratic";
 	constexpr const char* InnerCutOff               = "inner_cut_off";
 	constexpr const char* OuterCutOff               = "outer_cut_off";
+
+	constexpr const char* FieldOfView               = "field_of_view";
+	constexpr const char* NearPlane                 = "near_plane";
+	constexpr const char* FarPlane                  = "far_plane";
+	constexpr const char* IsActive                  = "is_active";
 
 }
 
@@ -266,6 +272,17 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 				{ SceneKeys::Attenuation, SerializeAttenuation(spotLight->attenuation) },
 				{ SceneKeys::InnerCutOff, spotLight->innerCutOffAngle                  },
 				{ SceneKeys::OuterCutOff, spotLight->outerCutOffAngle                  }
+			};
+		}
+
+		if (auto* camera = entityManager.GetComponent<CameraComponent>(i))
+		{
+			entityJson[SceneKeys::CameraComponent] =
+			{
+				{ SceneKeys::FieldOfView, camera->fieldOfView },
+				{ SceneKeys::NearPlane,   camera->nearPlane   },
+				{ SceneKeys::FarPlane,    camera->farPlane    },
+				{ SceneKeys::IsActive,    camera->isActive    }
 			};
 		}
 
@@ -491,6 +508,17 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			spotLight.innerCutOffAngle = lightData.value(SceneKeys::InnerCutOff, spotLight.innerCutOffAngle);
 			spotLight.outerCutOffAngle = lightData.value(SceneKeys::OuterCutOff, spotLight.outerCutOffAngle);
+		}
+
+		if (entityJson.contains(SceneKeys::CameraComponent))
+		{
+			const auto& cameraData = entityJson[SceneKeys::CameraComponent];
+			auto& camera = entityManager.AddComponent<CameraComponent>(entity);
+
+			camera.fieldOfView = cameraData.value(SceneKeys::FieldOfView, camera.fieldOfView);
+			camera.nearPlane   = cameraData.value(SceneKeys::NearPlane,   camera.nearPlane);
+			camera.farPlane    = cameraData.value(SceneKeys::FarPlane,    camera.farPlane);
+			camera.isActive    = cameraData.value(SceneKeys::IsActive,    camera.isActive);
 		}
 
 	}

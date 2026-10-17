@@ -61,7 +61,7 @@ struct ComponentType
 	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyType}
 
 #define ADD_PROPERTY_RANGED(ComponentStruct, PropertyName, PropertyType, MinValue, MaxValue) \
-	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyType, MinValue, MaxValue }
+	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyType, AssetType::None, MinValue, MaxValue }
 
 #define ADD_ASSET(ComponentStruct, PropertyName, AssetTypeValue) \
 	{ #PropertyName, (unsigned int)offsetof(ComponentStruct, PropertyName), PropertyDataType::AssetPath, AssetTypeValue }
