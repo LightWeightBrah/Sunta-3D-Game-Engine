@@ -16,7 +16,7 @@ public:
 	// Name from game.config, the folder name when there is no (readable) config
 	static std::string ReadProjectName(const std::filesystem::path& projectDirectory);
 
-	// Creates <parentDirectory>/<projectName>/res with Scenes, Scripts, App and game.config
+	// Creates <parentDirectory>/<projectName>/res with Fonts, Materials, Models, Scenes, Scripts, Shaders, Textures and game.config
 	// On failure returns false and fills outError with a message for the user
 	static bool CreateProject(const std::filesystem::path& parentDirectory, const std::string& projectName,
 							  std::filesystem::path& outProjectDirectory, std::string& outError);

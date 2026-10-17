@@ -16,7 +16,8 @@ namespace
 
 	constexpr const char* ResourcesFolderName = "res";
 	constexpr const char* ConfigFileName      = "game.config";
-	const std::vector<const char*> NewProjectFolders = { "Scenes", "Scripts", "App" };
+	// The same folders as the resources of the engine (Sunta/res). The "App" folder (game icon) is created when an icon is chosen
+	const std::vector<const char*> NewProjectFolders = { "Fonts", "Materials", "Models", "Scenes", "Scripts", "Shaders", "Textures" };
 
 	bool isSwitchProjectRequested = false;
 

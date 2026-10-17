@@ -1,51 +1,22 @@
-# Adds the platform specific icon files of a program to <sources_variable>
+# Adds the default Sunta Engine icon to a program (the editor and the SuntaRuntime template)
+# The icon of a game is not set here: the editor puts it into the copy of SuntaRuntime when it builds the game (see GameBuilder)
 #
-# custom_resources_dir: folder that may contain App/ with the program's own icon
-#                       if it doesn't, the default Sunta Engine icon is used
-function(sunta_add_app_icon sources_variable custom_resources_dir)
+#   Windows: the icon is a resource of the .exe (Sunta/res/App/resource.rc)
+#   Linux:   an executable can't hold an icon, so a .desktop file is created next to the program
+#   macOS:   the programs are plain executables, a game gets its icon in the .app bundle made by the editor
+function(sunta_add_app_icon sources_variable)
 
-	set(default_icon_dir "${CMAKE_SOURCE_DIR}/Sunta/res/App")
-	set(custom_icon_dir  "${custom_resources_dir}/App")
-	set(updated_sources  ${${sources_variable}})
+	set(icon_dir "${CMAKE_SOURCE_DIR}/Sunta/res/App")
+	set(updated_sources ${${sources_variable}})
 
-	# Windows
 	if(WIN32)
-		if(EXISTS "${custom_icon_dir}/resource.rc")
-			message(STATUS "${PROJECT_NAME}: Using custom executable icon")
-			list(APPEND updated_sources "${custom_icon_dir}/resource.rc")
-		elseif(EXISTS "${default_icon_dir}/resource.rc")
-			message(STATUS "${PROJECT_NAME}: Using default Sunta Engine executable icon")
-			list(APPEND updated_sources "${default_icon_dir}/resource.rc")
+		if(EXISTS "${icon_dir}/resource.rc")
+			list(APPEND updated_sources "${icon_dir}/resource.rc")
 		endif()
 
-	# Linux
 	elseif(UNIX AND NOT APPLE)
-		message(STATUS "${PROJECT_NAME}: Linux platform detected (Icons handled via desktop files and runtime GLFW)")
-
-		if(EXISTS "${custom_icon_dir}/app.desktop.in")
-			set(desktop_template "${custom_icon_dir}/app.desktop.in")
-		elseif(EXISTS "${default_icon_dir}/app.desktop.in")
-			set(desktop_template "${default_icon_dir}/app.desktop.in")
-		endif()
-
-		if(desktop_template)
-			configure_file("${desktop_template}" "${SUNTA_BIN_DIR}/${PROJECT_NAME}.desktop" @ONLY)
-		endif()
-
-	# Mac
-	elseif(APPLE)
-		if(EXISTS "${custom_icon_dir}/window_icon.icns")
-			set(mac_icon "${custom_icon_dir}/window_icon.icns")
-		elseif(EXISTS "${default_icon_dir}/engine_logo.icns")
-			set(mac_icon "${default_icon_dir}/engine_logo.icns")
-		endif()
-
-		if(mac_icon)
-			message(STATUS "${PROJECT_NAME}: Using App Icon for MacOS Bundle")
-			get_filename_component(mac_icon_name "${mac_icon}" NAME)
-			set(MACOSX_BUNDLE_ICON_FILE ${mac_icon_name} PARENT_SCOPE)
-			list(APPEND updated_sources "${mac_icon}")
-			set_source_files_properties("${mac_icon}" PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+		if(EXISTS "${icon_dir}/app.desktop.in")
+			configure_file("${icon_dir}/app.desktop.in" "${SUNTA_BIN_DIR}/${PROJECT_NAME}.desktop" @ONLY)
 		endif()
 	endif()
 

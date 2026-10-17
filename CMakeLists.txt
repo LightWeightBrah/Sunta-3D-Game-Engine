@@ -1,25 +1,15 @@
 # ========================= GLOBAL SETTINGS ========================= 
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 project(SuntaEngine VERSION 0.1 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-option(SUNTA_DEV_MODE "Development mode: the game build reads assets from the source folders when there is no 'res' next to it" ON)
-
-if(SUNTA_DEV_MODE)
-	message(STATUS "Sunta Engine: DEVELOPMENT mode (game build falls back to the source folders when it has no 'res' folder)")
-else()
-	message(STATUS "Sunta Engine: RELEASE mode (game build needs the 'res' folder next to it, the editor's Build menu creates it)")
-endif()
-
-# The game project the editor opens by default and the game executable is built from
+# Project the editor shows as the sample and SuntaRuntime opens when started straight from the IDE
 # A project is a folder with "res/" inside (and "res/game.config"), see Projects/
-set(SUNTA_PROJECT "Projects/MyGame" CACHE STRING "Game project (folder with 'res'), relative to the repository or absolute")
-cmake_path(ABSOLUTE_PATH SUNTA_PROJECT BASE_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE SUNTA_PROJECT_DIR NORMALIZE)
-message(STATUS "Sunta Engine: Game project: ${SUNTA_PROJECT_DIR}")
+set(SUNTA_PROJECT_DIR "${CMAKE_SOURCE_DIR}/Projects/MyGame")
 
 # Lua version
 add_compile_definitions(SOL_LUA_VERSION=50400)

@@ -103,9 +103,8 @@ add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PUBLIC "SUNTA_ROOT_DIR=R\"(${CMAKE_SOURCE_DIR})\"")
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
 
-if(SUNTA_DEV_MODE)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
-endif()
+# A game started from the IDE (no "res" folder next to it) reads its assets from the source folders
+target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
 
 # MSVC's legacy preprocessor ##__VA_ARGS__ sometimes don't remove ',' comma sign 
 # in nested macros (GLCall + SUNTA_ASSERT), this fixes it so macros actually work with no errors
@@ -118,7 +117,6 @@ set_source_files_properties("${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c"
 PROPERTIES LANGUAGE C
 SKIP_PRECOMPILE_HEADERS ON)
 
-# --- PRECOMPILED HEADER IMPLEMENTATION ---
 target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")
 
 target_include_directories(${PROJECT_NAME} PUBLIC  ${SUNTA_PUBLIC_INCLUDE_DIRS})
@@ -140,4 +138,4 @@ add_library(SuntaEditorModule STATIC ${EDITOR_SOURCES})
 target_link_libraries(SuntaEditorModule PUBLIC ${PROJECT_NAME})
 target_include_directories(SuntaEditorModule PRIVATE ${SUNTA_PRIVATE_INCLUDE_DIRS})
 target_compile_definitions(SuntaEditorModule PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
-target_precompile_headers(SuntaEditorModule  PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")
+target_precompile_headers(SuntaEditorModule PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")

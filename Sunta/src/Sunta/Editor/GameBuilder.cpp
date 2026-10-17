@@ -2,6 +2,8 @@
 #include "GameBuilder.h"
 
 #include "ExecutableIcon.h"
+#include "MacAppBundle.h"
+#include "Core/EngineAssets.h"
 #include "Core/Log.h"
 #include "Core/Platform.h"
 #include "Core/VirtualFileSystem.h"
@@ -15,7 +17,6 @@ namespace
 
 	constexpr const char* RuntimeExecutableName = "SuntaRuntime";
 	constexpr const char* BuildFolderName       = "Build";
-	constexpr const char* DebugFolderSuffix     = "_Debug";
 
 	// Resources only the editor uses (relative to Sunta/res), the shipped game doesn't need them
 	const std::vector<std::string> EditorOnlyResourceFolders = { "Textures/Icons/", "Textures/ui/" };
@@ -54,8 +55,9 @@ bool GameBuilder::BuildGame(BuildConfiguration configuration)
 	const GameConfig gameConfig      = LoadGameConfig();
 	const std::string gameName       = GetGameName(gameConfig);
 	const fs::path   outputDirectory = GetOutputDirectory(gameName, configuration);
+	const fs::path   packageDirectory = GetPackageDirectory(outputDirectory, gameName);
 	const fs::path   runtimePath     = GetRuntimeTemplatePath(configuration);
-	const fs::path   gameExecutable  = outputDirectory / (gameName + GetExecutableSuffix());
+	const fs::path   gameExecutable  = packageDirectory / (gameName + GetExecutableSuffix());
 
 	SUNTA_ENGINE_LOG_INFO("GameBuilder: Building '{0}' ({1}) to '{2}'", gameName, GetConfigurationName(configuration), outputDirectory.string());
 
@@ -66,10 +68,10 @@ bool GameBuilder::BuildGame(BuildConfiguration configuration)
 		return false;
 	}
 
-	const bool isBuilt = PrepareOutputDirectory(outputDirectory)
+	const bool isBuilt = PrepareOutputDirectory(outputDirectory, packageDirectory)
 					  && CopyRuntimeExecutable(runtimePath, gameExecutable)
-					  && CopyEngineResources(outputDirectory)
-					  && CopyGameResources(outputDirectory);
+					  && CopyEngineResources(packageDirectory)
+					  && CopyGameResources(packageDirectory);
 
 	if (!isBuilt)
 	{
@@ -79,6 +81,7 @@ bool GameBuilder::BuildGame(BuildConfiguration configuration)
 
 	ApplyGameIcon(gameExecutable, gameConfig);
 	WriteLinuxDesktopEntry(outputDirectory, gameName);
+	WriteMacBundleFiles(outputDirectory, gameName, gameConfig);
 
 	SUNTA_ENGINE_LOG_INFO("GameBuilder: Build of '{0}' finished", gameName);
 	Platform::Get().OpenInExplorer(outputDirectory.string());
@@ -142,8 +145,19 @@ fs::path GameBuilder::GetProjectDirectory()
 
 fs::path GameBuilder::GetOutputDirectory(const std::string& gameName, BuildConfiguration configuration)
 {
-	const std::string folderName = (configuration == BuildConfiguration::Debug) ? gameName + DebugFolderSuffix : gameName;
+	// "<GameName>_Debug" and "<GameName>_Release", so the two builds are never mixed up
+	const std::string folderName = gameName + "_" + GetConfigurationName(configuration);
 	return GetProjectDirectory() / BuildFolderName / folderName;
+}
+
+fs::path GameBuilder::GetPackageDirectory(const fs::path& outputDirectory, [[maybe_unused]] const std::string& gameName)
+{
+#if defined(SUNTA_PLATFORM_MAC)
+	// The game lives inside <GameName>.app, the executable and "res" lie next to each other in Contents/MacOS
+	return MacAppBundle::GetExecutableDirectory(outputDirectory / (gameName + ".app"));
+#else
+	return outputDirectory;
+#endif
 }
 
 fs::path GameBuilder::GetRuntimeDirectory(BuildConfiguration configuration)
@@ -173,13 +187,13 @@ fs::path GameBuilder::GetRuntimeTemplatePath(BuildConfiguration configuration)
 	return runtimeDirectory / (std::string(RuntimeExecutableName) + GetExecutableSuffix());
 }
 
-bool GameBuilder::PrepareOutputDirectory(const fs::path& outputDirectory)
+bool GameBuilder::PrepareOutputDirectory(const fs::path& outputDirectory, const fs::path& packageDirectory)
 {
 	std::error_code error;
 
 	// Removes files of the previous build, so deleted assets don't stay in the package
 	fs::remove_all(outputDirectory, error);
-	fs::create_directories(outputDirectory, error);
+	fs::create_directories(packageDirectory, error);
 
 	if (error)
 	{
@@ -204,18 +218,18 @@ bool GameBuilder::CopyRuntimeExecutable(const fs::path& runtimePath, const fs::p
 	return true;
 }
 
-bool GameBuilder::CopyEngineResources(const fs::path& outputDirectory)
+bool GameBuilder::CopyEngineResources(const fs::path& packageDirectory)
 {
 	const fs::path source      = VirtualFileSystem::GetMountPath("@engine");
-	const fs::path destination = outputDirectory / "res" / "Sunta";
+	const fs::path destination = packageDirectory / "res" / "Sunta";
 
 	return CopyDirectory(source, destination, true);
 }
 
-bool GameBuilder::CopyGameResources(const fs::path& outputDirectory)
+bool GameBuilder::CopyGameResources(const fs::path& packageDirectory)
 {
 	const fs::path source      = VirtualFileSystem::GetMountPath("@game");
-	const fs::path destination = outputDirectory / "res" / "Game";
+	const fs::path destination = packageDirectory / "res" / "Game";
 
 	return CopyDirectory(source, destination, false);
 }
@@ -251,6 +265,28 @@ void GameBuilder::WriteLinuxDesktopEntry(const fs::path& outputDirectory, const 
 				<< "Icon=./res/Game/App/window_icon.png\n"
 				<< "Terminal=false\n"
 				<< "Categories=Game;\n";
+#endif
+}
+
+void GameBuilder::WriteMacBundleFiles([[maybe_unused]] const fs::path& outputDirectory, [[maybe_unused]] const std::string& gameName,
+									  [[maybe_unused]] const GameConfig& gameConfig)
+{
+#if defined(SUNTA_PLATFORM_MAC)
+	// macOS takes the icon from the .icns file in the bundle, it is made from the PNG of the project
+	const fs::path bundleDirectory = outputDirectory / (gameName + ".app");
+
+	fs::path iconPath = VirtualFileSystem::Resolve(gameConfig.windowIcon);
+
+	std::error_code error;
+	if (!fs::exists(iconPath, error))
+		iconPath = VirtualFileSystem::Resolve(EngineAssets::App::EngineLogoPath);
+
+	const std::string iconFileName = MacAppBundle::WriteIcon(bundleDirectory, gameName, iconPath);
+	if (iconFileName.empty())
+		SUNTA_ENGINE_LOG_WARNING("GameBuilder: The game was built, but without an icon (making the .icns file failed)");
+
+	if (!MacAppBundle::WriteInfoPlist(bundleDirectory, gameName, iconFileName))
+		SUNTA_ENGINE_LOG_WARNING("GameBuilder: Couldn't write Info.plist, the .app may not start by double click");
 #endif
 }
 

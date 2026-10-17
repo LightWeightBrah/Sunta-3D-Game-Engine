@@ -253,7 +253,8 @@ namespace
 				RemoveIcon();
 		}
 
-		ImGui::TextDisabled("The window of the game gets the icon at runtime. The icon of the .exe is set while building (Windows).");
+		ImGui::TextDisabled("The window of the game gets the icon at runtime. The icon of the game file is made from this PNG while building:");
+		ImGui::TextDisabled("the .exe on Windows, the .icns inside the .app on macOS, the PNG itself on Linux.");
 		ImGui::TextDisabled("Windows may show the old icon for a while: it keeps icons in a cache.");
 	}
 

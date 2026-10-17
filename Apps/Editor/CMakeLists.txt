@@ -5,9 +5,9 @@ project(SuntaEditor)
 include("${CMAKE_SOURCE_DIR}/cmake/SuntaAppIcon.cmake")
 
 set(EDITOR_APP_SOURCES "src/main.cpp")
-sunta_add_app_icon(EDITOR_APP_SOURCES "")
+sunta_add_app_icon(EDITOR_APP_SOURCES)
 
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${EDITOR_APP_SOURCES})
+add_executable(${PROJECT_NAME} ${EDITOR_APP_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SuntaEditorModule)
 
