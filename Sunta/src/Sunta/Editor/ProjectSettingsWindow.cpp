@@ -5,6 +5,7 @@
 
 #include "EditorSettings.h"
 #include "ExecutableIcon.h"
+#include "GameBuildJob.h"
 #include "GameBuilder.h"
 #include "ImGuiTextInput.h"
 #include "ProjectManager.h"
@@ -62,6 +63,9 @@ struct WindowState
 };
 
 WindowState state;
+
+// The build runs on its own thread, the window only shows how it goes
+GameBuildJob buildJob;
 
 // While it lives, text breaks into lines at the right edge of the window instead of running out of it
 class TextWrapScope
@@ -146,12 +150,35 @@ void SetDevelopmentBuild(bool isDevelopmentBuild)
 	EditorSettings::SetDevelopmentBuild(isDevelopmentBuild);
 }
 
-void Build(bool isDevelopmentBuild)
+void StartBuild(bool isDevelopmentBuild)
 {
-	if (GameBuilder::BuildGame(isDevelopmentBuild))
-		SetStatus(std::string("Build finished (") + (isDevelopmentBuild ? "development build" : "release build") + "), the folder was opened", SuccessColor);
-	else
-		SetStatus("Build failed, see the log for the reason", ErrorColor);
+	// Opened, so the progress is visible (a build started from the menu would run unseen otherwise)
+	state.isOpen = true;
+	SetStatus("", SuccessColor);
+
+	buildJob.Start(isDevelopmentBuild);
+}
+
+void FinishBuild()
+{
+	const BuildResult result = buildJob.TakeResult();
+
+	if (!result.isSuccess)
+	{
+		// Opened, so the reason can't be missed when the window was closed during the build
+		state.isOpen = true;
+		SetStatus("Build failed: " + result.errorMessage, ErrorColor);
+		return;
+	}
+
+	SetStatus("Build finished, the folder was opened", SuccessColor);
+	Platform::Get().OpenInExplorer(result.outputDirectory.string());
+}
+
+void PollBuild()
+{
+	if (buildJob.IsFinished())
+		FinishBuild();
 }
 
 // Copies the chosen PNG to the project (always the same file, game.config points to it)
@@ -232,6 +259,14 @@ void DrawGameSection()
 		state.config.windowWidth  = static_cast<unsigned int>(std::clamp(windowSize[0], MinWindowSize, MaxWindowSize));
 		state.config.windowHeight = static_cast<unsigned int>(std::clamp(windowSize[1], MinWindowSize, MaxWindowSize));
 	}
+
+	ImGui::Checkbox("Fullscreen", &state.config.fullscreen);
+	ImGui::SameLine();
+	ImGui::Checkbox("VSync", &state.config.vsync);
+
+	TextWrapScope wrapText;
+	ImGui::TextDisabled("Fullscreen covers the main screen, the window size is used when it is off.");
+	ImGui::TextDisabled("VSync keeps the frame rate at the refresh rate of the screen: no tearing and a cooler computer. Turn it off for the fastest possible frames.");
 }
 
 void DrawIconStatus()
@@ -306,6 +341,16 @@ void DrawDevelopmentBuildCheckbox()
 	ImGui::TextDisabled("The game opens a console window with its log (including print from scripts). Leave it off for the version you give to players.");
 }
 
+void DrawBuildProgress()
+{
+	const BuildProgress& progress = buildJob.GetProgress();
+
+	ImGui::ProgressBar(progress.GetFraction(), ImVec2(-1.0f, 0.0f));
+
+	TextWrapScope wrapText;
+	ImGui::TextDisabled("%s", progress.GetStep().c_str());
+}
+
 void DrawBuildHint(bool isAvailable)
 {
 	if (isAvailable)
@@ -321,24 +366,31 @@ void DrawBuildSection()
 {
 	DrawSectionTitle("Build");
 
+	const bool isBuilding = buildJob.IsBuilding();
+
+	ImGui::BeginDisabled(isBuilding);
 	DrawDevelopmentBuildCheckbox();
+	ImGui::EndDisabled();
 
 	const bool isAvailable = GameBuilder::IsRuntimeAvailable();
 	DrawBuildHint(isAvailable);
+
+	if (isBuilding)
+		DrawBuildProgress();
 
 	if (ImGui::Button("Save"))
 		Save();
 
 	ImGui::SameLine();
 
-	ImGui::BeginDisabled(!isAvailable);
+	ImGui::BeginDisabled(!isAvailable || isBuilding);
 	if (ImGui::Button("Save and Build Game"))
 	{
 		// The build copies the scene files from the disk, so unsaved changes of the scene would not be in the game
 		if (Save())
 		{
 			const bool isDevelopmentBuild = state.developmentBuild;
-			UnsavedChangesDialog::RunAfterAsking([isDevelopmentBuild]() { Build(isDevelopmentBuild); });
+			UnsavedChangesDialog::RunAfterAsking([isDevelopmentBuild]() { StartBuild(isDevelopmentBuild); });
 		}
 	}
 	ImGui::EndDisabled();
@@ -351,13 +403,13 @@ void ProjectSettingsWindow::DrawProjectMenuItems()
 	if (ImGui::MenuItem("Project Settings..."))
 		Open();
 
-	if (ImGui::MenuItem("Build Game"))
+	if (ImGui::MenuItem("Build Game", nullptr, false, !buildJob.IsBuilding()))
 	{
 		// The window shows why a build can't be done (e.g. the Release game executable is not compiled)
 		const bool isDevelopmentBuild = EditorSettings::IsDevelopmentBuild();
 
 		if (GameBuilder::IsRuntimeAvailable())
-			UnsavedChangesDialog::RunAfterAsking([isDevelopmentBuild]() { Build(isDevelopmentBuild); });
+			UnsavedChangesDialog::RunAfterAsking([isDevelopmentBuild]() { StartBuild(isDevelopmentBuild); });
 		else
 			Open();
 	}
@@ -368,8 +420,16 @@ void ProjectSettingsWindow::DrawProjectMenuItems()
 		ProjectManager::RequestSwitchProject();
 }
 
+void ProjectSettingsWindow::WaitForBuildToFinish()
+{
+	buildJob.WaitUntilFinished();
+}
+
 void ProjectSettingsWindow::Draw()
 {
+	// Even with the window closed: the finished build opens the folder or shows what went wrong
+	PollBuild();
+
 	if (!state.isOpen)
 		return;
 

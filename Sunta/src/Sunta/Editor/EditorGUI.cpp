@@ -117,6 +117,48 @@ bool IsResourcesRoot(const std::filesystem::path& directory)
 	return false;
 }
 
+// Which of [ENGINE] and [GAME] is selected. Kept apart from the selected file, because Delete removes the selected file
+std::string selectedRootFolder;
+
+// Fill of [ENGINE] and [GAME] when they are neither selected nor hovered, so they look clickable (a bit darker than the hover color)
+const ImVec4 RootFolderIdleColor(0.22f, 0.17f, 0.14f, 1.0f);
+
+// [ENGINE] and [GAME] look and behave like the other folders of the File Browser: a click selects, a double click opens
+bool DrawRootFolderButton(const char* label, float size)
+{
+	const ImVec2 position = ImGui::GetCursorScreenPos();
+	const ImVec2 corner(position.x + size, position.y + size);
+
+	ImGui::InvisibleButton(label, ImVec2(size, size));
+
+	const bool isHovered = ImGui::IsItemHovered();
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+		selectedRootFolder = label;
+
+	const bool isSelected = (selectedRootFolder == label);
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+	if (isSelected)
+		drawList->AddRectFilled(position, corner, ImGui::GetColorU32(ImGuiCol_ButtonActive));
+	else if (isHovered)
+		drawList->AddRectFilled(position, corner, ImGui::GetColorU32(ImGuiCol_ButtonHovered));
+	else
+		drawList->AddRectFilled(position, corner, ImGui::GetColorU32(RootFolderIdleColor));
+
+	drawList->AddRect(position, corner, ImGui::GetColorU32(ImGuiCol_Border));
+
+	const ImVec2 textSize = ImGui::CalcTextSize(label);
+	const ImVec2 textPosition(position.x + (size - textSize.x) * 0.5f, position.y + (size - textSize.y) * 0.5f);
+	drawList->AddText(textPosition, ImGui::GetColorU32(ImGuiCol_Text), label);
+
+	const bool isOpened = isHovered && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+	if (isOpened)
+		selectedRootFolder.clear();
+
+	return isOpened;
+}
+
 }
 
 void EditorGUI::StartPlayMode(Scene& scene)
@@ -887,8 +929,11 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 	// we are in root
 	if (currentDirectory.empty())
 	{
+		// No file is visible here, so none stays selected (Delete would remove it unseen)
+		selectedFile = "";
+
 		// Sunta Engine Folder
-		if (ImGui::Button("[ENGINE]", ImVec2(cellSize - padding, cellSize - padding)))
+		if (DrawRootFolderButton("[ENGINE]", cellSize - padding))
 		{
 			currentDirectory = VirtualFileSystem::Resolve("@engine");
 			selectedFile = "";
@@ -898,7 +943,7 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 		ImGui::NextColumn();
 
 		// Game Folder
-		if (ImGui::Button("[GAME]", ImVec2(cellSize - padding, cellSize - padding)))
+		if (DrawRootFolderButton("[GAME]", cellSize - padding))
 		{
 			currentDirectory = VirtualFileSystem::Resolve("@game");
 			selectedFile = "";
@@ -1300,6 +1345,7 @@ void EditorGUI::DrawFileBrowser(Scene& scene)
 	{
 		SetSelectedEntity(-1);
 		selectedFile = "";
+		selectedRootFolder.clear();
 	}
 
 	if (!selectedFile.empty() && fileToRename.empty() && !pendingCreation.active)

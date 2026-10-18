@@ -9,6 +9,7 @@
 #include "EditorShortcuts.h"
 #include "ProcessLauncher.h"
 #include "ProjectManager.h"
+#include "ProjectSettingsWindow.h"
 #include "SceneDocument.h"
 #include "StartScene.h"
 #include "UnsavedChangesDialog.h"
@@ -27,7 +28,12 @@ namespace Sunta
 namespace
 {
 
-constexpr const char* WindowTitleSuffix = "Sunta Editor";
+// The Debug editor is very slow, so the title tells which one is open (SUNTA_DEBUG is defined by CMake for Debug only)
+#if defined(SUNTA_DEBUG)
+constexpr const char* WindowTitleSuffix = "Sunta Editor (Debug)";
+#else
+constexpr const char* WindowTitleSuffix = "Sunta Editor (Release)";
+#endif
 
 // ImGui reads the input at the start of the frame, so this is the state of the last frame
 bool IsAnyMouseButtonDown()
@@ -82,6 +88,8 @@ void EditorLayer::OnAttach()
 
 void EditorLayer::OnDetach()
 {
+	ProjectSettingsWindow::WaitForBuildToFinish();
+
 	EventBus::Unsubscribe(sceneChangedSubscriptionID);
 
 	EditorSettings::SetCameraSpeed(application.GetScene().GetEditorCameraSpeed());

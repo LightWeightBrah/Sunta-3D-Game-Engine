@@ -19,6 +19,15 @@
 namespace Sunta
 {
 
+namespace
+{
+
+// Frames drawn while the window is still hidden. ImGui needs a few frames to place its docked windows
+// (and a Debug frame is slow), so a window shown at once would first look like the bare scene
+constexpr int HiddenWarmUpFrames = 3;
+
+}
+
 Application::Application(const ApplicationSpecification& specification)
 	: specification(specification)
 	, window(nullptr)
@@ -35,13 +44,21 @@ Scene& Application::GetScene()
 
 void Application::Run()
 {
-	// Shown here, not in Init(), so the window doesn't appear empty while layers are still loading
-	window->Show();
 	SUNTA_ENGINE_LOG_INFO("Sunta Engine is running!");
+
+	bool isWindowShown = false;
+	int  framesDrawn   = 0;
 
 	while (isRunning)
 	{
 		EngineTime::Update();
+
+		// Shown here, not in Init(), and only after a few frames, so the window doesn't appear empty while layers are still loading
+		if (!isWindowShown && framesDrawn >= HiddenWarmUpFrames)
+		{
+			window->Show();
+			isWindowShown = true;
+		}
 
 		window->Update();
 
@@ -56,6 +73,9 @@ void Application::Run()
 		Render();
 
 		InputManager::Clear();
+
+		if (!isWindowShown)
+			++framesDrawn;
 	}
 
 	// Shutdown takes a moment, the window shouldn't sit there frozen in the meantime
@@ -94,6 +114,7 @@ void Application::Init()
 
 	window = Window::CreateWindow(specification.windowTitle, specification.windowWidth, specification.windowHeight);
 	SubscribeToWindowEvents();
+	ApplyWindowSettings();
 
 	if (specification.loadGameConfig)
 		ApplyGameWindowIcon();
@@ -119,6 +140,8 @@ void Application::LoadGameConfig()
 	specification.windowTitle  = gameConfig.name;
 	specification.windowWidth  = gameConfig.windowWidth;
 	specification.windowHeight = gameConfig.windowHeight;
+	specification.fullscreen   = gameConfig.fullscreen;
+	specification.vsync        = gameConfig.vsync;
 }
 
 // A development build (see GameBuilder) shows its log in a console window, other builds stay clean
@@ -140,6 +163,13 @@ void Application::ApplyGameWindowIcon()
 		return;
 
 	window->SetIcon(iconPath);
+}
+
+// Before the window is shown, so a fullscreen game doesn't flash as a small window first
+void Application::ApplyWindowSettings()
+{
+	window->SetVSync(specification.vsync);
+	window->SetFullscreen(specification.fullscreen);
 }
 
 // The user closed the window: closes at once, unless a layer wants to ask something first

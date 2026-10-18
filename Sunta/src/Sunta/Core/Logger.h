@@ -2,6 +2,7 @@
 #include <string>
 #include <any>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 
 #include "LogFile.h"
@@ -60,11 +61,16 @@ private:
 	void InsertIndexedArgument(const char* text, int& nextPosition, const int argsCount, std::string& result, std::string* argsAsStrings);
 	std::string GetTimeAsString();
 
+	// Threads (e.g. the game build) log too, one line must be written before the next one starts
+	static std::mutex& GetOutputMutex();
+
 	template<typename... Args>
 	void Log(Terminal::Color color, const char* levelLabel, const char* text, Args... args)
 	{
 		std::string message = GetLogMessage(text, args...);
-	
+
+		std::lock_guard<std::mutex> outputLock(GetOutputMutex());
+
 		Terminal::SetColor(color);
 		std::string timeString = GetTimeAsString();
 		Terminal::Write("[" + timeString + "] " + "[" + name + "]" + ": " + message);

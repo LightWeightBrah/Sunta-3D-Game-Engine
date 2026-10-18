@@ -22,10 +22,9 @@ int HeadlessGameBuild::Run(const std::filesystem::path& projectDirectory, bool i
 
 	VirtualFileSystem::Init(AssetSource::SourceTree, projectDirectory);
 
-	const bool shouldOpenResultFolder = false;
-	const bool isBuilt = GameBuilder::BuildGame(isDevelopmentBuild, shouldOpenResultFolder);
+	const BuildResult result = GameBuilder::BuildGame(isDevelopmentBuild);
 
-	return isBuilt ? EXIT_SUCCESS : EXIT_FAILURE;
+	return result.isSuccess ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 }

@@ -16,6 +16,8 @@ struct GameConfig
 	unsigned int windowWidth  = 1600;
 	unsigned int windowHeight = 900;
 	std::string  windowIcon   = "@game/App/window_icon.png"; // optional: the engine icon is used if the file doesn't exist
+	bool         fullscreen   = false;         // the game covers the whole main screen (the window size above is used when it is off)
+	bool         vsync        = true;          // a frame is shown when the screen refreshes: no tearing, no wasted work (see Window::SetVSync)
 
 	// Set only in the copy of the config inside a built development game (see GameBuilder), never in the project itself:
 	// the game opens a console window and shows its log there. Written to the file only when true

@@ -198,6 +198,46 @@ void GLFWWindowImplementation::SetTitle(const std::string& newTitle)
 	glfwSetWindowTitle(window, title.c_str());
 }
 
+void GLFWWindowImplementation::SetVSync(bool enabled)
+{
+	isVSyncEnabled = enabled;
+	glfwSwapInterval(enabled ? 1 : 0);
+}
+
+void GLFWWindowImplementation::SetFullscreen(bool enabled)
+{
+	if (enabled == isFullscreen)
+		return;
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* videoMode = monitor ? glfwGetVideoMode(monitor) : nullptr;
+
+	if (enabled && !videoMode)
+	{
+		SUNTA_ENGINE_LOG_WARNING("Primary monitor not found, the window stays windowed");
+		return;
+	}
+
+	if (enabled)
+	{
+		glfwGetWindowPos(window, &windowedX, &windowedY);
+		glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
+		glfwSetWindowMonitor(window, monitor, 0, 0, videoMode->width, videoMode->height, videoMode->refreshRate);
+	}
+	else
+	{
+		glfwSetWindowMonitor(window, nullptr, windowedX, windowedY, windowedWidth, windowedHeight, GLFW_DONT_CARE);
+	}
+
+	isFullscreen = enabled;
+
+	// Some systems forget the swap interval when the window changes its monitor
+	SetVSync(isVSyncEnabled);
+
+	// The resize callback reports the new size too, but not always before the caller reads it
+	glfwGetFramebufferSize(window, &width, &height);
+}
+
 void GLFWWindowImplementation::OnEngineModeChanged(const EngineModeChangedEvent& event)
 {
 	bool shouldShow = (event.mode == EngineMode::Editor);

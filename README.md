@@ -76,7 +76,7 @@ The engine includes a built-in editor designed to simplify scene creation and re
 
 #### Project Launcher, Settings and One-Click Game Build
 * **Project Launcher:** `SuntaEditor` starts with a window that lists recent projects and lets you create a new project or open an existing one, before the editor opens. A checkbox can skip it and open the last project at startup. `Project > Switch Project` returns to it.
-* **Project Settings:** game name, start scene, window size and game icon are edited in the editor (`Project > Project Settings`) and stored in the project's `game.config`.
+* **Project Settings:** game name, start scene, window size, fullscreen, vsync and game icon are edited in the editor (`Project > Project Settings`) and stored in the project's `game.config`.
 * **Build Game:** packages the project into a folder for players with one click, no compiler needed. The **Development build** checkbox makes a game that shows a console window with its log, and the icon of the game is made from one PNG for the system you build on (`.exe` icon on Windows, `.icns` in an `.app` on macOS, the PNG itself on Linux).
 
 ---
@@ -277,7 +277,9 @@ MyGame/
 	"start_scene": "@game/Scenes/Main.scene",
 	"window_width": 1600,
 	"window_height": 900,
-	"window_icon": "@game/App/window_icon.png"
+	"window_icon": "@game/App/window_icon.png",
+	"fullscreen": false,
+	"vsync": true
 }
 ```
 All of these fields can be edited in the editor (`Project > Project Settings`). A sample project lives in `Projects/MyGame`.
@@ -285,7 +287,7 @@ All of these fields can be edited in the editor (`Project > Project Settings`). 
 ---
 
 ## Building a Game
-In the editor open `Project > Project Settings` and click **Save and Build Game**. `Project > Build Game` builds with the last choice of the **Development build** checkbox.
+In the editor open `Project > Project Settings` and click **Save and Build Game**. `Project > Build Game` builds with the last choice of the **Development build** checkbox. The build runs in the background with a progress bar, so the editor stays usable, and when it fails the window shows the reason (for example a missing start scene or a game executable that was not compiled).
 The editor needs no CMake and no compiler, it assembles a ready folder:
 ```text
 <project>/Build/<GameName>_Release/
@@ -324,6 +326,5 @@ SUN-11 Commit description
 
 ## Roadmap
 * Camera component (the game currently uses a free WASD camera)
-* Fullscreen, vsync and more window settings in `game.config`
 * Compiling and testing the macOS packaging (`.app` with icon)
 * Compiling and testing on Linux and macOS, CI on all three systems

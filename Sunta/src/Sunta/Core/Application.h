@@ -20,6 +20,8 @@ struct ApplicationSpecification
 	std::string  windowTitle  = "Sunta Engine";
 	unsigned int windowWidth  = 1600;
 	unsigned int windowHeight = 800;
+	bool         fullscreen   = false;
+	bool         vsync        = true;
 
 	AssetSource assetSource = AssetSource::SourceTree;
 
@@ -27,7 +29,7 @@ struct ApplicationSpecification
 	// Used when assets are read from the source tree, a packaged game has its own copy
 	std::filesystem::path projectDirectory;
 
-	// When true, window title and size are taken from "@game/game.config"
+	// When true, window title, size, fullscreen and vsync are taken from "@game/game.config"
 	bool loadGameConfig = false;
 
 	// Shaders, textures, materials, meshes and models are loaded once, by the program that draws them
@@ -85,6 +87,7 @@ private:
 	void LoadGameConfig();
 	void ApplyDeveloperMode();
 	void ApplyGameWindowIcon();
+	void ApplyWindowSettings();
 	void SubscribeToWindowEvents();
 	void RequestClose();
 

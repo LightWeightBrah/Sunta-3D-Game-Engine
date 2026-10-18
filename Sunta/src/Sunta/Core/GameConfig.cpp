@@ -16,6 +16,8 @@ namespace GameConfigKeys
 	constexpr const char* WindowWidth  = "window_width";
 	constexpr const char* WindowHeight = "window_height";
 	constexpr const char* WindowIcon   = "window_icon";
+	constexpr const char* Fullscreen   = "fullscreen";
+	constexpr const char* VSync        = "vsync";
 	constexpr const char* DeveloperMode = "developer_mode";
 }
 
@@ -41,6 +43,8 @@ bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
 		loadedConfig.windowWidth  = configJson.value(GameConfigKeys::WindowWidth,  loadedConfig.windowWidth);
 		loadedConfig.windowHeight = configJson.value(GameConfigKeys::WindowHeight, loadedConfig.windowHeight);
 		loadedConfig.windowIcon   = configJson.value(GameConfigKeys::WindowIcon,   loadedConfig.windowIcon);
+		loadedConfig.fullscreen   = configJson.value(GameConfigKeys::Fullscreen,   loadedConfig.fullscreen);
+		loadedConfig.vsync        = configJson.value(GameConfigKeys::VSync,        loadedConfig.vsync);
 		loadedConfig.developerMode = configJson.value(GameConfigKeys::DeveloperMode, loadedConfig.developerMode);
 
 		outConfig = loadedConfig;
@@ -70,6 +74,8 @@ bool GameConfig::TrySaveToFile(const std::filesystem::path& filePath, const Game
 	configJson[GameConfigKeys::WindowWidth]  = config.windowWidth;
 	configJson[GameConfigKeys::WindowHeight] = config.windowHeight;
 	configJson[GameConfigKeys::WindowIcon]   = config.windowIcon;
+	configJson[GameConfigKeys::Fullscreen]   = config.fullscreen;
+	configJson[GameConfigKeys::VSync]        = config.vsync;
 
 	// A normal project never has this key, so a shipped game can't get a console by accident
 	if (config.developerMode)

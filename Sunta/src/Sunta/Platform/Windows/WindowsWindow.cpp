@@ -49,6 +49,16 @@ bool WindowsWindow::SetIcon(const std::string& imagePath)
 	return implementation.SetIcon(imagePath);
 }
 
+void WindowsWindow::SetVSync(bool enabled)
+{
+	implementation.SetVSync(enabled);
+}
+
+void WindowsWindow::SetFullscreen(bool enabled)
+{
+	implementation.SetFullscreen(enabled);
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
 {
 	return std::make_unique<WindowsOpenGLEditorGUIBackend>();

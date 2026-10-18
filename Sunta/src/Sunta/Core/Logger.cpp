@@ -11,6 +11,12 @@ Logger::Logger(std::string&& name, Terminal::Color infoColor)
 
 }
 
+std::mutex& Logger::GetOutputMutex()
+{
+	static std::mutex outputMutex;
+	return outputMutex;
+}
+
 void Logger::SetLevel(Logger::Level level)
 {
 	this->currentLevel = level;

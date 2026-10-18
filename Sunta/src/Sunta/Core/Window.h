@@ -26,6 +26,12 @@ public:
 	// Returns false and keeps the current icon if the image can't be loaded
 	virtual bool SetIcon(const std::string& imagePath) = 0;
 
+	// VSync on: a frame is shown when the screen refreshes (no tearing, no wasted work). Off: as many frames as possible
+	virtual void SetVSync(bool enabled) = 0;
+
+	// Fullscreen covers the whole main screen. Leaving it brings back the size and position the window had before
+	virtual void SetFullscreen(bool enabled) = 0;
+
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() = 0;
 
 	virtual unsigned int GetWidth() const = 0;

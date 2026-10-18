@@ -20,6 +20,9 @@ constexpr const char* RuntimeExecutableName = "SuntaRuntime";
 constexpr const char* BuildFolderName       = "Build";
 constexpr const char* ReleaseFolderPrefix   = "Release";
 
+// Steps of a build that are not copying resource files: the game executable, game.config, the icon
+constexpr size_t NonResourceBuildSteps = 3;
+
 // Resources only the editor uses (relative to Sunta/res), the shipped game doesn't need them
 const std::vector<std::string> EditorOnlyResourceFolders = { "Textures/Icons/", "Textures/ui/" };
 
@@ -31,6 +34,13 @@ std::string GetExecutableSuffix()
 	return "";
 #endif
 }
+
+// A build step failed, the message is shown to the user
+class BuildError : public std::runtime_error
+{
+public:
+	explicit BuildError(const std::string& message) : std::runtime_error(message) {}
+};
 
 // A game without a start scene would open as an empty window
 bool HasStartScene(const GameConfig& gameConfig)
@@ -58,7 +68,28 @@ std::string MakeFileNameSafe(std::string name)
 
 }
 
-bool GameBuilder::BuildGame(bool isDevelopmentBuild, bool shouldOpenResultFolder)
+BuildResult GameBuilder::BuildGame(bool isDevelopmentBuild, BuildProgress* progress)
+{
+	BuildProgress ignoredProgress;
+	BuildProgress& buildProgress = progress ? *progress : ignoredProgress;
+
+	BuildResult result;
+
+	try
+	{
+		result.outputDirectory = RunBuild(isDevelopmentBuild, buildProgress);
+		result.isSuccess       = true;
+	}
+	catch (const std::exception& error)
+	{
+		result.errorMessage = error.what();
+		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Build FAILED: {0}", result.errorMessage);
+	}
+
+	return result;
+}
+
+fs::path GameBuilder::RunBuild(bool isDevelopmentBuild, BuildProgress& progress)
 {
 	const GameConfig gameConfig      = LoadGameConfig();
 	const std::string gameName       = GetGameName(gameConfig);
@@ -70,40 +101,40 @@ bool GameBuilder::BuildGame(bool isDevelopmentBuild, bool shouldOpenResultFolder
 	SUNTA_ENGINE_LOG_INFO("GameBuilder: Building '{0}' ({1}) to '{2}'", gameName, isDevelopmentBuild ? "development build" : "release build", outputDirectory.string());
 
 	if (!HasStartScene(gameConfig))
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: The start scene '{0}' doesn't exist. Save a scene and choose it as the start scene in Project Settings", gameConfig.startScene);
-		return false;
-	}
+		throw BuildError("The start scene '" + gameConfig.startScene + "' doesn't exist. Save a scene and choose it as the start scene in Project Settings.");
 
 	if (!IsRuntimeAvailable())
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: There is no Release game executable (expected '{0}'). Compile the SuntaRuntime target in the Release configuration first",
-							   runtimePath.string());
-		return false;
-	}
+		throw BuildError("There is no Release game executable (expected '" + runtimePath.string() + "'). Compile the SuntaRuntime target in the Release configuration first.");
 
-	const bool isBuilt = PrepareOutputDirectory(outputDirectory, packageDirectory)
-					  && CopyRuntimeExecutable(runtimePath, gameExecutable)
-					  && CopyEngineResources(packageDirectory)
-					  && CopyGameResources(packageDirectory)
-					  && WriteBuiltGameConfig(packageDirectory, gameConfig, isDevelopmentBuild);
+	const size_t resourceFiles = CountFilesToCopy(VirtualFileSystem::GetMountPath("@engine"), true)
+							   + CountFilesToCopy(VirtualFileSystem::GetMountPath("@game"), false);
+	progress.Start(resourceFiles + NonResourceBuildSteps);
 
-	if (!isBuilt)
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Build of '{0}' FAILED", gameName);
-		return false;
-	}
+	progress.SetStep("Preparing the output folder");
+	PrepareOutputDirectory(outputDirectory, packageDirectory);
 
+	progress.SetStep("Copying the game executable");
+	CopyRuntimeExecutable(runtimePath, gameExecutable);
+	progress.Advance();
+
+	progress.SetStep("Copying engine resources");
+	CopyEngineResources(packageDirectory, progress);
+
+	progress.SetStep("Copying game resources");
+	CopyGameResources(packageDirectory, progress);
+
+	progress.SetStep("Writing game.config");
+	WriteBuiltGameConfig(packageDirectory, gameConfig, isDevelopmentBuild);
+	progress.Advance();
+
+	progress.SetStep("Setting the icon");
 	ApplyGameIcon(gameExecutable, gameConfig);
 	WriteLinuxDesktopEntry(outputDirectory, gameName);
 	WriteMacBundleFiles(outputDirectory, gameName, gameConfig);
+	progress.Advance();
 
 	SUNTA_ENGINE_LOG_INFO("GameBuilder: Build of '{0}' finished", gameName);
-
-	if (shouldOpenResultFolder)
-		Platform::Get().OpenInExplorer(outputDirectory.string());
-
-	return true;
+	return outputDirectory;
 }
 
 bool GameBuilder::IsRuntimeAvailable()
@@ -180,7 +211,7 @@ fs::path GameBuilder::GetRuntimeTemplatePath()
 	return runtimeDirectory / (std::string(RuntimeExecutableName) + GetExecutableSuffix());
 }
 
-bool GameBuilder::PrepareOutputDirectory(const fs::path& outputDirectory, const fs::path& packageDirectory)
+void GameBuilder::PrepareOutputDirectory(const fs::path& outputDirectory, const fs::path& packageDirectory)
 {
 	std::error_code error;
 
@@ -189,57 +220,42 @@ bool GameBuilder::PrepareOutputDirectory(const fs::path& outputDirectory, const 
 	fs::create_directories(packageDirectory, error);
 
 	if (error)
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Couldn't prepare '{0}': {1}", outputDirectory.string(), error.message());
-		return false;
-	}
-
-	return true;
+		throw BuildError("Couldn't prepare the folder '" + outputDirectory.string() + "': " + error.message());
 }
 
-bool GameBuilder::CopyRuntimeExecutable(const fs::path& runtimePath, const fs::path& gameExecutablePath)
+void GameBuilder::CopyRuntimeExecutable(const fs::path& runtimePath, const fs::path& gameExecutablePath)
 {
 	std::error_code error;
 	fs::copy_file(runtimePath, gameExecutablePath, fs::copy_options::overwrite_existing, error);
 
 	if (error)
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Couldn't copy the game executable: {0}", error.message());
-		return false;
-	}
-
-	return true;
+		throw BuildError("Couldn't copy the game executable: " + error.message());
 }
 
-bool GameBuilder::CopyEngineResources(const fs::path& packageDirectory)
+void GameBuilder::CopyEngineResources(const fs::path& packageDirectory, BuildProgress& progress)
 {
 	const fs::path source      = VirtualFileSystem::GetMountPath("@engine");
 	const fs::path destination = packageDirectory / "res" / "Sunta";
 
-	return CopyDirectory(source, destination, true);
+	CopyDirectory(source, destination, true, progress);
 }
 
-bool GameBuilder::CopyGameResources(const fs::path& packageDirectory)
+void GameBuilder::CopyGameResources(const fs::path& packageDirectory, BuildProgress& progress)
 {
 	const fs::path source      = VirtualFileSystem::GetMountPath("@game");
 	const fs::path destination = packageDirectory / "res" / "Game";
 
-	return CopyDirectory(source, destination, false);
+	CopyDirectory(source, destination, false, progress);
 }
 
-bool GameBuilder::WriteBuiltGameConfig(const fs::path& packageDirectory, GameConfig gameConfig, bool isDevelopmentBuild)
+void GameBuilder::WriteBuiltGameConfig(const fs::path& packageDirectory, GameConfig gameConfig, bool isDevelopmentBuild)
 {
 	gameConfig.developerMode = isDevelopmentBuild;
 
 	const fs::path configPath = packageDirectory / "res" / "Game" / fs::path(GameConfig::DefaultPath).filename();
 
 	if (!GameConfig::TrySaveToFile(configPath, gameConfig))
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Couldn't write '{0}'", configPath.string());
-		return false;
-	}
-
-	return true;
+		throw BuildError("Couldn't write '" + configPath.string() + "'");
 }
 
 void GameBuilder::ApplyGameIcon([[maybe_unused]] const fs::path& gameExecutablePath, const GameConfig& gameConfig)
@@ -298,13 +314,10 @@ void GameBuilder::WriteMacBundleFiles([[maybe_unused]] const fs::path& outputDir
 #endif
 }
 
-bool GameBuilder::CopyDirectory(const fs::path& source, const fs::path& destination, bool skipEditorOnlyResources)
+void GameBuilder::CopyDirectory(const fs::path& source, const fs::path& destination, bool skipEditorOnlyResources, BuildProgress& progress)
 {
 	if (!fs::exists(source))
-	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Folder '{0}' doesn't exist", source.string());
-		return false;
-	}
+		throw BuildError("The folder '" + source.string() + "' doesn't exist");
 
 	try
 	{
@@ -320,18 +333,45 @@ bool GameBuilder::CopyDirectory(const fs::path& source, const fs::path& destinat
 			const fs::path targetPath = destination / relativePath;
 
 			if (entry.is_directory())
+			{
 				fs::create_directories(targetPath);
-			else
-				fs::copy_file(entry.path(), targetPath, fs::copy_options::overwrite_existing);
+				continue;
+			}
+
+			fs::copy_file(entry.path(), targetPath, fs::copy_options::overwrite_existing);
+			progress.Advance();
 		}
 	}
 	catch (const fs::filesystem_error& error)
 	{
-		SUNTA_ENGINE_LOG_ERROR("GameBuilder: Copying '{0}' failed: {1}", source.string(), error.what());
-		return false;
+		throw BuildError("Copying '" + source.string() + "' failed: " + error.what());
+	}
+}
+
+// Counts what CopyDirectory will copy, so the progress bar knows the whole length of the build
+size_t GameBuilder::CountFilesToCopy(const fs::path& source, bool skipEditorOnlyResources)
+{
+	size_t fileCount = 0;
+
+	try
+	{
+		if (!fs::exists(source))
+			return 0;
+
+		for (const auto& entry : fs::recursive_directory_iterator(source))
+		{
+			const bool isSkipped = skipEditorOnlyResources && IsEditorOnlyResource(fs::relative(entry.path(), source));
+
+			if (!entry.is_directory() && !isSkipped)
+				++fileCount;
+		}
+	}
+	catch (const fs::filesystem_error&)
+	{
+		// A folder that can't be read makes the copying fail with a message, the count is only for the progress bar
 	}
 
-	return true;
+	return fileCount;
 }
 
 bool GameBuilder::IsEditorOnlyResource(const fs::path& pathInsideEngineResources)

@@ -3,9 +3,18 @@
 #include <string>
 
 #include "Sunta/Core/GameConfig.h"
+#include "Sunta/Editor/BuildProgress.h"
 
 namespace Sunta
 {
+
+// What a build ended with
+struct BuildResult
+{
+	bool                  isSuccess = false;
+	std::string           errorMessage;    // the reason, when it failed
+	std::filesystem::path outputDirectory; // the folder of the game, when it succeeded
+};
 
 // Packages the opened game project into a folder that can be given to players, no compiler needed:
 //   <project>/Build/<GameName>_<Kind>/<GameName>.exe   (copy of SuntaRuntime.exe, with the icon of the game)
@@ -26,9 +35,9 @@ namespace Sunta
 class GameBuilder
 {
 public:
-	// Returns true when the build succeeded, and opens the result folder then (unless shouldOpenResultFolder is false,
-	// a build without a window has no use for it)
-	static bool BuildGame(bool isDevelopmentBuild, bool shouldOpenResultFolder = true);
+	// Builds the game and says how it went. Doesn't open anything, so it can run on another thread (see GameBuildJob):
+	// the log is safe to use from there, the progress (optional) can be read by another thread while the build runs
+	static BuildResult BuildGame(bool isDevelopmentBuild, BuildProgress* progress = nullptr);
 
 	// False when the Release game executable was not compiled yet
 	static bool IsRuntimeAvailable();
@@ -37,6 +46,9 @@ public:
 	static std::filesystem::path GetRuntimeTemplatePath();
 
 private:
+	// The steps of a build: every one of them throws when it fails, the message becomes BuildResult::errorMessage
+	static std::filesystem::path RunBuild(bool isDevelopmentBuild, BuildProgress& progress);
+
 	static GameConfig            LoadGameConfig();
 	static std::string           GetGameName(const GameConfig& gameConfig);
 	static std::filesystem::path GetProjectDirectory();
@@ -46,20 +58,21 @@ private:
 	static std::filesystem::path GetPackageDirectory(const std::filesystem::path& outputDirectory, const std::string& gameName);
 	static std::filesystem::path GetRuntimeDirectory();
 
-	static bool PrepareOutputDirectory(const std::filesystem::path& outputDirectory, const std::filesystem::path& packageDirectory);
-	static bool CopyRuntimeExecutable  (const std::filesystem::path& runtimePath, const std::filesystem::path& gameExecutablePath);
-	static bool CopyEngineResources    (const std::filesystem::path& packageDirectory);
-	static bool CopyGameResources      (const std::filesystem::path& packageDirectory);
+	static void PrepareOutputDirectory(const std::filesystem::path& outputDirectory, const std::filesystem::path& packageDirectory);
+	static void CopyRuntimeExecutable (const std::filesystem::path& runtimePath, const std::filesystem::path& gameExecutablePath);
+	static void CopyEngineResources   (const std::filesystem::path& packageDirectory, BuildProgress& progress);
+	static void CopyGameResources     (const std::filesystem::path& packageDirectory, BuildProgress& progress);
 
 	// The game reads this copy of game.config, not the one of the project
-	static bool WriteBuiltGameConfig   (const std::filesystem::path& packageDirectory, GameConfig gameConfig, bool isDevelopmentBuild);
+	static void WriteBuiltGameConfig  (const std::filesystem::path& packageDirectory, GameConfig gameConfig, bool isDevelopmentBuild);
 
 	// Not fatal: without the icon the game just has the icon of the engine
 	static void ApplyGameIcon(const std::filesystem::path& gameExecutablePath, const GameConfig& gameConfig);
 	static void WriteLinuxDesktopEntry(const std::filesystem::path& outputDirectory, const std::string& gameName);
 	static void WriteMacBundleFiles   (const std::filesystem::path& outputDirectory, const std::string& gameName, const GameConfig& gameConfig);
 
-	static bool CopyDirectory(const std::filesystem::path& source, const std::filesystem::path& destination, bool skipEditorOnlyResources);
+	static void   CopyDirectory(const std::filesystem::path& source, const std::filesystem::path& destination, bool skipEditorOnlyResources, BuildProgress& progress);
+	static size_t CountFilesToCopy(const std::filesystem::path& source, bool skipEditorOnlyResources);
 	static bool IsEditorOnlyResource(const std::filesystem::path& pathInsideEngineResources);
 };
 
