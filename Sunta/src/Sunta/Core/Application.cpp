@@ -26,6 +26,16 @@ namespace
 // (and a Debug frame is slow), so a window shown at once would first look like the bare scene
 constexpr int HiddenWarmUpFrames = 3;
 
+// The SuntaRuntime program from the engine package is only the template of a game, it has no game files next to it,
+// so the message also tells a person who started it what to do instead
+std::string MakeMissingGameFilesMessage(const std::string& gameResourcesDirectory)
+{
+	return "The game files are missing: the folder '" + gameResourcesDirectory + "' doesn't exist.\n"
+		   "Unpack the whole game folder (not only the .exe) before starting it.\n\n"
+		   "If this is SuntaRuntime from the engine package: it is only a template and is not meant to be started. "
+		   "Build your game in the editor (Project Settings > Save and Build Game), the game is made in the Build folder of the project.";
+}
+
 }
 
 Application::Application(const ApplicationSpecification& specification)
@@ -98,7 +108,7 @@ void Application::Init()
 		SUNTA_ENGINE_LOG_ERROR("Application: Game resources folder '{0}' doesn't exist", gameResourcesDirectory);
 
 		if (specification.assetSource == AssetSource::PackagedNextToExecutable)
-			FatalError::Report("The game files are missing: the folder '" + gameResourcesDirectory + "' doesn't exist.\nUnpack the whole game folder (not only the .exe) before starting it.");
+			FatalError::Report(MakeMissingGameFilesMessage(gameResourcesDirectory));
 	}
 
 	if (specification.loadGameConfig)
