@@ -110,6 +110,7 @@ The engine is built on a modular architecture that separates low-level API calls
 ## Build System and CI
 * **Build System:** CMake with presets (`CMakePresets.json`) for Windows, Linux and macOS.
 * **Continuous Integration (CI):** automated build pipelines verify code stability on every commit.
+* **Engine package:** every workflow run uploads the ready-to-use engine for Windows, Linux and macOS (`Sunta-Engine-<system>-Release`): the editor, the game template and the sample project, no repository needed. See "Running the Editor".
 
 ---
 
@@ -252,6 +253,15 @@ The results go to `bin/<Configuration>-<System>-<Processor>/` and contain `Sunta
 Start `SuntaEditor`: it shows the project launcher, where you create a new project or open an existing one (a project can also be given on the command line: `SuntaEditor <project folder>`).
 The launcher remembers projects in per-user settings (`%APPDATA%/SuntaEngine/editor_settings.json` on Windows, `~/.config/SuntaEngine/` on Linux, `~/Library/Application Support/SuntaEngine/` on macOS). Enabling "Open the last project at startup" skips the launcher, which is handy when starting from an IDE. `Project > Switch Project` returns to it.
 
+**Engine package.** The workflow uploads the engine as an artifact (`Sunta-Engine-<system>-Release`, a `.tar.gz` on Linux and macOS, because a zip loses the executable flag). Unpack the whole folder and start `SuntaEditor`:
+```
+SuntaEngine/
+  SuntaEditor, SuntaRuntime   the editor and the game template
+  res/Sunta/                  engine resources
+  Projects/MyGame/            sample project (the launcher's "Open Sample Project")
+```
+The editor uses `res/Sunta` and `Projects/MyGame` next to itself when they exist, an editor compiled from the repository reads them from the repository instead. Building a game works the same in both cases.
+
 ---
 
 ## Game Projects
@@ -297,7 +307,7 @@ The editor needs no CMake and no compiler, it assembles a ready folder:
 ```
 Zip this folder and send it to players. A development build goes to `<GameName>_Development`. On macOS the game is packed as `<GameName>.app` (the executable and `res` are inside it, in `Contents/MacOS`), on Linux the executable has no extension.
 
-**Release and development builds.** The game is always a copy of the Release `SuntaRuntime` program compiled by CMake, so the Release configuration must be compiled. A Release editor has it already, a Debug editor needs the Release preset built too (for example `cmake --preset x64-Release` and `cmake --build --preset x64-Release`, see "Building the Engine"), the editor finds it in the neighbouring `bin/` folder. The **Development build** checkbox does not change the program, it only puts `"developer_mode": true` into the copy of `game.config` inside the built game (never into the config of your project), and the game then opens a console window with its log. The game for players has no console. Debug asserts exist only in the Debug configuration of the engine, a built game never has them.
+**Release and development builds.** The game is always a copy of the Release `SuntaRuntime` program compiled by CMake, so the Release configuration must be compiled. A Release editor has it already, a Debug editor needs the Release preset built too (for example `cmake --preset x64-Release` and `cmake --build --preset x64-Release`, see "Building the Engine"), the editor finds it in the neighbouring `bin/` folder. The **Development build** checkbox does not change the program, it only puts `"developer_mode": true` into the copy of `game.config` inside the built game (never into the config of your project), and the game then opens a console window with its log and reloads a Lua script when its file is saved while the game runs. The game for players has no console. Debug asserts exist only in the Debug configuration of the engine, a built game never has them.
 
 **Building from the command line.** The same build can run without any window, for scripts and CI:
 ```bash

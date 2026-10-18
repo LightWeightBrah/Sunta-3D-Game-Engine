@@ -20,7 +20,7 @@ struct GameConfig
 	bool         vsync        = true;          // a frame is shown when the screen refreshes: no tearing, no wasted work (see Window::SetVSync)
 
 	// Set only in the copy of the config inside a built development game (see GameBuilder), never in the project itself:
-	// the game opens a console window and shows its log there. Written to the file only when true
+	// the game opens a console window, shows its log there and reloads changed scripts. Written to the file only when true
 	bool         developerMode = false;
 
 	// Returns false (and leaves outConfig untouched) if the file is missing or broken

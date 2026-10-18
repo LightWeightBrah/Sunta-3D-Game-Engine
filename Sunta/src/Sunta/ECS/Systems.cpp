@@ -127,7 +127,7 @@ void Systems::UpdateAnimators(EntityManager& entityManager, float deltaTime)
 		component.animator.UpdateAnimation(deltaTime);
 }
 
-void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
+void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime, bool isHotReloadEnabled)
 {
 	auto& scriptComponents = entityManager.GetAllComponents<ScriptComponent>();
 
@@ -153,7 +153,7 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 				component.ReloadScript(script, owner);
 			}
 
-			if (std::filesystem::exists(script.scriptPath))
+			if (isHotReloadEnabled && std::filesystem::exists(script.scriptPath))
 			{
 				auto currentWriteTime = std::filesystem::last_write_time(script.scriptPath).time_since_epoch().count();
 

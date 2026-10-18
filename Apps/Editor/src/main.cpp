@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <Sunta/Core/Application.h>
+#include <Sunta/Core/VirtualFileSystem.h>
 #include <Sunta/Editor/EditorLayer.h>
 #include <Sunta/Editor/EditorSettings.h>
 #include <Sunta/Editor/HeadlessGameBuild.h>
@@ -21,6 +22,8 @@ namespace
 
 constexpr const char* BuildGameArgument   = "--build-game";
 constexpr const char* DevelopmentArgument = "--development";
+
+constexpr const char* PackagedSampleProjectFolder = "Projects/MyGame";
 
 constexpr unsigned int LauncherWindowWidth  = 1100;
 constexpr unsigned int LauncherWindowHeight = 680;
@@ -85,9 +88,20 @@ void RunEditor(const std::filesystem::path& projectDirectory)
 	application.Run();
 }
 
+// An engine package has the sample project next to the editor, an editor compiled from the repository uses the one in the repository
+std::filesystem::path FindSampleProject()
+{
+	const std::filesystem::path packagedSampleProject = Sunta::VirtualFileSystem::GetExecutableDirectory() / PackagedSampleProjectFolder;
+
+	if (Sunta::ProjectManager::IsProjectDirectory(packagedSampleProject))
+		return packagedSampleProject;
+
+	return SUNTA_DEFAULT_PROJECT_DIR;
+}
+
 void RunProjectLauncher()
 {
-	const std::filesystem::path sampleProject = SUNTA_DEFAULT_PROJECT_DIR;
+	const std::filesystem::path sampleProject = FindSampleProject();
 	Sunta::ProjectLauncherLayer::SetSampleProjectDirectory(sampleProject);
 
 	Sunta::ApplicationSpecification specification;

@@ -55,6 +55,18 @@ jobs:
             - name: "Compilation: Build Editor & Runtime"
               run: cmake --build --preset ${{ matrix.preset }}
 
+            # The engine package: the editor needs "res/Sunta" (engine resources) and "Projects/MyGame" next to itself, so it works without the repository
+            # It is made before the sample game is built, so the package has no "Build" folder inside the project
+            - name: "Package: Assemble the engine"
+              shell: bash
+              run: |
+                  mkdir -p SuntaEngine/res SuntaEngine/Projects
+                  find bin/Release-* -maxdepth 1 -type f \( -name 'SuntaEditor' -o -name 'SuntaEditor.exe' -o -name 'SuntaEditor.desktop' \
+                                                         -o -name 'SuntaRuntime' -o -name 'SuntaRuntime.exe' \) -exec cp {} SuntaEngine/ \;
+                  cp -r Sunta/res SuntaEngine/res/Sunta
+                  cp -r Projects/MyGame SuntaEngine/Projects/MyGame
+                  rm -rf SuntaEngine/Projects/MyGame/Build
+
             - name: "Game: Build the sample project (MyGame)"
               shell: bash
               run: ./bin/Release-*/${{ matrix.editor }} --build-game Projects/MyGame
@@ -83,12 +95,25 @@ jobs:
                   if-no-files-found: error
                   retention-days: 5
 
-            - name: "Distribution: Upload Build Artifacts"
+            - name: "Package: Pack the engine for Linux and macOS"
+              if: runner.os != 'Windows'
+              shell: bash
+              run: tar -czf Sunta-Engine-${{ matrix.os }}.tar.gz SuntaEngine
+
+            - name: "Distribution: Upload the engine (Linux, macOS)"
+              if: runner.os != 'Windows'
               uses: actions/upload-artifact@v4
               with:
                   name: Sunta-Engine-${{ matrix.os }}-Release
-                  path: |
-                      bin/Release-*/SuntaEditor*
-                      bin/Release-*/SuntaRuntime*
+                  path: Sunta-Engine-${{ matrix.os }}.tar.gz
+                  if-no-files-found: error
+                  retention-days: 5
+
+            - name: "Distribution: Upload the engine (Windows)"
+              if: runner.os == 'Windows'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Sunta-Engine-${{ matrix.os }}-Release
+                  path: SuntaEngine/
                   if-no-files-found: error
                   retention-days: 5

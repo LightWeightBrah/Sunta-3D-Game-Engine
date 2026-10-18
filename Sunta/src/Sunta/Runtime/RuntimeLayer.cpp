@@ -22,6 +22,9 @@ RuntimeLayer::RuntimeLayer(Application& application)
 
 void RuntimeLayer::OnAttach()
 {
+	// A development build reloads a script when its file changes, so values can be tried out while the game runs
+	application.GetScene().SetScriptHotReloadEnabled(application.GetGameConfig().developerMode);
+
 	LoadStartScene();
 
 	// The game has no editor mode: hides the cursor and unlocks the camera

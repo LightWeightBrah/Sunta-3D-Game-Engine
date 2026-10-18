@@ -64,6 +64,9 @@ public:
 	void SetFilePath(const std::string& path)      { this->filePath  = path;  }
 	void SetPlayState(PlayState state)			   { this->playState = state; }
 
+	// Off by default: the editor and a development build turn it on, a game for players doesn't check its script files every frame
+	void SetScriptHotReloadEnabled(bool enabled)   { isScriptHotReloadEnabled = enabled; }
+
 	// What the scene is drawn from: the active CameraComponent while the game plays, the free camera otherwise
 	// The editor's picking and transform gizmo use the same view, so they line up with what is on the screen
 	const glm::mat4& GetViewMatrix()       const { return activeCameraData.viewMatrix;       }
@@ -81,6 +84,7 @@ private:
 	EntityManager		entityManager;
 	Camera				camera;
 	PlayState			playState			= PlayState::Stopped;
+	bool				isScriptHotReloadEnabled = false;
 
 	// The view of the current frame (matrices and position only), see GetViewMatrix()
 	SceneData			activeCameraData;

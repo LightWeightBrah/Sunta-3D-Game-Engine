@@ -245,7 +245,7 @@ void Scene::Update()
 
 	if (isPlaying)
 	{
-		Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
+		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
 

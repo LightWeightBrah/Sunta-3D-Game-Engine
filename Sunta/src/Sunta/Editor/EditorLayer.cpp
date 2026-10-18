@@ -74,6 +74,8 @@ void EditorLayer::OnAttach()
 	if (savedCameraSpeed > 0.0f)
 		application.GetScene().SetEditorCameraSpeed(savedCameraSpeed);
 
+	application.GetScene().SetScriptHotReloadEnabled(true);
+
 	StartScene::OpenInEditor(application.GetScene());
 
 	// After the start scene is loaded (or created), so it starts as "no unsaved changes"

@@ -8,7 +8,7 @@ namespace Sunta
 
 enum class AssetSource
 {
-	SourceTree,               // reads assets straight from Sunta/res and <project>/res (the editor, development)
+	SourceTree,               // reads assets straight from the engine resources and <project>/res (the editor, development)
 	PackagedNextToExecutable  // reads assets from the "res" folder lying next to the executable (shipped game)
 };
 
@@ -40,6 +40,7 @@ private:
 	static std::unordered_map<std::string, std::filesystem::path>& GetMounts();
 
 	static void MountSourceTree(const std::filesystem::path& projectDirectory);
+	static std::filesystem::path GetEngineResourcesDirectory();
 	static void MountPackagedResources();
 	static std::filesystem::path GetPackagedResourcesDirectory();
 };

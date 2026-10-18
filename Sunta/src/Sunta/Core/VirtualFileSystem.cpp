@@ -54,9 +54,22 @@ void VirtualFileSystem::Init(AssetSource requestedSource, const std::filesystem:
 
 void VirtualFileSystem::MountSourceTree(const std::filesystem::path& projectDirectory)
 {
-	const std::filesystem::path rootDirectory = SUNTA_ROOT_DIR;
-	Mount("@engine", rootDirectory / "Sunta" / "res");
+	Mount("@engine", GetEngineResourcesDirectory());
 	Mount("@game"  , projectDirectory / "res");
+}
+
+// An editor from an engine package has the engine resources in "res/Sunta" next to itself (the same place a built game has them),
+// an editor compiled from the repository reads them from the source tree
+std::filesystem::path VirtualFileSystem::GetEngineResourcesDirectory()
+{
+	const std::filesystem::path packagedEngineResources = GetPackagedResourcesDirectory() / "Sunta";
+
+	std::error_code error;
+	if (std::filesystem::exists(packagedEngineResources, error))
+		return packagedEngineResources;
+
+	const std::filesystem::path rootDirectory = SUNTA_ROOT_DIR;
+	return rootDirectory / "Sunta" / "res";
 }
 
 void VirtualFileSystem::MountPackagedResources()

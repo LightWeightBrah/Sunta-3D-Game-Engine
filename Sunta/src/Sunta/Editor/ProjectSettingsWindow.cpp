@@ -242,6 +242,22 @@ void DrawSectionTitle(const char* title)
 	ImGui::Separator();
 }
 
+// The build refuses a game without a start scene, so the window says so before a build is started
+void DrawStartSceneWarning()
+{
+	TextWrapScope wrapText;
+
+	if (state.config.startScene.empty())
+	{
+		ImGui::TextColored(WarningColor, "No start scene: the game can't be built. Choose a scene.");
+		return;
+	}
+
+	std::error_code error;
+	if (!fs::exists(VirtualFileSystem::Resolve(state.config.startScene), error))
+		ImGui::TextColored(ErrorColor, "The start scene file doesn't exist.");
+}
+
 void DrawGameSection()
 {
 	DrawSectionTitle("Game");
@@ -252,6 +268,8 @@ void DrawGameSection()
 	ImGui::SameLine();
 	if (ImGui::Button("Choose scene..."))
 		ChooseStartScene();
+
+	DrawStartSceneWarning();
 
 	int windowSize[2] = { static_cast<int>(state.config.windowWidth), static_cast<int>(state.config.windowHeight) };
 	if (ImGui::InputInt2("Window size", windowSize))
@@ -338,7 +356,7 @@ void DrawDevelopmentBuildCheckbox()
 		SetDevelopmentBuild(isDevelopmentBuild);
 
 	TextWrapScope wrapText;
-	ImGui::TextDisabled("The game opens a console window with its log (including print from scripts). Leave it off for the version you give to players.");
+	ImGui::TextDisabled("The game opens a console window with its log (including print from scripts) and reloads a script when you save it. Leave it off for the version you give to players.");
 }
 
 void DrawBuildProgress()
