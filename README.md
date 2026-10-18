@@ -110,6 +110,7 @@ The engine is built on a modular architecture that separates low-level API calls
 ## Build System and CI
 * **Build System:** CMake with presets (`CMakePresets.json`) for Windows, Linux and macOS.
 * **Continuous Integration (CI):** automated build pipelines verify code stability on every commit.
+* **Releases:** pushing a tag like `v0.1.0` publishes a GitHub Release with the engine packages for Windows (`.zip`), Linux and macOS (`.tar.gz`).
 * **Engine package:** every workflow run uploads the ready-to-use engine for Windows, Linux and macOS (`Sunta-Engine-<system>-Release`): the editor, the game template and the sample project, no repository needed. See "Running the Editor".
 
 ---

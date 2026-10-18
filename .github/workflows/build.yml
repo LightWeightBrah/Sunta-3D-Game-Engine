@@ -3,6 +3,7 @@ name: "CI: Build"
 on:
     push:
         branches: [ "main", "master" ]
+        tags: [ "v*" ]
     pull_request:
         branches: [ "main", "master" ]
 
@@ -117,3 +118,33 @@ jobs:
                   path: SuntaEngine/
                   if-no-files-found: error
                   retention-days: 5
+
+    # A tag like "v0.1.0" publishes a GitHub Release with the engine packages, a link that doesn't expire like the artifacts do
+    release:
+        name: "Release: Publish"
+        needs: build
+        if: startsWith(github.ref, 'refs/tags/v')
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - name: "Release: Download the engine packages"
+              uses: actions/download-artifact@v4
+              with:
+                  pattern: Sunta-Engine-*
+                  path: packages
+
+            # The Windows package is a folder of files, the Linux and macOS ones are already .tar.gz (they keep the executable flag)
+            - name: "Release: Prepare the files"
+              run: |
+                  mkdir -p stage/SuntaEngine release
+                  mv packages/Sunta-Engine-windows-latest-Release/* stage/SuntaEngine/
+                  (cd stage && zip -r -q ../release/Sunta-Engine-Windows.zip SuntaEngine)
+                  mv packages/Sunta-Engine-ubuntu-latest-Release/*.tar.gz release/Sunta-Engine-Linux.tar.gz
+                  mv packages/Sunta-Engine-macos-latest-Release/*.tar.gz release/Sunta-Engine-macOS.tar.gz
+
+            - name: "Release: Create the GitHub Release"
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: gh release create "${{ github.ref_name }}" release/* --repo "${{ github.repository }}" --title "${{ github.ref_name }}" --generate-notes

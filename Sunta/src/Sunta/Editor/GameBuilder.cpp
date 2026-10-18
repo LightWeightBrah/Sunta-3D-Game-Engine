@@ -23,8 +23,17 @@ constexpr const char* ReleaseFolderPrefix   = "Release";
 // Steps of a build that are not copying resource files: the game executable, game.config, the icon
 constexpr size_t NonResourceBuildSteps = 3;
 
-// Resources only the editor uses (relative to Sunta/res), the shipped game doesn't need them
-const std::vector<std::string> EditorOnlyResourceFolders = { "Textures/Icons/", "Textures/ui/" };
+// Resources only the editor or the compilation of the engine use (relative to Sunta/res), the shipped game doesn't need them
+// A folder ends with "/", a single file has its whole name (the game window takes engine_logo.png at runtime, so that one stays)
+const std::vector<std::string> EditorOnlyResources =
+{
+	"Textures/Icons/",
+	"Textures/ui/",
+	"App/engine_logo.ico",
+	"App/engine_logo.icns",
+	"App/resource.rc",
+	"App/app.desktop.in"
+};
 
 std::string GetExecutableSuffix()
 {
@@ -376,12 +385,12 @@ size_t GameBuilder::CountFilesToCopy(const fs::path& source, bool skipEditorOnly
 
 bool GameBuilder::IsEditorOnlyResource(const fs::path& pathInsideEngineResources)
 {
-	// The trailing "/" makes the folder itself match too, not only the files inside it
+	// The trailing "/" makes a folder itself match too, not only the files inside it
 	const std::string pathWithSlash = pathInsideEngineResources.generic_string() + "/";
 
-	for (const std::string& editorOnlyFolder : EditorOnlyResourceFolders)
+	for (const std::string& editorOnlyResource : EditorOnlyResources)
 	{
-		if (pathWithSlash.rfind(editorOnlyFolder, 0) == 0)
+		if (pathWithSlash.rfind(editorOnlyResource, 0) == 0)
 			return true;
 	}
 
