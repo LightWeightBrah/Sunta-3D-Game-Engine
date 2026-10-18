@@ -42,13 +42,14 @@ void Systems::SyncMeshComponents(EntityManager& entityManager)
 
 	using namespace Sunta::EngineAssets;
 
-	auto errorMesh = ResourceManager::GetMeshData(Meshes::Cube);
-	auto errorMaterial = ResourceManager::GetMaterialData(Materials::Error);
-
 	for (auto& component : meshComponents)
 	{
 		if (component.isDirty)
 		{
+			// Fallbacks are looked up only when a component needs them, so a scene without meshes touches no resources
+			auto errorMesh     = ResourceManager::GetMeshData(Meshes::Cube);
+			auto errorMaterial = ResourceManager::GetMaterialData(Materials::Error);
+
 			std::shared_ptr<Mesh> mesh = nullptr;
 			if (component.meshName != MeshComponent::NULL_ASSET_NAME)
 				mesh = ResourceManager::GetMeshData(component.meshName);
@@ -126,7 +127,7 @@ void Systems::UpdateAnimators(EntityManager& entityManager, float deltaTime)
 		component.animator.UpdateAnimation(deltaTime);
 }
 
-void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
+void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime, bool isHotReloadEnabled)
 {
 	auto& scriptComponents = entityManager.GetAllComponents<ScriptComponent>();
 
@@ -152,7 +153,7 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime)
 				component.ReloadScript(script, owner);
 			}
 
-			if (std::filesystem::exists(script.scriptPath))
+			if (isHotReloadEnabled && std::filesystem::exists(script.scriptPath))
 			{
 				auto currentWriteTime = std::filesystem::last_write_time(script.scriptPath).time_since_epoch().count();
 

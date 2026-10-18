@@ -1,19 +1,15 @@
 # ========================= GLOBAL SETTINGS ========================= 
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 project(SuntaEngine VERSION 0.1 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-option(SUNTA_DEV_MODE "Enable development mode (reads assets directly from source folders)" ON)
-
-if(SUNTA_DEV_MODE)
-	message(STATUS "Sunta Engine: Running in DEVELOPMENT mode (Virtual File System points to source code")
-else()
-	message(STATUS "Sunta Engine: Running in RELEASE mode (Copy assets to bin directory for distribution")
-endif()
+# Project the editor shows as the sample and SuntaRuntime opens when started straight from the IDE
+# A project is a folder with "res/" inside (and "res/game.config"), see Projects/
+set(SUNTA_PROJECT_DIR "${CMAKE_SOURCE_DIR}/Projects/MyGame")
 
 # Lua version
 add_compile_definitions(SOL_LUA_VERSION=50400)
@@ -96,6 +92,9 @@ endif()
 
 # --- PROJECTS ---
 
+# Sunta            - engine core (static library, no editor)
+# SuntaEditor      - editor program: core + editor module
+# SuntaRuntime     - game program: core only. Content of the game lies in <project>/res
 add_subdirectory(Sunta)
-add_subdirectory(Game)
-
+add_subdirectory(Apps/Editor)
+add_subdirectory(Apps/Runtime)

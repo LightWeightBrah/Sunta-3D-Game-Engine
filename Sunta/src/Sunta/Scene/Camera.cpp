@@ -1,6 +1,8 @@
 #include "Core/SuntaPreCompiled.h"
 
 #include "Camera.h"
+
+#include <cmath>
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
 #include "Physics/CollisionShapes.h"
@@ -73,16 +75,18 @@ void Camera::HandleScrolling(float yOffset)
 	if (isLocked)
 		return;
 
-	fov -= (float)yOffset;
-	
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 45.0f)
-		fov = 45.0f;
-	
-	UpdateProjectionMatrix();
+	// Every notch of the wheel changes the speed by the same percentage,
+	// so the wheel feels the same at speed 1 and at speed 50
+	constexpr float SpeedChangePerScrollNotch = 1.2f;
+
+	SetMovementSpeed(movementSpeed * std::pow(SpeedChangePerScrollNotch, yOffset));
 }
-	
+
+void Camera::SetMovementSpeed(float speed)
+{
+	movementSpeed = glm::clamp(speed, MinMovementSpeed, MaxMovementSpeed);
+}
+
 void Camera::UpdateProjectionMatrix()
 {
 	if (aspectRatio <= 0.0f)
@@ -112,10 +116,26 @@ SceneData Camera::GetSceneData() const
 	return data;
 }
 	
+glm::quat Camera::GetRotation() const
+{
+	// The camera looks along its -Z axis, so the backward axis is the opposite of front
+	return glm::quat_cast(glm::mat3(right, up, -front));
+}
+
 Ray Camera::GetMouseScreenPositionToPointRay(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight) const
 {
+	return ScreenPointToRay(mousePosition, viewportWidth, viewportHeight, GetViewMatrix(), GetProjectionMatrix());
+}
+
+Ray Camera::ScreenPointToRay(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight,
+							 const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+{
+	// The inverse of the view matrix puts us in the world: its columns are the axes and the position of the camera
+	const glm::mat4 cameraToWorld = glm::inverse(viewMatrix);
+	const glm::vec3 cameraPosition = glm::vec3(cameraToWorld[3]);
+
 	if (viewportWidth <= 0.0f || viewportHeight <= 0.0f)
-		return Ray{ position, front };
+		return Ray{ cameraPosition, glm::normalize(-glm::vec3(cameraToWorld[2])) };
 
 	// Screen space: top-left is (0, 0), bottom-right is (viewportWidth, viewportHeight), Y pointing DOWN
 	// NDC (normalized device coordinates): (X,Y) = [ (-1.0f, 1.0f), (-1.0f, 1.0f) ]
@@ -138,7 +158,7 @@ Ray Camera::GetMouseScreenPositionToPointRay(const glm::vec2& mousePosition, flo
 
 	// Undo the projection matrix to go from clip space to view/eye space
 	// (the space where the camera sits at the origin, looking down -Z)
-	glm::vec4 rayViewSpace = glm::inverse(GetProjectionMatrix()) * rayClip;
+	glm::vec4 rayViewSpace = glm::inverse(projectionMatrix) * rayClip;
 
 	// From here on we only care about a DIRECTION, not a specific point, so:
 	// - z is reset to -1 (forward, in view space)
@@ -149,11 +169,11 @@ Ray Camera::GetMouseScreenPositionToPointRay(const glm::vec2& mousePosition, flo
 
 	// Undo the view matrix to go from view space to world space
 	// Because w = 0, only the camera's rotation gets applied here (not its position)
-	glm::vec3 rayWorldDirection = glm::normalize(glm::vec3(glm::inverse(GetViewMatrix()) * rayViewSpace));
+	glm::vec3 rayWorldDirection = glm::normalize(glm::vec3(cameraToWorld * rayViewSpace));
 
 	// The ray starts at the camera and points in the direction we just found
 	Ray ray;
-	ray.origin = position;
+	ray.origin = cameraPosition;
 	ray.direction = rayWorldDirection;
 
 	return ray;

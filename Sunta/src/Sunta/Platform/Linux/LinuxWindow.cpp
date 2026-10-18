@@ -33,6 +33,31 @@ void LinuxWindow::Show()
 	implementation.Show();
 }
 
+void LinuxWindow::Hide()
+{
+	implementation.Hide();
+}
+
+void LinuxWindow::SetTitle(const std::string& title)
+{
+	implementation.SetTitle(title);
+}
+
+bool LinuxWindow::SetIcon(const std::string& imagePath)
+{
+	return implementation.SetIcon(imagePath);
+}
+
+void LinuxWindow::SetVSync(bool enabled)
+{
+	implementation.SetVSync(enabled);
+}
+
+void LinuxWindow::SetFullscreen(bool enabled)
+{
+	implementation.SetFullscreen(enabled);
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> LinuxWindow::CreateGUIBackend()
 {
 	return std::make_unique<LinuxOpenGLEditorGUIBackend>();

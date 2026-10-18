@@ -9,6 +9,11 @@ file(GLOB_RECURSE ENGINE_SOURCES CMAKE_CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 #								   REGEX "Regular Expressions"
 list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Platform/.*") # . means any sign (letter, number, / etc.); * means repeat previous sign n times
 
+# Editor code lives in its own library (SuntaEditorModule), so the game build doesn't contain it
+set(EDITOR_SOURCES ${ENGINE_SOURCES})
+list(FILTER EDITOR_SOURCES INCLUDE REGEX "src/Sunta/Editor/.*")
+list(FILTER ENGINE_SOURCES EXCLUDE REGEX "src/Sunta/Editor/.*")
+
 # ====================== RENDERER API SOURCES ============================       
 
 file(GLOB_RECURSE OPENGL_SOURCES  "src/Sunta/Platform/OpenGL/*.cpp" "src/Sunta/Platform/OpenGL/*.h")
@@ -61,7 +66,7 @@ list(APPEND ENGINE_SOURCES
 
 # ========================= IDE ORGANIZATION =============================  
 
-set(SUNTA_INTERNAL_FILES ${ENGINE_SOURCES})
+set(SUNTA_INTERNAL_FILES ${ENGINE_SOURCES} ${EDITOR_SOURCES})
 list(FILTER SUNTA_INTERNAL_FILES INCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/.*")
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${SUNTA_INTERNAL_FILES})
 
@@ -69,45 +74,18 @@ set(SUNTA_EXTERNAL_FILES ${ENGINE_SOURCES})
 list(FILTER SUNTA_EXTERNAL_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/.*")
 source_group("Dependencies" FILES ${SUNTA_EXTERNAL_FILES})
 
-# ========================= TARGET DEFINITIONS ===========================   
+# ========================= INCLUDE DIRECTORIES ============================ 
 
-add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC "SUNTA_ROOT_DIR=R\"(${CMAKE_SOURCE_DIR})\"")
-target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
-
-if(SUNTA_DEV_MODE)
-	target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
-endif()
-
-# MSVC's legacy preprocessor ##__VA_ARGS__ sometimes don't remove ',' comma sign 
-# in nested macros (GLCall + SUNTA_ASSERT), this fixes it so macros actually work with no errors
-if(MSVC)
-	target_compile_options(${PROJECT_NAME} PUBLIC /Zc:preprocessor)
-endif()
-
-# ========================= PRECOMPILED HEADER ===========================   
-
-# --- GLAD FIX TO HIDE PRECOMPILED HEADER ---
-set_source_files_properties("${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c" 
-PROPERTIES LANGUAGE C
-SKIP_PRECOMPILE_HEADERS ON)
-
-# --- PRECOMPILED HEADER IMPLEMENTATION ---
-target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")
-
-# ========================= MAIN API ACCESS ============================== 
-
-# --- PUBLIC API (ACCESS: GAME & ENGINE) ---
-target_include_directories(${PROJECT_NAME} PUBLIC
+# --- PUBLIC API (ACCESS: APPS & ENGINE) ---
+set(SUNTA_PUBLIC_INCLUDE_DIRS
 "${CMAKE_CURRENT_SOURCE_DIR}/src"
 "${CMAKE_SOURCE_DIR}/Dependencies/glm_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/GLAD/include"
 "${CMAKE_SOURCE_DIR}/Dependencies/sol2_wrapper"
 )
 
-# --- PRIVATE API (ACCESS: ENGINE) ---
-target_include_directories(${PROJECT_NAME} PRIVATE
+# --- PRIVATE API (ACCESS: ENGINE CORE & EDITOR MODULE) ---
+set(SUNTA_PRIVATE_INCLUDE_DIRS
 "${CMAKE_CURRENT_SOURCE_DIR}/src/Sunta"
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper"					# for #include <imgui/imgui.h>
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui"				# for internal imgui implementation fixes (searching imgui_internal.h)
@@ -118,7 +96,31 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 "${CMAKE_SOURCE_DIR}/Dependencies/Lua"
 )
 
-# =========================== LINKING ====================================   
+# ========================= TARGET: SUNTA (CORE) =========================== 
+
+add_library(${PROJECT_NAME} STATIC ${ENGINE_SOURCES})
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC "SUNTA_ROOT_DIR=R\"(${CMAKE_SOURCE_DIR})\"")
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
+
+# A game started from the IDE (no "res" folder next to it) reads its assets from the source folders
+target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
+
+# MSVC's legacy preprocessor ##__VA_ARGS__ sometimes don't remove ',' comma sign 
+# in nested macros (GLCall + SUNTA_ASSERT), this fixes it so macros actually work with no errors
+if(MSVC)
+	target_compile_options(${PROJECT_NAME} PUBLIC /Zc:preprocessor)
+endif()
+
+# --- GLAD FIX TO HIDE PRECOMPILED HEADER ---
+set_source_files_properties("${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c" 
+PROPERTIES LANGUAGE C
+SKIP_PRECOMPILE_HEADERS ON)
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")
+
+target_include_directories(${PROJECT_NAME} PUBLIC  ${SUNTA_PUBLIC_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SUNTA_PRIVATE_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
 glfw 
@@ -127,3 +129,13 @@ nfd
 Lua
 ${PLATFORM_LIBS}
 )
+
+# ========================= TARGET: SUNTA EDITOR MODULE ==================== 
+
+# Everything from src/Sunta/Editor. Only the editor program links it
+add_library(SuntaEditorModule STATIC ${EDITOR_SOURCES})
+
+target_link_libraries(SuntaEditorModule PUBLIC ${PROJECT_NAME})
+target_include_directories(SuntaEditorModule PRIVATE ${SUNTA_PRIVATE_INCLUDE_DIRS})
+target_compile_definitions(SuntaEditorModule PRIVATE $<$<CONFIG:Debug>:SUNTA_DEBUG>)
+target_precompile_headers(SuntaEditorModule PRIVATE "src/Sunta/Core/SuntaPreCompiled.h")

@@ -33,6 +33,82 @@
 
 namespace Sunta
 {
+
+namespace
+{
+	// The camera of an entity looks along the -Z axis of the entity, with +Y up
+	const glm::vec3 CameraLocalForward = glm::vec3(0.0f, 0.0f, -1.0f);
+	const glm::vec3 CameraLocalUp      = glm::vec3(0.0f, 1.0f,  0.0f);
+
+	// The frustum drawn for a camera in the editor is short, the real far plane would be far outside the screen
+	constexpr float CameraGizmoDepth            = 2.0f;
+	constexpr float CameraGizmoMaxFieldOfView   = 120.0f;
+	constexpr unsigned int CameraGizmoRingCorners = 4;
+	const glm::vec3 CameraGizmoColor = glm::vec3(1.0f, 0.85f, 0.2f);
+
+	// A camera has no mesh, so the mouse picks it by a small box in front of it
+	const glm::vec3 CameraPickingBoxMin = glm::vec3(-0.3f, -0.2f, -0.8f);
+	const glm::vec3 CameraPickingBoxMax = glm::vec3( 0.3f,  0.2f,  0.0f);
+
+	float GetClampedFieldOfView(const CameraComponent& camera)
+	{
+		return glm::clamp(camera.fieldOfView, CameraComponent::MinFieldOfView, CameraComponent::MaxFieldOfView);
+	}
+
+	glm::mat4 MakeCameraViewMatrix(const TransformComponent& transform)
+	{
+		const glm::quat rotation = glm::normalize(transform.rotationQuaternion);
+
+		const glm::vec3 forward = rotation * CameraLocalForward;
+		const glm::vec3 up      = rotation * CameraLocalUp;
+
+		return glm::lookAt(transform.position, transform.position + forward, up);
+	}
+
+	glm::mat4 MakeCameraProjectionMatrix(const CameraComponent& camera, float aspectRatio)
+	{
+		const float nearPlane = glm::max(camera.nearPlane, CameraComponent::MinNearPlane);
+		const float farPlane  = glm::max(camera.farPlane, nearPlane + CameraComponent::MinNearPlane);
+
+		return glm::perspective(glm::radians(GetClampedFieldOfView(camera)), aspectRatio, nearPlane, farPlane);
+	}
+
+	// Corners of the frustum in the order the box wireframe expects them:
+	// the near rectangle (4 corners going around), then the far rectangle (the same order)
+	std::array<glm::vec3, BOX_CORNER_COUNT> MakeCameraFrustumCorners(const TransformComponent& transform, const CameraComponent& camera, float aspectRatio)
+	{
+		const glm::quat rotation = glm::normalize(transform.rotationQuaternion);
+
+		const float fieldOfView = glm::min(GetClampedFieldOfView(camera), CameraGizmoMaxFieldOfView);
+		const float tangent     = std::tan(glm::radians(fieldOfView) * 0.5f);
+
+		const float nearDepth = glm::min(glm::max(camera.nearPlane, CameraComponent::MinNearPlane), CameraGizmoDepth);
+		const float ringDepths[2] = { nearDepth, CameraGizmoDepth };
+
+		std::array<glm::vec3, BOX_CORNER_COUNT> corners{};
+
+		for (unsigned int ring = 0; ring < 2; ring++)
+		{
+			const float depth      = ringDepths[ring];
+			const float halfHeight = depth * tangent;
+			const float halfWidth  = halfHeight * aspectRatio;
+
+			const glm::vec3 ringCorners[CameraGizmoRingCorners] =
+			{
+				{ -halfWidth, -halfHeight, -depth },
+				{ +halfWidth, -halfHeight, -depth },
+				{ +halfWidth, +halfHeight, -depth },
+				{ -halfWidth, +halfHeight, -depth }
+			};
+
+			for (unsigned int corner = 0; corner < CameraGizmoRingCorners; corner++)
+				corners[ring * CameraGizmoRingCorners + corner] = transform.position + rotation * ringCorners[corner];
+		}
+
+		return corners;
+	}
+}
+
 Scene::Scene() 
 	: camera(glm::vec3(1.2f, 5.6f, 11.35f))
 {
@@ -83,11 +159,17 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 	collisionExitEventID = EventBus::Subscribe<CollisionExitEvent>(
 		[this](const CollisionExitEvent& event) { OnCollisionExit(event); }
 	);
+
+	UpdateActiveCameraData();
 }
 	
 void Scene::OnWindowResize(float windowWidth, float windowHeight)
 {
 	camera.SetViewportSize(windowWidth, windowHeight);
+
+	// A minimized window has no size, the last proper aspect ratio stays
+	if (windowWidth > 0.0f && windowHeight > 0.0f)
+		aspectRatio = windowWidth / windowHeight;
 }
 	
 // Trigger Events
@@ -126,6 +208,11 @@ void Scene::OnCollisionExit(const CollisionExitEvent& event)
 
 void Scene::ProcessInput()
 {
+	// The camera of the game is moved by the game (scripts),
+	// so the free camera must not fly away on the keys at the same time
+	if (ShouldUseSceneCamera())
+		return;
+
 	float deltaTime				= EngineTime::deltaTime;
 	glm::vec2 mouseDelta		= InputManager::GetMouseDelta();
 	
@@ -158,7 +245,7 @@ void Scene::Update()
 
 	if (isPlaying)
 	{
-		Systems::UpdateScripts(entityManager, EngineTime::deltaTime);
+		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
 
@@ -175,14 +262,18 @@ void Scene::Update()
 	// Keeps collider gizmos following their entities while stopped
 	if (!isPlaying)
 		CollisionSystem::UpdateColliders(entityManager);
+
+	// After the transforms, so a camera that follows a moving entity is never a frame behind
+	UpdateActiveCameraData();
 }
 	
 void Scene::Render(Renderer& renderer)
 {
+	const bool      isPlaying        = IsPlaying();
 	const bool      showBoundsGizmos = DebugRenderer::GetShowBoundsGizmos();
 	const glm::vec3 boundsGizmoColor = DebugRenderer::GetBoundsGizmoColor();
 
-	SceneData sceneData = camera.GetSceneData();
+	SceneData sceneData = activeCameraData;
 
 	sceneData.directionalLights.clear();
 	sceneData.pointLights.clear();
@@ -302,6 +393,13 @@ void Scene::Render(Renderer& renderer)
 				gizmosQueue.push_back({ GetOBBCorners(pickingBox), boundsGizmoColor });
 		}
 
+		// A camera is invisible in the game, in the editor its frustum shows where it stands and what it sees
+		if (!isPlaying && transformComponent)
+		{
+			if (auto* cameraComponent = entityManager.GetComponent<CameraComponent>(i))
+				gizmosQueue.push_back({ MakeCameraFrustumCorners(*transformComponent, *cameraComponent, aspectRatio), CameraGizmoColor });
+		}
+
 		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
 		{
 			bool shouldDrawThisGizmos = DebugRenderer::GetShowAllGizmos() || boxCollider->showGizmos;
@@ -360,6 +458,11 @@ bool Scene::TryGetEntityWorldPickingBox(unsigned int entity, OBB& outBox)
 		localBoundsMin = modelComponent->modelData->model->GetLocalBoundsMin();
 		localBoundsMax = modelComponent->modelData->model->GetLocalBoundsMax();
 	}
+	else if (entityManager.GetComponent<CameraComponent>(entity))
+	{
+		localBoundsMin = CameraPickingBoxMin;
+		localBoundsMax = CameraPickingBoxMax;
+	}
 	else
 	{
 		return false;
@@ -401,7 +504,7 @@ bool Scene::TryFindClosestEntityHitByRay(const Ray& ray, unsigned int& outEntity
 
 int Scene::GetEntityUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
 {
-	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+	Ray ray = Camera::ScreenPointToRay(mousePosition, viewportWidth, viewportHeight, GetViewMatrix(), GetProjectionMatrix());
 
 	unsigned int hitEntityID = 0;
 	float        hitDistance = 0.0f;
@@ -414,7 +517,7 @@ int Scene::GetEntityUnderMouse(const glm::vec2& mousePosition, float viewportWid
 
 glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight)
 {
-	Ray ray = camera.GetMouseScreenPositionToPointRay(mousePosition, viewportWidth, viewportHeight);
+	Ray ray = Camera::ScreenPointToRay(mousePosition, viewportWidth, viewportHeight, GetViewMatrix(), GetProjectionMatrix());
 
 	// The mouse is over an entity: use the point on its surface
 	unsigned int hitEntityID = 0;
@@ -425,6 +528,84 @@ glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, floa
 	// The mouse is over empty space: use a point at a fixed distance from the camera, along the ray
 	constexpr float DISTANCE_WHEN_NOTHING_IS_HIT = 10.0f;
 	return ray.origin + ray.direction * DISTANCE_WHEN_NOTHING_IS_HIT;
+}
+
+void Scene::BeginPlay()
+{
+	CollisionSystem::Reset();
+	playState = PlayState::Playing;
+
+	CameraComponent* cameraComponent = nullptr;
+	TransformComponent* cameraTransform = nullptr;
+	if (!TryFindActiveSceneCamera(cameraComponent, cameraTransform))
+		SUNTA_ENGINE_LOG_WARNING("Scene: There is no active Camera component, the game uses the free camera. Add a Camera component to an entity");
+
+	// The first frame of the game is already drawn from the camera of the scene
+	UpdateActiveCameraData();
+}
+
+bool Scene::TryFindActiveSceneCamera(CameraComponent*& outCamera, TransformComponent*& outTransform)
+{
+	for (CameraComponent& cameraComponent : entityManager.GetAllComponents<CameraComponent>())
+	{
+		if (!cameraComponent.isActive)
+			continue;
+
+		const unsigned int entity = entityManager.GetEntityIDForComponent(cameraComponent);
+
+		TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entity);
+		if (!transform)
+			continue;
+
+		outCamera    = &cameraComponent;
+		outTransform = transform;
+		return true;
+	}
+
+	return false;
+}
+
+bool Scene::ShouldUseSceneCamera()
+{
+	if (!IsPlaying())
+		return false;
+
+	CameraComponent*    cameraComponent = nullptr;
+	TransformComponent* cameraTransform = nullptr;
+
+	return TryFindActiveSceneCamera(cameraComponent, cameraTransform);
+}
+
+void Scene::UpdateActiveCameraData()
+{
+	CameraComponent*    cameraComponent = nullptr;
+	TransformComponent* cameraTransform = nullptr;
+
+	if (IsPlaying() && TryFindActiveSceneCamera(cameraComponent, cameraTransform))
+	{
+		activeCameraData.viewMatrix       = MakeCameraViewMatrix(*cameraTransform);
+		activeCameraData.projectionMatrix = MakeCameraProjectionMatrix(*cameraComponent, aspectRatio);
+		activeCameraData.cameraPosition   = cameraTransform->position;
+		return;
+	}
+
+	const SceneData freeCameraData = camera.GetSceneData();
+
+	activeCameraData.viewMatrix       = freeCameraData.viewMatrix;
+	activeCameraData.projectionMatrix = freeCameraData.projectionMatrix;
+	activeCameraData.cameraPosition   = freeCameraData.cameraPosition;
+}
+
+void Scene::AlignEntityWithEditorCamera(unsigned int entityID)
+{
+	TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityID);
+	if (!transform)
+		return;
+
+	transform->position           = camera.GetPosition();
+	transform->rotationQuaternion = camera.GetRotation();
+	transform->SyncEulerFromQuaternion();
+	transform->isDirty            = true;
 }
 
 void Scene::Clear()

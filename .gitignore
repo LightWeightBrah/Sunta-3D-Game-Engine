@@ -14,11 +14,17 @@ CMakeCache.txt
 CMakeFiles/
 CMakeSettings.json
 *.cmake
+!cmake/
+!cmake/**
 
 # ========================= BUILD OUTPUTS =============================== 
 
 bin/
 bin-intermediates/
+distribution/
+
+# Games built by the editor (Project > Build Game)
+**/Build/
 
 *.lib
 *.dll
@@ -43,4 +49,4 @@ bin-intermediates/**.obj
 !**/res/Models/
 !**/res/Models/**
 !**/res/Models/**/*.obj
-!**/res/Models/**/*.mtl
+!**/res/Models/**/*.mtl

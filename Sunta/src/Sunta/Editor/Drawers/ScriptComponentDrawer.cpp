@@ -10,12 +10,13 @@
 namespace Sunta
 {
 
-void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, EntityManager& entityManager)
+bool ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, EntityManager& entityManager)
 {
 	auto* scriptComponent = static_cast<ScriptComponent*>(componentData);
 
 	ImGui::TextDisabled("Drag & Drop .lua file on a slot, or on the Add button");
 
+	bool edited = false;
 	int slotToRemove = -1;
 
 	for (unsigned int i = 0; i < scriptComponent->scripts.size(); i++)
@@ -25,7 +26,10 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 		ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 35.0f);
 
 		if (ImGui::InputText("##Path", &scriptComponent->scripts[i].scriptPath))
+		{
 			scriptComponent->scripts[i].isStarted = false;
+			edited = true;
+		}
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -36,6 +40,7 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 				{
 					scriptComponent->scripts[i].scriptPath = droppedPath;
 					scriptComponent->scripts[i].isStarted = false;
+					edited = true;
 				}
 			}
 
@@ -45,7 +50,10 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 		ImGui::SameLine();
 
 		if (ImGui::Button("X", ImVec2(24, 0)))
+		{
 			slotToRemove = static_cast<int>(i);
+			edited = true;
+		}
 
 		ImGui::PopID();
 
@@ -57,7 +65,10 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 	ImGui::Spacing();
 
 	if (ImGui::Button("+ Add Empty Slot"))
+	{
 		scriptComponent->scripts.push_back(ScriptContainer{});
+		edited = true;
+	}
 
 	// Dropping a .lua file on the button adds it as a new script
 	if (ImGui::BeginDragDropTarget())
@@ -82,12 +93,15 @@ void ScriptComponentDrawer::Draw(void* componentData, unsigned int entityID, Ent
 					ScriptContainer newScript;
 					newScript.scriptPath = droppedPath;
 					scriptComponent->scripts.push_back(newScript);
+					edited = true;
 				}
 			}
 		}
 
 		ImGui::EndDragDropTarget();
 	}
+
+	return edited;
 }
 
 }

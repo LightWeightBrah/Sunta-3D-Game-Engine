@@ -8,7 +8,8 @@ namespace Sunta
 class Log
 {
 public:
-	static void Init();
+	// logFilePath: when not empty, every log line is written to this file as well (see LogFile)
+	static void Init(const std::filesystem::path& logFilePath = {});
 
 	static Logger& GetEngineLogger() { return *engineLogger; }
 	static Logger& GetGameLogger()	 { return *gameLogger;   }

@@ -17,6 +17,13 @@ struct EngineModeChangedEvent
 	EngineMode mode;
 };
 
+// The scene open in the editor may have changed: it was edited, saved, loaded or replaced, or Play started / stopped
+// Sent through SceneDocument::NotifyChanged(). It doesn't say what changed, whoever needs to know compares the scene
+struct SceneChangedEvent
+{
+
+};
+
 struct WindowResizeEvent
 {
 	int width, height;

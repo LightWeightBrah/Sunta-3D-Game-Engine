@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 
 #include "GLFWWindowImplementation.h"
+#include "Core/FatalError.h"
 #include "Core/Log.h"
 #include "Renderer/Renderer.h"
 #include "Events/EventBus.h"
@@ -36,10 +37,7 @@ GLFWWindowImplementation::~GLFWWindowImplementation()
 void GLFWWindowImplementation::Init()
 {
 	if (!glfwInit())
-	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initialize GLFW");
-		return;
-	}
+		FatalError::Report("Couldn't start the window system (GLFW).");
 
 	GraphicsContext::Configure();
 
@@ -66,12 +64,16 @@ void GLFWWindowImplementation::Init()
 
 	if (!window)
 	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to create GLFW window");
+		const char* glfwErrorDescription = nullptr;
+		glfwGetError(&glfwErrorDescription);
+
+		const std::string details = glfwErrorDescription ? glfwErrorDescription : "unknown error";
+
 		glfwTerminate();
-		return;
+		FatalError::Report("Couldn't create the window. The graphics card or its driver probably doesn't support OpenGL 3.3, try updating the graphics driver.\n\nDetails: " + details);
 	}
 
-	SetWindowIcon();
+	SetDefaultIcon();
 
 	graphicsContext = GraphicsContext::Create(window);
 	graphicsContext->Init();
@@ -139,7 +141,9 @@ void GLFWWindowImplementation::SetCallbacks()
 
 	glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
-			glfwHideWindow(window);
+			// GLFW already marked the window as closing. It stays open until the application agrees to close,
+			// because the editor may ask about unsaved changes first (Application hides the window when it closes)
+			glfwSetWindowShouldClose(window, GLFW_FALSE);
 			EventBus::Publish(WindowCloseEvent{});
 
 		});
@@ -183,6 +187,57 @@ void GLFWWindowImplementation::Show()
 	glfwShowWindow(window);
 }
 
+void GLFWWindowImplementation::Hide()
+{
+	glfwHideWindow(window);
+}
+
+void GLFWWindowImplementation::SetTitle(const std::string& newTitle)
+{
+	title = newTitle;
+	glfwSetWindowTitle(window, title.c_str());
+}
+
+void GLFWWindowImplementation::SetVSync(bool enabled)
+{
+	isVSyncEnabled = enabled;
+	glfwSwapInterval(enabled ? 1 : 0);
+}
+
+void GLFWWindowImplementation::SetFullscreen(bool enabled)
+{
+	if (enabled == isFullscreen)
+		return;
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* videoMode = monitor ? glfwGetVideoMode(monitor) : nullptr;
+
+	if (enabled && !videoMode)
+	{
+		SUNTA_ENGINE_LOG_WARNING("Primary monitor not found, the window stays windowed");
+		return;
+	}
+
+	if (enabled)
+	{
+		glfwGetWindowPos(window, &windowedX, &windowedY);
+		glfwGetWindowSize(window, &windowedWidth, &windowedHeight);
+		glfwSetWindowMonitor(window, monitor, 0, 0, videoMode->width, videoMode->height, videoMode->refreshRate);
+	}
+	else
+	{
+		glfwSetWindowMonitor(window, nullptr, windowedX, windowedY, windowedWidth, windowedHeight, GLFW_DONT_CARE);
+	}
+
+	isFullscreen = enabled;
+
+	// Some systems forget the swap interval when the window changes its monitor
+	SetVSync(isVSyncEnabled);
+
+	// The resize callback reports the new size too, but not always before the caller reads it
+	glfwGetFramebufferSize(window, &width, &height);
+}
+
 void GLFWWindowImplementation::OnEngineModeChanged(const EngineModeChangedEvent& event)
 {
 	bool shouldShow = (event.mode == EngineMode::Editor);
@@ -190,27 +245,31 @@ void GLFWWindowImplementation::OnEngineModeChanged(const EngineModeChangedEvent&
 }
 
 
-void GLFWWindowImplementation::SetWindowIcon()
+void GLFWWindowImplementation::SetDefaultIcon()
+{
+	const std::string engineLogoPath = VirtualFileSystem::Resolve(EngineAssets::App::EngineLogoPath);
+	SetIcon(engineLogoPath);
+}
+
+bool GLFWWindowImplementation::SetIcon(const std::string& imagePath)
 {
 	GLFWimage icon;
 	int channels = 0;
 
 	stbi_set_flip_vertically_on_load(false);
+	icon.pixels = stbi_load(imagePath.c_str(), &icon.width, &icon.height, &channels, 4);
 
-	std::string resolvedEngineLogoPath = VirtualFileSystem::Resolve(EngineAssets::App::EngineLogoPath);
-
-	icon.pixels = stbi_load(resolvedEngineLogoPath.c_str(), &icon.width, &icon.height, &channels, 4);
-
-	if (icon.pixels)
+	if (!icon.pixels)
 	{
-		glfwSetWindowIcon(window, 1, &icon);
-		stbi_image_free(icon.pixels);
-		SUNTA_ENGINE_LOG_INFO("Window icon successfully updated!");
+		SUNTA_ENGINE_LOG_WARNING("Failed to load Window icon from '{0}'", imagePath);
+		return false;
 	}
-	else
-	{
-		SUNTA_ENGINE_LOG_WARNING("Failed to load Window icon!");
-	}
+
+	glfwSetWindowIcon(window, 1, &icon);
+	stbi_image_free(icon.pixels);
+
+	SUNTA_ENGINE_LOG_INFO("Window icon successfully updated!");
+	return true;
 }
 
 }

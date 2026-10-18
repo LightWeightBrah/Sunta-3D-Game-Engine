@@ -1,0 +1,27 @@
+{
+    "name": "AnotherFloor",
+    "properties": {
+        "ambient": [
+            0.944615364074707,
+            0.913296639919281,
+            0.8457940816879272
+        ],
+        "diffuse": [
+            0.9169230461120605,
+            0.8081076145172119,
+            0.5924733281135559
+        ],
+        "shininess": 32.0,
+        "specular": [
+            1.0,
+            0.800000011920929,
+            0.615384578704834
+        ],
+        "use_alpha_cutout": false
+    },
+    "shader": "Lit",
+    "textures": {
+        "diffuse_maps": [],
+        "specular_maps": []
+    }
+}

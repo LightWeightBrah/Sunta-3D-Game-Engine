@@ -2,8 +2,10 @@
 #include <string>
 #include <any>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 
+#include "LogFile.h"
 #include "Terminal.h"
 
 namespace Sunta {
@@ -11,7 +13,8 @@ namespace Sunta {
 class Logger
 {
 public:
-	Logger(std::string&& name);
+	// infoColor: the color of Info() messages in the console (Warning and Error have their own)
+	Logger(std::string&& name, Terminal::Color infoColor = Terminal::Color::Green);
 
 	enum class Level
 	{
@@ -28,7 +31,7 @@ public:
 		if (currentLevel < Level::INFO)
 			return;
 
-		Log(Terminal::Color::Green, text, args...);
+		Log(infoColor, "INFO", text, args...);
 	}
 
 	template<typename... Args>
@@ -37,7 +40,7 @@ public:
 		if (currentLevel < Level::WARNING)
 			return;
 
-		Log(Terminal::Color::Yellow, text, args...);
+		Log(Terminal::Color::Yellow, "WARNING", text, args...);
 	}
 
 	template<typename... Args>
@@ -46,26 +49,35 @@ public:
 		if (currentLevel < Level::ERROR)
 			return;
 
-		Log(Terminal::Color::Red, text, args...);
+		Log(Terminal::Color::Red, "ERROR", text, args...);
 	}
 
 private:
 	std::string name;
+	Terminal::Color infoColor;
 	Level currentLevel;
 
 	void InsertArgument(int& argIndex, const int argsCount, std::string& result, std::string* argsAsStrings);
 	void InsertIndexedArgument(const char* text, int& nextPosition, const int argsCount, std::string& result, std::string* argsAsStrings);
 	std::string GetTimeAsString();
 
+	// Threads (e.g. the game build) log too, one line must be written before the next one starts
+	static std::mutex& GetOutputMutex();
+
 	template<typename... Args>
-	void Log(Terminal::Color color, const char* text, Args... args)
+	void Log(Terminal::Color color, const char* levelLabel, const char* text, Args... args)
 	{
 		std::string message = GetLogMessage(text, args...);
-	
+
+		std::lock_guard<std::mutex> outputLock(GetOutputMutex());
+
 		Terminal::SetColor(color);
 		std::string timeString = GetTimeAsString();
 		Terminal::Write("[" + timeString + "] " + "[" + name + "]" + ": " + message);
 		Terminal::SetColor(Terminal::Color::White);
+
+		// The console shows the level as a color, a file can't, so the level is written as text
+		LogFile::Write("[" + timeString + "] [" + levelLabel + "] [" + name + "]: " + message);
 	}
 
 	template <typename... Args>

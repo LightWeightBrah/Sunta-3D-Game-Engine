@@ -22,4 +22,10 @@ bool WindowsPlatform::OpenFileExternally(const std::string& path)
 	return (intptr_t)result > 32;
 }
 
+void WindowsPlatform::ShowErrorMessage(const std::string& title, const std::string& message)
+{
+	// The texts are in the ANSI code page, like everything from std::filesystem::path::string() on Windows
+	MessageBoxA(nullptr, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR | MB_SETFOREGROUND);
+}
+
 }

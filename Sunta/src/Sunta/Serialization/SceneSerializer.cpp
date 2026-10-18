@@ -10,6 +10,7 @@
 #include "ECS/Component.h"
 #include "Core/Log.h"
 #include "Physics/CollisionLayers.h"
+#include "Core/VirtualFileSystem.h"
 
 namespace Sunta
 {
@@ -32,6 +33,7 @@ namespace SceneKeys
 	constexpr const char* DirectionalLightComponent = "directional_light";
 	constexpr const char* PointLightComponent	    = "point_light";
 	constexpr const char* SpotLightComponent        = "spot_light";
+	constexpr const char* CameraComponent           = "camera";
 
 	constexpr const char* Name                      = "name";
 	constexpr const char* Position                  = "position";
@@ -75,6 +77,11 @@ namespace SceneKeys
 	constexpr const char* AttenuationQuadratic      = "attenuation_quadratic";
 	constexpr const char* InnerCutOff               = "inner_cut_off";
 	constexpr const char* OuterCutOff               = "outer_cut_off";
+
+	constexpr const char* FieldOfView               = "field_of_view";
+	constexpr const char* NearPlane                 = "near_plane";
+	constexpr const char* FarPlane                  = "far_plane";
+	constexpr const char* IsActive                  = "is_active";
 
 }
 
@@ -136,7 +143,7 @@ static void DeserializeAttenuation(const json& j, Attenuation& attenuation)
 	if (j.contains(SceneKeys::AttenuationQuadratic)) attenuation.quadratic = j[SceneKeys::AttenuationQuadratic];
 }
 
-bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
+std::string SceneSerializer::SerializeToString(Scene& scene)
 {
 	auto& entityManager = scene.GetEntityManager();
 	unsigned int totalEntities = entityManager.GetEntityCount();
@@ -173,7 +180,8 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 				json scriptsArray = json::array();
 				for (const auto& container : script->scripts)
 				{
-					scriptsArray.push_back({ { SceneKeys::ScriptPath, container.scriptPath} });
+					// Saved as a virtual path ("@game/Scripts/a.lua"), because the physical path differs on every machine and in the packaged game
+					scriptsArray.push_back({ { SceneKeys::ScriptPath, VirtualFileSystem::ToVirtualPath(container.scriptPath) } });
 				}
 
 				entityJson[SceneKeys::ScriptComponent] = scriptsArray;
@@ -267,12 +275,28 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 			};
 		}
 
+		if (auto* camera = entityManager.GetComponent<CameraComponent>(i))
+		{
+			entityJson[SceneKeys::CameraComponent] =
+			{
+				{ SceneKeys::FieldOfView, camera->fieldOfView },
+				{ SceneKeys::NearPlane,   camera->nearPlane   },
+				{ SceneKeys::FarPlane,    camera->farPlane    },
+				{ SceneKeys::IsActive,    camera->isActive    }
+			};
+		}
+
 		if(!entityJson.empty())
 			entitiesArray.push_back(entityJson);
 	}
 
 	sceneJson[SceneKeys::Entities] = entitiesArray;
 
+	return sceneJson.dump(4);
+}
+
+bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
+{
 	std::ofstream outFile(filepath);
 	if (!outFile.is_open())
 	{
@@ -280,7 +304,7 @@ bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
 		return false;
 	}
 
-	outFile << sceneJson.dump(4);
+	outFile << SerializeToString(scene);
 	outFile.close();
 
 	SUNTA_ENGINE_LOG_INFO("SceneSerializer::Serialize: Successfully Saved Scene to: '{0}'", filepath);
@@ -377,7 +401,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 					std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
 					if (!path.empty())
 					{
-						scriptComponent.AddScript(path);
+						scriptComponent.AddScript(VirtualFileSystem::Resolve(path));
 					}
 				}
 			}
@@ -489,6 +513,17 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			spotLight.innerCutOffAngle = lightData.value(SceneKeys::InnerCutOff, spotLight.innerCutOffAngle);
 			spotLight.outerCutOffAngle = lightData.value(SceneKeys::OuterCutOff, spotLight.outerCutOffAngle);
+		}
+
+		if (entityJson.contains(SceneKeys::CameraComponent))
+		{
+			const auto& cameraData = entityJson[SceneKeys::CameraComponent];
+			auto& camera = entityManager.AddComponent<CameraComponent>(entity);
+
+			camera.fieldOfView = cameraData.value(SceneKeys::FieldOfView, camera.fieldOfView);
+			camera.nearPlane   = cameraData.value(SceneKeys::NearPlane,   camera.nearPlane);
+			camera.farPlane    = cameraData.value(SceneKeys::FarPlane,    camera.farPlane);
+			camera.isActive    = cameraData.value(SceneKeys::IsActive,    camera.isActive);
 		}
 
 	}

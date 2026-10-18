@@ -20,6 +20,11 @@ public:
 	virtual void EnableMouseCursor(bool enabled) override;
 	virtual void SetAsGraphicsTarget() override;
 	virtual void Show() override;
+	virtual void Hide() override;
+	virtual void SetTitle(const std::string& title) override;
+	virtual bool SetIcon(const std::string& imagePath) override;
+	virtual void SetVSync(bool enabled) override;
+	virtual void SetFullscreen(bool enabled) override;
 
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() override;
 

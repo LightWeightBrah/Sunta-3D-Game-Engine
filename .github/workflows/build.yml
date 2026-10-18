@@ -1,48 +1,150 @@
-name: "CI: Platform Validation"
+name: "CI: Build"
 
-# Defines when action happens 
 on:
     push:
         branches: [ "main", "master" ]
+        tags: [ "v*" ]
     pull_request:
         branches: [ "main", "master" ]
 
 jobs:
-    build: 
-        name: "${{ matrix.os }} | x64 Debug"
+    build:
+        name: "${{ matrix.os }} | Release"
         runs-on: ${{ matrix.os }}
         strategy:
             fail-fast: false
             matrix:
-              os: [ windows-latest, ubuntu-latest, macos-latest ] 
+                include:
+                    - os: windows-latest
+                      preset: x64-Release
+                      editor: SuntaEditor.exe
+                    - os: ubuntu-latest
+                      preset: linux-release
+                      editor: SuntaEditor
+                    - os: macos-latest
+                      preset: macos-release
+                      editor: SuntaEditor
 
         steps:
             - name: "Setup: Fetch Sources & Submodules"
               uses: actions/checkout@v4
               with:
-                submodules: recursive # for .gitmodules if added in future
-                    
+                  submodules: recursive
+
+            - name: "Windows: Load the MSVC compiler environment"
+              if: runner.os == 'Windows'
+              uses: ilammy/msvc-dev-cmd@v1
+              with:
+                  arch: x64
+
             - name: "Linux: Install Dependencies"
               if: runner.os == 'Linux'
               run: |
-                sudo apt-get update
-                sudo apt-get install -y libgtk-3-dev libx11-dev libxcursor-dev libxinerama-dev \
-                                 libxrandr-dev libxi-dev libgl1-mesa-dev \
-                                 libglu1-mesa-dev mesa-common-dev \
-                                 libwayland-dev wayland-protocols libxkbcommon-dev
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build libgtk-3-dev libx11-dev libxcursor-dev libxinerama-dev \
+                                   libxrandr-dev libxi-dev libgl1-mesa-dev \
+                                   libglu1-mesa-dev mesa-common-dev \
+                                   libwayland-dev wayland-protocols libxkbcommon-dev
+
+            - name: "macOS: Install Dependencies"
+              if: runner.os == 'macOS'
+              run: brew install ninja
 
             - name: "Configuration: CMake Generate"
-              run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DSUNTA_DEV_MODE=OFF
+              run: cmake --preset ${{ matrix.preset }}
 
-            - name: "Compilation: Build Engine & Executables"
-              run: cmake --build build --config Debug
+            - name: "Compilation: Build Editor & Runtime"
+              run: cmake --build --preset ${{ matrix.preset }}
 
-            - name: "Distribution: Upload Build Artifacts"
+            # The engine package: the editor needs "res/Sunta" (engine resources) and "Projects/MyGame" next to itself, so it works without the repository
+            # It is made before the sample game is built, so the package has no "Build" folder inside the project
+            - name: "Package: Assemble the engine"
+              shell: bash
+              run: |
+                  mkdir -p SuntaEngine/res SuntaEngine/Projects
+                  find bin/Release-* -maxdepth 1 -type f \( -name 'SuntaEditor' -o -name 'SuntaEditor.exe' -o -name 'SuntaEditor.desktop' \
+                                                         -o -name 'SuntaRuntime' -o -name 'SuntaRuntime.exe' \) -exec cp {} SuntaEngine/ \;
+                  cp -r Sunta/res SuntaEngine/res/Sunta
+                  cp -r Projects/MyGame SuntaEngine/Projects/MyGame
+                  rm -rf SuntaEngine/Projects/MyGame/Build
+
+            - name: "Game: Build the sample project (MyGame)"
+              shell: bash
+              run: ./bin/Release-*/${{ matrix.editor }} --build-game Projects/MyGame
+
+            # Zip files keep no "executable" flag, a tar archive does, so Linux and macOS players can just start the game
+            - name: "Game: Pack for Linux and macOS"
+              if: runner.os != 'Windows'
+              shell: bash
+              run: tar -czf MyGame-${{ matrix.os }}.tar.gz -C Projects/MyGame/Build .
+
+            - name: "Distribution: Upload the game (Linux, macOS)"
+              if: runner.os != 'Windows'
               uses: actions/upload-artifact@v4
-              with: 
-                name: Sunta-Engine-${{ matrix.os }}-x64-Debug
-                path: |
-                  bin/**/Game* # Game, Game.exe, Game.pdb, Linux and Mac just uses Game without .exe
-                  bin/**/res/
-                if-no-files-found: error
-                retention-days: 5
+              with:
+                  name: MyGame-${{ matrix.os }}
+                  path: MyGame-${{ matrix.os }}.tar.gz
+                  if-no-files-found: error
+                  retention-days: 5
+
+            - name: "Distribution: Upload the game (Windows)"
+              if: runner.os == 'Windows'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: MyGame-${{ matrix.os }}
+                  path: Projects/MyGame/Build/
+                  if-no-files-found: error
+                  retention-days: 5
+
+            - name: "Package: Pack the engine for Linux and macOS"
+              if: runner.os != 'Windows'
+              shell: bash
+              run: tar -czf Sunta-Engine-${{ matrix.os }}.tar.gz SuntaEngine
+
+            - name: "Distribution: Upload the engine (Linux, macOS)"
+              if: runner.os != 'Windows'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Sunta-Engine-${{ matrix.os }}-Release
+                  path: Sunta-Engine-${{ matrix.os }}.tar.gz
+                  if-no-files-found: error
+                  retention-days: 5
+
+            - name: "Distribution: Upload the engine (Windows)"
+              if: runner.os == 'Windows'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Sunta-Engine-${{ matrix.os }}-Release
+                  path: SuntaEngine/
+                  if-no-files-found: error
+                  retention-days: 5
+
+    # A tag like "v0.1.0" publishes a GitHub Release with the engine packages, a link that doesn't expire like the artifacts do
+    release:
+        name: "Release: Publish"
+        needs: build
+        if: startsWith(github.ref, 'refs/tags/v')
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - name: "Release: Download the engine packages"
+              uses: actions/download-artifact@v4
+              with:
+                  pattern: Sunta-Engine-*
+                  path: packages
+
+            # The Windows package is a folder of files, the Linux and macOS ones are already .tar.gz (they keep the executable flag)
+            - name: "Release: Prepare the files"
+              run: |
+                  mkdir -p stage/SuntaEngine release
+                  mv packages/Sunta-Engine-windows-latest-Release/* stage/SuntaEngine/
+                  (cd stage && zip -r -q ../release/Sunta-Engine-Windows.zip SuntaEngine)
+                  mv packages/Sunta-Engine-ubuntu-latest-Release/*.tar.gz release/Sunta-Engine-Linux.tar.gz
+                  mv packages/Sunta-Engine-macos-latest-Release/*.tar.gz release/Sunta-Engine-macOS.tar.gz
+
+            - name: "Release: Create the GitHub Release"
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: gh release create "${{ github.ref_name }}" release/* --repo "${{ github.repository }}" --title "${{ github.ref_name }}" --generate-notes

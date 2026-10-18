@@ -9,6 +9,7 @@
 #include "Renderer/Shader.h"
 #include "VirtualFileSystem.h"
 #include "Utilities/TextureNamingConventionsUtilities.h"
+#include "Utilities/FileSystemUtilities.h"
 #include "Renderer/Renderer.h"
 
 namespace Sunta
@@ -22,6 +23,10 @@ void ResourceLoader::Init()
 	LoadMeshes();
 	LoadTexturesNamingConvention();
 	LoadModels();
+}
+
+void ResourceLoader::InitEditorAssets()
+{
 	LoadIcons();
 	LoadUIAssets();
 }
@@ -114,6 +119,9 @@ void ResourceLoader::LoadModels()
 
 	ResourceManager::LoadModel(Models::Solaire,  "@engine/Models/Solaire/Solaire All Animations.fbx", 0.05f);
 	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj", 0.5f);
+
+	// Models added by the user to the game's folder. Scenes refer to them by name
+	LoadModelsFromDirectory(VirtualFileSystem::Resolve("@game"));
 }
 
 void ResourceLoader::LoadIcons()
@@ -194,6 +202,32 @@ void ResourceLoader::LoadUIAssets()
 
 	ResourceManager::LoadEditorIcon(UIAssets::EditorWindowBG,   "@engine/Textures/ui/editor_window_background.jpg");
 	ResourceManager::LoadEditorIcon(UIAssets::FileBrowserBG ,   "@engine/Textures/ui/file_browser_background.jpg");
+}
+
+void ResourceLoader::LoadModelsFromDirectory(const std::filesystem::path& directoryPath)
+{
+	if (!std::filesystem::exists(directoryPath))
+		return;
+
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))
+	{
+		if (!entry.is_regular_file())
+			continue;
+
+		std::string extension = entry.path().extension().string();
+		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+		if (!IsModelExtension(extension))
+			continue;
+
+		// Same name the editor gives a model dropped into the scene (file name without extension)
+		const std::string modelName = entry.path().stem().string();
+
+		if (ResourceManager::HasModel(modelName))
+			continue;
+
+		ResourceManager::LoadModel(modelName, entry.path().string());
+	}
 }
 
 void ResourceLoader::LoadMaterialsFromDirectory(const std::filesystem::path& directoryPath)

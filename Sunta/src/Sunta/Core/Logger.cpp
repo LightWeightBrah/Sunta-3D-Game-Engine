@@ -3,11 +3,18 @@
 
 namespace Sunta {
 
-Logger::Logger(std::string&& name)
+Logger::Logger(std::string&& name, Terminal::Color infoColor)
 	: name(std::move(name))
+	, infoColor(infoColor)
 	, currentLevel(Level::INFO)
 {
 
+}
+
+std::mutex& Logger::GetOutputMutex()
+{
+	static std::mutex outputMutex;
+	return outputMutex;
 }
 
 void Logger::SetLevel(Logger::Level level)
