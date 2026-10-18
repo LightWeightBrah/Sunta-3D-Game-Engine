@@ -5,6 +5,7 @@
 #include <Sunta/Core/Application.h>
 #include <Sunta/Editor/EditorLayer.h>
 #include <Sunta/Editor/EditorSettings.h>
+#include <Sunta/Editor/HeadlessGameBuild.h>
 #include <Sunta/Editor/ProcessLauncher.h>
 #include <Sunta/Editor/ProjectLauncherLayer.h>
 #include <Sunta/Editor/ProjectManager.h>
@@ -13,8 +14,13 @@
 //   SuntaEditor                  shows the project launcher (or opens the last project, when the launcher is set to do so)
 //   SuntaEditor <project folder> opens the project at once
 //   SuntaEditor --launcher       always shows the project launcher
+//   SuntaEditor --build-game <project folder> [--development]
+//                                builds the game of the project without any window, exit code 0 = built
 namespace
 {
+
+constexpr const char* BuildGameArgument   = "--build-game";
+constexpr const char* DevelopmentArgument = "--development";
 
 constexpr unsigned int LauncherWindowWidth  = 1100;
 constexpr unsigned int LauncherWindowHeight = 680;
@@ -22,7 +28,9 @@ constexpr unsigned int LauncherWindowHeight = 680;
 struct LaunchOptions
 {
 	std::filesystem::path projectDirectory;
-	bool                  forceLauncher = false;
+	bool                  forceLauncher    = false;
+	bool                  buildGame        = false;
+	bool                  developmentBuild = false;
 };
 
 LaunchOptions ParseLaunchOptions(const std::vector<std::string>& arguments)
@@ -34,6 +42,10 @@ LaunchOptions ParseLaunchOptions(const std::vector<std::string>& arguments)
 	{
 		if (arguments[index] == Sunta::ProcessLauncher::LauncherArgument)
 			options.forceLauncher = true;
+		else if (arguments[index] == BuildGameArgument)
+			options.buildGame = true;
+		else if (arguments[index] == DevelopmentArgument)
+			options.developmentBuild = true;
 		else
 			options.projectDirectory = std::filesystem::u8path(arguments[index]);
 	}
@@ -96,6 +108,10 @@ void RunProjectLauncher()
 int main(int argc, char** argv)
 {
 	const LaunchOptions options = ParseLaunchOptions(Sunta::ProcessLauncher::GetCommandLineArguments(argc, argv));
+
+	if (options.buildGame)
+		return Sunta::HeadlessGameBuild::Run(options.projectDirectory, options.developmentBuild);
+
 	const std::filesystem::path projectToOpen = FindProjectToOpen(options);
 
 	if (projectToOpen.empty())

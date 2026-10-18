@@ -16,6 +16,7 @@ namespace GameConfigKeys
 	constexpr const char* WindowWidth  = "window_width";
 	constexpr const char* WindowHeight = "window_height";
 	constexpr const char* WindowIcon   = "window_icon";
+	constexpr const char* DeveloperMode = "developer_mode";
 }
 
 bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
@@ -40,6 +41,7 @@ bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
 		loadedConfig.windowWidth  = configJson.value(GameConfigKeys::WindowWidth,  loadedConfig.windowWidth);
 		loadedConfig.windowHeight = configJson.value(GameConfigKeys::WindowHeight, loadedConfig.windowHeight);
 		loadedConfig.windowIcon   = configJson.value(GameConfigKeys::WindowIcon,   loadedConfig.windowIcon);
+		loadedConfig.developerMode = configJson.value(GameConfigKeys::DeveloperMode, loadedConfig.developerMode);
 
 		outConfig = loadedConfig;
 		return true;
@@ -54,7 +56,12 @@ bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
 
 bool GameConfig::TrySave(const std::string& virtualPath, const GameConfig& config)
 {
-	const std::string physicalPath = VirtualFileSystem::Resolve(virtualPath);
+	return TrySaveToFile(VirtualFileSystem::Resolve(virtualPath), config);
+}
+
+bool GameConfig::TrySaveToFile(const std::filesystem::path& filePath, const GameConfig& config)
+{
+	const std::string physicalPath = filePath.string();
 
 	// ordered_json keeps the keys in the order they are added, so the file stays readable
 	nlohmann::ordered_json configJson;
@@ -63,6 +70,10 @@ bool GameConfig::TrySave(const std::string& virtualPath, const GameConfig& confi
 	configJson[GameConfigKeys::WindowWidth]  = config.windowWidth;
 	configJson[GameConfigKeys::WindowHeight] = config.windowHeight;
 	configJson[GameConfigKeys::WindowIcon]   = config.windowIcon;
+
+	// A normal project never has this key, so a shipped game can't get a console by accident
+	if (config.developerMode)
+		configJson[GameConfigKeys::DeveloperMode] = true;
 
 	std::ofstream configFile(physicalPath);
 	if (!configFile.is_open())

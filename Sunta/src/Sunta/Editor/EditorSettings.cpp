@@ -22,7 +22,7 @@ namespace Keys
 {
 	constexpr const char* RecentProjects          = "recent_projects";
 	constexpr const char* OpenLastProjectOnStart  = "open_last_project_on_startup";
-	constexpr const char* BuildConfiguration      = "build_configuration";
+	constexpr const char* DevelopmentBuild        = "development_build";
 	constexpr const char* CameraSpeed             = "camera_speed";
 }
 
@@ -30,7 +30,7 @@ struct SettingsData
 {
 	std::vector<std::string> recentProjects;   // UTF-8, newest first
 	bool        openLastProjectOnStartup = false;
-	std::string buildConfiguration;
+	bool        developmentBuild = false;
 	float       cameraSpeed = 0.0f;
 };
 
@@ -89,7 +89,7 @@ SettingsData LoadSettings()
 
 		data.recentProjects          = json.value(Keys::RecentProjects, std::vector<std::string>{});
 		data.openLastProjectOnStartup = json.value(Keys::OpenLastProjectOnStart, false);
-		data.buildConfiguration      = json.value(Keys::BuildConfiguration, std::string());
+		data.developmentBuild        = json.value(Keys::DevelopmentBuild, false);
 		data.cameraSpeed             = json.value(Keys::CameraSpeed, 0.0f);
 	}
 	catch (const nlohmann::json::exception& error)
@@ -106,7 +106,7 @@ void SaveSettings(const SettingsData& data)
 	nlohmann::ordered_json json;
 	json[Keys::RecentProjects]         = data.recentProjects;
 	json[Keys::OpenLastProjectOnStart] = data.openLastProjectOnStartup;
-	json[Keys::BuildConfiguration]     = data.buildConfiguration;
+	json[Keys::DevelopmentBuild]       = data.developmentBuild;
 	json[Keys::CameraSpeed]            = data.cameraSpeed;
 
 	const fs::path settingsPath = GetSettingsFilePath();
@@ -177,15 +177,15 @@ void EditorSettings::SetOpenLastProjectOnStartup(bool shouldOpen)
 	SaveSettings(data);
 }
 
-std::string EditorSettings::GetBuildConfiguration()
+bool EditorSettings::IsDevelopmentBuild()
 {
-	return GetData().buildConfiguration;
+	return GetData().developmentBuild;
 }
 
-void EditorSettings::SetBuildConfiguration(const std::string& configurationName)
+void EditorSettings::SetDevelopmentBuild(bool isDevelopmentBuild)
 {
 	SettingsData& data = GetData();
-	data.buildConfiguration = configurationName;
+	data.developmentBuild = isDevelopmentBuild;
 	SaveSettings(data);
 }
 

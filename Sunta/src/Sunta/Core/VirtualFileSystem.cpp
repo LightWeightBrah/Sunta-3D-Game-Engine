@@ -8,6 +8,25 @@
 namespace Sunta
 {
 
+#if defined(SUNTA_DEVELOPMENT)
+
+namespace
+{
+
+// Only the programs compiled by CMake (<repository>/bin/...) may read the source tree,
+// a game built by the editor must never reach into the folders of the developer, even on the developer's own computer
+bool IsExecutableInBuildOutputFolder()
+{
+	const std::filesystem::path buildOutputDirectory = (std::filesystem::path(SUNTA_ROOT_DIR) / "bin").lexically_normal();
+	const std::filesystem::path relativePath         = VirtualFileSystem::GetExecutableDirectory().lexically_normal().lexically_relative(buildOutputDirectory);
+
+	return !relativePath.empty() && relativePath.begin()->string() != "..";
+}
+
+}
+
+#endif
+
 std::unordered_map<std::string, std::filesystem::path>& VirtualFileSystem::GetMounts()
 {
 	static std::unordered_map<std::string, std::filesystem::path> mounts;
@@ -23,7 +42,7 @@ void VirtualFileSystem::Init(AssetSource requestedSource, const std::filesystem:
 #if defined(SUNTA_DEVELOPMENT)
 	// Running from the IDE: the build folder has no "res" yet, so read from the source tree instead
 	const bool hasPackagedResources = std::filesystem::exists(GetPackagedResourcesDirectory());
-	if (requestedSource == AssetSource::PackagedNextToExecutable && !hasPackagedResources)
+	if (requestedSource == AssetSource::PackagedNextToExecutable && !hasPackagedResources && IsExecutableInBuildOutputFolder())
 		assetSource = AssetSource::SourceTree;
 #endif
 

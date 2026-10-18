@@ -5,6 +5,7 @@
 
 #include "OpenGLUtilities.h"
 #include "Renderer/RendererAPI.h"
+#include "Core/FatalError.h"
 #include "Core/Log.h"
 
 namespace Sunta
@@ -36,10 +37,7 @@ void OpenGLGraphicsContext::Init()
 	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initalize GLAD");
-		return;
-	}
+		FatalError::Report("Couldn't load OpenGL. The graphics card or its driver may be too old, try updating the graphics driver.");
 
 	SUNTA_ENGINE_LOG_INFO("OpenGL Version: {}", glGetString(GL_VERSION));
 

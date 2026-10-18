@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 
 #include "GLFWWindowImplementation.h"
+#include "Core/FatalError.h"
 #include "Core/Log.h"
 #include "Renderer/Renderer.h"
 #include "Events/EventBus.h"
@@ -36,10 +37,7 @@ GLFWWindowImplementation::~GLFWWindowImplementation()
 void GLFWWindowImplementation::Init()
 {
 	if (!glfwInit())
-	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to initialize GLFW");
-		return;
-	}
+		FatalError::Report("Couldn't start the window system (GLFW).");
 
 	GraphicsContext::Configure();
 
@@ -66,9 +64,13 @@ void GLFWWindowImplementation::Init()
 
 	if (!window)
 	{
-		SUNTA_ENGINE_LOG_ERROR("ERROR: Failed to create GLFW window");
+		const char* glfwErrorDescription = nullptr;
+		glfwGetError(&glfwErrorDescription);
+
+		const std::string details = glfwErrorDescription ? glfwErrorDescription : "unknown error";
+
 		glfwTerminate();
-		return;
+		FatalError::Report("Couldn't create the window. The graphics card or its driver probably doesn't support OpenGL 3.3, try updating the graphics driver.\n\nDetails: " + details);
 	}
 
 	SetDefaultIcon();

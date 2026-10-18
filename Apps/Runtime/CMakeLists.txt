@@ -15,6 +15,14 @@ add_executable(${PROJECT_NAME} ${RUNTIME_APP_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Sunta)
 
+# A Release game opens without a console window (its log goes to a file, see Log), Debug keeps the console
+set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
+
+if(MSVC)
+	# WIN32_EXECUTABLE makes the linker look for WinMain, this keeps the normal main()
+	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release>:/ENTRY:mainCRTStartup>)
+endif()
+
 # Only used when started from the IDE, a built game reads its own "res" folder
 target_compile_definitions(${PROJECT_NAME} PRIVATE "SUNTA_DEFAULT_PROJECT_DIR=R\"(${SUNTA_PROJECT_DIR})\"")
 

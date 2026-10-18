@@ -4,8 +4,8 @@ namespace Sunta
 {
 
 // "Project" menu and the "Project Settings" window of the editor:
-// name of the game, start scene, window size, icon, and building the game (Debug or Release)
-// Everything except the build configuration is stored in the game.config of the open project
+// name of the game, start scene, window size, icon, and building the game (with or without the development console)
+// Everything except the "Development build" choice is stored in the game.config of the open project
 class ProjectSettingsWindow
 {
 public:

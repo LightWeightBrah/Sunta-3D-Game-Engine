@@ -77,7 +77,7 @@ The engine includes a built-in editor designed to simplify scene creation and re
 #### Project Launcher, Settings and One-Click Game Build
 * **Project Launcher:** `SuntaEditor` starts with a window that lists recent projects and lets you create a new project or open an existing one, before the editor opens. A checkbox can skip it and open the last project at startup. `Project > Switch Project` returns to it.
 * **Project Settings:** game name, start scene, window size and game icon are edited in the editor (`Project > Project Settings`) and stored in the project's `game.config`.
-* **Build Game:** packages the project into a folder for players with one click, no compiler needed. The configuration (Debug or Release) is chosen from a dropdown, and the icon of the game is made from one PNG for the system you build on (`.exe` icon on Windows, `.icns` in an `.app` on macOS, the PNG itself on Linux).
+* **Build Game:** packages the project into a folder for players with one click, no compiler needed. The **Development build** checkbox makes a game that shows a console window with its log, and the icon of the game is made from one PNG for the system you build on (`.exe` icon on Windows, `.icns` in an `.app` on macOS, the PNG itself on Linux).
 
 ---
 
@@ -285,7 +285,7 @@ All of these fields can be edited in the editor (`Project > Project Settings`). 
 ---
 
 ## Building a Game
-In the editor open `Project > Project Settings`, choose the **Configuration** (Release or Debug) and click **Save and Build Game**. `Project > Build Game` builds with the last chosen configuration.
+In the editor open `Project > Project Settings` and click **Save and Build Game**. `Project > Build Game` builds with the last choice of the **Development build** checkbox.
 The editor needs no CMake and no compiler, it assembles a ready folder:
 ```text
 <project>/Build/<GameName>_Release/
@@ -293,9 +293,18 @@ The editor needs no CMake and no compiler, it assembles a ready folder:
   res/Sunta/            engine resources (without icons and images used only by the editor)
   res/Game/             project resources
 ```
-Zip this folder and send it to players. A Debug build goes to `<GameName>_Debug`. On macOS the game is packed as `<GameName>.app` (the executable and `res` are inside it, in `Contents/MacOS`), on Linux the executable has no extension.
+Zip this folder and send it to players. A development build goes to `<GameName>_Development`. On macOS the game is packed as `<GameName>.app` (the executable and `res` are inside it, in `Contents/MacOS`), on Linux the executable has no extension.
 
-**Debug and Release.** The game is a copy of the `SuntaRuntime` program compiled by CMake, so the editor can only build with a configuration that was compiled. The configuration of the editor itself is always available. To make the other one available, build its preset too (for example `cmake --preset x64-Debug` and `cmake --build --preset x64-Debug`, see "Building the Engine"). The editor finds it in the neighbouring `bin/` folder. A Debug game needs the compiler's debug runtime on the player's computer, so use Release to share a game.
+**Release and development builds.** The game is always a copy of the Release `SuntaRuntime` program compiled by CMake, so the Release configuration must be compiled. A Release editor has it already, a Debug editor needs the Release preset built too (for example `cmake --preset x64-Release` and `cmake --build --preset x64-Release`, see "Building the Engine"), the editor finds it in the neighbouring `bin/` folder. The **Development build** checkbox does not change the program, it only puts `"developer_mode": true` into the copy of `game.config` inside the built game (never into the config of your project), and the game then opens a console window with its log. The game for players has no console. Debug asserts exist only in the Debug configuration of the engine, a built game never has them.
+
+**Building from the command line.** The same build can run without any window, for scripts and CI:
+```bash
+SuntaEditor --build-game Projects/MyGame
+SuntaEditor --build-game Projects/MyGame --development
+```
+The folder is the project (the one with `res` inside). The exit code is `0` when the game was built and `1` when not, the reason is printed. The result is in `<project>/Build/` like with the menu, but the folder is not opened. The GitHub workflow does exactly this for `MyGame` on Windows, Linux and macOS and uploads the finished game as an artifact (Linux and macOS as `.tar.gz`, because a zip loses the executable flag).
+
+**Game log.** A game on Windows opens without a console window (unless it is a development build, see above). Everything it logs, including `print` from Lua scripts, goes to `<GameName>.log` next to the executable (the log of the previous run stays as `<GameName>.previous.log`), so ask players for this file when something goes wrong. If the folder of the game can't be written to (for example a game started straight from a zip file), the log goes to the temporary folder of the system instead, and the first lines of the log say where. Messages of `print` are blue in the console of a development game. When the game can't start at all (missing game files, a graphics card without OpenGL 3.3, no start scene) it shows a window with the reason instead of just not opening.
 
 **Game icon.** `Project Settings > Icon > Choose icon (PNG)...` is all you do: you give one PNG (square, at least 256x256, ideally 1024x1024) and the editor makes the icon for the system it runs on:
 * Windows: the icon is written into the `.exe` (sizes 16 to 256 px).

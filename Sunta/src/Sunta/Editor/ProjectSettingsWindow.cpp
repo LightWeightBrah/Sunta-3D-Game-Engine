@@ -40,15 +40,13 @@ const ImVec4 ErrorColor   = ImVec4(1.0f, 0.45f, 0.4f, 1.0f);
 const ImVec4 SuccessColor = ImVec4(0.5f, 0.9f, 0.5f, 1.0f);
 const ImVec4 WarningColor = ImVec4(1.0f, 0.8f, 0.4f, 1.0f);
 
-const std::vector<BuildConfiguration> AllConfigurations = { BuildConfiguration::Release, BuildConfiguration::Debug };
-
 // Everything the window remembers between frames
 struct WindowState
 {
-	bool               isOpen        = false;
-	bool               needsReload   = true;
-	GameConfig         config;
-	BuildConfiguration configuration = BuildConfiguration::Release;
+	bool       isOpen           = false;
+	bool       needsReload      = true;
+	GameConfig config;
+	bool       developmentBuild = false;
 
 	std::string statusMessage;
 	ImVec4      statusColor = SuccessColor;
@@ -113,24 +111,13 @@ void RefreshIconInfo()
 	LoadIconPreview(hasProjectIcon ? iconPath.string() : EngineIconVirtualPath);
 }
 
-// Release is the version to share, but when only the configuration of the editor was compiled that one is chosen
-BuildConfiguration ChooseInitialConfiguration()
-{
-	const std::string savedName = EditorSettings::GetBuildConfiguration();
-
-	if (!savedName.empty())
-		return GameBuilder::ParseConfiguration(savedName, BuildConfiguration::Release);
-
-	return GameBuilder::IsConfigurationAvailable(BuildConfiguration::Release) ? BuildConfiguration::Release : GameBuilder::GetEditorConfiguration();
-}
-
 void Reload()
 {
 	state.config = GameConfig();
 	GameConfig::TryLoad(GameConfig::DefaultPath, state.config);
 
-	state.configuration = ChooseInitialConfiguration();
-	state.needsReload   = false;
+	state.developmentBuild = EditorSettings::IsDevelopmentBuild();
+	state.needsReload      = false;
 
 	RefreshIconInfo();
 }
@@ -153,30 +140,18 @@ bool Save()
 	return isSaved;
 }
 
-void SetConfiguration(BuildConfiguration configuration)
+void SetDevelopmentBuild(bool isDevelopmentBuild)
 {
-	state.configuration = configuration;
-	EditorSettings::SetBuildConfiguration(GameBuilder::GetConfigurationName(configuration));
+	state.developmentBuild = isDevelopmentBuild;
+	EditorSettings::SetDevelopmentBuild(isDevelopmentBuild);
 }
 
-void Build(BuildConfiguration configuration)
+void Build(bool isDevelopmentBuild)
 {
-	if (GameBuilder::BuildGame(configuration))
-		SetStatus(std::string("Build finished (") + GameBuilder::GetConfigurationName(configuration) + "), the folder was opened", SuccessColor);
+	if (GameBuilder::BuildGame(isDevelopmentBuild))
+		SetStatus(std::string("Build finished (") + (isDevelopmentBuild ? "development build" : "release build") + "), the folder was opened", SuccessColor);
 	else
 		SetStatus("Build failed, see the log for the reason", ErrorColor);
-}
-
-std::string GetConfigurationLabel(BuildConfiguration configuration)
-{
-	std::string label = GameBuilder::GetConfigurationName(configuration);
-
-	if (configuration == GameBuilder::GetEditorConfiguration())
-		label += "  (the same as this editor)";
-	else if (!GameBuilder::IsConfigurationAvailable(configuration))
-		label += "  (not compiled yet)";
-
-	return label;
 }
 
 // Copies the chosen PNG to the project (always the same file, game.config points to it)
@@ -320,49 +295,35 @@ void DrawIconSection()
 	ImGui::TextDisabled("Windows may show the old icon for a while: it keeps icons in a cache.");
 }
 
-void DrawConfigurationCombo()
+void DrawDevelopmentBuildCheckbox()
 {
-	const std::string selectedLabel = GetConfigurationLabel(state.configuration);
+	bool isDevelopmentBuild = state.developmentBuild;
 
-	if (!ImGui::BeginCombo("Configuration", selectedLabel.c_str()))
-		return;
+	if (ImGui::Checkbox("Development build", &isDevelopmentBuild))
+		SetDevelopmentBuild(isDevelopmentBuild);
 
-	for (BuildConfiguration configuration : AllConfigurations)
-	{
-		const bool isSelected = (configuration == state.configuration);
-
-		if (ImGui::Selectable(GetConfigurationLabel(configuration).c_str(), isSelected))
-			SetConfiguration(configuration);
-
-		if (isSelected)
-			ImGui::SetItemDefaultFocus();
-	}
-
-	ImGui::EndCombo();
+	TextWrapScope wrapText;
+	ImGui::TextDisabled("The game opens a console window with its log (including print from scripts). Leave it off for the version you give to players.");
 }
 
 void DrawBuildHint(bool isAvailable)
 {
+	if (isAvailable)
+		return;
+
 	TextWrapScope wrapText;
 
-	if (!isAvailable)
-	{
-		ImGui::TextColored(WarningColor, "The game executable for %s was not compiled yet.", GameBuilder::GetConfigurationName(state.configuration));
-		ImGui::TextDisabled("Compile the SuntaRuntime target in this configuration (see README), then try again.");
-	}
-	else if (state.configuration == BuildConfiguration::Debug)
-	{
-		ImGui::TextDisabled("Debug is slow and needs the debug runtime of the compiler. Use Release for the version you share.");
-	}
+	ImGui::TextColored(WarningColor, "The Release game executable was not compiled yet.");
+	ImGui::TextDisabled("Compile the SuntaRuntime target in the Release configuration (see README), then try again.");
 }
 
 void DrawBuildSection()
 {
 	DrawSectionTitle("Build");
 
-	DrawConfigurationCombo();
+	DrawDevelopmentBuildCheckbox();
 
-	const bool isAvailable = GameBuilder::IsConfigurationAvailable(state.configuration);
+	const bool isAvailable = GameBuilder::IsRuntimeAvailable();
 	DrawBuildHint(isAvailable);
 
 	if (ImGui::Button("Save"))
@@ -376,8 +337,8 @@ void DrawBuildSection()
 		// The build copies the scene files from the disk, so unsaved changes of the scene would not be in the game
 		if (Save())
 		{
-			const BuildConfiguration configuration = state.configuration;
-			UnsavedChangesDialog::RunAfterAsking([configuration]() { Build(configuration); });
+			const bool isDevelopmentBuild = state.developmentBuild;
+			UnsavedChangesDialog::RunAfterAsking([isDevelopmentBuild]() { Build(isDevelopmentBuild); });
 		}
 	}
 	ImGui::EndDisabled();
@@ -392,11 +353,11 @@ void ProjectSettingsWindow::DrawProjectMenuItems()
 
 	if (ImGui::MenuItem("Build Game"))
 	{
-		// The window shows why a build can't be done (e.g. the configuration is not compiled)
-		const BuildConfiguration configuration = ChooseInitialConfiguration();
+		// The window shows why a build can't be done (e.g. the Release game executable is not compiled)
+		const bool isDevelopmentBuild = EditorSettings::IsDevelopmentBuild();
 
-		if (GameBuilder::IsConfigurationAvailable(configuration))
-			UnsavedChangesDialog::RunAfterAsking([configuration]() { Build(configuration); });
+		if (GameBuilder::IsRuntimeAvailable())
+			UnsavedChangesDialog::RunAfterAsking([isDevelopmentBuild]() { Build(isDevelopmentBuild); });
 		else
 			Open();
 	}

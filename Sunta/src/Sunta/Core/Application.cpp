@@ -6,6 +6,7 @@
 #include "Renderer/RendererAPI.h"
 #include "Renderer/DebugRenderer.h"
 #include "EngineTime.h"
+#include "FatalError.h"
 #include "InputManager.h"
 #include "Log.h"
 #include "Events/EventBus.h"
@@ -65,18 +66,28 @@ void Application::Run()
 
 void Application::Init()
 {
-	Log::Init();
+	Log::Init(specification.logFilePath);
 	VirtualFileSystem::Init(specification.assetSource, specification.projectDirectory);
+
+	// Early, so a fatal error can already show its message window
+	Platform::Init();
 
 	const std::string gameResourcesDirectory = VirtualFileSystem::Resolve("@game");
 	if (!std::filesystem::exists(gameResourcesDirectory))
+	{
 		SUNTA_ENGINE_LOG_ERROR("Application: Game resources folder '{0}' doesn't exist", gameResourcesDirectory);
 
+		if (specification.assetSource == AssetSource::PackagedNextToExecutable)
+			FatalError::Report("The game files are missing: the folder '" + gameResourcesDirectory + "' doesn't exist.\nUnpack the whole game folder (not only the .exe) before starting it.");
+	}
+
 	if (specification.loadGameConfig)
+	{
 		LoadGameConfig();
+		ApplyDeveloperMode();
+	}
 
 	ScriptingEngine::Init();
-	Platform::Init();
 	InputManager::Init();
 
 	RendererAPI::SetAPI(RendererAPI::API::OpenGL);
@@ -108,6 +119,16 @@ void Application::LoadGameConfig()
 	specification.windowTitle  = gameConfig.name;
 	specification.windowWidth  = gameConfig.windowWidth;
 	specification.windowHeight = gameConfig.windowHeight;
+}
+
+// A development build (see GameBuilder) shows its log in a console window, other builds stay clean
+void Application::ApplyDeveloperMode()
+{
+	if (!gameConfig.developerMode)
+		return;
+
+	Terminal::OpenConsole();
+	SUNTA_ENGINE_LOG_INFO("Application: Development build, the log is shown in the console too");
 }
 
 void Application::ApplyGameWindowIcon()

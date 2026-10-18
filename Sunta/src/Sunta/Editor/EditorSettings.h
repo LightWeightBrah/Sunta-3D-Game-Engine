@@ -23,9 +23,9 @@ public:
 	static bool ShouldOpenLastProjectOnStartup();
 	static void SetOpenLastProjectOnStartup(bool shouldOpen);
 
-	// "Debug" or "Release", empty when the user never chose
-	static std::string GetBuildConfiguration();
-	static void SetBuildConfiguration(const std::string& configurationName);
+	// "Development build" checkbox of Project Settings: the built game shows a console and its log (see GameBuilder)
+	static bool IsDevelopmentBuild();
+	static void SetDevelopmentBuild(bool isDevelopmentBuild);
 
 	// Speed of the free camera in the editor (units per second), 0 when the user never changed it
 	static float GetCameraSpeed();

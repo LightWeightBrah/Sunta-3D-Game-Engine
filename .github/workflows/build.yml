@@ -16,10 +16,13 @@ jobs:
                 include:
                     - os: windows-latest
                       preset: x64-Release
+                      editor: SuntaEditor.exe
                     - os: ubuntu-latest
                       preset: linux-release
+                      editor: SuntaEditor
                     - os: macos-latest
                       preset: macos-release
+                      editor: SuntaEditor
 
         steps:
             - name: "Setup: Fetch Sources & Submodules"
@@ -51,6 +54,34 @@ jobs:
 
             - name: "Compilation: Build Editor & Runtime"
               run: cmake --build --preset ${{ matrix.preset }}
+
+            - name: "Game: Build the sample project (MyGame)"
+              shell: bash
+              run: ./bin/Release-*/${{ matrix.editor }} --build-game Projects/MyGame
+
+            # Zip files keep no "executable" flag, a tar archive does, so Linux and macOS players can just start the game
+            - name: "Game: Pack for Linux and macOS"
+              if: runner.os != 'Windows'
+              shell: bash
+              run: tar -czf MyGame-${{ matrix.os }}.tar.gz -C Projects/MyGame/Build .
+
+            - name: "Distribution: Upload the game (Linux, macOS)"
+              if: runner.os != 'Windows'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: MyGame-${{ matrix.os }}
+                  path: MyGame-${{ matrix.os }}.tar.gz
+                  if-no-files-found: error
+                  retention-days: 5
+
+            - name: "Distribution: Upload the game (Windows)"
+              if: runner.os == 'Windows'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: MyGame-${{ matrix.os }}
+                  path: Projects/MyGame/Build/
+                  if-no-files-found: error
+                  retention-days: 5
 
             - name: "Distribution: Upload Build Artifacts"
               uses: actions/upload-artifact@v4

@@ -16,9 +16,15 @@ public:
 	static void Shutdown();
 
 	static Platform& Get() { return *instance; }
+	static bool IsInitialized() { return instance != nullptr; }
 
 	virtual bool OpenInExplorer(const std::string& path) = 0;
 	virtual bool OpenFileExternally(const std::string& path) = 0;
+
+	// A window with the message and an OK button, for errors the user has to see (a game has no console window)
+	// Returns when the user closes it
+	virtual void ShowErrorMessage(const std::string& title, const std::string& message) = 0;
+
 	std::string OpenFileDialog(const std::string& filterName = "Supported Files", const std::vector<std::string>&extensions = {}, const std::string& defaultPath = "");
 	std::string SaveFileDialog(const std::string& filterName = "Supported Files", const std::vector<std::string>&extensions = {}, const std::string& defaultPath = "");
 	

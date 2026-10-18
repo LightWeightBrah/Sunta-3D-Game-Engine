@@ -3,8 +3,9 @@
 
 namespace Sunta {
 
-Logger::Logger(std::string&& name)
+Logger::Logger(std::string&& name, Terminal::Color infoColor)
 	: name(std::move(name))
+	, infoColor(infoColor)
 	, currentLevel(Level::INFO)
 {
 

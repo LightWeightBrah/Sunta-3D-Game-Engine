@@ -2,6 +2,7 @@
 #include "RuntimeLayer.h"
 
 #include "Core/Application.h"
+#include "Core/FatalError.h"
 #include "Core/InputManager.h"
 #include "Core/Log.h"
 #include "Core/VirtualFileSystem.h"
@@ -40,15 +41,12 @@ void RuntimeLayer::LoadStartScene()
 	const std::string& startScene = application.GetGameConfig().startScene;
 
 	if (startScene.empty())
-	{
-		SUNTA_ENGINE_LOG_ERROR("RuntimeLayer: 'start_scene' is not set in '{0}'", GameConfig::DefaultPath);
-		return;
-	}
+		FatalError::Report("The game has no start scene: 'start_scene' is not set in '" + std::string(GameConfig::DefaultPath) + "'.");
 
 	const std::string startScenePath = VirtualFileSystem::Resolve(startScene);
 
 	if (!SceneSerializer::Deserialize(startScenePath, application.GetScene()))
-		SUNTA_ENGINE_LOG_ERROR("RuntimeLayer: Failed to load the start scene '{0}'", startScenePath);
+		FatalError::Report("Couldn't load the start scene '" + startScenePath + "'.");
 }
 
 }

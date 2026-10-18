@@ -33,6 +33,10 @@ struct ApplicationSpecification
 	// Shaders, textures, materials, meshes and models are loaded once, by the program that draws them
 	// A program with nothing to draw (the project launcher) turns this off and starts much faster
 	bool loadEngineResources = true;
+
+	// Every log line is also written to this file (empty = only the console)
+	// A shipped game sets it, because on Windows it has no console window
+	std::filesystem::path logFilePath;
 };
 
 // The engine core: window, renderer, scene and the main loop
@@ -79,6 +83,7 @@ private:
 
 	void Init();
 	void LoadGameConfig();
+	void ApplyDeveloperMode();
 	void ApplyGameWindowIcon();
 	void SubscribeToWindowEvents();
 	void RequestClose();
