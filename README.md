@@ -201,7 +201,11 @@ MyGame/
     game.config      game settings (edited in Project Settings)
     Scenes/          scenes (.scene)
     Scripts/         Lua scripts
-    Materials/  Models/  Textures/  Shaders/  Fonts/
+    Materials/       materials
+    Models/          3D models
+    Textures/        textures and images
+    Shaders/         shaders
+    Fonts/           fonts
     App/             game icon (window_icon.png)
   Build/             where the built game goes
 ```
@@ -242,22 +246,17 @@ Sunta/                    the engine (static library) and engine resources (Sunt
     Editor/               editor code (separate library, SuntaEditorModule)
     Runtime/              layer that runs a game
     Platform/             Windows, Linux, Mac, GLFW, OpenGL
-Apps/Editor/              SuntaEditor, the editor program
-Apps/Runtime/             SuntaRuntime, the game template
-Projects/MyGame/          sample game project
+Apps/
+  Editor/                 SuntaEditor, the editor program
+  Runtime/                SuntaRuntime, the game template
+Projects/
+  MyGame/                 sample game project
 cmake/                    CMake helpers (program icons)
 Dependencies/             third-party libraries
-docs/media/               images and GIFs of this README
+docs/
+  media/                  images and GIFs of this README
 ```
 CMake targets: `Sunta` (engine core), `SuntaEditorModule` (editor code), `SuntaEditor` and `SuntaRuntime`.
-
----
-
-## Roadmap
-* Testing on real Linux and macOS machines
-* Format versions for scenes and project files
-* Smaller games: no ImGui in the game executable
-* A project template with a ready player
 
 ---
 
