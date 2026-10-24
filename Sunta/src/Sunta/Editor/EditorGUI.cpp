@@ -35,6 +35,7 @@
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSettings.h"
 #include "Physics/CollisionSystem.h"
+#include "Gameplay/CharacterControllerSystem.h"
 
 namespace Sunta
 {
@@ -876,6 +877,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Physics Body",
 				[&]() { return entityManager.GetComponent<PhysicsBodyComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<PhysicsBodyComponent>(inspectedEntity); }
+			},
+
+			{
+				"Character Controller",
+				[&]() { return entityManager.GetComponent<CharacterControllerComponent>(inspectedEntity) != nullptr; },
+				[&]() { CharacterControllerSystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
 			}
 		};
 

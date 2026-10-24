@@ -30,6 +30,7 @@
 #include "Physics/CollisionSystem.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/PhysicsSystem.h"
+#include "Gameplay/CharacterControllerSystem.h"
 
 namespace Sunta
 {
@@ -71,6 +72,12 @@ namespace
 		const float farPlane  = glm::max(camera.farPlane, nearPlane + CameraComponent::MinNearPlane);
 
 		return glm::perspective(glm::radians(GetClampedFieldOfView(camera)), aspectRatio, nearPlane, farPlane);
+	}
+
+	// The direction a view looks in. In a view matrix the third row points BACKWARDS, so forward is its opposite
+	glm::vec3 GetViewForward(const glm::mat4& viewMatrix)
+	{
+		return -glm::vec3(viewMatrix[0][2], viewMatrix[1][2], viewMatrix[2][2]);
 	}
 
 	// Corners of the frustum in the order the box wireframe expects them:
@@ -246,6 +253,7 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
+		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, GetViewForward(activeCameraData.viewMatrix));
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
 
@@ -533,6 +541,7 @@ glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, floa
 void Scene::BeginPlay()
 {
 	CollisionSystem::Reset();
+	CharacterControllerSystem::ReportProblemsBeforePlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

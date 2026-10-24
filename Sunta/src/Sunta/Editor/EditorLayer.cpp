@@ -213,6 +213,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	CameraComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
 	PhysicsBodyComponent::RegisterToInspector();
+	CharacterControllerComponent::RegisterToInspector();
 }
 
 }

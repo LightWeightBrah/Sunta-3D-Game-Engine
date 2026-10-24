@@ -31,6 +31,7 @@ struct ComponentHandle
 
 using TransformHandle   = ComponentHandle<TransformComponent>;
 using PhysicsBodyHandle = ComponentHandle<PhysicsBodyComponent>;
+using CharacterControllerHandle = ComponentHandle<CharacterControllerComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -126,6 +127,7 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterVector3(lua);
 	RegisterTransformComponent(lua);
 	RegisterPhysicsBodyComponent(lua);
+	RegisterCharacterControllerComponent(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -239,6 +241,24 @@ void LuaBindings::RegisterPhysicsBodyComponent(sol::state& lua)
 	);
 }
 
+void LuaBindings::RegisterCharacterControllerComponent(sol::state& lua)
+{
+	// Usage in Lua: this.characterController.walkSpeed = 3
+	// To drive a character from a script (e.g. an enemy): this.characterController.isPlayerControlled = false,
+	// then every frame set moveDirection (a vec3 in the world, its length 0..1 is how much of the speed is used) and wantsToRun
+	lua.new_usertype<CharacterControllerHandle>("CharacterController", sol::no_constructor,
+
+		"walkSpeed",     MemberProperty(&CharacterControllerComponent::walkSpeed,     0.0f),
+		"runSpeed",      MemberProperty(&CharacterControllerComponent::runSpeed,      0.0f),
+		"acceleration",  MemberProperty(&CharacterControllerComponent::acceleration,  0.0f),
+		"turnSpeed",     MemberProperty(&CharacterControllerComponent::turnSpeed,     0.0f),
+
+		"isPlayerControlled", MemberProperty(&CharacterControllerComponent::isPlayerControlled, false),
+		"moveDirection",       MemberProperty(&CharacterControllerComponent::moveDirection,       glm::vec3(0.0f)),
+		"wantsToRun",          MemberProperty(&CharacterControllerComponent::wantsToRun,          false)
+	);
+}
+
 void LuaBindings::RegisterEntity(sol::state& lua)
 {
 	lua.new_usertype<Entity>("Entity", sol::no_constructor,
@@ -260,7 +280,8 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 
 		// nil when the entity doesn't have the component, so scripts can check: if body then ... end
 		"transform",   ComponentHandleProperty<TransformComponent>(),
-		"physicsBody", ComponentHandleProperty<PhysicsBodyComponent>()
+		"physicsBody", ComponentHandleProperty<PhysicsBodyComponent>(),
+		"characterController", ComponentHandleProperty<CharacterControllerComponent>()
 	);
 }
 

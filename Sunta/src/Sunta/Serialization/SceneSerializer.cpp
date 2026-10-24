@@ -34,6 +34,7 @@ namespace SceneKeys
 	constexpr const char* PointLightComponent	    = "point_light";
 	constexpr const char* SpotLightComponent        = "spot_light";
 	constexpr const char* CameraComponent           = "camera";
+	constexpr const char* CharacterControllerComponent = "character_controller";
 
 	constexpr const char* Name                      = "name";
 	constexpr const char* Position                  = "position";
@@ -81,6 +82,13 @@ namespace SceneKeys
 	constexpr const char* NearPlane                 = "near_plane";
 	constexpr const char* FarPlane                  = "far_plane";
 	constexpr const char* IsActive                  = "is_active";
+
+	constexpr const char* WalkSpeed                 = "walk_speed";
+	constexpr const char* RunSpeed                  = "run_speed";
+	constexpr const char* Acceleration              = "acceleration";
+	constexpr const char* TurnSpeed                 = "turn_speed";
+	constexpr const char* FacingOffsetDegrees       = "facing_offset_degrees";
+	constexpr const char* IsPlayerControlled        = "is_player_controlled";
 
 }
 
@@ -281,6 +289,19 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::NearPlane,   camera->nearPlane   },
 				{ SceneKeys::FarPlane,    camera->farPlane    },
 				{ SceneKeys::IsActive,    camera->isActive    }
+			};
+		}
+
+		if (auto* characterController = entityManager.GetComponent<CharacterControllerComponent>(i))
+		{
+			entityJson[SceneKeys::CharacterControllerComponent] =
+			{
+				{ SceneKeys::WalkSpeed,           characterController->walkSpeed           },
+				{ SceneKeys::RunSpeed,            characterController->runSpeed            },
+				{ SceneKeys::Acceleration,        characterController->acceleration        },
+				{ SceneKeys::TurnSpeed,           characterController->turnSpeed           },
+				{ SceneKeys::FacingOffsetDegrees, characterController->facingOffsetDegrees },
+				{ SceneKeys::IsPlayerControlled,  characterController->isPlayerControlled  }
 			};
 		}
 
@@ -521,6 +542,20 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			camera.nearPlane   = cameraData.value(SceneKeys::NearPlane,   camera.nearPlane);
 			camera.farPlane    = cameraData.value(SceneKeys::FarPlane,    camera.farPlane);
 			camera.isActive    = cameraData.value(SceneKeys::IsActive,    camera.isActive);
+		}
+
+		if (entityJson.contains(SceneKeys::CharacterControllerComponent))
+		{
+			const auto& controllerData = entityJson[SceneKeys::CharacterControllerComponent];
+			auto& controller = entityManager.AddComponent<CharacterControllerComponent>(entity);
+
+			// A missing key keeps the default written in CharacterControllerComponent.h
+			controller.walkSpeed            = controllerData.value(SceneKeys::WalkSpeed,           controller.walkSpeed);
+			controller.runSpeed             = controllerData.value(SceneKeys::RunSpeed,            controller.runSpeed);
+			controller.acceleration         = controllerData.value(SceneKeys::Acceleration,        controller.acceleration);
+			controller.turnSpeed            = controllerData.value(SceneKeys::TurnSpeed,           controller.turnSpeed);
+			controller.facingOffsetDegrees  = controllerData.value(SceneKeys::FacingOffsetDegrees, controller.facingOffsetDegrees);
+			controller.isPlayerControlled   = controllerData.value(SceneKeys::IsPlayerControlled,  controller.isPlayerControlled);
 		}
 
 	}
