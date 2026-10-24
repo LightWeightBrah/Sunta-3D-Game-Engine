@@ -152,6 +152,8 @@ void Application::LoadGameConfig()
 	specification.windowHeight = gameConfig.windowHeight;
 	specification.fullscreen   = gameConfig.fullscreen;
 	specification.vsync        = gameConfig.vsync;
+
+	CollisionSettings::SetActive(gameConfig.collisionSettings);
 }
 
 // A development build (see GameBuilder) shows its log in a console window, other builds stay clean

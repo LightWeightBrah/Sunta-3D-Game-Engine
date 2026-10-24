@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Log.h"
+#include "Serialization/CollisionSettingsSerializer.h"
 #include "VirtualFileSystem.h"
 
 namespace Sunta
@@ -46,6 +47,7 @@ bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
 		loadedConfig.fullscreen   = configJson.value(GameConfigKeys::Fullscreen,   loadedConfig.fullscreen);
 		loadedConfig.vsync        = configJson.value(GameConfigKeys::VSync,        loadedConfig.vsync);
 		loadedConfig.developerMode = configJson.value(GameConfigKeys::DeveloperMode, loadedConfig.developerMode);
+		loadedConfig.collisionSettings = CollisionSettingsSerializer::Deserialize(configJson, loadedConfig.collisionSettings);
 
 		outConfig = loadedConfig;
 		return true;
@@ -76,6 +78,7 @@ bool GameConfig::TrySaveToFile(const std::filesystem::path& filePath, const Game
 	configJson[GameConfigKeys::WindowIcon]   = config.windowIcon;
 	configJson[GameConfigKeys::Fullscreen]   = config.fullscreen;
 	configJson[GameConfigKeys::VSync]        = config.vsync;
+	CollisionSettingsSerializer::Serialize(configJson, config.collisionSettings);
 
 	// A normal project never has this key, so a shipped game can't get a console by accident
 	if (config.developerMode)

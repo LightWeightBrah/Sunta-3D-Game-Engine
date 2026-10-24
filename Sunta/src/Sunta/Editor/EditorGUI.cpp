@@ -25,6 +25,7 @@
 #include "Serialization/SceneSerializer.h"
 #include "Utilities/FileSystemUtilities.h"
 #include "Core/VirtualFileSystem.h"
+#include "CollisionSettingsWindow.h"
 #include "ProjectSettingsWindow.h" 
 #include "SceneDocument.h"
 #include "UnsavedChangesDialog.h"
@@ -32,6 +33,7 @@
 #include "AssetTemplates.h"
 #include "ComponentDrawerFactory.h"
 #include "Renderer/DebugRenderer.h"
+#include "Physics/CollisionSettings.h"
 #include "Physics/CollisionSystem.h"
 
 namespace Sunta
@@ -392,6 +394,7 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 	ImGui::PopStyleColor(2);
 	ProjectSettingsWindow::Draw();
+	CollisionSettingsWindow::Draw();
 	UnsavedChangesDialog::Draw();
 }
 
@@ -2128,6 +2131,32 @@ bool EditorGUI::DrawPropertyWidget(const PropertyDefinition& property, void* pro
 	case PropertyDataType::String:
 		changed = ImGui::InputText(property.label.c_str(), (std::string*)propertyData);
 		break;
+	case PropertyDataType::CollisionLayer:
+	{
+		auto* layer = static_cast<CollisionLayer*>(propertyData);
+		const CollisionLayerSet& projectLayers = CollisionSettings::GetActive().GetLayers();
+
+		if (ImGui::BeginCombo(property.label.c_str(), projectLayers.GetName(*layer).c_str()))
+		{
+			for (CollisionLayer projectLayer : projectLayers.GetLayers())
+			{
+				const bool isSelected = (*layer == projectLayer);
+
+				if (ImGui::Selectable(projectLayers.GetName(projectLayer).c_str(), isSelected))
+				{
+					*layer = projectLayer;
+					changed = true;
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		break;
+	}
 	case PropertyDataType::AssetPath:
 	{
 		std::string& currentPath = *(std::string*)propertyData;

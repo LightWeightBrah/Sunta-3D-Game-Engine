@@ -52,7 +52,6 @@ namespace SceneKeys
 	constexpr const char* HalfExtents               = "half_extents";
 	constexpr const char* IsTrigger                 = "is_trigger";
 	constexpr const char* Layer                     = "layer";
-	constexpr const char* CollidesWith              = "collides_with";
 
 	constexpr const char* IsKinematic               = "is_kinematic";
 	constexpr const char* UseGravity                = "use_gravity";
@@ -223,8 +222,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::LocalOffset,       SerializeVec3(boxCollider->localOffset) },
 				{ SceneKeys::HalfExtents,       SerializeVec3(boxCollider->halfExtents) },
 				{ SceneKeys::IsTrigger,                       boxCollider->isTrigger    },
-				{ SceneKeys::Layer, static_cast<unsigned int>(boxCollider->layer)       },
-				{ SceneKeys::CollidesWith,                    boxCollider->collidesWith }
+				{ SceneKeys::Layer, static_cast<unsigned int>(boxCollider->layer)       }
 			};
 		}
 
@@ -449,8 +447,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			boxColliderComponent.showGizmos   = boxColliderData.value(SceneKeys::ShowGizmos, false);
 			boxColliderComponent.isTrigger    = boxColliderData.value(SceneKeys::IsTrigger, false);
-			boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(CollisionLayer::Environment)));
-			boxColliderComponent.collidesWith = boxColliderData.value(SceneKeys::CollidesWith, boxColliderComponent.collidesWith);
+			boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(DefaultCollisionLayer)));
 		}
 
 		if (entityJson.contains(SceneKeys::PhysicsBodyComponent))

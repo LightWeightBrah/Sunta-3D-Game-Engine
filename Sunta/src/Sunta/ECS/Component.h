@@ -399,8 +399,8 @@ struct BoxColliderComponent
 
 	bool isTrigger = false;
 
-	CollisionLayer layer        = CollisionLayer::Environment;
-	CollisionMask  collidesWith = MakeMask(CollisionLayer::Environment, CollisionLayer::Player, CollisionLayer::Enemy);
+	// Which layers this one collides with is decided by the project's collision rules (editor: Project > Collision Layers & Matrix...)
+	CollisionLayer layer = DefaultCollisionLayer;
 
 	OBB worldOBB;
 
@@ -411,7 +411,8 @@ struct BoxColliderComponent
 				ADD_PROPERTY(BoxColliderComponent, showGizmos,	 PropertyDataType::Bool),
 				ADD_PROPERTY(BoxColliderComponent, localOffset,	 PropertyDataType::Float3),
 				ADD_PROPERTY(BoxColliderComponent, halfExtents,	 PropertyDataType::Float3),
-				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool)
+				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool),
+				ADD_PROPERTY(BoxColliderComponent, layer,		 PropertyDataType::CollisionLayer)
 			});
 	}
 };

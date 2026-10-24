@@ -1,30 +1,51 @@
 #pragma once
 
+#include <limits>
+
 namespace Sunta
 {
 
-enum class CollisionLayer : unsigned int
+using CollisionMask = unsigned int;
+
+// A layer is ONE bit of a CollisionMask: the layer in slot 0 is bit 0, the layer in slot 1 is bit 1 and so on
+// (scene files store this value). Which slots are used and what the layers are called is decided by the project
+// (CollisionLayerSet, edited in the editor), so the engine code never refers to a layer by name
+enum class CollisionLayer : CollisionMask
 {
-	None = 0,
-
-	Environment  = 1u << 0, // static geometry: walls, floors, ceilings etc.
-	Player       = 1u << 1, // physical player body that blocks movement
-	Enemy        = 1u << 2, // physical enemy  body that blocks movement
-
-	PlayerHitbox = 1u << 3, // this DEALS damage e.g Player's sword 
-	EnemyHitbox  = 1u << 4, // this DEALS damage e.g Enemy's  sword 
-
-	Trigger      = 1u << 5  // general triggers (checkpoints, traps etc.)
+	None = 0
 };
 
-using CollisionMask = unsigned int;
+constexpr unsigned int MaxCollisionLayers = std::numeric_limits<CollisionMask>::digits;
+
+constexpr CollisionLayer LayerInSlot(unsigned int slot)
+{
+	return static_cast<CollisionLayer>(CollisionMask(1) << slot);
+}
+
+// Every new collider starts on it, a scene file without a layer gets it, and it can't be removed from the project
+constexpr CollisionLayer DefaultCollisionLayer = LayerInSlot(0);
 
 constexpr CollisionMask ToMask(CollisionLayer layer)
 {
 	return static_cast<CollisionMask>(layer);
 }
 
-// sums a lot of Layers in 1 MASK e.g MakeMask(CollisionLayer::Player, CollisionLayer::Enemy)
+// False for None and for a value with more than one bit, because that is not a single layer
+constexpr bool TryGetLayerSlot(CollisionLayer layer, unsigned int& outSlot)
+{
+	for (unsigned int slot = 0; slot < MaxCollisionLayers; slot++)
+	{
+		if (layer == LayerInSlot(slot))
+		{
+			outSlot = slot;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Sums a lot of layers in 1 mask, e.g. for a raycast: MakeMask(playerLayer, enemyLayer)
 template<typename... Layers>
 constexpr CollisionMask MakeMask(Layers... layers)
 {
@@ -37,13 +58,6 @@ constexpr bool MaskContainsLayer(CollisionMask mask, CollisionLayer layer)
 	return (mask & ToMask(layer)) != 0;
 }
 
-// True if Mask of ColliderA is inside Mask of ColliderB and vice versa
-// Collision/trigger between 2 objects works ONLY IF AT LEAST 1 collider Layer 
-// wants to react on another collider Layer
-constexpr bool LayersCanInteract(CollisionLayer layerA, CollisionMask maskA, 
-	CollisionLayer layerB, CollisionMask maskB)
-{
-	return MaskContainsLayer(maskB, layerA) || MaskContainsLayer(maskA, layerB);
-}
+// The names of the layers are in CollisionLayerSet.h, which layers collide with which is decided by CollisionSettings.h
 
 }

@@ -3,6 +3,7 @@
 
 #include <imgui/imgui.h>
 
+#include "CollisionSettingsWindow.h"
 #include "EditorGUI.h"
 #include "EditorGUIContext.h"
 #include "EditorSettings.h"
@@ -75,6 +76,9 @@ void EditorLayer::OnAttach()
 		application.GetScene().SetEditorCameraSpeed(savedCameraSpeed);
 
 	application.GetScene().SetScriptHotReloadEnabled(true);
+
+	// Play mode uses the collision rules of the project, even before the Collision Layers & Matrix window is opened
+	CollisionSettingsWindow::LoadProjectSettings();
 
 	StartScene::OpenInEditor(application.GetScene());
 

@@ -16,7 +16,8 @@ enum class PropertyDataType
 	Float3,
 	Color,
 	String,
-	AssetPath
+	AssetPath,
+	CollisionLayer
 };
 
 enum class AssetType

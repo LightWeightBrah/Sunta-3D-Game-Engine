@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CollisionSystem.h"
 #include "PhysicsSystem.h"
+#include "CollisionSettings.h"
 
 #include "ECS/EntityManager.h"
 #include "ECS/Component.h"
@@ -202,7 +203,7 @@ bool ShouldResolveAsSolid(const BoxColliderComponent& a, const BoxColliderCompon
 	if (a.isTrigger || b.isTrigger)
 		return false;
 
-	return LayersCanInteract(a.layer, a.collidesWith, b.layer, b.collidesWith);
+	return CollisionSettings::GetActive().CanCollide(a.layer, b.layer);
 }
 
 // If no physics body or isKinematic = unmovable object (wall etc.)
@@ -1147,8 +1148,7 @@ void CollisionSystem::DetectTriggerEvents(EntityManager& entityManager)
 	{
 		for (unsigned int j = i + 1; j < colliders.size(); j++)
 		{
-			bool layersCanInteract = LayersCanInteract(colliders[i].layer, colliders[i].collidesWith,
-				colliders[j].layer, colliders[j].collidesWith);
+			bool layersCanInteract = CollisionSettings::GetActive().CanCollide(colliders[i].layer, colliders[j].layer);
 
 			if (!layersCanInteract)
 				continue;

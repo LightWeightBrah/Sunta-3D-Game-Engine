@@ -2,6 +2,8 @@
 #include <filesystem>
 #include <string>
 
+#include "Sunta/Physics/CollisionSettings.h"
+
 namespace Sunta
 {
 
@@ -18,6 +20,10 @@ struct GameConfig
 	std::string  windowIcon   = "@game/App/window_icon.png"; // optional: the engine icon is used if the file doesn't exist
 	bool         fullscreen   = false;         // the game covers the whole main screen (the window size above is used when it is off)
 	bool         vsync        = true;          // a frame is shown when the screen refreshes: no tearing, no wasted work (see Window::SetVSync)
+
+	// Which collision layers the project has and which of them collide (edited in the editor: Project > Collision Layers & Matrix...),
+	// the defaults are used when the file has none
+	CollisionSettings collisionSettings;
 
 	// Set only in the copy of the config inside a built development game (see GameBuilder), never in the project itself:
 	// the game opens a console window, shows its log there and reloads changed scripts. Written to the file only when true

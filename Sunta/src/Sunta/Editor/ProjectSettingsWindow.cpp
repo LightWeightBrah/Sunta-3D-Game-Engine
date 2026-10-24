@@ -3,6 +3,7 @@
 
 #include <imgui/imgui.h>
 
+#include "CollisionSettingsWindow.h"
 #include "EditorSettings.h"
 #include "ExecutableIcon.h"
 #include "GameBuildJob.h"
@@ -15,6 +16,7 @@
 #include "Core/Platform.h"
 #include "Core/ResourceManager.h"
 #include "Core/VirtualFileSystem.h"
+#include "Physics/CollisionSettings.h"
 #include "Renderer/Texture.h"
 
 namespace Sunta
@@ -134,6 +136,9 @@ void Open()
 
 bool Save()
 {
+	// The Collision Layers & Matrix window saves its own changes, so the copy of the config held here may be older
+	state.config.collisionSettings = CollisionSettings::GetActive();
+
 	const bool isSaved = GameConfig::TrySave(GameConfig::DefaultPath, state.config);
 
 	if (isSaved)
@@ -420,6 +425,8 @@ void ProjectSettingsWindow::DrawProjectMenuItems()
 {
 	if (ImGui::MenuItem("Project Settings..."))
 		Open();
+
+	CollisionSettingsWindow::DrawMenuItem();
 
 	if (ImGui::MenuItem("Build Game", nullptr, false, !buildJob.IsBuilding()))
 	{
