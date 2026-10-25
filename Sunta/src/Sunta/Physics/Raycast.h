@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>
 #include <limits>
 #include <glm/glm.hpp>
 
@@ -31,6 +32,10 @@ constexpr unsigned int NoIgnoredEntity = std::numeric_limits<unsigned int>::max(
 // The ray direction doesn't have to be normalized, but must not be zero. Returns false when nothing is hit
 bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
 	unsigned int ignoredEntityID, RaycastHit& outHit);
+
+// The same, with any number of ignored entities, e.g. Raycast(..., { player, enemy }, hit) for a ray between two characters
+bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
+	std::initializer_list<unsigned int> ignoredEntityIDs, RaycastHit& outHit);
 
 }
 

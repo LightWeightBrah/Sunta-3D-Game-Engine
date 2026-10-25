@@ -35,7 +35,9 @@
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSettings.h"
 #include "Physics/CollisionSystem.h"
+#include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
+#include "Gameplay/FollowCameraSystem.h"
 
 namespace Sunta
 {
@@ -883,6 +885,30 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Character Controller",
 				[&]() { return entityManager.GetComponent<CharacterControllerComponent>(inspectedEntity) != nullptr; },
 				[&]() { CharacterControllerSystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Character Animation",
+				[&]() { return entityManager.GetComponent<CharacterAnimationComponent>(inspectedEntity) != nullptr; },
+				[&]() { CharacterAnimationSystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Follow Camera",
+				[&]() { return entityManager.GetComponent<FollowCameraComponent>(inspectedEntity) != nullptr; },
+				[&]() { FollowCameraSystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Lock On",
+				[&]() { return entityManager.GetComponent<LockOnComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<LockOnComponent>(inspectedEntity); }
+			},
+
+			{
+				"Lock On Target",
+				[&]() { return entityManager.GetComponent<LockOnTargetComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<LockOnTargetComponent>(inspectedEntity); }
 			}
 		};
 
@@ -1972,7 +1998,9 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 			DrawSingleComponent(entityID, entityManager, componentType, transformIterator->second);
 	}
 
-	// Draw rest of the components randomly
+	// Draw the rest of the components in the order they were registered (not in the order they were added to the entity)
+	std::vector<std::pair<const ComponentType*, IInspectableStorage*>> otherComponents;
+
 	for (auto const& [typeHash, storage] : inspectableMap)
 	{
 		// Don't draw again tag nor transform components, since they are already drawn
@@ -1987,9 +2015,16 @@ void EditorGUI::DrawEntityComponentList(unsigned int entityID, EntityManager& en
 		if (!componentType)
 			continue;
 
-		DrawSingleComponent(entityID, entityManager, componentType, storage);
-
+		otherComponents.emplace_back(componentType, storage);
 	}
+
+	std::sort(otherComponents.begin(), otherComponents.end(), [](const auto& first, const auto& second)
+	{
+		return first.first->sortOrder < second.first->sortOrder;
+	});
+
+	for (const auto& [componentType, storage] : otherComponents)
+		DrawSingleComponent(entityID, entityManager, componentType, storage);
 }
 
 namespace // Makes sure this struct name is only within this single file

@@ -54,6 +54,10 @@ struct ComponentType
 	size_t hash = 0;
 	std::string name;
 	std::string iconKey;
+
+	// Components are shown in the Inspector in the order they were registered (see EditorLayer::RegisterComponentsToInspector)
+	size_t sortOrder = 0;
+
 	std::vector<PropertyDefinition> properties;
 	std::function<void(void*)> onChanged = nullptr;
 };
@@ -79,6 +83,7 @@ public:
 		newComponentType.hash = typeid(T).hash_code();
 		newComponentType.name = name;
 		newComponentType.iconKey = iconKey;
+		newComponentType.sortOrder = GetComponentsMap().size();
 		newComponentType.properties = std::move(properties);
 		newComponentType.onChanged = std::move(onChanged);
 

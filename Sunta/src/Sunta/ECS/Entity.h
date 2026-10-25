@@ -17,6 +17,9 @@ public:
 
 	unsigned int GetID() const { return entityID; }
 
+	// The entity manager this entity lives in (for making another Entity of the same scene from an ID)
+	EntityManager* GetEntityManager() const { return entityManager; }
+
 	// False for a default-constructed Entity or one that has been destroyed
 	bool IsValid() const { return entityManager && entityManager->IsAlive(entityID); }
 

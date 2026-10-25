@@ -30,7 +30,10 @@
 #include "Physics/CollisionSystem.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/PhysicsSystem.h"
+#include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
+#include "Gameplay/FollowCameraSystem.h"
+#include "Gameplay/LockOnSystem.h"
 
 namespace Sunta
 {
@@ -125,6 +128,7 @@ Scene::Scene()
 Scene::~Scene()
 {
 	EventBus::Unsubscribe(resizeEventID);
+	EventBus::Unsubscribe(engineModeEventID);
 
 	EventBus::Unsubscribe(triggerEnterEventID);
 	EventBus::Unsubscribe(triggerStayEventID);
@@ -141,6 +145,10 @@ void Scene::Init(RendererDevice& rendererDevice, float windowWidth, float window
 
 	resizeEventID = EventBus::Subscribe<WindowResizeEvent>(
 		[this](auto& event) { OnWindowResize(static_cast<float>(event.width), static_cast<float>(event.height)); }
+	);
+
+	engineModeEventID = EventBus::Subscribe<EngineModeChangedEvent>(
+		[this](const EngineModeChangedEvent& event) { OnEngineModeChanged(event); }
 	);
 
 	// Trigger Events
@@ -179,6 +187,16 @@ void Scene::OnWindowResize(float windowWidth, float windowHeight)
 		aspectRatio = windowWidth / windowHeight;
 }
 	
+void Scene::OnEngineModeChanged(const EngineModeChangedEvent& event)
+{
+	isMouseOwnedByGame = (event.mode == EngineMode::Game);
+}
+
+glm::vec2 Scene::GetGameLookDelta() const
+{
+	return isMouseOwnedByGame ? InputManager::GetMouseDelta() : glm::vec2(0.0f);
+}
+
 // Trigger Events
 
 void Scene::OnTriggerEnter(const TriggerEnterEvent& event)
@@ -250,10 +268,14 @@ void Scene::Update()
 {
 	const bool isPlaying = IsPlaying();
 
+	const glm::vec3 cameraForward = GetViewForward(activeCameraData.viewMatrix);
+	const glm::vec2 lookDelta     = isPlaying ? GetGameLookDelta() : glm::vec2(0.0f);
+
 	if (isPlaying)
 	{
 		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
-		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, GetViewForward(activeCameraData.viewMatrix));
+		LockOnSystem::Update(entityManager, EngineTime::deltaTime, cameraForward, lookDelta);
+		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
 
@@ -262,10 +284,16 @@ void Scene::Update()
 
 	if (isPlaying)
 	{
+		// After physics (needs the speed of the character), before the animators play the chosen animation
+		CharacterAnimationSystem::Update(entityManager);
 		Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
 	}
 
 	Systems::UpdateTransform(entityManager);
+
+	// After the transforms, so the camera sees where the player and the walls really are
+	if (isPlaying)
+		FollowCameraSystem::Update(entityManager, EngineTime::deltaTime, lookDelta);
 
 	// Keeps collider gizmos following their entities while stopped
 	if (!isPlaying)
@@ -542,6 +570,8 @@ void Scene::BeginPlay()
 {
 	CollisionSystem::Reset();
 	CharacterControllerSystem::ReportProblemsBeforePlay(entityManager);
+	FollowCameraSystem::ReportProblemsBeforePlay(entityManager);
+	CharacterAnimationSystem::ReportProblemsBeforePlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

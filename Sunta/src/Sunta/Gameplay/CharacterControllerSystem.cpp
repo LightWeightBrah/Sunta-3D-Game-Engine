@@ -3,6 +3,9 @@
 
 #include <glm/glm.hpp>
 
+#include "EntityName.h"
+#include "GameplayMath.h"
+#include "LockOnSystem.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Core/Log.h"
@@ -16,6 +19,8 @@ namespace Sunta
 namespace
 {
 
+using namespace GameplayMath;
+
 // ========== Keys of the player ==========
 
 constexpr int MoveForwardKey  = SUNTA_KEY_W;
@@ -26,14 +31,8 @@ constexpr int RunKey          = SUNTA_KEY_LEFT_SHIFT;
 
 // ========== Numbers used below ==========
 
-// Anything shorter than this is treated as "no direction at all" (a direction can't be made of nothing)
-constexpr float SmallestUsableLength = 0.0001f;
-
 // A weak push on a stick should not make the character spin on the spot, so turning starts above this
 constexpr float SmallestMoveToTurn = 0.1f;
-
-const glm::vec3 WorldUp         = glm::vec3(0.0f, 1.0f,  0.0f);
-const glm::vec3 DefaultForward  = glm::vec3(0.0f, 0.0f, -1.0f);
 
 // The body given to a new character (about the size and weight of a person, standing on the entity position)
 constexpr float CharacterMass = 80.0f;
@@ -42,38 +41,10 @@ const glm::vec3 CharacterColliderOffset      = glm::vec3(0.0f, CharacterCollider
 
 // ========== Small helpers ==========
 
-glm::vec3 KeepOnlyHorizontalPart(const glm::vec3& vector)
-{
-	return glm::vec3(vector.x, 0.0f, vector.z);
-}
-
 // A vector longer than 1 is shortened to 1, a shorter one stays as it is (so a gentle push means a slow walk)
 glm::vec3 LimitLengthToOne(const glm::vec3& vector)
 {
 	return glm::length(vector) > 1.0f ? glm::normalize(vector) : vector;
-}
-
-glm::vec3 GetHorizontalDirectionOrDefault(const glm::vec3& direction)
-{
-	const glm::vec3 horizontalPart = KeepOnlyHorizontalPart(direction);
-
-	if (glm::length(horizontalPart) < SmallestUsableLength)
-		return DefaultForward;
-
-	return glm::normalize(horizontalPart);
-}
-
-// Angles are kept between -180 and 180 degrees, so "turn left or right?" always has a short answer
-float WrapDegrees(float angle)
-{
-	return glm::mod(angle + 180.0f, 360.0f) - 180.0f;
-}
-
-// The angle (around the up axis) that makes an entity look along the given direction
-// An entity looks along its -Z axis when the angle is 0
-float GetYawToFace(const glm::vec3& direction)
-{
-	return glm::degrees(std::atan2(-direction.x, -direction.z));
 }
 
 // Moves 'current' towards 'target' by at most 'maxStep' (and never past it)
@@ -86,12 +57,6 @@ glm::vec3 MoveTowards(const glm::vec3& current, const glm::vec3& target, float m
 		return target;
 
 	return current + difference / distance * maxStep;
-}
-
-std::string GetEntityName(EntityManager& entityManager, unsigned int entityID)
-{
-	const TagComponent* tag = entityManager.GetComponent<TagComponent>(entityID);
-	return tag ? tag->name : "Unnamed entity";
 }
 
 // ========== Player input ==========
@@ -157,16 +122,11 @@ void MoveBody(PhysicsBodyComponent& body, const CharacterControllerComponent& co
 		PhysicsSystem::WakeUp(body);
 }
 
-// The character stays upright and only turns around the up axis, towards the way it walks
-void TurnTowardsMoveDirection(TransformComponent& transform, const CharacterControllerComponent& controller, float deltaTime)
+// The character stays upright and only turns around the up axis
+void TurnTowards(TransformComponent& transform, const CharacterControllerComponent& controller, const glm::vec3& direction, float deltaTime)
 {
-	const glm::vec3 horizontalMove = KeepOnlyHorizontalPart(controller.moveDirection);
-
-	if (glm::length(horizontalMove) < SmallestMoveToTurn)
-		return;
-
 	const float currentYaw = transform.rotation.y;
-	const float wantedYaw  = GetYawToFace(horizontalMove) + controller.facingOffsetDegrees;
+	const float wantedYaw  = GetYawToFace(direction) + controller.facingOffsetDegrees;
 
 	const float yawLeftToTurn = WrapDegrees(wantedYaw - currentYaw);
 	const float maxTurn       = controller.turnSpeed * deltaTime;
@@ -175,6 +135,39 @@ void TurnTowardsMoveDirection(TransformComponent& transform, const CharacterCont
 	transform.rotation = glm::vec3(0.0f, WrapDegrees(currentYaw + turn), 0.0f);
 	transform.SyncQuaternionFromEuler();
 	transform.isDirty = true;
+}
+
+// Towards the way it walks
+void TurnTowardsMoveDirection(TransformComponent& transform, const CharacterControllerComponent& controller, float deltaTime)
+{
+	const glm::vec3 horizontalMove = KeepOnlyHorizontalPart(controller.moveDirection);
+
+	if (glm::length(horizontalMove) < SmallestMoveToTurn)
+		return;
+
+	TurnTowards(transform, controller, horizontalMove, deltaTime);
+}
+
+// Towards a point, even when standing still (the character locked on to an enemy walks around it and keeps facing it)
+void TurnTowardsPoint(TransformComponent& transform, const CharacterControllerComponent& controller, const glm::vec3& point, float deltaTime)
+{
+	const glm::vec3 horizontalDirection = KeepOnlyHorizontalPart(point - transform.position);
+
+	if (glm::length(horizontalDirection) < SmallestUsableLength)
+		return;
+
+	TurnTowards(transform, controller, horizontalDirection, deltaTime);
+}
+
+// The enemy the character is locked on to. While running the character faces the way it runs instead, so it can run away
+bool TryGetPointToFace(EntityManager& entityManager, unsigned int entityID, const CharacterControllerComponent& controller, glm::vec3& outPoint)
+{
+	if (controller.wantsToRun)
+		return false;
+
+	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(entityID);
+
+	return lockOn && LockOnSystem::TryGetTargetAimPoint(entityManager, *lockOn, outPoint);
 }
 
 // ========== Adding the required parts ==========
@@ -226,8 +219,27 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 			ReadPlayerInput(controller, cameraForward);
 
 		MoveBody(*body, controller, deltaTime);
-		TurnTowardsMoveDirection(*transform, controller, deltaTime);
+
+		glm::vec3 pointToFace;
+		if (TryGetPointToFace(entityManager, entityID, controller, pointToFace))
+			TurnTowardsPoint(*transform, controller, pointToFace, deltaTime);
+		else
+			TurnTowardsMoveDirection(*transform, controller, deltaTime);
 	}
+}
+
+bool CharacterControllerSystem::TryFindPlayer(EntityManager& entityManager, unsigned int& outEntityID)
+{
+	for (CharacterControllerComponent& controller : entityManager.GetAllComponents<CharacterControllerComponent>())
+	{
+		if (!controller.isPlayerControlled)
+			continue;
+
+		outEntityID = entityManager.GetEntityIDForComponent(controller);
+		return true;
+	}
+
+	return false;
 }
 
 void CharacterControllerSystem::AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID)

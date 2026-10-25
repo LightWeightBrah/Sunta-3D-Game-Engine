@@ -1,6 +1,8 @@
 #include "Core/SuntaPreCompiled.h"
 #include "Raycast.h"
 
+#include <algorithm>
+
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 
@@ -15,10 +17,10 @@ namespace
 
 constexpr float MinRayDirectionLength = 1e-6f;
 
-}
-
-bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
-	unsigned int ignoredEntityID, RaycastHit& outHit)
+// The one place that does the work. 'isIgnored' tells which entities the ray passes through
+template<typename IsIgnored>
+bool RaycastIgnoring(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
+	IsIgnored isIgnored, RaycastHit& outHit)
 {
 	const float rayDirectionLength = glm::length(ray.direction);
 
@@ -40,7 +42,7 @@ bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, Co
 
 		const unsigned int entityID = entityManager.GetEntityIDForComponent(collider);
 
-		if (entityID == ignoredEntityID)
+		if (isIgnored(entityID))
 			continue;
 
 		const auto* worldMatrixComponent = entityManager.GetComponent<WorldMatrixComponent>(entityID);
@@ -66,6 +68,25 @@ bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, Co
 	}
 
 	return isAnythingHit;
+}
+
+}
+
+bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
+	unsigned int ignoredEntityID, RaycastHit& outHit)
+{
+	return RaycastIgnoring(entityManager, ray, maxDistance, layerMask,
+		[ignoredEntityID](unsigned int entityID) { return entityID == ignoredEntityID; }, outHit);
+}
+
+bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
+	std::initializer_list<unsigned int> ignoredEntityIDs, RaycastHit& outHit)
+{
+	return RaycastIgnoring(entityManager, ray, maxDistance, layerMask,
+		[ignoredEntityIDs](unsigned int entityID)
+		{
+			return std::find(ignoredEntityIDs.begin(), ignoredEntityIDs.end(), entityID) != ignoredEntityIDs.end();
+		}, outHit);
 }
 
 }

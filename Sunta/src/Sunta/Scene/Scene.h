@@ -18,6 +18,8 @@ struct CollisionEnterEvent;
 struct CollisionStayEvent;
 struct CollisionExitEvent;
 
+struct EngineModeChangedEvent;
+
 struct OBB;
 
 struct CameraComponent;
@@ -90,7 +92,12 @@ private:
 	SceneData			activeCameraData;
 	float				aspectRatio			= 16.0f / 9.0f; // of the window, a CameraComponent has no size of its own
 
+	// True in the Game mode, where the cursor is hidden and the mouse belongs to the game (to turn the camera)
+	// In the Editor mode the mouse moves a visible cursor over the editor, so the game ignores it
+	bool				isMouseOwnedByGame	= false;
+
 	unsigned int		resizeEventID;
+	unsigned int		engineModeEventID   = 0;
 
 	unsigned int		triggerEnterEventID = 0;
 	unsigned int		triggerStayEventID  = 0;
@@ -104,6 +111,10 @@ private:
 	std::string			filePath;
 
 	void OnWindowResize(float windowWidth, float windowHeight);
+	void OnEngineModeChanged(const EngineModeChangedEvent& event);
+
+	// How far the mouse moved in this frame, or zero when the mouse isn't the game's
+	glm::vec2 GetGameLookDelta() const;
 
 	// The first active CameraComponent together with the Transform of its entity, false when the scene has none
 	bool TryFindActiveSceneCamera(CameraComponent*& outCamera, TransformComponent*& outTransform);

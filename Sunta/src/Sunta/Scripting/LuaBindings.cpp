@@ -7,6 +7,7 @@
 
 #include "ECS/Entity.h"
 #include "ECS/Component.h"
+#include "Gameplay/LockOnSystem.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Utilities/MathUtilities.h"
@@ -32,6 +33,8 @@ struct ComponentHandle
 using TransformHandle   = ComponentHandle<TransformComponent>;
 using PhysicsBodyHandle = ComponentHandle<PhysicsBodyComponent>;
 using CharacterControllerHandle = ComponentHandle<CharacterControllerComponent>;
+using LockOnHandle        = ComponentHandle<LockOnComponent>;
+using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -128,6 +131,8 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterTransformComponent(lua);
 	RegisterPhysicsBodyComponent(lua);
 	RegisterCharacterControllerComponent(lua);
+	RegisterLockOnComponent(lua);
+	RegisterLockOnTargetComponent(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -259,6 +264,61 @@ void LuaBindings::RegisterCharacterControllerComponent(sol::state& lua)
 	);
 }
 
+void LuaBindings::RegisterLockOnComponent(sol::state& lua)
+{
+	// Usage in Lua: if this.lockOn.hasTarget then print(this.lockOn.target.name) end
+	// To decide from a script what is locked on to (e.g. for an enemy): this.lockOn.isPlayerControlled = false,
+	// then this.lockOn:setTarget(otherEntity) and this.lockOn:clear()
+	lua.new_usertype<LockOnHandle>("LockOn", sol::no_constructor,
+
+		"maxDistance",        MemberProperty(&LockOnComponent::maxDistance,        0.0f),
+		"isPlayerControlled", MemberProperty(&LockOnComponent::isPlayerControlled, false),
+
+		"hasTarget", sol::readonly_property([](const LockOnHandle& handle)
+			{
+				const LockOnComponent* lockOnComponent = handle.TryGetComponent();
+				return lockOnComponent && lockOnComponent->hasTarget;
+			}),
+
+		// nil when nothing is locked on to
+		"target", sol::readonly_property([](const LockOnHandle& handle) -> sol::optional<Entity>
+			{
+				const LockOnComponent* lockOnComponent = handle.TryGetComponent();
+				if (!lockOnComponent || !lockOnComponent->hasTarget)
+					return sol::nullopt;
+
+				const Entity target(lockOnComponent->targetEntityID, handle.owner.GetEntityManager());
+				if (!target.IsValid())
+					return sol::nullopt;
+
+				return target;
+			}),
+
+		// Locks on to an entity that has a Lock On Target component (a warning in the log when it has none)
+		"setTarget", [](const LockOnHandle& handle, const Entity& target)
+			{
+				if (LockOnComponent* lockOnComponent = handle.TryGetComponent())
+					LockOnSystem::TrySetTarget(*handle.owner.GetEntityManager(), *lockOnComponent, target.GetID());
+			},
+
+		"clear", [](const LockOnHandle& handle)
+			{
+				if (LockOnComponent* lockOnComponent = handle.TryGetComponent())
+					LockOnSystem::ClearTarget(*lockOnComponent);
+			}
+	);
+}
+
+void LuaBindings::RegisterLockOnTargetComponent(sol::state& lua)
+{
+	// Usage in Lua: this.lockOnTarget.isLockable = false (e.g. when the enemy dies, the lock on it is dropped)
+	lua.new_usertype<LockOnTargetHandle>("LockOnTarget", sol::no_constructor,
+
+		"isLockable", MemberProperty(&LockOnTargetComponent::isLockable, false),
+		"aimHeight",  MemberProperty(&LockOnTargetComponent::aimHeight,  0.0f)
+	);
+}
+
 void LuaBindings::RegisterEntity(sol::state& lua)
 {
 	lua.new_usertype<Entity>("Entity", sol::no_constructor,
@@ -281,7 +341,9 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		// nil when the entity doesn't have the component, so scripts can check: if body then ... end
 		"transform",   ComponentHandleProperty<TransformComponent>(),
 		"physicsBody", ComponentHandleProperty<PhysicsBodyComponent>(),
-		"characterController", ComponentHandleProperty<CharacterControllerComponent>()
+		"characterController", ComponentHandleProperty<CharacterControllerComponent>(),
+		"lockOn",              ComponentHandleProperty<LockOnComponent>(),
+		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>()
 	);
 }
 

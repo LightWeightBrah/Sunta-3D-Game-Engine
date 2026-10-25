@@ -14,7 +14,11 @@
 #include "Physics/CollisionShapes.h"
 #include "Physics/CollisionLayers.h"
 #include "ECS/Entity.h"
+#include "Gameplay/CharacterAnimationComponent.h"
 #include "Gameplay/CharacterControllerComponent.h"
+#include "Gameplay/FollowCameraComponent.h"
+#include "Gameplay/LockOnComponent.h"
+#include "Gameplay/LockOnTargetComponent.h"
 
 namespace Sunta
 {

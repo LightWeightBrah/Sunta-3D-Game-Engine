@@ -35,6 +35,10 @@ namespace SceneKeys
 	constexpr const char* SpotLightComponent        = "spot_light";
 	constexpr const char* CameraComponent           = "camera";
 	constexpr const char* CharacterControllerComponent = "character_controller";
+	constexpr const char* CharacterAnimationComponent = "character_animation";
+	constexpr const char* FollowCameraComponent     = "follow_camera";
+	constexpr const char* LockOnComponent           = "lock_on";
+	constexpr const char* LockOnTargetComponent     = "lock_on_target";
 
 	constexpr const char* Name                      = "name";
 	constexpr const char* Position                  = "position";
@@ -89,6 +93,33 @@ namespace SceneKeys
 	constexpr const char* TurnSpeed                 = "turn_speed";
 	constexpr const char* FacingOffsetDegrees       = "facing_offset_degrees";
 	constexpr const char* IsPlayerControlled        = "is_player_controlled";
+
+	constexpr const char* Distance                  = "distance";
+	constexpr const char* PivotHeight               = "pivot_height";
+	constexpr const char* ShoulderOffset            = "shoulder_offset";
+	constexpr const char* ViewYawOffsetDegrees      = "view_yaw_offset_degrees";
+	constexpr const char* ViewPitchOffsetDegrees    = "view_pitch_offset_degrees";
+	constexpr const char* MouseSensitivity          = "mouse_sensitivity";
+	constexpr const char* InvertY                   = "invert_y";
+	constexpr const char* MinPitchDegrees           = "min_pitch_degrees";
+	constexpr const char* MaxPitchDegrees           = "max_pitch_degrees";
+	constexpr const char* FollowSharpness           = "follow_sharpness";
+	constexpr const char* LockOnPitchDegrees        = "lock_on_pitch_degrees";
+	constexpr const char* LockOnSharpness           = "lock_on_sharpness";
+
+	constexpr const char* MaxDistance               = "max_distance";
+	constexpr const char* SearchAngleDegrees        = "search_angle_degrees";
+	constexpr const char* EyeHeight                 = "eye_height";
+	constexpr const char* SwitchMouseDistance       = "switch_mouse_distance";
+	constexpr const char* RequireLineOfSight        = "require_line_of_sight";
+
+	constexpr const char* IdleAnimation             = "idle_animation";
+	constexpr const char* WalkAnimation             = "walk_animation";
+	constexpr const char* RunAnimation              = "run_animation";
+	constexpr const char* BlendSeconds              = "blend_seconds";
+
+	constexpr const char* IsLockable                = "is_lockable";
+	constexpr const char* AimHeight                 = "aim_height";
 
 }
 
@@ -302,6 +333,58 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::TurnSpeed,           characterController->turnSpeed           },
 				{ SceneKeys::FacingOffsetDegrees, characterController->facingOffsetDegrees },
 				{ SceneKeys::IsPlayerControlled,  characterController->isPlayerControlled  }
+			};
+		}
+
+		if (auto* characterAnimation = entityManager.GetComponent<CharacterAnimationComponent>(i))
+		{
+			entityJson[SceneKeys::CharacterAnimationComponent] =
+			{
+				{ SceneKeys::IdleAnimation, characterAnimation->idleAnimation },
+				{ SceneKeys::WalkAnimation, characterAnimation->walkAnimation },
+				{ SceneKeys::RunAnimation,  characterAnimation->runAnimation  },
+				{ SceneKeys::BlendSeconds,  characterAnimation->blendSeconds  }
+			};
+		}
+
+		if (auto* followCamera = entityManager.GetComponent<FollowCameraComponent>(i))
+		{
+			entityJson[SceneKeys::FollowCameraComponent] =
+			{
+				{ SceneKeys::Distance,         followCamera->distance           },
+				{ SceneKeys::PivotHeight,      followCamera->pivotHeight        },
+				{ SceneKeys::ShoulderOffset,   followCamera->shoulderOffset     },
+				{ SceneKeys::ViewYawOffsetDegrees,   followCamera->viewYawOffsetDegrees   },
+				{ SceneKeys::ViewPitchOffsetDegrees, followCamera->viewPitchOffsetDegrees },
+				{ SceneKeys::MouseSensitivity, followCamera->mouseSensitivity   },
+				{ SceneKeys::InvertY,          followCamera->invertY            },
+				{ SceneKeys::MinPitchDegrees,  followCamera->minPitchDegrees    },
+				{ SceneKeys::MaxPitchDegrees,  followCamera->maxPitchDegrees    },
+				{ SceneKeys::FollowSharpness,  followCamera->followSharpness    },
+				{ SceneKeys::LockOnPitchDegrees, followCamera->lockOnPitchDegrees },
+				{ SceneKeys::LockOnSharpness,  followCamera->lockOnSharpness    }
+			};
+		}
+
+		if (auto* lockOn = entityManager.GetComponent<LockOnComponent>(i))
+		{
+			entityJson[SceneKeys::LockOnComponent] =
+			{
+				{ SceneKeys::MaxDistance,         lockOn->maxDistance         },
+				{ SceneKeys::SearchAngleDegrees,  lockOn->searchAngleDegrees  },
+				{ SceneKeys::EyeHeight,           lockOn->eyeHeight           },
+				{ SceneKeys::SwitchMouseDistance, lockOn->switchMouseDistance },
+				{ SceneKeys::RequireLineOfSight,  lockOn->requireLineOfSight  },
+				{ SceneKeys::IsPlayerControlled,  lockOn->isPlayerControlled  }
+			};
+		}
+
+		if (auto* lockOnTarget = entityManager.GetComponent<LockOnTargetComponent>(i))
+		{
+			entityJson[SceneKeys::LockOnTargetComponent] =
+			{
+				{ SceneKeys::IsLockable, lockOnTarget->isLockable },
+				{ SceneKeys::AimHeight,  lockOnTarget->aimHeight  }
 			};
 		}
 
@@ -556,6 +639,61 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			controller.turnSpeed            = controllerData.value(SceneKeys::TurnSpeed,           controller.turnSpeed);
 			controller.facingOffsetDegrees  = controllerData.value(SceneKeys::FacingOffsetDegrees, controller.facingOffsetDegrees);
 			controller.isPlayerControlled   = controllerData.value(SceneKeys::IsPlayerControlled,  controller.isPlayerControlled);
+		}
+
+		if (entityJson.contains(SceneKeys::CharacterAnimationComponent))
+		{
+			const auto& animationData = entityJson[SceneKeys::CharacterAnimationComponent];
+			auto& characterAnimation = entityManager.AddComponent<CharacterAnimationComponent>(entity);
+
+			// A missing key keeps the default written in CharacterAnimationComponent.h
+			characterAnimation.idleAnimation = animationData.value(SceneKeys::IdleAnimation, characterAnimation.idleAnimation);
+			characterAnimation.walkAnimation = animationData.value(SceneKeys::WalkAnimation, characterAnimation.walkAnimation);
+			characterAnimation.runAnimation  = animationData.value(SceneKeys::RunAnimation,  characterAnimation.runAnimation);
+			characterAnimation.blendSeconds  = animationData.value(SceneKeys::BlendSeconds,  characterAnimation.blendSeconds);
+		}
+
+		if (entityJson.contains(SceneKeys::FollowCameraComponent))
+		{
+			const auto& followData = entityJson[SceneKeys::FollowCameraComponent];
+			auto& followCamera = entityManager.AddComponent<FollowCameraComponent>(entity);
+
+			// A missing key keeps the default written in FollowCameraComponent.h
+			followCamera.distance            = followData.value(SceneKeys::Distance,           followCamera.distance);
+			followCamera.pivotHeight         = followData.value(SceneKeys::PivotHeight,        followCamera.pivotHeight);
+			followCamera.shoulderOffset      = followData.value(SceneKeys::ShoulderOffset,     followCamera.shoulderOffset);
+			followCamera.viewYawOffsetDegrees   = followData.value(SceneKeys::ViewYawOffsetDegrees,   followCamera.viewYawOffsetDegrees);
+			followCamera.viewPitchOffsetDegrees = followData.value(SceneKeys::ViewPitchOffsetDegrees, followCamera.viewPitchOffsetDegrees);
+			followCamera.mouseSensitivity    = followData.value(SceneKeys::MouseSensitivity,   followCamera.mouseSensitivity);
+			followCamera.invertY             = followData.value(SceneKeys::InvertY,            followCamera.invertY);
+			followCamera.minPitchDegrees     = followData.value(SceneKeys::MinPitchDegrees,    followCamera.minPitchDegrees);
+			followCamera.maxPitchDegrees     = followData.value(SceneKeys::MaxPitchDegrees,    followCamera.maxPitchDegrees);
+			followCamera.followSharpness     = followData.value(SceneKeys::FollowSharpness,    followCamera.followSharpness);
+			followCamera.lockOnPitchDegrees  = followData.value(SceneKeys::LockOnPitchDegrees, followCamera.lockOnPitchDegrees);
+			followCamera.lockOnSharpness     = followData.value(SceneKeys::LockOnSharpness,    followCamera.lockOnSharpness);
+		}
+
+		if (entityJson.contains(SceneKeys::LockOnComponent))
+		{
+			const auto& lockOnData = entityJson[SceneKeys::LockOnComponent];
+			auto& lockOn = entityManager.AddComponent<LockOnComponent>(entity);
+
+			// A missing key keeps the default written in LockOnComponent.h
+			lockOn.maxDistance         = lockOnData.value(SceneKeys::MaxDistance,         lockOn.maxDistance);
+			lockOn.searchAngleDegrees  = lockOnData.value(SceneKeys::SearchAngleDegrees,  lockOn.searchAngleDegrees);
+			lockOn.eyeHeight           = lockOnData.value(SceneKeys::EyeHeight,           lockOn.eyeHeight);
+			lockOn.switchMouseDistance = lockOnData.value(SceneKeys::SwitchMouseDistance, lockOn.switchMouseDistance);
+			lockOn.requireLineOfSight  = lockOnData.value(SceneKeys::RequireLineOfSight,  lockOn.requireLineOfSight);
+			lockOn.isPlayerControlled  = lockOnData.value(SceneKeys::IsPlayerControlled,  lockOn.isPlayerControlled);
+		}
+
+		if (entityJson.contains(SceneKeys::LockOnTargetComponent))
+		{
+			const auto& targetData = entityJson[SceneKeys::LockOnTargetComponent];
+			auto& lockOnTarget = entityManager.AddComponent<LockOnTargetComponent>(entity);
+
+			lockOnTarget.isLockable = targetData.value(SceneKeys::IsLockable, lockOnTarget.isLockable);
+			lockOnTarget.aimHeight  = targetData.value(SceneKeys::AimHeight,  lockOnTarget.aimHeight);
 		}
 
 	}

@@ -234,7 +234,6 @@
         },
         {
             "box_collider": {
-                "collides_with": 7,
                 "half_extents": [
                     0.5,
                     0.5,
@@ -254,35 +253,13 @@
                 "material_name": "AnotherFloor",
                 "mesh_name": "cube"
             },
-            "physics_body": {
-                "angular_damping": 0.05000000074505806,
-                "angular_velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "freeze_rotation_x": false,
-                "freeze_rotation_y": false,
-                "freeze_rotation_z": false,
-                "friction": 0.5,
-                "is_kinematic": true,
-                "linear_damping": 0.05000000074505806,
-                "mass": 1.0,
-                "restitution": 0.20000000298023224,
-                "use_gravity": false,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            },
             "tag": {
                 "name": "Floor"
             },
             "transform": {
                 "position": [
                     0.0,
-                    -1.100000023841858,
+                    -1.2000000476837158,
                     -2.700000047683716
                 ],
                 "rotation": [
@@ -729,26 +706,49 @@
             }
         },
         {
+            "animator": {
+                "current_animation_name": "Armature|Praise the Sun Gesture"
+            },
             "box_collider": {
-                "collides_with": 7,
                 "half_extents": [
                     0.5,
-                    0.5,
+                    1.5,
                     0.5
                 ],
                 "is_trigger": false,
-                "layer": 1,
+                "layer": 2,
                 "local_offset": [
                     0.0,
-                    0.0,
+                    1.5,
                     0.0
                 ],
-                "show_gizmos": false
+                "show_gizmos": true
             },
-            "mesh": {
+            "character_animation": {
+                "blend_seconds": 0.20000000298023224,
+                "idle_animation": "Armature|idle",
+                "run_animation": "Armature|Praise the Sun Gesture",
+                "walk_animation": "Armature|Running"
+            },
+            "character_controller": {
+                "acceleration": 30.0,
+                "facing_offset_degrees": 180.0,
+                "is_player_controlled": true,
+                "run_speed": 7.083000183105469,
+                "turn_speed": 720.0,
+                "walk_speed": 4.061999797821045
+            },
+            "lock_on": {
+                "eye_height": 1.5,
+                "is_player_controlled": true,
+                "max_distance": 15.0,
+                "require_line_of_sight": true,
+                "search_angle_degrees": 60.0,
+                "switch_mouse_distance": 120.0
+            },
+            "model": {
                 "is_visible": true,
-                "material_name": "PlayerCube",
-                "mesh_name": "cube"
+                "model_name": "solaire"
             },
             "physics_body": {
                 "angular_damping": 0.05000000074505806,
@@ -772,18 +772,13 @@
                     0.0
                 ]
             },
-            "script": [
-                {
-                    "script_path": "@engine/Scripts/test_script.lua"
-                }
-            ],
             "tag": {
-                "name": "Cube"
+                "name": "Player"
             },
             "transform": {
                 "position": [
-                    -1.336599588394165,
-                    1.1448731422424316,
+                    -2.6447319984436035,
+                    1.2450000047683716,
                     5.7665534019470215
                 ],
                 "rotation": [
@@ -806,20 +801,23 @@
         },
         {
             "box_collider": {
-                "collides_with": 7,
                 "half_extents": [
                     0.5,
                     0.5,
                     0.5
                 ],
                 "is_trigger": false,
-                "layer": 1,
+                "layer": 4,
                 "local_offset": [
                     0.0,
                     0.0,
                     0.0
                 ],
                 "show_gizmos": false
+            },
+            "lock_on_target": {
+                "aim_height": 1.2000000476837158,
+                "is_lockable": true
             },
             "mesh": {
                 "is_visible": true,
@@ -849,7 +847,7 @@
                 ]
             },
             "tag": {
-                "name": "Cube"
+                "name": "Enemy"
             },
             "transform": {
                 "position": [
@@ -1047,6 +1045,20 @@
                 "is_active": true,
                 "near_plane": 0.10000000149011612
             },
+            "follow_camera": {
+                "distance": 12.833000183105469,
+                "follow_sharpness": 15.0,
+                "invert_y": false,
+                "lock_on_pitch_degrees": 17.756999969482422,
+                "lock_on_sharpness": 6.0,
+                "max_pitch_degrees": 60.0,
+                "min_pitch_degrees": -15.0,
+                "mouse_sensitivity": 0.15000000596046448,
+                "pivot_height": 1.5950000286102295,
+                "shoulder_offset": 0.0,
+                "view_pitch_offset_degrees": 0.0,
+                "view_yaw_offset_degrees": 0.0
+            },
             "tag": {
                 "name": "Camera"
             },
@@ -1071,6 +1083,54 @@
                     1.0,
                     1.0,
                     1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    0.5,
+                    0.5,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "mesh": {
+                "is_visible": true,
+                "material_name": "AnotherFloor",
+                "mesh_name": "cube"
+            },
+            "tag": {
+                "name": "Cube"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.0,
+                    3.23193359375
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    6.324065208435059,
+                    5.159746170043945
                 ]
             }
         }

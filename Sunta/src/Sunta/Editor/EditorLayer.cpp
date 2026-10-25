@@ -203,17 +203,21 @@ void EditorLayer::RegisterComponentsToInspector()
 {
 	TagComponent::RegisterToInspector();
 	TransformComponent::RegisterToInspector();
-	ScriptComponent::RegisterToInspector();
 	MeshComponent::RegisterToInspector();
 	ModelComponent::RegisterToInspector();
 	AnimatorComponent::RegisterToInspector();
+	CharacterAnimationComponent::RegisterToInspector();
+	CharacterControllerComponent::RegisterToInspector();
+	PhysicsBodyComponent::RegisterToInspector();
+	BoxColliderComponent::RegisterToInspector();
+	CameraComponent::RegisterToInspector();
+	FollowCameraComponent::RegisterToInspector();
+	LockOnComponent::RegisterToInspector();
+	LockOnTargetComponent::RegisterToInspector();
 	DirectionalLightComponent::RegisterToInspector();
 	PointLightComponent::RegisterToInspector();
 	SpotLightComponent::RegisterToInspector();
-	CameraComponent::RegisterToInspector();
-	BoxColliderComponent::RegisterToInspector();
-	PhysicsBodyComponent::RegisterToInspector();
-	CharacterControllerComponent::RegisterToInspector();
+	ScriptComponent::RegisterToInspector();
 }
 
 }
