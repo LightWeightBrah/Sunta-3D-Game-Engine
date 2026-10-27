@@ -112,6 +112,7 @@ namespace SceneKeys
 	constexpr const char* EyeHeight                 = "eye_height";
 	constexpr const char* SwitchMouseDistance       = "switch_mouse_distance";
 	constexpr const char* RequireLineOfSight        = "require_line_of_sight";
+	constexpr const char* ShowSightRays             = "show_sight_rays";
 
 	constexpr const char* IdleAnimation             = "idle_animation";
 	constexpr const char* WalkAnimation             = "walk_animation";
@@ -375,7 +376,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::EyeHeight,           lockOn->eyeHeight           },
 				{ SceneKeys::SwitchMouseDistance, lockOn->switchMouseDistance },
 				{ SceneKeys::RequireLineOfSight,  lockOn->requireLineOfSight  },
-				{ SceneKeys::IsPlayerControlled,  lockOn->isPlayerControlled  }
+				{ SceneKeys::IsPlayerControlled,  lockOn->isPlayerControlled  },
+				{ SceneKeys::ShowSightRays,       lockOn->showSightRays       }
 			};
 		}
 
@@ -685,6 +687,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			lockOn.switchMouseDistance = lockOnData.value(SceneKeys::SwitchMouseDistance, lockOn.switchMouseDistance);
 			lockOn.requireLineOfSight  = lockOnData.value(SceneKeys::RequireLineOfSight,  lockOn.requireLineOfSight);
 			lockOn.isPlayerControlled  = lockOnData.value(SceneKeys::IsPlayerControlled,  lockOn.isPlayerControlled);
+			lockOn.showSightRays       = lockOnData.value(SceneKeys::ShowSightRays,       lockOn.showSightRays);
 		}
 
 		if (entityJson.contains(SceneKeys::LockOnTargetComponent))

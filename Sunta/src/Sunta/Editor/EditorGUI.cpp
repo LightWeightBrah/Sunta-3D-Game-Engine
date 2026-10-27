@@ -353,6 +353,15 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			ImGui::Separator();
 
+			bool showLockOnSightRays = DebugRenderer::GetShowLockOnSightRays();
+			if (ImGui::Checkbox("Show Lock-On Sight Rays", &showLockOnSightRays))
+				DebugRenderer::SetShowLockOnSightRays(showLockOnSightRays);
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("While playing, Q draws the line of sight to every enemy it checks.\nGreen: visible. Red: hits a wall there (orange cross), grey: the rest of the way to the enemy");
+
+			ImGui::Separator();
+
 			ImGui::Checkbox("Show Transform Gizmo", &showTransformGizmo);
 
 			if (showTransformGizmo)

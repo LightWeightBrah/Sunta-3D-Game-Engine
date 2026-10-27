@@ -50,9 +50,29 @@ namespace
 	constexpr unsigned int CameraGizmoRingCorners = 4;
 	const glm::vec3 CameraGizmoColor = glm::vec3(1.0f, 0.85f, 0.2f);
 
+	// The line of sight of the lock-on (View > Show Lock-On Sight Rays)
+	const glm::vec3 SightRayClearColor      = glm::vec3(0.2f, 1.0f, 0.2f);
+	const glm::vec3 SightRayBlockedColor    = glm::vec3(1.0f, 0.15f, 0.15f);
+	const glm::vec3 SightRayHiddenPartColor = glm::vec3(0.5f, 0.5f, 0.5f);
+	const glm::vec3 SightRayHitColor        = glm::vec3(1.0f, 0.6f, 0.0f);
+	constexpr float SightRayHitMarkHalfSize = 0.25f;
+
 	// A camera has no mesh, so the mouse picks it by a small box in front of it
 	const glm::vec3 CameraPickingBoxMin = glm::vec3(-0.3f, -0.2f, -0.8f);
 	const glm::vec3 CameraPickingBoxMax = glm::vec3( 0.3f,  0.2f,  0.0f);
+
+	void DrawSightRay(const LockOnSystem::SightRay& sightRay, const SceneData& sceneData)
+	{
+		if (!sightRay.isBlocked)
+		{
+			DebugRenderer::DrawLine(sightRay.from, sightRay.to, SightRayClearColor, sceneData);
+			return;
+		}
+
+		DebugRenderer::DrawLine(sightRay.from, sightRay.hitPoint, SightRayBlockedColor, sceneData);
+		DebugRenderer::DrawLine(sightRay.hitPoint, sightRay.to, SightRayHiddenPartColor, sceneData);
+		DebugRenderer::DrawCross(sightRay.hitPoint, SightRayHitMarkHalfSize, SightRayHitColor, sceneData);
+	}
 
 	float GetClampedFieldOfView(const CameraComponent& camera)
 	{
@@ -274,6 +294,7 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
+		LockOnSystem::SetRecordingSightRays(DebugRenderer::GetShowLockOnSightRays());
 		LockOnSystem::Update(entityManager, EngineTime::deltaTime, cameraForward, lookDelta);
 		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
@@ -467,6 +488,12 @@ void Scene::Render(Renderer& renderer)
 	for (const auto& item : gizmosQueue)
 		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
 
+	if (isPlaying)
+	{
+		for (const LockOnSystem::SightRay& sightRay : LockOnSystem::GetSightRays())
+			DrawSightRay(sightRay, sceneData);
+	}
+
 }
 
 bool Scene::TryGetEntityWorldPickingBox(unsigned int entity, OBB& outBox)
@@ -569,6 +596,7 @@ glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, floa
 void Scene::BeginPlay()
 {
 	CollisionSystem::Reset();
+	LockOnSystem::ClearSightRays();
 	CharacterControllerSystem::ReportProblemsBeforePlay(entityManager);
 	FollowCameraSystem::ReportProblemsBeforePlay(entityManager);
 	CharacterAnimationSystem::ReportProblemsBeforePlay(entityManager);

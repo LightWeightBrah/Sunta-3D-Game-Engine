@@ -1,10 +1,12 @@
 #include "Core/SuntaPreCompiled.h"
 #include "LockOnSystem.h"
 
+#include <algorithm>
 #include <limits>
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "EntityName.h"
 #include "GameplayMath.h"
 #include "SightBlockers.h"
 #include "Core/InputManager.h"
@@ -46,6 +48,9 @@ constexpr float SwitchCooldownSeconds = 0.35f;
 // Two enemies that are less than this many degrees apart on the screen are not told apart when switching
 constexpr float SmallestAngleToSwitch = 1.0f;
 
+// How long the drawn line of sight stays on the screen after a search
+constexpr float SightRayShowSeconds = 3.0f;
+
 // ========== The character that locks on ==========
 
 struct Locker
@@ -63,6 +68,9 @@ struct Candidate
 	float        distance;
 	float        angleFromCamera; // degrees: positive to the right of where the camera looks, negative to the left
 };
+
+std::vector<LockOnSystem::SightRay> sightRays;
+bool isRecordingSightRays = false;
 
 // ========== Small helpers ==========
 
@@ -111,6 +119,17 @@ void SetTarget(LockOnComponent& lockOn, unsigned int targetEntityID)
 
 // ========== Finding enemies ==========
 
+void RememberSightRay(const glm::vec3& from, const glm::vec3& to, bool isBlocked, const glm::vec3& hitPoint)
+{
+	sightRays.push_back({ from, to, isBlocked, hitPoint, SightRayShowSeconds });
+}
+
+void ReportHiddenEnemy(Locker& locker, unsigned int targetEntityID, const RaycastHit& hit)
+{
+	SUNTA_ENGINE_LOG_INFO("Lock On: '{0}' is hidden behind '{1}' ({2} m from the eyes, the wall is on the Environment layer)",
+		GetEntityName(locker.entityManager, targetEntityID), GetEntityName(locker.entityManager, hit.entityID), hit.distance);
+}
+
 // True when a wall (or anything else that blocks the sight) is between the two points
 bool IsPathBlocked(Locker& locker, unsigned int targetEntityID, const glm::vec3& aimPoint)
 {
@@ -126,7 +145,17 @@ bool IsPathBlocked(Locker& locker, unsigned int targetEntityID, const glm::vec3&
 
 	// The characters themselves don't block the sight, they only stand in the middle of it
 	RaycastHit hit;
-	return Physics::Raycast(locker.entityManager, ray, length, SightBlockingLayers, { locker.entityID, targetEntityID }, hit);
+	const bool isBlocked = Physics::Raycast(locker.entityManager, ray, length, SightBlockingLayers, { locker.entityID, targetEntityID }, hit);
+
+	if (isRecordingSightRays)
+	{
+		RememberSightRay(locker.eyePoint, aimPoint, isBlocked, hit.point);
+
+		if (isBlocked)
+			ReportHiddenEnemy(locker, targetEntityID, hit);
+	}
+
+	return isBlocked;
 }
 
 bool IsCandidateAllowed(Locker& locker, const Candidate& candidate, const glm::vec3& aimPoint)
@@ -146,6 +175,10 @@ bool IsCandidateAllowed(Locker& locker, const Candidate& candidate, const glm::v
 std::vector<Candidate> CollectCandidates(Locker& locker, const glm::vec3& cameraForward)
 {
 	std::vector<Candidate> candidates;
+
+	// Only the latest search is drawn
+	if (isRecordingSightRays)
+		sightRays.clear();
 
 	for (LockOnTargetComponent& target : locker.entityManager.GetAllComponents<LockOnTargetComponent>())
 	{
@@ -285,6 +318,15 @@ void ReadPlayerInput(Locker& locker, const glm::vec3& cameraForward, const glm::
 		SwitchTargetWithMouse(locker, cameraForward, lookDelta, deltaTime);
 }
 
+void ForgetOldSightRays(float deltaTime)
+{
+	for (LockOnSystem::SightRay& sightRay : sightRays)
+		sightRay.secondsLeft -= deltaTime;
+
+	sightRays.erase(std::remove_if(sightRays.begin(), sightRays.end(),
+		[](const LockOnSystem::SightRay& sightRay) { return sightRay.secondsLeft <= 0.0f; }), sightRays.end());
+}
+
 // ========== Letting go ==========
 
 // The enemy died (was destroyed), can't be locked on to anymore, or is too far away
@@ -312,6 +354,8 @@ void DropTargetIfNoLongerValid(Locker& locker)
 
 void LockOnSystem::Update(EntityManager& entityManager, float deltaTime, const glm::vec3& cameraForward, const glm::vec2& lookDelta)
 {
+	ForgetOldSightRays(deltaTime);
+
 	for (LockOnComponent& lockOn : entityManager.GetAllComponents<LockOnComponent>())
 	{
 		const unsigned int entityID = entityManager.GetEntityIDForComponent(lockOn);
@@ -353,6 +397,24 @@ void LockOnSystem::ClearTarget(LockOnComponent& lockOn)
 	lockOn.targetEntityID     = 0;
 	lockOn.mouseTravel        = 0.0f;
 	lockOn.switchCooldownLeft = 0.0f;
+}
+
+void LockOnSystem::SetRecordingSightRays(bool isRecording)
+{
+	isRecordingSightRays = isRecording;
+
+	if (!isRecording)
+		sightRays.clear();
+}
+
+const std::vector<LockOnSystem::SightRay>& LockOnSystem::GetSightRays()
+{
+	return sightRays;
+}
+
+void LockOnSystem::ClearSightRays()
+{
+	sightRays.clear();
 }
 
 }

@@ -20,6 +20,10 @@ public:
 	static void Init();
 
 	static void DrawBoxWireframe(const std::array<glm::vec3, BOX_CORNER_COUNT>& corners, const glm::vec3& color, const SceneData& sceneData);
+	static void DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, const SceneData& sceneData);
+
+	// Three short lines crossing at the point, to mark a place (where a ray hit a wall)
+	static void DrawCross(const glm::vec3& center, float halfSize, const glm::vec3& color, const SceneData& sceneData);
 
 	static       bool       GetShowAllGizmos()      { return showAllGizmos;      }
 	static const glm::vec3& GetGizmosColor()        { return gizmosColor;        }
@@ -27,6 +31,7 @@ public:
 	static       bool       GetShowBoundsGizmos()	{ return showBoundsGizmos;   }
 	static const glm::vec3& GetBoundsGizmoColor()	{ return boundsGizmoColor;   }
 	static       float      GetGizmosLineWidth()    { return gizmosLineWidth;    }
+	static       bool       GetShowLockOnSightRays() { return showLockOnSightRays; }
 
 	static void SetShowAllGizmos(bool show)                   { showAllGizmos      = show;  }
 	static void SetGizmosColor(const glm::vec3& color)        { gizmosColor        = color; }
@@ -34,12 +39,20 @@ public:
 	static void SetShowBoundsGizmos(bool show)                { showBoundsGizmos   = show;  }
 	static void SetBoundsGizmoColor(const glm::vec3& color)	  { boundsGizmoColor   = color; }
 	static void SetGizmosLineWidth(float width)               { gizmosLineWidth    = width; }
+	static void SetShowLockOnSightRays(bool show)             { showLockOnSightRays = show; }
 
 private:
+
+	static void CreateLineBuffers();
+	static void DrawLinesWithColor(const VertexArray& lines, const glm::vec3& color, const SceneData& sceneData);
 
 	static inline std::shared_ptr<VertexArray>  vertexArray;
 	static inline std::shared_ptr<VertexBuffer> vertexBuffer;
 	static inline std::shared_ptr<Shader>       debugShader;
+
+	// A separate pair for single lines: the box one always holds the 8 corners of a box
+	static inline std::shared_ptr<VertexArray>  lineVertexArray;
+	static inline std::shared_ptr<VertexBuffer> lineVertexBuffer;
 
 	static inline bool      showAllGizmos           = false;
 	static inline glm::vec3 gizmosColor             = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -49,6 +62,8 @@ private:
 	static inline glm::vec3 boundsGizmoColor		= glm::vec3(0.0f, 1.0f, 1.0f);
 
 	static inline float     gizmosLineWidth         = 1.0f;
+
+	static inline bool      showLockOnSightRays     = false;
 
 };
 }

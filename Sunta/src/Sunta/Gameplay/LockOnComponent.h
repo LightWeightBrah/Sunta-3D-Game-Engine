@@ -43,6 +43,10 @@ struct LockOnComponent
 	// On: reads the keyboard and the mouse. Off: a script decides what is locked on to
 	bool isPlayerControlled = true;
 
+	// On: after every search (Q) the line of sight to each enemy is drawn for a few seconds and the log says what hides an enemy
+	// Green: the enemy can be seen. Red: the ray hits a wall there (orange cross), grey: the rest of the way to the enemy
+	bool showSightRays = false;
+
 	// The enemy that is locked on to now. Not saved with the scene
 	bool         hasTarget      = false;
 	unsigned int targetEntityID = 0;
@@ -60,7 +64,8 @@ struct LockOnComponent
 				ADD_PROPERTY_RANGED(LockOnComponent, eyeHeight,           PropertyDataType::Float, 0.0f,  MaxEyeHeight),
 				ADD_PROPERTY_RANGED(LockOnComponent, switchMouseDistance, PropertyDataType::Float, 20.0f, MaxSwitchDistance),
 				ADD_PROPERTY(LockOnComponent, requireLineOfSight, PropertyDataType::Bool),
-				ADD_PROPERTY(LockOnComponent, isPlayerControlled, PropertyDataType::Bool)
+				ADD_PROPERTY(LockOnComponent, isPlayerControlled, PropertyDataType::Bool),
+				ADD_PROPERTY(LockOnComponent, showSightRays,      PropertyDataType::Bool)
 			});
 	}
 };
