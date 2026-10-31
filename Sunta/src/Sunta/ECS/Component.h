@@ -17,6 +17,7 @@
 #include "Utilities/MathUtilities.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/EnemyComponent.h"
+#include "Gameplay/EnemyHealthBarComponent.h"
 #include "Gameplay/HealthComponent.h"
 #include "Gameplay/HitboxComponent.h"
 #include "Gameplay/StaminaComponent.h"
@@ -26,6 +27,7 @@
 #include "Gameplay/LockOnComponent.h"
 #include "Gameplay/LockOnTargetComponent.h"
 #include "Gameplay/MeleeEnemyComponent.h"
+#include "Gameplay/PlayerHUDComponent.h"
 
 namespace Sunta
 {

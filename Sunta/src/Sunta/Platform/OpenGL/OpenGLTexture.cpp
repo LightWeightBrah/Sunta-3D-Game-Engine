@@ -49,6 +49,25 @@ OpenGLTexture::OpenGLTexture(const std::string& filepath, bool flip, bool isPixe
 	stbi_image_free(data);
 }
 
+OpenGLTexture::OpenGLTexture(int width, int height, const unsigned char* rgbaPixels)
+	: Texture("")
+	, id(0)
+	, data(nullptr)
+	, width(width)
+	, height(height)
+	, nrChannels(4)
+{
+	GLCall(glGenTextures(1, &id));
+	GLCall(glBindTexture(GL_TEXTURE_2D, id));
+
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaPixels));
+}
+
 OpenGLTexture::~OpenGLTexture()
 {
 	GLCall(glDeleteTextures(1, &id));

@@ -81,6 +81,10 @@ public:
 	// Puts the entity where the free camera is and turns it the same way (for placing a CameraComponent)
 	void AlignEntityWithEditorCamera(unsigned int entityID);
 
+	// The scene is drawn under the whole window, the editor's panels cover its edges:
+	// the editor gives the free space between them (pixels of the window), so the HUD's bars are not hidden
+	void SetHUDArea(const glm::vec2& topLeft, const glm::vec2& size);
+
 
 private:
 	EntityManager		entityManager;
@@ -91,6 +95,12 @@ private:
 	// The view of the current frame (matrices and position only), see GetViewMatrix()
 	SceneData			activeCameraData;
 	float				aspectRatio			= 16.0f / 9.0f; // of the window, a CameraComponent has no size of its own
+	glm::vec2			screenSize			= glm::vec2(0.0f); // of the window in pixels, the HUD is drawn over it
+
+	// Where the HUD's bars go: set by the editor (the space between its panels), the whole window when not set
+	glm::vec2			hudAreaTopLeft		= glm::vec2(0.0f);
+	glm::vec2			hudAreaSize			= glm::vec2(0.0f);
+	bool				hasHUDArea			= false;
 
 	// True in the Game mode, where the cursor is hidden and the mouse belongs to the game (to turn the camera)
 	// In the Editor mode the mouse moves a visible cursor over the editor, so the game ignores it

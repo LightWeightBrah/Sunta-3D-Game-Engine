@@ -33,6 +33,7 @@
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/EnemySystem.h"
+#include "Gameplay/HUDSystem.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
@@ -212,7 +213,10 @@ void Scene::OnWindowResize(float windowWidth, float windowHeight)
 
 	// A minimized window has no size, the last proper aspect ratio stays
 	if (windowWidth > 0.0f && windowHeight > 0.0f)
+	{
 		aspectRatio = windowWidth / windowHeight;
+		screenSize  = glm::vec2(windowWidth, windowHeight);
+	}
 }
 	
 void Scene::OnEngineModeChanged(const EngineModeChangedEvent& event)
@@ -326,7 +330,10 @@ void Scene::Update()
 
 	// After the transforms: the sword hurts where the hand holds it in this frame
 	if (isPlaying)
+	{
 		CombatSystem::Update(entityManager, EngineTime::deltaTime);
+		HUDSystem::Update(entityManager, EngineTime::deltaTime);
+	}
 
 	// After the transforms, so the camera sees where the player and the walls really are
 	if (isPlaying)
@@ -519,6 +526,10 @@ void Scene::Render(Renderer& renderer)
 	{
 		for (const LockOnSystem::SightRay& sightRay : LockOnSystem::GetSightRays())
 			DrawSightRay(sightRay, sceneData);
+
+		// Last: the HUD is drawn over the whole scene
+		const HUDArea hudArea = hasHUDArea ? HUDArea{ hudAreaTopLeft, hudAreaSize } : HUDArea{ glm::vec2(0.0f), screenSize };
+		HUDSystem::Draw(entityManager, sceneData.projectionMatrix * sceneData.viewMatrix, screenSize, hudArea);
 	}
 
 }
@@ -641,6 +652,7 @@ void Scene::BeginPlay()
 	CombatSystem::PrepareForPlay(entityManager);
 	StaminaSystem::PrepareForPlay(entityManager);
 	EnemySystem::PrepareForPlay(entityManager);
+	HUDSystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;
@@ -714,6 +726,13 @@ void Scene::AlignEntityWithEditorCamera(unsigned int entityID)
 	transform->rotationQuaternion = camera.GetRotation();
 	transform->SyncEulerFromQuaternion();
 	transform->isDirty            = true;
+}
+
+void Scene::SetHUDArea(const glm::vec2& topLeft, const glm::vec2& size)
+{
+	hudAreaTopLeft = topLeft;
+	hudAreaSize    = size;
+	hasHUDArea     = true;
 }
 
 void Scene::Clear()

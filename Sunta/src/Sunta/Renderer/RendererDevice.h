@@ -37,6 +37,10 @@ public:
 	virtual void SetViewport(int x, int y, int width, int height) = 0;
 	virtual void SetLineWidth(float width) = 0;
 
+	// For drawing 2D over the scene (the game's UI): no depth test, and see-through pixels mixed with what is behind them
+	virtual void SetDepthTest(bool isEnabled) = 0;
+	virtual void SetAlphaBlending(bool isEnabled) = 0;
+
 	virtual void DrawElements(const VertexArray& vertexArray) = 0;
 	virtual void DrawLines(const VertexArray& vertexArray) = 0;
 
@@ -44,6 +48,9 @@ public:
 	virtual std::shared_ptr<ElementBuffer> CreateElementBuffer(const BufferDescriptor& descriptor) = 0;
 	virtual std::shared_ptr<VertexArray>   CreateVertexArray() = 0;
 	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath, bool flip = true, bool isPixelArt = false) = 0;
+
+	// A texture made in memory (e.g. the letters of a font): 4 bytes per pixel (RGBA), the first row is the top of the picture
+	virtual std::shared_ptr<Texture>       CreateTexture(int width, int height, const unsigned char* rgbaPixels) = 0;
 	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) = 0;
 
 	static std::unique_ptr<RendererDevice> Create();

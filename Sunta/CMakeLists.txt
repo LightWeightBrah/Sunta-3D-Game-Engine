@@ -62,6 +62,7 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends/imgui_impl_opengl3.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper/imguizmo/ImGuizmo.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_truetype.cpp"
 )
 
 # ========================= IDE ORGANIZATION =============================  

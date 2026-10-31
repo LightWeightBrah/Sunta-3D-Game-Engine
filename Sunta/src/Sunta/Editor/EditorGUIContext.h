@@ -27,6 +27,9 @@ public:
 
 	static void BeginDockingSpace(Window* window);
 
+	// Tells the scene which part of the window the panels leave free, so the game's HUD is laid out there
+	static void ShareFreeSceneAreaWithHUD(Scene& scene);
+
 	inline static const char* GetInspectorName() { return inspectorName; }
 
 	static void RenderUI(Window* window, Scene& scene, RendererDevice& rendererDevice);
@@ -52,6 +55,7 @@ private:
 	static constexpr const char* hierarchyName		= "Hierarchy";
 	static constexpr const char* rootWindowID		= "Main Viewport Docking Window";
 	static constexpr const char* mainDockingSpaceID = "Editor Docking Space";
+	inline static unsigned int dockspaceID = 0;
 	
 	static void MatchWindowSizeToViewport();
 	static int  GetRootWindowFlags();

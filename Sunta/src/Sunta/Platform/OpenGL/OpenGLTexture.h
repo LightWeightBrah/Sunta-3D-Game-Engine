@@ -9,6 +9,9 @@ class OpenGLTexture : public Texture
 
 public:
 	OpenGLTexture(const std::string& filepath, bool flip = true, bool isPixelArt = false);
+
+	// From pixels in memory: 4 bytes per pixel (RGBA), the first row is the top. Smooth when scaled, no repeating at the edges
+	OpenGLTexture(int width, int height, const unsigned char* rgbaPixels);
 	virtual ~OpenGLTexture() override;
 	
 	virtual unsigned int GetID() const override { return id; }

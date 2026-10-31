@@ -29,6 +29,31 @@ void OpenGLDevice::SetLineWidth(float width)
 	GLCall(glLineWidth(width));
 }
 
+void OpenGLDevice::SetDepthTest(bool isEnabled)
+{
+	// Braces: GLCall is a few statements in Debug
+	if (isEnabled)
+	{
+		GLCall(glEnable(GL_DEPTH_TEST));
+	}
+	else
+	{
+		GLCall(glDisable(GL_DEPTH_TEST));
+	}
+}
+
+void OpenGLDevice::SetAlphaBlending(bool isEnabled)
+{
+	if (!isEnabled)
+	{
+		GLCall(glDisable(GL_BLEND));
+		return;
+	}
+
+	GLCall(glEnable(GL_BLEND));
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+}
+
 void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 {
 	vertexArray.Bind();
@@ -64,6 +89,11 @@ std::shared_ptr<VertexArray> OpenGLDevice::CreateVertexArray()
 std::shared_ptr<Texture> OpenGLDevice::CreateTexture(const std::string& filepath, bool flip, bool isPixelArt)
 {
 	return std::make_shared<OpenGLTexture>(filepath, flip, isPixelArt);
+}
+
+std::shared_ptr<Texture> OpenGLDevice::CreateTexture(int width, int height, const unsigned char* rgbaPixels)
+{
+	return std::make_shared<OpenGLTexture>(width, height, rgbaPixels);
 }
 
 std::shared_ptr<Shader> OpenGLDevice::CreateShader(const std::string& filepath)

@@ -98,7 +98,7 @@ void EditorGUIContext::BeginDockingSpace(Window* window)
 	ImGui::Begin(rootWindowID, nullptr, GetRootWindowFlags());
 	RestoreNormalWindowStyle();
 
-	unsigned int dockspaceID = ImGui::GetID(mainDockingSpaceID);
+	dockspaceID = ImGui::GetID(mainDockingSpaceID);
 	// creates docking space						 passthru flag so  we can interact with scene
 	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 
@@ -121,6 +121,7 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 
 	EditorGUI::DrawMainMenuBarAndToolbar(scene, toolbarHeight);
 	EditorGUIContext::BeginDockingSpace(window);
+	EditorGUIContext::ShareFreeSceneAreaWithHUD(scene);
 
 	EditorGUI::DrawSceneDropTarget(scene);
 
@@ -145,6 +146,23 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 		ImGui::PopFont();
 
 	EditorGUIContext::EndFrame(window);
+}
+
+// The central node of the docking space is the part no panel covers (the scene shows through it)
+// ImGui places it in coordinates of the desktop, the scene counts pixels of the window
+void EditorGUIContext::ShareFreeSceneAreaWithHUD(Scene& scene)
+{
+	const ImGuiDockNode* centralNode = ImGui::DockBuilderGetCentralNode(dockspaceID);
+	if (!centralNode)
+		return;
+
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+	const ImVec2 pixelsPerPoint   = ImGui::GetIO().DisplayFramebufferScale;
+
+	const glm::vec2 topLeft = glm::vec2((centralNode->Pos.x - viewport->Pos.x) * pixelsPerPoint.x, (centralNode->Pos.y - viewport->Pos.y) * pixelsPerPoint.y);
+	const glm::vec2 size    = glm::vec2(centralNode->Size.x * pixelsPerPoint.x, centralNode->Size.y * pixelsPerPoint.y);
+
+	scene.SetHUDArea(topLeft, size);
 }
 
 void EditorGUIContext::MatchWindowSizeToViewport()

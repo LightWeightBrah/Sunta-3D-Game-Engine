@@ -56,6 +56,9 @@ void RustedKnightSetup::SetUp(EntityManager& entityManager, unsigned int entityI
 	if (!Has<LockOnTargetComponent>(entityManager, entityID))
 		entityManager.AddComponent<LockOnTargetComponent>(entityID);
 
+	if (!Has<EnemyHealthBarComponent>(entityManager, entityID))
+		entityManager.AddComponent<EnemyHealthBarComponent>(entityID);
+
 	CharacterSetup::SetBodyLayer(entityManager, entityID, EnemyBodyLayer);
 	CharacterSetup::AddSwordIfPossible(entityManager, entityID, EnemyWeaponLayer, SwordDamage);
 }

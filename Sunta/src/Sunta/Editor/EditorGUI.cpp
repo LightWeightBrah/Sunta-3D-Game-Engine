@@ -1081,6 +1081,18 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			},
 
 			{
+				"Player HUD",
+				[&]() { return entityManager.GetComponent<PlayerHUDComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<PlayerHUDComponent>(inspectedEntity); }
+			},
+
+			{
+				"Enemy Health Bar",
+				[&]() { return entityManager.GetComponent<EnemyHealthBarComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<EnemyHealthBarComponent>(inspectedEntity); }
+			},
+
+			{
 				"Hitbox",
 				[&]() { return entityManager.GetComponent<HitboxComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<HitboxComponent>(inspectedEntity); }

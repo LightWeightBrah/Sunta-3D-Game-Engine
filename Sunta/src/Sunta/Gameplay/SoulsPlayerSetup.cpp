@@ -38,7 +38,8 @@ bool Has(EntityManager& entityManager, unsigned int entityID)
 
 // ========== The player's own parts ==========
 
-// Stamina limits rolling and attacking, Lock On aims at enemies, Lock On Target lets the enemies face the player
+// Stamina limits rolling and attacking, Lock On aims at enemies, Lock On Target lets the enemies face the player,
+// Player HUD shows the bars
 void AddPlayerComponents(EntityManager& entityManager, unsigned int entityID)
 {
 	if (!Has<StaminaComponent>(entityManager, entityID))
@@ -49,6 +50,9 @@ void AddPlayerComponents(EntityManager& entityManager, unsigned int entityID)
 
 	if (!Has<LockOnTargetComponent>(entityManager, entityID))
 		entityManager.AddComponent<LockOnTargetComponent>(entityID);
+
+	if (!Has<PlayerHUDComponent>(entityManager, entityID))
+		entityManager.AddComponent<PlayerHUDComponent>(entityID);
 }
 
 // ========== The camera ==========

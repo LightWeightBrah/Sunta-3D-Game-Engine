@@ -45,6 +45,8 @@ namespace SceneKeys
 	constexpr const char* HitboxComponent           = "hitbox";
 	constexpr const char* EnemyComponent            = "enemy";
 	constexpr const char* MeleeEnemyComponent       = "melee_enemy";
+	constexpr const char* PlayerHUDComponent        = "player_hud";
+	constexpr const char* EnemyHealthBarComponent   = "enemy_health_bar";
 	constexpr const char* ParentComponent           = "parent";
 
 	constexpr const char* Name                      = "name";
@@ -173,6 +175,16 @@ namespace SceneKeys
 	constexpr const char* HeavyAttackChance         = "heavy_attack_chance";
 	constexpr const char* MaxLightCombo             = "max_light_combo";
 	constexpr const char* RecoverSeconds            = "recover_seconds";
+
+	constexpr const char* PixelsPerHealthPoint      = "pixels_per_health_point";
+	constexpr const char* PixelsPerStaminaPoint     = "pixels_per_stamina_point";
+	constexpr const char* ShowLockOnMarker          = "show_lock_on_marker";
+	constexpr const char* DeathMessage              = "death_message";
+
+	constexpr const char* IsBoss                    = "is_boss";
+	constexpr const char* DisplayName               = "display_name";
+	constexpr const char* ShowSecondsAfterHit       = "show_seconds_after_hit";
+	constexpr const char* HeightAboveFeet           = "height_above_feet";
 
 	// The parent is saved as its place in the list of entities (entity IDs change every time a scene is loaded)
 	constexpr const char* ParentIndex               = "index";
@@ -560,6 +572,28 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::SightAngleDegrees, enemy->sightAngleDegrees },
 				{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
 				{ SceneKeys::EyeHeight,         enemy->eyeHeight         }
+			};
+		}
+
+		if (auto* hud = entityManager.GetComponent<PlayerHUDComponent>(i))
+		{
+			entityJson[SceneKeys::PlayerHUDComponent] =
+			{
+				{ SceneKeys::PixelsPerHealthPoint,  hud->pixelsPerHealthPoint  },
+				{ SceneKeys::PixelsPerStaminaPoint, hud->pixelsPerStaminaPoint },
+				{ SceneKeys::ShowLockOnMarker,      hud->showLockOnMarker      },
+				{ SceneKeys::DeathMessage,          hud->deathMessage          }
+			};
+		}
+
+		if (auto* healthBar = entityManager.GetComponent<EnemyHealthBarComponent>(i))
+		{
+			entityJson[SceneKeys::EnemyHealthBarComponent] =
+			{
+				{ SceneKeys::IsBoss,              healthBar->isBoss              },
+				{ SceneKeys::DisplayName,         healthBar->displayName         },
+				{ SceneKeys::ShowSecondsAfterHit, healthBar->showSecondsAfterHit },
+				{ SceneKeys::HeightAboveFeet,     healthBar->heightAboveFeet     }
 			};
 		}
 
@@ -976,6 +1010,30 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			enemy.sightAngleDegrees = enemyData.value(SceneKeys::SightAngleDegrees, enemy.sightAngleDegrees);
 			enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
 			enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
+		}
+
+		if (entityJson.contains(SceneKeys::PlayerHUDComponent))
+		{
+			const auto& hudData = entityJson[SceneKeys::PlayerHUDComponent];
+			auto& hud = entityManager.AddComponent<PlayerHUDComponent>(entity);
+
+			// A missing key keeps the default written in PlayerHUDComponent.h
+			hud.pixelsPerHealthPoint  = hudData.value(SceneKeys::PixelsPerHealthPoint,  hud.pixelsPerHealthPoint);
+			hud.pixelsPerStaminaPoint = hudData.value(SceneKeys::PixelsPerStaminaPoint, hud.pixelsPerStaminaPoint);
+			hud.showLockOnMarker      = hudData.value(SceneKeys::ShowLockOnMarker,      hud.showLockOnMarker);
+			hud.deathMessage          = hudData.value(SceneKeys::DeathMessage,          hud.deathMessage);
+		}
+
+		if (entityJson.contains(SceneKeys::EnemyHealthBarComponent))
+		{
+			const auto& barData = entityJson[SceneKeys::EnemyHealthBarComponent];
+			auto& healthBar = entityManager.AddComponent<EnemyHealthBarComponent>(entity);
+
+			// A missing key keeps the default written in EnemyHealthBarComponent.h
+			healthBar.isBoss              = barData.value(SceneKeys::IsBoss,              healthBar.isBoss);
+			healthBar.displayName         = barData.value(SceneKeys::DisplayName,         healthBar.displayName);
+			healthBar.showSecondsAfterHit = barData.value(SceneKeys::ShowSecondsAfterHit, healthBar.showSecondsAfterHit);
+			healthBar.heightAboveFeet     = barData.value(SceneKeys::HeightAboveFeet,     healthBar.heightAboveFeet);
 		}
 
 		if (entityJson.contains(SceneKeys::MeleeEnemyComponent))
