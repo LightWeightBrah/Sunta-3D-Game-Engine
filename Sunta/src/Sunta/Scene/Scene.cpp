@@ -30,6 +30,7 @@
 #include "Physics/CollisionSystem.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/PhysicsSystem.h"
+#include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
 #include "Gameplay/FollowCameraSystem.h"
@@ -297,6 +298,7 @@ void Scene::Update()
 		LockOnSystem::SetRecordingSightRays(DebugRenderer::GetShowLockOnSightRays());
 		LockOnSystem::Update(entityManager, EngineTime::deltaTime, cameraForward, lookDelta);
 		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
+		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
 
@@ -310,6 +312,7 @@ void Scene::Update()
 		Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
 	}
 
+	// After the animators: a child on a bone (a sword in the hand) follows the pose of this frame
 	Systems::UpdateTransform(entityManager);
 
 	// After the transforms, so the camera sees where the player and the walls really are
@@ -597,9 +600,16 @@ void Scene::BeginPlay()
 {
 	CollisionSystem::Reset();
 	LockOnSystem::ClearSightRays();
+
+	// A scene loaded just now has the names of its models, the models themselves are found here.
+	// The checks below look at the models (animations, bones), so they must already be there
+	Systems::SyncMeshComponents(entityManager);
+	Systems::SyncModelComponents(entityManager);
+
 	CharacterControllerSystem::ReportProblemsBeforePlay(entityManager);
 	FollowCameraSystem::ReportProblemsBeforePlay(entityManager);
 	CharacterAnimationSystem::ReportProblemsBeforePlay(entityManager);
+	CharacterActionsSystem::ReportProblemsBeforePlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

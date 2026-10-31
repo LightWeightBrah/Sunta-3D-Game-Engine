@@ -37,9 +37,17 @@ public:
 	inline const std::vector<SubMesh>& GetSubMeshes() const { return subMeshes;		}
 	inline const aiScene* GetScene()				  const { return scene;         }
 	
-	inline const std::map<std::string, BoneInfo> GetBoneNameToInfo() const { return boneNameToInfo;			}
+	inline const std::map<std::string, BoneInfo>& GetBoneNameToInfo() const { return boneNameToInfo;			}
 	inline const glm::mat4 GetGlobalInverseTransform()				 const { return globalInverseTransform; }
 	inline const std::vector<glm::mat4> GetDefaultBoneMatrices()	 const { return defaultBoneMatrices; }
+
+	// Every node of the model file (bones, sockets like a weapon bone, meshes), parents before children
+	// The Animator fills its node transforms in the same order (see Animator::GetNodeModelTransform)
+	inline const std::vector<std::string>& GetNodeNames()			 const { return nodeNames; }
+	bool TryGetNodeIndex(const std::string& name, unsigned int& outIndex) const;
+
+	// Where a node is in the rest pose (no animation), in the space of the model
+	glm::mat4 GetRestNodeModelTransform(unsigned int nodeIndex) const;
 	
 	// Local-space bounding box (union of every submesh's bounds), used by the
 	// editor for mouse-picking (ray vs box)
@@ -59,6 +67,9 @@ private:
 	std::map<std::string, BoneInfo> boneNameToInfo;
 	glm::mat4						globalInverseTransform;
 	std::vector<glm::mat4>			defaultBoneMatrices;
+
+	std::vector<std::string>		nodeNames;
+	std::vector<glm::mat4>			restNodeModelTransforms;
 	
 	bool							hasAnimations;
 	float							importScale = 1.0f;
@@ -116,6 +127,7 @@ private:
 	
 	unsigned int GetBoneId		(aiBone* bone);
 	void CalculateDefaultBoneTransform(aiNode* node, glm::mat4 parentTransform);
+	void CollectNodes(const aiNode* node, const glm::mat4& parentTransform);
 
 };
 

@@ -1,58 +1,14 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CharacterAnimationComponentDrawer.h"
 
-#include <map>
-#include <string>
-
 #include <imgui/imgui.h>
 
+#include "NameCombo.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 
 namespace Sunta
 {
-
-namespace
-{
-
-constexpr const char* NoAnimationLabel = "(none)";
-
-// A dropdown of the animations. Returns true when another one was chosen
-bool DrawAnimationCombo(const char* label, std::string& chosenName, const std::map<std::string, Animation>& animations)
-{
-	bool changed = false;
-
-	const std::string preview = chosenName.empty() ? NoAnimationLabel : chosenName;
-
-	if (ImGui::BeginCombo(label, preview.c_str()))
-	{
-		if (ImGui::Selectable(NoAnimationLabel, chosenName.empty()))
-		{
-			chosenName.clear();
-			changed = true;
-		}
-
-		for (const auto& [animationName, animation] : animations)
-		{
-			const bool isSelected = (chosenName == animationName);
-
-			if (ImGui::Selectable(animationName.c_str(), isSelected))
-			{
-				chosenName = animationName;
-				changed    = true;
-			}
-
-			if (isSelected)
-				ImGui::SetItemDefaultFocus();
-		}
-
-		ImGui::EndCombo();
-	}
-
-	return changed;
-}
-
-}
 
 bool CharacterAnimationComponentDrawer::Draw(void* componentData, unsigned int entityID, EntityManager& entityManager)
 {

@@ -203,11 +203,13 @@ void EditorLayer::RegisterComponentsToInspector()
 {
 	TagComponent::RegisterToInspector();
 	TransformComponent::RegisterToInspector();
+	ParentComponent::RegisterToInspector();
 	MeshComponent::RegisterToInspector();
 	ModelComponent::RegisterToInspector();
 	AnimatorComponent::RegisterToInspector();
 	CharacterAnimationComponent::RegisterToInspector();
 	CharacterControllerComponent::RegisterToInspector();
+	CharacterActionsComponent::RegisterToInspector();
 	PhysicsBodyComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
 	CameraComponent::RegisterToInspector();

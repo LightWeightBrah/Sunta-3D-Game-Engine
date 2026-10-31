@@ -139,6 +139,14 @@ void GLFWWindowImplementation::SetCallbacks()
 			EventBus::Publish(MouseScrollEvent{ static_cast<float>(xOffset), static_cast<float>(yOffset) });
 		});
 
+	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods)
+		{
+			if (action == GLFW_PRESS)
+				EventBus::Publish(MouseButtonPressedEvent{ button });
+			else if (action == GLFW_RELEASE)
+				EventBus::Publish(MouseButtonReleasedEvent{ button });
+		});
+
 	glfwSetWindowCloseCallback(window, [](GLFWwindow* window)
 		{
 			// GLFW already marked the window as closing. It stays open until the application agrees to close,

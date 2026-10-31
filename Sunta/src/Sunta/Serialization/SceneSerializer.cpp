@@ -39,6 +39,8 @@ namespace SceneKeys
 	constexpr const char* FollowCameraComponent     = "follow_camera";
 	constexpr const char* LockOnComponent           = "lock_on";
 	constexpr const char* LockOnTargetComponent     = "lock_on_target";
+	constexpr const char* CharacterActionsComponent = "character_actions";
+	constexpr const char* ParentComponent           = "parent";
 
 	constexpr const char* Name                      = "name";
 	constexpr const char* Position                  = "position";
@@ -122,6 +124,69 @@ namespace SceneKeys
 	constexpr const char* IsLockable                = "is_lockable";
 	constexpr const char* AimHeight                 = "aim_height";
 
+	constexpr const char* RollAnimation             = "roll_animation";
+	constexpr const char* BackstepAnimation         = "backstep_animation";
+	constexpr const char* LightAttack1Animation     = "light_attack_1_animation";
+	constexpr const char* LightAttack2Animation     = "light_attack_2_animation";
+	constexpr const char* LightAttack3Animation     = "light_attack_3_animation";
+	constexpr const char* HeavyAttackAnimation      = "heavy_attack_animation";
+	constexpr const char* RollSpeed                 = "roll_speed";
+	constexpr const char* BackstepSpeed             = "backstep_speed";
+	constexpr const char* AttackStepSpeed           = "attack_step_speed";
+	constexpr const char* InvulnerableFrom          = "invulnerable_from";
+	constexpr const char* InvulnerableTo            = "invulnerable_to";
+	constexpr const char* InputBufferFrom           = "input_buffer_from";
+	constexpr const char* CancelFrom                = "cancel_from";
+
+	// The parent is saved as its place in the list of entities (entity IDs change every time a scene is loaded)
+	constexpr const char* ParentIndex               = "index";
+	constexpr const char* BoneName                  = "bone_name";
+
+}
+
+// Where each entity ended up in the saved list of entities (entity ID -> place in the list)
+using SavedIndices = std::unordered_map<unsigned int, size_t>;
+
+// Written after all entities, because a parent can come later in the list than its child
+static void SerializeParents(EntityManager& entityManager, const SavedIndices& savedIndices, json& entitiesArray)
+{
+	for (ParentComponent& parent : entityManager.GetAllComponents<ParentComponent>())
+	{
+		const auto child      = savedIndices.find(entityManager.GetEntityIDForComponent(parent));
+		const auto savedParent = savedIndices.find(parent.parentID);
+
+		if (child == savedIndices.end() || savedParent == savedIndices.end())
+			continue;
+
+		entitiesArray[child->second][SceneKeys::ParentComponent] =
+		{
+			{ SceneKeys::ParentIndex, savedParent->second },
+			{ SceneKeys::BoneName,    parent.boneName     }
+		};
+	}
+}
+
+// 'entityAtSavedIndex' says which entity was created for each place in the saved list (-1: the place was empty)
+static void DeserializeParents(EntityManager& entityManager, const json& entitiesJson, const std::vector<int>& entityAtSavedIndex)
+{
+	for (size_t savedIndex = 0; savedIndex < entityAtSavedIndex.size(); savedIndex++)
+	{
+		const json& entityJson = entitiesJson[savedIndex];
+		const int   childID    = entityAtSavedIndex[savedIndex];
+
+		if (childID < 0 || !entityJson.contains(SceneKeys::ParentComponent))
+			continue;
+
+		const json&  parentData  = entityJson[SceneKeys::ParentComponent];
+		const size_t parentIndex = parentData.value(SceneKeys::ParentIndex, entityAtSavedIndex.size());
+
+		if (parentIndex >= entityAtSavedIndex.size() || entityAtSavedIndex[parentIndex] < 0)
+			continue;
+
+		ParentComponent& parent = entityManager.AddComponent<ParentComponent>(static_cast<unsigned int>(childID));
+		parent.parentID = static_cast<unsigned int>(entityAtSavedIndex[parentIndex]);
+		parent.boneName = parentData.value(SceneKeys::BoneName, std::string());
+	}
 }
 
 static json SerializeVec3(const glm::vec3& vec)
@@ -191,6 +256,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 	sceneJson[SceneKeys::SceneName] = scene.GetName();
 
 	json entitiesArray = json::array();
+	SavedIndices savedIndices;
 
 	for (unsigned int i = 0; i < totalEntities; i++)
 	{
@@ -390,9 +456,35 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			};
 		}
 
-		if(!entityJson.empty())
+		if (auto* actions = entityManager.GetComponent<CharacterActionsComponent>(i))
+		{
+			entityJson[SceneKeys::CharacterActionsComponent] =
+			{
+				{ SceneKeys::RollAnimation,         actions->rollAnimation         },
+				{ SceneKeys::BackstepAnimation,     actions->backstepAnimation     },
+				{ SceneKeys::LightAttack1Animation, actions->lightAttack1Animation },
+				{ SceneKeys::LightAttack2Animation, actions->lightAttack2Animation },
+				{ SceneKeys::LightAttack3Animation, actions->lightAttack3Animation },
+				{ SceneKeys::HeavyAttackAnimation,  actions->heavyAttackAnimation  },
+				{ SceneKeys::RollSpeed,             actions->rollSpeed             },
+				{ SceneKeys::BackstepSpeed,         actions->backstepSpeed         },
+				{ SceneKeys::AttackStepSpeed,       actions->attackStepSpeed       },
+				{ SceneKeys::InvulnerableFrom,      actions->invulnerableFrom      },
+				{ SceneKeys::InvulnerableTo,        actions->invulnerableTo        },
+				{ SceneKeys::InputBufferFrom,       actions->inputBufferFrom       },
+				{ SceneKeys::CancelFrom,            actions->cancelFrom            },
+				{ SceneKeys::BlendSeconds,          actions->blendSeconds          }
+			};
+		}
+
+		if (!entityJson.empty())
+		{
+			savedIndices[i] = entitiesArray.size();
 			entitiesArray.push_back(entityJson);
+		}
 	}
+
+	SerializeParents(entityManager, savedIndices, entitiesArray);
 
 	sceneJson[SceneKeys::Entities] = entitiesArray;
 
@@ -453,12 +545,18 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 		return true;
 	}
 
-	for (const auto& entityJson : sceneJson[SceneKeys::Entities])
+	const json& entitiesJson = sceneJson[SceneKeys::Entities];
+	std::vector<int> entityAtSavedIndex;
+
+	for (const auto& entityJson : entitiesJson)
 	{
+		entityAtSavedIndex.push_back(-1);
+
 		if(entityJson.empty())
 			continue;
 
 		unsigned int entity = entityManager.CreateEntity();
+		entityAtSavedIndex.back() = static_cast<int>(entity);
 
 		if (entityJson.contains(SceneKeys::TagComponent))
 		{
@@ -699,7 +797,31 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			lockOnTarget.aimHeight  = targetData.value(SceneKeys::AimHeight,  lockOnTarget.aimHeight);
 		}
 
+		if (entityJson.contains(SceneKeys::CharacterActionsComponent))
+		{
+			const auto& actionsData = entityJson[SceneKeys::CharacterActionsComponent];
+			auto& actions = entityManager.AddComponent<CharacterActionsComponent>(entity);
+
+			// A missing key keeps the default written in CharacterActionsComponent.h
+			actions.rollAnimation         = actionsData.value(SceneKeys::RollAnimation,         actions.rollAnimation);
+			actions.backstepAnimation     = actionsData.value(SceneKeys::BackstepAnimation,     actions.backstepAnimation);
+			actions.lightAttack1Animation = actionsData.value(SceneKeys::LightAttack1Animation, actions.lightAttack1Animation);
+			actions.lightAttack2Animation = actionsData.value(SceneKeys::LightAttack2Animation, actions.lightAttack2Animation);
+			actions.lightAttack3Animation = actionsData.value(SceneKeys::LightAttack3Animation, actions.lightAttack3Animation);
+			actions.heavyAttackAnimation  = actionsData.value(SceneKeys::HeavyAttackAnimation,  actions.heavyAttackAnimation);
+			actions.rollSpeed             = actionsData.value(SceneKeys::RollSpeed,             actions.rollSpeed);
+			actions.backstepSpeed         = actionsData.value(SceneKeys::BackstepSpeed,         actions.backstepSpeed);
+			actions.attackStepSpeed       = actionsData.value(SceneKeys::AttackStepSpeed,       actions.attackStepSpeed);
+			actions.invulnerableFrom      = actionsData.value(SceneKeys::InvulnerableFrom,      actions.invulnerableFrom);
+			actions.invulnerableTo        = actionsData.value(SceneKeys::InvulnerableTo,        actions.invulnerableTo);
+			actions.inputBufferFrom       = actionsData.value(SceneKeys::InputBufferFrom,       actions.inputBufferFrom);
+			actions.cancelFrom            = actionsData.value(SceneKeys::CancelFrom,            actions.cancelFrom);
+			actions.blendSeconds          = actionsData.value(SceneKeys::BlendSeconds,          actions.blendSeconds);
+		}
+
 	}
+
+	DeserializeParents(entityManager, entitiesJson, entityAtSavedIndex);
 	
 	SUNTA_ENGINE_LOG_INFO("SceneSerializer::Deserialize: Successfully loaded Scene '{0}' from '{1}'", scene.GetName(), filepath);
 	return true;

@@ -50,6 +50,10 @@ namespace Sunta::EngineAssets
 	{
 		constexpr const char* Solaire = "solaire";
 		constexpr const char* Backpack = "backpack";
+
+		// The ready player character (Souls Player) and its sword, made by Tools/Blender/knight_generator.py
+		constexpr const char* Knight      = "knight";
+		constexpr const char* KnightSword = "knight_sword";
 	}
 
 	namespace Materials
@@ -125,6 +129,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* AnimationController = "animation_controller";
 		constexpr const char* Pose                = "pose";
 		constexpr const char* Skeleton            = "skeleton";
+		constexpr const char* SoulsPlayer         = "souls_player";
 
 		constexpr const char* BlendTree			  = "blend_tree";
 		constexpr const char* Particle			  = "particle";

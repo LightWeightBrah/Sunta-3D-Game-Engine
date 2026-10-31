@@ -74,6 +74,7 @@ void Model::LoadModel(std::string path, bool flipUV)
 	// Make suere model isn't super big on scene
 	globalInverseTransform = glm::scale(globalInverseTransform, glm::vec3(importScale));
 	ProcessNode(scene->mRootNode);
+	CollectNodes(scene->mRootNode, glm::mat4(1.0f));
 
 	localBoundsMin = glm::vec3(std::numeric_limits<float>::max());
 	localBoundsMax = glm::vec3(-std::numeric_limits<float>::max());
@@ -409,6 +410,33 @@ unsigned int Model::GetBoneId(aiBone* bone)
 	}
 
 	return id;
+}
+
+bool Model::TryGetNodeIndex(const std::string& name, unsigned int& outIndex) const
+{
+	const auto found = std::find(nodeNames.begin(), nodeNames.end(), name);
+	if (found == nodeNames.end())
+		return false;
+
+	outIndex = static_cast<unsigned int>(found - nodeNames.begin());
+	return true;
+}
+
+glm::mat4 Model::GetRestNodeModelTransform(unsigned int nodeIndex) const
+{
+	return nodeIndex < restNodeModelTransforms.size() ? restNodeModelTransforms[nodeIndex] : glm::mat4(1.0f);
+}
+
+// Walks the nodes in the same order as Animation copies them (parent first, then the children in order)
+void Model::CollectNodes(const aiNode* node, const glm::mat4& parentTransform)
+{
+	const glm::mat4 globalTransform = parentTransform * AssimpUtilities::ConvertAssimpMatrixToGLM(node->mTransformation);
+
+	nodeNames.push_back(node->mName.C_Str());
+	restNodeModelTransforms.push_back(globalInverseTransform * globalTransform);
+
+	for (unsigned int i = 0; i < node->mNumChildren; i++)
+		CollectNodes(node->mChildren[i], globalTransform);
 }
 
 void Model::CalculateDefaultBoneTransform(aiNode* node, glm::mat4 parentTransform)

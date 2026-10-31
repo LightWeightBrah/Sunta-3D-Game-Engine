@@ -1,11 +1,9 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CharacterAnimationSystem.h"
 
-#include <algorithm>
-#include <cctype>
-#include <map>
 #include <string>
 
+#include "AnimationNames.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "Core/Log.h"
@@ -19,8 +17,6 @@ namespace
 {
 
 using namespace GameplayMath;
-
-using AnimationMap = std::map<std::string, Animation>;
 
 // ========== Numbers used below ==========
 
@@ -41,12 +37,6 @@ enum class MoveState
 constexpr MoveState AllMoveStates[] = { MoveState::Idle, MoveState::Walk, MoveState::Run };
 
 // ========== Small helpers ==========
-
-std::string ToLowerCase(std::string text)
-{
-	std::transform(text.begin(), text.end(), text.begin(), [](unsigned char letter) { return static_cast<char>(std::tolower(letter)); });
-	return text;
-}
 
 std::string& GetAnimationName(CharacterAnimationComponent& component, MoveState state)
 {
@@ -138,21 +128,6 @@ void StartAnimation(CharacterAnimationComponent& component, AnimatorComponent& a
 
 // ========== Picking names when the component is added ==========
 
-// The first animation with the word in its name (Idle, idle_01, Armature|Idle, ...)
-bool TryFindAnimationContaining(const AnimationMap& animations, const std::string& keyword, std::string& outName)
-{
-	for (const auto& [name, animation] : animations)
-	{
-		if (ToLowerCase(name).find(keyword) != std::string::npos)
-		{
-			outName = name;
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void FillNamesFromModel(CharacterAnimationComponent& component, const AnimationMap& animations)
 {
 	for (MoveState state : AllMoveStates)
@@ -179,8 +154,14 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager)
 		if (!animatorComponent || !modelComponent || !modelComponent->modelData)
 			continue;
 
+		const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
+
+		// A roll or an attack plays its own animation (Character Actions), walking takes over again when it ends
+		if (controller && controller->isDrivenByAction)
+			continue;
+
 		const float     speed = GetHorizontalSpeed(entityManager.GetComponent<PhysicsBodyComponent>(entityID));
-		const MoveState state = GetMoveState(speed, entityManager.GetComponent<CharacterControllerComponent>(entityID));
+		const MoveState state = GetMoveState(speed, controller);
 
 		AnimationMap& animations = modelComponent->modelData->animations;
 

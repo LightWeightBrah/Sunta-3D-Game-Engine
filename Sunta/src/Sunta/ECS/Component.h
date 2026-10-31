@@ -14,6 +14,8 @@
 #include "Physics/CollisionShapes.h"
 #include "Physics/CollisionLayers.h"
 #include "ECS/Entity.h"
+#include "Utilities/MathUtilities.h"
+#include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/CharacterAnimationComponent.h"
 #include "Gameplay/CharacterControllerComponent.h"
 #include "Gameplay/FollowCameraComponent.h"
@@ -54,6 +56,24 @@ struct TransformComponent
 		: position(position) { }
 
 	TransformComponent() = default;
+
+	// The placement relative to the parent (to the world for an entity without a parent)
+	glm::mat4 GetLocalMatrix() const
+	{
+		return Math::ComposeTransform({ position, rotationQuaternion, scale });
+	}
+
+	void SetFromLocalMatrix(const glm::mat4& matrix)
+	{
+		const TransformParts parts = Math::DecomposeTransform(matrix);
+
+		position           = parts.position;
+		rotationQuaternion = parts.rotation;
+		scale              = parts.scale;
+
+		SyncEulerFromQuaternion();
+		isDirty = true;
+	}
 
 	void SyncQuaternionFromEuler()
 	{
@@ -116,6 +136,29 @@ struct TransformComponent
 struct WorldMatrixComponent
 {
 	glm::mat4 matrix = glm::mat4(1.0f);
+};
+
+// Makes this entity a child of another one: it moves, turns and scales together with its parent
+// Its Transform is then relative to the parent (position 0 = where the parent is)
+//
+// The child can also follow a bone of the parent's Model ('boneName', e.g. 'Weapon_R' of the Knight):
+// a sword that is a child of the player, on the bone of the hand, swings with every animation
+//
+// In the editor: drag an entity onto another one in the Hierarchy to make it its child,
+// drag it onto the empty space below the list (or use Unparent) to make it free again
+// Children of a moving physics body follow it, but physics never moves a child on its own
+struct ParentComponent
+{
+	unsigned int parentID = 0;
+
+	// Empty: follows the parent itself. Otherwise the name of a bone (or socket) of the parent's Model
+	std::string boneName;
+
+	static void RegisterToInspector()
+	{
+		// The Inspector draws it with a drawer (name of the parent, dropdown of its bones), so there is no list of properties
+		InspectorComponentRegistry::RegisterComponent<ParentComponent>("Parent", EngineAssets::Icons::Transform, { });
+	}
 };
 
 struct ScriptContainer

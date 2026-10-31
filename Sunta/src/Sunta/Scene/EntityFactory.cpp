@@ -10,6 +10,7 @@
 #include "Core/ResourceManager.h"
 #include "Core/EngineAssets.h"
 #include "Renderer/Shader.h"
+#include "Gameplay/SoulsPlayerSetup.h"
 
 namespace Sunta
 {
@@ -63,6 +64,15 @@ unsigned int EntityFactory::CreateModel(Scene& scene, const glm::vec3& position,
 
 	if (modelData && modelData->model && modelData->model->HasAnimations())
 		entityManager.AddComponent<AnimatorComponent>(entity);
+
+	return entity;
+}
+
+unsigned int EntityFactory::CreateSoulsPlayer(Scene& scene, const glm::vec3& position, const std::string& name)
+{
+	unsigned int entity = CreateEmpty(scene, position, name);
+
+	SoulsPlayerSetup::SetUp(scene.GetEntityManager(), entity);
 
 	return entity;
 }

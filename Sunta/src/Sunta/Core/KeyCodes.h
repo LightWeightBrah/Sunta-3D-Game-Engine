@@ -122,3 +122,8 @@
 #define SUNTA_KEY_RIGHT_ALT          346
 #define SUNTA_KEY_RIGHT_SUPER        347
 #define SUNTA_KEY_MENU               348
+
+/* Mouse buttons */
+#define SUNTA_MOUSE_BUTTON_LEFT      0
+#define SUNTA_MOUSE_BUTTON_RIGHT     1
+#define SUNTA_MOUSE_BUTTON_MIDDLE    2

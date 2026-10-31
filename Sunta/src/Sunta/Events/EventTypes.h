@@ -49,6 +49,16 @@ struct MouseScrollEvent
 	float xOffset, yOffset;
 };
 
+struct MouseButtonPressedEvent
+{
+	int button;
+};
+
+struct MouseButtonReleasedEvent
+{
+	int button;
+};
+
 struct KeyPressedEvent
 {
 	int keyCode;

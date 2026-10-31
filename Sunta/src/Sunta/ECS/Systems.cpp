@@ -8,32 +8,15 @@
 #include "EntityManager.h"
 #include "Component.h"
 #include "Core/EngineAssets.h"
+#include "Scene/EntityHierarchy.h"
 
 namespace Sunta
 {
 
+// Every frame for every entity (not only the changed ones): a child moves whenever its parent or the parent's bone does
 void Systems::UpdateTransform(EntityManager& entityManager)
 {
-	auto& transforms = entityManager.GetAllComponents<TransformComponent>();
-	auto& matrices = entityManager.GetAllComponents<WorldMatrixComponent>();
-
-	for (int i = 0; i < transforms.size(); i++)
-	{
-		if (transforms[i].isDirty)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-
-			glm::mat4 translation = glm::translate(model, transforms[i].position);
-			glm::mat4 rotation = glm::mat4_cast(transforms[i].rotationQuaternion);
-			glm::mat4 scale = glm::scale(model, transforms[i].scale);
-
-			model = translation * rotation * scale;
-
-			matrices[i].matrix = model;
-			transforms[i].isDirty = false;
-		}
-
-	}
+	EntityHierarchy::UpdateWorldMatrices(entityManager);
 }
 
 void Systems::SyncMeshComponents(EntityManager& entityManager)

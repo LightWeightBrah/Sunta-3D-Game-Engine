@@ -27,7 +27,10 @@ constexpr int MoveForwardKey  = SUNTA_KEY_W;
 constexpr int MoveBackwardKey = SUNTA_KEY_S;
 constexpr int MoveLeftKey     = SUNTA_KEY_A;
 constexpr int MoveRightKey    = SUNTA_KEY_D;
-constexpr int RunKey          = SUNTA_KEY_LEFT_SHIFT;
+constexpr int RunAndDodgeKey  = SUNTA_KEY_LEFT_SHIFT;
+
+// Holding the key longer than this runs, a shorter press is a tap that dodges (as in Dark Souls)
+constexpr float RunAfterHoldingSeconds = 0.25f;
 
 // ========== Numbers used below ==========
 
@@ -85,10 +88,21 @@ glm::vec3 ReadPlayerMoveDirection(const glm::vec3& cameraForward)
 	return LimitLengthToOne(forward * forwardAmount + right * rightAmount);
 }
 
-void ReadPlayerInput(CharacterControllerComponent& controller, const glm::vec3& cameraForward)
+// The dodge happens when a short press is let go, so a press that turns out long becomes running instead
+void ReadRunAndDodgeKey(CharacterControllerComponent& controller, float deltaTime)
+{
+	const bool isHeld        = InputManager::IsKeyPressed(RunAndDodgeKey);
+	const bool wasHeldBefore = controller.runKeyHeldSeconds > 0.0f;
+
+	controller.wasDodgeTapped    = !isHeld && wasHeldBefore && controller.runKeyHeldSeconds < RunAfterHoldingSeconds;
+	controller.runKeyHeldSeconds = isHeld ? controller.runKeyHeldSeconds + deltaTime : 0.0f;
+	controller.wantsToRun        = controller.runKeyHeldSeconds >= RunAfterHoldingSeconds;
+}
+
+void ReadPlayerInput(CharacterControllerComponent& controller, const glm::vec3& cameraForward, float deltaTime)
 {
 	controller.moveDirection = ReadPlayerMoveDirection(cameraForward);
-	controller.wantsToRun    = InputManager::IsKeyPressed(RunKey);
+	ReadRunAndDodgeKey(controller, deltaTime);
 }
 
 // ========== Movement ==========
@@ -216,7 +230,10 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 			continue;
 
 		if (controller.isPlayerControlled)
-			ReadPlayerInput(controller, cameraForward);
+			ReadPlayerInput(controller, cameraForward, deltaTime);
+
+		if (controller.isDrivenByAction)
+			continue;
 
 		MoveBody(*body, controller, deltaTime);
 

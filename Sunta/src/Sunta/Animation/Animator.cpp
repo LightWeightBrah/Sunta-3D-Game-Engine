@@ -3,6 +3,7 @@
 #include "Animator.h"
 #include "Utilities/AssimpUtilities.h"
 #include "Core/Log.h"
+#include "Utilities/MathUtilities.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -16,52 +17,35 @@ namespace
 // Used when an animation doesn't say how fast it is
 constexpr float DefaultTicksPerSecond = 25.0f;
 
-// Anything shorter than this can't be a scale
-constexpr float SmallestScale = 0.000001f;
-
-struct TransformParts
-{
-	glm::vec3 position;
-	glm::quat rotation;
-	glm::vec3 scale;
-};
-
 float GetTicksPerSecondOrDefault(const Animation& animation)
 {
 	return animation.GetTicksPerSecond() != 0.0f ? animation.GetTicksPerSecond() : DefaultTicksPerSecond;
 }
 
-// Splits a matrix made of a translation, a rotation and a scale (what a bone gives) back into those three
-TransformParts SplitIntoParts(const glm::mat4& matrix)
+// The time of an animation 'deltaTime' seconds later: wrapped around when it loops, held at the end when it doesn't
+float AdvanceTime(const Animation& animation, float time, float deltaTime, bool isLooping)
 {
-	const glm::vec3 axisX = glm::vec3(matrix[0]);
-	const glm::vec3 axisY = glm::vec3(matrix[1]);
-	const glm::vec3 axisZ = glm::vec3(matrix[2]);
+	const float duration = animation.GetDuration();
+	if (duration <= 0.0f)
+		return 0.0f;
 
-	TransformParts parts;
+	const float advancedTime = time + GetTicksPerSecondOrDefault(animation) * deltaTime;
 
-	parts.position = glm::vec3(matrix[3]);
-	parts.scale    = glm::vec3(glm::length(axisX), glm::length(axisY), glm::length(axisZ));
-
-	const glm::vec3 safeScale = glm::max(parts.scale, glm::vec3(SmallestScale));
-	const glm::mat3 rotation  = glm::mat3(axisX / safeScale.x, axisY / safeScale.y, axisZ / safeScale.z);
-
-	parts.rotation = glm::normalize(glm::quat_cast(rotation));
-
-	return parts;
+	return isLooping ? fmod(advancedTime, duration) : glm::min(advancedTime, duration);
 }
 
 // 'blend' 0 gives 'from', 1 gives 'to'. Rotations take the short way round
 glm::mat4 BlendTransforms(const glm::mat4& from, const glm::mat4& to, float blend)
 {
-	const TransformParts fromParts = SplitIntoParts(from);
-	const TransformParts toParts   = SplitIntoParts(to);
+	const TransformParts fromParts = Math::DecomposeTransform(from);
+	const TransformParts toParts   = Math::DecomposeTransform(to);
 
-	const glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::mix(fromParts.position, toParts.position, blend));
-	const glm::mat4 rotation    = glm::mat4_cast(glm::normalize(glm::slerp(fromParts.rotation, toParts.rotation, blend)));
-	const glm::mat4 scale       = glm::scale(glm::mat4(1.0f), glm::mix(fromParts.scale, toParts.scale, blend));
+	TransformParts blended;
+	blended.position = glm::mix(fromParts.position, toParts.position, blend);
+	blended.rotation = glm::normalize(glm::slerp(fromParts.rotation, toParts.rotation, blend));
+	blended.scale    = glm::mix(fromParts.scale, toParts.scale, blend);
 
-	return translation * rotation * scale;
+	return Math::ComposeTransform(blended);
 }
 
 }
@@ -70,33 +54,61 @@ Animator::Animator(Model* model)
 	: currentModel(model), currentTime(0.0f), currentAnimation(nullptr)
 {
 	finalBoneMatrices.assign(200, glm::mat4(1.0f));
+
+	if (model)
+		nodeModelTransforms.assign(model->GetNodeNames().size(), glm::mat4(1.0f));
 }
 	
-void Animator::PlayAnimation(Animation* animation)
+void Animator::PlayAnimation(Animation* animation, bool shouldLoop)
 {
 	currentAnimation  = animation;
 	currentTime       = 0.0f;
+	isLooping         = shouldLoop;
 	previousAnimation = nullptr;
 }
 
-void Animator::CrossFadeTo(Animation* animation, float durationSeconds)
+void Animator::CrossFadeTo(Animation* animation, float durationSeconds, bool shouldLoop)
 {
-	if (animation == currentAnimation)
+	if (animation == currentAnimation && isLooping && shouldLoop)
 		return;
 
 	if (!currentAnimation || durationSeconds <= 0.0f)
 	{
-		PlayAnimation(animation);
+		PlayAnimation(animation, shouldLoop);
 		return;
 	}
 
 	previousAnimation = currentAnimation;
 	previousTime      = currentTime;
+	isPreviousLooping = isLooping;
 	blendTime         = 0.0f;
 	blendDuration     = durationSeconds;
 
 	currentAnimation  = animation;
 	currentTime       = 0.0f;
+	isLooping         = shouldLoop;
+}
+
+float Animator::GetProgress() const
+{
+	if (!currentAnimation || currentAnimation->GetDuration() <= 0.0f)
+		return 0.0f;
+
+	return glm::clamp(currentTime / currentAnimation->GetDuration(), 0.0f, 1.0f);
+}
+
+bool Animator::IsFinished() const
+{
+	return currentAnimation && !isLooping && GetProgress() >= 1.0f;
+}
+
+bool Animator::TryGetNodeModelTransform(unsigned int nodeIndex, glm::mat4& outTransform) const
+{
+	if (nodeIndex >= nodeModelTransforms.size())
+		return false;
+
+	outTransform = nodeModelTransforms[nodeIndex];
+	return true;
 }
 
 void Animator::AdvanceBlend(float deltaTime)
@@ -112,9 +124,8 @@ void Animator::AdvanceBlend(float deltaTime)
 		return;
 	}
 
-	// The old animation keeps playing (and looping) while it fades out
-	previousTime += GetTicksPerSecondOrDefault(*previousAnimation) * deltaTime;
-	previousTime  = fmod(previousTime, previousAnimation->GetDuration());
+	// The old animation keeps playing while it fades out (one played once stays on its last frame)
+	previousTime = AdvanceTime(*previousAnimation, previousTime, deltaTime, isPreviousLooping);
 }
 
 // 0 at the start of the fade, 1 at the end, and eased so it neither starts nor stops abruptly
@@ -142,12 +153,16 @@ void Animator::UpdateAnimation(float deltaTime)
 	if (!currentAnimation) 
 	    return;
 	
-	float ticksPerSecond = currentAnimation->GetTicksPerSecond();
-	currentTime         += (ticksPerSecond != 0 ? ticksPerSecond : 25.0f) * deltaTime;
-	currentTime          = fmod(currentTime, currentAnimation->GetDuration());
+	currentTime = AdvanceTime(*currentAnimation, currentTime, deltaTime, isLooping);
 
 	AdvanceBlend(deltaTime);
 	
+	CalculatePose();
+}
+
+void Animator::CalculatePose()
+{
+	nodeWalkIndex = 0;
 	CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
 }
 	
@@ -167,6 +182,10 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 		nodeTransform = BlendTransforms(GetPreviousLocalTransform(node), nodeTransform, GetBlendFactor());
 	
 	glm::mat4 globalTransform = parentTransform * nodeTransform;
+
+	if (nodeWalkIndex < nodeModelTransforms.size())
+		nodeModelTransforms[nodeWalkIndex] = currentModel->GetGlobalInverseTransform() * globalTransform;
+	nodeWalkIndex++;
 	
 	auto& boneInfoMap = currentModel->GetBoneNameToInfo();
 	if (boneInfoMap.count(nodeName))
@@ -185,7 +204,7 @@ void Animator::SampleAtTime(float time)
 		return;
 
 	currentTime = time;
-	CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
+	CalculatePose();
 }
 
 }

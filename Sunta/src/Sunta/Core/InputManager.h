@@ -11,6 +11,10 @@ namespace Sunta
 	private:
 		static bool			keysPressed[1024];
 		static bool			keysChanged[1024];
+
+		static constexpr int MouseButtonCount = 8;
+		static bool			mouseButtonsPressed[MouseButtonCount];
+		static bool			mouseButtonsChanged[MouseButtonCount];
 	
 		static glm::vec2	mousePosition;
 		static glm::vec2	lastMousePosition;
@@ -26,9 +30,15 @@ namespace Sunta
 		static void OnKeyReleased(const KeyReleasedEvent& event);
 		static void OnMouseMoved (const MouseMovedEvent&  event);
 		static void OnMouseScroll(const MouseScrollEvent& event);
+		static void OnMouseButtonPressed (const MouseButtonPressedEvent&  event);
+		static void OnMouseButtonReleased(const MouseButtonReleasedEvent& event);
 	
 		static bool IsKeyPressed (int keyCode);
 		static bool IsKeyDown	 (int keyCode);
+
+		// Held now / pressed this frame (button = SUNTA_MOUSE_BUTTON_LEFT etc.)
+		static bool IsMouseButtonPressed(int button);
+		static bool IsMouseButtonDown   (int button);
 	
 		static void Clear();
 	

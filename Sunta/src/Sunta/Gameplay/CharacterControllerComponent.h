@@ -14,7 +14,7 @@ namespace Sunta
 // How to use it: in the editor choose Add Component > Character Controller
 // It also adds the Physics Body and the Box Collider a character needs
 // After pressing Play the character moves with W A S D (relative to where the camera looks)
-// and runs while Left Shift is held
+// and runs while Left Shift is held. A quick tap of Left Shift is a dodge (see Character Actions), as in Dark Souls
 //
 // Every number below shows up in the Inspector, so the feel of the character is tuned there
 //
@@ -53,6 +53,14 @@ struct CharacterControllerComponent
 
 	// Run instead of walk. Filled from the keyboard when 'isPlayerControlled' is on. Not saved with the scene
 	bool wantsToRun = false;
+
+	// How long Left Shift has been held now, and whether it was tapped (let go quickly) this frame. Not saved with the scene
+	float runKeyHeldSeconds = 0.0f;
+	bool  wasDodgeTapped    = false;
+
+	// On while a roll or an attack (Character Actions) moves and turns the character. The keys are still read,
+	// so the next action knows the held direction, but walking and turning wait. Not saved with the scene
+	bool isDrivenByAction = false;
 
 	static void RegisterToInspector()
 	{

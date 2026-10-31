@@ -35,9 +35,12 @@
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSettings.h"
 #include "Physics/CollisionSystem.h"
+#include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
 #include "Gameplay/FollowCameraSystem.h"
+#include "Gameplay/SoulsPlayerSetup.h"
+#include "Scene/EntityHierarchy.h"
 
 namespace Sunta
 {
@@ -99,6 +102,26 @@ bool EditorGUI::Button(const std::string& label)
 	
 namespace
 {
+
+// What is carried while an entity is dragged in the Hierarchy (its ID)
+constexpr const char* HierarchyEntityPayload = "HIERARCHY_ENTITY";
+
+// The empty space below the Hierarchy list (dropping an entity there unparents it) is never smaller than this
+constexpr float HierarchyDropZoneMinHeight = 30.0f;
+
+// A new Souls player stands on the ground (height 0) this far in front of the free camera
+constexpr float SoulsPlayerDistanceFromView = 5.0f;
+
+glm::vec3 GetGroundPointInFrontOfView(const Camera& camera, float distance)
+{
+	glm::vec3 forward = camera.GetRotation() * glm::vec3(0.0f, 0.0f, -1.0f);
+	forward.y = 0.0f;
+
+	const glm::vec3 horizontalForward = glm::length(forward) > 0.0f ? glm::normalize(forward) : glm::vec3(0.0f, 0.0f, -1.0f);
+	const glm::vec3 point = camera.GetPosition() + horizontalForward * distance;
+
+	return glm::vec3(point.x, 0.0f, point.z);
+}
 
 // Where we store a copy of the scene as it looked in the editor right before Play
 // Stop loads it back, so everything the game changed (physics, scripts) is undone
@@ -311,6 +334,15 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 				SceneDocument::NotifyChanged();
 			}
 
+			ImGui::Separator();
+
+			// A knight with a sword, all the movement and combat components and a camera that follows him, ready for Play
+			if (ImGui::MenuItem("Create Souls Player", nullptr, false, canEditScene))
+			{
+				CreateSoulsPlayerInFrontOfView(scene);
+				SceneDocument::NotifyChanged();
+			}
+
 			ImGui::EndMenu();
 		}
 
@@ -514,6 +546,11 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 				EntityFactory::CreateModel(scene, glm::vec3(0.0f, 2.0f, 0.0f), "Model");
 			});
 
+		DrawToolbarButton(Icons::SoulsPlayer, "##CreateSoulsPlayer", "Create Souls Player (knight with a sword, ready for Play)", [&]()
+			{
+				CreateSoulsPlayerInFrontOfView(scene);
+			});
+
 		// Play / Stop, centered in the toolbar
 		float buttonWidth = iconSize + framePadding * 2.0f;
 		float groupWidth = buttonWidth * 2.0f + ImGui::GetStyle().ItemSpacing.x;
@@ -551,110 +588,28 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 	ImGui::PopStyleVar(3);
 }
 
+void EditorGUI::CreateSoulsPlayerInFrontOfView(Scene& scene)
+{
+	const glm::vec3    position = GetGroundPointInFrontOfView(scene.GetCamera(), SoulsPlayerDistanceFromView);
+	const unsigned int player   = EntityFactory::CreateSoulsPlayer(scene, position);
+
+	SetSelectedEntity(static_cast<int>(player));
+}
+
 void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 {
-	unsigned int totalEntities = entityManager.GetEntityCount();
+	const unsigned int totalEntities = entityManager.GetEntityCount();
 
+	// Children are drawn inside the node of their parent, so only entities without a parent start a branch
 	for (unsigned int entityID = 0; entityID < totalEntities; entityID++)
 	{
-		if(!entityManager.IsAlive(entityID))
-			continue;
+		unsigned int parentID = 0;
 
-		std::string label = ("Entity " + std::to_string(entityID));
-
-		if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
-			if (!tag->name.empty())
-				label = tag->name;
-
-		// ### is special imgui separator, everything after this is seen via imGUI
-		// as a permament unique ID (so we won't see ###EntityID-, but it works for 
-		// changing names in inspector)
-		std::string uniqueID = "###EntityID-" + std::to_string(entityID);
-
-		if (entityToRename == static_cast<int>(entityID))
-		{
-			ImGui::SetNextItemWidth(-1.0f);
-			ImGui::SetKeyboardFocusHere();
-
-			if (ImGui::InputText(uniqueID.c_str(), entityNameBuffer, IM_ARRAYSIZE(entityNameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
-			{
-				if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
-					tag->name = entityNameBuffer;
-
-				SceneDocument::NotifyChanged();
-				entityToRename = -1;
-			}
-
-			if (ImGui::IsItemDeactivated() && !ImGui::IsKeyDown(ImGuiKey_Enter))
-				entityToRename = -1;
-		}
-		else
-		{
-			ImGuiTreeNodeFlags flags = (inspectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
-			flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-			ImGui::TreeNodeEx((label + uniqueID).c_str(), flags);
-
-			if (ImGui::IsItemFocused() && ImGui::IsKeyPressed(ImGuiKey_F2))
-			{
-				entityToRename = entityID;
-				snprintf(entityNameBuffer, sizeof(entityNameBuffer), "%s", label.c_str());
-			}
-		}
-
-		ImGui::PushID(static_cast<int>(entityID));
-		if (ImGui::BeginPopupContextItem("EntityMenu"))
-		{
-			SetSelectedEntity(static_cast<int>(entityID));
-			selectedFile = "";
-
-			if (ImGui::MenuItem("Rename"))
-			{
-				entityToRename = entityID;
-				snprintf(entityNameBuffer, sizeof(entityNameBuffer), "%s", label.c_str());
-			}
-
-			if (ImGui::MenuItem("Delete"))
-			{
-				SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", entityID);
-				CollisionSystem::ForgetEntity(entityID);
-				entityManager.DestroyEntity(entityID);
-				SceneDocument::NotifyChanged();
-				SetSelectedEntity(-1);
-
-				ImGui::CloseCurrentPopup();
-			}
-
-			if (ImGui::MenuItem("Reset Transform"))
-			{
-				if (auto* transform = entityManager.GetComponent<TransformComponent>(entityID))
-				{
-					// Teleport, not real movement. Clear any remembered contact
-					// state for this entity, otherwise next physics step warm-starts
-					// the solver with impulses computed for the old geometry
-					CollisionSystem::ForgetEntity(entityID);
-
-					transform->position = glm::vec3(0.0f);
-					transform->rotation = glm::vec3(0.0f);
-					transform->scale = glm::vec3(1.0f);
-					transform->isDirty = true;
-					SceneDocument::NotifyChanged();
-				}
-
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::EndPopup();
-		}
-
-		ImGui::PopID();
-
-		if (ImGui::IsItemClicked())
-		{
-			SetSelectedEntity(static_cast<int>(entityID));
-			selectedFile = "";
-		}
-
+		if (entityManager.IsAlive(entityID) && !EntityHierarchy::TryGetParent(entityManager, entityID, parentID))
+			DrawHierarchyEntity(entityManager, entityID);
 	}
+
+	DrawHierarchyUnparentDropZone(entityManager);
 
 	if (IsClickingEmptySpace())
 	{
@@ -665,14 +620,189 @@ void EditorGUI::DrawHierarchy(EntityManager& entityManager)
 	if (selectedEntity != -1 && entityToRename == -1)
 	{
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsKeyPressed(ImGuiKey_Delete))
-		{
-			SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", selectedEntity);
-			CollisionSystem::ForgetEntity(static_cast<unsigned int>(selectedEntity));
-			entityManager.DestroyEntity(static_cast<unsigned int>(selectedEntity));
-			SceneDocument::NotifyChanged();
-			SetSelectedEntity(-1);
-		}
+			DeleteEntityWithChildren(entityManager, static_cast<unsigned int>(selectedEntity));
 	}
+}
+
+void EditorGUI::DrawHierarchyEntity(EntityManager& entityManager, unsigned int entityID)
+{
+	std::string label = ("Entity " + std::to_string(entityID));
+
+	if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
+		if (!tag->name.empty())
+			label = tag->name;
+
+	// ### is special imgui separator, everything after this is seen via imGUI
+	// as a permament unique ID (so we won't see ###EntityID-, but it works for
+	// changing names in inspector)
+	std::string uniqueID = "###EntityID-" + std::to_string(entityID);
+
+	const std::vector<unsigned int> children = EntityHierarchy::GetChildren(entityManager, entityID);
+
+	// While the name is edited there is no tree node, the children are just indented
+	bool areChildrenShown = !children.empty();
+
+	if (entityToRename == static_cast<int>(entityID))
+	{
+		ImGui::SetNextItemWidth(-1.0f);
+		ImGui::SetKeyboardFocusHere();
+
+		if (ImGui::InputText(uniqueID.c_str(), entityNameBuffer, IM_ARRAYSIZE(entityNameBuffer), ImGuiInputTextFlags_EnterReturnsTrue))
+		{
+			if (auto* tag = entityManager.GetComponent<TagComponent>(entityID))
+				tag->name = entityNameBuffer;
+
+			SceneDocument::NotifyChanged();
+			entityToRename = -1;
+		}
+
+		if (ImGui::IsItemDeactivated() && !ImGui::IsKeyDown(ImGuiKey_Enter))
+			entityToRename = -1;
+
+		if (areChildrenShown)
+			ImGui::TreePush(uniqueID.c_str());
+	}
+	else
+	{
+		ImGuiTreeNodeFlags flags = (inspectedEntity == static_cast<int>(entityID)) ? ImGuiTreeNodeFlags_Selected : 0;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen;
+
+		if (children.empty())
+			flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+		const bool isOpen = ImGui::TreeNodeEx((label + uniqueID).c_str(), flags);
+		areChildrenShown  = isOpen && !children.empty();
+
+		if (ImGui::IsItemFocused() && ImGui::IsKeyPressed(ImGuiKey_F2))
+		{
+			entityToRename = entityID;
+			snprintf(entityNameBuffer, sizeof(entityNameBuffer), "%s", label.c_str());
+		}
+
+		DrawHierarchyDragAndDrop(entityManager, entityID, label);
+	}
+
+	ImGui::PushID(static_cast<int>(entityID));
+	if (ImGui::BeginPopupContextItem("EntityMenu"))
+	{
+		SetSelectedEntity(static_cast<int>(entityID));
+		selectedFile = "";
+
+		if (ImGui::MenuItem("Rename"))
+		{
+			entityToRename = entityID;
+			snprintf(entityNameBuffer, sizeof(entityNameBuffer), "%s", label.c_str());
+		}
+
+		if (ImGui::MenuItem("Unparent", nullptr, false, entityManager.GetComponent<ParentComponent>(entityID) != nullptr))
+		{
+			EntityHierarchy::ClearParent(entityManager, entityID);
+			SceneDocument::NotifyChanged();
+		}
+
+		if (ImGui::MenuItem("Delete"))
+		{
+			DeleteEntityWithChildren(entityManager, entityID);
+			ImGui::CloseCurrentPopup();
+		}
+
+		if (ImGui::MenuItem("Reset Transform"))
+		{
+			if (auto* transform = entityManager.GetComponent<TransformComponent>(entityID))
+			{
+				// Teleport, not real movement. Clear any remembered contact
+				// state for this entity, otherwise next physics step warm-starts
+				// the solver with impulses computed for the old geometry
+				CollisionSystem::ForgetEntity(entityID);
+
+				transform->position = glm::vec3(0.0f);
+				transform->rotation = glm::vec3(0.0f);
+				transform->scale = glm::vec3(1.0f);
+				transform->isDirty = true;
+				SceneDocument::NotifyChanged();
+			}
+
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopID();
+
+	if (ImGui::IsItemClicked())
+	{
+		SetSelectedEntity(static_cast<int>(entityID));
+		selectedFile = "";
+	}
+
+	if (!areChildrenShown)
+		return;
+
+	// A child deleted from the menu of an entity above is gone, the others are drawn as they are now
+	for (unsigned int childID : children)
+	{
+		if (entityManager.IsAlive(childID))
+			DrawHierarchyEntity(entityManager, childID);
+	}
+
+	ImGui::TreePop();
+}
+
+// Drag an entity onto another one to make it its child
+void EditorGUI::DrawHierarchyDragAndDrop(EntityManager& entityManager, unsigned int entityID, const std::string& label)
+{
+	if (ImGui::BeginDragDropSource())
+	{
+		ImGui::SetDragDropPayload(HierarchyEntityPayload, &entityID, sizeof(entityID));
+		ImGui::Text("%s", label.c_str());
+		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(HierarchyEntityPayload))
+		{
+			const unsigned int childID = *static_cast<const unsigned int*>(payload->Data);
+
+			if (EntityHierarchy::SetParent(entityManager, childID, entityID))
+				SceneDocument::NotifyChanged();
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+}
+
+// The empty space below the list: an entity dropped there no longer has a parent
+void EditorGUI::DrawHierarchyUnparentDropZone(EntityManager& entityManager)
+{
+	const ImVec2 freeSpace = ImGui::GetContentRegionAvail();
+	ImGui::Dummy(ImVec2(freeSpace.x, std::max(freeSpace.y, HierarchyDropZoneMinHeight)));
+
+	if (!ImGui::BeginDragDropTarget())
+		return;
+
+	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(HierarchyEntityPayload))
+	{
+		EntityHierarchy::ClearParent(entityManager, *static_cast<const unsigned int*>(payload->Data));
+		SceneDocument::NotifyChanged();
+	}
+
+	ImGui::EndDragDropTarget();
+}
+
+// A parent takes its children with it (the sword of a deleted player would float in the air)
+void EditorGUI::DeleteEntityWithChildren(EntityManager& entityManager, unsigned int entityID)
+{
+	for (unsigned int deletedID : EntityHierarchy::GetWithDescendants(entityManager, entityID))
+	{
+		SUNTA_ENGINE_LOG_INFO("Deleted entity: '{0}'", deletedID);
+		CollisionSystem::ForgetEntity(deletedID);
+		entityManager.DestroyEntity(deletedID);
+	}
+
+	SceneDocument::NotifyChanged();
+	SetSelectedEntity(-1);
 }
 
 void EditorGUI::DrawInspector(EntityManager& entityManager)
@@ -900,6 +1030,18 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Character Animation",
 				[&]() { return entityManager.GetComponent<CharacterAnimationComponent>(inspectedEntity) != nullptr; },
 				[&]() { CharacterAnimationSystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Character Actions",
+				[&]() { return entityManager.GetComponent<CharacterActionsComponent>(inspectedEntity) != nullptr; },
+				[&]() { CharacterActionsSystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Souls Player (everything a player needs)",
+				[&]() { return SoulsPlayerSetup::IsSetUp(entityManager, inspectedEntity); },
+				[&]() { SoulsPlayerSetup::SetUp(entityManager, inspectedEntity); }
 			},
 
 			{
@@ -1453,9 +1595,9 @@ void EditorGUI::DrawTransformGizmo(Scene& scene)
 
 	// Build the matrix straight from the transform (not from WorldMatrixComponent),
 	// so it is never one frame behind when isDirty is still true
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), transform->position)
-		* glm::mat4_cast(transform->rotationQuaternion)
-		* glm::scale(glm::mat4(1.0f), transform->scale);
+	// A child's Transform is relative to its parent, the gizmo works in the world
+	const glm::mat4 parentSpace = EntityHierarchy::GetParentSpace(entityManager, entityID);
+	glm::mat4 model = parentSpace * transform->GetLocalMatrix();
 
 	ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
 	float snapValue = 0.5f;
@@ -1498,36 +1640,22 @@ void EditorGUI::DrawTransformGizmo(Scene& scene)
 	if (!ImGuizmo::IsUsing())
 		return;
 
-	// Split the edited matrix back into position / scale / rotation
-	glm::vec3 newPosition = glm::vec3(model[3]);
-
-	// Scale = length of each basis axis
-	glm::vec3 newScale(
-		glm::length(glm::vec3(model[0])),
-		glm::length(glm::vec3(model[1])),
-		glm::length(glm::vec3(model[2]))
-	);
-
-	// Rotation = basis axes with the scale divided out
-	glm::mat3 rotationMatrix(
-		glm::vec3(model[0]) / newScale.x,
-		glm::vec3(model[1]) / newScale.y,
-		glm::vec3(model[2]) / newScale.z
-	);
+	// Split the edited matrix (back in the space of the parent) into position / rotation / scale
+	const TransformParts edited = Math::DecomposeTransform(glm::inverse(parentSpace) * model);
 
 	switch (gizmoOperation)
 	{
 	case GizmoOperation::Translate:
-		transform->position = newPosition;
+		transform->position = edited.position;
 		break;
 
 	case GizmoOperation::Rotate:
-		transform->rotationQuaternion = glm::normalize(glm::quat_cast(rotationMatrix));
+		transform->rotationQuaternion = edited.rotation;
 		transform->SyncEulerFromQuaternion(); // keeps the Inspector values up to date
 		break;
 
 	case GizmoOperation::Scale:
-		transform->scale = newScale;
+		transform->scale = edited.scale;
 		break;
 	}
 

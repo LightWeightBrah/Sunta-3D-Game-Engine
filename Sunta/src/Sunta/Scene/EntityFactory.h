@@ -18,6 +18,9 @@ public:
 	static unsigned int CreateCamera          (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Camera");
 
 	static unsigned int CreateModel           (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Model",			 const std::string&		   modelName	  = EngineAssets::Models::Solaire);
+
+	// The Knight with a sword, ready to play: every component a Dark Souls style player needs (see SoulsPlayerSetup)
+	static unsigned int CreateSoulsPlayer     (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Player");
 	static unsigned int CreateCube            (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cube",              std::shared_ptr<Material> customMaterial = nullptr);
 	static unsigned int CreatePyramid         (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Pyramid",           std::shared_ptr<Material> customMaterial = nullptr);
 	static unsigned int CreateCone            (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cone",              std::shared_ptr<Material> customMaterial = nullptr);

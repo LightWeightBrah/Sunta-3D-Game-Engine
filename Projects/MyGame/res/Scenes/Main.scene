@@ -95,7 +95,7 @@
             "transform": {
                 "position": [
                     4.8955206871032715,
-                    11.746841430664063,
+                    11.746841430664062,
                     2.0
                 ],
                 "rotation": [
@@ -289,7 +289,7 @@
                 "model_name": "solaire"
             },
             "tag": {
-                "name": "Player"
+                "name": "Solaire Statue"
             },
             "transform": {
                 "position": [
@@ -499,7 +499,7 @@
                 ],
                 "rotation": [
                     0.0,
-                    14.746353149414063,
+                    14.746353149414062,
                     0.0
                 ],
                 "rotation_quaternion": [
@@ -707,36 +707,52 @@
         },
         {
             "animator": {
-                "current_animation_name": "Armature|Praise the Sun Gesture"
+                "current_animation_name": "Idle"
             },
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    1.5,
-                    0.5
+                    0.3,
+                    0.9,
+                    0.3
                 ],
                 "is_trigger": false,
                 "layer": 2,
                 "local_offset": [
                     0.0,
-                    1.5,
+                    0.9,
                     0.0
                 ],
                 "show_gizmos": true
             },
+            "character_actions": {
+                "attack_step_speed": 1.5,
+                "backstep_animation": "Backstep",
+                "backstep_speed": 4.0,
+                "blend_seconds": 0.08,
+                "cancel_from": 0.75,
+                "heavy_attack_animation": "Attack_Heavy",
+                "input_buffer_from": 0.3,
+                "invulnerable_from": 0.1,
+                "invulnerable_to": 0.55,
+                "light_attack_1_animation": "Attack_Light_1",
+                "light_attack_2_animation": "Attack_Light_2",
+                "light_attack_3_animation": "Attack_Light_3",
+                "roll_animation": "Roll",
+                "roll_speed": 5.5
+            },
             "character_animation": {
-                "blend_seconds": 0.20000000298023224,
-                "idle_animation": "Armature|idle",
-                "run_animation": "Armature|Praise the Sun Gesture",
-                "walk_animation": "Armature|Running"
+                "blend_seconds": 0.2,
+                "idle_animation": "Idle",
+                "run_animation": "Run",
+                "walk_animation": "Walk"
             },
             "character_controller": {
                 "acceleration": 30.0,
-                "facing_offset_degrees": 180.0,
+                "facing_offset_degrees": 0.0,
                 "is_player_controlled": true,
-                "run_speed": 7.083000183105469,
+                "run_speed": 5.0,
                 "turn_speed": 720.0,
-                "walk_speed": 4.061999797821045
+                "walk_speed": 2.0
             },
             "lock_on": {
                 "eye_height": 1.5,
@@ -748,7 +764,7 @@
             },
             "model": {
                 "is_visible": true,
-                "model_name": "solaire"
+                "model_name": "knight"
             },
             "physics_body": {
                 "angular_damping": 0.05000000074505806,
@@ -760,11 +776,11 @@
                 "freeze_rotation_x": true,
                 "freeze_rotation_y": true,
                 "freeze_rotation_z": true,
-                "friction": 0.5,
+                "friction": 0.0,
                 "is_kinematic": false,
                 "linear_damping": 0.05000000074505806,
-                "mass": 1.0,
-                "restitution": 0.20000000298023224,
+                "mass": 80.0,
+                "restitution": 0.0,
                 "use_gravity": true,
                 "velocity": [
                     0.0,
@@ -780,6 +796,42 @@
                     -2.6447319984436035,
                     1.2450000047683716,
                     5.7665534019470215
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_sword"
+            },
+            "parent": {
+                "bone_name": "Weapon_R",
+                "index": 18
+            },
+            "tag": {
+                "name": "Sword"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "rotation": [
                     0.0,
@@ -1046,7 +1098,7 @@
                 "near_plane": 0.10000000149011612
             },
             "follow_camera": {
-                "distance": 12.833000183105469,
+                "distance": 4.5,
                 "follow_sharpness": 15.0,
                 "invert_y": false,
                 "lock_on_pitch_degrees": 17.756999969482422,

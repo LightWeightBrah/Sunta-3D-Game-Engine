@@ -55,7 +55,8 @@ namespace Sunta
 	        if (animTime < keys[i + 1].timeStamp)
 	            return i;
 	    }
-	    return 0;
+	    // At (or past) the last key: the last pair, so an animation played once holds its final pose
+	    return static_cast<unsigned int>(keys.size()) - 2;
 	}
 	
 	float GetFactor(float animTime, float frameTime, float nextFrameTime)

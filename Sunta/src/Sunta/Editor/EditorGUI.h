@@ -133,6 +133,13 @@ private:
 
 	static void SetSelectedEntity(int entityID);
 
+	static void CreateSoulsPlayerInFrontOfView(Scene& scene);
+
+	static void DrawHierarchyEntity(EntityManager& entityManager, unsigned int entityID);
+	static void DrawHierarchyDragAndDrop(EntityManager& entityManager, unsigned int entityID, const std::string& label);
+	static void DrawHierarchyUnparentDropZone(EntityManager& entityManager);
+	static void DeleteEntityWithChildren(EntityManager& entityManager, unsigned int entityID);
+
 };
 
 }
