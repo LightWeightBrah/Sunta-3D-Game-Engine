@@ -33,6 +33,13 @@ struct PlayerHUDComponent
 
 	float secondsSinceDeath = 0.0f;
 
+	// What the player can do right here (e.g. "Rest at the bonfire [E]"), shown at the bottom. Set every frame, cleared after drawing
+	std::string promptText;
+
+	// A big message in the middle that fades away (e.g. "BONFIRE LIT")
+	std::string notificationText;
+	float notificationSecondsLeft = 0.0f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PlayerHUDComponent>("Player HUD", EngineAssets::Icons::Bonfire,

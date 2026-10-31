@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <glm/glm.hpp>
 
 namespace Sunta
@@ -25,6 +26,12 @@ public:
 
 	// Call once per frame while the game plays: the slowly shrinking part of the bars, the timers
 	static void Update(EntityManager& entityManager, float deltaTime);
+
+	// What the player can do right now, drawn at the bottom of the screen this frame (call it every frame while it applies)
+	static void ShowPrompt(EntityManager& entityManager, const std::string& text);
+
+	// A big message in the middle of the screen that fades away after a few seconds
+	static void ShowNotification(EntityManager& entityManager, const std::string& text);
 
 	// Call after the scene is drawn. 'viewProjection' is the camera the scene was drawn with, 'screenSize' the whole window
 	// (the marks over enemies follow them on the whole window), 'area' where the bars and the messages go

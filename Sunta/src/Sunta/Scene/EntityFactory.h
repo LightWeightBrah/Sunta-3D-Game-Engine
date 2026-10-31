@@ -22,6 +22,9 @@ public:
 	// The Knight with a sword, ready to play: every component a Dark Souls style player needs (see SoulsPlayerSetup)
 	static unsigned int CreateSoulsPlayer     (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Player");
 
+	// A place to rest and come back after death, with a warm light (see BonfireSetup)
+	static unsigned int CreateBonfire         (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Bonfire");
+
 	// A ready enemy that fights with a sword (see RustedKnightSetup)
 	static unsigned int CreateRustedKnight    (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Rusted Knight");
 	static unsigned int CreateCube            (Scene& scene, const glm::vec3& position = glm::vec3(0.0f), const std::string& name = "Cube",              std::shared_ptr<Material> customMaterial = nullptr);

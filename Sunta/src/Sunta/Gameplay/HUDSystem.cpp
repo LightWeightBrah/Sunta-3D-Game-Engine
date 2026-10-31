@@ -52,6 +52,18 @@ const glm::vec4 MarkerOutlineColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.8f);
 const glm::vec4 DeathBandColor     = glm::vec4(0.0f, 0.0f, 0.0f, 0.65f);
 const glm::vec4 DeathMessageColor  = glm::vec4(0.62f, 0.05f, 0.04f, 1.0f);
 
+constexpr float PromptHeight        = 28.0f;
+constexpr float PromptBottomMargin  = 150.0f;
+constexpr float PromptPadding       = 14.0f;
+const glm::vec4 PromptColor         = glm::vec4(0.92f, 0.88f, 0.8f, 1.0f);
+const glm::vec4 PromptBackground    = glm::vec4(0.0f, 0.0f, 0.0f, 0.55f);
+
+constexpr float NotificationSeconds = 3.5f;
+constexpr float NotificationFadeOut = 1.2f;
+constexpr float NotificationHeight  = 72.0f;
+constexpr float NotificationAreaY   = 0.3f; // part of the HUD area from the top
+const glm::vec4 NotificationColor   = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
+
 // How fast the pale part of a bar (the health just lost) shrinks: this part of the whole bar per second
 constexpr float TrailShrinkPerSecond = 0.35f;
 
@@ -97,8 +109,16 @@ void UpdatePlayer(EntityManager& entityManager, float deltaTime)
 
 	hud->trailingHealth = ShrinkTrailTowards(hud->trailingHealth, health->currentHealth, health->maxHealth, deltaTime);
 
-	if (health->isDead)
-		hud->secondsSinceDeath += deltaTime;
+	// Back to zero once the player is alive again (brought back at a bonfire)
+	hud->secondsSinceDeath = health->isDead ? hud->secondsSinceDeath + deltaTime : 0.0f;
+
+	hud->notificationSecondsLeft = glm::max(hud->notificationSecondsLeft - deltaTime, 0.0f);
+}
+
+PlayerHUDComponent* TryGetPlayerHUD(EntityManager& entityManager)
+{
+	unsigned int playerID = 0;
+	return CharacterControllerSystem::TryFindPlayer(entityManager, playerID) ? entityManager.GetComponent<PlayerHUDComponent>(playerID) : nullptr;
 }
 
 void DrawPlayerBars(const HUDArea& area, const PlayerHUDComponent& hud, const HealthComponent* health, const StaminaComponent* stamina)
@@ -147,6 +167,29 @@ void DrawDeathMessage(const HUDArea& area, const PlayerHUDComponent& hud)
 	UIRenderer::DrawTextCentered(hud.deathMessage, center, DeathMessageHeight, WithAlpha(DeathMessageColor, fadeIn));
 }
 
+void DrawPrompt(const HUDArea& area, const PlayerHUDComponent& hud)
+{
+	if (hud.promptText.empty())
+		return;
+
+	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y - PromptBottomMargin);
+	const glm::vec2 size   = glm::vec2(UIRenderer::MeasureText(hud.promptText, PromptHeight) + PromptPadding * 2.0f, PromptHeight + PromptPadding);
+
+	UIRenderer::DrawRectangle(center - size * 0.5f, size, PromptBackground);
+	UIRenderer::DrawTextCentered(hud.promptText, center, PromptHeight, PromptColor);
+}
+
+void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
+{
+	if (hud.notificationSecondsLeft <= 0.0f)
+		return;
+
+	const float alpha  = glm::clamp(hud.notificationSecondsLeft / NotificationFadeOut, 0.0f, 1.0f);
+	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y * NotificationAreaY);
+
+	UIRenderer::DrawTextCentered(hud.notificationText, center, NotificationHeight, WithAlpha(NotificationColor, alpha));
+}
+
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	unsigned int playerID = 0;
@@ -163,6 +206,9 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(playerID);
 	if (hud->showLockOnMarker && lockOn)
 		DrawLockOnMarker(entityManager, *lockOn, viewProjection);
+
+	DrawPrompt(area, *hud);
+	DrawNotification(area, *hud);
 
 	if (health && health->isDead)
 		DrawDeathMessage(area, *hud);
@@ -186,7 +232,9 @@ void UpdateEnemyBar(EntityManager& entityManager, EnemyHealthBarComponent& bar, 
 	const bool wasHit = health->currentHealth < bar.healthLastFrame;
 
 	bar.secondsSinceHit = wasHit ? 0.0f : glm::min(bar.secondsSinceHit + deltaTime, EnemyHealthBarComponent::MaxSeconds);
-	bar.isEngaged       = bar.isEngaged || wasHit || HasNoticedPlayer(entityManager, enemyID);
+	// Engaged while it fights the player or is hurt: an enemy brought back at a bonfire hides its boss bar again
+	const bool isHurt = health->currentHealth < health->maxHealth;
+	bar.isEngaged       = wasHit || HasNoticedPlayer(entityManager, enemyID) || (bar.isEngaged && isHurt);
 	bar.trailingHealth  = ShrinkTrailTowards(bar.trailingHealth, health->currentHealth, health->maxHealth, deltaTime);
 	bar.healthLastFrame = health->currentHealth;
 }
@@ -278,6 +326,21 @@ void HUDSystem::Update(EntityManager& entityManager, float deltaTime)
 		UpdateEnemyBar(entityManager, bar, deltaTime);
 }
 
+void HUDSystem::ShowPrompt(EntityManager& entityManager, const std::string& text)
+{
+	if (PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager))
+		hud->promptText = text;
+}
+
+void HUDSystem::ShowNotification(EntityManager& entityManager, const std::string& text)
+{
+	if (PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager))
+	{
+		hud->notificationText        = text;
+		hud->notificationSecondsLeft = NotificationSeconds;
+	}
+}
+
 void HUDSystem::Draw(EntityManager& entityManager, const glm::mat4& viewProjection, const glm::vec2& screenSize, const HUDArea& area)
 {
 	UIRenderer::Begin(screenSize);
@@ -287,6 +350,10 @@ void HUDSystem::Draw(EntityManager& entityManager, const glm::mat4& viewProjecti
 	DrawPlayer(entityManager, viewProjection, area);
 
 	UIRenderer::End();
+
+	// The prompt is shown only while some system keeps asking for it, every frame
+	if (PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager))
+		hud->promptText.clear();
 }
 
 }

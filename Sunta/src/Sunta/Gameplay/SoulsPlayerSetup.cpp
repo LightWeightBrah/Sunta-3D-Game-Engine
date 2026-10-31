@@ -39,7 +39,7 @@ bool Has(EntityManager& entityManager, unsigned int entityID)
 // ========== The player's own parts ==========
 
 // Stamina limits rolling and attacking, Lock On aims at enemies, Lock On Target lets the enemies face the player,
-// Player HUD shows the bars
+// Player HUD shows the bars, Respawn brings the player back at the last bonfire
 void AddPlayerComponents(EntityManager& entityManager, unsigned int entityID)
 {
 	if (!Has<StaminaComponent>(entityManager, entityID))
@@ -53,6 +53,9 @@ void AddPlayerComponents(EntityManager& entityManager, unsigned int entityID)
 
 	if (!Has<PlayerHUDComponent>(entityManager, entityID))
 		entityManager.AddComponent<PlayerHUDComponent>(entityID);
+
+	if (!Has<RespawnComponent>(entityManager, entityID))
+		entityManager.AddComponent<RespawnComponent>(entityID);
 }
 
 // ========== The camera ==========

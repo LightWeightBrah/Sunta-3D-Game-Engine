@@ -135,6 +135,7 @@ private:
 
 	static void CreateSoulsPlayerInFrontOfView(Scene& scene);
 	static void CreateRustedKnightInFrontOfView(Scene& scene);
+	static void CreateBonfireInFrontOfView(Scene& scene);
 
 	static void DrawHierarchyEntity(EntityManager& entityManager, unsigned int entityID);
 	static void DrawHierarchyDragAndDrop(EntityManager& entityManager, unsigned int entityID, const std::string& label);

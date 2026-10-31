@@ -122,6 +122,7 @@ void ResourceLoader::LoadModels()
 	ResourceManager::LoadModel(Models::Knight,      "@engine/Models/Knight/knight.gltf");
 	ResourceManager::LoadModel(Models::KnightSword, "@engine/Models/KnightSword/knight_sword.gltf");
 	ResourceManager::LoadModel(Models::RustedKnight, "@engine/Models/RustedKnight/rusted_knight.gltf");
+	ResourceManager::LoadModel(Models::Bonfire,      "@engine/Models/Bonfire/bonfire.gltf");
 
 	// Models added by the user to the game's folder. Scenes refer to them by name
 	LoadModelsFromDirectory(VirtualFileSystem::Resolve("@game"));
@@ -186,6 +187,7 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::Skeleton,            "@engine/Textures/Icons/skeleton_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::SoulsPlayer,         "@engine/Textures/Icons/souls_player_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::RustedKnight,        "@engine/Textures/Icons/rusted_knight_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::SoulsBonfire,        "@engine/Textures/Icons/souls_bonfire_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::BlendTree,           "@engine/Textures/Icons/blend_tree_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::Particle,            "@engine/Textures/Icons/particle_icon.png");

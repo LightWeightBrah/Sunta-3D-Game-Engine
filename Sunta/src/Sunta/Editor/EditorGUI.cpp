@@ -35,6 +35,7 @@
 #include "Renderer/DebugRenderer.h"
 #include "Physics/CollisionSettings.h"
 #include "Physics/CollisionSystem.h"
+#include "Gameplay/BonfireSetup.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/EnemySystem.h"
@@ -346,6 +347,13 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 				SceneDocument::NotifyChanged();
 			}
 
+			// A place to rest: heals the player, brings the enemies back and is where the player comes back after dying
+			if (ImGui::MenuItem("Create Bonfire", nullptr, false, canEditScene))
+			{
+				CreateBonfireInFrontOfView(scene);
+				SceneDocument::NotifyChanged();
+			}
+
 			// A rusted knight that chases the player and fights with a sword
 			if (ImGui::MenuItem("Create Rusted Knight (enemy)", nullptr, false, canEditScene))
 			{
@@ -568,6 +576,11 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 				CreateSoulsPlayerInFrontOfView(scene);
 			});
 
+		DrawToolbarButton(Icons::SoulsBonfire, "##CreateBonfire", "Create Bonfire (rest, heal and come back here after dying)", [&]()
+			{
+				CreateBonfireInFrontOfView(scene);
+			});
+
 		DrawToolbarButton(Icons::RustedKnight, "##CreateRustedKnight", "Create Rusted Knight (an enemy: a rusted knight that fights the player)", [&]()
 			{
 				CreateRustedKnightInFrontOfView(scene);
@@ -616,6 +629,14 @@ void EditorGUI::CreateSoulsPlayerInFrontOfView(Scene& scene)
 	const unsigned int player   = EntityFactory::CreateSoulsPlayer(scene, position);
 
 	SetSelectedEntity(static_cast<int>(player));
+}
+
+void EditorGUI::CreateBonfireInFrontOfView(Scene& scene)
+{
+	const glm::vec3    position = GetGroundPointInFrontOfView(scene.GetCamera(), CharacterDistanceFromView);
+	const unsigned int bonfire  = EntityFactory::CreateBonfire(scene, position);
+
+	SetSelectedEntity(static_cast<int>(bonfire));
 }
 
 void EditorGUI::CreateRustedKnightInFrontOfView(Scene& scene)
@@ -1078,6 +1099,18 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Stamina",
 				[&]() { return entityManager.GetComponent<StaminaComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<StaminaComponent>(inspectedEntity); }
+			},
+
+			{
+				"Respawn",
+				[&]() { return entityManager.GetComponent<RespawnComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<RespawnComponent>(inspectedEntity); }
+			},
+
+			{
+				"Bonfire (model, light and resting)",
+				[&]() { return BonfireSetup::IsSetUp(entityManager, inspectedEntity); },
+				[&]() { BonfireSetup::SetUp(entityManager, inspectedEntity); }
 			},
 
 			{

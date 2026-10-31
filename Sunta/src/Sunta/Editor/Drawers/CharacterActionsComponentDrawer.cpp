@@ -25,6 +25,7 @@ bool DrawAnimations(CharacterActionsComponent& actions, const std::map<std::stri
 	edited |= DrawAnimationCombo("Heavy Attack",   actions.heavyAttackAnimation,  animations);
 	edited |= DrawAnimationCombo("Hit Reaction",   actions.hitReactionAnimation,  animations);
 	edited |= DrawAnimationCombo("Death",          actions.deathAnimation,        animations);
+	edited |= DrawAnimationCombo("Rest",           actions.restAnimation,         animations);
 
 	return edited;
 }

@@ -46,6 +46,8 @@ namespace SceneKeys
 	constexpr const char* EnemyComponent            = "enemy";
 	constexpr const char* MeleeEnemyComponent       = "melee_enemy";
 	constexpr const char* PlayerHUDComponent        = "player_hud";
+	constexpr const char* BonfireComponent          = "bonfire";
+	constexpr const char* RespawnComponent          = "respawn";
 	constexpr const char* EnemyHealthBarComponent   = "enemy_health_bar";
 	constexpr const char* ParentComponent           = "parent";
 
@@ -146,6 +148,7 @@ namespace SceneKeys
 	constexpr const char* CancelFrom                = "cancel_from";
 	constexpr const char* HitReactionAnimation      = "hit_reaction_animation";
 	constexpr const char* DeathAnimation            = "death_animation";
+	constexpr const char* RestAnimation             = "rest_animation";
 	constexpr const char* LightHitFrom              = "light_hit_from";
 	constexpr const char* LightHitTo                = "light_hit_to";
 	constexpr const char* HeavyHitFrom              = "heavy_hit_from";
@@ -175,6 +178,10 @@ namespace SceneKeys
 	constexpr const char* HeavyAttackChance         = "heavy_attack_chance";
 	constexpr const char* MaxLightCombo             = "max_light_combo";
 	constexpr const char* RecoverSeconds            = "recover_seconds";
+
+	constexpr const char* InteractDistance          = "interact_distance";
+	constexpr const char* RespawnOffset             = "respawn_offset";
+	constexpr const char* RespawnDelaySeconds       = "respawn_delay_seconds";
 
 	constexpr const char* PixelsPerHealthPoint      = "pixels_per_health_point";
 	constexpr const char* PixelsPerStaminaPoint     = "pixels_per_stamina_point";
@@ -524,6 +531,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::BlendSeconds,          actions->blendSeconds          },
 				{ SceneKeys::HitReactionAnimation,  actions->hitReactionAnimation  },
 				{ SceneKeys::DeathAnimation,        actions->deathAnimation        },
+				{ SceneKeys::RestAnimation,         actions->restAnimation         },
 				{ SceneKeys::LightHitFrom,          actions->lightHitFrom          },
 				{ SceneKeys::LightHitTo,            actions->lightHitTo            },
 				{ SceneKeys::HeavyHitFrom,          actions->heavyHitFrom          },
@@ -573,6 +581,20 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
 				{ SceneKeys::EyeHeight,         enemy->eyeHeight         }
 			};
+		}
+
+		if (auto* bonfire = entityManager.GetComponent<BonfireComponent>(i))
+		{
+			entityJson[SceneKeys::BonfireComponent] =
+			{
+				{ SceneKeys::InteractDistance,               bonfire->interactDistance },
+				{ SceneKeys::RespawnOffset,    SerializeVec3(bonfire->respawnOffset)    }
+			};
+		}
+
+		if (auto* respawn = entityManager.GetComponent<RespawnComponent>(i))
+		{
+			entityJson[SceneKeys::RespawnComponent] = { { SceneKeys::RespawnDelaySeconds, respawn->respawnDelaySeconds } };
 		}
 
 		if (auto* hud = entityManager.GetComponent<PlayerHUDComponent>(i))
@@ -953,6 +975,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.blendSeconds          = actionsData.value(SceneKeys::BlendSeconds,          actions.blendSeconds);
 			actions.hitReactionAnimation  = actionsData.value(SceneKeys::HitReactionAnimation,  actions.hitReactionAnimation);
 			actions.deathAnimation        = actionsData.value(SceneKeys::DeathAnimation,        actions.deathAnimation);
+			actions.restAnimation         = actionsData.value(SceneKeys::RestAnimation,         actions.restAnimation);
 			actions.lightHitFrom          = actionsData.value(SceneKeys::LightHitFrom,          actions.lightHitFrom);
 			actions.lightHitTo            = actionsData.value(SceneKeys::LightHitTo,            actions.lightHitTo);
 			actions.heavyHitFrom          = actionsData.value(SceneKeys::HeavyHitFrom,          actions.heavyHitFrom);
@@ -1010,6 +1033,23 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			enemy.sightAngleDegrees = enemyData.value(SceneKeys::SightAngleDegrees, enemy.sightAngleDegrees);
 			enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
 			enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
+		}
+
+		if (entityJson.contains(SceneKeys::BonfireComponent))
+		{
+			const auto& bonfireData = entityJson[SceneKeys::BonfireComponent];
+			auto& bonfire = entityManager.AddComponent<BonfireComponent>(entity);
+
+			bonfire.interactDistance = bonfireData.value(SceneKeys::InteractDistance, bonfire.interactDistance);
+
+			if (bonfireData.contains(SceneKeys::RespawnOffset))
+				bonfire.respawnOffset = DeserializeVec3(bonfireData[SceneKeys::RespawnOffset]);
+		}
+
+		if (entityJson.contains(SceneKeys::RespawnComponent))
+		{
+			auto& respawn = entityManager.AddComponent<RespawnComponent>(entity);
+			respawn.respawnDelaySeconds = entityJson[SceneKeys::RespawnComponent].value(SceneKeys::RespawnDelaySeconds, respawn.respawnDelaySeconds);
 		}
 
 		if (entityJson.contains(SceneKeys::PlayerHUDComponent))

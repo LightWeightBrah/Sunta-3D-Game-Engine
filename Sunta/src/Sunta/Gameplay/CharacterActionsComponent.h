@@ -18,7 +18,8 @@ enum class CharacterAction
 	LightAttack, // quick attacks that chain into a combo when pressed again in time
 	HeavyAttack, // a slow, strong attack
 	HitReaction, // staggering after being hit (started by the Health, not by a button)
-	Death        // the last animation, the character never acts again
+	Death,       // the last animation, the character never acts again (until it is brought back at a bonfire)
+	Rest         // kneeling at a bonfire, ends when the bonfire stands the character up
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -53,6 +54,7 @@ struct CharacterActionsComponent
 	std::string heavyAttackAnimation;
 	std::string hitReactionAnimation;
 	std::string deathAnimation;
+	std::string restAnimation;
 
 	// How fast the actions move the character (meters per second)
 	float rollSpeed       = 5.5f;
@@ -106,6 +108,8 @@ struct CharacterActionsComponent
 	unsigned int attackNumber = 0;
 
 	bool IsBusy() const { return currentAction != CharacterAction::None; }
+
+	bool IsResting() const { return currentAction == CharacterAction::Rest; }
 
 	bool IsAttacking() const { return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack; }
 

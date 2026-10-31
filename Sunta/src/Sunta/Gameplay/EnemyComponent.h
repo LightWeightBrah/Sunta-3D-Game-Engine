@@ -41,6 +41,7 @@ struct EnemyComponent
 
 	// Where it stood when the game started (it walks back there when it loses the player)
 	glm::vec3 homePosition = glm::vec3(0.0f);
+	float     homeYawDegrees = 0.0f;
 
 	// Time left until the next attack is allowed (set by the states of the enemy's kind)
 	float attackCooldownLeft = 0.0f;

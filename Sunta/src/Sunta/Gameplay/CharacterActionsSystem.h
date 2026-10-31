@@ -17,6 +17,13 @@ public:
 	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID);
 	static void PlayDeath(EntityManager& entityManager, unsigned int entityID);
 
+	// Started by a bonfire: the character kneels (moving, rolling and attacking do nothing) until StandUp
+	static void PlayRest(EntityManager& entityManager, unsigned int entityID);
+	static void StandUp(EntityManager& entityManager, unsigned int entityID);
+
+	// Back to no action at all (a character brought back to life): walking and its animations take over again
+	static void Reset(EntityManager& entityManager, unsigned int entityID);
+
 	// Adds Character Actions and picks the animations by their names when the Model is already loaded
 	static void AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID);
 

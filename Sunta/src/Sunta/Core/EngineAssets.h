@@ -57,6 +57,9 @@ namespace Sunta::EngineAssets
 
 		// The ready enemy (Rusted Knight): the same knight in rusted armor
 		constexpr const char* RustedKnight = "rusted_knight";
+
+		// The place to rest and come back after death (Bonfire)
+		constexpr const char* Bonfire = "bonfire";
 	}
 
 	namespace Materials
@@ -134,6 +137,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* Skeleton            = "skeleton";
 		constexpr const char* SoulsPlayer         = "souls_player";
 		constexpr const char* RustedKnight        = "rusted_knight";
+		constexpr const char* SoulsBonfire        = "souls_bonfire";
 
 		constexpr const char* BlendTree			  = "blend_tree";
 		constexpr const char* Particle			  = "particle";

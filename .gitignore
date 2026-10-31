@@ -40,6 +40,10 @@ bin-intermediates/**.obj
 
 **/imgui.ini
 
+# Python caches (made when Blender runs the Tools/Blender scripts)
+__pycache__/
+*.pyc
+
 # ========================= ASSETS ====================================== 
 
 
@@ -49,4 +53,4 @@ bin-intermediates/**.obj
 !**/res/Models/
 !**/res/Models/**
 !**/res/Models/**/*.obj
-!**/res/Models/**/*.mtl
+!**/res/Models/**/*.mtl

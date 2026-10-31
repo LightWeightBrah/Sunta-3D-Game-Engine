@@ -56,6 +56,7 @@ constexpr const char* LightAttackKeywords[LightAttackCount] = { "light_1", "ligh
 constexpr const char* HeavyAttackKeyword  = "heavy";
 constexpr const char* HitReactionKeyword  = "hit";
 constexpr const char* DeathKeyword        = "death";
+constexpr const char* RestKeyword         = "rest";
 
 // ========== The parts of one character ==========
 
@@ -193,6 +194,7 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::HeavyAttack: return actions.heavyAttackAnimation;
 	case CharacterAction::HitReaction: return actions.hitReactionAnimation;
 	case CharacterAction::Death:       return actions.deathAnimation;
+	case CharacterAction::Rest:        return actions.restAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -269,10 +271,22 @@ bool IsDodge(CharacterAction action)
 	return action == CharacterAction::Roll || action == CharacterAction::Backstep;
 }
 
-// Staggering after a hit can't be cut short, and nothing comes after death
+// Staggering after a hit can't be cut short, a rest lasts until the character stands up, and nothing comes after death
 bool CanBeInterrupted(CharacterAction action)
 {
-	return action != CharacterAction::HitReaction && action != CharacterAction::Death;
+	return action != CharacterAction::HitReaction && action != CharacterAction::Rest && action != CharacterAction::Death;
+}
+
+// A rest goes on after its animation ended (the character stays kneeling) until StandUp
+bool EndsWithItsAnimation(CharacterAction action)
+{
+	return action != CharacterAction::Rest;
+}
+
+// A roll or an attack picks its direction and turns the character, the actions started by the game don't
+bool ChoosesDirection(CharacterAction action)
+{
+	return CanBeInterrupted(action);
 }
 
 // ========== Starting and ending actions ==========
@@ -290,7 +304,7 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 {
 	CharacterActionsComponent& actions = *character.actions;
 
-	if (CanBeInterrupted(action))
+	if (ChoosesDirection(action))
 	{
 		actions.actionDirection = ChooseActionDirection(entityManager, character, action);
 
@@ -376,9 +390,10 @@ void EndOrChainAction(EntityManager& entityManager, Character& character, float 
 			return;
 	}
 
-	const bool walksAway = canBeInterrupted && HoldsDirection(*character.controller);
+	const bool walksAway       = canBeInterrupted && HoldsDirection(*character.controller);
+	const bool animationIsOver = character.animator->animator.IsFinished() && EndsWithItsAnimation(actions.currentAction);
 
-	if (character.animator->animator.IsFinished() || walksAway)
+	if (animationIsOver || walksAway)
 		FinishAction(character);
 }
 
@@ -418,6 +433,7 @@ void FillNamesFromModel(CharacterActionsComponent& actions, const AnimationMap& 
 	FillAnimationName(actions.heavyAttackAnimation,  animations, HeavyAttackKeyword);
 	FillAnimationName(actions.hitReactionAnimation,  animations, HitReactionKeyword);
 	FillAnimationName(actions.deathAnimation,        animations, DeathKeyword);
+	FillAnimationName(actions.restAnimation,         animations, RestKeyword);
 }
 
 void WarnAboutMissingAnimation(const std::string& entityName, const char* label, const std::string& animationName, const AnimationMap& animations)
@@ -455,6 +471,34 @@ void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsig
 void CharacterActionsSystem::PlayDeath(EntityManager& entityManager, unsigned int entityID)
 {
 	ForceAction(entityManager, entityID, CharacterAction::Death);
+}
+
+void CharacterActionsSystem::PlayRest(EntityManager& entityManager, unsigned int entityID)
+{
+	ForceAction(entityManager, entityID, CharacterAction::Rest);
+}
+
+void CharacterActionsSystem::StandUp(EntityManager& entityManager, unsigned int entityID)
+{
+	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+
+	if (actions && actions->IsResting())
+		Reset(entityManager, entityID);
+}
+
+void CharacterActionsSystem::Reset(EntityManager& entityManager, unsigned int entityID)
+{
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+
+	Character character;
+	if (!actions || !TryGetCharacter(entityManager, *actions, character))
+		return;
+
+	FinishAction(character);
+	actions->actionProgress = 0.0f;
+
+	// Nothing plays according to the walking animation any more, so Character Animation starts its animation again
+	character.animator->currentAnimationName.clear();
 }
 
 void CharacterActionsSystem::AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID)

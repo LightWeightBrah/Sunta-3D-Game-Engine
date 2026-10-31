@@ -219,6 +219,8 @@ void EditorLayer::RegisterComponentsToInspector()
 	MeleeEnemyComponent::RegisterToInspector();
 	PlayerHUDComponent::RegisterToInspector();
 	EnemyHealthBarComponent::RegisterToInspector();
+	RespawnComponent::RegisterToInspector();
+	BonfireComponent::RegisterToInspector();
 	PhysicsBodyComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
 	HitboxComponent::RegisterToInspector();

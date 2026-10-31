@@ -15,6 +15,7 @@
 #include "Physics/CollisionLayers.h"
 #include "ECS/Entity.h"
 #include "Utilities/MathUtilities.h"
+#include "Gameplay/BonfireComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/EnemyComponent.h"
 #include "Gameplay/EnemyHealthBarComponent.h"
@@ -28,6 +29,7 @@
 #include "Gameplay/LockOnTargetComponent.h"
 #include "Gameplay/MeleeEnemyComponent.h"
 #include "Gameplay/PlayerHUDComponent.h"
+#include "Gameplay/RespawnComponent.h"
 
 namespace Sunta
 {

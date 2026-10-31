@@ -30,10 +30,12 @@
 #include "Physics/CollisionSystem.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/PhysicsSystem.h"
+#include "Gameplay/BonfireSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/HUDSystem.h"
+#include "Gameplay/RespawnSystem.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
@@ -332,6 +334,8 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		CombatSystem::Update(entityManager, EngineTime::deltaTime);
+		BonfireSystem::Update(entityManager);
+		RespawnSystem::Update(entityManager, EngineTime::deltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
 	}
 
@@ -399,6 +403,10 @@ void Scene::Render(Renderer& renderer)
 		auto* pointLightComponent       = entityManager.GetComponent<PointLightComponent>(i);
 		auto* spotLightComponent        = entityManager.GetComponent<SpotLightComponent>(i);
 
+		// A light can be a child (the light of a bonfire), so its place in the world comes from its world matrix
+		const glm::vec3 worldPosition = matrixComponent ? glm::vec3(matrixComponent->matrix[3])
+			: (transformComponent ? transformComponent->position : glm::vec3(0.0f));
+
 		if (directionalLightComponent && transformComponent)
 		{
 			DirectionalLightData data;
@@ -413,7 +421,7 @@ void Scene::Render(Renderer& renderer)
 		{
 			PointLightData data;
 
-			data.position	 = transformComponent->position;
+			data.position	 = worldPosition;
 
 			data.color		 = pointLightComponent->color;
 			data.attenuation = pointLightComponent->attenuation;
@@ -425,7 +433,7 @@ void Scene::Render(Renderer& renderer)
 		{
 			SpotlightData data;
 
-			data.position		     = transformComponent->position;
+			data.position		     = worldPosition;
 			data.spotlightDirection	 = Sunta::Math::DegreesToDirection(transformComponent->rotation);
 
 			data.innercutOffAngle	 = spotLightComponent->innerCutOffAngle;
@@ -653,6 +661,8 @@ void Scene::BeginPlay()
 	StaminaSystem::PrepareForPlay(entityManager);
 	EnemySystem::PrepareForPlay(entityManager);
 	HUDSystem::PrepareForPlay(entityManager);
+	BonfireSystem::PrepareForPlay(entityManager);
+	RespawnSystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

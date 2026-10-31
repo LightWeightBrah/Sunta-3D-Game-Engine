@@ -102,6 +102,7 @@ void EnemySystem::PrepareForPlay(EntityManager& entityManager)
 		const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityManager.GetEntityIDForComponent(enemy));
 
 		enemy.homePosition       = transform ? transform->position : glm::vec3(0.0f);
+		enemy.homeYawDegrees     = transform ? transform->rotation.y : 0.0f;
 		enemy.attackCooldownLeft = 0.0f;
 		enemy.stateMachine.reset();
 	}
