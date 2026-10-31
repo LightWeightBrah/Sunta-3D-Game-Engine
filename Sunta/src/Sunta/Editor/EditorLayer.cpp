@@ -136,11 +136,14 @@ void EditorLayer::OnRender()
 	Scene& scene = application.GetScene();
 
 	EditorGUIContext::RenderUI(&application.GetWindow(), scene, Renderer::GetDevice());
-	EditorGUI::HandleSelectionInteraction(scene);
 
-	// In Game mode the keys belong to the game (and the cursor is hidden), so the shortcuts are for the Editor mode only
-	if (currentEngineMode == EngineMode::Editor)
-		EditorShortcuts::Process(scene);
+	// In Game mode the mouse and the keys belong to the game (the cursor is hidden): a click is an attack,
+	// not picking an entity, and the keys don't trigger shortcuts. TAB gives them back to the editor
+	if (currentEngineMode != EngineMode::Editor)
+		return;
+
+	EditorGUI::HandleSelectionInteraction(scene);
+	EditorShortcuts::Process(scene);
 }
 
 bool EditorLayer::OnCloseRequested()
@@ -210,8 +213,13 @@ void EditorLayer::RegisterComponentsToInspector()
 	CharacterAnimationComponent::RegisterToInspector();
 	CharacterControllerComponent::RegisterToInspector();
 	CharacterActionsComponent::RegisterToInspector();
+	HealthComponent::RegisterToInspector();
+	StaminaComponent::RegisterToInspector();
+	EnemyComponent::RegisterToInspector();
+	MeleeEnemyComponent::RegisterToInspector();
 	PhysicsBodyComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
+	HitboxComponent::RegisterToInspector();
 	CameraComponent::RegisterToInspector();
 	FollowCameraComponent::RegisterToInspector();
 	LockOnComponent::RegisterToInspector();

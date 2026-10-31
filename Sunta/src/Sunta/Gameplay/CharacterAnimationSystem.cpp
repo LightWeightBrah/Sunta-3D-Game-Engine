@@ -112,18 +112,11 @@ bool TryFindAnimationName(CharacterAnimationComponent& component, const Animatio
 	return false;
 }
 
-void StartAnimation(CharacterAnimationComponent& component, AnimatorComponent& animatorComponent, AnimationMap& animations, const std::string& name)
+// Fades from whatever plays now: the previous walking animation, or the end of a roll or an attack (Character Actions)
+void StartAnimation(const CharacterAnimationComponent& component, AnimatorComponent& animatorComponent, AnimationMap& animations, const std::string& name)
 {
-	Animation* animation = &animations.at(name);
-
-	// The first one starts at once, there is nothing to fade from (the editor only showed some animation of the model)
-	if (component.playingAnimation.empty())
-		animatorComponent.animator.PlayAnimation(animation);
-	else
-		animatorComponent.animator.CrossFadeTo(animation, component.blendSeconds);
-
-	component.playingAnimation              = name;
-	animatorComponent.currentAnimationName  = name;
+	animatorComponent.animator.CrossFadeTo(&animations.at(name), component.blendSeconds);
+	animatorComponent.currentAnimationName = name;
 }
 
 // ========== Picking names when the component is added ==========
@@ -166,7 +159,7 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager)
 		AnimationMap& animations = modelComponent->modelData->animations;
 
 		std::string name;
-		if (!TryFindAnimationName(component, animations, state, name) || name == component.playingAnimation)
+		if (!TryFindAnimationName(component, animations, state, name) || name == animatorComponent->currentAnimationName)
 			continue;
 
 		StartAnimation(component, *animatorComponent, animations, name);

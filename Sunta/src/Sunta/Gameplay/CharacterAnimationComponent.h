@@ -32,9 +32,6 @@ struct CharacterAnimationComponent
 	// How long one animation takes to change into the next one. 0 is a hard cut
 	float blendSeconds = 0.2f;
 
-	// The animation that plays now. Not saved with the scene
-	std::string playingAnimation;
-
 	static void RegisterToInspector()
 	{
 		// The Inspector draws it with a drawer (dropdowns of the animations), so there is no list of properties

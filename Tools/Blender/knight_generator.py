@@ -5,10 +5,11 @@ Run (from the repository root):
     blender --background --factory-startup --python Tools/Blender/knight_generator.py -- --out Sunta/res/Models
 
 Writes:
-    <out>/Knight/knight.gltf (+ .bin, knight_diffuse.png, knight_specular.png)
+    <out>/Knight/knight.gltf (+ .bin, knight_diffuse.png, knight_specular.png)                   the player
+    <out>/RustedKnight/rusted_knight.gltf (+ .bin, rusted_knight_diffuse.png, ...)               the enemy: same body, rusted armor
     <out>/KnightSword/knight_sword.gltf (+ .bin, knight_sword_diffuse.png, knight_sword_specular.png)
 Optional: --preview <folder> renders pictures of the model and of every animation, --blend <file> saves the .blend,
---icon <file> renders the editor icon (a picture of the helmet)
+--icons <folder> renders the editor icons (souls_player_icon.png, rusted_knight_icon.png: pictures of the helmets)
 
 The armor is built from simple shapes, every color is a cell of a small palette. Cycles then bakes the final textures:
 the palette color with fine metal grain, large stains, darker crevices (ambient occlusion) and brighter worn edges
@@ -47,6 +48,18 @@ KNIGHT_COLORS = {
     "leather":      ((0.22, 0.14, 0.08), 0.12),
     "leather_dark": ((0.12, 0.08, 0.05), 0.08),
     "brass":        ((0.46, 0.35, 0.16), 0.70),
+    "black":        ((0.01, 0.01, 0.01), 0.00),
+}
+
+# The enemy: the same armor, rusted and dark, with rotten leather
+RUSTED_COLORS = {
+    "steel":        ((0.27, 0.24, 0.21), 0.45),
+    "steel_dark":   ((0.12, 0.11, 0.10), 0.30),
+    "steel_worn":   ((0.33, 0.21, 0.12), 0.25),
+    "mail":         ((0.17, 0.15, 0.13), 0.30),
+    "leather":      ((0.14, 0.10, 0.07), 0.08),
+    "leather_dark": ((0.08, 0.06, 0.04), 0.05),
+    "brass":        ((0.26, 0.19, 0.09), 0.35),
     "black":        ((0.01, 0.01, 0.01), 0.00),
 }
 
@@ -140,7 +153,7 @@ def parse_arguments():
     parser.add_argument("--out", required=True)
     parser.add_argument("--preview", default="")
     parser.add_argument("--blend", default="")
-    parser.add_argument("--icon", default="")
+    parser.add_argument("--icons", default="")
     return parser.parse_args(argv)
 
 
@@ -462,14 +475,14 @@ def build_leg(parts, side):
     parts.box(foot, "leather_dark", mirrored((0.11, 0.03, 0.006)), (0.10, 0.22, 0.012), bevel=0.002)
 
 
-def build_knight_mesh(armature, palette):
+def build_knight_mesh(armature, palette, name):
     parts = PartBuilder(palette)
     build_head(parts)
     build_torso(parts)
     for side in (1, -1):
         build_arm(parts, side)
         build_leg(parts, side)
-    return parts.to_object("Knight", armature)
+    return parts.to_object(name, armature)
 
 
 # ========== The sword ==========
@@ -674,8 +687,16 @@ def setup_bake_render():
     scene.cycles.samples = BAKE_SAMPLES
 
 
+def show_only(visible_objects):
+    """Hides every other mesh from rendering and baking (the models overlap: the knight and the rusted knight stand in one place)"""
+    for scene_object in bpy.context.scene.objects:
+        if scene_object.type == "MESH":
+            scene_object.hide_render = scene_object not in visible_objects
+
+
 def bake_textures(mesh_object, palette, base_name, folder, pixels):
     """Writes <base_name>_diffuse.png and <base_name>_specular.png and gives the object the material the engine reads"""
+    show_only([mesh_object])
     palette_diffuse, palette_specular = palette.make_images(base_name)
     detail = SurfaceDetailMaterial(base_name + "_bake", palette_diffuse, palette_specular)
 
@@ -876,38 +897,51 @@ LUNGE_RIGHT = {"Thigh_R": (42, 0, 0), "Shin_R": (-50, 0, 0), "Foot_R": (8, 0, 0)
 LUNGE_LEFT = {"Thigh_L": (40, 0, 0), "Shin_L": (-48, 0, 0), "Foot_L": (8, 0, 0),
               "Thigh_R": (-12, 0, -6), "Shin_R": (-24, 0, 0), "Foot_R": (28, 0, 6)}
 
+# The wrist that makes the blade level with the arm held straight forward (the grip points it 55 degrees down)
+LEVEL_BLADE_WRIST = -35
+
+
+def reaching_cut(torso_turn, lean, arm_turn, blade_tilt, legs, drop):
+    """The arm straight forward at shoulder height and the blade level with it: the part of a swing that reaches the enemy
+    'arm_turn' > 0 points the arm to the left, 'blade_tilt' rolls the blade (a diagonal cut instead of a flat one)"""
+    return attack_pose(torso_turn, lean, (86, 0, arm_turn), 0, (LEVEL_BLADE_WRIST, blade_tilt, 0), legs, drop=drop)
+
 
 def light_attack_1():
     """Diagonal slash from the right shoulder down to the left"""
     wind_up = attack_pose(-40, 6, (115, -45, -10), 70, (-15, 0, 0), drop=0.04)
-    strike = attack_pose(38, -14, (45, 0, 55), 8, (-30, 0, 0), LUNGE_RIGHT, drop=0.09)
+    cut_starts = reaching_cut(0, -10, -12, 25, LUNGE_RIGHT, drop=0.08)
+    cut_ends = reaching_cut(8, -12, 5, 25, LUNGE_RIGHT, drop=0.09)
     follow = attack_pose(48, -12, (30, 10, 70), 12, (-25, 0, 0), LUNGE_RIGHT, drop=0.08)
-    return [(0, STANCE), (8, wind_up), (12, strike), (16, follow), (28, STANCE)]
+    return [(0, STANCE), (8, wind_up), (10, cut_starts), (13, cut_ends), (17, follow), (28, STANCE)]
 
 
 def light_attack_2():
     """Backhand slash from the left to the right"""
     wind_up = attack_pose(40, 4, (70, 10, 75), 75, (5, 0, 0), drop=0.04, left_arm=(10, 25, 0))
-    strike = attack_pose(-42, -12, (80, -55, -25), 6, (-20, 0, -20), LUNGE_LEFT, drop=0.09)
+    cut_starts = reaching_cut(-2, -10, 18, -20, LUNGE_LEFT, drop=0.08)
+    cut_ends = reaching_cut(-6, -12, 4, -20, LUNGE_LEFT, drop=0.09)
     follow = attack_pose(-52, -10, (70, -70, -35), 10, (-15, 0, -20), LUNGE_LEFT, drop=0.08)
-    return [(0, STANCE), (7, wind_up), (11, strike), (15, follow), (27, STANCE)]
+    return [(0, STANCE), (7, wind_up), (9, cut_starts), (12, cut_ends), (16, follow), (27, STANCE)]
 
 
 def light_attack_3():
     """Finisher: the sword raised over the head and brought straight down"""
     wind_up = attack_pose(-10, 12, (165, -10, 0), 45, (10, 0, 0), drop=0.02, left_arm=(30, 30, 0))
-    strike = attack_pose(5, -28, (60, -4, 8), 0, (-15, 0, 0), LUNGE_RIGHT, drop=0.14)
+    cut_starts = attack_pose(2, -18, (112, -4, 6), 0, (LEVEL_BLADE_WRIST, 0, 0), LUNGE_RIGHT, drop=0.1)
+    cut_ends = reaching_cut(4, -26, 6, 0, LUNGE_RIGHT, drop=0.14)
     follow = attack_pose(5, -30, (45, -4, 8), 4, (-20, 0, 0), LUNGE_RIGHT, drop=0.15)
-    return [(0, STANCE), (11, wind_up), (15, strike), (20, follow), (34, STANCE)]
+    return [(0, STANCE), (11, wind_up), (13, cut_starts), (16, cut_ends), (20, follow), (34, STANCE)]
 
 
 def heavy_attack():
     """Slow, wide swing: the knight twists far back, then cuts down through everything in front"""
     wind_up = attack_pose(-60, 15, (165, -45, -20), 95, (10, 0, 0), drop=0.06, left_arm=(40, 40, 0))
     hold = attack_pose(-66, 18, (170, -48, -22), 100, (12, 0, 0), drop=0.07, left_arm=(42, 42, 0))
-    strike = attack_pose(45, -30, (50, -5, 60), 5, (-30, 0, 0), LUNGE_RIGHT, drop=0.16)
+    cut_starts = reaching_cut(-6, -18, -12, 30, LUNGE_RIGHT, drop=0.14)
+    cut_ends = reaching_cut(10, -24, 6, 30, LUNGE_RIGHT, drop=0.16)
     follow = attack_pose(55, -32, (30, 5, 75), 10, (-30, 0, 0), LUNGE_RIGHT, drop=0.17)
-    return [(0, STANCE), (14, wind_up), (20, hold), (25, strike), (30, follow), (46, STANCE)]
+    return [(0, STANCE), (14, wind_up), (20, hold), (23, cut_starts), (27, cut_ends), (31, follow), (46, STANCE)]
 
 
 def hit_animation():
@@ -1116,17 +1150,20 @@ def main():
     arguments = parse_arguments()
     out_folder = os.path.abspath(arguments.out)
     knight_folder = os.path.join(out_folder, "Knight")
+    rusted_folder = os.path.join(out_folder, "RustedKnight")
     sword_folder = os.path.join(out_folder, "KnightSword")
-    os.makedirs(knight_folder, exist_ok=True)
-    os.makedirs(sword_folder, exist_ok=True)
+    for folder in (knight_folder, rusted_folder, sword_folder):
+        os.makedirs(folder, exist_ok=True)
 
     clear_scene()
 
     knight_palette = Palette(KNIGHT_COLORS)
+    rusted_palette = Palette(RUSTED_COLORS)
     sword_palette = Palette(SWORD_COLORS)
 
     armature = build_skeleton()
-    knight = build_knight_mesh(armature, knight_palette)
+    knight = build_knight_mesh(armature, knight_palette, "Knight")
+    rusted_knight = build_knight_mesh(armature, rusted_palette, "RustedKnight")
     actions = create_animations(armature)
     sword = build_sword_mesh(sword_palette)
 
@@ -1134,9 +1171,12 @@ def main():
     reset_to_rest_pose(armature)
     setup_bake_render()
     bake_textures(knight, knight_palette, "knight", knight_folder, KNIGHT_TEXTURE_PIXELS)
+    bake_textures(rusted_knight, rusted_palette, "rusted_knight", rusted_folder, KNIGHT_TEXTURE_PIXELS)
     bake_textures(sword, sword_palette, "knight_sword", sword_folder, SWORD_TEXTURE_PIXELS)
 
+    # Both characters share the skeleton and the animations, each file has its own armor
     export_gltf(os.path.join(knight_folder, "knight.gltf"), [armature, knight], with_animations=True)
+    export_gltf(os.path.join(rusted_folder, "rusted_knight.gltf"), [armature, rusted_knight], with_animations=True)
     export_gltf(os.path.join(sword_folder, "knight_sword.gltf"), [sword], with_animations=False)
 
     # For the pictures (and the .blend) the sword hangs on the weapon bone, exactly as the engine attaches it
@@ -1146,8 +1186,14 @@ def main():
     sword.parent_bone = WEAPON_BONE
     sword.matrix_world = get_sword_rest_matrix()
 
-    if arguments.icon:
-        render_icon(arguments.icon, armature)
+    if arguments.icons:
+        icons_folder = os.path.abspath(arguments.icons)
+        show_only([knight, sword])
+        render_icon(os.path.join(icons_folder, "souls_player_icon.png"), armature)
+        show_only([rusted_knight, sword])
+        render_icon(os.path.join(icons_folder, "rusted_knight_icon.png"), armature)
+
+    show_only([knight, sword])
 
     if arguments.blend:
         bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(arguments.blend))

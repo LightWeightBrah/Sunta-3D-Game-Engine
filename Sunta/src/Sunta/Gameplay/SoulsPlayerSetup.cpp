@@ -4,16 +4,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "CharacterActionsSystem.h"
-#include "CharacterAnimationSystem.h"
-#include "CharacterControllerSystem.h"
+#include "CharacterSetup.h"
 #include "FollowCameraSystem.h"
 #include "Core/EngineAssets.h"
-#include "Core/ResourceManager.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
-#include "Renderer/Model.h"
-#include "Scene/EntityHierarchy.h"
 
 namespace Sunta
 {
@@ -23,32 +18,17 @@ namespace
 
 // ========== Numbers used below ==========
 
-// The bone of the Knight placed exactly where a sword sits in its right hand (see Tools/Blender/knight_generator.py)
-constexpr const char* KnightWeaponBone = "Weapon_R";
+// The default collision layers of a project: the player's body, and what the player's sword may hit
+constexpr const char* PlayerBodyLayer   = "Player";
+constexpr const char* PlayerWeaponLayer = "PlayerHitbox";
 
-constexpr const char* SwordName        = "Sword";
+constexpr float PlayerSwordDamage = 30.0f;
+
 constexpr const char* PlayerCameraName = "Player Camera";
 
 // Where a new camera is put relative to the player (behind and above it, looking slightly down)
 const glm::vec3 CameraOffsetBehindPlayer = glm::vec3(0.0f, 2.2f, 4.5f);
 constexpr float CameraPitchDegrees       = -20.0f;
-
-// ========== Small helpers ==========
-
-unsigned int CreateNamedEntity(EntityManager& entityManager, const std::string& name, const glm::vec3& position, const glm::vec3& rotation)
-{
-	const unsigned int entityID = entityManager.CreateEntity();
-
-	entityManager.AddComponent<TagComponent>(entityID).name = name;
-
-	TransformComponent& transform = entityManager.AddComponent<TransformComponent>(entityID, position);
-	transform.rotation = rotation;
-	transform.SyncQuaternionFromEuler();
-
-	entityManager.AddComponent<WorldMatrixComponent>(entityID);
-
-	return entityID;
-}
 
 template<typename T>
 bool Has(EntityManager& entityManager, unsigned int entityID)
@@ -56,68 +36,19 @@ bool Has(EntityManager& entityManager, unsigned int entityID)
 	return entityManager.GetComponent<T>(entityID) != nullptr;
 }
 
-// ========== The character ==========
+// ========== The player's own parts ==========
 
-// The model is loaded at once (not on the next frame), so the components added after it can pick its animations
-void AddKnightModelIfMissing(EntityManager& entityManager, unsigned int entityID)
+// Stamina limits rolling and attacking, Lock On aims at enemies, Lock On Target lets the enemies face the player
+void AddPlayerComponents(EntityManager& entityManager, unsigned int entityID)
 {
-	if (Has<ModelComponent>(entityManager, entityID))
-		return;
-
-	ModelComponent& model = entityManager.AddComponent<ModelComponent>(entityID, EngineAssets::Models::Knight);
-	model.modelData = ResourceManager::GetModelData(EngineAssets::Models::Knight);
-}
-
-void AddCharacterComponents(EntityManager& entityManager, unsigned int entityID)
-{
-	if (!Has<CharacterControllerComponent>(entityManager, entityID))
-		CharacterControllerSystem::AddWithRequiredComponents(entityManager, entityID);
-
-	if (!Has<CharacterAnimationComponent>(entityManager, entityID))
-		CharacterAnimationSystem::AddWithRequiredComponents(entityManager, entityID);
-
-	if (!Has<CharacterActionsComponent>(entityManager, entityID))
-		CharacterActionsSystem::AddWithRequiredComponents(entityManager, entityID);
+	if (!Has<StaminaComponent>(entityManager, entityID))
+		entityManager.AddComponent<StaminaComponent>(entityID);
 
 	if (!Has<LockOnComponent>(entityManager, entityID))
 		entityManager.AddComponent<LockOnComponent>(entityID);
-}
 
-// ========== The sword ==========
-
-bool ModelHasBone(EntityManager& entityManager, unsigned int entityID, const std::string& boneName)
-{
-	const ModelComponent* model = entityManager.GetComponent<ModelComponent>(entityID);
-
-	unsigned int nodeIndex = 0;
-	return model && model->modelData && model->modelData->model && model->modelData->model->TryGetNodeIndex(boneName, nodeIndex);
-}
-
-bool HoldsSomethingOnBone(EntityManager& entityManager, unsigned int playerID, const std::string& boneName)
-{
-	for (unsigned int childID : EntityHierarchy::GetChildren(entityManager, playerID))
-	{
-		if (entityManager.GetComponent<ParentComponent>(childID)->boneName == boneName)
-			return true;
-	}
-
-	return false;
-}
-
-// The sword is a child of the player on the weapon bone, with no offset: the bone already sits where the grip goes
-// Only a model with the Knight's weapon bone gets it, on another model nobody knows where the hand is
-void AddSwordIfPossible(EntityManager& entityManager, unsigned int playerID)
-{
-	if (!ModelHasBone(entityManager, playerID, KnightWeaponBone) || HoldsSomethingOnBone(entityManager, playerID, KnightWeaponBone))
-		return;
-
-	const unsigned int swordID = CreateNamedEntity(entityManager, SwordName, glm::vec3(0.0f), glm::vec3(0.0f));
-
-	entityManager.AddComponent<ModelComponent>(swordID, EngineAssets::Models::KnightSword);
-
-	ParentComponent& parent = entityManager.AddComponent<ParentComponent>(swordID);
-	parent.parentID = playerID;
-	parent.boneName = KnightWeaponBone;
+	if (!Has<LockOnTargetComponent>(entityManager, entityID))
+		entityManager.AddComponent<LockOnTargetComponent>(entityID);
 }
 
 // ========== The camera ==========
@@ -151,7 +82,7 @@ unsigned int CreateCameraBehindPlayer(EntityManager& entityManager, unsigned int
 	const glm::quat playerYaw = glm::quat(glm::radians(glm::vec3(0.0f, player.rotation.y, 0.0f)));
 	const glm::vec3 position  = player.position + playerYaw * CameraOffsetBehindPlayer;
 
-	return CreateNamedEntity(entityManager, PlayerCameraName, position, glm::vec3(CameraPitchDegrees, player.rotation.y, 0.0f));
+	return CharacterSetup::CreateNamedEntity(entityManager, PlayerCameraName, position, glm::vec3(CameraPitchDegrees, player.rotation.y, 0.0f));
 }
 
 void AddFollowCameraIfMissing(EntityManager& entityManager, unsigned int playerID)
@@ -174,15 +105,20 @@ void SoulsPlayerSetup::SetUp(EntityManager& entityManager, unsigned int entityID
 	if (!Has<TransformComponent>(entityManager, entityID))
 		return;
 
-	AddKnightModelIfMissing(entityManager, entityID);
-	AddCharacterComponents(entityManager, entityID);
-	AddSwordIfPossible(entityManager, entityID);
+	CharacterSetup::AddModelIfMissing(entityManager, entityID, EngineAssets::Models::Knight);
+	CharacterSetup::AddFighterComponents(entityManager, entityID);
+	AddPlayerComponents(entityManager, entityID);
+
+	CharacterSetup::SetBodyLayer(entityManager, entityID, PlayerBodyLayer);
+	CharacterSetup::AddSwordIfPossible(entityManager, entityID, PlayerWeaponLayer, PlayerSwordDamage);
+
 	AddFollowCameraIfMissing(entityManager, entityID);
 }
 
 bool SoulsPlayerSetup::IsSetUp(EntityManager& entityManager, unsigned int entityID)
 {
-	return Has<CharacterActionsComponent>(entityManager, entityID);
+	return Has<CharacterActionsComponent>(entityManager, entityID) && Has<CharacterControllerComponent>(entityManager, entityID)
+		&& entityManager.GetComponent<CharacterControllerComponent>(entityID)->isPlayerControlled;
 }
 
 }

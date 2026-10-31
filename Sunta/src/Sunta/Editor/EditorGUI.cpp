@@ -37,6 +37,9 @@
 #include "Physics/CollisionSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
+#include "Gameplay/EnemySystem.h"
+#include "Gameplay/RustedKnightSetup.h"
+#include "Gameplay/MeleeEnemy.h"
 #include "Gameplay/CharacterControllerSystem.h"
 #include "Gameplay/FollowCameraSystem.h"
 #include "Gameplay/SoulsPlayerSetup.h"
@@ -109,8 +112,8 @@ constexpr const char* HierarchyEntityPayload = "HIERARCHY_ENTITY";
 // The empty space below the Hierarchy list (dropping an entity there unparents it) is never smaller than this
 constexpr float HierarchyDropZoneMinHeight = 30.0f;
 
-// A new Souls player stands on the ground (height 0) this far in front of the free camera
-constexpr float SoulsPlayerDistanceFromView = 5.0f;
+// A new Souls player (or enemy) stands on the ground (height 0) this far in front of the free camera
+constexpr float CharacterDistanceFromView = 5.0f;
 
 glm::vec3 GetGroundPointInFrontOfView(const Camera& camera, float distance)
 {
@@ -343,6 +346,13 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 				SceneDocument::NotifyChanged();
 			}
 
+			// A rusted knight that chases the player and fights with a sword
+			if (ImGui::MenuItem("Create Rusted Knight (enemy)", nullptr, false, canEditScene))
+			{
+				CreateRustedKnightInFrontOfView(scene);
+				SceneDocument::NotifyChanged();
+			}
+
 			ImGui::EndMenu();
 		}
 
@@ -391,6 +401,13 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("While playing, Q draws the line of sight to every enemy it checks.\nGreen: visible. Red: hits a wall there (orange cross), grey: the rest of the way to the enemy");
+
+			bool showWeaponHitboxes = DebugRenderer::GetShowWeaponHitboxes();
+			if (ImGui::Checkbox("Show Weapon Hitboxes", &showWeaponHitboxes))
+				DebugRenderer::SetShowWeaponHitboxes(showWeaponHitboxes);
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Draws the boxes of the weapons that deal damage (Hitbox).\nGreen, and red for a moment after the weapon hurt someone");
 
 			ImGui::Separator();
 
@@ -551,6 +568,11 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 				CreateSoulsPlayerInFrontOfView(scene);
 			});
 
+		DrawToolbarButton(Icons::RustedKnight, "##CreateRustedKnight", "Create Rusted Knight (an enemy: a rusted knight that fights the player)", [&]()
+			{
+				CreateRustedKnightInFrontOfView(scene);
+			});
+
 		// Play / Stop, centered in the toolbar
 		float buttonWidth = iconSize + framePadding * 2.0f;
 		float groupWidth = buttonWidth * 2.0f + ImGui::GetStyle().ItemSpacing.x;
@@ -590,10 +612,18 @@ void EditorGUI::DrawToolbar(Scene& scene, float toolbarHeight)
 
 void EditorGUI::CreateSoulsPlayerInFrontOfView(Scene& scene)
 {
-	const glm::vec3    position = GetGroundPointInFrontOfView(scene.GetCamera(), SoulsPlayerDistanceFromView);
+	const glm::vec3    position = GetGroundPointInFrontOfView(scene.GetCamera(), CharacterDistanceFromView);
 	const unsigned int player   = EntityFactory::CreateSoulsPlayer(scene, position);
 
 	SetSelectedEntity(static_cast<int>(player));
+}
+
+void EditorGUI::CreateRustedKnightInFrontOfView(Scene& scene)
+{
+	const glm::vec3    position = GetGroundPointInFrontOfView(scene.GetCamera(), CharacterDistanceFromView);
+	const unsigned int enemy    = EntityFactory::CreateRustedKnight(scene, position);
+
+	SetSelectedEntity(static_cast<int>(enemy));
 }
 
 void EditorGUI::DrawHierarchy(EntityManager& entityManager)
@@ -1039,9 +1069,45 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			},
 
 			{
+				"Health",
+				[&]() { return entityManager.GetComponent<HealthComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<HealthComponent>(inspectedEntity); }
+			},
+
+			{
+				"Stamina",
+				[&]() { return entityManager.GetComponent<StaminaComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<StaminaComponent>(inspectedEntity); }
+			},
+
+			{
+				"Hitbox",
+				[&]() { return entityManager.GetComponent<HitboxComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<HitboxComponent>(inspectedEntity); }
+			},
+
+			{
+				"Enemy",
+				[&]() { return entityManager.GetComponent<EnemyComponent>(inspectedEntity) != nullptr; },
+				[&]() { EnemySystem::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Melee Enemy",
+				[&]() { return entityManager.GetComponent<MeleeEnemyComponent>(inspectedEntity) != nullptr; },
+				[&]() { MeleeEnemy::AddWithRequiredComponents(entityManager, inspectedEntity); }
+			},
+
+			{
 				"Souls Player (everything a player needs)",
 				[&]() { return SoulsPlayerSetup::IsSetUp(entityManager, inspectedEntity); },
 				[&]() { SoulsPlayerSetup::SetUp(entityManager, inspectedEntity); }
+			},
+
+			{
+				"Rusted Knight (a ready enemy)",
+				[&]() { return RustedKnightSetup::IsSetUp(entityManager, inspectedEntity); },
+				[&]() { RustedKnightSetup::SetUp(entityManager, inspectedEntity); }
 			},
 
 			{

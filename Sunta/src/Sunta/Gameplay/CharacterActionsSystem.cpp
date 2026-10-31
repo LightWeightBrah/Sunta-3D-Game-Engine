@@ -7,6 +7,7 @@
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "LockOnSystem.h"
+#include "StaminaSystem.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Core/Log.h"
@@ -53,6 +54,8 @@ constexpr const char* RollKeyword         = "roll";
 constexpr const char* BackstepKeyword     = "backstep";
 constexpr const char* LightAttackKeywords[LightAttackCount] = { "light_1", "light_2", "light_3" };
 constexpr const char* HeavyAttackKeyword  = "heavy";
+constexpr const char* HitReactionKeyword  = "hit";
+constexpr const char* DeathKeyword        = "death";
 
 // ========== The parts of one character ==========
 
@@ -66,7 +69,6 @@ struct Character
 	TransformComponent*           transform          = nullptr;
 	AnimatorComponent*            animator           = nullptr;
 	AnimationMap*                 animations         = nullptr;
-	CharacterAnimationComponent*  characterAnimation = nullptr;
 	LockOnComponent*              lockOn             = nullptr;
 };
 
@@ -84,7 +86,6 @@ bool TryGetCharacter(EntityManager& entityManager, CharacterActionsComponent& ac
 	outCharacter.transform          = entityManager.GetComponent<TransformComponent>(entityID);
 	outCharacter.animator           = entityManager.GetComponent<AnimatorComponent>(entityID);
 	outCharacter.animations         = (model && model->modelData) ? &model->modelData->animations : nullptr;
-	outCharacter.characterAnimation = entityManager.GetComponent<CharacterAnimationComponent>(entityID);
 	outCharacter.lockOn             = entityManager.GetComponent<LockOnComponent>(entityID);
 
 	return outCharacter.controller && outCharacter.body && outCharacter.transform && outCharacter.animator && outCharacter.animations;
@@ -190,6 +191,8 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::Backstep:    return actions.backstepAnimation;
 	case CharacterAction::LightAttack: return GetLightAttackAnimation(actions, actions.lightAttackStep);
 	case CharacterAction::HeavyAttack: return actions.heavyAttackAnimation;
+	case CharacterAction::HitReaction: return actions.hitReactionAnimation;
+	case CharacterAction::Death:       return actions.deathAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -212,14 +215,11 @@ int GetNextLightAttackStep(const Character& character)
 	return HasAnimation(character, GetLightAttackAnimation(actions, nextStep)) ? nextStep : 0;
 }
 
+// Character Animation sees that its walking animation no longer plays, so it fades back in when the action ends
 void PlayActionAnimation(Character& character, const std::string& name)
 {
 	character.animator->animator.CrossFadeTo(&character.animations->at(name), character.actions->blendSeconds, false);
 	character.animator->currentAnimationName = name;
-
-	// Character Animation sees that its walking animation no longer plays, so it fades back in when the action ends
-	if (character.characterAnimation)
-		character.characterAnimation->playingAnimation = name;
 }
 
 // ========== Moving ==========
@@ -241,7 +241,14 @@ float GetActionSpeed(const CharacterActionsComponent& actions, CharacterAction a
 	{
 	case CharacterAction::Roll:     return actions.rollSpeed       * GetMoveFactor(RollMove,       progress);
 	case CharacterAction::Backstep: return actions.backstepSpeed   * GetMoveFactor(BackstepMove,   progress);
-	default:                        return actions.attackStepSpeed * GetMoveFactor(AttackStepMove, progress);
+
+	case CharacterAction::LightAttack:
+	case CharacterAction::HeavyAttack:
+		return actions.attackStepSpeed * GetMoveFactor(AttackStepMove, progress);
+
+	// A hit character and a dead one stand where they are
+	default:
+		return 0.0f;
 	}
 }
 
@@ -262,6 +269,12 @@ bool IsDodge(CharacterAction action)
 	return action == CharacterAction::Roll || action == CharacterAction::Backstep;
 }
 
+// Staggering after a hit can't be cut short, and nothing comes after death
+bool CanBeInterrupted(CharacterAction action)
+{
+	return action != CharacterAction::HitReaction && action != CharacterAction::Death;
+}
+
 // ========== Starting and ending actions ==========
 
 // A roll without a held direction becomes a backstep (as in Dark Souls)
@@ -273,30 +286,65 @@ CharacterAction ResolveAction(const Character& character, CharacterAction action
 	return action;
 }
 
+void StartAction(EntityManager& entityManager, Character& character, CharacterAction action, const std::string& animationName)
+{
+	CharacterActionsComponent& actions = *character.actions;
+
+	if (CanBeInterrupted(action))
+	{
+		actions.actionDirection = ChooseActionDirection(entityManager, character, action);
+
+		if (action != CharacterAction::Backstep)
+			FaceDirection(character, actions.actionDirection);
+	}
+
+	PlayActionAnimation(character, animationName);
+
+	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack)
+		actions.attackNumber++;
+
+	actions.currentAction                  = action;
+	actions.queuedAction                   = CharacterAction::None;
+	actions.actionProgress                 = 0.0f;
+	actions.isInvulnerable                 = false;
+	character.controller->isDrivenByAction = true;
+}
+
+// An action asked for by a button or a script: it needs its animation and some stamina
 bool TryStartAction(EntityManager& entityManager, Character& character, CharacterAction requestedAction)
 {
 	CharacterActionsComponent& actions = *character.actions;
 	const CharacterAction action = ResolveAction(character, requestedAction);
 
+	const int previousLightAttackStep = actions.lightAttackStep;
 	if (action == CharacterAction::LightAttack)
 		actions.lightAttackStep = GetNextLightAttackStep(character);
 
 	const std::string& animationName = GetAnimationName(actions, action);
-	if (!HasAnimation(character, animationName))
+
+	if (!HasAnimation(character, animationName) || !StaminaSystem::TrySpendForAction(entityManager, character.entityID, action))
+	{
+		actions.lightAttackStep = previousLightAttackStep;
 		return false;
+	}
 
-	actions.actionDirection = ChooseActionDirection(entityManager, character, action);
-
-	if (action != CharacterAction::Backstep)
-		FaceDirection(character, actions.actionDirection);
-
-	PlayActionAnimation(character, animationName);
-
-	actions.currentAction                  = action;
-	actions.queuedAction                   = CharacterAction::None;
-	character.controller->isDrivenByAction = true;
-
+	StartAction(entityManager, character, action, animationName);
 	return true;
+}
+
+// Started by the game itself (a hit, the death): interrupts whatever the character was doing
+void ForceAction(EntityManager& entityManager, unsigned int entityID, CharacterAction action)
+{
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+
+	Character character;
+	if (!actions || !TryGetCharacter(entityManager, *actions, character))
+		return;
+
+	const std::string& animationName = GetAnimationName(*actions, action);
+
+	if (HasAnimation(character, animationName))
+		StartAction(entityManager, character, action, animationName);
 }
 
 void FinishAction(Character& character)
@@ -313,7 +361,11 @@ void FinishAction(Character& character)
 void EndOrChainAction(EntityManager& entityManager, Character& character, float progress)
 {
 	CharacterActionsComponent& actions = *character.actions;
-	const bool canBeInterrupted = progress >= actions.cancelFrom;
+
+	if (actions.currentAction == CharacterAction::Death)
+		return;
+
+	const bool canBeInterrupted = CanBeInterrupted(actions.currentAction) && progress >= actions.cancelFrom;
 
 	if (canBeInterrupted && actions.queuedAction != CharacterAction::None)
 	{
@@ -335,11 +387,12 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 	CharacterActionsComponent& actions = *character.actions;
 	const float progress = character.animator->animator.GetProgress();
 
+	actions.actionProgress = progress;
 	actions.isInvulnerable = IsDodge(actions.currentAction)
 		&& progress >= actions.invulnerableFrom && progress <= actions.invulnerableTo;
 
 	// Pressed during the action: remembered, so a combo doesn't need frame-perfect timing
-	if (request != CharacterAction::None && progress >= actions.inputBufferFrom)
+	if (request != CharacterAction::None && progress >= actions.inputBufferFrom && CanBeInterrupted(actions.currentAction))
 		actions.queuedAction = request;
 
 	MoveBody(character, progress);
@@ -363,6 +416,8 @@ void FillNamesFromModel(CharacterActionsComponent& actions, const AnimationMap& 
 	FillAnimationName(actions.lightAttack2Animation, animations, LightAttackKeywords[1]);
 	FillAnimationName(actions.lightAttack3Animation, animations, LightAttackKeywords[2]);
 	FillAnimationName(actions.heavyAttackAnimation,  animations, HeavyAttackKeyword);
+	FillAnimationName(actions.hitReactionAnimation,  animations, HitReactionKeyword);
+	FillAnimationName(actions.deathAnimation,        animations, DeathKeyword);
 }
 
 void WarnAboutMissingAnimation(const std::string& entityName, const char* label, const std::string& animationName, const AnimationMap& animations)
@@ -390,6 +445,16 @@ void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMou
 		else if (request != CharacterAction::None && TryStartAction(entityManager, character, request))
 			MoveBody(character, 0.0f);
 	}
+}
+
+void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsigned int entityID)
+{
+	ForceAction(entityManager, entityID, CharacterAction::HitReaction);
+}
+
+void CharacterActionsSystem::PlayDeath(EntityManager& entityManager, unsigned int entityID)
+{
+	ForceAction(entityManager, entityID, CharacterAction::Death);
 }
 
 void CharacterActionsSystem::AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID)

@@ -23,6 +23,8 @@ bool DrawAnimations(CharacterActionsComponent& actions, const std::map<std::stri
 	edited |= DrawAnimationCombo("Light Attack 2", actions.lightAttack2Animation, animations);
 	edited |= DrawAnimationCombo("Light Attack 3", actions.lightAttack3Animation, animations);
 	edited |= DrawAnimationCombo("Heavy Attack",   actions.heavyAttackAnimation,  animations);
+	edited |= DrawAnimationCombo("Hit Reaction",   actions.hitReactionAnimation,  animations);
+	edited |= DrawAnimationCombo("Death",          actions.deathAnimation,        animations);
 
 	return edited;
 }
@@ -34,6 +36,7 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Roll Speed",        &actions.rollSpeed,       0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Backstep Speed",    &actions.backstepSpeed,   0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Attack Step Speed", &actions.attackStepSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Heavy Damage Multiplier", &actions.heavyDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
 
 	return edited;
 }
@@ -43,6 +46,10 @@ bool DrawTiming(CharacterActionsComponent& actions)
 {
 	bool edited = false;
 
+	edited |= ImGui::SliderFloat("Light Hit From",    &actions.lightHitFrom,     0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Light Hit To",      &actions.lightHitTo,       0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Heavy Hit From",    &actions.heavyHitFrom,     0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Heavy Hit To",      &actions.heavyHitTo,       0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Invulnerable From", &actions.invulnerableFrom, 0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Invulnerable To",   &actions.invulnerableTo,   0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Input Buffer From", &actions.inputBufferFrom,  0.0f, 1.0f);

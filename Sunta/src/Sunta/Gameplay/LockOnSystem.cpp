@@ -8,7 +8,7 @@
 
 #include "EntityName.h"
 #include "GameplayMath.h"
-#include "SightBlockers.h"
+#include "LineOfSight.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Core/Log.h"
@@ -133,19 +133,8 @@ void ReportHiddenEnemy(Locker& locker, unsigned int targetEntityID, const Raycas
 // True when a wall (or anything else that blocks the sight) is between the two points
 bool IsPathBlocked(Locker& locker, unsigned int targetEntityID, const glm::vec3& aimPoint)
 {
-	const glm::vec3 path   = aimPoint - locker.eyePoint;
-	const float     length = glm::length(path);
-
-	if (length < SmallestUsableLength)
-		return false;
-
-	Ray ray;
-	ray.origin    = locker.eyePoint;
-	ray.direction = path / length;
-
-	// The characters themselves don't block the sight, they only stand in the middle of it
 	RaycastHit hit;
-	const bool isBlocked = Physics::Raycast(locker.entityManager, ray, length, SightBlockingLayers, { locker.entityID, targetEntityID }, hit);
+	const bool isBlocked = IsLineOfSightBlocked(locker.entityManager, locker.eyePoint, aimPoint, locker.entityID, targetEntityID, hit);
 
 	if (isRecordingSightRays)
 	{

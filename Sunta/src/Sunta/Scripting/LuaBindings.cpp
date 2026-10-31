@@ -7,7 +7,12 @@
 
 #include "ECS/Entity.h"
 #include "ECS/Component.h"
+#include "Gameplay/CombatSystem.h"
+#include "Gameplay/EnemySystem.h"
+#include "Gameplay/EnemyContext.h"
+#include "Gameplay/EnemyStateMachine.h"
 #include "Gameplay/LockOnSystem.h"
+#include "Gameplay/LuaEnemyState.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Utilities/MathUtilities.h"
@@ -35,6 +40,9 @@ using PhysicsBodyHandle = ComponentHandle<PhysicsBodyComponent>;
 using CharacterControllerHandle = ComponentHandle<CharacterControllerComponent>;
 using LockOnHandle        = ComponentHandle<LockOnComponent>;
 using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
+using HealthHandle        = ComponentHandle<HealthComponent>;
+using EnemyHandle         = ComponentHandle<EnemyComponent>;
+using MeleeEnemyHandle    = ComponentHandle<MeleeEnemyComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -100,6 +108,46 @@ auto ComponentHandleProperty()
 
 // ========== Reactions to changes made from scripts ==========
 
+// ========== Enemy AI helpers ==========
+
+// What the enemy knows and can do, made for one call from Lua (the same thing the ready C++ states use)
+EnemyContext MakeEnemyContext(const EnemyHandle& handle)
+{
+	return EnemyContext(*handle.owner.GetEntityManager(), handle.owner.GetID(), 0.0f);
+}
+
+// Runs a command (move, stop, attack) on the enemy, nothing when it lacks the parts an enemy needs
+template<typename TCommand>
+void CommandEnemy(const EnemyHandle& handle, TCommand command)
+{
+	EnemyContext context = MakeEnemyContext(handle);
+	if (context.IsValid())
+		command(context);
+}
+
+// Asks the enemy something (a distance, can it see the player), 'answerWhenInvalid' when it lacks the parts an enemy needs
+template<typename TQuestion, typename TAnswer>
+TAnswer AskEnemy(const EnemyHandle& handle, TQuestion question, TAnswer answerWhenInvalid)
+{
+	const EnemyContext context = MakeEnemyContext(handle);
+	return context.IsValid() ? question(context) : answerWhenInvalid;
+}
+
+// "light", "heavy", "roll", "backstep" as used by enemy:attack(...) in Lua
+CharacterAction ParseActionName(const std::string& name)
+{
+	if (name == "heavy")    return CharacterAction::HeavyAttack;
+	if (name == "roll")     return CharacterAction::Roll;
+	if (name == "backstep") return CharacterAction::Backstep;
+
+	return CharacterAction::LightAttack;
+}
+
+EnemyStateMachine* TryGetStateMachine(const EnemyHandle& handle)
+{
+	return EnemySystem::GetOrCreateStateMachine(*handle.owner.GetEntityManager(), handle.owner.GetID());
+}
+
 void OnTransformPositionChanged(TransformComponent& transformComponent)
 {
 	transformComponent.isDirty = true;
@@ -133,6 +181,9 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterCharacterControllerComponent(lua);
 	RegisterLockOnComponent(lua);
 	RegisterLockOnTargetComponent(lua);
+	RegisterHealthComponent(lua);
+	RegisterEnemyComponent(lua);
+	RegisterMeleeEnemyComponent(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -319,6 +370,164 @@ void LuaBindings::RegisterLockOnTargetComponent(sol::state& lua)
 	);
 }
 
+void LuaBindings::RegisterHealthComponent(sol::state& lua)
+{
+	// Usage in Lua: if this.health.current < 30 then ... end, other.health:damage(10) (a trap), this.health.isDead
+	lua.new_usertype<HealthHandle>("Health", sol::no_constructor,
+
+		"max", MemberProperty(&HealthComponent::maxHealth, 0.0f),
+
+		"current", sol::readonly_property([](const HealthHandle& handle)
+			{
+				const HealthComponent* health = handle.TryGetComponent();
+				return health ? health->currentHealth : 0.0f;
+			}),
+
+		"isDead", sol::readonly_property([](const HealthHandle& handle)
+			{
+				const HealthComponent* health = handle.TryGetComponent();
+				return health && health->isDead;
+			}),
+
+		// Hurts like a weapon does: plays the hit (or death) animation, does nothing while rolling
+		"damage", [](const HealthHandle& handle, float amount)
+			{
+				return CombatSystem::ApplyDamage(*handle.owner.GetEntityManager(), handle.owner.GetID(), amount, handle.owner.GetID());
+			}
+	);
+}
+
+void LuaBindings::RegisterEnemyComponent(sol::state& lua)
+{
+	// The enemy's state machine from Lua. A script on the enemy adds its own states or replaces the ready ones by name
+	// (Idle, Chase, Attack, Recover, ReturnHome, Dead):
+	//
+	//     function OnStart()
+	//         this.enemy:addState("Chase", {
+	//             enter  = function(entity) entity.enemy:lookAtTarget(true) end,
+	//             update = function(entity, deltaTime)
+	//                 local ai = entity.enemy
+	//                 if ai.distanceToTarget < 2 then return "Attack" end
+	//                 ai:moveTo(ai.target.transform.position, true)
+	//             end
+	//         })
+	//     end
+	lua.new_usertype<EnemyHandle>("Enemy", sol::no_constructor,
+
+		// The senses from the Inspector
+		"sightDistance",   MemberProperty(&EnemyComponent::sightDistance,   0.0f),
+		"hearingDistance", MemberProperty(&EnemyComponent::hearingDistance, 0.0f),
+
+		// ===== The state machine =====
+
+		"state", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				const EnemyStateMachine* stateMachine = TryGetStateMachine(handle);
+				return stateMachine ? stateMachine->GetCurrentStateName() : std::string();
+			}),
+
+		"secondsInState", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				const EnemyStateMachine* stateMachine = TryGetStateMachine(handle);
+				return stateMachine ? stateMachine->GetSecondsInState() : 0.0f;
+			}),
+
+		"addState", [](const EnemyHandle& handle, const std::string& name, const sol::table& functions)
+			{
+				if (EnemyStateMachine* stateMachine = TryGetStateMachine(handle))
+					stateMachine->SetState(name, std::make_unique<LuaEnemyState>(functions));
+			},
+
+		"changeState", [](const EnemyHandle& handle, const std::string& name)
+			{
+				if (EnemyStateMachine* stateMachine = TryGetStateMachine(handle))
+					stateMachine->RequestState(name);
+			},
+
+		// ===== What the enemy knows =====
+
+		"hasTarget", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				return AskEnemy(handle, [](const EnemyContext& context) { return context.HasTarget(); }, false);
+			}),
+
+		"target", sol::readonly_property([](const EnemyHandle& handle) -> sol::optional<Entity>
+			{
+				const EnemyContext context = MakeEnemyContext(handle);
+				if (!context.IsValid() || !context.HasTarget())
+					return sol::nullopt;
+
+				return Entity(context.GetTargetID(), handle.owner.GetEntityManager());
+			}),
+
+		"distanceToTarget", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				return AskEnemy(handle, [](const EnemyContext& context) { return context.GetDistanceToTarget(); }, 0.0f);
+			}),
+
+		"distanceToHome", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				return AskEnemy(handle, [](const EnemyContext& context) { return context.GetDistanceToHome(); }, 0.0f);
+			}),
+
+		"isBusy", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				return AskEnemy(handle, [](const EnemyContext& context) { return context.IsBusy(); }, false);
+			}),
+
+		"canSeeTarget", [](const EnemyHandle& handle)
+			{
+				return AskEnemy(handle, [](const EnemyContext& context) { return context.CanSeeTarget(); }, false);
+			},
+
+		// ===== What the enemy can do =====
+
+		"moveTo", [](const EnemyHandle& handle, const glm::vec3& point, bool run)
+			{
+				CommandEnemy(handle, [&](EnemyContext& context) { context.MoveTowards(point, run); });
+			},
+
+		"goHome", [](const EnemyHandle& handle)
+			{
+				CommandEnemy(handle, [](EnemyContext& context) { context.MoveTowards(context.GetEnemy().homePosition, false); });
+			},
+
+		"circleTarget", [](const EnemyHandle& handle, float side)
+			{
+				CommandEnemy(handle, [&](EnemyContext& context) { context.CircleTarget(side); });
+			},
+
+		"stop", [](const EnemyHandle& handle)
+			{
+				CommandEnemy(handle, [](EnemyContext& context) { context.Stop(); });
+			},
+
+		"lookAtTarget", [](const EnemyHandle& handle, bool shouldLook)
+			{
+				CommandEnemy(handle, [&](EnemyContext& context) { context.LookAtTarget(shouldLook); });
+			},
+
+		// "light", "heavy", "roll" or "backstep"
+		"attack", [](const EnemyHandle& handle, const std::string& actionName)
+			{
+				CommandEnemy(handle, [&](EnemyContext& context) { context.RequestAction(ParseActionName(actionName)); });
+			}
+	);
+}
+
+void LuaBindings::RegisterMeleeEnemyComponent(sol::state& lua)
+{
+	// The tuning of a Melee Enemy, e.g. a script makes it more aggressive when hurt: this.meleeEnemy.attackCooldownSeconds = 0.5
+	lua.new_usertype<MeleeEnemyHandle>("MeleeEnemy", sol::no_constructor,
+		"attackDistance",        MemberProperty(&MeleeEnemyComponent::attackDistance,        0.0f),
+		"runDistance",           MemberProperty(&MeleeEnemyComponent::runDistance,           0.0f),
+		"giveUpDistance",        MemberProperty(&MeleeEnemyComponent::giveUpDistance,        0.0f),
+		"attackCooldownSeconds", MemberProperty(&MeleeEnemyComponent::attackCooldownSeconds, 0.0f),
+		"heavyAttackChance",     MemberProperty(&MeleeEnemyComponent::heavyAttackChance,     0.0f),
+		"recoverSeconds",        MemberProperty(&MeleeEnemyComponent::recoverSeconds,        0.0f)
+	);
+}
+
 void LuaBindings::RegisterEntity(sol::state& lua)
 {
 	lua.new_usertype<Entity>("Entity", sol::no_constructor,
@@ -343,7 +552,10 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"physicsBody", ComponentHandleProperty<PhysicsBodyComponent>(),
 		"characterController", ComponentHandleProperty<CharacterControllerComponent>(),
 		"lockOn",              ComponentHandleProperty<LockOnComponent>(),
-		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>()
+		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>(),
+		"health",              ComponentHandleProperty<HealthComponent>(),
+		"enemy",               ComponentHandleProperty<EnemyComponent>(),
+		"meleeEnemy",          ComponentHandleProperty<MeleeEnemyComponent>()
 	);
 }
 

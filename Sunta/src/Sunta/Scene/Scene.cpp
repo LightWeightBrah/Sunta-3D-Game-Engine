@@ -31,6 +31,9 @@
 #include "Physics/CollisionShapes.h"
 #include "Physics/PhysicsSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
+#include "Gameplay/CombatSystem.h"
+#include "Gameplay/EnemySystem.h"
+#include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
 #include "Gameplay/FollowCameraSystem.h"
@@ -50,6 +53,10 @@ namespace
 	constexpr float CameraGizmoMaxFieldOfView   = 120.0f;
 	constexpr unsigned int CameraGizmoRingCorners = 4;
 	const glm::vec3 CameraGizmoColor = glm::vec3(1.0f, 0.85f, 0.2f);
+
+	// The box of a weapon (View > Show Weapon Hitboxes): green, red for a moment after it hurt someone
+	const glm::vec3 HitboxColor         = glm::vec3(0.2f, 1.0f, 0.2f);
+	const glm::vec3 HitboxJustHitColor  = glm::vec3(1.0f, 0.1f, 0.1f);
 
 	// The line of sight of the lock-on (View > Show Lock-On Sight Rays)
 	const glm::vec3 SightRayClearColor      = glm::vec3(0.2f, 1.0f, 0.2f);
@@ -297,8 +304,10 @@ void Scene::Update()
 		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
 		LockOnSystem::SetRecordingSightRays(DebugRenderer::GetShowLockOnSightRays());
 		LockOnSystem::Update(entityManager, EngineTime::deltaTime, cameraForward, lookDelta);
+		EnemySystem::Update(entityManager, EngineTime::deltaTime);
 		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
 		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame);
+		StaminaSystem::Update(entityManager, EngineTime::deltaTime);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
 
@@ -314,6 +323,10 @@ void Scene::Update()
 
 	// After the animators: a child on a bone (a sword in the hand) follows the pose of this frame
 	Systems::UpdateTransform(entityManager);
+
+	// After the transforms: the sword hurts where the hand holds it in this frame
+	if (isPlaying)
+		CombatSystem::Update(entityManager, EngineTime::deltaTime);
 
 	// After the transforms, so the camera sees where the player and the walls really are
 	if (isPlaying)
@@ -458,6 +471,17 @@ void Scene::Render(Renderer& renderer)
 		{
 			if (auto* cameraComponent = entityManager.GetComponent<CameraComponent>(i))
 				gizmosQueue.push_back({ MakeCameraFrustumCorners(*transformComponent, *cameraComponent, aspectRatio), CameraGizmoColor });
+		}
+
+		if (auto* hitbox = entityManager.GetComponent<HitboxComponent>(i))
+		{
+			if (matrixComponent && (DebugRenderer::GetShowWeaponHitboxes() || hitbox->showGizmos))
+			{
+				const OBB box = MakeWorldOBB(matrixComponent->matrix, hitbox->localOffset, hitbox->halfExtents);
+				const glm::vec3 color = CombatSystem::HasJustHit(*hitbox) ? HitboxJustHitColor : HitboxColor;
+
+				gizmosQueue.push_back({ GetOBBCorners(box), color });
+			}
 		}
 
 		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
@@ -610,6 +634,13 @@ void Scene::BeginPlay()
 	FollowCameraSystem::ReportProblemsBeforePlay(entityManager);
 	CharacterAnimationSystem::ReportProblemsBeforePlay(entityManager);
 	CharacterActionsSystem::ReportProblemsBeforePlay(entityManager);
+	CombatSystem::ReportProblemsBeforePlay(entityManager);
+	EnemySystem::ReportProblemsBeforePlay(entityManager);
+
+	// Everyone starts alive, rested and at home
+	CombatSystem::PrepareForPlay(entityManager);
+	StaminaSystem::PrepareForPlay(entityManager);
+	EnemySystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

@@ -16,7 +16,9 @@ enum class CharacterAction
 	Roll,        // a dodge in the direction of the stick, invulnerable for a part of it
 	Backstep,    // a short hop back, used when rolling without choosing a direction
 	LightAttack, // quick attacks that chain into a combo when pressed again in time
-	HeavyAttack  // a slow, strong attack
+	HeavyAttack, // a slow, strong attack
+	HitReaction, // staggering after being hit (started by the Health, not by a button)
+	Death        // the last animation, the character never acts again
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -32,11 +34,15 @@ enum class CharacterAction
 //
 // A script (or an enemy) can ask for an action instead of the keyboard: turn 'isPlayerControlled' off
 // on the Character Controller and set 'requestedAction'
+//
+// Attacks hurt through the Hitbox of the weapon during their striking part ('lightHitFrom'..'lightHitTo' and the heavy one).
+// With a Stamina component every action costs stamina, and with none left it doesn't start
 struct CharacterActionsComponent
 {
 	// Limits of the sliders in the Inspector
 	static constexpr float MaxSpeed        = 15.0f;
 	static constexpr float MaxBlendSeconds = 0.5f;
+	static constexpr float MaxDamageMultiplier = 5.0f;
 
 	// Names of the animations of the Model, empty means "this action is not available"
 	std::string rollAnimation;
@@ -45,6 +51,8 @@ struct CharacterActionsComponent
 	std::string lightAttack2Animation;
 	std::string lightAttack3Animation;
 	std::string heavyAttackAnimation;
+	std::string hitReactionAnimation;
+	std::string deathAnimation;
 
 	// How fast the actions move the character (meters per second)
 	float rollSpeed       = 5.5f;
@@ -55,6 +63,15 @@ struct CharacterActionsComponent
 	// The part of the roll and the backstep during which nothing can hurt the character
 	float invulnerableFrom = 0.1f;
 	float invulnerableTo   = 0.55f;
+
+	// The striking part of the attacks: the weapon's Hitbox hurts only then
+	float lightHitFrom = 0.28f;
+	float lightHitTo   = 0.56f;
+	float heavyHitFrom = 0.45f;
+	float heavyHitTo   = 0.66f;
+
+	// How much more a heavy attack hurts than a light one
+	float heavyDamageMultiplier = 1.8f;
 
 	// A button pressed after this part of an action is remembered and starts the next action (no need for perfect timing)
 	float inputBufferFrom = 0.3f;
@@ -82,7 +99,29 @@ struct CharacterActionsComponent
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;
 
+	// How far the current action is (0 = start, 1 = end of its animation)
+	float actionProgress = 0.0f;
+
+	// Grows with every attack, so a weapon knows when a new swing started (and may hit the same enemy again)
+	unsigned int attackNumber = 0;
+
 	bool IsBusy() const { return currentAction != CharacterAction::None; }
+
+	bool IsAttacking() const { return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack; }
+
+	// True during the part of the current attack that hurts
+	bool IsInHitWindow() const
+	{
+		if (currentAction == CharacterAction::LightAttack)
+			return actionProgress >= lightHitFrom && actionProgress <= lightHitTo;
+
+		if (currentAction == CharacterAction::HeavyAttack)
+			return actionProgress >= heavyHitFrom && actionProgress <= heavyHitTo;
+
+		return false;
+	}
+
+	float GetDamageMultiplier() const { return currentAction == CharacterAction::HeavyAttack ? heavyDamageMultiplier : 1.0f; }
 
 	static void RegisterToInspector()
 	{

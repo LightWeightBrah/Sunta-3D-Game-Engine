@@ -110,6 +110,9 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC SUNTA_DEVELOPMENT)
 # in nested macros (GLCall + SUNTA_ASSERT), this fixes it so macros actually work with no errors
 if(MSVC)
 	target_compile_options(${PROJECT_NAME} PUBLIC /Zc:preprocessor)
+
+	# The Lua bindings (sol2 templates) make more sections than one object file can hold in Debug
+	target_compile_options(${PROJECT_NAME} PRIVATE /bigobj)
 endif()
 
 # --- GLAD FIX TO HIDE PRECOMPILED HEADER ---

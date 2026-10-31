@@ -40,6 +40,11 @@ namespace SceneKeys
 	constexpr const char* LockOnComponent           = "lock_on";
 	constexpr const char* LockOnTargetComponent     = "lock_on_target";
 	constexpr const char* CharacterActionsComponent = "character_actions";
+	constexpr const char* HealthComponent           = "health";
+	constexpr const char* StaminaComponent          = "stamina";
+	constexpr const char* HitboxComponent           = "hitbox";
+	constexpr const char* EnemyComponent            = "enemy";
+	constexpr const char* MeleeEnemyComponent       = "melee_enemy";
 	constexpr const char* ParentComponent           = "parent";
 
 	constexpr const char* Name                      = "name";
@@ -137,6 +142,37 @@ namespace SceneKeys
 	constexpr const char* InvulnerableTo            = "invulnerable_to";
 	constexpr const char* InputBufferFrom           = "input_buffer_from";
 	constexpr const char* CancelFrom                = "cancel_from";
+	constexpr const char* HitReactionAnimation      = "hit_reaction_animation";
+	constexpr const char* DeathAnimation            = "death_animation";
+	constexpr const char* LightHitFrom              = "light_hit_from";
+	constexpr const char* LightHitTo                = "light_hit_to";
+	constexpr const char* HeavyHitFrom              = "heavy_hit_from";
+	constexpr const char* HeavyHitTo                = "heavy_hit_to";
+	constexpr const char* HeavyDamageMultiplier     = "heavy_damage_multiplier";
+
+	constexpr const char* MaxHealth                 = "max_health";
+
+	constexpr const char* MaxStamina                = "max_stamina";
+	constexpr const char* RegenerationPerSecond     = "regeneration_per_second";
+	constexpr const char* RegenerationDelaySeconds  = "regeneration_delay_seconds";
+	constexpr const char* RollCost                  = "roll_cost";
+	constexpr const char* BackstepCost              = "backstep_cost";
+	constexpr const char* LightAttackCost           = "light_attack_cost";
+	constexpr const char* HeavyAttackCost           = "heavy_attack_cost";
+	constexpr const char* RunCostPerSecond          = "run_cost_per_second";
+
+	constexpr const char* Damage                    = "damage";
+
+	constexpr const char* SightDistance             = "sight_distance";
+	constexpr const char* SightAngleDegrees         = "sight_angle_degrees";
+	constexpr const char* HearingDistance           = "hearing_distance";
+	constexpr const char* AttackDistance            = "attack_distance";
+	constexpr const char* RunDistance               = "run_distance";
+	constexpr const char* GiveUpDistance            = "give_up_distance";
+	constexpr const char* AttackCooldownSeconds     = "attack_cooldown_seconds";
+	constexpr const char* HeavyAttackChance         = "heavy_attack_chance";
+	constexpr const char* MaxLightCombo             = "max_light_combo";
+	constexpr const char* RecoverSeconds            = "recover_seconds";
 
 	// The parent is saved as its place in the list of entities (entity IDs change every time a scene is loaded)
 	constexpr const char* ParentIndex               = "index";
@@ -473,7 +509,71 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::InvulnerableTo,        actions->invulnerableTo        },
 				{ SceneKeys::InputBufferFrom,       actions->inputBufferFrom       },
 				{ SceneKeys::CancelFrom,            actions->cancelFrom            },
-				{ SceneKeys::BlendSeconds,          actions->blendSeconds          }
+				{ SceneKeys::BlendSeconds,          actions->blendSeconds          },
+				{ SceneKeys::HitReactionAnimation,  actions->hitReactionAnimation  },
+				{ SceneKeys::DeathAnimation,        actions->deathAnimation        },
+				{ SceneKeys::LightHitFrom,          actions->lightHitFrom          },
+				{ SceneKeys::LightHitTo,            actions->lightHitTo            },
+				{ SceneKeys::HeavyHitFrom,          actions->heavyHitFrom          },
+				{ SceneKeys::HeavyHitTo,            actions->heavyHitTo            },
+				{ SceneKeys::HeavyDamageMultiplier, actions->heavyDamageMultiplier }
+			};
+		}
+
+		if (auto* health = entityManager.GetComponent<HealthComponent>(i))
+		{
+			entityJson[SceneKeys::HealthComponent] = { { SceneKeys::MaxHealth, health->maxHealth } };
+		}
+
+		if (auto* stamina = entityManager.GetComponent<StaminaComponent>(i))
+		{
+			entityJson[SceneKeys::StaminaComponent] =
+			{
+				{ SceneKeys::MaxStamina,               stamina->maxStamina               },
+				{ SceneKeys::RegenerationPerSecond,    stamina->regenerationPerSecond    },
+				{ SceneKeys::RegenerationDelaySeconds, stamina->regenerationDelaySeconds },
+				{ SceneKeys::RollCost,                 stamina->rollCost                 },
+				{ SceneKeys::BackstepCost,             stamina->backstepCost             },
+				{ SceneKeys::LightAttackCost,          stamina->lightAttackCost          },
+				{ SceneKeys::HeavyAttackCost,          stamina->heavyAttackCost          },
+				{ SceneKeys::RunCostPerSecond,         stamina->runCostPerSecond         }
+			};
+		}
+
+		if (auto* hitbox = entityManager.GetComponent<HitboxComponent>(i))
+		{
+			entityJson[SceneKeys::HitboxComponent] =
+			{
+				{ SceneKeys::Damage,                     hitbox->damage       },
+				{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
+				{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
+				{ SceneKeys::Layer, static_cast<unsigned int>(hitbox->layer)  },
+				{ SceneKeys::ShowGizmos,                 hitbox->showGizmos   }
+			};
+		}
+
+		if (auto* enemy = entityManager.GetComponent<EnemyComponent>(i))
+		{
+			entityJson[SceneKeys::EnemyComponent] =
+			{
+				{ SceneKeys::SightDistance,     enemy->sightDistance     },
+				{ SceneKeys::SightAngleDegrees, enemy->sightAngleDegrees },
+				{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
+				{ SceneKeys::EyeHeight,         enemy->eyeHeight         }
+			};
+		}
+
+		if (auto* meleeEnemy = entityManager.GetComponent<MeleeEnemyComponent>(i))
+		{
+			entityJson[SceneKeys::MeleeEnemyComponent] =
+			{
+				{ SceneKeys::AttackDistance,        meleeEnemy->attackDistance        },
+				{ SceneKeys::RunDistance,           meleeEnemy->runDistance           },
+				{ SceneKeys::GiveUpDistance,        meleeEnemy->giveUpDistance        },
+				{ SceneKeys::AttackCooldownSeconds, meleeEnemy->attackCooldownSeconds },
+				{ SceneKeys::HeavyAttackChance,     meleeEnemy->heavyAttackChance     },
+				{ SceneKeys::MaxLightCombo,         meleeEnemy->maxLightCombo         },
+				{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        }
 			};
 		}
 
@@ -817,6 +917,80 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.inputBufferFrom       = actionsData.value(SceneKeys::InputBufferFrom,       actions.inputBufferFrom);
 			actions.cancelFrom            = actionsData.value(SceneKeys::CancelFrom,            actions.cancelFrom);
 			actions.blendSeconds          = actionsData.value(SceneKeys::BlendSeconds,          actions.blendSeconds);
+			actions.hitReactionAnimation  = actionsData.value(SceneKeys::HitReactionAnimation,  actions.hitReactionAnimation);
+			actions.deathAnimation        = actionsData.value(SceneKeys::DeathAnimation,        actions.deathAnimation);
+			actions.lightHitFrom          = actionsData.value(SceneKeys::LightHitFrom,          actions.lightHitFrom);
+			actions.lightHitTo            = actionsData.value(SceneKeys::LightHitTo,            actions.lightHitTo);
+			actions.heavyHitFrom          = actionsData.value(SceneKeys::HeavyHitFrom,          actions.heavyHitFrom);
+			actions.heavyHitTo            = actionsData.value(SceneKeys::HeavyHitTo,            actions.heavyHitTo);
+			actions.heavyDamageMultiplier = actionsData.value(SceneKeys::HeavyDamageMultiplier, actions.heavyDamageMultiplier);
+		}
+
+		if (entityJson.contains(SceneKeys::HealthComponent))
+		{
+			auto& health = entityManager.AddComponent<HealthComponent>(entity);
+			health.maxHealth     = entityJson[SceneKeys::HealthComponent].value(SceneKeys::MaxHealth, health.maxHealth);
+			health.currentHealth = health.maxHealth;
+		}
+
+		if (entityJson.contains(SceneKeys::StaminaComponent))
+		{
+			const auto& staminaData = entityJson[SceneKeys::StaminaComponent];
+			auto& stamina = entityManager.AddComponent<StaminaComponent>(entity);
+
+			// A missing key keeps the default written in StaminaComponent.h
+			stamina.maxStamina               = staminaData.value(SceneKeys::MaxStamina,               stamina.maxStamina);
+			stamina.regenerationPerSecond    = staminaData.value(SceneKeys::RegenerationPerSecond,    stamina.regenerationPerSecond);
+			stamina.regenerationDelaySeconds = staminaData.value(SceneKeys::RegenerationDelaySeconds, stamina.regenerationDelaySeconds);
+			stamina.rollCost                 = staminaData.value(SceneKeys::RollCost,                 stamina.rollCost);
+			stamina.backstepCost             = staminaData.value(SceneKeys::BackstepCost,             stamina.backstepCost);
+			stamina.lightAttackCost          = staminaData.value(SceneKeys::LightAttackCost,          stamina.lightAttackCost);
+			stamina.heavyAttackCost          = staminaData.value(SceneKeys::HeavyAttackCost,          stamina.heavyAttackCost);
+			stamina.runCostPerSecond         = staminaData.value(SceneKeys::RunCostPerSecond,         stamina.runCostPerSecond);
+			stamina.currentStamina           = stamina.maxStamina;
+		}
+
+		if (entityJson.contains(SceneKeys::HitboxComponent))
+		{
+			const auto& hitboxData = entityJson[SceneKeys::HitboxComponent];
+			auto& hitbox = entityManager.AddComponent<HitboxComponent>(entity);
+
+			hitbox.damage     = hitboxData.value(SceneKeys::Damage,     hitbox.damage);
+			hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
+			hitbox.layer      = static_cast<CollisionLayer>(hitboxData.value(SceneKeys::Layer, static_cast<unsigned int>(hitbox.layer)));
+
+			if (hitboxData.contains(SceneKeys::LocalOffset))
+				hitbox.localOffset = DeserializeVec3(hitboxData[SceneKeys::LocalOffset]);
+
+			if (hitboxData.contains(SceneKeys::HalfExtents))
+				hitbox.halfExtents = DeserializeVec3(hitboxData[SceneKeys::HalfExtents]);
+		}
+
+		if (entityJson.contains(SceneKeys::EnemyComponent))
+		{
+			const auto& enemyData = entityJson[SceneKeys::EnemyComponent];
+			auto& enemy = entityManager.AddComponent<EnemyComponent>(entity);
+
+			// A missing key keeps the default written in EnemyComponent.h
+			enemy.sightDistance     = enemyData.value(SceneKeys::SightDistance,     enemy.sightDistance);
+			enemy.sightAngleDegrees = enemyData.value(SceneKeys::SightAngleDegrees, enemy.sightAngleDegrees);
+			enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
+			enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
+		}
+
+		if (entityJson.contains(SceneKeys::MeleeEnemyComponent))
+		{
+			const auto& meleeData = entityJson[SceneKeys::MeleeEnemyComponent];
+			auto& meleeEnemy = entityManager.AddComponent<MeleeEnemyComponent>(entity);
+
+			// A missing key keeps the default written in MeleeEnemyComponent.h
+			meleeEnemy.attackDistance        = meleeData.value(SceneKeys::AttackDistance,        meleeEnemy.attackDistance);
+			meleeEnemy.runDistance           = meleeData.value(SceneKeys::RunDistance,           meleeEnemy.runDistance);
+			meleeEnemy.giveUpDistance        = meleeData.value(SceneKeys::GiveUpDistance,        meleeEnemy.giveUpDistance);
+			meleeEnemy.attackCooldownSeconds = meleeData.value(SceneKeys::AttackCooldownSeconds, meleeEnemy.attackCooldownSeconds);
+			meleeEnemy.heavyAttackChance     = meleeData.value(SceneKeys::HeavyAttackChance,     meleeEnemy.heavyAttackChance);
+			meleeEnemy.maxLightCombo         = meleeData.value(SceneKeys::MaxLightCombo,         meleeEnemy.maxLightCombo);
+			meleeEnemy.recoverSeconds        = meleeData.value(SceneKeys::RecoverSeconds,        meleeEnemy.recoverSeconds);
 		}
 
 	}

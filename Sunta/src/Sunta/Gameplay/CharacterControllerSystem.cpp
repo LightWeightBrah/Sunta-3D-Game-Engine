@@ -6,6 +6,7 @@
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "LockOnSystem.h"
+#include "StaminaSystem.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Core/Log.h"
@@ -231,6 +232,10 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 
 		if (controller.isPlayerControlled)
 			ReadPlayerInput(controller, cameraForward, deltaTime);
+
+		// An empty stamina bar stops running (walking is free)
+		if (controller.wantsToRun && !StaminaSystem::HasStaminaLeft(entityManager, entityID))
+			controller.wantsToRun = false;
 
 		if (controller.isDrivenByAction)
 			continue;

@@ -730,13 +730,20 @@
                 "backstep_speed": 4.0,
                 "blend_seconds": 0.08,
                 "cancel_from": 0.75,
+                "death_animation": "Death",
                 "heavy_attack_animation": "Attack_Heavy",
+                "heavy_damage_multiplier": 1.8,
+                "heavy_hit_from": 0.45,
+                "heavy_hit_to": 0.66,
+                "hit_reaction_animation": "Hit",
                 "input_buffer_from": 0.3,
                 "invulnerable_from": 0.1,
                 "invulnerable_to": 0.55,
                 "light_attack_1_animation": "Attack_Light_1",
                 "light_attack_2_animation": "Attack_Light_2",
                 "light_attack_3_animation": "Attack_Light_3",
+                "light_hit_from": 0.28,
+                "light_hit_to": 0.56,
                 "roll_animation": "Roll",
                 "roll_speed": 5.5
             },
@@ -754,6 +761,9 @@
                 "turn_speed": 720.0,
                 "walk_speed": 2.0
             },
+            "health": {
+                "max_health": 100.0
+            },
             "lock_on": {
                 "eye_height": 1.5,
                 "is_player_controlled": true,
@@ -761,6 +771,10 @@
                 "require_line_of_sight": true,
                 "search_angle_degrees": 60.0,
                 "switch_mouse_distance": 120.0
+            },
+            "lock_on_target": {
+                "aim_height": 1.2,
+                "is_lockable": true
             },
             "model": {
                 "is_visible": true,
@@ -787,6 +801,16 @@
                     0.0,
                     0.0
                 ]
+            },
+            "stamina": {
+                "backstep_cost": 12.0,
+                "heavy_attack_cost": 28.0,
+                "light_attack_cost": 14.0,
+                "max_stamina": 100.0,
+                "regeneration_delay_seconds": 0.6,
+                "regeneration_per_second": 45.0,
+                "roll_cost": 18.0,
+                "run_cost_per_second": 12.0
             },
             "tag": {
                 "name": "Player"
@@ -816,6 +840,21 @@
             }
         },
         {
+            "hitbox": {
+                "damage": 30.0,
+                "half_extents": [
+                    0.06,
+                    0.48,
+                    0.06
+                ],
+                "layer": 8,
+                "local_offset": [
+                    0.0,
+                    0.56,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
             "model": {
                 "is_visible": true,
                 "model_name": "knight_sword"
@@ -1183,6 +1222,196 @@
                     1.0,
                     6.324065208435059,
                     5.159746170043945
+                ]
+            }
+        },
+        {
+            "animator": {
+                "current_animation_name": "Idle"
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.3,
+                    0.9,
+                    0.3
+                ],
+                "is_trigger": false,
+                "layer": 4,
+                "local_offset": [
+                    0.0,
+                    0.9,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "character_actions": {
+                "attack_step_speed": 1.5,
+                "backstep_animation": "Backstep",
+                "backstep_speed": 4.0,
+                "blend_seconds": 0.08,
+                "cancel_from": 0.75,
+                "death_animation": "Death",
+                "heavy_attack_animation": "Attack_Heavy",
+                "heavy_damage_multiplier": 1.8,
+                "heavy_hit_from": 0.45,
+                "heavy_hit_to": 0.66,
+                "hit_reaction_animation": "Hit",
+                "input_buffer_from": 0.3,
+                "invulnerable_from": 0.1,
+                "invulnerable_to": 0.55,
+                "light_attack_1_animation": "Attack_Light_1",
+                "light_attack_2_animation": "Attack_Light_2",
+                "light_attack_3_animation": "Attack_Light_3",
+                "light_hit_from": 0.28,
+                "light_hit_to": 0.56,
+                "roll_animation": "Roll",
+                "roll_speed": 5.5
+            },
+            "character_animation": {
+                "blend_seconds": 0.2,
+                "idle_animation": "Idle",
+                "run_animation": "Run",
+                "walk_animation": "Walk"
+            },
+            "character_controller": {
+                "acceleration": 30.0,
+                "facing_offset_degrees": 0.0,
+                "is_player_controlled": false,
+                "run_speed": 4.2,
+                "turn_speed": 720.0,
+                "walk_speed": 1.6
+            },
+            "enemy": {
+                "eye_height": 1.5,
+                "hearing_distance": 3.0,
+                "sight_angle_degrees": 75.0,
+                "sight_distance": 12.0
+            },
+            "health": {
+                "max_health": 120.0
+            },
+            "lock_on": {
+                "eye_height": 1.5,
+                "is_player_controlled": false,
+                "max_distance": 18.0,
+                "require_line_of_sight": true,
+                "search_angle_degrees": 60.0,
+                "switch_mouse_distance": 120.0
+            },
+            "lock_on_target": {
+                "aim_height": 1.2,
+                "is_lockable": true
+            },
+            "melee_enemy": {
+                "attack_cooldown_seconds": 1.4,
+                "attack_distance": 2.0,
+                "give_up_distance": 18.0,
+                "heavy_attack_chance": 0.25,
+                "max_light_combo": 2,
+                "recover_seconds": 1.0,
+                "run_distance": 6.0
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "rusted_knight"
+            },
+            "physics_body": {
+                "angular_damping": 0.05000000074505806,
+                "angular_velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "freeze_rotation_x": true,
+                "freeze_rotation_y": true,
+                "freeze_rotation_z": true,
+                "friction": 0.0,
+                "is_kinematic": false,
+                "linear_damping": 0.05000000074505806,
+                "mass": 80.0,
+                "restitution": 0.0,
+                "use_gravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "tag": {
+                "name": "Rusted Knight"
+            },
+            "transform": {
+                "position": [
+                    -2.6447319984436035,
+                    1.2450000047683716,
+                    0.7665534019470215
+                ],
+                "rotation": [
+                    0.0,
+                    180.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "hitbox": {
+                "damage": 20.0,
+                "half_extents": [
+                    0.06,
+                    0.48,
+                    0.06
+                ],
+                "layer": 16,
+                "local_offset": [
+                    0.0,
+                    0.56,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_sword"
+            },
+            "parent": {
+                "bone_name": "Weapon_R",
+                "index": 28
+            },
+            "tag": {
+                "name": "Sword"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
                 ]
             }
         }

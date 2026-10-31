@@ -10,6 +10,7 @@
 #include "Core/ResourceManager.h"
 #include "Core/EngineAssets.h"
 #include "Renderer/Shader.h"
+#include "Gameplay/RustedKnightSetup.h"
 #include "Gameplay/SoulsPlayerSetup.h"
 
 namespace Sunta
@@ -73,6 +74,15 @@ unsigned int EntityFactory::CreateSoulsPlayer(Scene& scene, const glm::vec3& pos
 	unsigned int entity = CreateEmpty(scene, position, name);
 
 	SoulsPlayerSetup::SetUp(scene.GetEntityManager(), entity);
+
+	return entity;
+}
+
+unsigned int EntityFactory::CreateRustedKnight(Scene& scene, const glm::vec3& position, const std::string& name)
+{
+	unsigned int entity = CreateEmpty(scene, position, name);
+
+	RustedKnightSetup::SetUp(scene.GetEntityManager(), entity);
 
 	return entity;
 }
