@@ -136,6 +136,50 @@ float Animator::GetBlendFactor() const
 	return linear * linear * (3.0f - 2.0f * linear);
 }
 
+void Animator::SetLayer(Animation* animation, const std::string& rootNodeName, float fadeSeconds, bool shouldLoop)
+{
+	if (animation != layerAnimation || layerWeight <= 0.0f)
+		layerTime = 0.0f;
+
+	layerAnimation   = animation;
+	layerRootNode    = rootNodeName;
+	isLayerLooping   = shouldLoop;
+	layerTarget      = animation ? 1.0f : 0.0f;
+	layerFadeSeconds = fadeSeconds;
+}
+
+void Animator::ClearLayer(float fadeSeconds)
+{
+	layerTarget      = 0.0f;
+	layerFadeSeconds = fadeSeconds;
+}
+
+void Animator::AdvanceLayer(float deltaTime)
+{
+	if (!layerAnimation)
+		return;
+
+	layerTime = AdvanceTime(*layerAnimation, layerTime, deltaTime, isLayerLooping);
+
+	const float step = layerFadeSeconds > 0.0f ? deltaTime / layerFadeSeconds : 1.0f;
+	layerWeight = layerTarget > layerWeight ? glm::min(layerWeight + step, layerTarget) : glm::max(layerWeight - step, layerTarget);
+
+	if (layerWeight <= 0.0f && layerTarget <= 0.0f)
+		layerAnimation = nullptr;
+}
+
+// The bone of the layer's animation as it is right now (or the resting pose of the node when that animation doesn't move it)
+glm::mat4 Animator::GetLayerLocalTransform(const AssimpNodeData* node)
+{
+	Bone* bone = layerAnimation->FindBone(node->name);
+
+	if (!bone)
+		return node->transformation;
+
+	bone->Update(layerTime);
+	return bone->GetLocalTransform();
+}
+
 // The bone of the old animation as it is right now (or the resting pose of the node when that animation doesn't move it)
 glm::mat4 Animator::GetPreviousLocalTransform(const AssimpNodeData* node)
 {
@@ -156,7 +200,8 @@ void Animator::UpdateAnimation(float deltaTime)
 	currentTime = AdvanceTime(*currentAnimation, currentTime, deltaTime, isLooping);
 
 	AdvanceBlend(deltaTime);
-	
+	AdvanceLayer(deltaTime);
+
 	CalculatePose();
 }
 
@@ -166,7 +211,7 @@ void Animator::CalculatePose()
 	CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));
 }
 	
-void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, bool isInLayer, glm::mat4 layerParentTransform)
 {
 	std::string nodeName = node->name;
 	glm::mat4   nodeTransform = node->transformation;
@@ -180,7 +225,29 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 
 	if (previousAnimation)
 		nodeTransform = BlendTransforms(GetPreviousLocalTransform(node), nodeTransform, GetBlendFactor());
-	
+
+	// The layer's root and everything below it in the tree (the bones it carries) follow the layer.
+	// The root keeps the layer's turn relative to the whole character, not to its parent: a block whose hips stand turned
+	// would otherwise twist the upper body sideways on top of walking hips that face forward
+	const bool hasLayer = layerAnimation && layerWeight > 0.0f;
+	const glm::mat4 layerLocal  = hasLayer ? GetLayerLocalTransform(node) : glm::mat4(1.0f);
+	const glm::mat4 layerGlobal = layerParentTransform * layerLocal;
+
+	const bool isLayerRoot = !isInLayer && hasLayer && nodeName == layerRootNode;
+	isInLayer = isInLayer || isLayerRoot;
+	if (isInLayer && hasLayer)
+	{
+		glm::mat4 target = layerLocal;
+		if (isLayerRoot)
+		{
+			target = glm::inverse(parentTransform) * layerGlobal;
+			target[3] = nodeTransform[3];
+		}
+
+		const float eased = layerWeight * layerWeight * (3.0f - 2.0f * layerWeight);
+		nodeTransform = BlendTransforms(nodeTransform, target, eased);
+	}
+
 	glm::mat4 globalTransform = parentTransform * nodeTransform;
 
 	if (nodeWalkIndex < nodeModelTransforms.size())
@@ -195,7 +262,7 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	}
 	
 	for (const auto& child : node->children)
-	    CalculateBoneTransform(&child, globalTransform);
+	    CalculateBoneTransform(&child, globalTransform, isInLayer, layerGlobal);
 }
 
 void Animator::SampleAtTime(float time)

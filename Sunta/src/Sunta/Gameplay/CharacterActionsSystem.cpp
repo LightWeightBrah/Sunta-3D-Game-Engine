@@ -27,10 +27,13 @@ using namespace GameplayMath;
 // ========== Keys and buttons of the player ==========
 
 // The roll is a tap of the run key, the Character Controller reads that key (wasDodgeTapped)
-constexpr int LightAttackButton = SUNTA_MOUSE_BUTTON_LEFT;
-constexpr int HeavyAttackButton = SUNTA_MOUSE_BUTTON_RIGHT;
-constexpr int BlockKey          = SUNTA_KEY_LEFT_CONTROL;
+constexpr int AttackButton      = SUNTA_MOUSE_BUTTON_LEFT;
+constexpr int HeavyAttackKey    = SUNTA_KEY_LEFT_CONTROL; // held with the attack button
+constexpr int BlockButton       = SUNTA_MOUSE_BUTTON_RIGHT;
 constexpr int ParryKey          = SUNTA_KEY_F;
+
+// The upper body fades into the block (and out of it) in this time
+constexpr float BlockFadeSeconds = 0.15f;
 
 // ========== Numbers used below ==========
 
@@ -112,17 +115,14 @@ CharacterAction ReadPlayerRequest(const CharacterControllerComponent& controller
 	if (controller.wasDodgeTapped)
 		return CharacterAction::Roll;
 
-	if (canUseMouse && InputManager::IsMouseButtonDown(LightAttackButton))
-		return CharacterAction::LightAttack;
-
-	if (canUseMouse && InputManager::IsMouseButtonDown(HeavyAttackButton))
-		return CharacterAction::HeavyAttack;
+	if (canUseMouse && InputManager::IsMouseButtonDown(AttackButton))
+		return InputManager::IsKeyPressed(HeavyAttackKey) ? CharacterAction::HeavyAttack : CharacterAction::LightAttack;
 
 	if (InputManager::IsKeyDown(ParryKey))
 		return CharacterAction::Parry;
 
 	// Held, not tapped: the block lasts as long as it is asked for every frame
-	if (InputManager::IsKeyPressed(BlockKey))
+	if (canUseMouse && InputManager::IsMouseButtonPressed(BlockButton))
 		return CharacterAction::Block;
 
 	return CharacterAction::None;
@@ -385,7 +385,16 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 			FaceDirection(character, actions.actionDirection);
 	}
 
-	PlayActionAnimation(character, animationName);
+	// The block raises the shield with the upper body only, the walking animation keeps the legs (and the controller
+	// keeps moving the character). Every other action plays on the whole body
+	const bool isBlock = action == CharacterAction::Block;
+	if (isBlock)
+		character.animator->animator.SetLayer(&character.animations->at(animationName), actions.upperBodyBone, BlockFadeSeconds);
+	else
+	{
+		character.animator->animator.ClearLayer(actions.blendSeconds);
+		PlayActionAnimation(character, animationName);
+	}
 
 	if (action == CharacterAction::LeapAttack)
 		actions.currentLeapSpeed = ChooseLeapSpeed(entityManager, character, animationName);
@@ -397,7 +406,7 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	actions.queuedAction                   = CharacterAction::None;
 	actions.actionProgress                 = 0.0f;
 	actions.isInvulnerable                 = false;
-	character.controller->isDrivenByAction = true;
+	character.controller->isDrivenByAction = !isBlock;
 }
 
 // An action asked for by a button or a script: it needs its animation and some stamina
@@ -442,6 +451,9 @@ bool ForceAction(EntityManager& entityManager, unsigned int entityID, CharacterA
 void FinishAction(Character& character)
 {
 	CharacterActionsComponent& actions = *character.actions;
+
+	if (actions.currentAction == CharacterAction::Block)
+		character.animator->animator.ClearLayer(BlockFadeSeconds);
 
 	actions.currentAction                  = CharacterAction::None;
 	actions.queuedAction                   = CharacterAction::None;
@@ -492,8 +504,16 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 
 	if (actions.currentAction == CharacterAction::Block)
 	{
-		actions.actionProgress = progress;
-		MoveBody(character, progress);
+		// Walking behind the shield: the controller moves the character, but never faster than a walk
+		character.controller->wantsToRun = false;
+		glm::vec3& velocity = character.body->velocity;
+		const float speed = glm::length(glm::vec2(velocity.x, velocity.z));
+		if (speed > character.controller->walkSpeed)
+		{
+			velocity.x *= character.controller->walkSpeed / speed;
+			velocity.z *= character.controller->walkSpeed / speed;
+		}
+
 		UpdateBlock(entityManager, character, request);
 		return;
 	}

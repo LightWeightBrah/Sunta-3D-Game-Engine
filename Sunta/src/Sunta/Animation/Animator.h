@@ -25,6 +25,16 @@ namespace Sunta
 	    float                  blendDuration     = 0.0f;
 	    bool                   isPreviousLooping = true;
 
+	    // A layer over the main animation: from 'layerRootNode' up (e.g. the spine, the arms and what they hold) the bones
+	    // follow 'layerAnimation' instead, faded in and out with 'layerWeight' (the legs keep walking while the arms block)
+	    Animation*             layerAnimation   = nullptr;
+	    std::string            layerRootNode;
+	    float                  layerTime        = 0.0f;
+	    bool                   isLayerLooping   = true;
+	    float                  layerWeight      = 0.0f;
+	    float                  layerTarget      = 0.0f;
+	    float                  layerFadeSeconds = 0.0f;
+
 	    // Every node of the model (bones and sockets) in the space of the model, in the order of Model::GetNodeNames
 	    std::vector<glm::mat4> nodeModelTransforms;
 	    unsigned int           nodeWalkIndex = 0;
@@ -42,7 +52,15 @@ namespace Sunta
 	    // Without a current animation (or with a zero duration) it is the same as PlayAnimation
 	    // The same animation played once can be started again (two rolls in a row), a looping one just keeps playing
 	    void CrossFadeTo           (Animation* animation, float durationSeconds, bool shouldLoop = true);
-	    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
+	    // 'layerParentTransform': where the parent is in the pose of the layer's animation (the layer's root keeps that turn)
+	    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, bool isInLayer = false,
+	                                glm::mat4 layerParentTransform = glm::mat4(1.0f));
+
+	    // Plays 'animation' over the main one on the bones from 'rootNodeName' up (the upper body), fading in for 'fadeSeconds'
+	    // Playing the same layer again keeps it going. ClearLayer fades it out, then the main animation has every bone again
+	    void SetLayer  (Animation* animation, const std::string& rootNodeName, float fadeSeconds, bool shouldLoop = true);
+	    void ClearLayer(float fadeSeconds);
+	    inline const Animation* GetLayerAnimation() const { return layerTarget > 0.0f ? layerAnimation : nullptr; }
 
 		// For Raycasting Boundding Box fixes
 		void SampleAtTime(float time);
@@ -62,6 +80,8 @@ namespace Sunta
 	private:
 	    void      CalculatePose            ();
 	    void      AdvanceBlend             (float deltaTime);
+	    void      AdvanceLayer             (float deltaTime);
+	    glm::mat4 GetLayerLocalTransform   (const AssimpNodeData* node);
 	    float     GetBlendFactor           () const;
 	    glm::mat4 GetPreviousLocalTransform(const AssimpNodeData* node);
 	};

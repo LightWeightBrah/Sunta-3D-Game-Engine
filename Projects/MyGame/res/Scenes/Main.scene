@@ -162,11 +162,11 @@
                 "walk_back_animation": "Walk_Back"
             },
             "character_controller": {
-                "acceleration": 30.0,
+                "acceleration": 55.0,
                 "facing_offset_degrees": 0.0,
                 "is_player_controlled": true,
                 "run_speed": 5.0,
-                "turn_speed": 720.0,
+                "turn_speed": 1080.0,
                 "walk_speed": 2.0
             },
             "health": {

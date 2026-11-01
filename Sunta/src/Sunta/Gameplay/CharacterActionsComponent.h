@@ -36,8 +36,10 @@ enum class CharacterAction
 // a Model with animations and an Animator. Animations whose names contain roll, backstep, light_1/2/3 and heavy
 // are chosen for you, the others are picked from the dropdowns in the Inspector
 // After pressing Play: a tap of Left Shift rolls (a backstep when no direction is held; holding it runs), left mouse button = light attack
-// (press again during the attack to chain the combo), right mouse button = heavy attack,
-// holding Left Ctrl blocks and a tap of F parries (both need a Shield on the character, see ShieldComponent)
+// (press again during the attack to chain the combo), Left Ctrl + left mouse button = heavy attack,
+// holding the right mouse button blocks and a tap of F parries (both need a Shield on the character, see ShieldComponent)
+// The block plays on the upper body only (from 'upperBodyBone' up): the legs keep walking, so the character can move
+// behind its shield (walking, not running)
 //
 // The action plays its animation once. While it plays, the character moves on its own (the roll carries it forward,
 // an attack makes a small step) and turns towards the locked-on enemy or the held direction when the action starts
@@ -70,6 +72,9 @@ struct CharacterActionsComponent
 	std::string blockImpactAnimation;
 	std::string parryAnimation;
 	std::string parriedAnimation;
+
+	// The bone where the upper body starts: an animation of the upper body only (the block) moves it and the bones above it
+	std::string upperBodyBone = "Spine";
 
 	// How fast the actions move the character (meters per second)
 	float rollSpeed       = 5.5f;

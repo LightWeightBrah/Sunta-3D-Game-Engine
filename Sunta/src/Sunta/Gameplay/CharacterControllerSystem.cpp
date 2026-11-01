@@ -31,7 +31,7 @@ constexpr int MoveRightKey    = SUNTA_KEY_D;
 constexpr int RunAndDodgeKey  = SUNTA_KEY_LEFT_SHIFT;
 
 // Holding the key longer than this runs, a shorter press is a tap that dodges (as in Dark Souls)
-constexpr float RunAfterHoldingSeconds = 0.25f;
+constexpr float RunAfterHoldingSeconds = 0.2f;
 
 // ========== Numbers used below ==========
 

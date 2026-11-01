@@ -169,6 +169,7 @@ namespace SceneKeys
 	constexpr const char* BlockImpactAnimation      = "block_impact_animation";
 	constexpr const char* ParryAnimation            = "parry_animation";
 	constexpr const char* ParriedAnimation          = "parried_animation";
+	constexpr const char* UpperBodyBone             = "upper_body_bone";
 	constexpr const char* ParryFrom                 = "parry_from";
 	constexpr const char* ParryTo                   = "parry_to";
 	constexpr const char* RiposteDamageMultiplier   = "riposte_damage_multiplier";
@@ -609,6 +610,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::BlockImpactAnimation,  actions->blockImpactAnimation  },
 				{ SceneKeys::ParryAnimation,        actions->parryAnimation        },
 				{ SceneKeys::ParriedAnimation,      actions->parriedAnimation      },
+				{ SceneKeys::UpperBodyBone,         actions->upperBodyBone         },
 				{ SceneKeys::ParryFrom,             actions->parryFrom             },
 				{ SceneKeys::ParryTo,               actions->parryTo               },
 				{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
@@ -1147,6 +1149,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.blockImpactAnimation  = actionsData.value(SceneKeys::BlockImpactAnimation,  actions.blockImpactAnimation);
 			actions.parryAnimation        = actionsData.value(SceneKeys::ParryAnimation,        actions.parryAnimation);
 			actions.parriedAnimation      = actionsData.value(SceneKeys::ParriedAnimation,      actions.parriedAnimation);
+			actions.upperBodyBone         = actionsData.value(SceneKeys::UpperBodyBone,         actions.upperBodyBone);
 			actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
 			actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
 			actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
