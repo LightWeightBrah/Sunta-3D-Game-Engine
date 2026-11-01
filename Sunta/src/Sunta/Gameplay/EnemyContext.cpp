@@ -165,6 +165,16 @@ void EnemyContext::CircleTarget(float side)
 	controller->wantsToRun    = false;
 }
 
+bool EnemyContext::IsMoving() const
+{
+	return glm::length(controller->moveDirection) > 0.0f;
+}
+
+bool EnemyContext::IsRunning() const
+{
+	return IsMoving() && controller->wantsToRun;
+}
+
 void EnemyContext::Stop()
 {
 	controller->moveDirection = glm::vec3(0.0f);

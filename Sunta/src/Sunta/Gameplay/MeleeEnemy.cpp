@@ -30,6 +30,12 @@ constexpr float AttackStartGraceSeconds = 0.2f;
 // Walking home, the enemy turns back only when the player is this much closer than the give-up distance (no flickering at the border)
 constexpr float SeeAgainFactor = 0.8f;
 
+// Chasing: a running enemy slows to a walk only this much (meters) inside its run distance, and an enemy that stopped
+// to attack starts walking again only this much outside its attack distance. Without the margin a player standing
+// at the border makes it switch walk/run (or walk/stand) every frame, and the weapon jumps between the poses of the two
+constexpr float RunMargin  = 1.5f;
+constexpr float StopMargin = 0.6f;
+
 // ========== Small helpers ==========
 
 // The states are added only to enemies with the component, but a script can switch any enemy to them
@@ -94,9 +100,11 @@ public:
 		if (distance > settings.attackDistance && distance <= settings.leapAttackDistance && context.IsAttackReady())
 			return Leap;
 
-		if (distance > settings.attackDistance)
+		const float walkUntil = context.IsMoving() ? settings.attackDistance : settings.attackDistance + StopMargin;
+		if (distance > walkUntil)
 		{
-			context.MoveTowards(context.GetTargetPosition(), distance > settings.runDistance);
+			const float runFrom = context.IsRunning() ? settings.runDistance - RunMargin : settings.runDistance;
+			context.MoveTowards(context.GetTargetPosition(), distance > runFrom);
 			return "";
 		}
 

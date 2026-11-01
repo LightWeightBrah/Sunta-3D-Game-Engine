@@ -3114,24 +3114,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -3255,24 +3255,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -3396,24 +3396,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -4009,6 +4009,41 @@
                     1,
                     1
                 ]
+            },
+            "particle_emitter": {
+                "is_emitting": true,
+                "particles_per_second": 80.0,
+                "lifetime_seconds": 0.8,
+                "spawn_half_extents": [
+                    0.18,
+                    0.05,
+                    0.18
+                ],
+                "velocity": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "velocity_randomness": 0.3,
+                "gravity": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "start_size": 0.32,
+                "end_size": 0.04,
+                "start_color": [
+                    1.0,
+                    0.55,
+                    0.15
+                ],
+                "end_color": [
+                    0.45,
+                    0.05,
+                    0.0
+                ],
+                "intensity": 1.6,
+                "max_particles": 150
             }
         },
         {
@@ -4120,6 +4155,41 @@
                     1,
                     1
                 ]
+            },
+            "particle_emitter": {
+                "is_emitting": true,
+                "particles_per_second": 80.0,
+                "lifetime_seconds": 0.8,
+                "spawn_half_extents": [
+                    0.18,
+                    0.05,
+                    0.18
+                ],
+                "velocity": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "velocity_randomness": 0.3,
+                "gravity": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "start_size": 0.32,
+                "end_size": 0.04,
+                "start_color": [
+                    1.0,
+                    0.55,
+                    0.15
+                ],
+                "end_color": [
+                    0.45,
+                    0.05,
+                    0.0
+                ],
+                "intensity": 1.6,
+                "max_particles": 150
             }
         },
         {
@@ -5039,24 +5109,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -5180,24 +5250,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -5321,24 +5391,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -5991,11 +6061,8 @@
                     30.0,
                     6.0,
                     29.6
-                ]
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "fog_gate"
+                ],
+                "is_crossed_with_key": true
             },
             "tag": {
                 "name": "Arena Fog"
@@ -6746,24 +6813,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -6887,24 +6954,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -7122,24 +7189,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -7263,24 +7330,24 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.56,
-                    1.13
+                    1.75,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.56,
+                    1.75,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "arena_wall_arch"
+                "model_name": "castle_wall"
             },
             "tag": {
-                "name": "Wall Arch"
+                "name": "Wall"
             },
             "transform": {
                 "position": [
@@ -9152,6 +9219,104 @@
                     1.0,
                     1.0,
                     1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Fog Mist"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.2,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 115
+            },
+            "particle_emitter": {
+                "is_emitting": true,
+                "particles_per_second": 45.0,
+                "lifetime_seconds": 3.0,
+                "spawn_half_extents": [
+                    1.7,
+                    2.1,
+                    0.12
+                ],
+                "velocity": [
+                    0.0,
+                    0.12,
+                    0.0
+                ],
+                "velocity_randomness": 0.18,
+                "gravity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "start_size": 1.0,
+                "end_size": 1.6,
+                "start_color": [
+                    0.55,
+                    0.56,
+                    0.62
+                ],
+                "end_color": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "intensity": 0.35,
+                "max_particles": 220
+            }
+        },
+        {
+            "tag": {
+                "name": "Outer Ground"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_floor"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -0.03,
+                    -30.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    8.0,
+                    8.0,
+                    8.0
                 ]
             }
         }

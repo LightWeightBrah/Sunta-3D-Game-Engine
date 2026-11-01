@@ -227,6 +227,7 @@ namespace SceneKeys
 	constexpr const char* ArenaCenter               = "arena_center";
 	constexpr const char* ArenaHalfExtents          = "arena_half_extents";
 	constexpr const char* VictoryMessage            = "victory_message";
+	constexpr const char* IsCrossedWithKey          = "is_crossed_with_key";
 
 	constexpr const char* MaxPoise                  = "max_poise";
 	constexpr const char* RecoverAfterSeconds       = "recover_after_seconds";
@@ -714,7 +715,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			{
 				{ SceneKeys::ArenaCenter,      SerializeVec3(fogGate->arenaCenter)      },
 				{ SceneKeys::ArenaHalfExtents, SerializeVec3(fogGate->arenaHalfExtents) },
-				{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     }
+				{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     },
+				{ SceneKeys::IsCrossedWithKey,              fogGate->isCrossedWithKey   }
 			};
 		}
 
@@ -1273,7 +1275,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			if (fogData.contains(SceneKeys::ArenaHalfExtents))
 				fogGate.arenaHalfExtents = DeserializeVec3(fogData[SceneKeys::ArenaHalfExtents]);
 
-			fogGate.victoryMessage = fogData.value(SceneKeys::VictoryMessage, fogGate.victoryMessage);
+			fogGate.victoryMessage   = fogData.value(SceneKeys::VictoryMessage,   fogGate.victoryMessage);
+			fogGate.isCrossedWithKey = fogData.value(SceneKeys::IsCrossedWithKey, fogGate.isCrossedWithKey);
 		}
 
 		if (entityJson.contains(SceneKeys::PoiseComponent))

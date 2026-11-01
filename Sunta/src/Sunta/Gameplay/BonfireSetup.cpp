@@ -33,6 +33,27 @@ bool Has(EntityManager& entityManager, unsigned int entityID)
 	return entityManager.GetComponent<T>(entityID) != nullptr;
 }
 
+// The fire: tongues of flame rising from the ashes and fading to dark red (the model has no flames, they move)
+void AddFire(EntityManager& entityManager, unsigned int bonfireID)
+{
+	if (Has<ParticleEmitterComponent>(entityManager, bonfireID))
+		return;
+
+	ParticleEmitterComponent& fire = entityManager.AddComponent<ParticleEmitterComponent>(bonfireID);
+	fire.particlesPerSecond = 80.0f;
+	fire.lifetimeSeconds    = 0.8f;
+	fire.spawnHalfExtents   = glm::vec3(0.18f, 0.05f, 0.18f);
+	fire.velocity           = glm::vec3(0.0f, 1.3f, 0.0f);
+	fire.velocityRandomness = 0.3f;
+	fire.gravity            = glm::vec3(0.0f, 1.0f, 0.0f);
+	fire.startSize          = 0.32f;
+	fire.endSize            = 0.04f;
+	fire.startColor         = glm::vec3(1.0f, 0.55f, 0.15f);
+	fire.endColor           = glm::vec3(0.45f, 0.05f, 0.0f);
+	fire.intensity          = 1.6f;
+	fire.maxParticles       = 150;
+}
+
 void AddBody(EntityManager& entityManager, unsigned int entityID)
 {
 	if (Has<BoxColliderComponent>(entityManager, entityID))
@@ -69,6 +90,7 @@ void BonfireSetup::SetUp(EntityManager& entityManager, unsigned int entityID)
 
 	AddBody(entityManager, entityID);
 	AddLight(entityManager, entityID);
+	AddFire(entityManager, entityID);
 }
 
 bool BonfireSetup::IsSetUp(EntityManager& entityManager, unsigned int entityID)

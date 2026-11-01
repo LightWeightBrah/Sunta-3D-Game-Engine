@@ -5,7 +5,10 @@
 
 #include "CharacterActionsSystem.h"
 #include "CharacterControllerSystem.h"
+#include "GameplayMath.h"
 #include "HUDSystem.h"
+#include "Core/InputManager.h"
+#include "Core/KeyCodes.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 #include "Scene/EntityHierarchy.h"
@@ -25,6 +28,16 @@ constexpr float GrowSeconds      = 1.5f;
 constexpr float GlowPulse        = 0.25f;
 constexpr float GlowPulseSpeed   = 3.0f;
 constexpr int   PhaseTwoBurst    = 80;
+
+// Crossing a fog gate: how close to it E works, how long the walk through takes, how far behind it the player comes out
+constexpr int         CrossKey           = SUNTA_KEY_E;
+constexpr const char* CrossPrompt        = "Traverse the white fog   [E]";
+constexpr float       CrossReachDistance = 2.5f;
+constexpr float       CrossSeconds       = 1.2f;
+constexpr float       CrossBehindFog     = 1.5f;
+
+// A defeated boss goes out like a fire: no new embers, the glow fades away in this time
+constexpr float GoingOutSeconds  = 3.0f;
 
 // ========== Small helpers ==========
 
@@ -144,6 +157,23 @@ void SetPhaseTwo(EntityManager& entityManager, unsigned int bossID, BossComponen
 	}
 }
 
+// Defeated: the emitters stop (the embers in the air live on) and the glow fades out
+void GoOut(EntityManager& entityManager, unsigned int bossID, BossComponent& boss, float deltaTime)
+{
+	for (unsigned int entityID : GetBossAndChildren(entityManager, bossID))
+	{
+		if (ParticleEmitterComponent* emitter = entityManager.GetComponent<ParticleEmitterComponent>(entityID))
+			emitter->isEmitting = false;
+	}
+
+	const float fadeStep = boss.phaseTwoGlow / GoingOutSeconds * deltaTime;
+	for (const auto& [entityID, glow] : boss.restingGlows)
+	{
+		if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(entityID))
+			model->emissiveStrength = glm::max(model->emissiveStrength - fadeStep, 0.0f);
+	}
+}
+
 // The look of phase two over time: growing during the first seconds, the glow pulsing like embers
 void UpdatePhaseTwoLook(EntityManager& entityManager, unsigned int bossID, BossComponent& boss, float deltaTime)
 {
@@ -191,19 +221,41 @@ void UpdatePhase(EntityManager& entityManager, unsigned int bossID, BossComponen
 
 // ========== The fog gates ==========
 
+// A fog crossed with a key is a wall until somebody crosses it; otherwise it is a wall only while the fight goes on
+void UpdateFogWall(EntityManager& entityManager, unsigned int fogID, const FogGateComponent& fog)
+{
+	const bool isCrossing = fog.crossingSeconds >= 0.0f;
+	const bool isWall     = !fog.isCleared && !isCrossing && (fog.isClosed || fog.isCrossedWithKey);
+
+	// A trigger collides with nobody
+	if (BoxColliderComponent* wall = entityManager.GetComponent<BoxColliderComponent>(fogID))
+		wall->isTrigger = !isWall;
+}
+
 void SetFogClosed(EntityManager& entityManager, unsigned int fogID, FogGateComponent& fog, bool isClosed)
 {
 	fog.isClosed = isClosed;
+	UpdateFogWall(entityManager, fogID, fog);
+}
 
-	// A trigger collides with nobody: the player walks through the fog until it closes behind it
-	if (BoxColliderComponent* wall = entityManager.GetComponent<BoxColliderComponent>(fogID))
-		wall->isTrigger = !isClosed;
+void SetFogEmitters(EntityManager& entityManager, unsigned int fogID, bool isEmitting)
+{
+	std::vector<unsigned int> entities = { fogID };
+	for (unsigned int childID : EntityHierarchy::GetChildren(entityManager, fogID))
+		entities.push_back(childID);
+
+	for (unsigned int entityID : entities)
+	{
+		if (ParticleEmitterComponent* emitter = entityManager.GetComponent<ParticleEmitterComponent>(entityID))
+			emitter->isEmitting = isEmitting && emitter->wasEmittingAtStart;
+	}
 }
 
 void ClearFog(EntityManager& entityManager, unsigned int fogID, FogGateComponent& fog)
 {
-	SetFogClosed(entityManager, fogID, fog, false);
 	fog.isCleared = true;
+	SetFogClosed(entityManager, fogID, fog, false);
+	SetFogEmitters(entityManager, fogID, false);
 
 	if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(fogID))
 		model->isVisible = false;
@@ -237,6 +289,75 @@ bool HasLivingBoss(EntityManager& entityManager, const FogGateComponent& fog)
 	}
 
 	return false;
+}
+
+// The player walks through the fog (its walking animation, carried from one side to the other), then plays on
+void UpdateCrossing(EntityManager& entityManager, unsigned int fogID, FogGateComponent& fog, unsigned int playerID, float deltaTime)
+{
+	TransformComponent*   transform = entityManager.GetComponent<TransformComponent>(playerID);
+	PhysicsBodyComponent* body      = entityManager.GetComponent<PhysicsBodyComponent>(playerID);
+	if (!transform)
+	{
+		fog.crossingSeconds = -1.0f;
+		return;
+	}
+
+	fog.crossingSeconds += deltaTime;
+	const float done = glm::clamp(fog.crossingSeconds / CrossSeconds, 0.0f, 1.0f);
+
+	transform->position = glm::mix(fog.crossingFrom, fog.crossingTo, done);
+	transform->isDirty  = true;
+	if (body)
+		body->velocity = glm::vec3(0.0f, body->velocity.y, 0.0f);
+
+	if (done >= 1.0f)
+	{
+		fog.crossingSeconds = -1.0f;
+		UpdateFogWall(entityManager, fogID, fog);
+	}
+}
+
+// Close to a fog crossed with a key (from outside the arena): the prompt, and E starts the walk through it
+void OfferCrossing(EntityManager& entityManager, unsigned int fogID, FogGateComponent& fog, unsigned int playerID, const glm::vec3& playerPosition)
+{
+	glm::vec3 fogPosition;
+	if (!TryGetPosition(entityManager, fogID, fogPosition))
+		return;
+
+	glm::vec3 toFog = fogPosition - playerPosition;
+	toFog.y = 0.0f;
+	if (glm::length(toFog) > CrossReachDistance)
+		return;
+
+	HUDSystem::ShowPrompt(entityManager, CrossPrompt);
+	if (!InputManager::IsKeyDown(CrossKey))
+		return;
+
+	// Straight through the doorway towards the arena, coming out a little behind the fog
+	glm::vec3 inward = fog.arenaCenter - fogPosition;
+	inward.y = 0.0f;
+	inward = glm::length(inward) > 0.0f ? glm::normalize(inward) : glm::vec3(0.0f, 0.0f, -1.0f);
+	if (std::abs(inward.x) > std::abs(inward.z))
+		inward = glm::vec3(glm::sign(inward.x), 0.0f, 0.0f);
+	else
+		inward = glm::vec3(0.0f, 0.0f, glm::sign(inward.z));
+
+	fog.crossingFrom    = playerPosition;
+	fog.crossingTo      = glm::vec3(fogPosition.x, playerPosition.y, fogPosition.z) + inward * CrossBehindFog;
+	fog.crossingSeconds = 0.0f;
+	UpdateFogWall(entityManager, fogID, fog);
+
+	TransformComponent*                 transform  = entityManager.GetComponent<TransformComponent>(playerID);
+	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(playerID);
+	if (transform && controller)
+	{
+		transform->rotation = glm::vec3(0.0f, GameplayMath::WrapDegrees(GameplayMath::GetYawToFace(inward) + controller->facingOffsetDegrees), 0.0f);
+		transform->SyncQuaternionFromEuler();
+		transform->isDirty = true;
+	}
+
+	if (const CharacterAnimationComponent* animation = entityManager.GetComponent<CharacterAnimationComponent>(playerID))
+		CharacterActionsSystem::PlaySpecial(entityManager, playerID, animation->walkAnimation);
 }
 
 void UpdateFog(EntityManager& entityManager, unsigned int fogID, FogGateComponent& fog, bool isPlayerAliveInside)
@@ -277,8 +398,10 @@ void BossSystem::PrepareForPlay(EntityManager& entityManager)
 	{
 		const unsigned int fogID = entityManager.GetEntityIDForComponent(fog);
 
-		fog.isCleared = false;
+		fog.isCleared       = false;
+		fog.crossingSeconds = -1.0f;
 		SetFogClosed(entityManager, fogID, fog, false);
+		SetFogEmitters(entityManager, fogID, true);
 
 		if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(fogID))
 			model->isVisible = true;
@@ -296,7 +419,9 @@ void BossSystem::Update(EntityManager& entityManager, float deltaTime)
 
 		UpdatePhase(entityManager, bossID, boss);
 
-		if (boss.isInPhaseTwo)
+		if (boss.isDefeated)
+			GoOut(entityManager, bossID, boss, deltaTime);
+		else if (boss.isInPhaseTwo)
 			UpdatePhaseTwoLook(entityManager, bossID, boss, deltaTime);
 	}
 
@@ -306,7 +431,17 @@ void BossSystem::Update(EntityManager& entityManager, float deltaTime)
 	const bool   isPlayerAlive = hasPlayer && IsAlive(entityManager, playerID);
 
 	for (FogGateComponent& fog : entityManager.GetAllComponents<FogGateComponent>())
-		UpdateFog(entityManager, entityManager.GetEntityIDForComponent(fog), fog, isPlayerAlive && IsInside(fog, playerPosition));
+	{
+		const unsigned int fogID    = entityManager.GetEntityIDForComponent(fog);
+		const bool         isInside = isPlayerAlive && IsInside(fog, playerPosition);
+
+		if (fog.crossingSeconds >= 0.0f)
+			UpdateCrossing(entityManager, fogID, fog, playerID, deltaTime);
+		else if (fog.isCrossedWithKey && !fog.isCleared && !fog.isClosed && isPlayerAlive && !isInside)
+			OfferCrossing(entityManager, fogID, fog, playerID, playerPosition);
+
+		UpdateFog(entityManager, fogID, fog, isInside);
+	}
 }
 
 bool BossSystem::CanBeBroughtBack(EntityManager& entityManager, unsigned int enemyID)

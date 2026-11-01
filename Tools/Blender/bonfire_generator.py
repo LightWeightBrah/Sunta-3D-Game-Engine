@@ -1,6 +1,7 @@
 """
 Generates the bonfire model of the engine: a ring of stones, ashes with embers, charred logs,
-a rusted sword planted in the middle and the flames around it
+a rusted sword planted in the middle. The fire itself is not in the model: the engine makes it from particles
+(a Particle Emitter on the bonfire, see BonfireSetup), so it moves; only the editor icon shows modelled flames
 
 Run (from the repository root):
     blender --background --factory-startup --python Tools/Blender/bonfire_generator.py -- --out Sunta/res/Models --icon Sunta/res/Textures/Icons/souls_bonfire_icon.png
@@ -159,7 +160,7 @@ def build_flames(parts, generator):
             build_flame(parts, center_xy, height * generator.uniform(0.8, 1.15), lean)
 
 
-def build_bonfire(palette):
+def build_bonfire(palette, with_flames):
     generator = random.Random(RANDOM_SEED)
     parts = PartBuilder(palette)
 
@@ -167,7 +168,8 @@ def build_bonfire(palette):
     build_ashes(parts, generator)
     build_logs(parts, generator)
     build_sword(parts)
-    build_flames(parts, generator)
+    if with_flames:
+        build_flames(parts, generator)
 
     return parts.to_object("Bonfire")
 
@@ -189,7 +191,7 @@ def main():
     clear_scene()
 
     palette = Palette(BONFIRE_COLORS, BONFIRE_SURFACES)
-    bonfire = build_bonfire(palette)
+    bonfire = build_bonfire(palette, with_flames=False)
 
     setup_bake_render()
     bake_textures(bonfire, palette, "bonfire", folder, TEXTURE_PIXELS)

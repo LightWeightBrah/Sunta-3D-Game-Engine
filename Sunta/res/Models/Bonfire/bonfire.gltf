@@ -64,7 +64,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":5939,
+			"count":3729,
 			"max":[
 				0.672917366027832,
 				0.8573508262634277,
@@ -80,45 +80,45 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":5939,
+			"count":3729,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":5939,
+			"count":3729,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":14610,
+			"count":9066,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":71268,
+			"byteLength":44748,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":71268,
-			"byteOffset":71268,
+			"byteLength":44748,
+			"byteOffset":44748,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":47512,
-			"byteOffset":142536,
+			"byteLength":29832,
+			"byteOffset":89496,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":29220,
-			"byteOffset":190048,
+			"byteLength":18132,
+			"byteOffset":119328,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":219268,
+			"byteLength":137460,
 			"uri":"bonfire.bin"
 		}
 	]

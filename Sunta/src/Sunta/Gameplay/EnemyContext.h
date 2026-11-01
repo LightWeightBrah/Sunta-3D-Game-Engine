@@ -69,6 +69,10 @@ public:
 
 	void Stop();
 
+	// What the enemy was asked to do the last time: walk somewhere (or run)
+	bool IsMoving()  const;
+	bool IsRunning() const;
+
 	// While on, the enemy keeps facing the target when it walks (uses its Lock On)
 	void LookAtTarget(bool shouldLook);
 
