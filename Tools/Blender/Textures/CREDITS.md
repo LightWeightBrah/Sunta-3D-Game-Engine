@@ -34,6 +34,7 @@ prompt and settings) is in `../Generated/meshy_log.json`.
 |---|---|---|
 | `../Concepts/knight_concept.png`, `../Concepts/rusted_knight_concept.png` | Meshy Text to Image | concepts of the knights |
 | `../Generated/knight_meshy.glb`, `../Generated/rusted_knight_meshy.glb` | Meshy Image to 3D | the knights' bodies (`characters_generator.py`) |
+| `../Generated/knight_meshy_rigged.glb` | Meshy Image to 3D of `knight_concept.png`, rigged by Meshy | the player's body (`characters_generator.py`) |
 | `../Generated/boss_meshy_rigged.glb` | Meshy Image to 3D of `boss_concept.png`, rigged by Meshy | the boss's body (`boss_generator.py`) |
 | `../Concepts/boss_great_axe_concept.png` | Meshy Text to Image | concept of the boss's long brass-bound axe |
 | `../Generated/boss_great_axe_meshy.glb` | Meshy Image to 3D | the boss's axe (`boss_generator.py`) |

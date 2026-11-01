@@ -9,6 +9,7 @@ so it is always known where a model of the project comes from
 Plain Python (no Blender needed), for example:
     python Tools/Blender/meshy_client.py image "a knight ..." --pose a-pose --out Concepts/knight.png
     python Tools/Blender/meshy_client.py model Concepts/knight.png --pose a-pose --faces 30000 --out Generated/knight.glb
+    python Tools/Blender/meshy_client.py rig <the model's task ID> --height 1.85 --out Generated/knight_rigged.glb
 """
 
 import argparse
@@ -157,6 +158,17 @@ def make_motion(prompt, seconds, out_path, task_id=None):
     return task_id
 
 
+def rig_model(model_task_id, height, out_path):
+    """Meshy's skeleton and skin weights for a humanoid model it made (the Image to 3D task), saved as a rigged GLB"""
+    body = {"input_task_id": model_task_id, "height_meters": height}
+    task_id = request("POST", "/rigging", body)["result"]
+    task = wait_for("rigging", task_id)
+    download(task["result"]["rigged_character_glb_url"], out_path)
+
+    write_log({"task": "rigging", "task_id": task_id, "settings": body, "output": relative(out_path)})
+    return task_id
+
+
 def balance():
     return request("GET", "/balance")
 
@@ -182,6 +194,11 @@ def main():
     motion.add_argument("--seconds", type=float, default=3.0)
     motion.add_argument("--out", required=True)
 
+    rig = commands.add_parser("rig")
+    rig.add_argument("model_task_id")
+    rig.add_argument("--height", type=float, default=1.85)
+    rig.add_argument("--out", required=True)
+
     commands.add_parser("balance")
 
     arguments = parser.parse_args()
@@ -189,6 +206,8 @@ def main():
         print(make_image(arguments.prompt, arguments.out, arguments.pose, arguments.aspect))
     elif arguments.command == "model":
         print(make_model(arguments.image, arguments.out, arguments.pose, arguments.faces))
+    elif arguments.command == "rig":
+        print(rig_model(arguments.model_task_id, arguments.height, arguments.out))
     elif arguments.command == "motion":
         print(make_motion(arguments.prompt, arguments.seconds, arguments.out))
     else:

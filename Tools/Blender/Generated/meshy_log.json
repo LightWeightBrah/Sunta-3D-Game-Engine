@@ -194,5 +194,75 @@
     },
     "output": "Generated/Motions/boss_library.fbx",
     "date": "2026-11-01T06:25:15"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a195b0-f191-773f-acec-2b05b5d58e95",
+    "settings": {
+      "input_task_id": "01a19580-575a-7781-a56b-8fcf5b43e477",
+      "height_meters": 1.85
+    },
+    "output": "Generated/knight_meshy_rigged.glb",
+    "date": "2026-11-01T07:00:02"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197a5-abbc-75f2-bcbe-7b50a2b0b1f6",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "ancient skeleton warrior, yellowed bones, remains of a bronze corroded scale cuirass and a crested bronze helmet, tattered cape, holding a long spear and a small round bronze shield, realistic dark fantasy game character concept, grim gothic medieval world, detailed textures, full body, front view, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/Proposals/enemy_skeleton_spearman.png",
+    "date": "2026-11-01T16:06:58"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197a5-abbd-75db-bcb4-279c3a9c8256",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "hulking executioner brute, huge fat muscular man, leather apron and black executioner hood, bare scarred arms with iron shackles, holding a giant rusty two-handed cleaver blade, realistic dark fantasy game character concept, grim gothic medieval world, detailed textures, full body, front view, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/Proposals/enemy_executioner.png",
+    "date": "2026-11-01T16:06:59"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197a5-abbc-76a9-b1fd-7400220dd8db",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "colossal undead warden knight boss in second phase, heavy black plate armor with a horned helmet, the armor cracked open with glowing molten orange embers and fire burning from inside the cracks, smoke and ash rising, eyes glowing orange through the visor, holding a long brass-bound great axe whose blade glows red hot, realistic dark fantasy game character concept, grim gothic medieval world, detailed textures, full body, front view, plain background",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/Proposals/boss_phase_two.png",
+    "date": "2026-11-01T16:07:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197a5-abbd-76bd-a052-34d6dbd2de61",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "ash cultist priest, tall figure in long tattered dark crimson robes and a deep hood hiding the face, bone mask, hanging chains and a smoking iron censer, holding a long ritual staff, realistic dark fantasy game character concept, grim gothic medieval world, detailed textures, full body, front view, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/Proposals/enemy_ash_cultist.png",
+    "date": "2026-11-01T16:07:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197a5-abbd-716a-bee8-2f7d80bd0869",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "gaunt undead hollow ghoul, emaciated grey skin, torn dirty rags and a rope belt, no armor, long matted hair, hunched posture, holding a crude rusty meat cleaver, realistic dark fantasy game character concept, grim gothic medieval world, detailed textures, full body, front view, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/Proposals/enemy_hollow_ghoul.png",
+    "date": "2026-11-01T16:07:09"
   }
 ]

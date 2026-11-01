@@ -260,6 +260,52 @@ def hips_offset(source, rig, character):
     return Vector((0.0, 0.0, (now.z - rest.z) * our_hips_height / their_hips_height))
 
 
+def leg_bones(character):
+    """The bones below the thighs (shins, feet, toes): what touches the ground"""
+    return [bone.name for bone in character.data.bones
+            if any(parent.name.startswith("Thigh") for parent in bone.parent_recursive)]
+
+
+def lowest_leg_point(character, is_rest=False):
+    points = []
+    for name in leg_bones(character):
+        if is_rest:
+            bone = character.data.bones[name]
+            points += [bone.head_local, bone.tail_local]
+        else:
+            bone = character.pose.bones[name]
+            points += [bone.head, bone.tail]
+    return min((character.matrix_world @ point).z for point in points)
+
+
+def action_curves(action):
+    """Every animation curve of an action (Blender 4.4+ keeps them in layers, strips and channel bags)"""
+    if not hasattr(action, "layers"):
+        return list(action.fcurves)
+    return [curve for layer in action.layers for strip in layer.strips for bag in strip.channelbags for curve in bag.fcurves]
+
+
+def put_on_ground(character, action, frames):
+    """Moves the whole clip up or down so that its lowest step is on the ground, like the feet at rest.
+    Clips whose skeleton stands at another height than its rest pose (Meshy's Text to Motion) would float or sink"""
+    scene = bpy.context.scene
+    lowest = math.inf
+    for frame in range(frames + 1):
+        scene.frame_set(frame)
+        lowest = min(lowest, lowest_leg_point(character))
+    rise = lowest_leg_point(character, is_rest=True) - lowest
+    if abs(rise) < 0.005:
+        return
+
+    local_rise = world_rest_rotation(character, ROOT_BONE).inverted() @ Vector((0.0, 0.0, rise))
+    data_path = 'pose.bones["{}"].location'.format(ROOT_BONE)
+    for curve in [curve for curve in action_curves(action) if curve.data_path == data_path]:
+        for point in curve.keyframe_points:
+            for coordinates in (point.co, point.handle_left, point.handle_right):
+                coordinates[1] += local_rise[curve.array_index]
+        curve.update()
+
+
 def key_frame(character, rotations, offset, frame, previous_rotations):
     for bone in character.data.bones:
         pose_bone = character.pose.bones[bone.name]
@@ -307,4 +353,5 @@ def retarget(character, clip, action):
         key_frame(character, rotations, hips_offset(source, clip.rig, character), frame, previous_rotations)
 
     remove_source_armature(source, actions_before | {action})
+    put_on_ground(character, action, frames)
     return frames
