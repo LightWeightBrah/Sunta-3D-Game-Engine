@@ -51,3 +51,10 @@ from procedural nodes (`boss_generator.py`), no outside source.
 The sky of the example game (`Projects/MyGame/res/Skyboxes/AshenNight`): Poly Haven HDRI "Kloppenheim 07 (Pure Sky)"
 (https://polyhaven.com/a/kloppenheim_07_puresky, CC0), its tonemapped JPG cut into cubemap faces, darkened and tinted by
 `Tools/Skybox/panorama_to_cubemap.py`.
+
+Arena props (Meshy, the user's paid plan, the user owns them; every task in `../Generated/meshy_log.json`):
+
+| File | Made with | Used for |
+|---|---|---|
+| `../Concepts/Arena/*.png` | Meshy Text to Image (approved by the user) | concepts of the throne, brazier, wall with an arch, knight statue, sword graves, corner tower |
+| `../Generated/Arena/*.glb` | Meshy Image to 3D of the concepts | the props (`arena_props_generator.py`) |

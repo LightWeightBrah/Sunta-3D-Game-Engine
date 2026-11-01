@@ -587,5 +587,197 @@
     },
     "output": "Generated/Enemies/skeleton_spearman_rigged.glb",
     "date": "2026-11-01T16:13:29"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197d2-48e8-7034-95ed-a1503e5006ac",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a cluster of five old rusted swords stuck in a mound of rubble and ash like graves, broken helmet and torn cloth, realistic dark fantasy game prop concept, grim gothic medieval ruin, weathered dark grey stone with soot and moss, detailed, single isolated object, front three-quarter view, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/Arena/sword_graves.png",
+    "date": "2026-11-01T16:55:42"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197d2-48e8-7330-bbe0-7300713f6c5b",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a large broken stone statue of a kneeling knight leaning on a greatsword, head missing, cracked and weathered, on a square stone plinth, realistic dark fantasy game prop concept, grim gothic medieval ruin, weathered dark grey stone with soot and moss, detailed, single isolated object, front three-quarter view, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/Arena/knight_statue.png",
+    "date": "2026-11-01T16:55:42"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197d2-48e7-715b-8fa5-077e7feee2c8",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a tall wrought iron brazier, a wide fire bowl full of glowing coals on three twisted iron legs standing on a square stone base, realistic dark fantasy game prop concept, grim gothic medieval ruin, weathered dark grey stone with soot and moss, detailed, single isolated object, front three-quarter view, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/Arena/brazier.png",
+    "date": "2026-11-01T16:55:42"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197d2-48e7-741a-b0c3-7f851735c889",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a ruined stone throne of a fallen warden on a three-step stone dais, tall carved backrest with a cracked horned crest, chains hanging, ash and candle stubs at its feet, realistic dark fantasy game prop concept, grim gothic medieval ruin, weathered dark grey stone with soot and moss, detailed, single isolated object, front three-quarter view, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/Arena/throne.png",
+    "date": "2026-11-01T16:55:42"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197d2-48e8-72a2-828d-3a845d7b50fa",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a modular ruined castle wall segment 4 meters wide with a gothic pointed arch opening in the middle, crumbling top edge, buttress on each side, realistic dark fantasy game prop concept, grim gothic medieval ruin, weathered dark grey stone with soot and moss, detailed, single isolated object, front three-quarter view, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "4:3"
+    },
+    "output": "Concepts/Arena/wall_arch.png",
+    "date": "2026-11-01T16:55:52"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197d2-48e6-7210-b429-1c7eae22dc80",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a ruined round corner tower of a castle wall, crumbled top, arrow slits, stone stairs remains, realistic dark fantasy game prop concept, grim gothic medieval ruin, weathered dark grey stone with soot and moss, detailed, single isolated object, front three-quarter view, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/Arena/corner_tower.png",
+    "date": "2026-11-01T16:55:52"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197d3-fb2c-72cb-829e-5f3ddecfef6f",
+    "input": "Concepts/Arena/brazier.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 12000
+    },
+    "output": "Generated/Arena/brazier.glb",
+    "date": "2026-11-01T16:59:11"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197d3-faed-7111-ab4f-4f33e1738b8a",
+    "input": "Concepts/Arena/sword_graves.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 15000
+    },
+    "output": "Generated/Arena/sword_graves.glb",
+    "date": "2026-11-01T16:59:23"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197d3-fac0-71d7-bc77-94f3f72ec05a",
+    "input": "Concepts/Arena/throne.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 25000
+    },
+    "output": "Generated/Arena/throne.glb",
+    "date": "2026-11-01T16:59:33"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197d3-fb3a-7286-928c-45ff73143c07",
+    "input": "Concepts/Arena/knight_statue.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000
+    },
+    "output": "Generated/Arena/knight_statue.glb",
+    "date": "2026-11-01T16:59:34"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197d3-fb32-7455-929b-4d4639822920",
+    "input": "Concepts/Arena/wall_arch.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000
+    },
+    "output": "Generated/Arena/wall_arch.glb",
+    "date": "2026-11-01T17:00:05"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197d3-fb4b-72f3-97f7-e83ce3f2a982",
+    "input": "Concepts/Arena/corner_tower.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 25000
+    },
+    "output": "Generated/Arena/corner_tower.glb",
+    "date": "2026-11-01T17:00:38"
   }
 ]

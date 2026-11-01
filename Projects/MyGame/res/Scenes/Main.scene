@@ -3113,25 +3113,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -3254,25 +3254,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -3395,25 +3395,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -3677,25 +3677,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    0.9,
-                    0.5
+                    0.4,
+                    0.85,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    0.85,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar_broken"
+                "model_name": "arena_brazier"
             },
             "tag": {
-                "name": "Broken Pillar"
+                "name": "Brazier"
             },
             "transform": {
                 "position": [
@@ -3705,13 +3705,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    247.0,
+                    0.0,
                     0.0
                 ],
                 "rotation_quaternion": [
-                    -0.5519369853120581,
+                    1.0,
                     0.0,
-                    0.8338858220671682,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -3818,25 +3818,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    0.9,
-                    0.5
+                    0.4,
+                    0.85,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    0.85,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar_broken"
+                "model_name": "arena_brazier"
             },
             "tag": {
-                "name": "Broken Pillar"
+                "name": "Brazier"
             },
             "transform": {
                 "position": [
@@ -3846,13 +3846,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    357.0,
+                    0.0,
                     0.0
                 ],
                 "rotation_quaternion": [
-                    -0.9996573249755573,
+                    1.0,
                     0.0,
-                    0.026176948307873423,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -3865,25 +3865,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    0.9,
-                    0.5
+                    0.4,
+                    0.85,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    0.85,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar_broken"
+                "model_name": "arena_brazier"
             },
             "tag": {
-                "name": "Broken Pillar"
+                "name": "Brazier"
             },
             "transform": {
                 "position": [
@@ -3893,13 +3893,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    343.0,
+                    0.0,
                     0.0
                 ],
                 "rotation_quaternion": [
-                    -0.9890158633619168,
+                    1.0,
                     0.0,
-                    0.14780941112961082,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -5038,25 +5038,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -5066,13 +5066,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    90.0,
+                    -90.0,
                     0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
                     0.0,
-                    0.7071067811865476,
+                    -0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -5179,25 +5179,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -5207,13 +5207,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    90.0,
+                    -90.0,
                     0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
                     0.0,
-                    0.7071067811865476,
+                    -0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -5320,25 +5320,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -5348,13 +5348,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    90.0,
+                    -90.0,
                     0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
                     0.0,
-                    0.7071067811865476,
+                    -0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -5696,25 +5696,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    0.9,
-                    0.5
+                    0.4,
+                    0.85,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    0.85,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar_broken"
+                "model_name": "arena_brazier"
             },
             "tag": {
-                "name": "Broken Pillar"
+                "name": "Brazier"
             },
             "transform": {
                 "position": [
@@ -5724,13 +5724,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    93.0,
+                    0.0,
                     0.0
                 ],
                 "rotation_quaternion": [
-                    0.6883545756937539,
+                    1.0,
                     0.0,
-                    0.7253743710122876,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -6055,7 +6055,7 @@
             "transform": {
                 "position": [
                     -13.0,
-                    2.8,
+                    2.4,
                     -32.0
                 ],
                 "rotation": [
@@ -6107,7 +6107,7 @@
             "transform": {
                 "position": [
                     13.0,
-                    2.8,
+                    2.4,
                     -44.0
                 ],
                 "rotation": [
@@ -6159,7 +6159,7 @@
             "transform": {
                 "position": [
                     -13.0,
-                    2.8,
+                    2.4,
                     -56.0
                 ],
                 "rotation": [
@@ -6211,7 +6211,7 @@
             "transform": {
                 "position": [
                     13.0,
-                    2.8,
+                    2.4,
                     -68.0
                 ],
                 "rotation": [
@@ -6263,7 +6263,7 @@
             "transform": {
                 "position": [
                     -6.0,
-                    2.8,
+                    2.4,
                     -77.0
                 ],
                 "rotation": [
@@ -6745,25 +6745,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -6886,25 +6886,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -7121,25 +7121,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -7262,25 +7262,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    1.56,
+                    1.13
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    1.56,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "arena_wall_arch"
             },
             "tag": {
-                "name": "Wall"
+                "name": "Wall Arch"
             },
             "transform": {
                 "position": [
@@ -7685,25 +7685,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    0.9,
-                    0.5
+                    0.4,
+                    0.85,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    0.85,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar_broken"
+                "model_name": "arena_brazier"
             },
             "tag": {
-                "name": "Broken Pillar"
+                "name": "Brazier"
             },
             "transform": {
                 "position": [
@@ -7713,13 +7713,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    42.0,
+                    0.0,
                     0.0
                 ],
                 "rotation_quaternion": [
-                    0.9335804264972017,
+                    1.0,
                     0.0,
-                    0.35836794954530027,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -7732,25 +7732,25 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    0.9,
-                    0.5
+                    0.4,
+                    0.85,
+                    0.4
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    0.85,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar_broken"
+                "model_name": "arena_brazier"
             },
             "tag": {
-                "name": "Broken Pillar"
+                "name": "Brazier"
             },
             "transform": {
                 "position": [
@@ -7760,13 +7760,13 @@
                 ],
                 "rotation": [
                     0.0,
-                    318.0,
+                    0.0,
                     0.0
                 ],
                 "rotation_quaternion": [
-                    -0.9335804264972017,
+                    1.0,
                     0.0,
-                    0.3583679495453002,
+                    0.0,
                     0.0
                 ],
                 "scale": [
@@ -7818,7 +7818,7 @@
             "transform": {
                 "position": [
                     -13.0,
-                    1.85,
+                    1.6,
                     -32.0
                 ],
                 "rotation": [
@@ -7881,7 +7881,7 @@
             "transform": {
                 "position": [
                     13.0,
-                    1.85,
+                    1.6,
                     -44.0
                 ],
                 "rotation": [
@@ -7944,7 +7944,7 @@
             "transform": {
                 "position": [
                     -13.0,
-                    1.85,
+                    1.6,
                     -56.0
                 ],
                 "rotation": [
@@ -8007,7 +8007,7 @@
             "transform": {
                 "position": [
                     13.0,
-                    1.85,
+                    1.6,
                     -68.0
                 ],
                 "rotation": [
@@ -8070,7 +8070,7 @@
             "transform": {
                 "position": [
                     -6.0,
-                    1.85,
+                    1.6,
                     -77.0
                 ],
                 "rotation": [
@@ -8133,7 +8133,7 @@
             "transform": {
                 "position": [
                     6.0,
-                    1.85,
+                    1.6,
                     -77.0
                 ],
                 "rotation": [
@@ -8185,7 +8185,7 @@
             "transform": {
                 "position": [
                     6.0,
-                    2.8,
+                    2.4,
                     -77.0
                 ],
                 "rotation": [
@@ -8588,6 +8588,570 @@
                     2.2,
                     2.2,
                     2.2
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Warden's Throne"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_throne"
+            },
+            "box_collider": {
+                "half_extents": [
+                    1.55,
+                    1.7,
+                    1.53
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.7,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    -73.5
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Corner Tower"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_corner_tower"
+            },
+            "box_collider": {
+                "half_extents": [
+                    3.05,
+                    4.5,
+                    3.64
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    4.5,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    -31.0,
+                    0.0,
+                    -21.0
+                ],
+                "rotation": [
+                    0.0,
+                    135.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.38268343236508984,
+                    0.0,
+                    0.9238795325112867,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Corner Tower"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_corner_tower"
+            },
+            "box_collider": {
+                "half_extents": [
+                    3.05,
+                    4.5,
+                    3.64
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    4.5,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    31.0,
+                    0.0,
+                    -21.0
+                ],
+                "rotation": [
+                    0.0,
+                    -135.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.38268343236508984,
+                    0.0,
+                    -0.9238795325112867,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Corner Tower"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_corner_tower"
+            },
+            "box_collider": {
+                "half_extents": [
+                    3.05,
+                    4.5,
+                    3.64
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    4.5,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    -31.0,
+                    0.0,
+                    -79.0
+                ],
+                "rotation": [
+                    0.0,
+                    45.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.9238795325112867,
+                    0.0,
+                    0.3826834323650898,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Corner Tower"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_corner_tower"
+            },
+            "box_collider": {
+                "half_extents": [
+                    3.05,
+                    4.5,
+                    3.64
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    4.5,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    31.0,
+                    0.0,
+                    -79.0
+                ],
+                "rotation": [
+                    0.0,
+                    -45.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.9238795325112867,
+                    0.0,
+                    -0.3826834323650898,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Knight Statue"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_knight_statue"
+            },
+            "box_collider": {
+                "half_extents": [
+                    1.22,
+                    1.9,
+                    1.33
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.9,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    -23.0,
+                    0.0,
+                    -50.0
+                ],
+                "rotation": [
+                    0.0,
+                    90.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Knight Statue"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_knight_statue"
+            },
+            "box_collider": {
+                "half_extents": [
+                    1.22,
+                    1.9,
+                    1.33
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.9,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    23.0,
+                    0.0,
+                    -50.0
+                ],
+                "rotation": [
+                    0.0,
+                    -90.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    -0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Sword Graves"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_sword_graves"
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.99,
+                    0.75,
+                    0.95
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.75,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    -7.0,
+                    0.0,
+                    -38.0
+                ],
+                "rotation": [
+                    0.0,
+                    20.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.984807753012208,
+                    0.0,
+                    0.17364817766693033,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Sword Graves"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_sword_graves"
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.99,
+                    0.75,
+                    0.95
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.75,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    9.0,
+                    0.0,
+                    -51.0
+                ],
+                "rotation": [
+                    0.0,
+                    -40.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.9396926207859084,
+                    0.0,
+                    -0.3420201433256687,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Sword Graves"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_sword_graves"
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.99,
+                    0.75,
+                    0.95
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.75,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    -10.0,
+                    0.0,
+                    -63.0
+                ],
+                "rotation": [
+                    0.0,
+                    70.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.8191520442889918,
+                    0.0,
+                    0.573576436351046,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Sword Graves"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_sword_graves"
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.99,
+                    0.75,
+                    0.95
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.75,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    21.0,
+                    0.0,
+                    -29.0
+                ],
+                "rotation": [
+                    0.0,
+                    10.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.9961946980917455,
+                    0.0,
+                    0.08715574274765817,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Sword Graves"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "arena_sword_graves"
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.99,
+                    0.75,
+                    0.95
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    0.75,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "transform": {
+                "position": [
+                    -22.0,
+                    0.0,
+                    -71.0
+                ],
+                "rotation": [
+                    0.0,
+                    -25.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.9762960071199334,
+                    0.0,
+                    -0.21643961393810288,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
                 ]
             }
         }
