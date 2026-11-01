@@ -46,6 +46,11 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Leap Speed",        &actions.leapSpeed,       0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Heavy Damage Multiplier", &actions.heavyDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
 	edited |= ImGui::SliderFloat("Riposte Damage Multiplier", &actions.riposteDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
+	edited |= ImGui::SliderFloat("Shockwave Radius",   &actions.shockwaveRadius,   0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Shockwave Damage",   &actions.shockwaveDamage,   0.0f, 500.0f);
+	edited |= ImGui::SliderFloat("Shockwave Distance", &actions.shockwaveDistance, 0.0f, CharacterActionsComponent::MaxSpeed);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("A heavy attack or a leap hurts everyone around where it lands (0 radius = no shockwave)");
 
 	return edited;
 }

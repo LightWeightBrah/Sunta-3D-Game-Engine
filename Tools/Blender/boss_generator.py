@@ -20,12 +20,11 @@ In the engine the boss entity is scaled up (1.5: a 3 m giant), its axe and colli
 """
 
 import argparse
-import math
 import os
 import sys
 
 import bpy
-from mathutils import Matrix, Vector
+from mathutils import Matrix
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -45,11 +44,9 @@ BODY_HEIGHT = 2.0
 AXE_LENGTH = 2.0
 BODY_BRIGHTNESS = 1.3
 
-# Where the right fist holds the haft: this part of the axe's length from the pommel (the left hand holds it higher up)
+# Where the right fist holds the haft: this part of the axe's length from the pommel (the left hand holds it higher up).
+# Both hands are closed into fists around the haft (character_from_mesh.make_fist), the haft goes through the right one
 AXE_GRIP_FROM_BOTTOM = 0.14
-
-# The haft points forward from the fist and this many degrees down, like the knight's sword (Mixamo's sword holding hand)
-AXE_DOWN_DEGREES = 55.0
 
 # ========== The animations ==========
 
@@ -78,6 +75,12 @@ BOSS_ANIMATIONS = {
 
     # Phase two starts with this (BossComponent.phaseTwoAnimation): it raises the axe and bursts into embers
     "Phase_Two":      MotionClip(GREAT_SWORD + "power up.fbx"),
+
+    # Phase two fights differently (BossComponent swaps these in): a charge with a wide sweep, a combo of two chops and
+    # a jump slam, and an overhead slam into the ground with a fire shockwave. Made by Meshy's Text to Motion
+    "Fury_Sweep":     MotionClip("Generated/Motions/boss_charge_sweep.fbx", rig=motion_retarget.SMPL),
+    "Fury_Combo":     MotionClip("Generated/Motions/boss_combo_slam.fbx", rig=motion_retarget.SMPL),
+    "Fury_Slam":      MotionClip("Generated/Motions/boss_overhead_slam.fbx", rig=motion_retarget.SMPL),
 
     "Hit":            MotionClip(GREAT_SWORD + "impact.fbx"),
     "Parried":        MotionClip(GREAT_SWORD + "impact (3).fbx", speed=0.6),
@@ -209,19 +212,12 @@ def load_axe(folder):
     return axe
 
 
-def axe_rest_matrix(grip_position):
-    """Where the axe stands in the rest pose: built with the haft along +Z and the blade towards -X"""
-    angle = math.radians(AXE_DOWN_DEGREES)
-    haft = Vector((0.0, math.cos(angle), -math.sin(angle)))
-    toward_back_of_blade = Vector((0.0, math.sin(angle), math.cos(angle)))
-    side = haft.cross(toward_back_of_blade)
-    rotation = Matrix((toward_back_of_blade, side, haft)).transposed()
-    return Matrix.Translation(grip_position) @ rotation.to_4x4()
-
-
-def held_axe(skeleton):
-    return [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE,
-             axe_rest_matrix(character_from_mesh.fist_center(skeleton, "_R")))]
+def axe_in_fists(armature, body):
+    """Both hands closed into fists; the axe (built with the haft along +Z, the blade towards -X) goes through the right
+    one towards the thumb, its blade where the straight fingers pointed. Returns the axe's rest matrix"""
+    right = character_from_mesh.make_fist(armature, body, "_R")
+    character_from_mesh.make_fist(armature, body, "_L")
+    return right.item_matrix(-right.fingers, right.fingers.cross(right.along), right.along)
 
 
 # ========== Pictures ==========
@@ -263,8 +259,8 @@ def main():
     character_from_mesh.make_engine_textures(body, boss_folder, "boss", BODY_BRIGHTNESS)
     character_from_mesh.bake_emission(body, boss_folder, "boss_emissive", ember_cracks, size=2048)
 
-    skeleton = character_from_mesh.skeleton_of(armature)
-    character_from_mesh.add_held_item_bones(armature, held_axe(skeleton))
+    axe_matrix = axe_in_fists(armature, body)
+    character_from_mesh.add_held_item_bones(armature, [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE, axe_matrix)])
     knight_generator.create_animations(armature, BOSS_ANIMATIONS)
     knight_generator.reset_to_rest_pose(armature)
 
@@ -274,7 +270,7 @@ def main():
     export_gltf(os.path.join(axe_folder, "boss_axe.gltf"), [axe], with_animations=False)
 
     if arguments.preview:
-        knight_generator.hang_on_bone(axe, armature, knight_generator.WEAPON_BONE, axe_rest_matrix(character_from_mesh.fist_center(skeleton, "_R")))
+        knight_generator.hang_on_bone(axe, armature, knight_generator.WEAPON_BONE, axe_matrix)
         render_previews(os.path.abspath(arguments.preview), armature, body, axe)
 
     print("BOSS_GENERATOR_DONE")

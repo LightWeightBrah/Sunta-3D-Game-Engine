@@ -313,8 +313,79 @@ void CombatSystem::PrepareForPlay(EntityManager& entityManager)
 	}
 }
 
+namespace
+{
+
+// How many specks the shockwave's effect throws at once
+constexpr int ShockwaveBurst = 140;
+
+// Only targets within this height of the shockwave are hurt (not someone standing on a wall above)
+constexpr float ShockwaveHeight = 2.0f;
+
+bool IsOnPlayersSide(EntityManager& entityManager, unsigned int entityID)
+{
+	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
+	return controller && controller->isPlayerControlled;
+}
+
+void BurstEffect(EntityManager& entityManager, unsigned int ownerID, const std::string& effectName)
+{
+	if (effectName.empty())
+		return;
+
+	for (unsigned int childID : EntityHierarchy::GetChildren(entityManager, ownerID))
+	{
+		const TagComponent* tag = entityManager.GetComponent<TagComponent>(childID);
+		ParticleEmitterComponent* emitter = entityManager.GetComponent<ParticleEmitterComponent>(childID);
+		if (tag && emitter && tag->name == effectName)
+			emitter->burstCount += ShockwaveBurst;
+	}
+}
+
+// The moment a heavy attack or a leap starts to hit, once per attack
+void UpdateShockwave(EntityManager& entityManager, unsigned int ownerID, CharacterActionsComponent& actions)
+{
+	if (actions.shockwaveRadius <= 0.0f || actions.shockwaveAttackNumber == actions.attackNumber)
+		return;
+
+	const bool isHeavy = actions.currentAction == CharacterAction::HeavyAttack && actions.actionProgress >= actions.heavyHitFrom;
+	const bool isLeap  = actions.currentAction == CharacterAction::LeapAttack  && actions.actionProgress >= actions.leapHitFrom;
+	if (!isHeavy && !isLeap)
+		return;
+
+	actions.shockwaveAttackNumber = actions.attackNumber;
+
+	const TransformComponent*           transform  = entityManager.GetComponent<TransformComponent>(ownerID);
+	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(ownerID);
+	if (!transform || !controller)
+		return;
+
+	const glm::vec3 forward = GameplayMath::GetDirectionFromYawAndPitch(transform->rotation.y - controller->facingOffsetDegrees, 0.0f);
+	const glm::vec3 center  = transform->position + forward * actions.shockwaveDistance;
+	const bool      isPlayerSide = IsOnPlayersSide(entityManager, ownerID);
+
+	BurstEffect(entityManager, ownerID, actions.shockwaveEffect);
+
+	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
+	{
+		const unsigned int targetID = entityManager.GetEntityIDForComponent(health);
+		const TransformComponent* target = entityManager.GetComponent<TransformComponent>(targetID);
+		if (targetID == ownerID || !target || IsOnPlayersSide(entityManager, targetID) == isPlayerSide)
+			continue;
+
+		const glm::vec3 offset = target->position - center;
+		if (glm::length(glm::vec2(offset.x, offset.z)) <= actions.shockwaveRadius && std::abs(offset.y) <= ShockwaveHeight)
+			CombatSystem::ApplyDamage(entityManager, targetID, actions.shockwaveDamage, ownerID);
+	}
+}
+
+}
+
 void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 {
+	for (CharacterActionsComponent& actions : entityManager.GetAllComponents<CharacterActionsComponent>())
+		UpdateShockwave(entityManager, entityManager.GetEntityIDForComponent(actions), actions);
+
 	for (PoiseComponent& poise : entityManager.GetAllComponents<PoiseComponent>())
 		RecoverPoise(poise, deltaTime);
 

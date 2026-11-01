@@ -73,6 +73,14 @@ struct CharacterActionsComponent
 	std::string parryAnimation;
 	std::string parriedAnimation;
 
+	// A shockwave where a heavy attack or a leap lands (0 radius = none): everyone of the other side within
+	// 'shockwaveRadius' of the point 'shockwaveDistance' in front of the character takes 'shockwaveDamage' (a roll dodges it)
+	// when the attack starts to hit. The Particle Emitter of the child named 'shockwaveEffect' bursts there
+	float       shockwaveRadius   = 0.0f;
+	float       shockwaveDamage   = 30.0f;
+	float       shockwaveDistance = 2.5f;
+	std::string shockwaveEffect;
+
 	// The bone where the upper body starts: an animation of the upper body only (the block) moves it and the bones above it
 	std::string upperBodyBone = "Spine";
 
@@ -143,6 +151,9 @@ struct CharacterActionsComponent
 
 	// Grows with every attack, so a weapon knows when a new swing started (and may hit the same enemy again)
 	unsigned int attackNumber = 0;
+
+	// The attack whose shockwave already happened (one per attack)
+	unsigned int shockwaveAttackNumber = 0;
 
 	bool IsBusy() const { return currentAction != CharacterAction::None; }
 

@@ -62,3 +62,5 @@ Arena props (Meshy, the user's paid plan, the user owns them; every task in `../
 Level kit (Meshy, the user's paid plan): `../Concepts/Kit/*.png` (Meshy Text to Image, front + side views, approved by the user;
 `*_front.png` / `*_side.png` are their halves) → `../Generated/Kit/*.glb` (Meshy Multi Image to 3D or Image to 3D) →
 `kit_generator.py`.
+
+Motions (Meshy Text to Motion): `../Generated/Motions/boss_*.fbx` (the boss's phase two) and `executioner_*.fbx` (the executioner).

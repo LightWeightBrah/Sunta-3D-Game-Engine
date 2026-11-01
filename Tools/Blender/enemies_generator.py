@@ -30,6 +30,7 @@ import boss_generator  # noqa: E402
 import character_from_mesh  # noqa: E402
 import knight_generator  # noqa: E402
 import motion_retarget  # noqa: E402
+from motion_retarget import MotionClip  # noqa: E402
 from sunta_blender import clear_scene, export_gltf, place_preview_camera, setup_preview_render, show_only  # noqa: E402
 
 BLENDER_FOLDER = os.path.dirname(os.path.abspath(__file__))
@@ -37,7 +38,15 @@ ENEMIES_FOLDER = os.path.join(BLENDER_FOLDER, "Generated", "Enemies")
 
 # Mixamo's sword-and-shield moves (the knights') for one-handed weapons, the Great Sword Pack's (the boss's) for two hands
 ONE_HANDED = knight_generator.ANIMATIONS
-TWO_HANDED = {name: clip for name, clip in boss_generator.BOSS_ANIMATIONS.items() if name not in ("Attack_Leap", "Phase_Two")}
+TWO_HANDED = {name: clip for name, clip in boss_generator.BOSS_ANIMATIONS.items()
+              if name not in ("Attack_Leap", "Phase_Two") and not name.startswith("Fury_")}
+
+# The executioner's own blows (Meshy's Text to Motion): a slow diagonal chop, a wide cleave, a double hack like chopping wood
+EXECUTIONER = dict(TWO_HANDED,
+                   Attack_Light_1=MotionClip("Generated/Motions/executioner_chop.fbx", rig=motion_retarget.SMPL),
+                   Attack_Light_2=MotionClip("Generated/Motions/executioner_cleave.fbx", rig=motion_retarget.SMPL),
+                   Attack_Light_3=MotionClip("Generated/Motions/executioner_chop.fbx", rig=motion_retarget.SMPL, speed=1.15),
+                   Attack_Heavy=MotionClip("Generated/Motions/executioner_double_hack.fbx", rig=motion_retarget.SMPL))
 
 
 @dataclass
@@ -70,7 +79,7 @@ ENEMIES = [
           Weapon("ghoul_cleaver.glb", "ghoul_cleaver", 0.55, 0.18)),
     Enemy("ash_cultist_rigged.glb", "AshCultist", "ash_cultist", 1.9, TWO_HANDED,
           Weapon("cultist_staff.glb", "cultist_staff", 1.9, 0.42), is_left_fist=True, brightness=1.7),
-    Enemy("executioner_rigged.glb", "Executioner", "executioner", 2.1, TWO_HANDED,
+    Enemy("executioner_rigged.glb", "Executioner", "executioner", 2.1, EXECUTIONER,
           Weapon("executioner_cleaver.glb", "executioner_cleaver", 1.6, 0.1, is_handle_on_top=True), is_left_fist=True),
     Enemy("skeleton_spearman_rigged.glb", "SkeletonSpearman", "skeleton_spearman", 1.8, ONE_HANDED,
           Weapon("skeleton_spear.glb", "skeleton_spear", 2.2, 0.4),

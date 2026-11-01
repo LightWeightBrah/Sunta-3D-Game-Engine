@@ -4682,8 +4682,8 @@
                 "death_animation": "Death",
                 "heavy_attack_animation": "Attack_Heavy",
                 "heavy_damage_multiplier": 1.8,
-                "heavy_hit_from": 0.44,
-                "heavy_hit_to": 0.8,
+                "heavy_hit_from": 0.33,
+                "heavy_hit_to": 0.62,
                 "hit_reaction_animation": "Hit",
                 "input_buffer_from": 0.3,
                 "invulnerable_from": 0.1,
@@ -4695,8 +4695,8 @@
                 "light_attack_1_animation": "Attack_Light_1",
                 "light_attack_2_animation": "Attack_Light_2",
                 "light_attack_3_animation": "Attack_Light_3",
-                "light_hit_from": 0.42,
-                "light_hit_to": 0.6,
+                "light_hit_from": 0.3,
+                "light_hit_to": 0.58,
                 "parried_animation": "Parried",
                 "parry_animation": "",
                 "rest_animation": "",
@@ -5804,7 +5804,17 @@
                 "phase_two_health_fraction": 0.5,
                 "phase_two_animation": "Phase_Two",
                 "phase_two_glow": 1.8,
-                "phase_two_growth": 1.15
+                "phase_two_growth": 1.15,
+                "phase_two_light_attack_1_animation": "Fury_Sweep",
+                "phase_two_light_attack_2_animation": "Attack_Light_2",
+                "phase_two_light_attack_3_animation": "Fury_Combo",
+                "phase_two_heavy_attack_animation": "Fury_Slam",
+                "phase_two_light_hit_from": 0.44,
+                "phase_two_light_hit_to": 0.68,
+                "phase_two_heavy_hit_from": 0.31,
+                "phase_two_heavy_hit_to": 0.42,
+                "phase_two_shockwave_radius": 4.0,
+                "phase_two_max_light_combo": 3
             },
             "box_collider": {
                 "half_extents": [
@@ -5833,7 +5843,7 @@
                 "heavy_attack_animation": "Attack_Heavy",
                 "heavy_damage_multiplier": 1.8,
                 "heavy_hit_from": 0.44,
-                "heavy_hit_to": 0.8,
+                "heavy_hit_to": 0.78,
                 "hit_reaction_animation": "Hit",
                 "input_buffer_from": 0.3,
                 "invulnerable_from": 0.1,
@@ -5845,14 +5855,18 @@
                 "light_attack_1_animation": "Attack_Light_1",
                 "light_attack_2_animation": "Attack_Light_2",
                 "light_attack_3_animation": "Attack_Light_3",
-                "light_hit_from": 0.42,
-                "light_hit_to": 0.6,
+                "light_hit_from": 0.46,
+                "light_hit_to": 0.66,
                 "parried_animation": "Parried",
                 "parry_animation": "",
                 "rest_animation": "",
                 "roll_animation": "",
                 "roll_speed": 5.5,
-                "stand_up_animation": ""
+                "stand_up_animation": "",
+                "shockwave_radius": 0.0,
+                "shockwave_damage": 45.0,
+                "shockwave_distance": 3.0,
+                "shockwave_effect": "Shockwave Burst"
             },
             "character_animation": {
                 "blend_seconds": 0.2,
@@ -11722,6 +11736,72 @@
                     1.0,
                     1.0
                 ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Shockwave Burst"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.1,
+                    1.76
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 113
+            },
+            "particle_emitter": {
+                "is_emitting": false,
+                "particles_per_second": 0.0,
+                "lifetime_seconds": 1.0,
+                "spawn_half_extents": [
+                    0.7,
+                    0.05,
+                    0.7
+                ],
+                "velocity": [
+                    0.0,
+                    2.2,
+                    0.0
+                ],
+                "velocity_randomness": 3.2,
+                "gravity": [
+                    0.0,
+                    -3.0,
+                    0.0
+                ],
+                "start_size": 0.28,
+                "end_size": 0.03,
+                "start_color": [
+                    1.0,
+                    0.5,
+                    0.12
+                ],
+                "end_color": [
+                    0.4,
+                    0.04,
+                    0.0
+                ],
+                "intensity": 2.6,
+                "max_particles": 320
             }
         }
     ],

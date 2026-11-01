@@ -1067,5 +1067,71 @@
     },
     "output": "Generated/Kit/wall_ruined.glb",
     "date": "2026-11-01T17:51:39"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a19812-4fc7-75d7-bf7d-a93799927556",
+    "settings": {
+      "prompt": "A huge executioner holding a giant cleaver with both hands swings it in a wide slow horizontal cleave from his right side to his left side at chest height, shifting his weight, then returns to a ready stance",
+      "mode": "prime",
+      "duration": 3.0
+    },
+    "output": "Generated/Motions/executioner_cleave.fbx",
+    "date": "2026-11-01T18:05:41"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a19812-4fd2-73ce-a74d-f4ff4678c518",
+    "settings": {
+      "prompt": "A huge executioner holding a giant cleaver with both hands raises it straight above his head and hacks down twice in a row like chopping wood, then rests the cleaver low",
+      "mode": "prime",
+      "duration": 3.5
+    },
+    "output": "Generated/Motions/executioner_double_hack.fbx",
+    "date": "2026-11-01T18:05:50"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a19812-4fd3-73fa-9ec6-eac738521df8",
+    "settings": {
+      "prompt": "A giant armored warrior holding a huge heavy axe with both hands makes two fast diagonal chops forward while stepping in, then jumps up and smashes the axe down into the ground with both hands, then rises",
+      "mode": "prime",
+      "duration": 4.5
+    },
+    "output": "Generated/Motions/boss_combo_slam.fbx",
+    "date": "2026-11-01T18:06:00"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a19812-4fc9-703e-b22d-6d90f4be73f4",
+    "settings": {
+      "prompt": "A giant armored warrior holding a huge heavy axe with both hands raises it high above his head, leans back, then slams it straight down into the ground in front of him with his whole body weight, stays bent over for a moment, then straightens up",
+      "mode": "prime",
+      "duration": 3.5
+    },
+    "output": "Generated/Motions/boss_overhead_slam.fbx",
+    "date": "2026-11-01T18:06:11"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a19812-4fc8-77ef-a6db-9f36329e43d2",
+    "settings": {
+      "prompt": "A giant armored warrior holding a huge heavy axe with both hands charges forward three heavy running steps and swings the axe in a wide powerful horizontal sweep from right to left at waist height, then stops and recovers his stance",
+      "mode": "prime",
+      "duration": 3.5
+    },
+    "output": "Generated/Motions/boss_charge_sweep.fbx",
+    "date": "2026-11-01T18:06:32"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a19812-4fc8-7422-bc89-affc914da523",
+    "settings": {
+      "prompt": "A huge executioner holding a giant cleaver with both hands slowly lifts it high over his right shoulder and brings it down in a heavy diagonal chop in front of him, the blade stops low, then he pulls it back up",
+      "mode": "prime",
+      "duration": 3.0
+    },
+    "output": "Generated/Motions/executioner_chop.fbx",
+    "date": "2026-11-01T18:06:35"
   }
 ]

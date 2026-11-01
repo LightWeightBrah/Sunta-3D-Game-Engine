@@ -105,6 +105,22 @@ void RememberRestingValues(EntityManager& entityManager, unsigned int bossID, Bo
 
 	if (const HitboxComponent* weapon = FindWeapon(entityManager, bossID))
 		boss.restingWeaponDamage = weapon->damage;
+
+	if (const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(bossID))
+	{
+		boss.restingLight1Animation = actions->lightAttack1Animation;
+		boss.restingLight2Animation = actions->lightAttack2Animation;
+		boss.restingLight3Animation = actions->lightAttack3Animation;
+		boss.restingHeavyAnimation  = actions->heavyAttackAnimation;
+		boss.restingLightHitFrom    = actions->lightHitFrom;
+		boss.restingLightHitTo      = actions->lightHitTo;
+		boss.restingHeavyHitFrom    = actions->heavyHitFrom;
+		boss.restingHeavyHitTo      = actions->heavyHitTo;
+		boss.restingShockwaveRadius = actions->shockwaveRadius;
+	}
+
+	if (const MeleeEnemyComponent* melee = entityManager.GetComponent<MeleeEnemyComponent>(bossID))
+		boss.restingMaxLightCombo = melee->maxLightCombo;
 }
 
 void SetAwake(EntityManager& entityManager, unsigned int bossID, BossComponent& boss, bool isAwake)
@@ -113,6 +129,35 @@ void SetAwake(EntityManager& entityManager, unsigned int bossID, BossComponent& 
 
 	if (EnemyComponent* enemy = entityManager.GetComponent<EnemyComponent>(bossID))
 		enemy->hearingDistance = isAwake ? AwakeHearingDistance : boss.restingHearingDistance;
+}
+
+// The second phase's set of attacks (each one only when it is set), or back to the first phase's
+void SwapAttacks(EntityManager& entityManager, unsigned int bossID, const BossComponent& boss, bool isInPhaseTwo)
+{
+	auto pick = [isInPhaseTwo](const std::string& phaseTwo, const std::string& resting)
+	{
+		return (isInPhaseTwo && !phaseTwo.empty()) ? phaseTwo : resting;
+	};
+
+	if (CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(bossID))
+	{
+		actions->lightAttack1Animation = pick(boss.phaseTwoLight1Animation, boss.restingLight1Animation);
+		actions->lightAttack2Animation = pick(boss.phaseTwoLight2Animation, boss.restingLight2Animation);
+		actions->lightAttack3Animation = pick(boss.phaseTwoLight3Animation, boss.restingLight3Animation);
+		actions->heavyAttackAnimation  = pick(boss.phaseTwoHeavyAnimation,  boss.restingHeavyAnimation);
+
+		const bool hasNewLights = isInPhaseTwo && !boss.phaseTwoLight1Animation.empty();
+		const bool hasNewHeavy  = isInPhaseTwo && !boss.phaseTwoHeavyAnimation.empty();
+		actions->lightHitFrom = hasNewLights ? boss.phaseTwoLightHitFrom : boss.restingLightHitFrom;
+		actions->lightHitTo   = hasNewLights ? boss.phaseTwoLightHitTo   : boss.restingLightHitTo;
+		actions->heavyHitFrom = hasNewHeavy  ? boss.phaseTwoHeavyHitFrom : boss.restingHeavyHitFrom;
+		actions->heavyHitTo   = hasNewHeavy  ? boss.phaseTwoHeavyHitTo   : boss.restingHeavyHitTo;
+
+		actions->shockwaveRadius = (isInPhaseTwo && boss.phaseTwoShockwaveRadius > 0.0f) ? boss.phaseTwoShockwaveRadius : boss.restingShockwaveRadius;
+	}
+
+	if (MeleeEnemyComponent* melee = entityManager.GetComponent<MeleeEnemyComponent>(bossID))
+		melee->maxLightCombo = (isInPhaseTwo && boss.phaseTwoMaxLightCombo > 0) ? boss.phaseTwoMaxLightCombo : boss.restingMaxLightCombo;
 }
 
 void SetPhaseTwo(EntityManager& entityManager, unsigned int bossID, BossComponent& boss, bool isInPhaseTwo)
@@ -126,6 +171,8 @@ void SetPhaseTwo(EntityManager& entityManager, unsigned int bossID, BossComponen
 		weapon->damage = isInPhaseTwo ? boss.restingWeaponDamage * boss.phaseTwoDamageMultiplier : boss.restingWeaponDamage;
 
 	boss.phaseTwoSeconds = 0.0f;
+
+	SwapAttacks(entityManager, bossID, boss, isInPhaseTwo);
 
 	// The emitters start with a burst (the boss bursts into flames), back to how the scene had them when it rests again
 	for (unsigned int entityID : GetBossAndChildren(entityManager, bossID))

@@ -170,6 +170,20 @@ namespace SceneKeys
 	constexpr const char* ParryAnimation            = "parry_animation";
 	constexpr const char* ParriedAnimation          = "parried_animation";
 	constexpr const char* UpperBodyBone             = "upper_body_bone";
+	constexpr const char* ShockwaveRadius           = "shockwave_radius";
+	constexpr const char* ShockwaveDamage           = "shockwave_damage";
+	constexpr const char* ShockwaveDistance         = "shockwave_distance";
+	constexpr const char* ShockwaveEffect           = "shockwave_effect";
+	constexpr const char* PhaseTwoLight1Animation   = "phase_two_light_attack_1_animation";
+	constexpr const char* PhaseTwoLight2Animation   = "phase_two_light_attack_2_animation";
+	constexpr const char* PhaseTwoLight3Animation   = "phase_two_light_attack_3_animation";
+	constexpr const char* PhaseTwoHeavyAnimation    = "phase_two_heavy_attack_animation";
+	constexpr const char* PhaseTwoLightHitFrom      = "phase_two_light_hit_from";
+	constexpr const char* PhaseTwoLightHitTo        = "phase_two_light_hit_to";
+	constexpr const char* PhaseTwoHeavyHitFrom      = "phase_two_heavy_hit_from";
+	constexpr const char* PhaseTwoHeavyHitTo        = "phase_two_heavy_hit_to";
+	constexpr const char* PhaseTwoShockwaveRadius   = "phase_two_shockwave_radius";
+	constexpr const char* PhaseTwoMaxLightCombo     = "phase_two_max_light_combo";
 	constexpr const char* ParryFrom                 = "parry_from";
 	constexpr const char* ParryTo                   = "parry_to";
 	constexpr const char* RiposteDamageMultiplier   = "riposte_damage_multiplier";
@@ -611,6 +625,10 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::ParryAnimation,        actions->parryAnimation        },
 				{ SceneKeys::ParriedAnimation,      actions->parriedAnimation      },
 				{ SceneKeys::UpperBodyBone,         actions->upperBodyBone         },
+				{ SceneKeys::ShockwaveRadius,       actions->shockwaveRadius       },
+				{ SceneKeys::ShockwaveDamage,       actions->shockwaveDamage       },
+				{ SceneKeys::ShockwaveDistance,     actions->shockwaveDistance     },
+				{ SceneKeys::ShockwaveEffect,       actions->shockwaveEffect       },
 				{ SceneKeys::ParryFrom,             actions->parryFrom             },
 				{ SceneKeys::ParryTo,               actions->parryTo               },
 				{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
@@ -675,7 +693,17 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    },
 				{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
 				{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
-				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           }
+				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           },
+				{ SceneKeys::PhaseTwoLight1Animation,  boss->phaseTwoLight1Animation  },
+				{ SceneKeys::PhaseTwoLight2Animation,  boss->phaseTwoLight2Animation  },
+				{ SceneKeys::PhaseTwoLight3Animation,  boss->phaseTwoLight3Animation  },
+				{ SceneKeys::PhaseTwoHeavyAnimation,   boss->phaseTwoHeavyAnimation   },
+				{ SceneKeys::PhaseTwoLightHitFrom,     boss->phaseTwoLightHitFrom     },
+				{ SceneKeys::PhaseTwoLightHitTo,       boss->phaseTwoLightHitTo       },
+				{ SceneKeys::PhaseTwoHeavyHitFrom,     boss->phaseTwoHeavyHitFrom     },
+				{ SceneKeys::PhaseTwoHeavyHitTo,       boss->phaseTwoHeavyHitTo       },
+				{ SceneKeys::PhaseTwoShockwaveRadius,  boss->phaseTwoShockwaveRadius  },
+				{ SceneKeys::PhaseTwoMaxLightCombo,    boss->phaseTwoMaxLightCombo    }
 			};
 		}
 
@@ -1150,6 +1178,10 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.parryAnimation        = actionsData.value(SceneKeys::ParryAnimation,        actions.parryAnimation);
 			actions.parriedAnimation      = actionsData.value(SceneKeys::ParriedAnimation,      actions.parriedAnimation);
 			actions.upperBodyBone         = actionsData.value(SceneKeys::UpperBodyBone,         actions.upperBodyBone);
+			actions.shockwaveRadius       = actionsData.value(SceneKeys::ShockwaveRadius,       actions.shockwaveRadius);
+			actions.shockwaveDamage       = actionsData.value(SceneKeys::ShockwaveDamage,       actions.shockwaveDamage);
+			actions.shockwaveDistance     = actionsData.value(SceneKeys::ShockwaveDistance,     actions.shockwaveDistance);
+			actions.shockwaveEffect       = actionsData.value(SceneKeys::ShockwaveEffect,       actions.shockwaveEffect);
 			actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
 			actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
 			actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
@@ -1223,6 +1255,16 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
 			boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
 			boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
+			boss.phaseTwoLight1Animation  = bossData.value(SceneKeys::PhaseTwoLight1Animation,  boss.phaseTwoLight1Animation);
+			boss.phaseTwoLight2Animation  = bossData.value(SceneKeys::PhaseTwoLight2Animation,  boss.phaseTwoLight2Animation);
+			boss.phaseTwoLight3Animation  = bossData.value(SceneKeys::PhaseTwoLight3Animation,  boss.phaseTwoLight3Animation);
+			boss.phaseTwoHeavyAnimation   = bossData.value(SceneKeys::PhaseTwoHeavyAnimation,   boss.phaseTwoHeavyAnimation);
+			boss.phaseTwoLightHitFrom     = bossData.value(SceneKeys::PhaseTwoLightHitFrom,     boss.phaseTwoLightHitFrom);
+			boss.phaseTwoLightHitTo       = bossData.value(SceneKeys::PhaseTwoLightHitTo,       boss.phaseTwoLightHitTo);
+			boss.phaseTwoHeavyHitFrom     = bossData.value(SceneKeys::PhaseTwoHeavyHitFrom,     boss.phaseTwoHeavyHitFrom);
+			boss.phaseTwoHeavyHitTo       = bossData.value(SceneKeys::PhaseTwoHeavyHitTo,       boss.phaseTwoHeavyHitTo);
+			boss.phaseTwoShockwaveRadius  = bossData.value(SceneKeys::PhaseTwoShockwaveRadius,  boss.phaseTwoShockwaveRadius);
+			boss.phaseTwoMaxLightCombo    = bossData.value(SceneKeys::PhaseTwoMaxLightCombo,    boss.phaseTwoMaxLightCombo);
 		}
 
 		if (entityJson.contains(SceneKeys::EnvironmentComponent))
