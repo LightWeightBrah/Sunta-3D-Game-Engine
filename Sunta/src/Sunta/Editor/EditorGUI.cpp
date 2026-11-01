@@ -1114,6 +1114,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			},
 
 			{
+				"Environment",
+				[&]() { return entityManager.GetComponent<EnvironmentComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<EnvironmentComponent>(inspectedEntity); }
+			},
+
+			{
 				"Particle Emitter",
 				[&]() { return entityManager.GetComponent<ParticleEmitterComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<ParticleEmitterComponent>(inspectedEntity); }

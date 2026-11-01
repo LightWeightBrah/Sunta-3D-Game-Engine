@@ -38,6 +38,7 @@
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
 #include "Effects/ParticleSystem.h"
+#include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
@@ -520,6 +521,20 @@ void Scene::Render(Renderer& renderer)
 
 	}
 
+	// The scene's Environment (the first one): the sky first, behind everything, and the fog of every lit thing
+	auto& environments = entityManager.GetAllComponents<EnvironmentComponent>();
+	if (!environments.empty())
+	{
+		const EnvironmentComponent& environment = environments.front();
+		if (environment.isFogEnabled)
+		{
+			sceneData.fogColor   = environment.fogColor;
+			sceneData.fogDensity = environment.fogDensity;
+		}
+
+		SkyboxRenderer::Draw(environment.skyboxFolder, sceneData.viewMatrix, sceneData.projectionMatrix, environment.skyBrightness);
+	}
+
 	for (const auto& item : lightSourceQueue)
 		renderer.DrawLigthSource(*item.mesh, *item.material->GetShader(), item.matrix, sceneData);
 
@@ -533,7 +548,7 @@ void Scene::Render(Renderer& renderer)
 		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength);
 
 	// After everything solid: the specks are hidden behind walls, but never hide what is behind them
-	ParticleSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix);
+	ParticleSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix, sceneData.cameraPosition, sceneData.fogDensity);
 
 	for (const auto& item : gizmosQueue)
 		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);

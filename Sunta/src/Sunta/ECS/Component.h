@@ -18,6 +18,7 @@
 #include "Gameplay/BonfireComponent.h"
 #include "Gameplay/BossComponent.h"
 #include "Effects/ParticleEmitterComponent.h"
+#include "Effects/EnvironmentComponent.h"
 #include "Gameplay/FogGateComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/EnemyComponent.h"

@@ -217,6 +217,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	StaminaComponent::RegisterToInspector();
 	PoiseComponent::RegisterToInspector();
 	ParticleEmitterComponent::RegisterToInspector();
+	EnvironmentComponent::RegisterToInspector();
 	EnemyComponent::RegisterToInspector();
 	MeleeEnemyComponent::RegisterToInspector();
 	PlayerHUDComponent::RegisterToInspector();

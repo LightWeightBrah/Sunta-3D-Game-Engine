@@ -130,6 +130,10 @@ uniform		sampler2D			materialEmissiveMap1;
 // How strongly the emissive map shines (0 = off), set per model by its Model component
 uniform		float				emissiveStrength;
 
+// Distance fog (exponential squared, see learnopengl.com): the farther, the more of the fog's color. Density 0 = none
+uniform		vec3				fogColor;
+uniform		float				fogDensity;
+
 vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, 			  vec3 viewerDirection);
 vec3 CalculatePointLights(      PointLight       light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
 vec3 CalculateSpotLights(       SpotLight        light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
@@ -163,6 +167,10 @@ void main()
 
 	if(material.hasEmissiveMap)
 		result += texture(materialEmissiveMap1, TexCoord).rgb * emissiveStrength;
+
+	float distanceToViewer = length(viewerPosition - FragPos);
+	float visibility       = exp(-pow(fogDensity * distanceToViewer, 2.0));
+	result = mix(fogColor, result, clamp(visibility, 0.0, 1.0));
 
 	FragColor = vec4(result, 1.0f);
 

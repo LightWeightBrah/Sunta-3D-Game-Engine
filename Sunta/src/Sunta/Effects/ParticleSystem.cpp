@@ -143,7 +143,8 @@ void ParticleSystem::EnsureInitialized()
 	shader = rendererDevice.CreateShader(VirtualFileSystem::Resolve(ShaderPath));
 }
 
-void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, const glm::mat4& projection)
+void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, const glm::mat4& projection,
+	const glm::vec3& cameraPosition, float fogDensity)
 {
 	auto& emitters = entityManager.GetAllComponents<ParticleEmitterComponent>();
 
@@ -168,6 +169,8 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 	shader->SetUniformMatrix4fv("viewProjection", projection * view);
 	shader->SetUniform3f("cameraRight", cameraRight.x, cameraRight.y, cameraRight.z);
 	shader->SetUniform3f("cameraUp", cameraUp.x, cameraUp.y, cameraUp.z);
+	shader->SetUniform3f("cameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	shader->SetUniform1f("fogDensity", fogDensity);
 
 	for (const ParticleEmitterComponent& emitter : emitters)
 	{

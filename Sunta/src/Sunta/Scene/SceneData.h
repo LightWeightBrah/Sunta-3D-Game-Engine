@@ -46,6 +46,10 @@ struct SceneData
 	std::vector<DirectionalLightData>	directionalLights;
 	std::vector<PointLightData>			pointLights;
 	std::vector<SpotlightData>			spotlights;
+
+	// Distance fog (from the scene's Environment): far things fade into 'fogColor'. Density 0 = no fog
+	glm::vec3 fogColor   = glm::vec3(0.0f);
+	float     fogDensity = 0.0f;
 };
 
 }

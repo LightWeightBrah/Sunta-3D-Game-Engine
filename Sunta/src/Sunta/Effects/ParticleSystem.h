@@ -21,7 +21,8 @@ public:
 	static void Update(EntityManager& entityManager, float deltaTime);
 
 	// Call after the solid models: the specks are hidden behind walls but never hide what is behind them
-	static void Draw(EntityManager& entityManager, const glm::mat4& view, const glm::mat4& projection);
+	static void Draw(EntityManager& entityManager, const glm::mat4& view, const glm::mat4& projection,
+		const glm::vec3& cameraPosition, float fogDensity);
 
 	// When the game starts and stops: no specks left over from the last time
 	static void Clear(EntityManager& entityManager);

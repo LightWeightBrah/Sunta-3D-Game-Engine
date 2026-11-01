@@ -47,3 +47,7 @@ prompt and settings) is in `../Generated/meshy_log.json`.
 
 The glow of the boss's second phase (`boss_emissive.png`, `boss_axe_emissive.png` in Sunta/res/Models) is ours: baked in Blender
 from procedural nodes (`boss_generator.py`), no outside source.
+
+The sky of the example game (`Projects/MyGame/res/Skyboxes/AshenNight`): Poly Haven HDRI "Kloppenheim 07 (Pure Sky)"
+(https://polyhaven.com/a/kloppenheim_07_puresky, CC0), its tonemapped JPG cut into cubemap faces, darkened and tinted by
+`Tools/Skybox/panorama_to_cubemap.py`.

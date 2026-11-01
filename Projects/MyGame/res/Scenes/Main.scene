@@ -43,6 +43,17 @@
                     1,
                     1
                 ]
+            },
+            "environment": {
+                "skybox_folder": "@game/Skyboxes/AshenNight",
+                "sky_brightness": 1.0,
+                "is_fog_enabled": true,
+                "fog_color": [
+                    0.075,
+                    0.068,
+                    0.068
+                ],
+                "fog_density": 0.035
             }
         },
         {

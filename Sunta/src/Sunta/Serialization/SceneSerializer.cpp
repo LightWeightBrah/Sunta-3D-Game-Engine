@@ -46,6 +46,7 @@ namespace SceneKeys
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
+	constexpr const char* EnvironmentComponent      = "environment";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -216,6 +217,12 @@ namespace SceneKeys
 	constexpr const char* EndColor                  = "end_color";
 	constexpr const char* ParticleIntensity         = "intensity";
 	constexpr const char* MaxParticles              = "max_particles";
+
+	constexpr const char* SkyboxFolder              = "skybox_folder";
+	constexpr const char* SkyBrightness             = "sky_brightness";
+	constexpr const char* IsFogEnabled              = "is_fog_enabled";
+	constexpr const char* FogColor                  = "fog_color";
+	constexpr const char* FogDensity                = "fog_density";
 
 	constexpr const char* ArenaCenter               = "arena_center";
 	constexpr const char* ArenaHalfExtents          = "arena_half_extents";
@@ -666,6 +673,18 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
 				{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
 				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           }
+			};
+		}
+
+		if (auto* environment = entityManager.GetComponent<EnvironmentComponent>(i))
+		{
+			entityJson[SceneKeys::EnvironmentComponent] =
+			{
+				{ SceneKeys::SkyboxFolder,  environment->skyboxFolder           },
+				{ SceneKeys::SkyBrightness, environment->skyBrightness          },
+				{ SceneKeys::IsFogEnabled,  environment->isFogEnabled           },
+				{ SceneKeys::FogColor,      SerializeVec3(environment->fogColor) },
+				{ SceneKeys::FogDensity,    environment->fogDensity             }
 			};
 		}
 
@@ -1199,6 +1218,20 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
 			boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
 			boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
+		}
+
+		if (entityJson.contains(SceneKeys::EnvironmentComponent))
+		{
+			const auto& environmentData = entityJson[SceneKeys::EnvironmentComponent];
+			auto& environment = entityManager.AddComponent<EnvironmentComponent>(entity);
+
+			environment.skyboxFolder  = environmentData.value(SceneKeys::SkyboxFolder,  environment.skyboxFolder);
+			environment.skyBrightness = environmentData.value(SceneKeys::SkyBrightness, environment.skyBrightness);
+			environment.isFogEnabled  = environmentData.value(SceneKeys::IsFogEnabled,  environment.isFogEnabled);
+			environment.fogDensity    = environmentData.value(SceneKeys::FogDensity,    environment.fogDensity);
+
+			if (environmentData.contains(SceneKeys::FogColor))
+				environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);
 		}
 
 		if (entityJson.contains(SceneKeys::ParticleEmitterComponent))

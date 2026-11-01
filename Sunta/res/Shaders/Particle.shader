@@ -9,7 +9,11 @@ uniform float size;
 uniform vec3  cameraRight;
 uniform vec3  cameraUp;
 
-out vec2 cornerOffset;
+uniform vec3  cameraPosition;
+uniform float fogDensity;
+
+out vec2  cornerOffset;
+out float visibility;
 
 void main()
 {
@@ -17,13 +21,17 @@ void main()
 
 	vec3 worldPosition = center + (cameraRight * aPos.x + cameraUp * aPos.y) * size;
 	gl_Position = viewProjection * vec4(worldPosition, 1.0);
+
+	// The same distance fog as the lit models: far specks fade away (their light is added, so fading = less light)
+	visibility = exp(-pow(fogDensity * length(cameraPosition - center), 2.0));
 }
 
 #shader fragment
 
 uniform vec3 color;
 
-in vec2 cornerOffset;
+in vec2  cornerOffset;
+in float visibility;
 
 out vec4 FragColor;
 
@@ -37,5 +45,5 @@ void main()
 		discard;
 
 	// Added to the picture (additive blending): alpha scales how much light the speck adds
-	FragColor = vec4(color, glow * glow);
+	FragColor = vec4(color * visibility, glow * glow);
 }

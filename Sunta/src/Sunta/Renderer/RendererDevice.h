@@ -10,6 +10,7 @@ class ElementBuffer;
 class VertexArray;
 class Texture;
 class Shader;
+class Cubemap;
 
 enum class BufferUsage 
 { 
@@ -57,6 +58,9 @@ public:
 	// A texture made in memory (e.g. the letters of a font): 4 bytes per pixel (RGBA), the first row is the top of the picture
 	virtual std::shared_ptr<Texture>       CreateTexture(int width, int height, const unsigned char* rgbaPixels) = 0;
 	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) = 0;
+
+	// Six pictures of a folder (right, left, top, bottom, front, back) as one cubemap (the sky)
+	virtual std::shared_ptr<Cubemap>       CreateCubemap(const std::string& folder) = 0;
 
 	static std::unique_ptr<RendererDevice> Create();
 };

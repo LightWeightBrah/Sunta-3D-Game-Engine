@@ -120,6 +120,8 @@ void Renderer::SetBaseLighting(Shader& shader, const SceneData& sceneData) const
 		return;
 
 	shader.SetUniform3f("viewerPosition", sceneData.cameraPosition);
+	shader.TrySetUniform3f("fogColor", sceneData.fogColor);
+	shader.TrySetUniform1f("fogDensity", sceneData.fogDensity);
 
 	SetDirectionalLights(shader, sceneData);
 	SetPointLights(shader, sceneData);

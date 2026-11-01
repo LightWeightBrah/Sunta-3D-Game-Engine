@@ -49,6 +49,7 @@ using BossHandle          = ComponentHandle<BossComponent>;
 using FogGateHandle       = ComponentHandle<FogGateComponent>;
 using ModelHandle         = ComponentHandle<ModelComponent>;
 using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
+using EnvironmentHandle   = ComponentHandle<EnvironmentComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -656,7 +657,8 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"boss",                ComponentHandleProperty<BossComponent>(),
 		"fogGate",             ComponentHandleProperty<FogGateComponent>(),
 		"model",               ComponentHandleProperty<ModelComponent>(),
-		"particles",           ComponentHandleProperty<ParticleEmitterComponent>()
+		"particles",           ComponentHandleProperty<ParticleEmitterComponent>(),
+		"environment",         ComponentHandleProperty<EnvironmentComponent>()
 	);
 }
 
@@ -666,6 +668,13 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 	lua.new_usertype<ModelHandle>("Model", sol::no_constructor,
 		"isVisible",        MemberProperty(&ModelComponent::isVisible,        false),
 		"emissiveStrength", MemberProperty(&ModelComponent::emissiveStrength, 0.0f)
+	);
+
+	// Usage in Lua (on the entity with the Environment): this.environment.fogDensity = 0.1, this.environment.skyBrightness = 0.5
+	lua.new_usertype<EnvironmentHandle>("Environment", sol::no_constructor,
+		"skyBrightness", MemberProperty(&EnvironmentComponent::skyBrightness, 0.0f),
+		"isFogEnabled",  MemberProperty(&EnvironmentComponent::isFogEnabled,  false),
+		"fogDensity",    MemberProperty(&EnvironmentComponent::fogDensity,    0.0f)
 	);
 
 	// Usage in Lua: this.particles.isEmitting = true, this.particles:burst(40) (40 specks at once), this.particles.particlesPerSecond = 80

@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 
 #include "OpenGLTexture.h"
+#include "OpenGLCubemap.h"
 #include "OpenGLShader.h"
 #include "OpenGLVertexArray.h"
 #include "OpenGLVertexBuffer.h"
@@ -116,6 +117,11 @@ std::shared_ptr<Texture> OpenGLDevice::CreateTexture(int width, int height, cons
 std::shared_ptr<Shader> OpenGLDevice::CreateShader(const std::string& filepath)
 {
 	return std::make_shared<OpenGLShader>(filepath);
+}
+
+std::shared_ptr<Cubemap> OpenGLDevice::CreateCubemap(const std::string& folder)
+{
+	return std::make_shared<OpenGLCubemap>(folder);
 }
 
 }

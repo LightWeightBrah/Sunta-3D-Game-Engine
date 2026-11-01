@@ -25,6 +25,7 @@ public:
 	virtual std::shared_ptr<Texture>       CreateTexture(const std::string& filepath, bool flip = true, bool isPixelArt = false) override;
 	virtual std::shared_ptr<Texture>       CreateTexture(int width, int height, const unsigned char* rgbaPixels) override;
 	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) override;
+	virtual std::shared_ptr<Cubemap>       CreateCubemap(const std::string& folder) override;
 };
 
 
