@@ -39,7 +39,7 @@ ENEMIES_FOLDER = os.path.join(BLENDER_FOLDER, "Generated", "Enemies")
 # Mixamo's sword-and-shield moves (the knights') for one-handed weapons, the Great Sword Pack's (the boss's) for two hands
 ONE_HANDED = knight_generator.ANIMATIONS
 TWO_HANDED = {name: clip for name, clip in boss_generator.BOSS_ANIMATIONS.items()
-              if name not in ("Attack_Leap", "Phase_Two") and not name.startswith("Fury_")}
+              if name not in ("Attack_Leap", "Phase_Two", "Intro") and not name.startswith("Fury_")}
 
 # The executioner's own blows (Meshy's Text to Motion): a slow diagonal chop, a wide cleave, a double hack like chopping wood
 EXECUTIONER = dict(TWO_HANDED,

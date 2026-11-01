@@ -1114,6 +1114,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			},
 
 			{
+				"Cutscene",
+				[&]() { return entityManager.GetComponent<CutsceneComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<CutsceneComponent>(inspectedEntity); }
+			},
+
+			{
 				"Environment",
 				[&]() { return entityManager.GetComponent<EnvironmentComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<EnvironmentComponent>(inspectedEntity); }

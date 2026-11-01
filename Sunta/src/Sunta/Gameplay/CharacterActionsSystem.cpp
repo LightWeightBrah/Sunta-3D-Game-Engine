@@ -134,7 +134,7 @@ CharacterAction TakeRequest(Character& character, bool canUseMouse)
 	CharacterAction request = character.actions->requestedAction;
 	character.actions->requestedAction = CharacterAction::None;
 
-	if (character.controller->isPlayerControlled)
+	if (character.controller->isPlayerControlled && !character.controller->isHeldByCutscene)
 	{
 		const CharacterAction playerRequest = ReadPlayerRequest(*character.controller, canUseMouse);
 		if (playerRequest != CharacterAction::None)

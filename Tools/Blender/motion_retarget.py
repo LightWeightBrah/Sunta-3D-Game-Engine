@@ -19,7 +19,7 @@ import os
 from dataclasses import dataclass, field
 
 import bpy
-from mathutils import Matrix, Vector
+from mathutils import Matrix, Quaternion, Vector
 
 BLENDER_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
@@ -125,6 +125,9 @@ class MotionClip:
     speed: float = 1.0
     rig: Rig = MIXAMO
     action: str = None
+    # The character keeps facing where it faced in the first frame (a motion that turns the whole body around,
+    # e.g. a parry made by Text to Motion, would otherwise face away from the enemy in the middle of it)
+    keeps_facing: bool = False
 
 
 # ========== Rotations and directions of the bones (world space, the armature objects included) ==========
@@ -245,6 +248,20 @@ def character_world_rotations(source, rig, character, corrections):
     return rotations
 
 
+def heading(source, rig):
+    """How far the clip's hips are turned around the up axis (radians). Measured with the hip bone's side axis:
+    a bone points along its Y axis, which for the hips is mostly up"""
+    hips = source.pose.bones[rig.bone_of[ROOT_BONE]]
+    side = (source.matrix_world.to_3x3() @ hips.matrix.to_3x3()) @ Vector((1.0, 0.0, 0.0))
+    return math.atan2(side.y, side.x)
+
+
+def turned_back(rotations, angle):
+    """Every world rotation turned by 'angle' around the up axis"""
+    turn = Quaternion((0.0, 0.0, 1.0), angle)
+    return {name: turn @ rotation for name, rotation in rotations.items()}
+
+
 def lowest_rest_point(armature):
     return min((armature.matrix_world @ bone.head_local).z for bone in armature.data.bones)
 
@@ -344,12 +361,17 @@ def retarget(character, clip, action):
 
     character.animation_data.action = action
     previous_rotations = {}
+    first_heading = None
 
     for frame in range(frames + 1):
         source_frame = first + frame * source_frames_per_frame
         scene.frame_set(int(source_frame), subframe=source_frame - int(source_frame))
 
         rotations = character_world_rotations(source, clip.rig, character, corrections)
+        if clip.keeps_facing:
+            now = heading(source, clip.rig)
+            first_heading = now if first_heading is None else first_heading
+            rotations = turned_back(rotations, first_heading - now)
         key_frame(character, rotations, hips_offset(source, clip.rig, character), frame, previous_rotations)
 
     remove_source_armature(source, actions_before | {action})

@@ -33,7 +33,7 @@ from mathutils import Matrix, Quaternion, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from motion_retarget import MotionClip, retarget  # noqa: E402
+from motion_retarget import SMPL, MotionClip, retarget  # noqa: E402
 from sunta_blender import (  # noqa: E402
     Palette,
     PartBuilder,
@@ -379,7 +379,8 @@ ANIMATIONS = {
     # and a parry (a fast raise of the shield)
     "Block":          MotionClip(PACK + "block idle.fbx"),
     "Block_Impact":   MotionClip(PACK + "impact.fbx"),
-    "Parry":          MotionClip(PACK + "block.fbx", speed=1.5),
+    # A quick swipe of the shield outward (Meshy Text to Motion): the blow that lands in it early is turned away
+    "Parry":          MotionClip("Generated/Motions/knight_parry.fbx", rig=SMPL, keeps_facing=True),
 
     # Resting at a bonfire: kneeling down (the last frame is held), and getting up again
     "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),

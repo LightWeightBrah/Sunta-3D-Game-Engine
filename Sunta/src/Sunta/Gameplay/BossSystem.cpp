@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "CharacterActionsSystem.h"
+#include "CutsceneSystem.h"
 #include "CharacterControllerSystem.h"
 #include "GameplayMath.h"
 #include "HUDSystem.h"
@@ -425,6 +426,10 @@ void UpdateFog(EntityManager& entityManager, unsigned int fogID, FogGateComponen
 
 	SetFogClosed(entityManager, fogID, fog, isPlayerAliveInside);
 	WakeBossesOfArena(entityManager, fog, isPlayerAliveInside);
+
+	// The boss shows itself the first time (a cutscene plays only once)
+	if (isPlayerAliveInside && !fog.cutscene.empty())
+		CutsceneSystem::PlayByName(entityManager, fog.cutscene);
 }
 
 }

@@ -1133,5 +1133,27 @@
     },
     "output": "Generated/Motions/executioner_chop.fbx",
     "date": "2026-11-01T18:06:35"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a1981c-1ad0-71ee-a28c-756749cb6125",
+    "settings": {
+      "prompt": "A giant armored warrior holding a huge axe with both hands stands still with head lowered, slowly raises his head, lifts the axe high above his head with both arms, then slams the butt of the axe down into the ground in front of him and leans forward roaring at his enemy",
+      "mode": "prime",
+      "duration": 4.0
+    },
+    "output": "Generated/Motions/boss_intro.fbx",
+    "date": "2026-11-01T18:16:21"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a1981c-87f5-753f-beb9-3a4677a9a8d3",
+    "settings": {
+      "prompt": "A knight holding a sword in his right hand and a round shield on his left forearm stands in a guard stance, then quickly and sharply swings the shield outward to his left to knock away an incoming blow, then snaps back into the guard stance",
+      "mode": "prime",
+      "duration": 2.0
+    },
+    "output": "Generated/Motions/knight_parry.fbx",
+    "date": "2026-11-01T18:16:49"
   }
 ]

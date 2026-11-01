@@ -62,6 +62,9 @@ struct CharacterControllerComponent
 	// so the next action knows the held direction, but walking and turning wait. Not saved with the scene
 	bool isDrivenByAction = false;
 
+	// The player's keys switched off for a cutscene (switched back on when it ends)
+	bool isHeldByCutscene = false;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<CharacterControllerComponent>("Character Controller", EngineAssets::Icons::Skeleton,

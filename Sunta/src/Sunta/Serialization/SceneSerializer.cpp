@@ -47,6 +47,7 @@ namespace SceneKeys
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
 	constexpr const char* EnvironmentComponent      = "environment";
+	constexpr const char* CutsceneComponent         = "cutscene";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -243,6 +244,17 @@ namespace SceneKeys
 	constexpr const char* ArenaHalfExtents          = "arena_half_extents";
 	constexpr const char* VictoryMessage            = "victory_message";
 	constexpr const char* IsCrossedWithKey          = "is_crossed_with_key";
+	constexpr const char* FogCutscene               = "cutscene";
+	constexpr const char* DurationSeconds           = "duration_seconds";
+	constexpr const char* LookAtEntity              = "look_at_entity";
+	constexpr const char* LookAtHeight              = "look_at_height";
+	constexpr const char* AnimationEntity           = "animation_entity";
+	constexpr const char* CutsceneAnimationName     = "animation_name";
+	constexpr const char* AnimationAtSeconds        = "animation_at_seconds";
+	constexpr const char* CutsceneTitle             = "title";
+	constexpr const char* TitleSeconds              = "title_seconds";
+	constexpr const char* CanBeSkipped              = "can_be_skipped";
+	constexpr const char* VideoFile                 = "video_file";
 
 	constexpr const char* MaxPoise                  = "max_poise";
 	constexpr const char* RecoverAfterSeconds       = "recover_after_seconds";
@@ -707,6 +719,23 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			};
 		}
 
+		if (auto* cutscene = entityManager.GetComponent<CutsceneComponent>(i))
+		{
+			entityJson[SceneKeys::CutsceneComponent] =
+			{
+				{ SceneKeys::DurationSeconds,       cutscene->durationSeconds    },
+				{ SceneKeys::LookAtEntity,          cutscene->lookAtEntity       },
+				{ SceneKeys::LookAtHeight,          cutscene->lookAtHeight       },
+				{ SceneKeys::AnimationEntity,       cutscene->animationEntity    },
+				{ SceneKeys::CutsceneAnimationName, cutscene->animationName      },
+				{ SceneKeys::AnimationAtSeconds,    cutscene->animationAtSeconds },
+				{ SceneKeys::CutsceneTitle,         cutscene->title              },
+				{ SceneKeys::TitleSeconds,          cutscene->titleSeconds       },
+				{ SceneKeys::CanBeSkipped,          cutscene->canBeSkipped       },
+				{ SceneKeys::VideoFile,             cutscene->videoFile          }
+			};
+		}
+
 		if (auto* environment = entityManager.GetComponent<EnvironmentComponent>(i))
 		{
 			entityJson[SceneKeys::EnvironmentComponent] =
@@ -746,7 +775,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::ArenaCenter,      SerializeVec3(fogGate->arenaCenter)      },
 				{ SceneKeys::ArenaHalfExtents, SerializeVec3(fogGate->arenaHalfExtents) },
 				{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     },
-				{ SceneKeys::IsCrossedWithKey,              fogGate->isCrossedWithKey   }
+				{ SceneKeys::IsCrossedWithKey,              fogGate->isCrossedWithKey   },
+				{ SceneKeys::FogCutscene,                   fogGate->cutscene           }
 			};
 		}
 
@@ -1267,6 +1297,23 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			boss.phaseTwoMaxLightCombo    = bossData.value(SceneKeys::PhaseTwoMaxLightCombo,    boss.phaseTwoMaxLightCombo);
 		}
 
+		if (entityJson.contains(SceneKeys::CutsceneComponent))
+		{
+			const auto& cutsceneData = entityJson[SceneKeys::CutsceneComponent];
+			auto& cutscene = entityManager.AddComponent<CutsceneComponent>(entity);
+
+			cutscene.durationSeconds    = cutsceneData.value(SceneKeys::DurationSeconds,       cutscene.durationSeconds);
+			cutscene.lookAtEntity       = cutsceneData.value(SceneKeys::LookAtEntity,          cutscene.lookAtEntity);
+			cutscene.lookAtHeight       = cutsceneData.value(SceneKeys::LookAtHeight,          cutscene.lookAtHeight);
+			cutscene.animationEntity    = cutsceneData.value(SceneKeys::AnimationEntity,       cutscene.animationEntity);
+			cutscene.animationName      = cutsceneData.value(SceneKeys::CutsceneAnimationName, cutscene.animationName);
+			cutscene.animationAtSeconds = cutsceneData.value(SceneKeys::AnimationAtSeconds,    cutscene.animationAtSeconds);
+			cutscene.title              = cutsceneData.value(SceneKeys::CutsceneTitle,         cutscene.title);
+			cutscene.titleSeconds       = cutsceneData.value(SceneKeys::TitleSeconds,          cutscene.titleSeconds);
+			cutscene.canBeSkipped       = cutsceneData.value(SceneKeys::CanBeSkipped,          cutscene.canBeSkipped);
+			cutscene.videoFile          = cutsceneData.value(SceneKeys::VideoFile,             cutscene.videoFile);
+		}
+
 		if (entityJson.contains(SceneKeys::EnvironmentComponent))
 		{
 			const auto& environmentData = entityJson[SceneKeys::EnvironmentComponent];
@@ -1322,6 +1369,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			fogGate.victoryMessage   = fogData.value(SceneKeys::VictoryMessage,   fogGate.victoryMessage);
 			fogGate.isCrossedWithKey = fogData.value(SceneKeys::IsCrossedWithKey, fogGate.isCrossedWithKey);
+			fogGate.cutscene         = fogData.value(SceneKeys::FogCutscene,      fogGate.cutscene);
 		}
 
 		if (entityJson.contains(SceneKeys::PoiseComponent))

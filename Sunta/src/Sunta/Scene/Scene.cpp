@@ -38,6 +38,7 @@
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
 #include "Effects/ParticleSystem.h"
+#include "Gameplay/CutsceneSystem.h"
 #include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
@@ -308,12 +309,16 @@ void Scene::Update()
 	const glm::vec3 cameraForward = GetViewForward(activeCameraData.viewMatrix);
 	const glm::vec2 lookDelta     = isPlaying ? GetGameLookDelta() : glm::vec2(0.0f);
 
+	// While a cutscene plays nobody fights: the enemies don't think (the player's keys are off, see CutsceneSystem)
+	const bool isCutscene = isPlaying && CutsceneSystem::IsPlaying(entityManager);
+
 	if (isPlaying)
 	{
 		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
 		LockOnSystem::SetRecordingSightRays(DebugRenderer::GetShowLockOnSightRays());
 		LockOnSystem::Update(entityManager, EngineTime::deltaTime, cameraForward, lookDelta);
-		EnemySystem::Update(entityManager, EngineTime::deltaTime);
+		if (!isCutscene)
+			EnemySystem::Update(entityManager, EngineTime::deltaTime);
 		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
 		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame);
 		StaminaSystem::Update(entityManager, EngineTime::deltaTime);
@@ -346,7 +351,12 @@ void Scene::Update()
 
 	// After the transforms, so the camera sees where the player and the walls really are
 	if (isPlaying)
+	{
 		FollowCameraSystem::Update(entityManager, EngineTime::deltaTime, lookDelta);
+
+		// After the follow camera: during a cutscene its camera wins
+		CutsceneSystem::Update(entityManager, EngineTime::deltaTime);
+	}
 
 	// Keeps collider gizmos following their entities while stopped
 	if (!isPlaying)
@@ -560,7 +570,10 @@ void Scene::Render(Renderer& renderer)
 
 		// Last: the HUD is drawn over the whole scene
 		const HUDArea hudArea = hasHUDArea ? HUDArea{ hudAreaTopLeft, hudAreaSize } : HUDArea{ glm::vec2(0.0f), screenSize };
-		HUDSystem::Draw(entityManager, sceneData.projectionMatrix * sceneData.viewMatrix, screenSize, hudArea);
+		if (CutsceneSystem::IsPlaying(entityManager))
+			CutsceneSystem::DrawOverlay(entityManager, screenSize, hudArea.topLeft, hudArea.size);
+		else
+			HUDSystem::Draw(entityManager, sceneData.projectionMatrix * sceneData.viewMatrix, screenSize, hudArea);
 	}
 
 }
@@ -688,6 +701,7 @@ void Scene::BeginPlay()
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);
+	CutsceneSystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

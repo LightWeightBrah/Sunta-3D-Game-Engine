@@ -76,6 +76,9 @@ BOSS_ANIMATIONS = {
     # Phase two starts with this (BossComponent.phaseTwoAnimation): it raises the axe and bursts into embers
     "Phase_Two":      MotionClip(GREAT_SWORD + "power up.fbx"),
 
+    # The boss shows itself before the fight (a Cutscene plays it): it raises its head and the axe, slams it down, roars
+    "Intro":          MotionClip("Generated/Motions/boss_intro.fbx", rig=motion_retarget.SMPL, keeps_facing=True),
+
     # Phase two fights differently (BossComponent swaps these in): a charge with a wide sweep, a combo of two chops and
     # a jump slam, and an overhead slam into the ground with a fire shockwave. Made by Meshy's Text to Motion
     "Fury_Sweep":     MotionClip("Generated/Motions/boss_charge_sweep.fbx", rig=motion_retarget.SMPL),

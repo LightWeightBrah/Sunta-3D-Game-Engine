@@ -230,7 +230,7 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 		if (!transform || !body || body->isKinematic)
 			continue;
 
-		if (controller.isPlayerControlled)
+		if (controller.isPlayerControlled && !controller.isHeldByCutscene)
 			ReadPlayerInput(controller, cameraForward, deltaTime);
 
 		// An empty stamina bar stops running (walking is free)

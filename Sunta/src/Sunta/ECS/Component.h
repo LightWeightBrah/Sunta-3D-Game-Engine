@@ -19,6 +19,7 @@
 #include "Gameplay/BossComponent.h"
 #include "Effects/ParticleEmitterComponent.h"
 #include "Effects/EnvironmentComponent.h"
+#include "Gameplay/CutsceneComponent.h"
 #include "Gameplay/FogGateComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/EnemyComponent.h"

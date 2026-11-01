@@ -64,3 +64,4 @@ Level kit (Meshy, the user's paid plan): `../Concepts/Kit/*.png` (Meshy Text to 
 `kit_generator.py`.
 
 Motions (Meshy Text to Motion): `../Generated/Motions/boss_*.fbx` (the boss's phase two) and `executioner_*.fbx` (the executioner).
+Also `../Generated/Motions/knight_parry.fbx` (the player's parry) and `boss_intro.fbx` (the boss's intro cutscene).

@@ -32,6 +32,9 @@ struct FogGateComponent
 
 	bool isCrossedWithKey = true;
 
+	// The name of a Cutscene played the first time the fog closes behind the player (the boss shows itself). Empty: none
+	std::string cutscene;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	bool isClosed  = false;
@@ -49,7 +52,8 @@ struct FogGateComponent
 				ADD_PROPERTY(FogGateComponent, arenaCenter,      PropertyDataType::Float3),
 				ADD_PROPERTY(FogGateComponent, arenaHalfExtents, PropertyDataType::Float3),
 				ADD_PROPERTY(FogGateComponent, victoryMessage,   PropertyDataType::String),
-				ADD_PROPERTY(FogGateComponent, isCrossedWithKey, PropertyDataType::Bool)
+				ADD_PROPERTY(FogGateComponent, isCrossedWithKey, PropertyDataType::Bool),
+				ADD_PROPERTY(FogGateComponent, cutscene,         PropertyDataType::String)
 			});
 	}
 };

@@ -150,7 +150,9 @@
                 "rest_animation": "Rest",
                 "roll_animation": "Roll",
                 "roll_speed": 5.5,
-                "stand_up_animation": "Stand_Up"
+                "stand_up_animation": "Stand_Up",
+                "parry_from": 0.2,
+                "parry_to": 0.5
             },
             "character_animation": {
                 "blend_seconds": 0.2,
@@ -6060,7 +6062,8 @@
                     6.0,
                     29.6
                 ],
-                "is_crossed_with_key": true
+                "is_crossed_with_key": true,
+                "cutscene": "Warden Intro"
             },
             "tag": {
                 "name": "Arena Fog"
@@ -11802,6 +11805,232 @@
                 ],
                 "intensity": 2.6,
                 "max_particles": 320
+            }
+        },
+        {
+            "tag": {
+                "name": "Warden Intro"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "cutscene": {
+                "duration_seconds": 9.5,
+                "look_at_entity": "Boss",
+                "look_at_height": 2.6,
+                "animation_entity": "Boss",
+                "animation_name": "Intro",
+                "animation_at_seconds": 2.0,
+                "title": "Warden of the Ashen Gate",
+                "title_seconds": 3.0,
+                "can_be_skipped": true,
+                "video_file": ""
+            }
+        },
+        {
+            "tag": {
+                "name": "Camera Point 1"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.4,
+                    -16.5
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 258
+            }
+        },
+        {
+            "tag": {
+                "name": "Camera Point 2"
+            },
+            "transform": {
+                "position": [
+                    5.0,
+                    3.5,
+                    -34.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 258
+            }
+        },
+        {
+            "tag": {
+                "name": "Camera Point 3"
+            },
+            "transform": {
+                "position": [
+                    4.5,
+                    2.6,
+                    -52.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 258
+            }
+        },
+        {
+            "tag": {
+                "name": "Camera Point 4"
+            },
+            "transform": {
+                "position": [
+                    1.5,
+                    1.6,
+                    -57.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 258
+            }
+        },
+        {
+            "tag": {
+                "name": "Camera Point 5"
+            },
+            "transform": {
+                "position": [
+                    -1.5,
+                    1.8,
+                    -57.5
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 258
+            }
+        },
+        {
+            "tag": {
+                "name": "Camera Point 6"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    2.6,
+                    -18.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 258
             }
         }
     ],
