@@ -4,15 +4,18 @@ General tools for making the engine's models in Blender (used by knight_generato
 Models are built from simple shapes (PartBuilder): every shape has one color of a small palette and follows one bone (or none).
 Cycles then bakes the final textures (bake_textures): the palette color with fine grain, large stains, darker crevices
 (ambient occlusion) and brighter worn edges on metal, plus a specular map. export_gltf writes what the engine loads
+A palette color can also get the surface of a photo (SurfaceTexture, the photos are in Tools/Blender/Textures)
 
 Blender axes: Z up. The glTF exporter turns them into the engine's axes (Y up)
 """
 
 import math
 import os
+from dataclasses import dataclass
 
 import bmesh
 import bpy
+import numpy
 from mathutils import Euler, Matrix, Vector
 
 FRAMES_PER_SECOND = 30
@@ -25,6 +28,12 @@ PALETTE_CELL_PIXELS = 64
 
 # A specular value above this marks metal: only metal gets brighter worn edges
 METAL_SPECULAR = 0.5
+
+# The photos for SurfaceTexture (Textures/CREDITS.md says where they come from)
+TEXTURES_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Textures")
+
+# How much the copies of a photo blend where the sides of a shape meet (box projection)
+SURFACE_PROJECTION_BLEND = 0.25
 
 # ========== Baked textures ==========
 
@@ -69,14 +78,26 @@ def matrix_aligning_z_to(head, tail):
 # ========== Palette texture ==========
 
 
+@dataclass(frozen=True)
+class SurfaceTexture:
+    """A photo that gives a palette color its surface: only the light and dark spots of the photo are used,
+    the color stays the palette's. The photo is projected onto every side of a shape (no UVs needed)"""
+    file_name: str          # in TEXTURES_FOLDER
+    meters: float = 1.0     # the size of one copy of the photo on the model
+    strength: float = 1.0   # 0 = the plain palette color, 1 = the contrast of the photo, more = stronger than the photo
+
+
 class Palette:
     """name: (diffuse RGB, specular intensity) or (diffuse RGB, specular intensity, True) for a color that glows
-    (fire, embers): it keeps its plain color, without the grain, the stains and the dark crevices of the bake"""
+    (fire, embers): it keeps its plain color, without the grain, the stains and the dark crevices of the bake
+    'surfaces' gives some colors a photo surface: {name: SurfaceTexture}"""
 
-    def __init__(self, colors):
+    def __init__(self, colors, surfaces=None):
         self.names = list(colors.keys())
         self.colors = colors
+        self.surfaces = surfaces or {}
         assert len(self.names) <= PALETTE_GRID * PALETTE_GRID
+        assert all(name in colors for name in self.surfaces)
 
     def uv(self, name):
         index = self.names.index(name)
@@ -105,15 +126,49 @@ class Palette:
                     for layer in layers:
                         pixels[layer][pixel:pixel + 4] = cell[layer]
 
-        images = []
-        for layer in ("diffuse", "specular", "glow"):
-            image = bpy.data.images.new(base_name + "_palette_" + layer, size, size, alpha=False)
-            if layer != "diffuse":
-                image.colorspace_settings.name = "Non-Color"
-            image.pixels.foreach_set(pixels[layer])
-            images.append(image)
+        return [self._make_image(base_name + "_palette_" + layer, pixels[layer], is_color=(layer == "diffuse"))
+                for layer in ("diffuse", "specular", "glow")]
 
-        return images
+    def make_surface_masks(self, base_name):
+        """[(SurfaceTexture, mask)]: the mask is white in the cells of the colors that use that photo"""
+        size = PALETTE_GRID * PALETTE_CELL_PIXELS
+        masks = []
+
+        for surface in dict.fromkeys(self.surfaces.values()):
+            pixels = [0.0] * (size * size * 4)
+            for index, name in enumerate(self.names):
+                value = 1.0 if self.surfaces.get(name) == surface else 0.0
+                column, row = index % PALETTE_GRID, index // PALETTE_GRID
+                for y in range(row * PALETTE_CELL_PIXELS, (row + 1) * PALETTE_CELL_PIXELS):
+                    for x in range(column * PALETTE_CELL_PIXELS, (column + 1) * PALETTE_CELL_PIXELS):
+                        pixel = (y * size + x) * 4
+                        pixels[pixel:pixel + 4] = [value, value, value, 1.0]
+
+            name = base_name + "_mask_" + os.path.splitext(surface.file_name)[0]
+            masks.append((surface, self._make_image(name, pixels, is_color=False)))
+
+        return masks
+
+    @staticmethod
+    def _make_image(name, pixels, is_color):
+        size = PALETTE_GRID * PALETTE_CELL_PIXELS
+        image = bpy.data.images.new(name, size, size, alpha=False)
+        if not is_color:
+            image.colorspace_settings.name = "Non-Color"
+        image.pixels.foreach_set(pixels)
+        return image
+
+
+def load_surface_photo(surface):
+    """The photo and its average color (linear, the way the shader sees it): dividing by it leaves only the light and dark spots"""
+    image = bpy.data.images.load(os.path.join(TEXTURES_FOLDER, surface.file_name), check_existing=True)
+
+    pixels = numpy.empty(len(image.pixels), dtype=numpy.float32)
+    image.pixels.foreach_get(pixels)
+    srgb = pixels.reshape(-1, 4)[:, :3]
+    linear = numpy.where(srgb <= 0.04045, srgb / 12.92, ((srgb + 0.055) / 1.055) ** 2.4)
+
+    return image, tuple(float(channel) for channel in linear.mean(axis=0))
 
 
 def make_textured_material(name, diffuse_image):
@@ -230,7 +285,7 @@ class SurfaceDetailMaterial:
     """The material the textures are baked from: the palette color made to look like used armor
     (fine grain, large stains, dark crevices, bright worn edges on metal)"""
 
-    def __init__(self, name, palette_diffuse, palette_specular, palette_glow):
+    def __init__(self, name, palette_diffuse, palette_specular, palette_glow, surface_masks=()):
         self.material = bpy.data.materials.new(name)
         self.material.use_nodes = True
         self.nodes = self.material.node_tree.nodes
@@ -257,6 +312,8 @@ class SurfaceDetailMaterial:
         worn_edges = self._math("MULTIPLY", edges, metal)
 
         color = self._multiply(diffuse.outputs["Color"], fine_grain)
+        for surface, mask in surface_masks:
+            color = self._multiply(color, self._surface_spots(surface, self._image(mask, palette_uv), object_coordinates))
         color = self._multiply(color, stains)
         color = self._multiply(color, darker_crevices)
         color = self._vector_math("ADD", color, worn_edges)
@@ -285,6 +342,33 @@ class SurfaceDetailMaterial:
         select_only([mesh_object])
         bpy.ops.object.bake(type="EMIT", margin=BAKE_MARGIN_PIXELS, use_clear=True)
         image.save()
+
+    def _surface_spots(self, surface, mask, object_coordinates):
+        """1 + (photo / its average - 1) * strength, only where the mask is white: the photo's light and dark spots around 1"""
+        photo, average = load_surface_photo(surface)
+
+        mapping = self._node("ShaderNodeMapping")
+        mapping.inputs["Scale"].default_value = [1.0 / surface.meters] * 3
+        self.links.new(object_coordinates, mapping.inputs["Vector"])
+
+        texture = self._node("ShaderNodeTexImage", image=photo, projection="BOX", projection_blend=SURFACE_PROJECTION_BLEND)
+        self.links.new(mapping.outputs["Vector"], texture.inputs["Vector"])
+
+        inverse_average = self._node("ShaderNodeCombineXYZ")
+        for axis, channel in zip("XYZ", average):
+            inverse_average.inputs[axis].default_value = 1.0 / max(channel, 0.001)
+
+        spots = self._multiply(texture.outputs["Color"], inverse_average.outputs["Vector"])
+        spots = self._vector_math("SUBTRACT", spots, self._constant(1.0))
+        spots = self._multiply(spots, mask.outputs["Color"])
+        spots = self._multiply(spots, self._constant(surface.strength))
+        return self._vector_math("ADD", spots, self._constant(1.0))
+
+    def _constant(self, value):
+        node = self._node("ShaderNodeCombineXYZ")
+        for axis in "XYZ":
+            node.inputs[axis].default_value = value
+        return node.outputs["Vector"]
 
     def _node(self, node_type, **properties):
         node = self.nodes.new(node_type)
@@ -365,7 +449,8 @@ def bake_textures(mesh_object, palette, base_name, folder, pixels):
     """Writes <base_name>_diffuse.png and <base_name>_specular.png and gives the object the material the engine reads"""
     show_only([mesh_object])
     palette_diffuse, palette_specular, palette_glow = palette.make_images(base_name)
-    detail = SurfaceDetailMaterial(base_name + "_bake", palette_diffuse, palette_specular, palette_glow)
+    surface_masks = palette.make_surface_masks(base_name)
+    detail = SurfaceDetailMaterial(base_name + "_bake", palette_diffuse, palette_specular, palette_glow, surface_masks)
 
     mesh_object.data.materials.clear()
     mesh_object.data.materials.append(detail.material)

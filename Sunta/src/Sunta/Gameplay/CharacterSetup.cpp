@@ -23,6 +23,10 @@ namespace
 constexpr const char* KnightWeaponBone = "Weapon_R";
 constexpr const char* SwordName        = "Sword";
 
+// The bone of the Knight placed exactly where a shield sits on its left hand
+constexpr const char* KnightShieldBone = "Shield_L";
+constexpr const char* ShieldName       = "Shield";
+
 template<typename T>
 bool Has(EntityManager& entityManager, unsigned int entityID)
 {
@@ -98,23 +102,54 @@ void CharacterSetup::AddFighterComponents(EntityManager& entityManager, unsigned
 		entityManager.AddComponent<HealthComponent>(entityID);
 }
 
-// The sword is a child on the weapon bone with no offset: the bone already sits where the grip goes
+namespace
+{
+
+// A model held by the character: a child on the bone with no offset, the bone already sits where the grip goes.
+// Returns false when the model has no such bone or something already hangs on it
+bool TryAddHeldModel(EntityManager& entityManager, unsigned int entityID, const char* boneName, const char* name, const char* modelName, unsigned int& outHeldID)
+{
+	if (!ModelHasBone(entityManager, entityID, boneName) || HoldsSomethingOnBone(entityManager, entityID, boneName))
+		return false;
+
+	outHeldID = CharacterSetup::CreateNamedEntity(entityManager, name, glm::vec3(0.0f), glm::vec3(0.0f));
+
+	entityManager.AddComponent<ModelComponent>(outHeldID, modelName);
+
+	ParentComponent& parent = entityManager.AddComponent<ParentComponent>(outHeldID);
+	parent.parentID = entityID;
+	parent.boneName = boneName;
+	return true;
+}
+
+}
+
 void CharacterSetup::AddSwordIfPossible(EntityManager& entityManager, unsigned int entityID, const std::string& hitboxLayerName, float damage)
 {
-	if (!ModelHasBone(entityManager, entityID, KnightWeaponBone) || HoldsSomethingOnBone(entityManager, entityID, KnightWeaponBone))
+	unsigned int swordID = 0;
+	if (!TryAddHeldModel(entityManager, entityID, KnightWeaponBone, SwordName, EngineAssets::Models::KnightSword, swordID))
 		return;
-
-	const unsigned int swordID = CreateNamedEntity(entityManager, SwordName, glm::vec3(0.0f), glm::vec3(0.0f));
-
-	entityManager.AddComponent<ModelComponent>(swordID, EngineAssets::Models::KnightSword);
-
-	ParentComponent& parent = entityManager.AddComponent<ParentComponent>(swordID);
-	parent.parentID = entityID;
-	parent.boneName = KnightWeaponBone;
 
 	HitboxComponent& hitbox = entityManager.AddComponent<HitboxComponent>(swordID);
 	hitbox.damage = damage;
 	TryFindLayer(hitboxLayerName, hitbox.layer);
+}
+
+void CharacterSetup::AddShieldIfPossible(EntityManager& entityManager, unsigned int entityID)
+{
+	unsigned int shieldID = 0;
+	if (TryAddHeldModel(entityManager, entityID, KnightShieldBone, ShieldName, EngineAssets::Models::KnightShield, shieldID))
+		entityManager.AddComponent<ShieldComponent>(shieldID);
+}
+
+void CharacterSetup::AddPoiseIfMissing(EntityManager& entityManager, unsigned int entityID, float maxPoise)
+{
+	if (Has<PoiseComponent>(entityManager, entityID))
+		return;
+
+	PoiseComponent& poise = entityManager.AddComponent<PoiseComponent>(entityID);
+	poise.maxPoise     = maxPoise;
+	poise.currentPoise = maxPoise;
 }
 
 void CharacterSetup::SetBodyLayer(EntityManager& entityManager, unsigned int entityID, const std::string& layerName)

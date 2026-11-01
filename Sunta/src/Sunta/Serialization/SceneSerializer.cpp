@@ -43,6 +43,8 @@ namespace SceneKeys
 	constexpr const char* HealthComponent           = "health";
 	constexpr const char* StaminaComponent          = "stamina";
 	constexpr const char* HitboxComponent           = "hitbox";
+	constexpr const char* ShieldComponent           = "shield";
+	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* EnemyComponent            = "enemy";
 	constexpr const char* MeleeEnemyComponent       = "melee_enemy";
 	constexpr const char* PlayerHUDComponent        = "player_hud";
@@ -128,6 +130,9 @@ namespace SceneKeys
 	constexpr const char* IdleAnimation             = "idle_animation";
 	constexpr const char* WalkAnimation             = "walk_animation";
 	constexpr const char* RunAnimation              = "run_animation";
+	constexpr const char* WalkBackAnimation         = "walk_back_animation";
+	constexpr const char* StrafeLeftAnimation       = "strafe_left_animation";
+	constexpr const char* StrafeRightAnimation      = "strafe_right_animation";
 	constexpr const char* BlendSeconds              = "blend_seconds";
 
 	constexpr const char* IsLockable                = "is_lockable";
@@ -149,6 +154,14 @@ namespace SceneKeys
 	constexpr const char* HitReactionAnimation      = "hit_reaction_animation";
 	constexpr const char* DeathAnimation            = "death_animation";
 	constexpr const char* RestAnimation             = "rest_animation";
+	constexpr const char* StandUpAnimation          = "stand_up_animation";
+	constexpr const char* BlockAnimation            = "block_animation";
+	constexpr const char* BlockImpactAnimation      = "block_impact_animation";
+	constexpr const char* ParryAnimation            = "parry_animation";
+	constexpr const char* ParriedAnimation          = "parried_animation";
+	constexpr const char* ParryFrom                 = "parry_from";
+	constexpr const char* ParryTo                   = "parry_to";
+	constexpr const char* RiposteDamageMultiplier   = "riposte_damage_multiplier";
 	constexpr const char* LightHitFrom              = "light_hit_from";
 	constexpr const char* LightHitTo                = "light_hit_to";
 	constexpr const char* HeavyHitFrom              = "heavy_hit_from";
@@ -164,9 +177,18 @@ namespace SceneKeys
 	constexpr const char* BackstepCost              = "backstep_cost";
 	constexpr const char* LightAttackCost           = "light_attack_cost";
 	constexpr const char* HeavyAttackCost           = "heavy_attack_cost";
+	constexpr const char* ParryCost                 = "parry_cost";
 	constexpr const char* RunCostPerSecond          = "run_cost_per_second";
 
 	constexpr const char* Damage                    = "damage";
+	constexpr const char* PoiseDamage               = "poise_damage";
+
+	constexpr const char* GuardAngleDegrees         = "guard_angle_degrees";
+	constexpr const char* DamageThrough             = "damage_through";
+	constexpr const char* StaminaPerDamage          = "stamina_per_damage";
+
+	constexpr const char* MaxPoise                  = "max_poise";
+	constexpr const char* RecoverAfterSeconds       = "recover_after_seconds";
 
 	constexpr const char* SightDistance             = "sight_distance";
 	constexpr const char* SightAngleDegrees         = "sight_angle_degrees";
@@ -465,6 +487,9 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::IdleAnimation, characterAnimation->idleAnimation },
 				{ SceneKeys::WalkAnimation, characterAnimation->walkAnimation },
 				{ SceneKeys::RunAnimation,  characterAnimation->runAnimation  },
+				{ SceneKeys::WalkBackAnimation,    characterAnimation->walkBackAnimation    },
+				{ SceneKeys::StrafeLeftAnimation,  characterAnimation->strafeLeftAnimation  },
+				{ SceneKeys::StrafeRightAnimation, characterAnimation->strafeRightAnimation },
 				{ SceneKeys::BlendSeconds,  characterAnimation->blendSeconds  }
 			};
 		}
@@ -532,6 +557,14 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::HitReactionAnimation,  actions->hitReactionAnimation  },
 				{ SceneKeys::DeathAnimation,        actions->deathAnimation        },
 				{ SceneKeys::RestAnimation,         actions->restAnimation         },
+				{ SceneKeys::StandUpAnimation,      actions->standUpAnimation      },
+				{ SceneKeys::BlockAnimation,        actions->blockAnimation        },
+				{ SceneKeys::BlockImpactAnimation,  actions->blockImpactAnimation  },
+				{ SceneKeys::ParryAnimation,        actions->parryAnimation        },
+				{ SceneKeys::ParriedAnimation,      actions->parriedAnimation      },
+				{ SceneKeys::ParryFrom,             actions->parryFrom             },
+				{ SceneKeys::ParryTo,               actions->parryTo               },
+				{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
 				{ SceneKeys::LightHitFrom,          actions->lightHitFrom          },
 				{ SceneKeys::LightHitTo,            actions->lightHitTo            },
 				{ SceneKeys::HeavyHitFrom,          actions->heavyHitFrom          },
@@ -556,6 +589,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::BackstepCost,             stamina->backstepCost             },
 				{ SceneKeys::LightAttackCost,          stamina->lightAttackCost          },
 				{ SceneKeys::HeavyAttackCost,          stamina->heavyAttackCost          },
+				{ SceneKeys::ParryCost,                stamina->parryCost                },
 				{ SceneKeys::RunCostPerSecond,         stamina->runCostPerSecond         }
 			};
 		}
@@ -565,10 +599,30 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			entityJson[SceneKeys::HitboxComponent] =
 			{
 				{ SceneKeys::Damage,                     hitbox->damage       },
+				{ SceneKeys::PoiseDamage,                hitbox->poiseDamage  },
 				{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
 				{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
 				{ SceneKeys::Layer, static_cast<unsigned int>(hitbox->layer)  },
 				{ SceneKeys::ShowGizmos,                 hitbox->showGizmos   }
+			};
+		}
+
+		if (auto* shield = entityManager.GetComponent<ShieldComponent>(i))
+		{
+			entityJson[SceneKeys::ShieldComponent] =
+			{
+				{ SceneKeys::GuardAngleDegrees, shield->guardAngleDegrees },
+				{ SceneKeys::DamageThrough,     shield->damageThrough     },
+				{ SceneKeys::StaminaPerDamage,  shield->staminaPerDamage  }
+			};
+		}
+
+		if (auto* poise = entityManager.GetComponent<PoiseComponent>(i))
+		{
+			entityJson[SceneKeys::PoiseComponent] =
+			{
+				{ SceneKeys::MaxPoise,            poise->maxPoise            },
+				{ SceneKeys::RecoverAfterSeconds, poise->recoverAfterSeconds }
 			};
 		}
 
@@ -906,6 +960,9 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			characterAnimation.idleAnimation = animationData.value(SceneKeys::IdleAnimation, characterAnimation.idleAnimation);
 			characterAnimation.walkAnimation = animationData.value(SceneKeys::WalkAnimation, characterAnimation.walkAnimation);
 			characterAnimation.runAnimation  = animationData.value(SceneKeys::RunAnimation,  characterAnimation.runAnimation);
+			characterAnimation.walkBackAnimation    = animationData.value(SceneKeys::WalkBackAnimation,    characterAnimation.walkBackAnimation);
+			characterAnimation.strafeLeftAnimation  = animationData.value(SceneKeys::StrafeLeftAnimation,  characterAnimation.strafeLeftAnimation);
+			characterAnimation.strafeRightAnimation = animationData.value(SceneKeys::StrafeRightAnimation, characterAnimation.strafeRightAnimation);
 			characterAnimation.blendSeconds  = animationData.value(SceneKeys::BlendSeconds,  characterAnimation.blendSeconds);
 		}
 
@@ -976,6 +1033,14 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.hitReactionAnimation  = actionsData.value(SceneKeys::HitReactionAnimation,  actions.hitReactionAnimation);
 			actions.deathAnimation        = actionsData.value(SceneKeys::DeathAnimation,        actions.deathAnimation);
 			actions.restAnimation         = actionsData.value(SceneKeys::RestAnimation,         actions.restAnimation);
+			actions.standUpAnimation      = actionsData.value(SceneKeys::StandUpAnimation,      actions.standUpAnimation);
+			actions.blockAnimation        = actionsData.value(SceneKeys::BlockAnimation,        actions.blockAnimation);
+			actions.blockImpactAnimation  = actionsData.value(SceneKeys::BlockImpactAnimation,  actions.blockImpactAnimation);
+			actions.parryAnimation        = actionsData.value(SceneKeys::ParryAnimation,        actions.parryAnimation);
+			actions.parriedAnimation      = actionsData.value(SceneKeys::ParriedAnimation,      actions.parriedAnimation);
+			actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
+			actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
+			actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
 			actions.lightHitFrom          = actionsData.value(SceneKeys::LightHitFrom,          actions.lightHitFrom);
 			actions.lightHitTo            = actionsData.value(SceneKeys::LightHitTo,            actions.lightHitTo);
 			actions.heavyHitFrom          = actionsData.value(SceneKeys::HeavyHitFrom,          actions.heavyHitFrom);
@@ -1003,6 +1068,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			stamina.backstepCost             = staminaData.value(SceneKeys::BackstepCost,             stamina.backstepCost);
 			stamina.lightAttackCost          = staminaData.value(SceneKeys::LightAttackCost,          stamina.lightAttackCost);
 			stamina.heavyAttackCost          = staminaData.value(SceneKeys::HeavyAttackCost,          stamina.heavyAttackCost);
+			stamina.parryCost                = staminaData.value(SceneKeys::ParryCost,                stamina.parryCost);
 			stamina.runCostPerSecond         = staminaData.value(SceneKeys::RunCostPerSecond,         stamina.runCostPerSecond);
 			stamina.currentStamina           = stamina.maxStamina;
 		}
@@ -1012,7 +1078,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			const auto& hitboxData = entityJson[SceneKeys::HitboxComponent];
 			auto& hitbox = entityManager.AddComponent<HitboxComponent>(entity);
 
-			hitbox.damage     = hitboxData.value(SceneKeys::Damage,     hitbox.damage);
+			hitbox.damage      = hitboxData.value(SceneKeys::Damage,      hitbox.damage);
+			hitbox.poiseDamage = hitboxData.value(SceneKeys::PoiseDamage, hitbox.poiseDamage);
 			hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
 			hitbox.layer      = static_cast<CollisionLayer>(hitboxData.value(SceneKeys::Layer, static_cast<unsigned int>(hitbox.layer)));
 
@@ -1021,6 +1088,26 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			if (hitboxData.contains(SceneKeys::HalfExtents))
 				hitbox.halfExtents = DeserializeVec3(hitboxData[SceneKeys::HalfExtents]);
+		}
+
+		if (entityJson.contains(SceneKeys::ShieldComponent))
+		{
+			const auto& shieldData = entityJson[SceneKeys::ShieldComponent];
+			auto& shield = entityManager.AddComponent<ShieldComponent>(entity);
+
+			shield.guardAngleDegrees = shieldData.value(SceneKeys::GuardAngleDegrees, shield.guardAngleDegrees);
+			shield.damageThrough     = shieldData.value(SceneKeys::DamageThrough,     shield.damageThrough);
+			shield.staminaPerDamage  = shieldData.value(SceneKeys::StaminaPerDamage,  shield.staminaPerDamage);
+		}
+
+		if (entityJson.contains(SceneKeys::PoiseComponent))
+		{
+			const auto& poiseData = entityJson[SceneKeys::PoiseComponent];
+			auto& poise = entityManager.AddComponent<PoiseComponent>(entity);
+
+			poise.maxPoise            = poiseData.value(SceneKeys::MaxPoise,            poise.maxPoise);
+			poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
+			poise.currentPoise        = poise.maxPoise;
 		}
 
 		if (entityJson.contains(SceneKeys::EnemyComponent))

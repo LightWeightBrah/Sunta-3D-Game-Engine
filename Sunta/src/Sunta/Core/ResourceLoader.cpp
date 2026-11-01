@@ -121,6 +121,7 @@ void ResourceLoader::LoadModels()
 	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj", 0.5f);
 	ResourceManager::LoadModel(Models::Knight,      "@engine/Models/Knight/knight.gltf");
 	ResourceManager::LoadModel(Models::KnightSword, "@engine/Models/KnightSword/knight_sword.gltf");
+	ResourceManager::LoadModel(Models::KnightShield, "@engine/Models/KnightShield/knight_shield.gltf");
 	ResourceManager::LoadModel(Models::RustedKnight, "@engine/Models/RustedKnight/rusted_knight.gltf");
 	ResourceManager::LoadModel(Models::Bonfire,      "@engine/Models/Bonfire/bonfire.gltf");
 

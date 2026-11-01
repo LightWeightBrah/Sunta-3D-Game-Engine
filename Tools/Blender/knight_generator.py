@@ -1,5 +1,5 @@
 """
-Generates the Knight player model, its animations and its sword for the Sunta engine.
+Generates the Knight player model, its animations, its sword and its shield for the Sunta engine.
 
 Run (from the repository root):
     blender --background --factory-startup --python Tools/Blender/knight_generator.py -- --out Sunta/res/Models
@@ -8,6 +8,7 @@ Writes:
     <out>/Knight/knight.gltf (+ .bin, knight_diffuse.png, knight_specular.png)                   the player
     <out>/RustedKnight/rusted_knight.gltf (+ .bin, rusted_knight_diffuse.png, ...)               the enemy: same body, rusted armor
     <out>/KnightSword/knight_sword.gltf (+ .bin, knight_sword_diffuse.png, knight_sword_specular.png)
+    <out>/KnightShield/knight_shield.gltf (+ .bin, knight_shield_diffuse.png, knight_shield_specular.png)
 Optional: --preview <folder> renders pictures of the model and of every animation, --blend <file> saves the .blend,
 --icons <folder> renders the editor icons (souls_player_icon.png, rusted_knight_icon.png: pictures of the helmets)
 
@@ -18,8 +19,9 @@ Conventions (Blender axes): X = the knight's right, Y = forward, Z = up
 The glTF exporter turns this into the engine's axes: Y up and forward along -Z
 
 Every armor piece follows exactly one bone (rigid skinning), the joints are hidden under overlapping plates
-The sword is a separate model. The bone 'Weapon_R' in the right hand is placed so that the sword attached to it
-without any offset sits in the hand (in the engine: the sword is a child entity on that bone)
+The animations are Mixamo motion capture moved onto this skeleton (see ANIMATIONS): the Mixamo files must be downloaded first
+The sword and the shield are separate models. The bones 'Weapon_R' (right hand) and 'Shield_L' (left hand) are placed
+so that the model attached to them without any offset sits in the hand (in the engine: a child entity on that bone)
 """
 
 import argparse
@@ -32,12 +34,13 @@ from mathutils import Matrix, Quaternion, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from mixamo_retarget import MixamoClip, retarget  # noqa: E402
 from sunta_blender import (  # noqa: E402
     Palette,
     PartBuilder,
+    SurfaceTexture,
     bake_textures,
     clear_scene,
-    degrees_to_quaternion,
     export_gltf,
     make_matrix,
     place_preview_camera,
@@ -70,6 +73,40 @@ RUSTED_COLORS = {
     "leather_dark": ((0.08, 0.06, 0.04), 0.05),
     "brass":        ((0.26, 0.19, 0.09), 0.35),
     "black":        ((0.01, 0.01, 0.01), 0.00),
+}
+
+# Photo surfaces (Poly Haven, CC0): leather straps on both, the enemy's armor eaten by rust
+LEATHER_SURFACE = SurfaceTexture("brown_leather_diff_1k.jpg", meters=0.3)
+RUST_SURFACE = SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.5)
+
+KNIGHT_SURFACES = {
+    "leather":      LEATHER_SURFACE,
+    "leather_dark": LEATHER_SURFACE,
+}
+
+RUSTED_SURFACES = {
+    "steel":        RUST_SURFACE,
+    "steel_dark":   RUST_SURFACE,
+    "steel_worn":   RUST_SURFACE,
+    "mail":         SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.5, strength=0.6),
+    "leather":      LEATHER_SURFACE,
+    "leather_dark": LEATHER_SURFACE,
+}
+
+SHIELD_COLORS = {
+    "wood":       ((0.30, 0.21, 0.13), 0.10),
+    "paint":      ((0.30, 0.07, 0.05), 0.15),
+    "iron":       ((0.24, 0.24, 0.25), 0.60),
+    "steel":      ((0.40, 0.41, 0.43), 0.75),
+    "steel_dark": ((0.20, 0.21, 0.22), 0.55),
+    "leather":    ((0.22, 0.14, 0.08), 0.12),
+}
+
+SHIELD_SURFACES = {
+    "wood":    SurfaceTexture("old_wood_floor_diff_1k.jpg", meters=0.6),
+    "paint":   SurfaceTexture("old_wood_floor_diff_1k.jpg", meters=0.6, strength=0.6),
+    "iron":    SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.4, strength=0.5),
+    "leather": LEATHER_SURFACE,
 }
 
 SWORD_COLORS = {
@@ -120,12 +157,26 @@ SKELETON = [
 
 WEAPON_BONE = "Weapon_R"
 WEAPON_PARENT_BONE = "Hand_R"
-WEAPON_BONE_LENGTH = 0.15
+SHIELD_BONE = "Shield_L"
+SHIELD_PARENT_BONE = "Hand_L"
+HELD_ITEM_BONE_LENGTH = 0.15
 
 # Where the sword grip sits in the rest pose (the middle of the right fist) and where its blade points:
 # forward and 55 degrees down, the edges up and down
 SWORD_GRIP_POSITION = Vector((0.25, 0.045, 0.855))
 SWORD_BLADE_DOWN_DEGREES = 55.0
+
+# The shield is held by a grip behind its middle: in the rest pose (arm hanging) it covers the outside of the left forearm,
+# its face looking away from the body and its top forward. Raising the forearm across the chest (Mixamo's block)
+# then turns the face forward
+SHIELD_CENTER = Vector((-0.32, 0.02, 1.04))
+SHIELD_FACE = Vector((-1.0, 0.0, 0.0))
+SHIELD_TOP = Vector((0.0, 1.0, 0.0))
+
+# ========== Shield size (meters) ==========
+
+SHIELD_RADIUS = 0.30
+SHIELD_THICKNESS = 0.03
 
 # ========== Sword size (meters) ==========
 
@@ -168,15 +219,21 @@ def build_skeleton():
             bone.parent = edit_bones[parent]
             bone.use_connect = False
 
-    weapon = edit_bones.new(WEAPON_BONE)
-    # A new bone has no length and no direction, it takes the matrix only after it got some
-    weapon.head, weapon.tail = (0.0, 0.0, 0.0), (0.0, WEAPON_BONE_LENGTH, 0.0)
-    weapon.matrix = get_weapon_bone_matrix()
-    weapon.parent = edit_bones[WEAPON_PARENT_BONE]
-    weapon.use_deform = False
+    add_held_item_bone(edit_bones, WEAPON_BONE, WEAPON_PARENT_BONE, get_sword_rest_matrix())
+    add_held_item_bone(edit_bones, SHIELD_BONE, SHIELD_PARENT_BONE, get_shield_rest_matrix())
 
     bpy.ops.object.mode_set(mode="OBJECT")
     return armature
+
+
+def add_held_item_bone(edit_bones, name, parent_name, item_rest_matrix):
+    """A bone that carries a held model: the model attached to it without any offset stands at 'item_rest_matrix'"""
+    bone = edit_bones.new(name)
+    # A new bone has no length and no direction, it takes the matrix only after it got some
+    bone.head, bone.tail = (0.0, 0.0, 0.0), (0.0, HELD_ITEM_BONE_LENGTH, 0.0)
+    bone.matrix = get_held_item_bone_matrix(item_rest_matrix)
+    bone.parent = edit_bones[parent_name]
+    bone.use_deform = False
 
 
 def get_sword_rest_matrix():
@@ -189,14 +246,21 @@ def get_sword_rest_matrix():
     return Matrix.Translation(SWORD_GRIP_POSITION) @ rotation.to_4x4()
 
 
+def get_shield_rest_matrix():
+    """Where the shield object stands in the rest pose (Blender axes, shield built facing +Z with its top along +Y)"""
+    side = SHIELD_TOP.cross(SHIELD_FACE)
+    rotation = Matrix((side, SHIELD_TOP, SHIELD_FACE)).transposed()
+    return Matrix.Translation(SHIELD_CENTER) @ rotation.to_4x4()
+
+
 # The glTF exporter turns Blender axes (Z up) into glTF axes (Y up): (x, y, z) -> (x, z, -y)
 BLENDER_TO_GLTF = Matrix(((1, 0, 0, 0), (0, 0, 1, 0), (0, -1, 0, 0), (0, 0, 0, 1)))
 
 
-def get_weapon_bone_matrix():
-    """The sword file is converted to glTF axes on its own, the bone must carry the same frame:
-    bone frame in glTF = sword placement in glTF, so in Blender the bone frame is sword frame * (Blender->glTF)^-1"""
-    return get_sword_rest_matrix() @ BLENDER_TO_GLTF.inverted()
+def get_held_item_bone_matrix(item_rest_matrix):
+    """The held model's file is converted to glTF axes on its own, the bone must carry the same frame:
+    bone frame in glTF = model placement in glTF, so in Blender the bone frame is model frame * (Blender->glTF)^-1"""
+    return item_rest_matrix @ BLENDER_TO_GLTF.inverted()
 
 
 def build_head(parts):
@@ -306,6 +370,41 @@ def build_knight_mesh(armature, palette, name):
     return parts.to_object(name, armature)
 
 
+# ========== The shield ==========
+
+
+def build_shield_mesh(palette):
+    """A round wooden shield: painted planks in an iron rim, a steel boss and rivets on the face, a leather grip behind.
+    Built with the grip at the origin, the face towards +Z and the top along +Y"""
+    parts = PartBuilder(palette)
+    face_z = SHIELD_THICKNESS * 0.5
+
+    # The rim is thinner than the planks, so only its edge shows: no two surfaces may lie in one plane,
+    # the graphics card would draw one or the other from frame to frame (flickering)
+    parts.cylinder(None, "iron", make_matrix((0.0, 0.0, 0.0)), SHIELD_RADIUS + 0.015, SHIELD_RADIUS + 0.015, SHIELD_THICKNESS - 0.01, segments=40)
+    parts.cylinder(None, "wood", make_matrix((0.0, 0.0, 0.0)), SHIELD_RADIUS, SHIELD_RADIUS, SHIELD_THICKNESS, segments=40)
+    parts.cylinder(None, "paint", make_matrix((0.0, 0.0, face_z + 0.002)), SHIELD_RADIUS - 0.012, SHIELD_RADIUS - 0.012, 0.006, segments=40)
+
+    # A pale band across the paint, under the boss
+    parts.box(None, "wood", (0.0, 0.0, face_z + 0.004), (0.09, SHIELD_RADIUS * 1.9, 0.006), bevel=0.002)
+
+    parts.half_sphere(None, "steel", (0.0, 0.0, face_z + 0.004), (0.075, 0.075, 0.06), segments=24, rings=10)
+    parts.cylinder(None, "steel_dark", make_matrix((0.0, 0.0, face_z + 0.006)), 0.095, 0.095, 0.008, segments=24)
+
+    for index in range(12):
+        angle = 2.0 * math.pi * index / 12
+        location = (math.cos(angle) * (SHIELD_RADIUS - 0.03), math.sin(angle) * (SHIELD_RADIUS - 0.03), face_z + 0.006)
+        parts.sphere(None, "steel_dark", location, (0.011, 0.011, 0.008), segments=8, rings=6)
+
+    # The grip behind the boss, across the shield, and the strap over the forearm
+    parts.box(None, "leather", (0.0, 0.0, -face_z - 0.035), (0.13, 0.03, 0.025))
+    parts.box(None, "iron", (-0.08, 0.0, -face_z - 0.018), (0.02, 0.035, 0.035))
+    parts.box(None, "iron", (0.08, 0.0, -face_z - 0.018), (0.02, 0.035, 0.035))
+    parts.box(None, "leather", (0.0, -0.12, -face_z - 0.03), (0.16, 0.035, 0.012))
+
+    return parts.to_object("KnightShield")
+
+
 # ========== The sword ==========
 
 
@@ -384,331 +483,63 @@ def add_blade(parts, blade_start, blade_end):
 
 # ========== Animations ==========
 
-# A pose is {bone: (x, y, z) degrees}, a rotation relative to the rest pose expressed in the axes of the knight
-# (X = right, Y = forward, Z = up), so +X swings a hanging limb forward and bends the spine backward,
-# +Z turns to the left and +Y tips the top of a bone to the right. 'Hips' may also have "location" (meters)
-# Every bone inherits the turn of its parent, like in any skeleton
+# The motion comes from Mixamo (motion capture), moved onto the knight's skeleton by mixamo_retarget.py
+# Every animation is a part of one Mixamo file (Mixamo frames at 30 fps, inclusive) played at some speed
+# The engine finds the animations by these names (Character Animation, Character Actions), so they stay the same
+#
+# Files (downloaded as "FBX Binary, Without Skin" into Tools/Blender/Mixamo, see MIXAMO_FOLDER):
+#   ProSwordShield/   the "Pro Sword And Shield Pack", unzipped
+#   Sprinting Forward Roll.fbx, Standing Dodge Backward.fbx, Kneel Campfire.fbx ("Kneel", warming hands over a campfire)
+#
+# The attacks are cut so that the blade strikes inside the hit windows of Character Actions
+# (light: 0.28..0.56 of the animation, heavy: 0.45..0.66), check with check_attack_reach.py
 
-MIRRORED_BONE_NAMES = {}
-for _name, *_ in SKELETON:
-    if _name.endswith("_R"):
-        MIRRORED_BONE_NAMES[_name] = _name[:-2] + "_L"
-        MIRRORED_BONE_NAMES[_name[:-2] + "_L"] = _name
-
-
-def mirror_pose(pose):
-    """The same pose for the other side of the body (left becomes right)"""
-    mirrored = {}
-    for bone, value in pose.items():
-        if bone == "location":
-            mirrored[bone] = (-value[0], value[1], value[2])
-            continue
-        x, y, z = value
-        mirrored[MIRRORED_BONE_NAMES.get(bone, bone)] = (x, -y, -z)
-    return mirrored
-
-
-def combine(*poses):
-    """Adds poses together (angles and locations are summed per axis)"""
-    result = {}
-    for pose in poses:
-        for bone, value in pose.items():
-            previous = result.get(bone, (0.0, 0.0, 0.0))
-            result[bone] = tuple(a + b for a, b in zip(previous, value))
-    return result
-
-
-# The ready stance the knight returns to: knees soft, sword held low in front
-STANCE = {
-    "location": (0.0, 0.0, -0.03),
-    "Spine": (-4, 0, 0), "Chest": (-3, 0, 4), "Neck": (3, 0, -2), "Head": (4, 0, -2),
-    "Thigh_R": (18, 0, -4), "Shin_R": (-30, 0, 0), "Foot_R": (12, 0, 4),
-    "Thigh_L": (14, 0, 6), "Shin_L": (-26, 0, 0), "Foot_L": (12, 0, -6),
-    "Shoulder_R": (0, 0, 0), "UpperArm_R": (14, -6, 0), "LowerArm_R": (38, 0, 0), "Hand_R": (-8, 0, 0),
-    "Shoulder_L": (0, 0, 0), "UpperArm_L": (6, 8, 0), "LowerArm_L": (22, 0, 0), "Hand_L": (0, 0, 0),
-}
-
-UPPER_BODY_STANCE = {bone: value for bone, value in STANCE.items()
-                     if bone not in ("location",) and not bone.startswith(("Thigh", "Shin", "Foot"))}
-
-
-def idle_animation():
-    breathe_in = combine(STANCE, {"location": (0, 0, -0.008), "Chest": (2, 0, 0), "Head": (-2, 0, 0),
-                                  "UpperArm_L": (0, 2, 0), "UpperArm_R": (2, -1, 0)})
-    return [(0, STANCE), (30, breathe_in), (60, STANCE)]
-
-
-def walk_step(right_leg_forward):
-    """Right foot touches the ground in front, the left one pushes off behind"""
-    contact = combine(UPPER_BODY_STANCE, {
-        "location": (0.0, 0.0, -0.045),
-        "Hips": (0, 0, 6), "Chest": (0, 0, -9), "Spine": (-2, 0, 0),
-        "Thigh_R": (28, 0, 0), "Shin_R": (-6, 0, 0), "Foot_R": (-12, 0, 0),
-        "Thigh_L": (-20, 0, 0), "Shin_L": (-24, 0, 0), "Foot_L": (24, 0, 0),
-        "UpperArm_L": (22, 0, 0), "LowerArm_L": (12, 0, 0),
-        "UpperArm_R": (-12, 0, 0),
-    })
-    passing = combine(UPPER_BODY_STANCE, {
-        "location": (0.0, 0.0, -0.005),
-        "Hips": (0, 0, 1), "Chest": (0, 0, -2),
-        "Thigh_R": (2, 0, 0), "Shin_R": (-8, 0, 0), "Foot_R": (6, 0, 0),
-        "Thigh_L": (24, 0, 0), "Shin_L": (-58, 0, 0), "Foot_L": (20, 0, 0),
-        "UpperArm_L": (4, 0, 0), "UpperArm_R": (-2, 0, 0),
-    })
-    if right_leg_forward:
-        return contact, passing
-    return mirror_pose(contact), mirror_pose(passing)
-
-
-def walk_animation():
-    contact_right, passing_right = walk_step(True)
-    contact_left, passing_left = walk_step(False)
-    return [(0, contact_right), (8, passing_right), (15, contact_left), (23, passing_left), (30, contact_right)]
-
-
-def run_step(right_leg_forward):
-    lean = {"Spine": (-8, 0, 0), "Chest": (-6, 0, 0), "Neck": (6, 0, 0), "Head": (6, 0, 0)}
-    arms = {"LowerArm_R": (55, 0, 0), "LowerArm_L": (70, 0, 0), "Hand_R": (-45, 0, 0)}
-    contact = combine(lean, arms, {
-        "location": (0.0, 0.0, -0.07),
-        "Hips": (0, 0, 9), "Chest": (0, 0, -16),
-        "Thigh_R": (40, 0, 0), "Shin_R": (-22, 0, 0), "Foot_R": (-6, 0, 0),
-        "Thigh_L": (-28, 0, 0), "Shin_L": (-40, 0, 0), "Foot_L": (28, 0, 0),
-        "UpperArm_L": (40, 6, 0), "UpperArm_R": (-30, -6, 0),
-    })
-    flight = combine(lean, arms, {
-        "location": (0.0, 0.0, 0.02),
-        "Hips": (0, 0, 3), "Chest": (0, 0, -5),
-        "Thigh_R": (12, 0, 0), "Shin_R": (-30, 0, 0), "Foot_R": (10, 0, 0),
-        "Thigh_L": (30, 0, 0), "Shin_L": (-100, 0, 0), "Foot_L": (24, 0, 0),
-        "UpperArm_L": (8, 6, 0), "UpperArm_R": (0, -6, 0),
-    })
-    if right_leg_forward:
-        return contact, flight
-    return mirror_pose(contact), mirror_pose(flight)
-
-
-def run_animation():
-    contact_right, flight_right = run_step(True)
-    contact_left, flight_left = run_step(False)
-    return [(0, contact_right), (5, flight_right), (10, contact_left), (15, flight_left), (20, contact_right)]
-
-
-def tucked_body(hips_pitch, hips_drop, tuck=1.0):
-    """The knight curled into a ball and turned forward by 'hips_pitch' degrees"""
-    return {
-        "location": (0.0, 0.0, -hips_drop),
-        "Hips": (-hips_pitch, 0, 0),
-        "Spine": (-35 * tuck, 0, 0), "Chest": (-30 * tuck, 0, 0), "Neck": (-25 * tuck, 0, 0), "Head": (-10 * tuck, 0, 0),
-        "Thigh_R": (105 * tuck, 0, 0), "Shin_R": (-130 * tuck, 0, 0), "Foot_R": (30 * tuck, 0, 0),
-        "Thigh_L": (100 * tuck, 0, 0), "Shin_L": (-125 * tuck, 0, 0), "Foot_L": (30 * tuck, 0, 0),
-        "UpperArm_R": (60 * tuck, -10, 0), "LowerArm_R": (90 * tuck, 0, 0),
-        "UpperArm_L": (70 * tuck, 15, 0), "LowerArm_L": (100 * tuck, 0, 0),
-    }
-
-
-def roll_animation():
-    crouch = combine(STANCE, {"location": (0, 0, -0.16), "Spine": (-25, 0, 0), "Chest": (-10, 0, 0),
-                              "Thigh_R": (45, 0, 0), "Shin_R": (-70, 0, 0), "Foot_R": (20, 0, 0),
-                              "Thigh_L": (40, 0, 0), "Shin_L": (-65, 0, 0), "Foot_L": (20, 0, 0)})
-    landing = combine(STANCE, {"location": (0, 0, -0.22), "Hips": (-20, 0, 0), "Spine": (-10, 0, 0),
-                               "Thigh_R": (70, 0, 0), "Shin_R": (-95, 0, 0), "Foot_R": (10, 0, 0),
-                               "Thigh_L": (55, 0, 0), "Shin_L": (-90, 0, 0), "Foot_L": (25, 0, 0),
-                               "UpperArm_L": (20, 25, 0)})
-    return [
-        (0, STANCE),
-        (3, crouch),
-        (6, tucked_body(80, 0.36, 0.8)),
-        (9, tucked_body(165, 0.50)),
-        (12, tucked_body(250, 0.50)),
-        (15, tucked_body(320, 0.34, 0.9)),
-        (18, landing),
-        (26, STANCE),
-    ]
-
-
-def backstep_animation():
-    push = combine(STANCE, {"location": (0, 0, -0.08), "Spine": (-12, 0, 0), "Chest": (-6, 0, 0),
-                            "Thigh_R": (30, 0, 0), "Shin_R": (-50, 0, 0), "Foot_R": (18, 0, 0),
-                            "Thigh_L": (24, 0, 0), "Shin_L": (-48, 0, 0), "Foot_L": (22, 0, 0)})
-    airborne = combine(STANCE, {"location": (0, 0, 0.02), "Spine": (-14, 0, 0), "Chest": (-4, 0, 0),
-                                "Thigh_R": (30, 0, 0), "Shin_R": (-40, 0, 0), "Foot_R": (-10, 0, 0),
-                                "Thigh_L": (10, 0, 0), "Shin_L": (-30, 0, 0), "Foot_L": (-10, 0, 0),
-                                "UpperArm_L": (20, 20, 0), "UpperArm_R": (10, -15, 0)})
-    landing = combine(STANCE, {"location": (0, 0, -0.10), "Spine": (-10, 0, 0),
-                               "Thigh_R": (40, 0, 0), "Shin_R": (-60, 0, 0), "Foot_R": (20, 0, 0),
-                               "Thigh_L": (30, 0, 0), "Shin_L": (-58, 0, 0), "Foot_L": (28, 0, 0)})
-    return [(0, STANCE), (3, push), (7, airborne), (11, landing), (18, STANCE)]
-
-
-def attack_pose(torso_turn, lean, arm, elbow, wrist, legs=None, drop=0.03, left_arm=(6, 14, 0)):
-    """'torso_turn' > 0 turns the chest to the left, 'arm' is the rotation of the right upper arm (x, y, z)"""
-    pose = {
-        "location": (0.0, 0.0, -drop),
-        "Hips": (0, 0, torso_turn * 0.3),
-        "Spine": (lean * 0.5, 0, torso_turn * 0.35), "Chest": (lean * 0.5, 0, torso_turn * 0.35),
-        "Neck": (-lean * 0.4, 0, -torso_turn * 0.4), "Head": (-lean * 0.3, 0, -torso_turn * 0.3),
-        "UpperArm_R": arm, "LowerArm_R": (elbow, 0, 0), "Hand_R": wrist,
-        "UpperArm_L": left_arm, "LowerArm_L": (40, 0, 0),
-    }
-    pose.update(legs if legs is not None else {
-        "Thigh_R": (14, 0, -4), "Shin_R": (-28, 0, 0), "Foot_R": (14, 0, 4),
-        "Thigh_L": (14, 0, 6), "Shin_L": (-28, 0, 0), "Foot_L": (14, 0, -6),
-    })
-    return pose
-
-
-LUNGE_RIGHT = {"Thigh_R": (42, 0, 0), "Shin_R": (-50, 0, 0), "Foot_R": (8, 0, 0),
-               "Thigh_L": (-14, 0, 6), "Shin_L": (-24, 0, 0), "Foot_L": (30, 0, -6)}
-
-LUNGE_LEFT = {"Thigh_L": (40, 0, 0), "Shin_L": (-48, 0, 0), "Foot_L": (8, 0, 0),
-              "Thigh_R": (-12, 0, -6), "Shin_R": (-24, 0, 0), "Foot_R": (28, 0, 6)}
-
-# The wrist that makes the blade level with the arm held straight forward (the grip points it 55 degrees down)
-LEVEL_BLADE_WRIST = -35
-
-
-def reaching_cut(torso_turn, lean, arm_turn, blade_tilt, legs, drop):
-    """The arm straight forward at shoulder height and the blade level with it: the part of a swing that reaches the enemy
-    'arm_turn' > 0 points the arm to the left, 'blade_tilt' rolls the blade (a diagonal cut instead of a flat one)"""
-    return attack_pose(torso_turn, lean, (86, 0, arm_turn), 0, (LEVEL_BLADE_WRIST, blade_tilt, 0), legs, drop=drop)
-
-
-def light_attack_1():
-    """Diagonal slash from the right shoulder down to the left"""
-    wind_up = attack_pose(-40, 6, (115, -45, -10), 70, (-15, 0, 0), drop=0.04)
-    cut_starts = reaching_cut(0, -10, -12, 25, LUNGE_RIGHT, drop=0.08)
-    cut_ends = reaching_cut(8, -12, 5, 25, LUNGE_RIGHT, drop=0.09)
-    follow = attack_pose(48, -12, (30, 10, 70), 12, (-25, 0, 0), LUNGE_RIGHT, drop=0.08)
-    return [(0, STANCE), (8, wind_up), (10, cut_starts), (13, cut_ends), (17, follow), (28, STANCE)]
-
-
-def light_attack_2():
-    """Backhand slash from the left to the right"""
-    wind_up = attack_pose(40, 4, (70, 10, 75), 75, (5, 0, 0), drop=0.04, left_arm=(10, 25, 0))
-    cut_starts = reaching_cut(-2, -10, 18, -20, LUNGE_LEFT, drop=0.08)
-    cut_ends = reaching_cut(-6, -12, 4, -20, LUNGE_LEFT, drop=0.09)
-    follow = attack_pose(-52, -10, (70, -70, -35), 10, (-15, 0, -20), LUNGE_LEFT, drop=0.08)
-    return [(0, STANCE), (7, wind_up), (9, cut_starts), (12, cut_ends), (16, follow), (27, STANCE)]
-
-
-def light_attack_3():
-    """Finisher: the sword raised over the head and brought straight down"""
-    wind_up = attack_pose(-10, 12, (165, -10, 0), 45, (10, 0, 0), drop=0.02, left_arm=(30, 30, 0))
-    cut_starts = attack_pose(2, -18, (112, -4, 6), 0, (LEVEL_BLADE_WRIST, 0, 0), LUNGE_RIGHT, drop=0.1)
-    cut_ends = reaching_cut(4, -26, 6, 0, LUNGE_RIGHT, drop=0.14)
-    follow = attack_pose(5, -30, (45, -4, 8), 4, (-20, 0, 0), LUNGE_RIGHT, drop=0.15)
-    return [(0, STANCE), (11, wind_up), (13, cut_starts), (16, cut_ends), (20, follow), (34, STANCE)]
-
-
-def heavy_attack():
-    """Slow, wide swing: the knight twists far back, then cuts down through everything in front"""
-    wind_up = attack_pose(-60, 15, (165, -45, -20), 95, (10, 0, 0), drop=0.06, left_arm=(40, 40, 0))
-    hold = attack_pose(-66, 18, (170, -48, -22), 100, (12, 0, 0), drop=0.07, left_arm=(42, 42, 0))
-    cut_starts = reaching_cut(-6, -18, -12, 30, LUNGE_RIGHT, drop=0.14)
-    cut_ends = reaching_cut(10, -24, 6, 30, LUNGE_RIGHT, drop=0.16)
-    follow = attack_pose(55, -32, (30, 5, 75), 10, (-30, 0, 0), LUNGE_RIGHT, drop=0.17)
-    return [(0, STANCE), (14, wind_up), (20, hold), (23, cut_starts), (27, cut_ends), (31, follow), (46, STANCE)]
-
-
-def hit_animation():
-    recoil = combine(STANCE, {"location": (0, 0, -0.06), "Spine": (14, 0, 6), "Chest": (10, 0, 4), "Head": (16, 0, -6),
-                              "UpperArm_L": (-10, 30, 0), "UpperArm_R": (-6, -25, 0), "LowerArm_R": (-10, 0, 0),
-                              "Thigh_R": (8, 0, 0), "Thigh_L": (-8, 0, 0)})
-    return [(0, STANCE), (3, recoil), (8, combine(recoil, {"Spine": (-6, 0, 0)})), (18, STANCE)]
-
-
-def death_animation():
-    knees = combine(STANCE, {"location": (0, 0, -0.42), "Spine": (-20, 0, 0), "Chest": (-15, 0, 0), "Head": (-20, 0, 0),
-                             "Thigh_R": (85, 0, 0), "Shin_R": (-150, 0, 0), "Foot_R": (65, 0, 0),
-                             "Thigh_L": (80, 0, 0), "Shin_L": (-145, 0, 0), "Foot_L": (65, 0, 0),
-                             "UpperArm_R": (10, -10, 0), "LowerArm_R": (10, 0, 0),
-                             "UpperArm_L": (5, 10, 0), "LowerArm_L": (10, 0, 0)})
-    sway = combine(knees, {"Spine": (8, 0, 0), "Head": (14, 0, 0)})
-    falling = combine(knees, {"location": (0, 0.05, -0.55), "Hips": (-50, 0, 0), "Thigh_R": (-40, 0, 0), "Thigh_L": (-40, 0, 0),
-                              "UpperArm_R": (30, -20, 0), "UpperArm_L": (30, 20, 0)})
-    lying = {"location": (0, 0.15, -0.86), "Hips": (-88, 0, 0), "Spine": (-2, 0, 0), "Chest": (0, 0, 0), "Head": (10, 0, 25),
-             "Thigh_R": (6, 0, 0), "Shin_R": (-4, 0, 0), "Foot_R": (-50, 0, 0),
-             "Thigh_L": (8, 0, 8), "Shin_L": (-12, 0, 0), "Foot_L": (-40, 0, 0),
-             "UpperArm_R": (110, -40, 0), "LowerArm_R": (20, 0, 0),
-             "UpperArm_L": (160, 40, 0), "LowerArm_L": (30, 0, 0)}
-    return [(0, STANCE), (10, knees), (22, sway), (32, falling), (40, lying), (60, lying)]
-
-
-def rest_animation():
-    """Kneeling at a bonfire: down on the right knee, the left foot forward, the head bowed (played once, the last pose stays)"""
-    kneel = {
-        "location": (0.0, 0.05, -0.45),
-        "Spine": (-14, 0, 0), "Chest": (-10, 0, 0), "Neck": (-10, 0, 0), "Head": (-14, 0, 0),
-        "Thigh_R": (-4, 0, 0), "Shin_R": (-88, 0, 0), "Foot_R": (62, 0, 0),
-        "Thigh_L": (76, 0, 4), "Shin_L": (-78, 0, 0), "Foot_L": (2, 0, 0),
-        "UpperArm_R": (28, -6, 12), "LowerArm_R": (34, 0, 0), "Hand_R": (-24, 0, 0),
-        "UpperArm_L": (46, 12, 0), "LowerArm_L": (42, 0, 0),
-    }
-    halfway = {bone: tuple(value * 0.55 for value in angles) for bone, angles in kneel.items()}
-    return [(0, STANCE), (10, combine(halfway, {"Spine": (-8, 0, 0)})), (20, kneel), (32, combine(kneel, {"Chest": (2, 0, 0), "Head": (-3, 0, 0)}))]
-
+PACK = "ProSwordShield/sword and shield "
 
 ANIMATIONS = {
-    "Idle": idle_animation,
-    "Walk": walk_animation,
-    "Run": run_animation,
-    "Roll": roll_animation,
-    "Backstep": backstep_animation,
-    "Attack_Light_1": light_attack_1,
-    "Attack_Light_2": light_attack_2,
-    "Attack_Light_3": light_attack_3,
-    "Attack_Heavy": heavy_attack,
-    "Hit": hit_animation,
-    "Death": death_animation,
-    "Rest": rest_animation,
+    # Walking and standing, looped by the engine
+    "Idle":           MixamoClip(PACK + "idle (4).fbx"),
+    "Walk":           MixamoClip(PACK + "walk.fbx"),
+    "Run":            MixamoClip(PACK + "run.fbx"),
+    "Walk_Back":      MixamoClip(PACK + "walk (2).fbx"),
+    "Strafe_Left":    MixamoClip(PACK + "strafe (2).fbx"),
+    "Strafe_Right":   MixamoClip(PACK + "strafe.fbx"),
+
+    # Actions, played once. The roll and the backstep without the running before and after them
+    "Roll":           MixamoClip("Sprinting Forward Roll.fbx", 4, 36, speed=1.1),
+    "Backstep":       MixamoClip("Standing Dodge Backward.fbx", 4, 40, speed=1.2),
+    "Attack_Light_1": MixamoClip(PACK + "slash.fbx", 4, 40, speed=1.3),
+    "Attack_Light_2": MixamoClip(PACK + "slash (3).fbx", 10, 45, speed=1.3),
+    "Attack_Light_3": MixamoClip(PACK + "attack (2).fbx", 6, 34, speed=1.1),
+    "Attack_Heavy":   MixamoClip(PACK + "slash (2).fbx", 4, 36, speed=0.9),
+    "Hit":            MixamoClip(PACK + "impact (2).fbx"),
+    "Parried":        MixamoClip(PACK + "impact (3).fbx", speed=0.6),
+    "Death":          MixamoClip(PACK + "death.fbx"),
+
+    # The shield: held up (the engine fades into it, the last frame is held while blocking), a hit taken on it,
+    # and a parry (a fast raise of the shield)
+    "Block":          MixamoClip(PACK + "block idle.fbx"),
+    "Block_Impact":   MixamoClip(PACK + "impact.fbx"),
+    "Parry":          MixamoClip(PACK + "block.fbx", speed=1.5),
+
+    # Resting at a bonfire: kneeling down (the last frame is held), and getting up again
+    "Rest":           MixamoClip("Kneel Campfire.fbx", 50, 110, speed=1.2),
+    "Stand_Up":       MixamoClip("Kneel Campfire.fbx", 188, 238, speed=1.3),
 }
 
-
-def get_rest_rotation(armature, bone_name):
-    return armature.data.bones[bone_name].matrix_local.to_quaternion()
-
-
-def keyframe_pose(armature, pose, frame, previous_rotations):
-    """Puts every bone into the pose and stores a key. Bones missing from the pose go back to the rest pose"""
-    for pose_bone in armature.pose.bones:
-        name = pose_bone.name
-        rest = get_rest_rotation(armature, name)
-
-        angles = pose.get(name, (0.0, 0.0, 0.0))
-        rotation_in_knight_axes = degrees_to_quaternion(angles)
-        local_rotation = rest.inverted() @ rotation_in_knight_axes @ rest
-
-        # Keeps neighbouring keys on the same side of the quaternion sphere, so a full roll turns the short way each step
-        if name in previous_rotations:
-            local_rotation.make_compatible(previous_rotations[name])
-        previous_rotations[name] = local_rotation.copy()
-
-        pose_bone.rotation_mode = "QUATERNION"
-        pose_bone.rotation_quaternion = local_rotation
-        pose_bone.keyframe_insert("rotation_quaternion", frame=frame)
-
-        if name == "Hips":
-            location = Vector(pose.get("location", (0.0, 0.0, 0.0)))
-            pose_bone.location = rest.inverted() @ location
-            pose_bone.keyframe_insert("location", frame=frame)
+MIXAMO_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Mixamo")
 
 
 def create_animations(armature):
     armature.animation_data_create()
     actions = []
 
-    for name, make_keys in ANIMATIONS.items():
+    for name, clip in ANIMATIONS.items():
         action = bpy.data.actions.new(name)
         action.use_fake_user = True
-        armature.animation_data.action = action
 
-        previous_rotations = {}
-        keys = make_keys()
-        for frame, pose in keys:
-            keyframe_pose(armature, pose, frame, previous_rotations)
-
-        action.frame_range = (keys[0][0], keys[-1][0])
+        last_frame = retarget(armature, clip, MIXAMO_FOLDER, action)
+        action.frame_range = (0, last_frame)
         actions.append(action)
 
     armature.animation_data.action = actions[0]
@@ -767,26 +598,37 @@ def render_previews(folder, armature, actions):
 # ========== Main ==========
 
 
+def hang_on_bone(held_object, armature, bone_name, rest_matrix):
+    held_object.parent = armature
+    held_object.parent_type = "BONE"
+    held_object.parent_bone = bone_name
+    held_object.matrix_world = rest_matrix
+
+
+
 def main():
     arguments = parse_arguments()
     out_folder = os.path.abspath(arguments.out)
     knight_folder = os.path.join(out_folder, "Knight")
     rusted_folder = os.path.join(out_folder, "RustedKnight")
     sword_folder = os.path.join(out_folder, "KnightSword")
-    for folder in (knight_folder, rusted_folder, sword_folder):
+    shield_folder = os.path.join(out_folder, "KnightShield")
+    for folder in (knight_folder, rusted_folder, sword_folder, shield_folder):
         os.makedirs(folder, exist_ok=True)
 
     clear_scene()
 
-    knight_palette = Palette(KNIGHT_COLORS)
-    rusted_palette = Palette(RUSTED_COLORS)
+    knight_palette = Palette(KNIGHT_COLORS, KNIGHT_SURFACES)
+    rusted_palette = Palette(RUSTED_COLORS, RUSTED_SURFACES)
     sword_palette = Palette(SWORD_COLORS)
+    shield_palette = Palette(SHIELD_COLORS, SHIELD_SURFACES)
 
     armature = build_skeleton()
     knight = build_knight_mesh(armature, knight_palette, "Knight")
     rusted_knight = build_knight_mesh(armature, rusted_palette, "RustedKnight")
     actions = create_animations(armature)
     sword = build_sword_mesh(sword_palette)
+    shield = build_shield_mesh(shield_palette)
 
     # Baked in the rest pose: the armor must not be bent by an animation while its texture is made
     reset_to_rest_pose(armature)
@@ -794,27 +636,27 @@ def main():
     bake_textures(knight, knight_palette, "knight", knight_folder, KNIGHT_TEXTURE_PIXELS)
     bake_textures(rusted_knight, rusted_palette, "rusted_knight", rusted_folder, KNIGHT_TEXTURE_PIXELS)
     bake_textures(sword, sword_palette, "knight_sword", sword_folder, SWORD_TEXTURE_PIXELS)
+    bake_textures(shield, shield_palette, "knight_shield", shield_folder, SWORD_TEXTURE_PIXELS)
 
     # Both characters share the skeleton and the animations, each file has its own armor
     export_gltf(os.path.join(knight_folder, "knight.gltf"), [armature, knight], with_animations=True)
     export_gltf(os.path.join(rusted_folder, "rusted_knight.gltf"), [armature, rusted_knight], with_animations=True)
     export_gltf(os.path.join(sword_folder, "knight_sword.gltf"), [sword], with_animations=False)
+    export_gltf(os.path.join(shield_folder, "knight_shield.gltf"), [shield], with_animations=False)
 
-    # For the pictures (and the .blend) the sword hangs on the weapon bone, exactly as the engine attaches it
+    # For the pictures (and the .blend) the sword and the shield hang on their bones, exactly as the engine attaches them
     reset_to_rest_pose(armature)
-    sword.parent = armature
-    sword.parent_type = "BONE"
-    sword.parent_bone = WEAPON_BONE
-    sword.matrix_world = get_sword_rest_matrix()
+    hang_on_bone(sword, armature, WEAPON_BONE, get_sword_rest_matrix())
+    hang_on_bone(shield, armature, SHIELD_BONE, get_shield_rest_matrix())
 
     if arguments.icons:
         icons_folder = os.path.abspath(arguments.icons)
-        show_only([knight, sword])
+        show_only([knight, sword, shield])
         render_icon(os.path.join(icons_folder, "souls_player_icon.png"), armature)
-        show_only([rusted_knight, sword])
+        show_only([rusted_knight, sword, shield])
         render_icon(os.path.join(icons_folder, "rusted_knight_icon.png"), armature)
 
-    show_only([knight, sword])
+    show_only([knight, sword, shield])
 
     if arguments.blend:
         bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(arguments.blend))

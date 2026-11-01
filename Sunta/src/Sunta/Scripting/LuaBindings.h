@@ -20,6 +20,7 @@ private:
 	static void RegisterLockOnComponent(sol::state& lua);
 	static void RegisterLockOnTargetComponent(sol::state& lua);
 	static void RegisterHealthComponent(sol::state& lua);
+	static void RegisterCharacterActionsComponent(sol::state& lua);
 	static void RegisterEnemyComponent(sol::state& lua);
 	static void RegisterMeleeEnemyComponent(sol::state& lua);
 	static void RegisterEntity(sol::state& lua);

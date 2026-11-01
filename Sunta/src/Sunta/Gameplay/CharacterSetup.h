@@ -26,6 +26,12 @@ public:
 	// Only for a model with that bone: on another model nobody knows where the hand is
 	static void AddSwordIfPossible(EntityManager& entityManager, unsigned int entityID, const std::string& hitboxLayerName, float damage);
 
+	// A shield (with a Shield component, so the character can block and parry) as a child on the shield bone of the Knight model
+	static void AddShieldIfPossible(EntityManager& entityManager, unsigned int entityID);
+
+	// Poise: how much the character takes before a hit makes it stagger
+	static void AddPoiseIfMissing(EntityManager& entityManager, unsigned int entityID, float maxPoise);
+
 	// Moves the body (the Box Collider) to the named collision layer, when the project has a layer with that name
 	static void SetBodyLayer(EntityManager& entityManager, unsigned int entityID, const std::string& layerName);
 };

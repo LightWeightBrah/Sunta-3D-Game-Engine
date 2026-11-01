@@ -215,6 +215,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	CharacterActionsComponent::RegisterToInspector();
 	HealthComponent::RegisterToInspector();
 	StaminaComponent::RegisterToInspector();
+	PoiseComponent::RegisterToInspector();
 	EnemyComponent::RegisterToInspector();
 	MeleeEnemyComponent::RegisterToInspector();
 	PlayerHUDComponent::RegisterToInspector();
@@ -224,6 +225,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	PhysicsBodyComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
 	HitboxComponent::RegisterToInspector();
+	ShieldComponent::RegisterToInspector();
 	CameraComponent::RegisterToInspector();
 	FollowCameraComponent::RegisterToInspector();
 	LockOnComponent::RegisterToInspector();

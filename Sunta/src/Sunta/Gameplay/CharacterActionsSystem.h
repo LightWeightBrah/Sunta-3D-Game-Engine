@@ -17,7 +17,13 @@ public:
 	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID);
 	static void PlayDeath(EntityManager& entityManager, unsigned int entityID);
 
-	// Started by a bonfire: the character kneels (moving, rolling and attacking do nothing) until StandUp
+	// Started by a hit: taken on the shield (the character stays behind it), or the attacker's own attack was parried
+	// (a long stagger, the next hit it takes is a riposte)
+	static void PlayBlockImpact(EntityManager& entityManager, unsigned int entityID);
+	static void PlayParried(EntityManager& entityManager, unsigned int entityID);
+
+	// Started by a bonfire: the character kneels (moving, rolling and attacking do nothing) until StandUp,
+	// which plays the animation of getting up (or just ends the rest when there is none)
 	static void PlayRest(EntityManager& entityManager, unsigned int entityID);
 	static void StandUp(EntityManager& entityManager, unsigned int entityID);
 

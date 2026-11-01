@@ -54,6 +54,7 @@ namespace Sunta::EngineAssets
 		// The ready player character (Souls Player) and its sword, made by Tools/Blender/knight_generator.py
 		constexpr const char* Knight      = "knight";
 		constexpr const char* KnightSword = "knight_sword";
+		constexpr const char* KnightShield = "knight_shield";
 
 		// The ready enemy (Rusted Knight): the same knight in rusted armor
 		constexpr const char* RustedKnight = "rusted_knight";

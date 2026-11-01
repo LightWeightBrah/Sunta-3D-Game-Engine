@@ -28,6 +28,8 @@ using namespace GameplayMath;
 // The roll is a tap of the run key, the Character Controller reads that key (wasDodgeTapped)
 constexpr int LightAttackButton = SUNTA_MOUSE_BUTTON_LEFT;
 constexpr int HeavyAttackButton = SUNTA_MOUSE_BUTTON_RIGHT;
+constexpr int BlockKey          = SUNTA_KEY_LEFT_CONTROL;
+constexpr int ParryKey          = SUNTA_KEY_F;
 
 // ========== Numbers used below ==========
 
@@ -57,6 +59,11 @@ constexpr const char* HeavyAttackKeyword  = "heavy";
 constexpr const char* HitReactionKeyword  = "hit";
 constexpr const char* DeathKeyword        = "death";
 constexpr const char* RestKeyword         = "rest";
+constexpr const char* StandUpKeyword      = "stand_up";
+constexpr const char* BlockKeyword        = "block";
+constexpr const char* BlockImpactKeyword  = "block_impact";
+constexpr const char* ParryKeyword        = "parry";
+constexpr const char* ParriedKeyword      = "parried";
 
 // ========== The parts of one character ==========
 
@@ -104,6 +111,13 @@ CharacterAction ReadPlayerRequest(const CharacterControllerComponent& controller
 
 	if (canUseMouse && InputManager::IsMouseButtonDown(HeavyAttackButton))
 		return CharacterAction::HeavyAttack;
+
+	if (InputManager::IsKeyDown(ParryKey))
+		return CharacterAction::Parry;
+
+	// Held, not tapped: the block lasts as long as it is asked for every frame
+	if (InputManager::IsKeyPressed(BlockKey))
+		return CharacterAction::Block;
 
 	return CharacterAction::None;
 }
@@ -195,6 +209,11 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::HitReaction: return actions.hitReactionAnimation;
 	case CharacterAction::Death:       return actions.deathAnimation;
 	case CharacterAction::Rest:        return actions.restAnimation;
+	case CharacterAction::StandUp:     return actions.standUpAnimation;
+	case CharacterAction::Block:       return actions.blockAnimation;
+	case CharacterAction::BlockImpact: return actions.blockImpactAnimation;
+	case CharacterAction::Parry:       return actions.parryAnimation;
+	case CharacterAction::Parried:     return actions.parriedAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -266,21 +285,40 @@ void MoveBody(Character& character, float progress)
 	PhysicsSystem::WakeUp(*character.body);
 }
 
+bool IsRemembered(CharacterAction request)
+{
+	return request != CharacterAction::None && request != CharacterAction::Block;
+}
+
 bool IsDodge(CharacterAction action)
 {
 	return action == CharacterAction::Roll || action == CharacterAction::Backstep;
 }
 
-// Staggering after a hit can't be cut short, a rest lasts until the character stands up, and nothing comes after death
+// Staggering after a hit can't be cut short, a rest lasts until the character stands up (and getting up until it stands),
+// and nothing comes after death
 bool CanBeInterrupted(CharacterAction action)
 {
-	return action != CharacterAction::HitReaction && action != CharacterAction::Rest && action != CharacterAction::Death;
+	switch (action)
+	{
+	case CharacterAction::HitReaction:
+	case CharacterAction::Rest:
+	case CharacterAction::StandUp:
+	case CharacterAction::BlockImpact:
+	case CharacterAction::Parried:
+	case CharacterAction::Death:
+		return false;
+
+	default:
+		return true;
+	}
 }
 
-// A rest goes on after its animation ended (the character stays kneeling) until StandUp
+// A rest goes on after its animation ended (the character stays kneeling) until StandUp,
+// and a block (the shield stays up) until the block key is let go
 bool EndsWithItsAnimation(CharacterAction action)
 {
-	return action != CharacterAction::Rest;
+	return action != CharacterAction::Rest && action != CharacterAction::Block;
 }
 
 // A roll or an attack picks its direction and turns the character, the actions started by the game don't
@@ -346,19 +384,21 @@ bool TryStartAction(EntityManager& entityManager, Character& character, Characte
 	return true;
 }
 
-// Started by the game itself (a hit, the death): interrupts whatever the character was doing
-void ForceAction(EntityManager& entityManager, unsigned int entityID, CharacterAction action)
+// Started by the game itself (a hit, the death): interrupts whatever the character was doing. False when it has no such animation
+bool ForceAction(EntityManager& entityManager, unsigned int entityID, CharacterAction action)
 {
 	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
 
 	Character character;
 	if (!actions || !TryGetCharacter(entityManager, *actions, character))
-		return;
+		return false;
 
 	const std::string& animationName = GetAnimationName(*actions, action);
+	if (!HasAnimation(character, animationName))
+		return false;
 
-	if (HasAnimation(character, animationName))
-		StartAction(entityManager, character, action, animationName);
+	StartAction(entityManager, character, action, animationName);
+	return true;
 }
 
 void FinishAction(Character& character)
@@ -397,17 +437,36 @@ void EndOrChainAction(EntityManager& entityManager, Character& character, float 
 		FinishAction(character);
 }
 
+// Blocking lasts while it is asked for. Anything else asked for instead (a roll, an attack) starts at once
+void UpdateBlock(EntityManager& entityManager, Character& character, CharacterAction request)
+{
+	if (request == CharacterAction::Block)
+		return;
+
+	if (request == CharacterAction::None || !TryStartAction(entityManager, character, request))
+		FinishAction(character);
+}
+
 void UpdateCurrentAction(EntityManager& entityManager, Character& character, CharacterAction request)
 {
 	CharacterActionsComponent& actions = *character.actions;
 	const float progress = character.animator->animator.GetProgress();
 
+	if (actions.currentAction == CharacterAction::Block)
+	{
+		actions.actionProgress = progress;
+		MoveBody(character, progress);
+		UpdateBlock(entityManager, character, request);
+		return;
+	}
+
 	actions.actionProgress = progress;
 	actions.isInvulnerable = IsDodge(actions.currentAction)
 		&& progress >= actions.invulnerableFrom && progress <= actions.invulnerableTo;
 
-	// Pressed during the action: remembered, so a combo doesn't need frame-perfect timing
-	if (request != CharacterAction::None && progress >= actions.inputBufferFrom && CanBeInterrupted(actions.currentAction))
+	// Pressed during the action: remembered, so a combo doesn't need frame-perfect timing (a held block is not remembered:
+	// it starts by itself once the action is over and the key is still held)
+	if (IsRemembered(request) && progress >= actions.inputBufferFrom && CanBeInterrupted(actions.currentAction))
 		actions.queuedAction = request;
 
 	MoveBody(character, progress);
@@ -434,6 +493,11 @@ void FillNamesFromModel(CharacterActionsComponent& actions, const AnimationMap& 
 	FillAnimationName(actions.hitReactionAnimation,  animations, HitReactionKeyword);
 	FillAnimationName(actions.deathAnimation,        animations, DeathKeyword);
 	FillAnimationName(actions.restAnimation,         animations, RestKeyword);
+	FillAnimationName(actions.standUpAnimation,      animations, StandUpKeyword);
+	FillAnimationName(actions.blockAnimation,        animations, BlockKeyword);
+	FillAnimationName(actions.blockImpactAnimation,  animations, BlockImpactKeyword);
+	FillAnimationName(actions.parryAnimation,        animations, ParryKeyword);
+	FillAnimationName(actions.parriedAnimation,      animations, ParriedKeyword);
 }
 
 void WarnAboutMissingAnimation(const std::string& entityName, const char* label, const std::string& animationName, const AnimationMap& animations)
@@ -473,6 +537,16 @@ void CharacterActionsSystem::PlayDeath(EntityManager& entityManager, unsigned in
 	ForceAction(entityManager, entityID, CharacterAction::Death);
 }
 
+void CharacterActionsSystem::PlayBlockImpact(EntityManager& entityManager, unsigned int entityID)
+{
+	ForceAction(entityManager, entityID, CharacterAction::BlockImpact);
+}
+
+void CharacterActionsSystem::PlayParried(EntityManager& entityManager, unsigned int entityID)
+{
+	ForceAction(entityManager, entityID, CharacterAction::Parried);
+}
+
 void CharacterActionsSystem::PlayRest(EntityManager& entityManager, unsigned int entityID)
 {
 	ForceAction(entityManager, entityID, CharacterAction::Rest);
@@ -481,8 +555,11 @@ void CharacterActionsSystem::PlayRest(EntityManager& entityManager, unsigned int
 void CharacterActionsSystem::StandUp(EntityManager& entityManager, unsigned int entityID)
 {
 	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+	if (!actions || !actions->IsResting())
+		return;
 
-	if (actions && actions->IsResting())
+	// Without an animation for getting up the character is simply standing again
+	if (!ForceAction(entityManager, entityID, CharacterAction::StandUp))
 		Reset(entityManager, entityID);
 }
 

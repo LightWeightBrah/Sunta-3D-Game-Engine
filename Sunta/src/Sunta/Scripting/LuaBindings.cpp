@@ -41,6 +41,7 @@ using CharacterControllerHandle = ComponentHandle<CharacterControllerComponent>;
 using LockOnHandle        = ComponentHandle<LockOnComponent>;
 using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
 using HealthHandle        = ComponentHandle<HealthComponent>;
+using CharacterActionsHandle = ComponentHandle<CharacterActionsComponent>;
 using EnemyHandle         = ComponentHandle<EnemyComponent>;
 using MeleeEnemyHandle    = ComponentHandle<MeleeEnemyComponent>;
 
@@ -139,6 +140,8 @@ CharacterAction ParseActionName(const std::string& name)
 	if (name == "heavy")    return CharacterAction::HeavyAttack;
 	if (name == "roll")     return CharacterAction::Roll;
 	if (name == "backstep") return CharacterAction::Backstep;
+	if (name == "parry")    return CharacterAction::Parry;
+	if (name == "block")    return CharacterAction::Block;
 
 	return CharacterAction::LightAttack;
 }
@@ -182,6 +185,7 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterLockOnComponent(lua);
 	RegisterLockOnTargetComponent(lua);
 	RegisterHealthComponent(lua);
+	RegisterCharacterActionsComponent(lua);
 	RegisterEnemyComponent(lua);
 	RegisterMeleeEnemyComponent(lua);
 	RegisterEntity(lua);
@@ -370,6 +374,38 @@ void LuaBindings::RegisterLockOnTargetComponent(sol::state& lua)
 	);
 }
 
+void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
+{
+	// Usage in Lua: this.characterActions:request("block") (every frame while it should last), :request("parry"), :request("light"),
+	// if this.characterActions.isGuarding then ... end
+	lua.new_usertype<CharacterActionsHandle>("CharacterActions", sol::no_constructor,
+
+		"request", [](const CharacterActionsHandle& handle, const std::string& actionName)
+			{
+				if (CharacterActionsComponent* actions = handle.TryGetComponent())
+					actions->requestedAction = ParseActionName(actionName);
+			},
+
+		"isBusy", sol::readonly_property([](const CharacterActionsHandle& handle)
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions && actions->IsBusy();
+			}),
+
+		"isGuarding", sol::readonly_property([](const CharacterActionsHandle& handle)
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions && actions->IsGuarding();
+			}),
+
+		"isOpenToRiposte", sol::readonly_property([](const CharacterActionsHandle& handle)
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions && actions->IsOpenToRiposte();
+			})
+	);
+}
+
 void LuaBindings::RegisterHealthComponent(sol::state& lua)
 {
 	// Usage in Lua: if this.health.current < 30 then ... end, other.health:damage(10) (a trap), this.health.isDead
@@ -507,7 +543,7 @@ void LuaBindings::RegisterEnemyComponent(sol::state& lua)
 				CommandEnemy(handle, [&](EnemyContext& context) { context.LookAtTarget(shouldLook); });
 			},
 
-		// "light", "heavy", "roll" or "backstep"
+		// "light", "heavy", "roll", "backstep", "parry" or "block" (a block lasts only while it is asked for, every frame)
 		"attack", [](const EnemyHandle& handle, const std::string& actionName)
 			{
 				CommandEnemy(handle, [&](EnemyContext& context) { context.RequestAction(ParseActionName(actionName)); });
@@ -554,6 +590,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"lockOn",              ComponentHandleProperty<LockOnComponent>(),
 		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>(),
 		"health",              ComponentHandleProperty<HealthComponent>(),
+		"characterActions",    ComponentHandleProperty<CharacterActionsComponent>(),
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),
 		"meleeEnemy",          ComponentHandleProperty<MeleeEnemyComponent>()
 	);

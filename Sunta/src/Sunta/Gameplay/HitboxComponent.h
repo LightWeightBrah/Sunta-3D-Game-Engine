@@ -24,6 +24,9 @@ struct HitboxComponent
 
 	float damage = 25.0f;
 
+	// How much poise a hit takes from the target (see PoiseComponent), a heavy attack multiplies it like the damage
+	float poiseDamage = 20.0f;
+
 	// The box, in the space of the weapon (the Knight's sword: the blade goes up along +Y from the grip)
 	glm::vec3 localOffset = glm::vec3(0.0f, 0.56f, 0.0f);
 	glm::vec3 halfExtents = glm::vec3(0.06f, 0.48f, 0.06f);
@@ -45,6 +48,7 @@ struct HitboxComponent
 		InspectorComponentRegistry::RegisterComponent<HitboxComponent>("Hitbox", EngineAssets::Icons::BoxCollider,
 			{
 				ADD_PROPERTY_RANGED(HitboxComponent, damage, PropertyDataType::Float, 0.0f, MaxDamage),
+				ADD_PROPERTY_RANGED(HitboxComponent, poiseDamage, PropertyDataType::Float, 0.0f, MaxDamage),
 				ADD_PROPERTY(HitboxComponent, localOffset, PropertyDataType::Float3),
 				ADD_PROPERTY(HitboxComponent, halfExtents, PropertyDataType::Float3),
 				ADD_PROPERTY(HitboxComponent, layer,       PropertyDataType::CollisionLayer),

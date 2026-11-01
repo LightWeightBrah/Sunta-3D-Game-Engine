@@ -28,6 +28,7 @@ struct StaminaComponent
 	float backstepCost    = 12.0f;
 	float lightAttackCost = 14.0f;
 	float heavyAttackCost = 28.0f;
+	float parryCost       = 10.0f;
 	float runCostPerSecond = 12.0f;
 
 	// Filled with 'maxStamina' when the game starts. Not saved with the scene
@@ -45,6 +46,7 @@ struct StaminaComponent
 				ADD_PROPERTY_RANGED(StaminaComponent, backstepCost,             PropertyDataType::Float, 0.0f, MaxCost),
 				ADD_PROPERTY_RANGED(StaminaComponent, lightAttackCost,          PropertyDataType::Float, 0.0f, MaxCost),
 				ADD_PROPERTY_RANGED(StaminaComponent, heavyAttackCost,          PropertyDataType::Float, 0.0f, MaxCost),
+				ADD_PROPERTY_RANGED(StaminaComponent, parryCost,                PropertyDataType::Float, 0.0f, MaxCost),
 				ADD_PROPERTY_RANGED(StaminaComponent, runCostPerSecond,         PropertyDataType::Float, 0.0f, MaxCost),
 				ADD_PROPERTY_RANGED(StaminaComponent, currentStamina,           PropertyDataType::Float, 0.0f, MaxStaminaLimit)
 			});

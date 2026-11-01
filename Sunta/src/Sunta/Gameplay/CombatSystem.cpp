@@ -2,9 +2,12 @@
 #include "CombatSystem.h"
 
 #include <algorithm>
+#include <cmath>
 
 #include "CharacterActionsSystem.h"
 #include "EntityName.h"
+#include "GameplayMath.h"
+#include "StaminaSystem.h"
 #include "Core/Log.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
@@ -18,6 +21,8 @@ namespace Sunta
 
 namespace
 {
+
+using namespace GameplayMath;
 
 // How long a weapon's box stays red after it hurt someone
 constexpr float HitFlashSeconds = 0.4f;
@@ -81,11 +86,14 @@ bool CanHurt(const HitboxComponent& hitbox, const BoxColliderComponent& targetBo
 	return CollisionSettings::GetActive().CanCollide(hitbox.layer, targetBody.layer);
 }
 
+bool HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID);
+
 void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, unsigned int weaponEntityID,
 	unsigned int ownerID, const CharacterActionsComponent& owner)
 {
-	const OBB   box    = GetWorldBox(entityManager, weaponEntityID, hitbox);
-	const float damage = hitbox.damage * owner.GetDamageMultiplier();
+	const OBB   box         = GetWorldBox(entityManager, weaponEntityID, hitbox);
+	const float damage      = hitbox.damage      * owner.GetDamageMultiplier();
+	const float poiseDamage = hitbox.poiseDamage * owner.GetDamageMultiplier();
 
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
 	{
@@ -100,7 +108,7 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 
 		hitbox.entitiesHitThisSwing.push_back(targetID);
 
-		if (CombatSystem::ApplyDamage(entityManager, targetID, damage, ownerID))
+		if (HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID))
 			hitbox.hitFlashSecondsLeft = HitFlashSeconds;
 	}
 }
@@ -111,6 +119,12 @@ bool IsInvulnerable(EntityManager& entityManager, unsigned int entityID)
 {
 	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
 	return actions && actions->isInvulnerable;
+}
+
+bool CanBeHurt(EntityManager& entityManager, unsigned int entityID)
+{
+	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityID);
+	return health && !health->isDead && !IsInvulnerable(entityManager, entityID);
 }
 
 void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& health)
@@ -124,6 +138,164 @@ void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& h
 	CharacterActionsSystem::PlayDeath(entityManager, entityID);
 }
 
+// Takes the damage away from the health. True when the character is still alive
+bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damage, unsigned int attackerEntityID)
+{
+	HealthComponent& health = *entityManager.GetComponent<HealthComponent>(entityID);
+	health.currentHealth = glm::max(health.currentHealth - damage, 0.0f);
+
+	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' hit '{1}' for {2} ({3} health left)", GetEntityName(entityManager, attackerEntityID),
+		GetEntityName(entityManager, entityID), damage, health.currentHealth);
+
+	if (health.currentHealth > 0.0f)
+		return true;
+
+	Die(entityManager, entityID, health);
+	return false;
+}
+
+// ========== Poise ==========
+
+// True when the hit makes the character stagger: a character without Poise always staggers,
+// with Poise only when the hit takes the last of it (and then the poise is full again)
+bool BreaksPoise(EntityManager& entityManager, unsigned int entityID, float poiseDamage)
+{
+	PoiseComponent* poise = entityManager.GetComponent<PoiseComponent>(entityID);
+	if (!poise)
+		return true;
+
+	poise->secondsSinceHit = 0.0f;
+	poise->currentPoise   -= poiseDamage;
+
+	if (poise->currentPoise > 0.0f)
+		return false;
+
+	poise->currentPoise = poise->maxPoise;
+	return true;
+}
+
+void RecoverPoise(PoiseComponent& poise, float deltaTime)
+{
+	poise.secondsSinceHit += deltaTime;
+
+	if (poise.secondsSinceHit >= poise.recoverAfterSeconds)
+		poise.currentPoise = poise.maxPoise;
+}
+
+// ========== Parrying and blocking ==========
+
+const CharacterActionsComponent* GetActions(EntityManager& entityManager, unsigned int entityID)
+{
+	return entityManager.GetComponent<CharacterActionsComponent>(entityID);
+}
+
+// The attack lands early in the defender's parry: the attacker staggers for long, nobody is hurt
+bool TryParry(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID)
+{
+	const CharacterActionsComponent* defender = GetActions(entityManager, defenderID);
+	if (!defender || !defender->IsParrying())
+		return false;
+
+	CharacterActionsSystem::PlayParried(entityManager, attackerID);
+
+	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' parried '{1}'", GetEntityName(entityManager, defenderID), GetEntityName(entityManager, attackerID));
+	return true;
+}
+
+// The shield of the character: a child entity with a Shield component (on the left hand)
+const ShieldComponent* FindShield(EntityManager& entityManager, unsigned int characterID)
+{
+	for (unsigned int childID : EntityHierarchy::GetChildren(entityManager, characterID))
+	{
+		if (const ShieldComponent* shield = entityManager.GetComponent<ShieldComponent>(childID))
+			return shield;
+	}
+
+	return nullptr;
+}
+
+// The attacker stands inside the arc the shield covers, in front of the defender
+bool IsInFrontOfShield(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID, const ShieldComponent& shield)
+{
+	const TransformComponent* defender = entityManager.GetComponent<TransformComponent>(defenderID);
+	const TransformComponent* attacker = entityManager.GetComponent<TransformComponent>(attackerID);
+	if (!defender || !attacker)
+		return false;
+
+	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(defenderID);
+	const float facingOffset = controller ? controller->facingOffsetDegrees : 0.0f;
+
+	const glm::vec3 facing     = GetDirectionFromYawAndPitch(defender->rotation.y - facingOffset, 0.0f);
+	const glm::vec3 toAttacker = GetHorizontalDirectionOrDefault(attacker->position - defender->position);
+
+	return glm::dot(facing, toAttacker) >= std::cos(glm::radians(shield.guardAngleDegrees * 0.5f));
+}
+
+enum class BlockResult
+{
+	NotBlocked,  // no shield up, or the hit came from the side or the back
+	Blocked,     // the shield took the hit
+	GuardBroken  // the shield was up, but there was not enough stamina to hold it
+};
+
+// A blocked hit costs stamina and hurts only by the part the shield lets through ('inOutDamage' is lowered to it)
+BlockResult TryBlock(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID, float& inOutDamage)
+{
+	const CharacterActionsComponent* defender = GetActions(entityManager, defenderID);
+	const ShieldComponent*           shield   = FindShield(entityManager, defenderID);
+
+	if (!defender || !defender->IsGuarding() || !shield || !IsInFrontOfShield(entityManager, defenderID, attackerID, *shield))
+		return BlockResult::NotBlocked;
+
+	if (!StaminaSystem::TrySpend(entityManager, defenderID, inOutDamage * shield->staminaPerDamage))
+	{
+		SUNTA_ENGINE_LOG_INFO("Combat: the guard of '{0}' broke", GetEntityName(entityManager, defenderID));
+		return BlockResult::GuardBroken;
+	}
+
+	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' blocked '{1}' with the shield", GetEntityName(entityManager, defenderID), GetEntityName(entityManager, attackerID));
+
+	inOutDamage *= shield->damageThrough;
+	return BlockResult::Blocked;
+}
+
+// A character staggering after its attack was parried takes a riposte: much more damage
+float GetRiposteMultiplier(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID)
+{
+	const CharacterActionsComponent* defender = GetActions(entityManager, defenderID);
+	const CharacterActionsComponent* attacker = GetActions(entityManager, attackerID);
+
+	return (defender && attacker && defender->IsOpenToRiposte()) ? attacker->riposteDamageMultiplier : 1.0f;
+}
+
+// ========== A weapon's hit ==========
+
+// Goes through the target's defences: a parry turns it away, a shield takes it, poise keeps the target on its feet
+// True when the hit landed (on the body or on the shield)
+bool HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID)
+{
+	if (!CanBeHurt(entityManager, targetID) || TryParry(entityManager, targetID, attackerID))
+		return false;
+
+	const BlockResult block = TryBlock(entityManager, targetID, attackerID, damage);
+
+	if (block == BlockResult::Blocked)
+	{
+		if (damage <= 0.0f || LoseHealth(entityManager, targetID, damage, attackerID))
+			CharacterActionsSystem::PlayBlockImpact(entityManager, targetID);
+		return true;
+	}
+
+	damage *= GetRiposteMultiplier(entityManager, targetID, attackerID);
+
+	const bool staggers = block == BlockResult::GuardBroken || BreaksPoise(entityManager, targetID, poiseDamage);
+
+	if (LoseHealth(entityManager, targetID, damage, attackerID) && staggers)
+		CharacterActionsSystem::PlayHitReaction(entityManager, targetID);
+
+	return true;
+}
+
 }
 
 void CombatSystem::PrepareForPlay(EntityManager& entityManager)
@@ -133,10 +305,19 @@ void CombatSystem::PrepareForPlay(EntityManager& entityManager)
 		health.currentHealth = health.maxHealth;
 		health.isDead        = false;
 	}
+
+	for (PoiseComponent& poise : entityManager.GetAllComponents<PoiseComponent>())
+	{
+		poise.currentPoise    = poise.maxPoise;
+		poise.secondsSinceHit = 0.0f;
+	}
 }
 
 void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 {
+	for (PoiseComponent& poise : entityManager.GetAllComponents<PoiseComponent>())
+		RecoverPoise(poise, deltaTime);
+
 	for (HitboxComponent& hitbox : entityManager.GetAllComponents<HitboxComponent>())
 	{
 		hitbox.hitFlashSecondsLeft = glm::max(hitbox.hitFlashSecondsLeft - deltaTime, 0.0f);
@@ -155,19 +336,10 @@ void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 
 bool CombatSystem::ApplyDamage(EntityManager& entityManager, unsigned int targetEntityID, float damage, unsigned int attackerEntityID)
 {
-	HealthComponent* health = entityManager.GetComponent<HealthComponent>(targetEntityID);
-
-	if (!health || health->isDead || IsInvulnerable(entityManager, targetEntityID))
+	if (!CanBeHurt(entityManager, targetEntityID))
 		return false;
 
-	health->currentHealth = glm::max(health->currentHealth - damage, 0.0f);
-
-	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' hit '{1}' for {2} ({3} health left)", GetEntityName(entityManager, attackerEntityID),
-		GetEntityName(entityManager, targetEntityID), damage, health->currentHealth);
-
-	if (health->currentHealth <= 0.0f)
-		Die(entityManager, targetEntityID, *health);
-	else
+	if (LoseHealth(entityManager, targetEntityID, damage, attackerEntityID))
 		CharacterActionsSystem::PlayHitReaction(entityManager, targetEntityID);
 
 	return true;

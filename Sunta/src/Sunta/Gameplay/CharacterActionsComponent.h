@@ -19,7 +19,12 @@ enum class CharacterAction
 	HeavyAttack, // a slow, strong attack
 	HitReaction, // staggering after being hit (started by the Health, not by a button)
 	Death,       // the last animation, the character never acts again (until it is brought back at a bonfire)
-	Rest         // kneeling at a bonfire, ends when the bonfire stands the character up
+	Rest,        // kneeling at a bonfire, ends when the bonfire stands the character up
+	StandUp,     // getting up after a rest
+	Block,       // holding the shield up (needs a Shield), lasts while the block key is held
+	BlockImpact, // a hit taken on the shield
+	Parry,       // a quick turn of the shield: an attack that lands early in it is turned away (see 'parryFrom')
+	Parried      // the long stagger of an attacker whose attack was parried: its next hit taken is a riposte
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -28,7 +33,8 @@ enum class CharacterAction
 // a Model with animations and an Animator. Animations whose names contain roll, backstep, light_1/2/3 and heavy
 // are chosen for you, the others are picked from the dropdowns in the Inspector
 // After pressing Play: a tap of Left Shift rolls (a backstep when no direction is held; holding it runs), left mouse button = light attack
-// (press again during the attack to chain the combo), right mouse button = heavy attack
+// (press again during the attack to chain the combo), right mouse button = heavy attack,
+// holding Left Ctrl blocks and a tap of F parries (both need a Shield on the character, see ShieldComponent)
 //
 // The action plays its animation once. While it plays, the character moves on its own (the roll carries it forward,
 // an attack makes a small step) and turns towards the locked-on enemy or the held direction when the action starts
@@ -55,6 +61,11 @@ struct CharacterActionsComponent
 	std::string hitReactionAnimation;
 	std::string deathAnimation;
 	std::string restAnimation;
+	std::string standUpAnimation;
+	std::string blockAnimation;
+	std::string blockImpactAnimation;
+	std::string parryAnimation;
+	std::string parriedAnimation;
 
 	// How fast the actions move the character (meters per second)
 	float rollSpeed       = 5.5f;
@@ -74,6 +85,13 @@ struct CharacterActionsComponent
 
 	// How much more a heavy attack hurts than a light one
 	float heavyDamageMultiplier = 1.8f;
+
+	// The part of the parry during which an attack that lands is turned away
+	float parryFrom = 0.0f;
+	float parryTo   = 0.4f;
+
+	// How much more an attack hurts a character that was just parried (a riposte)
+	float riposteDamageMultiplier = 3.0f;
 
 	// A button pressed after this part of an action is remembered and starts the next action (no need for perfect timing)
 	float inputBufferFrom = 0.3f;
@@ -112,6 +130,15 @@ struct CharacterActionsComponent
 	bool IsResting() const { return currentAction == CharacterAction::Rest; }
 
 	bool IsAttacking() const { return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack; }
+
+	// The shield is up: blocking, or taking a hit on it
+	bool IsGuarding() const { return currentAction == CharacterAction::Block || currentAction == CharacterAction::BlockImpact; }
+
+	// True during the part of a parry that turns attacks away
+	bool IsParrying() const { return currentAction == CharacterAction::Parry && actionProgress >= parryFrom && actionProgress <= parryTo; }
+
+	// Staggering after its attack was parried: the next hit it takes is a riposte
+	bool IsOpenToRiposte() const { return currentAction == CharacterAction::Parried; }
 
 	// True during the part of the current attack that hurts
 	bool IsInHitWindow() const

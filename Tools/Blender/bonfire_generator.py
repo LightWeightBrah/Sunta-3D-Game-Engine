@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sunta_blender import (  # noqa: E402
     Palette,
     PartBuilder,
+    SurfaceTexture,
     bake_textures,
     clear_scene,
     export_gltf,
@@ -46,6 +47,16 @@ BONFIRE_COLORS = {
     "rusted_steel": ((0.40, 0.33, 0.27), 0.45),
     "rust":         ((0.36, 0.19, 0.09), 0.25),
     "leather":      ((0.13, 0.09, 0.06), 0.08),
+}
+
+# Photo surfaces (Poly Haven, CC0)
+BONFIRE_SURFACES = {
+    "stone":        SurfaceTexture("rock_boulder_dry_diff_1k.jpg", meters=0.8, strength=0.9),
+    "stone_dark":   SurfaceTexture("rock_08_diff_1k.jpg", meters=0.8, strength=0.9),
+    "ash":          SurfaceTexture("burned_ground_01_diff_1k.jpg", meters=0.6),
+    "charcoal":     SurfaceTexture("bark_brown_02_diff_1k.jpg", meters=0.4, strength=0.8),
+    "rusted_steel": SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.5, strength=0.8),
+    "rust":         SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.5, strength=0.8),
 }
 
 TEXTURE_PIXELS = 1024
@@ -177,7 +188,7 @@ def main():
 
     clear_scene()
 
-    palette = Palette(BONFIRE_COLORS)
+    palette = Palette(BONFIRE_COLORS, BONFIRE_SURFACES)
     bonfire = build_bonfire(palette)
 
     setup_bake_render()

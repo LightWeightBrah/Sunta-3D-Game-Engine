@@ -1,9 +1,11 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CharacterAnimationSystem.h"
 
+#include <cmath>
 #include <string>
 
 #include "AnimationNames.h"
+#include "CharacterControllerSystem.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "Core/Log.h"
@@ -26,15 +28,18 @@ constexpr float StandingSpeedLimit = 0.1f;
 // A push on the stick (or keys) shorter than this is not a wish to move
 constexpr float SmallestMoveIntent = 0.1f;
 
-// What the character is doing. The order matters: a missing animation is replaced by the one before it
+// What the character is doing
 enum class MoveState
 {
 	Idle,
 	Walk,
-	Run
+	Run,
+	WalkBack,
+	StrafeLeft,
+	StrafeRight
 };
 
-constexpr MoveState AllMoveStates[] = { MoveState::Idle, MoveState::Walk, MoveState::Run };
+constexpr MoveState AllMoveStates[] = { MoveState::Idle, MoveState::Walk, MoveState::Run, MoveState::WalkBack, MoveState::StrafeLeft, MoveState::StrafeRight };
 
 // ========== Small helpers ==========
 
@@ -42,19 +47,27 @@ std::string& GetAnimationName(CharacterAnimationComponent& component, MoveState 
 {
 	switch (state)
 	{
-	case MoveState::Walk: return component.walkAnimation;
-	case MoveState::Run:  return component.runAnimation;
-	default:              return component.idleAnimation;
+	case MoveState::Walk:        return component.walkAnimation;
+	case MoveState::Run:         return component.runAnimation;
+	case MoveState::WalkBack:    return component.walkBackAnimation;
+	case MoveState::StrafeLeft:  return component.strafeLeftAnimation;
+	case MoveState::StrafeRight: return component.strafeRightAnimation;
+	default:                     return component.idleAnimation;
 	}
 }
 
+// The part of the animation's name it is found by. The first name in alphabetical order wins,
+// so "walk" finds Walk before Walk_Back
 const char* GetKeyword(MoveState state)
 {
 	switch (state)
 	{
-	case MoveState::Walk: return "walk";
-	case MoveState::Run:  return "run";
-	default:              return "idle";
+	case MoveState::Walk:        return "walk";
+	case MoveState::Run:         return "run";
+	case MoveState::WalkBack:    return "walk_back";
+	case MoveState::StrafeLeft:  return "strafe_left";
+	case MoveState::StrafeRight: return "strafe_right";
+	default:                     return "idle";
 	}
 }
 
@@ -62,9 +75,23 @@ const char* GetLabel(MoveState state)
 {
 	switch (state)
 	{
-	case MoveState::Walk: return "Walk";
-	case MoveState::Run:  return "Run";
-	default:              return "Idle";
+	case MoveState::Walk:        return "Walk";
+	case MoveState::Run:         return "Run";
+	case MoveState::WalkBack:    return "Walk Back";
+	case MoveState::StrafeLeft:  return "Strafe Left";
+	case MoveState::StrafeRight: return "Strafe Right";
+	default:                     return "Idle";
+	}
+}
+
+// The state whose animation plays when this one has none: running and stepping are a kind of walking, walking is a kind of standing
+bool TryGetReplacement(MoveState state, MoveState& outReplacement)
+{
+	switch (state)
+	{
+	case MoveState::Idle: return false;
+	case MoveState::Walk: outReplacement = MoveState::Idle; return true;
+	default:              outReplacement = MoveState::Walk; return true;
 	}
 }
 
@@ -95,21 +122,38 @@ MoveState GetMoveState(float speed, const CharacterControllerComponent* controll
 	return controller->wantsToRun ? MoveState::Run : MoveState::Walk;
 }
 
-// The animation for the state, or the closest one below it when that one is not set (running -> walking -> standing)
+// Facing a locked-on enemy the character doesn't turn to where it walks: the way it steps decides the animation
+MoveState GetStepState(const CharacterControllerComponent& controller, const TransformComponent& transform)
+{
+	const glm::vec3 forward = GetDirectionFromYawAndPitch(transform.rotation.y - controller.facingOffsetDegrees, 0.0f);
+	const glm::vec3 right   = glm::cross(forward, WorldUp);
+	const glm::vec3 move    = KeepOnlyHorizontalPart(controller.moveDirection);
+
+	const float forwardAmount = glm::dot(move, forward);
+	const float sideAmount    = glm::dot(move, right);
+
+	if (std::abs(forwardAmount) >= std::abs(sideAmount))
+		return forwardAmount >= 0.0f ? MoveState::Walk : MoveState::WalkBack;
+
+	return sideAmount >= 0.0f ? MoveState::StrafeRight : MoveState::StrafeLeft;
+}
+
+// The animation for the state, or the closest one when that one is not set (stepping -> walking -> standing)
 bool TryFindAnimationName(CharacterAnimationComponent& component, const AnimationMap& animations, MoveState state, std::string& outName)
 {
-	for (int stateIndex = static_cast<int>(state); stateIndex >= 0; stateIndex--)
+	while (true)
 	{
-		const std::string& name = GetAnimationName(component, AllMoveStates[stateIndex]);
+		const std::string& name = GetAnimationName(component, state);
 
 		if (!name.empty() && animations.count(name) > 0)
 		{
 			outName = name;
 			return true;
 		}
-	}
 
-	return false;
+		if (!TryGetReplacement(state, state))
+			return false;
+	}
 }
 
 // Fades from whatever plays now: the previous walking animation, or the end of a roll or an attack (Character Actions)
@@ -153,8 +197,13 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager)
 		if (controller && controller->isDrivenByAction)
 			continue;
 
-		const float     speed = GetHorizontalSpeed(entityManager.GetComponent<PhysicsBodyComponent>(entityID));
-		const MoveState state = GetMoveState(speed, controller);
+		const float speed = GetHorizontalSpeed(entityManager.GetComponent<PhysicsBodyComponent>(entityID));
+		MoveState   state = GetMoveState(speed, controller);
+
+		const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityID);
+
+		if (state == MoveState::Walk && transform && CharacterControllerSystem::IsFacingLockedTarget(entityManager, entityID))
+			state = GetStepState(*controller, *transform);
 
 		AnimationMap& animations = modelComponent->modelData->animations;
 
@@ -213,7 +262,7 @@ void CharacterAnimationSystem::ReportProblemsBeforePlay(EntityManager& entityMan
 				SUNTA_ENGINE_LOG_WARNING("Character Animation on '{0}': the {1} animation '{2}' doesn't exist in the Model", name, GetLabel(state), animationName);
 		}
 
-		if (component.idleAnimation.empty() && component.walkAnimation.empty() && component.runAnimation.empty())
+		if (component.idleAnimation.empty() && component.walkAnimation.empty())
 			SUNTA_ENGINE_LOG_WARNING("Character Animation on '{0}': no animation is chosen, pick them in the Inspector", name);
 	}
 }

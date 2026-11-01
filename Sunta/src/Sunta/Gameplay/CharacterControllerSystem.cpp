@@ -250,6 +250,14 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 	}
 }
 
+bool CharacterControllerSystem::IsFacingLockedTarget(EntityManager& entityManager, unsigned int entityID)
+{
+	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
+
+	glm::vec3 pointToFace;
+	return controller && TryGetPointToFace(entityManager, entityID, *controller, pointToFace);
+}
+
 bool CharacterControllerSystem::TryFindPlayer(EntityManager& entityManager, unsigned int& outEntityID)
 {
 	for (CharacterControllerComponent& controller : entityManager.GetAllComponents<CharacterControllerComponent>())

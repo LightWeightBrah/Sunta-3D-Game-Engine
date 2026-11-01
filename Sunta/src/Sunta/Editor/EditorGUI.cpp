@@ -1102,6 +1102,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			},
 
 			{
+				"Poise",
+				[&]() { return entityManager.GetComponent<PoiseComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<PoiseComponent>(inspectedEntity); }
+			},
+
+			{
 				"Respawn",
 				[&]() { return entityManager.GetComponent<RespawnComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<RespawnComponent>(inspectedEntity); }
@@ -1129,6 +1135,12 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Hitbox",
 				[&]() { return entityManager.GetComponent<HitboxComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<HitboxComponent>(inspectedEntity); }
+			},
+
+			{
+				"Shield",
+				[&]() { return entityManager.GetComponent<ShieldComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<ShieldComponent>(inspectedEntity); }
 			},
 
 			{

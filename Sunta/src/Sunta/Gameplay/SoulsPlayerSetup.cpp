@@ -24,6 +24,9 @@ constexpr const char* PlayerWeaponLayer = "PlayerHitbox";
 
 constexpr float PlayerSwordDamage = 30.0f;
 
+// Low: every hit of a Rusted Knight still staggers the player (until better armor)
+constexpr float PlayerPoise = 15.0f;
+
 constexpr const char* PlayerCameraName = "Player Camera";
 
 // Where a new camera is put relative to the player (behind and above it, looking slightly down)
@@ -118,6 +121,8 @@ void SoulsPlayerSetup::SetUp(EntityManager& entityManager, unsigned int entityID
 
 	CharacterSetup::SetBodyLayer(entityManager, entityID, PlayerBodyLayer);
 	CharacterSetup::AddSwordIfPossible(entityManager, entityID, PlayerWeaponLayer, PlayerSwordDamage);
+	CharacterSetup::AddShieldIfPossible(entityManager, entityID);
+	CharacterSetup::AddPoiseIfMissing(entityManager, entityID, PlayerPoise);
 
 	AddFollowCameraIfMissing(entityManager, entityID);
 }

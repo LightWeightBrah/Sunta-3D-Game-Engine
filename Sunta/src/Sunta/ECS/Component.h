@@ -21,6 +21,8 @@
 #include "Gameplay/EnemyHealthBarComponent.h"
 #include "Gameplay/HealthComponent.h"
 #include "Gameplay/HitboxComponent.h"
+#include "Gameplay/PoiseComponent.h"
+#include "Gameplay/ShieldComponent.h"
 #include "Gameplay/StaminaComponent.h"
 #include "Gameplay/CharacterAnimationComponent.h"
 #include "Gameplay/CharacterControllerComponent.h"

@@ -24,6 +24,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sunta_blender import (  # noqa: E402
     Palette,
     PartBuilder,
+    SurfaceTexture,
     bake_textures,
     clear_scene,
     export_gltf,
@@ -42,6 +43,19 @@ STONE_COLORS = {
     "mortar":      ((0.20, 0.19, 0.17), 0.05),
     "moss":        ((0.20, 0.25, 0.12), 0.05),
     "iron":        ((0.22, 0.21, 0.20), 0.50),
+}
+
+# Photo surfaces (Poly Haven, CC0): rough limestone for the blocks, gravelly concrete for the mortar
+LIGHT_STONE_SURFACE = SurfaceTexture("rock_boulder_dry_diff_1k.jpg", meters=1.0, strength=1.3)
+DARK_STONE_SURFACE = SurfaceTexture("rock_08_diff_1k.jpg", meters=1.0, strength=1.3)
+
+STONE_SURFACES = {
+    "stone":       LIGHT_STONE_SURFACE,
+    "stone_light": LIGHT_STONE_SURFACE,
+    "stone_dark":  DARK_STONE_SURFACE,
+    "mortar":      SurfaceTexture("gravel_concrete_03_diff_1k.jpg", meters=1.0),
+    "moss":        SurfaceTexture("forest_ground_04_diff_1k.jpg", meters=0.8),
+    "iron":        SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=1.0, strength=0.8),
 }
 
 TEXTURE_PIXELS = 1024
@@ -215,7 +229,7 @@ def main():
     clear_scene()
     setup_bake_render()
 
-    palette = Palette(STONE_COLORS)
+    palette = Palette(STONE_COLORS, STONE_SURFACES)
     pieces = []
 
     for name, (build, pixels) in PIECES.items():

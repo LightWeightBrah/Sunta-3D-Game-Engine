@@ -20,6 +20,9 @@ constexpr const char* EnemyWeaponLayer = "EnemyHitbox";
 constexpr float SwordDamage = 20.0f;
 constexpr float Health      = 120.0f;
 
+// The first light hit of the player doesn't stagger a Rusted Knight, the second one (or a heavy attack) does
+constexpr float Poise = 30.0f;
+
 // A bit slower than the player, so it can be outrun
 constexpr float WalkSpeed = 1.6f;
 constexpr float RunSpeed  = 4.2f;
@@ -61,6 +64,8 @@ void RustedKnightSetup::SetUp(EntityManager& entityManager, unsigned int entityI
 
 	CharacterSetup::SetBodyLayer(entityManager, entityID, EnemyBodyLayer);
 	CharacterSetup::AddSwordIfPossible(entityManager, entityID, EnemyWeaponLayer, SwordDamage);
+	CharacterSetup::AddShieldIfPossible(entityManager, entityID);
+	CharacterSetup::AddPoiseIfMissing(entityManager, entityID, Poise);
 }
 
 bool RustedKnightSetup::IsSetUp(EntityManager& entityManager, unsigned int entityID)

@@ -40,6 +40,9 @@ bin-intermediates/**.obj
 
 **/imgui.ini
 
+# Raw Mixamo downloads: their license forbids sharing the files, only the knight with the animations baked in is committed
+Tools/Blender/Mixamo/
+
 # Python caches (made when Blender runs the Tools/Blender scripts)
 __pycache__/
 *.pyc

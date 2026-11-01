@@ -24,6 +24,7 @@ float GetActionCost(const StaminaComponent& stamina, CharacterAction action)
 	case CharacterAction::Backstep:    return stamina.backstepCost;
 	case CharacterAction::LightAttack: return stamina.lightAttackCost;
 	case CharacterAction::HeavyAttack: return stamina.heavyAttackCost;
+	case CharacterAction::Parry:       return stamina.parryCost;
 	default:                           return 0.0f;
 	}
 }
@@ -90,6 +91,17 @@ bool StaminaSystem::TrySpendForAction(EntityManager& entityManager, unsigned int
 
 	Spend(*stamina, GetActionCost(*stamina, action));
 	return true;
+}
+
+bool StaminaSystem::TrySpend(EntityManager& entityManager, unsigned int entityID, float amount)
+{
+	StaminaComponent* stamina = entityManager.GetComponent<StaminaComponent>(entityID);
+	if (!stamina)
+		return true;
+
+	const bool isEnough = stamina->currentStamina >= amount;
+	Spend(*stamina, amount);
+	return isEnough;
 }
 
 bool StaminaSystem::HasStaminaLeft(EntityManager& entityManager, unsigned int entityID)

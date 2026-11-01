@@ -18,6 +18,9 @@ public:
 	// The entity the player plays: the first Character Controller with 'isPlayerControlled' turned on. False when there is none
 	static bool TryFindPlayer(EntityManager& entityManager, unsigned int& outEntityID);
 
+	// True while the character keeps facing the enemy it is locked on to (not while it runs): it then steps sideways and backwards
+	static bool IsFacingLockedTarget(EntityManager& entityManager, unsigned int entityID);
+
 	// Adds the Character Controller together with the parts it needs and fills them with sensible values:
 	// a Physics Body (upright, no friction) and a Box Collider (the size of a person)
 	// Parts the entity already has are left as they are

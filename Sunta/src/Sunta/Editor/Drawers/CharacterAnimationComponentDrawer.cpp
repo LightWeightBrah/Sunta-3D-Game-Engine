@@ -34,6 +34,12 @@ bool CharacterAnimationComponentDrawer::Draw(void* componentData, unsigned int e
 	edited |= DrawAnimationCombo("Walk", component->walkAnimation, animations);
 	edited |= DrawAnimationCombo("Run",  component->runAnimation,  animations);
 
+	ImGui::Separator();
+	ImGui::TextDisabled("While locked on");
+	edited |= DrawAnimationCombo("Walk Back",    component->walkBackAnimation,    animations);
+	edited |= DrawAnimationCombo("Strafe Left",  component->strafeLeftAnimation,  animations);
+	edited |= DrawAnimationCombo("Strafe Right", component->strafeRightAnimation, animations);
+
 	edited |= ImGui::SliderFloat("Blend Seconds", &component->blendSeconds, 0.0f, CharacterAnimationComponent::MaxBlendSeconds);
 
 	return edited;

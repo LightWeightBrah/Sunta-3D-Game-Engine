@@ -117,6 +117,8 @@
                 "backstep_animation": "Backstep",
                 "backstep_speed": 4.0,
                 "blend_seconds": 0.08,
+                "block_animation": "Block",
+                "block_impact_animation": "Block_Impact",
                 "cancel_from": 0.75,
                 "death_animation": "Death",
                 "heavy_attack_animation": "Attack_Heavy",
@@ -132,15 +134,21 @@
                 "light_attack_3_animation": "Attack_Light_3",
                 "light_hit_from": 0.28,
                 "light_hit_to": 0.56,
+                "parried_animation": "Parried",
+                "parry_animation": "Parry",
                 "rest_animation": "Rest",
                 "roll_animation": "Roll",
-                "roll_speed": 5.5
+                "roll_speed": 5.5,
+                "stand_up_animation": "Stand_Up"
             },
             "character_animation": {
                 "blend_seconds": 0.2,
                 "idle_animation": "Idle",
                 "run_animation": "Run",
-                "walk_animation": "Walk"
+                "strafe_left_animation": "Strafe_Left",
+                "strafe_right_animation": "Strafe_Right",
+                "walk_animation": "Walk",
+                "walk_back_animation": "Walk_Back"
             },
             "character_controller": {
                 "acceleration": 30.0,
@@ -196,6 +204,10 @@
                 "pixels_per_health_point": 3.0,
                 "pixels_per_stamina_point": 2.6,
                 "show_lock_on_marker": true
+            },
+            "poise": {
+                "max_poise": 15.0,
+                "recover_after_seconds": 4.0
             },
             "respawn": {
                 "respawn_delay_seconds": 4.5
@@ -4179,6 +4191,8 @@
                 "backstep_animation": "Backstep",
                 "backstep_speed": 4.0,
                 "blend_seconds": 0.08,
+                "block_animation": "Block",
+                "block_impact_animation": "Block_Impact",
                 "cancel_from": 0.75,
                 "death_animation": "Death",
                 "heavy_attack_animation": "Attack_Heavy",
@@ -4194,15 +4208,21 @@
                 "light_attack_3_animation": "Attack_Light_3",
                 "light_hit_from": 0.28,
                 "light_hit_to": 0.56,
+                "parried_animation": "Parried",
+                "parry_animation": "Parry",
                 "rest_animation": "Rest",
                 "roll_animation": "Roll",
-                "roll_speed": 5.5
+                "roll_speed": 5.5,
+                "stand_up_animation": "Stand_Up"
             },
             "character_animation": {
                 "blend_seconds": 0.2,
                 "idle_animation": "Idle",
                 "run_animation": "Run",
-                "walk_animation": "Walk"
+                "strafe_left_animation": "Strafe_Left",
+                "strafe_right_animation": "Strafe_Right",
+                "walk_animation": "Walk",
+                "walk_back_animation": "Walk_Back"
             },
             "character_controller": {
                 "acceleration": 30.0,
@@ -4273,6 +4293,10 @@
                     0.0,
                     0.0
                 ]
+            },
+            "poise": {
+                "max_poise": 30.0,
+                "recover_after_seconds": 4.0
             },
             "tag": {
                 "name": "Rusted Knight"
@@ -4376,6 +4400,8 @@
                 "backstep_animation": "Backstep",
                 "backstep_speed": 4.0,
                 "blend_seconds": 0.08,
+                "block_animation": "Block",
+                "block_impact_animation": "Block_Impact",
                 "cancel_from": 0.75,
                 "death_animation": "Death",
                 "heavy_attack_animation": "Attack_Heavy",
@@ -4391,15 +4417,21 @@
                 "light_attack_3_animation": "Attack_Light_3",
                 "light_hit_from": 0.28,
                 "light_hit_to": 0.56,
+                "parried_animation": "Parried",
+                "parry_animation": "Parry",
                 "rest_animation": "Rest",
                 "roll_animation": "Roll",
-                "roll_speed": 5.5
+                "roll_speed": 5.5,
+                "stand_up_animation": "Stand_Up"
             },
             "character_animation": {
                 "blend_seconds": 0.2,
                 "idle_animation": "Idle",
                 "run_animation": "Run",
-                "walk_animation": "Walk"
+                "strafe_left_animation": "Strafe_Left",
+                "strafe_right_animation": "Strafe_Right",
+                "walk_animation": "Walk",
+                "walk_back_animation": "Walk_Back"
             },
             "character_controller": {
                 "acceleration": 30.0,
@@ -4470,6 +4502,10 @@
                     0.0,
                     0.0
                 ]
+            },
+            "poise": {
+                "max_poise": 30.0,
+                "recover_after_seconds": 4.0
             },
             "tag": {
                 "name": "Rusted Knight"
@@ -4573,6 +4609,8 @@
                 "backstep_animation": "Backstep",
                 "backstep_speed": 4.0,
                 "blend_seconds": 0.08,
+                "block_animation": "Block",
+                "block_impact_animation": "Block_Impact",
                 "cancel_from": 0.75,
                 "death_animation": "Death",
                 "heavy_attack_animation": "Attack_Heavy",
@@ -4588,15 +4626,21 @@
                 "light_attack_3_animation": "Attack_Light_3",
                 "light_hit_from": 0.28,
                 "light_hit_to": 0.56,
+                "parried_animation": "Parried",
+                "parry_animation": "Parry",
                 "rest_animation": "Rest",
                 "roll_animation": "Roll",
-                "roll_speed": 5.5
+                "roll_speed": 5.5,
+                "stand_up_animation": "Stand_Up"
             },
             "character_animation": {
                 "blend_seconds": 0.2,
                 "idle_animation": "Idle",
                 "run_animation": "Run",
-                "walk_animation": "Walk"
+                "strafe_left_animation": "Strafe_Left",
+                "strafe_right_animation": "Strafe_Right",
+                "walk_animation": "Walk",
+                "walk_back_animation": "Walk_Back"
             },
             "character_controller": {
                 "acceleration": 30.0,
@@ -4668,6 +4712,10 @@
                     0.0
                 ]
             },
+            "poise": {
+                "max_poise": 30.0,
+                "recover_after_seconds": 4.0
+            },
             "tag": {
                 "name": "Rusted Knight"
             },
@@ -4721,6 +4769,170 @@
             },
             "tag": {
                 "name": "Sword"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_shield"
+            },
+            "parent": {
+                "bone_name": "Shield_L",
+                "index": 2
+            },
+            "shield": {
+                "damage_through": 0.0,
+                "guard_angle_degrees": 140.0,
+                "stamina_per_damage": 1.0
+            },
+            "tag": {
+                "name": "Shield"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_shield"
+            },
+            "parent": {
+                "bone_name": "Shield_L",
+                "index": 87
+            },
+            "shield": {
+                "damage_through": 0.0,
+                "guard_angle_degrees": 140.0,
+                "stamina_per_damage": 1.0
+            },
+            "tag": {
+                "name": "Shield"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_shield"
+            },
+            "parent": {
+                "bone_name": "Shield_L",
+                "index": 89
+            },
+            "shield": {
+                "damage_through": 0.0,
+                "guard_angle_degrees": 140.0,
+                "stamina_per_damage": 1.0
+            },
+            "tag": {
+                "name": "Shield"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_shield"
+            },
+            "parent": {
+                "bone_name": "Shield_L",
+                "index": 91
+            },
+            "shield": {
+                "damage_through": 0.0,
+                "guard_angle_degrees": 140.0,
+                "stamina_per_damage": 1.0
+            },
+            "tag": {
+                "name": "Shield"
             },
             "transform": {
                 "position": [
