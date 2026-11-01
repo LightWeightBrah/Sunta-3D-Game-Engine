@@ -39,3 +39,8 @@ prompt and settings) is in `../Generated/meshy_log.json`.
 | `../Concepts/boss_great_axe_concept.png` | Meshy Text to Image | concept of the boss's long brass-bound axe |
 | `../Generated/boss_great_axe_meshy.glb` | Meshy Image to 3D | the boss's axe (`boss_generator.py`) |
 | `../Generated/Motions/leap_slam.fbx` | Meshy Text to Motion | the boss's jump attack |
+| `../Concepts/Enemies/enemy_*.png` | Meshy Text to Image | concepts of the enemies (approved by the user) |
+| `../Concepts/Enemies/enemy_*_body.png`, `../Concepts/Enemies/weapon_*.png` | Meshy Image to Image of the concepts | each enemy with empty hands and its weapons alone |
+| `../Generated/Enemies/*_rigged.glb` | Meshy Image to 3D, rigged by Meshy | the enemies' bodies |
+| `../Generated/Enemies/<weapon>.glb` | Meshy Image to 3D | the enemies' weapons |
+| `../Concepts/boss_phase_two_concept.png` | Meshy Text to Image | the look of the boss's second phase |

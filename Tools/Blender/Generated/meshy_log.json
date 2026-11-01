@@ -214,7 +214,7 @@
       "remove_background": true,
       "pose_mode": "a-pose"
     },
-    "output": "Concepts/Proposals/enemy_skeleton_spearman.png",
+    "output": "Concepts/Enemies/enemy_skeleton_spearman.png",
     "date": "2026-11-01T16:06:58"
   },
   {
@@ -226,7 +226,7 @@
       "remove_background": true,
       "pose_mode": "a-pose"
     },
-    "output": "Concepts/Proposals/enemy_executioner.png",
+    "output": "Concepts/Enemies/enemy_executioner.png",
     "date": "2026-11-01T16:06:59"
   },
   {
@@ -238,7 +238,7 @@
       "remove_background": true,
       "aspect_ratio": "3:4"
     },
-    "output": "Concepts/Proposals/boss_phase_two.png",
+    "output": "Concepts/boss_phase_two_concept.png",
     "date": "2026-11-01T16:07:09"
   },
   {
@@ -250,7 +250,7 @@
       "remove_background": true,
       "pose_mode": "a-pose"
     },
-    "output": "Concepts/Proposals/enemy_ash_cultist.png",
+    "output": "Concepts/Enemies/enemy_ash_cultist.png",
     "date": "2026-11-01T16:07:09"
   },
   {
@@ -262,7 +262,330 @@
       "remove_background": true,
       "pose_mode": "a-pose"
     },
-    "output": "Concepts/Proposals/enemy_hollow_ghoul.png",
+    "output": "Concepts/Enemies/enemy_hollow_ghoul.png",
     "date": "2026-11-01T16:07:09"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-3696-7668-bce1-0446c0b18dc7",
+    "input": "Concepts/Enemies/enemy_skeleton_spearman.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The long spear from this picture. Show ONLY this object alone, nothing else, no character, no hands, laid straight upright and centered, full object visible, front view, same materials and colors, plain light grey background."
+    },
+    "output": "Concepts/Enemies/weapon_skeleton_spear.png",
+    "date": "2026-11-01T16:08:42"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-363b-73d3-a31c-5187563b06e0",
+    "input": "Concepts/Enemies/enemy_hollow_ghoul.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep exactly the same character, same face, clothes, materials and colors, standing in a relaxed A-pose with arms slightly away from the body, but with completely EMPTY open hands: remove every weapon and held object. Full body, front view, plain light grey background."
+    },
+    "output": "Concepts/Enemies/enemy_hollow_ghoul_body.png",
+    "date": "2026-11-01T16:08:42"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-3648-75bd-a377-4af81eb0f55f",
+    "input": "Concepts/Enemies/enemy_executioner.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep exactly the same character, same face, clothes, materials and colors, standing in a relaxed A-pose with arms slightly away from the body, but with completely EMPTY open hands: remove every weapon and held object. Full body, front view, plain light grey background. Keep the shackles and chains on the wrists."
+    },
+    "output": "Concepts/Enemies/enemy_executioner_body.png",
+    "date": "2026-11-01T16:08:43"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-367d-73d8-bc24-0ba96ac84865",
+    "input": "Concepts/Enemies/enemy_executioner.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The giant rusty two-handed cleaver blade from this picture. Show ONLY this object alone, nothing else, no character, no hands, laid straight upright and centered, full object visible, front view, same materials and colors, plain light grey background."
+    },
+    "output": "Concepts/Enemies/weapon_executioner_cleaver.png",
+    "date": "2026-11-01T16:08:43"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-3621-749c-a1d7-2312077a9fce",
+    "input": "Concepts/Enemies/enemy_hollow_ghoul.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The rusty meat cleaver from this picture. Show ONLY this object alone, nothing else, no character, no hands, laid straight upright and centered, full object visible, front view, same materials and colors, plain light grey background."
+    },
+    "output": "Concepts/Enemies/weapon_ghoul_cleaver.png",
+    "date": "2026-11-01T16:08:44"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-35e1-7258-b20e-41aa8766d854",
+    "input": "Concepts/Enemies/enemy_skeleton_spearman.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep exactly the same character, same face, clothes, materials and colors, standing in a relaxed A-pose with arms slightly away from the body, but with completely EMPTY open hands: remove every weapon and held object. Full body, front view, plain light grey background. Remove the spear and the round shield."
+    },
+    "output": "Concepts/Enemies/enemy_skeleton_spearman_body.png",
+    "date": "2026-11-01T16:08:53"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-3649-712e-a94f-be01ac5ab295",
+    "input": "Concepts/Enemies/enemy_ash_cultist.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep exactly the same character, same face, clothes, materials and colors, standing in a relaxed A-pose with arms slightly away from the body, but with completely EMPTY open hands: remove every weapon and held object. Full body, front view, plain light grey background. Also remove the hanging censer and the staff."
+    },
+    "output": "Concepts/Enemies/enemy_ash_cultist_body.png",
+    "date": "2026-11-01T16:08:53"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-3677-75af-8c18-6d407e56034b",
+    "input": "Concepts/Enemies/enemy_ash_cultist.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The long ritual staff with the skull and feathers from this picture. Show ONLY this object alone, nothing else, no character, no hands, laid straight upright and centered, full object visible, front view, same materials and colors, plain light grey background."
+    },
+    "output": "Concepts/Enemies/weapon_cultist_staff.png",
+    "date": "2026-11-01T16:08:54"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a197a7-378a-72c4-82bd-033588a7181b",
+    "input": "Concepts/Enemies/enemy_skeleton_spearman.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The small round corroded bronze shield from this picture, seen from the front. Show ONLY this object alone, nothing else, no character, no hands, laid straight upright and centered, full object visible, front view, same materials and colors, plain light grey background."
+    },
+    "output": "Concepts/Enemies/weapon_skeleton_shield.png",
+    "date": "2026-11-01T16:09:04"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2cb5-74a7-90a1-45ac55b86b8f",
+    "input": "Concepts/Enemies/weapon_executioner_cleaver.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 10000
+    },
+    "output": "Generated/Enemies/executioner_cleaver.glb",
+    "date": "2026-11-01T16:10:18"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2d05-7008-810f-0944e0877f5a",
+    "input": "Concepts/Enemies/weapon_ghoul_cleaver.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 10000
+    },
+    "output": "Generated/Enemies/ghoul_cleaver.glb",
+    "date": "2026-11-01T16:10:30"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2cfa-7299-9537-3f593d429104",
+    "input": "Concepts/Enemies/weapon_cultist_staff.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 10000
+    },
+    "output": "Generated/Enemies/cultist_staff.glb",
+    "date": "2026-11-01T16:10:37"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2d04-75ff-9a38-0bd0db14d3b7",
+    "input": "Concepts/Enemies/weapon_skeleton_spear.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 10000
+    },
+    "output": "Generated/Enemies/skeleton_spear.glb",
+    "date": "2026-11-01T16:10:50"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2cbf-71cc-b92d-fb63ca0c291f",
+    "input": "Concepts/Enemies/weapon_skeleton_shield.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 10000
+    },
+    "output": "Generated/Enemies/skeleton_shield.glb",
+    "date": "2026-11-01T16:11:02"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2c82-7091-aa30-407be34bc8dc",
+    "input": "Concepts/Enemies/enemy_executioner_body.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/Enemies/executioner.glb",
+    "date": "2026-11-01T16:11:34"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2caf-762d-9aee-d1d9d91280bd",
+    "input": "Concepts/Enemies/enemy_skeleton_spearman_body.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/Enemies/skeleton_spearman.glb",
+    "date": "2026-11-01T16:11:44"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2c73-76a0-9e3f-26686241bd96",
+    "input": "Concepts/Enemies/enemy_hollow_ghoul_body.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/Enemies/hollow_ghoul.glb",
+    "date": "2026-11-01T16:12:24"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197a8-2c91-7492-8c88-36c76d8052fd",
+    "input": "Concepts/Enemies/enemy_ash_cultist_body.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/Enemies/ash_cultist.glb",
+    "date": "2026-11-01T16:12:26"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a197ab-6921-752e-a1bc-ffd19440ea4f",
+    "settings": {
+      "input_task_id": "01a197a8-2c73-76a0-9e3f-26686241bd96",
+      "height_meters": 1.8
+    },
+    "output": "Generated/Enemies/hollow_ghoul_rigged.glb",
+    "date": "2026-11-01T16:13:18"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a197ab-6927-7419-afca-a1852374ffaf",
+    "settings": {
+      "input_task_id": "01a197a8-2c82-7091-aa30-407be34bc8dc",
+      "height_meters": 2.1
+    },
+    "output": "Generated/Enemies/executioner_rigged.glb",
+    "date": "2026-11-01T16:13:19"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a197ab-691a-735c-a5d4-1a099bfdaf92",
+    "settings": {
+      "input_task_id": "01a197a8-2c91-7492-8c88-36c76d8052fd",
+      "height_meters": 1.9
+    },
+    "output": "Generated/Enemies/ash_cultist_rigged.glb",
+    "date": "2026-11-01T16:13:28"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a197ab-6935-7450-a303-b7177c2da4f8",
+    "settings": {
+      "input_task_id": "01a197a8-2caf-762d-9aee-d1d9d91280bd",
+      "height_meters": 1.8
+    },
+    "output": "Generated/Enemies/skeleton_spearman_rigged.glb",
+    "date": "2026-11-01T16:13:29"
   }
 ]

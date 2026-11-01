@@ -131,6 +131,19 @@ def make_image(prompt, out_path, pose_mode=None, aspect_ratio="3:4"):
     return task_id
 
 
+def edit_image(image_path, prompt, out_path):
+    """A picture changed by a description (Image to Image), keeping the rest of it: e.g. the same character without
+    its weapon, so the body and the weapon become separate models"""
+    body = {"ai_model": IMAGE_MODEL, "prompt": prompt, "reference_image_urls": [as_data_uri(image_path)]}
+    task_id = request("POST", "/image-to-image", body)["result"]
+    task = wait_for("image-to-image", task_id)
+    download(task["image_urls"][0], out_path)
+
+    settings = {key: value for key, value in body.items() if key != "reference_image_urls"}
+    write_log({"task": "image-to-image", "task_id": task_id, "input": relative(image_path), "settings": settings, "output": relative(out_path)})
+    return task_id
+
+
 def make_model(image_path, out_path, pose_mode=None, faces=30000):
     """A textured 3D model (GLB) from a picture"""
     body = dict(MODEL_SETTINGS, image_url=as_data_uri(image_path), target_polycount=faces)
@@ -183,6 +196,11 @@ def main():
     image.add_argument("--pose", default=None)
     image.add_argument("--aspect", default="3:4")
 
+    edit = commands.add_parser("edit")
+    edit.add_argument("image")
+    edit.add_argument("prompt")
+    edit.add_argument("--out", required=True)
+
     model = commands.add_parser("model")
     model.add_argument("image")
     model.add_argument("--out", required=True)
@@ -206,6 +224,8 @@ def main():
         print(make_image(arguments.prompt, arguments.out, arguments.pose, arguments.aspect))
     elif arguments.command == "model":
         print(make_model(arguments.image, arguments.out, arguments.pose, arguments.faces))
+    elif arguments.command == "edit":
+        print(edit_image(arguments.image, arguments.prompt, arguments.out))
     elif arguments.command == "rig":
         print(rig_model(arguments.model_task_id, arguments.height, arguments.out))
     elif arguments.command == "motion":
