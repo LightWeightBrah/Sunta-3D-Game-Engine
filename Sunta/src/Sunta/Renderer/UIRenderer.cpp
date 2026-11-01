@@ -124,6 +124,11 @@ void UIRenderer::DrawRectangle(const glm::vec2& topLeft, const glm::vec2& size, 
 	DrawQuad(topLeft, size, color, nullptr, WholeTexture);
 }
 
+void UIRenderer::DrawImage(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture)
+{
+	DrawQuad(topLeft, size, glm::vec4(1.0f), &texture, WholeTexture);
+}
+
 void UIRenderer::DrawRectangleOutline(const glm::vec2& topLeft, const glm::vec2& size, float thickness, const glm::vec4& color)
 {
 	DrawRectangle(topLeft, glm::vec2(size.x, thickness), color);

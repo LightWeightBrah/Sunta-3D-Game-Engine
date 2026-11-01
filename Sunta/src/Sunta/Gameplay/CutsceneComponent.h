@@ -18,8 +18,9 @@ namespace Sunta
 // While it plays nobody fights: the enemies wait and the player's keys do nothing; E skips it ('canBeSkipped')
 // It starts from a Fog Gate (its 'cutscene': played the first time the fog closes behind the player) or from a script:
 // this.cutscene:play()
-// 'videoFile' is for a video instead of the engine's camera (a cutscene made elsewhere, e.g. by an AI video generator);
-// the engine can't play videos yet, so for now it is only kept
+// With 'videoFile' (e.g. @game/Videos/intro.mpg) a video plays instead of the engine's camera: a cutscene made elsewhere,
+// e.g. by an AI video generator. It must be MPEG-1 (see VideoPlayer.h for the ffmpeg command), it plays without sound
+// and ends with the video (or E). The camera points, the animation and the title are not used then
 struct CutsceneComponent
 {
 	// Limits of the sliders in the Inspector
@@ -45,6 +46,7 @@ struct CutsceneComponent
 	bool  isPlaying           = false;
 	bool  hasPlayed           = false;
 	bool  hasStartedAnimation = false;
+	bool  isVideo             = false;
 	float seconds             = 0.0f;
 
 	static void RegisterToInspector()

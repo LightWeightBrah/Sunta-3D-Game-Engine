@@ -73,6 +73,12 @@ OpenGLTexture::~OpenGLTexture()
 	GLCall(glDeleteTextures(1, &id));
 }
 
+void OpenGLTexture::SetPixels(const unsigned char* rgbaPixels)
+{
+	GLCall(glBindTexture(GL_TEXTURE_2D, id));
+	GLCall(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, rgbaPixels));
+}
+
 void OpenGLTexture::Bind(unsigned int slot) const
 {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));

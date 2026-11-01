@@ -15,6 +15,10 @@ public:
 	virtual void Bind(unsigned int slot = 0) const = 0;
 	virtual void Unbind() const = 0;
 
+	// Replaces every pixel of a texture made in memory (4 bytes per pixel, RGBA, the first row is the top),
+	// e.g. the next frame of a video
+	virtual void SetPixels(const unsigned char* rgbaPixels) = 0;
+
 	virtual int GetWidth() const = 0;
 	virtual int GetHeight() const = 0;
 

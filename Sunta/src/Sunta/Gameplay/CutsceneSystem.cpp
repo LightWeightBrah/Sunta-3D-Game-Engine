@@ -12,6 +12,9 @@
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 #include "Renderer/UIRenderer.h"
+#include "Renderer/Texture.h"
+#include "Renderer/VideoPlayer.h"
+#include "Core/VirtualFileSystem.h"
 #include "Scene/EntityHierarchy.h"
 
 namespace Sunta
@@ -34,6 +37,13 @@ const glm::vec4     TitleColor  = glm::vec4(0.92f, 0.78f, 0.52f, 1.0f);
 constexpr float     HintHeight  = 18.0f;
 const glm::vec4     HintColor   = glm::vec4(0.7f, 0.7f, 0.7f, 0.6f);
 const glm::vec3     WorldUp     = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// One video plays at a time
+VideoPlayer& GetVideo()
+{
+	static VideoPlayer video;
+	return video;
+}
 
 bool TryFindByName(EntityManager& entityManager, const std::string& name, unsigned int& outEntityID)
 {
@@ -142,7 +152,10 @@ void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, const Cu
 
 void Finish(EntityManager& entityManager, CutsceneComponent& cutscene)
 {
-	SUNTA_ENGINE_LOG_INFO("Cutscene: finished after {:.1f} s", cutscene.seconds);
+	if (cutscene.isVideo)
+		GetVideo().Close();
+
+	SUNTA_ENGINE_LOG_INFO("Cutscene: finished after {0} s", cutscene.seconds);
 	cutscene.isPlaying = false;
 	HoldEveryone(entityManager, false);
 }
@@ -155,14 +168,15 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 	if (!cutscene || cutscene->hasPlayed)
 		return;
 
-	if (!cutscene->videoFile.empty())
-		SUNTA_ENGINE_LOG_WARNING("Cutscene: '{0}' is a video, the engine can't play videos yet, the camera cutscene plays instead", cutscene->videoFile);
 
 	SUNTA_ENGINE_LOG_INFO("Cutscene: '{0}' starts", GetEntityName(entityManager, cutsceneEntityID));
 	cutscene->isPlaying           = true;
 	cutscene->hasPlayed           = true;
 	cutscene->hasStartedAnimation = false;
 	cutscene->seconds             = 0.0f;
+
+	// A video that can't be opened leaves the camera cutscene (the error is in the log)
+	cutscene->isVideo = !cutscene->videoFile.empty() && GetVideo().Open(VirtualFileSystem::Resolve(cutscene->videoFile));
 	HoldEveryone(entityManager, true);
 }
 
@@ -197,6 +211,16 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 		// A long frame (loading something) must not skip the cutscene
 		cutscene.seconds += glm::min(deltaTime, MaxStepSeconds);
 
+		const bool isSkipped = cutscene.canBeSkipped && cutscene.seconds > SkipAfterSeconds && InputManager::IsKeyDown(SkipKey);
+
+		if (cutscene.isVideo)
+		{
+			GetVideo().Update(deltaTime);
+			if (isSkipped || GetVideo().IsFinished())
+				Finish(entityManager, cutscene);
+			continue;
+		}
+
 		if (!cutscene.hasStartedAnimation && cutscene.seconds >= cutscene.animationAtSeconds)
 		{
 			cutscene.hasStartedAnimation = true;
@@ -208,7 +232,6 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 
 		PlaceCamera(entityManager, cutsceneID, cutscene);
 
-		const bool isSkipped = cutscene.canBeSkipped && cutscene.seconds > SkipAfterSeconds && InputManager::IsKeyDown(SkipKey);
 		if (isSkipped || cutscene.seconds >= cutscene.durationSeconds)
 			Finish(entityManager, cutscene);
 	}
@@ -220,6 +243,27 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 	{
 		if (!cutscene.isPlaying)
 			continue;
+
+		// A video fills the game's area as much as it can without stretching, black around it
+		if (cutscene.isVideo)
+		{
+			UIRenderer::Begin(screenSize);
+			UIRenderer::DrawRectangle(areaTopLeft, areaSize, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+			const VideoPlayer& video = GetVideo();
+			if (const Texture* frame = video.GetTexture())
+			{
+				const float scale = glm::min(areaSize.x / (float)video.GetWidth(), areaSize.y / (float)video.GetHeight());
+				const glm::vec2 size = glm::vec2((float)video.GetWidth(), (float)video.GetHeight()) * scale;
+				UIRenderer::DrawImage(areaTopLeft + (areaSize - size) * 0.5f, size, *frame);
+			}
+
+			if (cutscene.canBeSkipped)
+				UIRenderer::DrawTextAt(SkipHint, areaTopLeft + glm::vec2(areaSize.x - 110.0f, areaSize.y - 30.0f), HintHeight, HintColor);
+
+			UIRenderer::End();
+			continue;
+		}
 
 		// The bars slide in at the start and out at the end
 		const float in   = glm::clamp(cutscene.seconds / BarFadeSeconds, 0.0f, 1.0f);

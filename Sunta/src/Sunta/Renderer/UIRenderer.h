@@ -26,6 +26,9 @@ public:
 	static glm::vec2 GetScreenSize() { return screenSize; }
 
 	static void DrawRectangle(const glm::vec2& topLeft, const glm::vec2& size, const glm::vec4& color);
+	// A picture (e.g. a frame of a video) stretched over the rectangle
+	static void DrawImage(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture);
+
 	static void DrawRectangleOutline(const glm::vec2& topLeft, const glm::vec2& size, float thickness, const glm::vec4& color);
 
 	// Letters 'pixelHeight' tall with a soft dark shadow, so the text can be read over a bright scene

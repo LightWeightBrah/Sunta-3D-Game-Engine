@@ -63,6 +63,7 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper/imguizmo/ImGuizmo.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_truetype.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/pl_mpeg_wrapper/pl_mpeg/pl_mpeg.cpp"
 )
 
 # ========================= IDE ORGANIZATION =============================  
@@ -93,6 +94,7 @@ set(SUNTA_PRIVATE_INCLUDE_DIRS
 "${CMAKE_SOURCE_DIR}/Dependencies/imgui_wrapper/imgui/backends"		# for internal imgui implementation (files from folder backends can see folder imgui)
 "${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
+"${CMAKE_SOURCE_DIR}/Dependencies/pl_mpeg_wrapper"						# for #include <pl_mpeg/pl_mpeg.h> (MPEG-1 videos)
 "${CMAKE_SOURCE_DIR}/Dependencies/nlohmann_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/Lua"
 )
