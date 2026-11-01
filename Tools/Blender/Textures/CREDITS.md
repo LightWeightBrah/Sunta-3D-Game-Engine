@@ -18,3 +18,11 @@ The generators (`sunta_blender.SurfaceTexture`) take only the light and dark spo
 | `burned_ground_01_diff_1k.jpg` | [burned_ground_01](https://polyhaven.com/a/burned_ground_01) | ash of the bonfire |
 
 Downloaded through the public Poly Haven API (`https://api.polyhaven.com/files/<asset>`, the 1k JPG "Diffuse" map).
+
+## Pictures and models made by AI
+
+| File | Made with | License | Used for |
+|---|---|---|---|
+| `../Concepts/boss_concept.png` | Z-Image-Turbo (Tongyi-MAI) | Apache 2.0 | concept of the boss, input of TRELLIS.2 |
+| `../Generated/boss_trellis.glb` | TRELLIS.2 (Microsoft) from the concept | MIT | the boss's body (`boss_generator.py`) |
+| `../Concepts/boss_axe_concept.png` | Z-Image-Turbo (Tongyi-MAI) | Apache 2.0 | the boss's great axe (`boss_generator.py` builds it from the picture) |

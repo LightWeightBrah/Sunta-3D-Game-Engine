@@ -123,6 +123,8 @@ void ResourceLoader::LoadModels()
 	ResourceManager::LoadModel(Models::KnightSword, "@engine/Models/KnightSword/knight_sword.gltf");
 	ResourceManager::LoadModel(Models::KnightShield, "@engine/Models/KnightShield/knight_shield.gltf");
 	ResourceManager::LoadModel(Models::FogGate, "@engine/Models/FogGate/fog_gate.gltf");
+	ResourceManager::LoadModel(Models::Boss, "@engine/Models/Boss/boss.gltf");
+	ResourceManager::LoadModel(Models::BossAxe, "@engine/Models/BossAxe/boss_axe.gltf");
 	ResourceManager::LoadModel(Models::RustedKnight, "@engine/Models/RustedKnight/rusted_knight.gltf");
 	ResourceManager::LoadModel(Models::Bonfire,      "@engine/Models/Bonfire/bonfire.gltf");
 

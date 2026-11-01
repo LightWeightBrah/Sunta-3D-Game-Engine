@@ -202,7 +202,14 @@ def parse_arguments():
 # ========== The knight ==========
 
 
-def build_skeleton():
+def knight_held_items():
+    """(bone, parent bone, where the held model stands in the rest pose) for the sword and the shield of the knights"""
+    return [(WEAPON_BONE, WEAPON_PARENT_BONE, get_sword_rest_matrix()),
+            (SHIELD_BONE, SHIELD_PARENT_BONE, get_shield_rest_matrix())]
+
+
+def build_skeleton(skeleton=SKELETON, held_items=None):
+    """The armature of a character: the bones of 'skeleton' plus a bone for every held model (by default the knight's)"""
     armature_data = bpy.data.armatures.new("KnightArmature")
     armature = bpy.data.objects.new("Armature", armature_data)
     bpy.context.scene.collection.objects.link(armature)
@@ -211,7 +218,7 @@ def build_skeleton():
     bpy.ops.object.mode_set(mode="EDIT")
     edit_bones = armature_data.edit_bones
 
-    for name, parent, head, tail, roll_axis in SKELETON:
+    for name, parent, head, tail, roll_axis in skeleton:
         bone = edit_bones.new(name)
         bone.head, bone.tail = head, tail
         bone.align_roll(Vector(roll_axis))
@@ -219,8 +226,8 @@ def build_skeleton():
             bone.parent = edit_bones[parent]
             bone.use_connect = False
 
-    add_held_item_bone(edit_bones, WEAPON_BONE, WEAPON_PARENT_BONE, get_sword_rest_matrix())
-    add_held_item_bone(edit_bones, SHIELD_BONE, SHIELD_PARENT_BONE, get_shield_rest_matrix())
+    for bone_name, parent_name, item_rest_matrix in (held_items if held_items is not None else knight_held_items()):
+        add_held_item_bone(edit_bones, bone_name, parent_name, item_rest_matrix)
 
     bpy.ops.object.mode_set(mode="OBJECT")
     return armature

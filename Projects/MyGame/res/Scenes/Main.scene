@@ -5815,15 +5815,15 @@
             },
             "box_collider": {
                 "half_extents": [
-                    0.3,
-                    0.9,
-                    0.3
+                    0.35,
+                    0.98,
+                    0.35
                 ],
                 "is_trigger": false,
                 "layer": 4,
                 "local_offset": [
                     0.0,
-                    0.9,
+                    0.98,
                     0.0
                 ],
                 "show_gizmos": false
@@ -5833,7 +5833,7 @@
                 "backstep_animation": "Backstep",
                 "backstep_speed": 4.0,
                 "blend_seconds": 0.08,
-                "block_animation": "Block",
+                "block_animation": "",
                 "block_impact_animation": "Block_Impact",
                 "cancel_from": 0.75,
                 "death_animation": "Death",
@@ -5851,7 +5851,7 @@
                 "light_hit_from": 0.28,
                 "light_hit_to": 0.56,
                 "parried_animation": "Parried",
-                "parry_animation": "Parry",
+                "parry_animation": "",
                 "rest_animation": "Rest",
                 "roll_animation": "Roll",
                 "roll_speed": 5.5,
@@ -5898,12 +5898,12 @@
                 "switch_mouse_distance": 120.0
             },
             "lock_on_target": {
-                "aim_height": 1.25,
+                "aim_height": 1.3,
                 "is_lockable": true
             },
             "melee_enemy": {
                 "attack_cooldown_seconds": 1.8,
-                "attack_distance": 3.0,
+                "attack_distance": 4.0,
                 "give_up_distance": 60.0,
                 "heavy_attack_chance": 0.35,
                 "max_light_combo": 3,
@@ -5912,7 +5912,7 @@
             },
             "model": {
                 "is_visible": true,
-                "model_name": "rusted_knight"
+                "model_name": "boss"
             },
             "physics_body": {
                 "angular_damping": 0.05000000074505806,
@@ -5961,9 +5961,9 @@
                     0.0
                 ],
                 "scale": [
-                    1.6,
-                    1.6,
-                    1.6
+                    1.5,
+                    1.5,
+                    1.5
                 ]
             }
         },
@@ -5971,14 +5971,14 @@
             "hitbox": {
                 "damage": 35.0,
                 "half_extents": [
-                    0.06,
-                    0.48,
-                    0.06
+                    0.4,
+                    0.26,
+                    0.08
                 ],
                 "layer": 16,
                 "local_offset": [
                     0.0,
-                    0.56,
+                    1.928,
                     0.0
                 ],
                 "poise_damage": 45.0,
@@ -5986,55 +5986,14 @@
             },
             "model": {
                 "is_visible": true,
-                "model_name": "knight_sword"
+                "model_name": "boss_axe"
             },
             "parent": {
                 "bone_name": "Weapon_R",
                 "index": 115
             },
             "tag": {
-                "name": "Sword"
-            },
-            "transform": {
-                "position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation_quaternion": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "model": {
-                "is_visible": true,
-                "model_name": "knight_shield"
-            },
-            "parent": {
-                "bone_name": "Shield_L",
-                "index": 115
-            },
-            "shield": {
-                "damage_through": 0.0,
-                "guard_angle_degrees": 140.0,
-                "stamina_per_damage": 1.0
-            },
-            "tag": {
-                "name": "Shield"
+                "name": "Great Axe"
             },
             "transform": {
                 "position": [
@@ -6100,6 +6059,266 @@
                     0.0,
                     0.0,
                     -20.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.07,
+                    "attenuation_quadratic": 0.017
+                },
+                "color": {
+                    "ambient": [
+                        0.03,
+                        0.02,
+                        0.01
+                    ],
+                    "diffuse": [
+                        0.95,
+                        0.6,
+                        0.3
+                    ],
+                    "specular": [
+                        0.7,
+                        0.5,
+                        0.3
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Arena Light"
+            },
+            "transform": {
+                "position": [
+                    -16.0,
+                    3.2,
+                    -30.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.07,
+                    "attenuation_quadratic": 0.017
+                },
+                "color": {
+                    "ambient": [
+                        0.03,
+                        0.02,
+                        0.01
+                    ],
+                    "diffuse": [
+                        0.95,
+                        0.6,
+                        0.3
+                    ],
+                    "specular": [
+                        0.7,
+                        0.5,
+                        0.3
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Arena Light"
+            },
+            "transform": {
+                "position": [
+                    16.0,
+                    3.2,
+                    -30.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.07,
+                    "attenuation_quadratic": 0.017
+                },
+                "color": {
+                    "ambient": [
+                        0.03,
+                        0.02,
+                        0.01
+                    ],
+                    "diffuse": [
+                        0.95,
+                        0.6,
+                        0.3
+                    ],
+                    "specular": [
+                        0.7,
+                        0.5,
+                        0.3
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Arena Light"
+            },
+            "transform": {
+                "position": [
+                    -16.0,
+                    3.2,
+                    -50.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.07,
+                    "attenuation_quadratic": 0.017
+                },
+                "color": {
+                    "ambient": [
+                        0.03,
+                        0.02,
+                        0.01
+                    ],
+                    "diffuse": [
+                        0.95,
+                        0.6,
+                        0.3
+                    ],
+                    "specular": [
+                        0.7,
+                        0.5,
+                        0.3
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Arena Light"
+            },
+            "transform": {
+                "position": [
+                    16.0,
+                    3.2,
+                    -50.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "point_light": {
+                "attenuation": {
+                    "attenuation_constant": 1.0,
+                    "attenuation_linear": 0.07,
+                    "attenuation_quadratic": 0.017
+                },
+                "color": {
+                    "ambient": [
+                        0.03,
+                        0.02,
+                        0.01
+                    ],
+                    "diffuse": [
+                        0.95,
+                        0.6,
+                        0.3
+                    ],
+                    "specular": [
+                        0.7,
+                        0.5,
+                        0.3
+                    ]
+                }
+            },
+            "tag": {
+                "name": "Arena Light"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    3.2,
+                    -57.0
                 ],
                 "rotation": [
                     0.0,
