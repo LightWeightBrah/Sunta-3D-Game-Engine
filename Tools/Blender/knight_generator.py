@@ -137,6 +137,7 @@ SHIELD_TOP = Vector((0.0, 1.0, 0.0))
 
 SHIELD_RADIUS = 0.30
 SHIELD_THICKNESS = 0.03
+SHIELD_GRIP_BEHIND_FACE = 0.035  # the middle of the grip, behind the back of the planks
 
 # ========== Sword size (meters) ==========
 
@@ -255,7 +256,7 @@ def build_shield_mesh(palette):
         parts.sphere(None, "steel_dark", location, (0.011, 0.011, 0.008), segments=8, rings=6)
 
     # The grip behind the boss, across the shield, and the strap over the forearm
-    parts.box(None, "leather", (0.0, 0.0, -face_z - 0.035), (0.13, 0.03, 0.025))
+    parts.box(None, "leather", (0.0, 0.0, -face_z - SHIELD_GRIP_BEHIND_FACE), (0.13, 0.03, 0.025))
     parts.box(None, "iron", (-0.08, 0.0, -face_z - 0.018), (0.02, 0.035, 0.035))
     parts.box(None, "iron", (0.08, 0.0, -face_z - 0.018), (0.02, 0.035, 0.035))
     parts.box(None, "leather", (0.0, -0.12, -face_z - 0.03), (0.16, 0.035, 0.012))

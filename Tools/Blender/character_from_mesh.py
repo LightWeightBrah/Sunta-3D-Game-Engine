@@ -15,6 +15,7 @@ Used by characters_generator.py (the knights) and boss_generator.py
 """
 
 import math
+from dataclasses import dataclass
 
 import bpy
 import numpy
@@ -159,6 +160,89 @@ def add_held_item_bones(armature, held_items):
     for bone_name, parent_name, item_rest_matrix in held_items:
         knight_generator.add_held_item_bone(armature.data.edit_bones, bone_name, parent_name, item_rest_matrix)
     bpy.ops.object.mode_set(mode="OBJECT")
+
+
+# ========== Hands closed around a grip ==========
+
+# The palm is this part of the hand's length (from the wrist), the fingers the rest
+PALM_PART_OF_HAND = 0.42
+
+# The fingers wrap around the grip this far (degrees): a little less than a full circle, the fingertips end at the palm
+FINGER_WRAP_DEGREES = 250.0
+
+
+@dataclass
+class Grip:
+    """A closed fist in the rest pose: the middle of the hole the fingers make, the hole's direction (towards the thumb),
+    the straight fingers' direction (from the wrist), the palm's side (out of the palm) and how far the back of the fist
+    reaches from the middle (towards -palm)"""
+    center: Vector
+    along: Vector
+    fingers: Vector
+    palm: Vector
+    back_of_fist: float
+
+    def item_matrix(self, x, y, z, grip_in_item=Vector()):
+        """Where a held model stands so that its grip (at 'grip_in_item', its own coordinates) is in this fist,
+        with its local axes along the given world directions"""
+        rotation = Matrix((x, y, z)).transposed().to_4x4()
+        return Matrix.Translation(self.center - rotation.to_3x3() @ grip_in_item) @ rotation
+
+
+def make_fist(armature, mesh, side):
+    """Bends the hand's fingers (the mesh in the rest pose, the hand has no finger bones) into a fist around a grip.
+    Rigged models come with open hands: a weapon only looks held when the fingers close around it. Returns the Grip"""
+    hand = armature.data.bones["Hand" + side]
+    wrist = armature.matrix_world @ hand.head_local
+
+    group = mesh.vertex_groups[hand.name].index
+    to_world = mesh.matrix_world
+    to_mesh = to_world.inverted()
+    vertices = [vertex for vertex in mesh.data.vertices
+                if any(slot.group == group and slot.weight >= 0.3 for slot in vertex.groups)]
+    points = numpy.array([tuple(to_world @ vertex.co) for vertex in vertices])
+
+    # The hand is longest along the fingers (the bone has no finger bones to point at)
+    _, _, directions = numpy.linalg.svd(points - points.mean(axis=0), full_matrices=False)
+    fingers = Vector(directions[0]).normalized()
+    if fingers.dot(Vector(points.mean(axis=0)) - wrist) < 0.0:
+        fingers = -fingers
+
+    # The hand is flat: across the fingers its widest direction is the knuckles' line, its thinnest the palm's side
+    along_fingers = (points - numpy.array(wrist)) @ numpy.array(fingers)
+    across = points - numpy.outer(along_fingers, numpy.array(fingers))
+    middle = across.mean(axis=0)
+    _, _, directions = numpy.linalg.svd(across - middle, full_matrices=False)
+    along = Vector(directions[0]).normalized()
+
+    # Thumbs point forward (+Y) in an A or T pose; the palm is on the side the fingers bend to
+    if along.y < 0.0:
+        along = -along
+    palm = along.cross(fingers) if side == "_R" else fingers.cross(along)
+
+    knuckle_distance = along_fingers.max() * PALM_PART_OF_HAND
+    finger_length = along_fingers.max() - knuckle_distance
+    radius = finger_length / math.radians(FINGER_WRAP_DEGREES)
+    knuckles = Vector(middle) + fingers * knuckle_distance
+    center = knuckles + palm * radius
+
+    for vertex, distance in zip(vertices, along_fingers):
+        out_of_palm = distance - knuckle_distance
+        if out_of_palm <= 0.0:
+            continue
+        position = to_world @ vertex.co
+        offset = position - knuckles
+        to_palm = offset.dot(palm)
+        sideways = offset.dot(along)
+        # Rolled onto a circle around the grip: the farther along the finger, the more it turns towards the palm
+        angle = out_of_palm / radius
+        distance_from_center = radius - to_palm
+        bent = center + along * sideways + (-palm * math.cos(angle) + fingers * math.sin(angle)) * distance_from_center
+        vertex.co = to_mesh @ bent
+
+    mesh.data.update()
+    back_of_fist = max((to_world @ vertex.co - center).dot(-palm) for vertex in vertices)
+    return Grip(center, along, fingers, palm, back_of_fist)
 
 
 def skeleton_of(armature):

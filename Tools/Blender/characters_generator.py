@@ -38,6 +38,9 @@ KNIGHT_BRIGHTNESS = 1.5
 # (parts of the character's height), so the hand stays behind the face
 SHIELD_OUT_OF_FIST = 0.04
 
+# Rigged characters close their hands into fists: between the back of the left fist and the back of the shield (meters)
+SHIELD_GAP = 0.008
+
 
 @dataclass
 class Character:
@@ -75,6 +78,22 @@ def sword_and_shield(skeleton):
              knight_generator.get_sword_rest_matrix(character_from_mesh.fist_center(skeleton, "_R"))),
             (knight_generator.SHIELD_BONE, knight_generator.SHIELD_PARENT_BONE,
              knight_generator.get_shield_rest_matrix(shield_center))]
+
+
+def sword_and_shield_in_fists(armature, mesh):
+    """For a rigged character: both hands closed into fists, the sword's grip in the right one (the blade towards the thumb,
+    the edge where the straight fingers pointed) and the shield's grip in the left one (its face on the back of the hand)"""
+    right = character_from_mesh.make_fist(armature, mesh, "_R")
+    left = character_from_mesh.make_fist(armature, mesh, "_L")
+
+    sword = right.item_matrix(right.fingers, right.along.cross(right.fingers), right.along)
+    # The fist is in the shield's boss: the back of the planks just outside the back of the fist
+    face = -left.palm
+    shield_middle = Vector((0.0, 0.0, -left.back_of_fist - SHIELD_GAP - knight_generator.SHIELD_THICKNESS * 0.5))
+    shield = left.item_matrix(left.along, face.cross(left.along), face, shield_middle)
+
+    return [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE, sword),
+            (knight_generator.SHIELD_BONE, knight_generator.SHIELD_PARENT_BONE, shield)]
 
 
 def render_icon(path, armature, mesh, height):
@@ -118,7 +137,7 @@ def make_character(character, arguments):
     character_from_mesh.make_engine_textures(mesh, folder, character.name, character.brightness)
 
     if character.is_rigged:
-        character_from_mesh.add_held_item_bones(armature, sword_and_shield(character_from_mesh.skeleton_of(armature)))
+        character_from_mesh.add_held_item_bones(armature, sword_and_shield_in_fists(armature, mesh))
         knight_generator.create_animations(armature)
         knight_generator.reset_to_rest_pose(armature)
     else:
