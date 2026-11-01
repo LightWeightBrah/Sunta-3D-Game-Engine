@@ -25,7 +25,9 @@ enum class CharacterAction
 	Block,       // holding the shield up (needs a Shield), lasts while the block key is held
 	BlockImpact, // a hit taken on the shield
 	Parry,       // a quick turn of the shield: an attack that lands early in it is turned away (see 'parryFrom')
-	Parried      // the long stagger of an attacker whose attack was parried: its next hit taken is a riposte
+	Parried,     // the long stagger of an attacker whose attack was parried: its next hit taken is a riposte
+	Special      // any animation played once by name (a roar, a taunt), started by a script or a boss;
+	             // hits still hurt but don't stagger the character (it can't be interrupted)
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -124,6 +126,9 @@ struct CharacterActionsComponent
 
 	// How fast the current leap flies (chosen when it starts, from the distance to the target)
 	float currentLeapSpeed = 0.0f;
+
+	// The animation of the current Special action
+	std::string specialAnimation;
 
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;

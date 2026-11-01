@@ -54,6 +54,23 @@ void OpenGLDevice::SetAlphaBlending(bool isEnabled)
 	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
 
+void OpenGLDevice::SetAdditiveBlending(bool isEnabled)
+{
+	if (!isEnabled)
+	{
+		GLCall(glDisable(GL_BLEND));
+		return;
+	}
+
+	GLCall(glEnable(GL_BLEND));
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE));
+}
+
+void OpenGLDevice::SetDepthWrite(bool isEnabled)
+{
+	GLCall(glDepthMask(isEnabled ? GL_TRUE : GL_FALSE));
+}
+
 void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 {
 	vertexArray.Bind();

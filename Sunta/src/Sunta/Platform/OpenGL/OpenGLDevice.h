@@ -13,6 +13,8 @@ public:
 	virtual void SetLineWidth(float width) override;
 	virtual void SetDepthTest(bool isEnabled) override;
 	virtual void SetAlphaBlending(bool isEnabled) override;
+	virtual void SetAdditiveBlending(bool isEnabled) override;
+	virtual void SetDepthWrite(bool isEnabled) override;
 
 	virtual void DrawElements(const VertexArray& vertexArray) override;
 	virtual void DrawLines(const VertexArray& vertexArray) override;

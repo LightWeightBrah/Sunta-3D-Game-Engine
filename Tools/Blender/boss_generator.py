@@ -76,6 +76,9 @@ BOSS_ANIMATIONS = {
     "Attack_Heavy":   MotionClip(GREAT_SWORD + "slash (2).fbx", speed=0.8),
     "Attack_Leap":    MotionClip(LEAP_SLAM, rig=motion_retarget.SMPL),
 
+    # Phase two starts with this (BossComponent.phaseTwoAnimation): it raises the axe and bursts into embers
+    "Phase_Two":      MotionClip(GREAT_SWORD + "power up.fbx"),
+
     "Hit":            MotionClip(GREAT_SWORD + "impact.fbx"),
     "Parried":        MotionClip(GREAT_SWORD + "impact (3).fbx", speed=0.6),
     "Death":          MotionClip("Mixamo/GreatSword/two handed sword death.fbx"),
@@ -88,6 +91,90 @@ def parse_arguments():
     parser.add_argument("--out", required=True)
     parser.add_argument("--preview", default="")
     return parser.parse_args(argv)
+
+
+# ========== The glow of phase two ==========
+
+# Cracks with embers in the armor and the red-hot head of the axe (the look of Concepts/boss_phase_two_concept.png):
+# baked into boss_emissive.png and boss_axe_emissive.png, they shine when the Boss sets the glow in phase two
+EMBER_COLOR = (1.0, 0.36, 0.05)
+RED_HOT_COLOR = (1.0, 0.2, 0.02)
+CRACK_SCALE = 7.0            # cracks per meter (a 3D pattern in the boss's own coordinates)
+CRACK_WIDTH = 0.035
+# The darkest gaps between armor plates glow too: fully below this brightness (linear), not at all above the second
+# (about the darkest 5% of the boss's texture)
+GLOWING_GAP_FULL = 0.012
+GLOWING_GAP_NONE = 0.02
+AXE_HEAD_FROM = 1.1          # meters above the fist where the axe head starts to glow
+
+
+def add_node(tree, kind, **settings):
+    node = tree.nodes.new(kind)
+    for name, value in settings.items():
+        if hasattr(node, name):
+            setattr(node, name, value)
+        else:
+            node.inputs[name].default_value = value
+    return node
+
+
+def map_range(tree, socket, from_min, from_max, to_min, to_max):
+    node = add_node(tree, "ShaderNodeMapRange", clamp=True)
+    node.inputs["From Min"].default_value = from_min
+    node.inputs["From Max"].default_value = from_max
+    node.inputs["To Min"].default_value = to_min
+    node.inputs["To Max"].default_value = to_max
+    tree.links.new(socket, node.inputs["Value"])
+    return node.outputs["Result"]
+
+
+def combine(tree, first, second, operation="MULTIPLY"):
+    node = add_node(tree, "ShaderNodeMath", operation=operation, use_clamp=True)
+    tree.links.new(first, node.inputs[0])
+    tree.links.new(second, node.inputs[1])
+    return node.outputs["Value"]
+
+
+def tinted(tree, strength, color):
+    node = add_node(tree, "ShaderNodeVectorMath", operation="SCALE")
+    node.inputs[0].default_value = color
+    tree.links.new(strength, node.inputs["Scale"])
+    return node.outputs["Vector"]
+
+
+def ember_cracks(tree, diffuse_image):
+    """Thin cracks (edges of 3D Voronoi cells) in some parts of the armor, and the darkest gaps between its plates"""
+    coordinates = tree.nodes.new("ShaderNodeTexCoord").outputs["Object"]
+
+    cells = add_node(tree, "ShaderNodeTexVoronoi", feature="DISTANCE_TO_EDGE", Scale=CRACK_SCALE)
+    tree.links.new(coordinates, cells.inputs["Vector"])
+    cracks = map_range(tree, cells.outputs["Distance"], 0.0, CRACK_WIDTH, 1.0, 0.0)
+
+    patches = add_node(tree, "ShaderNodeTexNoise", Scale=2.5, Detail=2.0)
+    tree.links.new(coordinates, patches.inputs["Vector"])
+    cracks = combine(tree, cracks, map_range(tree, patches.outputs["Fac"], 0.45, 0.6, 0.0, 1.0))
+
+    image = tree.nodes.new("ShaderNodeTexImage")
+    image.image = diffuse_image
+    brightness = tree.nodes.new("ShaderNodeRGBToBW")
+    tree.links.new(image.outputs["Color"], brightness.inputs["Color"])
+    gaps = map_range(tree, brightness.outputs["Val"], GLOWING_GAP_FULL, GLOWING_GAP_NONE, 0.5, 0.0)
+
+    return tinted(tree, combine(tree, cracks, gaps, operation="ADD"), EMBER_COLOR)
+
+
+def red_hot_head(tree, diffuse_image):
+    """The axe head glows (the haft stays cold), unevenly like heated metal"""
+    coordinates = tree.nodes.new("ShaderNodeTexCoord").outputs["Object"]
+    along = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(coordinates, along.inputs["Vector"])
+    head = map_range(tree, along.outputs["Z"], AXE_HEAD_FROM, AXE_HEAD_FROM + 0.3, 0.0, 1.0)
+
+    heat = add_node(tree, "ShaderNodeTexNoise", Scale=6.0, Detail=3.0)
+    tree.links.new(coordinates, heat.inputs["Vector"])
+    unevenness = map_range(tree, heat.outputs["Fac"], 0.3, 0.7, 0.5, 1.0)
+
+    return tinted(tree, combine(tree, head, unevenness), RED_HOT_COLOR)
 
 
 # ========== The axe ==========
@@ -116,6 +203,7 @@ def load_axe(folder):
 
     axe.name = "BossAxe"
     character_from_mesh.make_engine_textures(axe, folder, "boss_axe", BODY_BRIGHTNESS)
+    character_from_mesh.bake_emission(axe, folder, "boss_axe_emissive", red_hot_head, size=1024)
     print("AXE_HITBOX local_offset (0, {:.3f}, 0) half_extents (0.12, {:.3f}, 0.12) for the whole length above the fist".format(
         (AXE_LENGTH - grip) * 0.5, (AXE_LENGTH - grip) * 0.5))
     return axe
@@ -173,6 +261,7 @@ def main():
     armature, body = character_from_mesh.load_rigged_character(BODY_SOURCE, BODY_HEIGHT, our_names)
     body.name = "Boss"
     character_from_mesh.make_engine_textures(body, boss_folder, "boss", BODY_BRIGHTNESS)
+    character_from_mesh.bake_emission(body, boss_folder, "boss_emissive", ember_cracks, size=2048)
 
     skeleton = character_from_mesh.skeleton_of(armature)
     character_from_mesh.add_held_item_bones(armature, held_axe(skeleton))

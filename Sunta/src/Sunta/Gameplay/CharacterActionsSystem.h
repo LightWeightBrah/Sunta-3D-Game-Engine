@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace Sunta
 {
 
@@ -21,6 +23,10 @@ public:
 	// (a long stagger, the next hit it takes is a riposte)
 	static void PlayBlockImpact(EntityManager& entityManager, unsigned int entityID);
 	static void PlayParried(EntityManager& entityManager, unsigned int entityID);
+
+	// Plays any animation of the character once (a roar, a taunt), interrupting what it does. It can't be cut short and
+	// hits don't stagger it. False when the character has no such animation (or is dead)
+	static bool PlaySpecial(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);
 
 	// Started by a bonfire: the character kneels (moving, rolling and attacking do nothing) until StandUp,
 	// which plays the animation of getting up (or just ends the rest when there is none)

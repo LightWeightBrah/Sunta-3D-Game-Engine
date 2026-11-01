@@ -37,6 +37,7 @@
 #include "Gameplay/HUDSystem.h"
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
+#include "Effects/ParticleSystem.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
@@ -335,7 +336,8 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		CombatSystem::Update(entityManager, EngineTime::deltaTime);
-		BossSystem::Update(entityManager);
+		BossSystem::Update(entityManager, EngineTime::deltaTime);
+		ParticleSystem::Update(entityManager, EngineTime::deltaTime);
 		BonfireSystem::Update(entityManager);
 		RespawnSystem::Update(entityManager, EngineTime::deltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
@@ -381,6 +383,7 @@ void Scene::Render(Renderer& renderer)
 		const Animator* animator;
 
 		glm::mat4 matrix;
+		float emissiveStrength;
 	};
 
 	struct GizmosDrawItem
@@ -471,7 +474,7 @@ void Scene::Render(Renderer& renderer)
 				auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(i);
 				const Animator* animator = animatorComponent ? &animatorComponent->animator : nullptr;
 
-				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix });
+				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix, modelComponent->emissiveStrength });
 			}
 		}
 
@@ -527,7 +530,10 @@ void Scene::Render(Renderer& renderer)
 		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
 
 	for (const auto& item : modelQueue)
-		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator);
+		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength);
+
+	// After everything solid: the specks are hidden behind walls, but never hide what is behind them
+	ParticleSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix);
 
 	for (const auto& item : gizmosQueue)
 		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
@@ -666,6 +672,7 @@ void Scene::BeginPlay()
 	BonfireSystem::PrepareForPlay(entityManager);
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
+	ParticleSystem::Clear(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

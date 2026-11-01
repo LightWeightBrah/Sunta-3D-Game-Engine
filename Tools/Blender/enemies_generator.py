@@ -37,7 +37,7 @@ ENEMIES_FOLDER = os.path.join(BLENDER_FOLDER, "Generated", "Enemies")
 
 # Mixamo's sword-and-shield moves (the knights') for one-handed weapons, the Great Sword Pack's (the boss's) for two hands
 ONE_HANDED = knight_generator.ANIMATIONS
-TWO_HANDED = {name: clip for name, clip in boss_generator.BOSS_ANIMATIONS.items() if name != "Attack_Leap"}
+TWO_HANDED = {name: clip for name, clip in boss_generator.BOSS_ANIMATIONS.items() if name not in ("Attack_Leap", "Phase_Two")}
 
 
 @dataclass

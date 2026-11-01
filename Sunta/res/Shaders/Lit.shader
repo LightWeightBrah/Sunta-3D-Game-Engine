@@ -52,6 +52,9 @@ struct Material
 
     bool  useAlphaCutout;
 
+	// A model's own light (glowing cracks, embers, red-hot metal): added after lighting, so it shines in the dark
+	bool  hasEmissiveMap;
+
 };
 
 struct LightColor
@@ -122,6 +125,10 @@ uniform 	int 				spotLightsCount;
 
 uniform		sampler2D			materialDiffuseMap1;
 uniform		sampler2D			materialSpecularMap1;
+uniform		sampler2D			materialEmissiveMap1;
+
+// How strongly the emissive map shines (0 = off), set per model by its Model component
+uniform		float				emissiveStrength;
 
 vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, 			  vec3 viewerDirection);
 vec3 CalculatePointLights(      PointLight       light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
@@ -154,6 +161,8 @@ void main()
 	for(int i = 0; i < spotLightsCount; i++)
 		result += CalculateSpotLights(spotLights[i], normalVector, FragPos, viewerDirection);
 
+	if(material.hasEmissiveMap)
+		result += texture(materialEmissiveMap1, TexCoord).rgb * emissiveStrength;
 
 	FragColor = vec4(result, 1.0f);
 

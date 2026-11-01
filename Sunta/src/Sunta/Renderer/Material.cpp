@@ -40,6 +40,11 @@ Material& Material::Apply()
 
 	ApplyTextures(diffuseMaps,  "materialDiffuseMap",  textureSlot);
 	ApplyTextures(specularMaps, "materialSpecularMap", textureSlot);
+
+	// Without an emissive map nothing is bound for it: the shader doesn't read it
+	if (!emissiveMaps.empty())
+		ApplyTextures(emissiveMaps, "materialEmissiveMap", textureSlot);
+	shader->TrySetUniformBool("material.hasEmissiveMap", !emissiveMaps.empty());
 		
 	shader->TrySetUniform3f("material.ambientColor", data.ambientColor);
 	shader->TrySetUniform3f("material.diffuseColor", data.diffuseColor);
@@ -133,6 +138,12 @@ Material& Material::AddSpecularMap(const std::shared_ptr<Texture> specularMap)
 	return *this;
 }
 	
+Material& Material::AddEmissiveMap(const std::shared_ptr<Texture> emissiveMap)
+{
+	this->emissiveMaps.push_back(emissiveMap);
+	return *this;
+}
+
 Material& Material::SetDiffuseMap(const std::shared_ptr<Texture> diffuseMap, unsigned int index)
 {
 	// if we pass null texture, remove texture from this slot

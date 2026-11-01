@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 
+#include "CharacterActionsSystem.h"
 #include "CharacterControllerSystem.h"
 #include "HUDSystem.h"
 #include "ECS/Component.h"
@@ -17,6 +18,13 @@ namespace
 
 // An awake boss hears the player anywhere in its arena, so it never stands waiting while the player walks around it
 constexpr float AwakeHearingDistance = 100.0f;
+
+// Phase two: how long the boss takes to grow to its new size, how its glow pulses (part of the glow, times a second),
+// and how many specks each of its emitters throws at once when it starts
+constexpr float GrowSeconds      = 1.5f;
+constexpr float GlowPulse        = 0.25f;
+constexpr float GlowPulseSpeed   = 3.0f;
+constexpr int   PhaseTwoBurst    = 80;
 
 // ========== Small helpers ==========
 
@@ -54,8 +62,28 @@ HitboxComponent* FindWeapon(EntityManager& entityManager, unsigned int bossID)
 
 // ========== The bosses ==========
 
+// The boss and its children (the weapon in its hand, the effects on its bones)
+std::vector<unsigned int> GetBossAndChildren(EntityManager& entityManager, unsigned int bossID)
+{
+	std::vector<unsigned int> entities = { bossID };
+	for (unsigned int childID : EntityHierarchy::GetChildren(entityManager, bossID))
+		entities.push_back(childID);
+
+	return entities;
+}
+
 void RememberRestingValues(EntityManager& entityManager, unsigned int bossID, BossComponent& boss)
 {
+	if (const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(bossID))
+		boss.restingScale = transform->scale;
+
+	boss.restingGlows.clear();
+	for (unsigned int entityID : GetBossAndChildren(entityManager, bossID))
+	{
+		if (const ModelComponent* model = entityManager.GetComponent<ModelComponent>(entityID))
+			boss.restingGlows.push_back({ entityID, model->emissiveStrength });
+	}
+
 	if (const EnemyComponent* enemy = entityManager.GetComponent<EnemyComponent>(bossID))
 		boss.restingHearingDistance = enemy->hearingDistance;
 
@@ -83,6 +111,67 @@ void SetPhaseTwo(EntityManager& entityManager, unsigned int bossID, BossComponen
 
 	if (HitboxComponent* weapon = FindWeapon(entityManager, bossID))
 		weapon->damage = isInPhaseTwo ? boss.restingWeaponDamage * boss.phaseTwoDamageMultiplier : boss.restingWeaponDamage;
+
+	boss.phaseTwoSeconds = 0.0f;
+
+	// The emitters start with a burst (the boss bursts into flames), back to how the scene had them when it rests again
+	for (unsigned int entityID : GetBossAndChildren(entityManager, bossID))
+	{
+		if (ParticleEmitterComponent* emitter = entityManager.GetComponent<ParticleEmitterComponent>(entityID))
+		{
+			emitter->isEmitting = isInPhaseTwo || emitter->wasEmittingAtStart;
+			if (isInPhaseTwo)
+				emitter->burstCount += PhaseTwoBurst;
+		}
+	}
+
+	if (isInPhaseTwo && !boss.phaseTwoAnimation.empty())
+		CharacterActionsSystem::PlaySpecial(entityManager, bossID, boss.phaseTwoAnimation);
+
+	if (!isInPhaseTwo)
+	{
+		if (TransformComponent* transform = entityManager.GetComponent<TransformComponent>(bossID))
+		{
+			transform->scale   = boss.restingScale;
+			transform->isDirty = true;
+		}
+
+		for (const auto& [entityID, glow] : boss.restingGlows)
+		{
+			if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(entityID))
+				model->emissiveStrength = glow;
+		}
+	}
+}
+
+// The look of phase two over time: growing during the first seconds, the glow pulsing like embers
+void UpdatePhaseTwoLook(EntityManager& entityManager, unsigned int bossID, BossComponent& boss, float deltaTime)
+{
+	boss.phaseTwoSeconds += deltaTime;
+
+	if (boss.phaseTwoGrowth != 1.0f)
+	{
+		if (TransformComponent* transform = entityManager.GetComponent<TransformComponent>(bossID))
+		{
+			const float grown = glm::clamp(boss.phaseTwoSeconds / GrowSeconds, 0.0f, 1.0f);
+			const float smooth = grown * grown * (3.0f - 2.0f * grown);
+			transform->scale = boss.restingScale * glm::mix(1.0f, boss.phaseTwoGrowth, smooth);
+			transform->isDirty = true;
+		}
+	}
+
+	if (boss.phaseTwoGlow > 0.0f)
+	{
+		// Glowing up from nothing at the start, then breathing
+		const float rising = glm::clamp(boss.phaseTwoSeconds / GrowSeconds, 0.0f, 1.0f);
+		const float pulse  = 1.0f + GlowPulse * glm::sin(boss.phaseTwoSeconds * GlowPulseSpeed);
+
+		for (const auto& [entityID, glow] : boss.restingGlows)
+		{
+			if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(entityID))
+				model->emissiveStrength = boss.phaseTwoGlow * rising * pulse;
+		}
+	}
 }
 
 // Below the health limit the boss fights harder. Brought back with full health (the player died) it starts calm again
@@ -196,7 +285,7 @@ void BossSystem::PrepareForPlay(EntityManager& entityManager)
 	}
 }
 
-void BossSystem::Update(EntityManager& entityManager)
+void BossSystem::Update(EntityManager& entityManager, float deltaTime)
 {
 	for (BossComponent& boss : entityManager.GetAllComponents<BossComponent>())
 	{
@@ -206,6 +295,9 @@ void BossSystem::Update(EntityManager& entityManager)
 			boss.isDefeated = true;
 
 		UpdatePhase(entityManager, bossID, boss);
+
+		if (boss.isInPhaseTwo)
+			UpdatePhaseTwoLook(entityManager, bossID, boss, deltaTime);
 	}
 
 	unsigned int playerID = 0;

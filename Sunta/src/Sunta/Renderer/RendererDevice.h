@@ -41,6 +41,11 @@ public:
 	virtual void SetDepthTest(bool isEnabled) = 0;
 	virtual void SetAlphaBlending(bool isEnabled) = 0;
 
+	// For light-like effects (embers, sparks): the color is added to what is behind (overlapping ones get brighter),
+	// and see-through things that shouldn't hide each other are drawn without writing their depth
+	virtual void SetAdditiveBlending(bool isEnabled) = 0;
+	virtual void SetDepthWrite(bool isEnabled) = 0;
+
 	virtual void DrawElements(const VertexArray& vertexArray) = 0;
 	virtual void DrawLines(const VertexArray& vertexArray) = 0;
 

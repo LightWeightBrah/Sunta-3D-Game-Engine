@@ -33,7 +33,8 @@ public:
 	static void Clear(float r, float g, float b, float a);
 
 	void DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
-	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const;
+	// 'emissiveStrength' scales the model's own light (its emissive maps, 0 = off)
+	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator, float emissiveStrength = 1.0f) const;
 	void DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 
 	static RendererDevice& GetDevice() { return *rendererDevice; }

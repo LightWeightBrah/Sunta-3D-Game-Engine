@@ -60,7 +60,7 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	rendererDevice->DrawElements(mesh.GetVertexArray());
 }
 	
-void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator) const
+void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator, float emissiveStrength) const
 {
 	for (const auto& subMesh : model.GetSubMeshes())
 	{
@@ -72,6 +72,7 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 
 		SetBaseTransform(*shader, modelMatrix, sceneData);
 		SetBaseLighting(*shader, sceneData);
+		shader->TrySetUniform1f("emissiveStrength", emissiveStrength);
 			
 		bool supportsSkinning = shader->HasFeature(ShaderFeature::Skinning);
 		bool isSkinnedMesh = supportsSkinning && model.HasBones();

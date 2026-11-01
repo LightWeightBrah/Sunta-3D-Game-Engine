@@ -306,6 +306,7 @@ void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::share
 		{
 			material->AddDiffuseMap(texture);
 			TryFillMissingTextureByNamingConvention(filename, "specular", material);
+			TryFillMissingTextureByNamingConvention(filename, "emissive", material);
 		}
 		else if (type == aiTextureType_SPECULAR)
 		{
@@ -318,6 +319,9 @@ void Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::share
 void Model::TryFillMissingTextureByNamingConvention(const std::string& diffuseFilename, const std::string& textureTypeName, std::shared_ptr<Material>& material)
 {
 	if (textureTypeName == "specular" && !material->GetSpecularMaps().empty())
+		return;
+
+	if (textureTypeName == "emissive" && !material->GetEmissiveMaps().empty())
 		return;
 
 	std::vector<std::string> candidates =
@@ -334,6 +338,8 @@ void Model::TryFillMissingTextureByNamingConvention(const std::string& diffuseFi
 
 		if (textureTypeName == "specular")
 			material->AddSpecularMap(texture);
+		else if (textureTypeName == "emissive")
+			material->AddEmissiveMap(texture);
 
 		SUNTA_ENGINE_LOG_INFO("Model '{0}': added '{1}' texture by naming convention -> '{2}'",
 			directory, textureTypeName, fullPath);
@@ -341,7 +347,8 @@ void Model::TryFillMissingTextureByNamingConvention(const std::string& diffuseFi
 		return;
 	}
 
-	if (!candidates.empty())
+	// Most models don't glow: a missing emissive map is normal, not worth a warning
+	if (!candidates.empty() && textureTypeName != "emissive")
 	{
 		SUNTA_ENGINE_LOG_WARNING("Model '{0}': Tried {1} Texture naming-convention guess(es) for '{2}' (e.g. '{3}') but none of the files exist",
 			directory, candidates.size(), textureTypeName, directory + "/" + candidates.front());

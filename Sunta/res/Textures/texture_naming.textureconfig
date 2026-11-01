@@ -1,6 +1,7 @@
 {
   "diffuse":   [ "_dd", "_d", "diffuse", "albedo", "basecolor", "color" ],
   "specular":  [ "_s", "specular", "spec" ],
+  "emissive":  [ "_e", "emissive", "emission", "glow" ],
   "normal":    [ "_n", "normal", "normalmap" ],
   "roughness": [ "_r", "roughness", "rough" ],
   "metallic":  [ "_m", "metallic", "metal" ],

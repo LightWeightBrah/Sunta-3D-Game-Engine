@@ -307,6 +307,50 @@ def make_engine_textures(mesh, folder, base_name, brightness=1.0):
     mesh.data.materials.append(make_textured_material(base_name, diffuse))
 
 
+def bake_emission(mesh, folder, name, build_color, size=1024):
+    """Bakes a glow made of shader nodes into <folder>/<name>.png (the engine's *_emissive texture).
+    'build_color(node_tree, diffuse_image)' adds the nodes and returns the color socket: the light of every point
+    of the surface. Nodes can use the object's own coordinates (a pattern in 3D, without seams between UV islands)"""
+    scene = bpy.context.scene
+    previous_engine = scene.render.engine
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 1
+
+    original_materials = list(mesh.data.materials)
+    diffuse_image = next((node.image for node in original_materials[0].node_tree.nodes if node.type == "TEX_IMAGE"), None)
+
+    material = bpy.data.materials.new(name + "_bake")
+    material.use_nodes = True
+    tree = material.node_tree
+    tree.nodes.clear()
+    output = tree.nodes.new("ShaderNodeOutputMaterial")
+    emission = tree.nodes.new("ShaderNodeEmission")
+    tree.links.new(build_color(tree, diffuse_image), emission.inputs["Color"])
+    tree.links.new(emission.outputs["Emission"], output.inputs["Surface"])
+
+    target = bpy.data.images.new(name, size, size, alpha=False)
+    target_node = tree.nodes.new("ShaderNodeTexImage")
+    target_node.image = target
+    tree.nodes.active = target_node
+
+    mesh.data.materials.clear()
+    mesh.data.materials.append(material)
+    select_only([mesh])
+    bpy.context.view_layer.objects.active = mesh
+    bpy.ops.object.bake(type="EMIT", margin=4)
+
+    target.filepath_raw = "{}/{}.png".format(folder, name)
+    target.file_format = "PNG"
+    target.save()
+
+    mesh.data.materials.clear()
+    for original in original_materials:
+        mesh.data.materials.append(original)
+    scene.render.engine = previous_engine
+    return target
+
+
 # ========== Finding the joints ==========
 
 

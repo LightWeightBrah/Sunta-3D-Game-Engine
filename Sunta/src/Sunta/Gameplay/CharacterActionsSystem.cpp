@@ -221,6 +221,7 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::BlockImpact: return actions.blockImpactAnimation;
 	case CharacterAction::Parry:       return actions.parryAnimation;
 	case CharacterAction::Parried:     return actions.parriedAnimation;
+	case CharacterAction::Special:     return actions.specialAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -316,6 +317,7 @@ bool CanBeInterrupted(CharacterAction action)
 	case CharacterAction::StandUp:
 	case CharacterAction::BlockImpact:
 	case CharacterAction::Parried:
+	case CharacterAction::Special:
 	case CharacterAction::Death:
 		return false;
 
@@ -566,7 +568,22 @@ void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMou
 
 void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsigned int entityID)
 {
+	// A special animation (a boss roaring into its second phase) goes on, the hit only hurts
+	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+	if (actions && actions->currentAction == CharacterAction::Special)
+		return;
+
 	ForceAction(entityManager, entityID, CharacterAction::HitReaction);
+}
+
+bool CharacterActionsSystem::PlaySpecial(EntityManager& entityManager, unsigned int entityID, const std::string& animationName)
+{
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+	if (!actions || actions->currentAction == CharacterAction::Death)
+		return false;
+
+	actions->specialAnimation = animationName;
+	return ForceAction(entityManager, entityID, CharacterAction::Special);
 }
 
 void CharacterActionsSystem::PlayDeath(EntityManager& entityManager, unsigned int entityID)

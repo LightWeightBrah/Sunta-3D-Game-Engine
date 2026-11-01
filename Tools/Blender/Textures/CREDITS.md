@@ -44,3 +44,6 @@ prompt and settings) is in `../Generated/meshy_log.json`.
 | `../Generated/Enemies/*_rigged.glb` | Meshy Image to 3D, rigged by Meshy | the enemies' bodies |
 | `../Generated/Enemies/<weapon>.glb` | Meshy Image to 3D | the enemies' weapons |
 | `../Concepts/boss_phase_two_concept.png` | Meshy Text to Image | the look of the boss's second phase |
+
+The glow of the boss's second phase (`boss_emissive.png`, `boss_axe_emissive.png` in Sunta/res/Models) is ours: baked in Blender
+from procedural nodes (`boss_generator.py`), no outside source.

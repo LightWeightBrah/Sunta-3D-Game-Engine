@@ -17,6 +17,7 @@
 #include "Utilities/MathUtilities.h"
 #include "Gameplay/BonfireComponent.h"
 #include "Gameplay/BossComponent.h"
+#include "Effects/ParticleEmitterComponent.h"
 #include "Gameplay/FogGateComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/EnemyComponent.h"
@@ -414,11 +415,17 @@ struct ModelComponent
 {
 	static constexpr const char* NULL_ASSET_NAME = "None";
 
+	static constexpr float MaxEmissiveStrength = 10.0f;
+
 	bool isDirty = true;
 	bool isVisible = true;
 
 	std::string modelName = NULL_ASSET_NAME;
 	std::shared_ptr<ModelData> modelData;
+
+	// How strongly the model's own light shines (its *_emissive texture: glowing cracks, embers), 0 = off.
+	// A script or the Boss can change it during the game, e.g. this.model.emissiveStrength = 2
+	float emissiveStrength = 1.0f;
 
 	ModelComponent(const std::string& modelName)
 		: modelName(modelName) { }
@@ -430,7 +437,8 @@ struct ModelComponent
 		InspectorComponentRegistry::RegisterComponent<ModelComponent>("Model", EngineAssets::Icons::Skeleton,
 			{
 				ADD_PROPERTY(ModelComponent, isVisible, PropertyDataType::Bool),
-				ADD_ASSET(ModelComponent, modelName, AssetType::Model)
+				ADD_ASSET(ModelComponent, modelName, AssetType::Model),
+				ADD_PROPERTY_RANGED(ModelComponent, emissiveStrength, PropertyDataType::Float, 0.0f, MaxEmissiveStrength)
 			},
 			[](void* data)
 			{

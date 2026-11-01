@@ -13,7 +13,7 @@ public:
 	static void PrepareForPlay(EntityManager& entityManager);
 
 	// Call once per frame while the game plays, AFTER the Combat (a boss may have just died)
-	static void Update(EntityManager& entityManager);
+	static void Update(EntityManager& entityManager, float deltaTime);
 
 	// False for a boss that was defeated: it is not brought back with the other enemies
 	static bool CanBeBroughtBack(EntityManager& entityManager, unsigned int enemyID);

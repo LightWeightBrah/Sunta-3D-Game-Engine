@@ -7,6 +7,7 @@
 
 #include "ECS/Entity.h"
 #include "ECS/Component.h"
+#include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/EnemyContext.h"
@@ -46,6 +47,8 @@ using EnemyHandle         = ComponentHandle<EnemyComponent>;
 using MeleeEnemyHandle    = ComponentHandle<MeleeEnemyComponent>;
 using BossHandle          = ComponentHandle<BossComponent>;
 using FogGateHandle       = ComponentHandle<FogGateComponent>;
+using ModelHandle         = ComponentHandle<ModelComponent>;
+using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -192,6 +195,7 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterEnemyComponent(lua);
 	RegisterMeleeEnemyComponent(lua);
 	RegisterBossComponents(lua);
+	RegisterLookComponents(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -381,8 +385,14 @@ void LuaBindings::RegisterLockOnTargetComponent(sol::state& lua)
 void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 {
 	// Usage in Lua: this.characterActions:request("block") (every frame while it should last), :request("parry"), :request("light"),
-	// if this.characterActions.isGuarding then ... end
+	// if this.characterActions.isGuarding then ... end, this.characterActions:play("Roar") (any animation of the model, once)
 	lua.new_usertype<CharacterActionsHandle>("CharacterActions", sol::no_constructor,
+
+		"play", [](const CharacterActionsHandle& handle, const std::string& animationName)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && CharacterActionsSystem::PlaySpecial(*entityManager, handle.owner.GetID(), animationName);
+			},
 
 		"request", [](const CharacterActionsHandle& handle, const std::string& actionName)
 			{
@@ -644,7 +654,31 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),
 		"meleeEnemy",          ComponentHandleProperty<MeleeEnemyComponent>(),
 		"boss",                ComponentHandleProperty<BossComponent>(),
-		"fogGate",             ComponentHandleProperty<FogGateComponent>()
+		"fogGate",             ComponentHandleProperty<FogGateComponent>(),
+		"model",               ComponentHandleProperty<ModelComponent>(),
+		"particles",           ComponentHandleProperty<ParticleEmitterComponent>()
+	);
+}
+
+void LuaBindings::RegisterLookComponents(sol::state& lua)
+{
+	// Usage in Lua: this.model.isVisible = false, this.model.emissiveStrength = 2 (its glowing parts shine brighter)
+	lua.new_usertype<ModelHandle>("Model", sol::no_constructor,
+		"isVisible",        MemberProperty(&ModelComponent::isVisible,        false),
+		"emissiveStrength", MemberProperty(&ModelComponent::emissiveStrength, 0.0f)
+	);
+
+	// Usage in Lua: this.particles.isEmitting = true, this.particles:burst(40) (40 specks at once), this.particles.particlesPerSecond = 80
+	lua.new_usertype<ParticleEmitterHandle>("ParticleEmitter", sol::no_constructor,
+		"isEmitting",         MemberProperty(&ParticleEmitterComponent::isEmitting,         false),
+		"particlesPerSecond", MemberProperty(&ParticleEmitterComponent::particlesPerSecond, 0.0f),
+		"intensity",          MemberProperty(&ParticleEmitterComponent::intensity,          0.0f),
+
+		"burst", [](const ParticleEmitterHandle& handle, int count)
+			{
+				if (ParticleEmitterComponent* emitter = handle.TryGetComponent())
+					emitter->burstCount += glm::max(count, 0);
+			}
 	);
 }
 

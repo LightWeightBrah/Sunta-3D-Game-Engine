@@ -44,6 +44,9 @@ public:
 	
 	Material& AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
 	Material& AddSpecularMap(const std::shared_ptr<Texture> specularMap);
+
+	// The material's own light (see Lit.shader): shines without any light, scaled by the model's emissive strength
+	Material& AddEmissiveMap(const std::shared_ptr<Texture> emissiveMap);
 	
 	Material& SetDiffuseMap(const std::shared_ptr<Texture> diffuseMap, unsigned int index = 0);
 	Material& SetSpecularMap(const std::shared_ptr<Texture> specularMap, unsigned int index = 0);
@@ -59,6 +62,7 @@ public:
 
 	inline const std::vector<std::shared_ptr<Texture>>& GetDiffuseMaps()  const { return diffuseMaps; }
 	inline const std::vector<std::shared_ptr<Texture>>& GetSpecularMaps() const { return specularMaps; }
+	inline const std::vector<std::shared_ptr<Texture>>& GetEmissiveMaps() const { return emissiveMaps; }
 
 	bool						NeedsLoading()	const { return diffuseMaps.empty() && specularMaps.empty(); }
 	
@@ -69,6 +73,7 @@ private:
 
 	std::vector<std::shared_ptr<Texture>> diffuseMaps;
 	std::vector<std::shared_ptr<Texture>> specularMaps;
+	std::vector<std::shared_ptr<Texture>> emissiveMaps;
 
 	std::unordered_map<std::string, glm::vec3> customVec3Uniforms;
 

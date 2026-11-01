@@ -45,6 +45,7 @@ namespace SceneKeys
 	constexpr const char* HitboxComponent           = "hitbox";
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
+	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -62,6 +63,7 @@ namespace SceneKeys
 	constexpr const char* RotationQuaternion        = "rotation_quaternion";
 	constexpr const char* ScriptPath                = "script_path";
 	constexpr const char* IsVisible                 = "is_visible";
+	constexpr const char* EmissiveStrength          = "emissive_strength";
 	constexpr const char* MeshName                  = "mesh_name";
 	constexpr const char* MaterialName              = "material_name";
 	constexpr const char* ModelName                 = "model_name";
@@ -197,6 +199,23 @@ namespace SceneKeys
 	constexpr const char* PhaseTwoHealthFraction    = "phase_two_health_fraction";
 	constexpr const char* PhaseTwoDamageMultiplier  = "phase_two_damage_multiplier";
 	constexpr const char* PhaseTwoAttackSpeedup     = "phase_two_attack_speedup";
+	constexpr const char* PhaseTwoAnimation         = "phase_two_animation";
+	constexpr const char* PhaseTwoGlow              = "phase_two_glow";
+	constexpr const char* PhaseTwoGrowth            = "phase_two_growth";
+
+	constexpr const char* IsEmitting                = "is_emitting";
+	constexpr const char* ParticlesPerSecond        = "particles_per_second";
+	constexpr const char* LifetimeSeconds           = "lifetime_seconds";
+	constexpr const char* SpawnHalfExtents          = "spawn_half_extents";
+	constexpr const char* ParticleVelocity          = "velocity";
+	constexpr const char* VelocityRandomness        = "velocity_randomness";
+	constexpr const char* ParticleGravity           = "gravity";
+	constexpr const char* StartSize                 = "start_size";
+	constexpr const char* EndSize                   = "end_size";
+	constexpr const char* StartColor                = "start_color";
+	constexpr const char* EndColor                  = "end_color";
+	constexpr const char* ParticleIntensity         = "intensity";
+	constexpr const char* MaxParticles              = "max_particles";
 
 	constexpr const char* ArenaCenter               = "arena_center";
 	constexpr const char* ArenaHalfExtents          = "arena_half_extents";
@@ -399,8 +418,9 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 		{
 			entityJson[SceneKeys::ModelComponent] =
 			{
-				{ SceneKeys::IsVisible,    model->isVisible     },
-				{ SceneKeys::ModelName,    model->modelName     }
+				{ SceneKeys::IsVisible,        model->isVisible        },
+				{ SceneKeys::ModelName,        model->modelName        },
+				{ SceneKeys::EmissiveStrength, model->emissiveStrength }
 			};
 		}
 
@@ -642,7 +662,30 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			{
 				{ SceneKeys::PhaseTwoHealthFraction,   boss->phaseTwoHealthFraction   },
 				{ SceneKeys::PhaseTwoDamageMultiplier, boss->phaseTwoDamageMultiplier },
-				{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    }
+				{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    },
+				{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
+				{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
+				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           }
+			};
+		}
+
+		if (auto* emitter = entityManager.GetComponent<ParticleEmitterComponent>(i))
+		{
+			entityJson[SceneKeys::ParticleEmitterComponent] =
+			{
+				{ SceneKeys::IsEmitting,         emitter->isEmitting                     },
+				{ SceneKeys::ParticlesPerSecond, emitter->particlesPerSecond             },
+				{ SceneKeys::LifetimeSeconds,    emitter->lifetimeSeconds                },
+				{ SceneKeys::SpawnHalfExtents,   SerializeVec3(emitter->spawnHalfExtents) },
+				{ SceneKeys::ParticleVelocity,   SerializeVec3(emitter->velocity)        },
+				{ SceneKeys::VelocityRandomness, emitter->velocityRandomness             },
+				{ SceneKeys::ParticleGravity,    SerializeVec3(emitter->gravity)         },
+				{ SceneKeys::StartSize,          emitter->startSize                      },
+				{ SceneKeys::EndSize,            emitter->endSize                        },
+				{ SceneKeys::StartColor,         SerializeVec3(emitter->startColor)      },
+				{ SceneKeys::EndColor,           SerializeVec3(emitter->endColor)        },
+				{ SceneKeys::ParticleIntensity,  emitter->intensity                      },
+				{ SceneKeys::MaxParticles,       emitter->maxParticles                   }
 			};
 		}
 
@@ -877,6 +920,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			modelComponent.isVisible = modelData.value(SceneKeys::IsVisible, true);
 			modelComponent.modelName = modelData.value(SceneKeys::ModelName, ModelComponent::NULL_ASSET_NAME);
+			modelComponent.emissiveStrength = modelData.value(SceneKeys::EmissiveStrength, modelComponent.emissiveStrength);
 			modelComponent.isDirty = true;
 		}
 
@@ -1152,6 +1196,37 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			boss.phaseTwoHealthFraction   = bossData.value(SceneKeys::PhaseTwoHealthFraction,   boss.phaseTwoHealthFraction);
 			boss.phaseTwoDamageMultiplier = bossData.value(SceneKeys::PhaseTwoDamageMultiplier, boss.phaseTwoDamageMultiplier);
 			boss.phaseTwoAttackSpeedup    = bossData.value(SceneKeys::PhaseTwoAttackSpeedup,    boss.phaseTwoAttackSpeedup);
+			boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
+			boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
+			boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
+		}
+
+		if (entityJson.contains(SceneKeys::ParticleEmitterComponent))
+		{
+			const auto& emitterData = entityJson[SceneKeys::ParticleEmitterComponent];
+			auto& emitter = entityManager.AddComponent<ParticleEmitterComponent>(entity);
+
+			emitter.isEmitting         = emitterData.value(SceneKeys::IsEmitting,         emitter.isEmitting);
+			emitter.particlesPerSecond = emitterData.value(SceneKeys::ParticlesPerSecond, emitter.particlesPerSecond);
+			emitter.lifetimeSeconds    = emitterData.value(SceneKeys::LifetimeSeconds,    emitter.lifetimeSeconds);
+			emitter.velocityRandomness = emitterData.value(SceneKeys::VelocityRandomness, emitter.velocityRandomness);
+			emitter.startSize          = emitterData.value(SceneKeys::StartSize,          emitter.startSize);
+			emitter.endSize            = emitterData.value(SceneKeys::EndSize,            emitter.endSize);
+			emitter.intensity          = emitterData.value(SceneKeys::ParticleIntensity,  emitter.intensity);
+			emitter.maxParticles       = emitterData.value(SceneKeys::MaxParticles,       emitter.maxParticles);
+
+			if (emitterData.contains(SceneKeys::SpawnHalfExtents))
+				emitter.spawnHalfExtents = DeserializeVec3(emitterData[SceneKeys::SpawnHalfExtents]);
+			if (emitterData.contains(SceneKeys::ParticleVelocity))
+				emitter.velocity = DeserializeVec3(emitterData[SceneKeys::ParticleVelocity]);
+			if (emitterData.contains(SceneKeys::ParticleGravity))
+				emitter.gravity = DeserializeVec3(emitterData[SceneKeys::ParticleGravity]);
+			if (emitterData.contains(SceneKeys::StartColor))
+				emitter.startColor = DeserializeVec3(emitterData[SceneKeys::StartColor]);
+			if (emitterData.contains(SceneKeys::EndColor))
+				emitter.endColor = DeserializeVec3(emitterData[SceneKeys::EndColor]);
+
+			emitter.wasEmittingAtStart = emitter.isEmitting;
 		}
 
 		if (entityJson.contains(SceneKeys::FogGateComponent))
