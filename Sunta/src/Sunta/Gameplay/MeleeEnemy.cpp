@@ -91,6 +91,9 @@ public:
 		const MeleeEnemyComponent& settings = GetSettings(context);
 		const float distance = context.GetDistanceToTarget();
 
+		if (distance > settings.attackDistance && distance <= settings.leapAttackDistance && context.IsAttackReady())
+			return Leap;
+
 		if (distance > settings.attackDistance)
 		{
 			context.MoveTowards(context.GetTargetPosition(), distance > settings.runDistance);
@@ -164,6 +167,26 @@ private:
 	}
 };
 
+// One jump at the player, then the usual pause after an attack
+class LeapState : public EnemyState
+{
+public:
+	void Enter(EnemyContext& context) override
+	{
+		context.Stop();
+		context.RequestAction(CharacterAction::LeapAttack);
+	}
+
+	std::string Update(EnemyContext& context) override
+	{
+		if (context.IsBusy() || context.GetSecondsInState() < AttackStartGraceSeconds)
+			return "";
+
+		context.StartAttackCooldown(GetSettings(context).attackCooldownSeconds);
+		return Recover;
+	}
+};
+
 class RecoverState : public EnemyState
 {
 public:
@@ -216,6 +239,7 @@ void MeleeEnemy::AddStates(EnemyStateMachine& stateMachine)
 	stateMachine.SetState(EnemyStateNames::Idle, std::make_unique<WatchState>());
 	stateMachine.SetState(Chase,                 std::make_unique<ChaseState>());
 	stateMachine.SetState(Attack,                std::make_unique<AttackState>());
+	stateMachine.SetState(Leap,                  std::make_unique<LeapState>());
 	stateMachine.SetState(Recover,               std::make_unique<RecoverState>());
 	stateMachine.SetState(ReturnHome,            std::make_unique<ReturnHomeState>());
 }

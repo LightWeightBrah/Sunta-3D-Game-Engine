@@ -143,6 +143,7 @@ CharacterAction ParseActionName(const std::string& name)
 	if (name == "roll")     return CharacterAction::Roll;
 	if (name == "backstep") return CharacterAction::Backstep;
 	if (name == "parry")    return CharacterAction::Parry;
+	if (name == "leap")     return CharacterAction::LeapAttack;
 	if (name == "block")    return CharacterAction::Block;
 
 	return CharacterAction::LightAttack;
@@ -546,7 +547,7 @@ void LuaBindings::RegisterEnemyComponent(sol::state& lua)
 				CommandEnemy(handle, [&](EnemyContext& context) { context.LookAtTarget(shouldLook); });
 			},
 
-		// "light", "heavy", "roll", "backstep", "parry" or "block" (a block lasts only while it is asked for, every frame)
+		// "light", "heavy", "leap", "roll", "backstep", "parry" or "block" (a block lasts only while it is asked for, every frame)
 		"attack", [](const EnemyHandle& handle, const std::string& actionName)
 			{
 				CommandEnemy(handle, [&](EnemyContext& context) { context.RequestAction(ParseActionName(actionName)); });
@@ -608,7 +609,8 @@ void LuaBindings::RegisterMeleeEnemyComponent(sol::state& lua)
 		"giveUpDistance",        MemberProperty(&MeleeEnemyComponent::giveUpDistance,        0.0f),
 		"attackCooldownSeconds", MemberProperty(&MeleeEnemyComponent::attackCooldownSeconds, 0.0f),
 		"heavyAttackChance",     MemberProperty(&MeleeEnemyComponent::heavyAttackChance,     0.0f),
-		"recoverSeconds",        MemberProperty(&MeleeEnemyComponent::recoverSeconds,        0.0f)
+		"recoverSeconds",        MemberProperty(&MeleeEnemyComponent::recoverSeconds,        0.0f),
+		"leapAttackDistance",    MemberProperty(&MeleeEnemyComponent::leapAttackDistance,    0.0f)
 	);
 }
 

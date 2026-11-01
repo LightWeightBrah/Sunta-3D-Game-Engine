@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "AnimationNames.h"
+#include "Animation/Animation.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "LockOnSystem.h"
@@ -50,12 +51,17 @@ struct MoveWindow
 constexpr MoveWindow RollMove       = { 0.05f, 0.55f, 0.80f };
 constexpr MoveWindow BackstepMove   = { 0.05f, 0.40f, 0.60f };
 constexpr MoveWindow AttackStepMove = { 0.20f, 0.35f, 0.50f };
+constexpr MoveWindow LeapMove       = { 0.10f, 0.30f, 0.36f };  // In the air from the take-off until the landing
+
+// A leap lands this far in front of its target (meters): close enough for the blow, not on top of it
+constexpr float LeapLandingDistance = 1.5f;
 
 // The keywords the animations are found by when the component is added (the names of the Knight's animations contain them)
 constexpr const char* RollKeyword         = "roll";
 constexpr const char* BackstepKeyword     = "backstep";
 constexpr const char* LightAttackKeywords[LightAttackCount] = { "light_1", "light_2", "light_3" };
 constexpr const char* HeavyAttackKeyword  = "heavy";
+constexpr const char* LeapAttackKeyword   = "leap";
 constexpr const char* HitReactionKeyword  = "hit";
 constexpr const char* DeathKeyword        = "death";
 constexpr const char* RestKeyword         = "rest";
@@ -206,6 +212,7 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::Backstep:    return actions.backstepAnimation;
 	case CharacterAction::LightAttack: return GetLightAttackAnimation(actions, actions.lightAttackStep);
 	case CharacterAction::HeavyAttack: return actions.heavyAttackAnimation;
+	case CharacterAction::LeapAttack:  return actions.leapAttackAnimation;
 	case CharacterAction::HitReaction: return actions.hitReactionAnimation;
 	case CharacterAction::Death:       return actions.deathAnimation;
 	case CharacterAction::Rest:        return actions.restAnimation;
@@ -266,6 +273,9 @@ float GetActionSpeed(const CharacterActionsComponent& actions, CharacterAction a
 	case CharacterAction::LightAttack:
 	case CharacterAction::HeavyAttack:
 		return actions.attackStepSpeed * GetMoveFactor(AttackStepMove, progress);
+
+	case CharacterAction::LeapAttack:
+		return actions.currentLeapSpeed * GetMoveFactor(LeapMove, progress);
 
 	// A hit character and a dead one stand where they are
 	default:
@@ -338,6 +348,29 @@ CharacterAction ResolveAction(const Character& character, CharacterAction action
 	return action;
 }
 
+// The part of the animation's time a move covers at full speed (the slowing down counts half)
+float GetMoveSeconds(const Animation& animation, const MoveWindow& window)
+{
+	const float seconds = animation.GetDuration() / glm::max(animation.GetTicksPerSecond(), 1.0f);
+	return seconds * ((window.fullUntil - window.from) + 0.5f * (window.to - window.fullUntil));
+}
+
+// Just fast enough to land in front of the locked-on target, never faster than 'leapSpeed'. Without a target: as far as it can
+float ChooseLeapSpeed(EntityManager& entityManager, const Character& character, const std::string& animationName)
+{
+	const CharacterActionsComponent& actions = *character.actions;
+
+	glm::vec3 targetPoint;
+	if (!character.lockOn || !LockOnSystem::TryGetTargetAimPoint(entityManager, *character.lockOn, targetPoint))
+		return actions.leapSpeed;
+
+	const float distance = glm::length(KeepOnlyHorizontalPart(targetPoint - character.transform->position));
+	const float travel   = glm::max(distance - LeapLandingDistance, 0.0f);
+	const float seconds  = GetMoveSeconds(character.animations->at(animationName), LeapMove);
+
+	return glm::min(travel / glm::max(seconds, 0.01f), actions.leapSpeed);
+}
+
 void StartAction(EntityManager& entityManager, Character& character, CharacterAction action, const std::string& animationName)
 {
 	CharacterActionsComponent& actions = *character.actions;
@@ -352,7 +385,10 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 
 	PlayActionAnimation(character, animationName);
 
-	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack)
+	if (action == CharacterAction::LeapAttack)
+		actions.currentLeapSpeed = ChooseLeapSpeed(entityManager, character, animationName);
+
+	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack || action == CharacterAction::LeapAttack)
 		actions.attackNumber++;
 
 	actions.currentAction                  = action;
@@ -490,6 +526,7 @@ void FillNamesFromModel(CharacterActionsComponent& actions, const AnimationMap& 
 	FillAnimationName(actions.lightAttack2Animation, animations, LightAttackKeywords[1]);
 	FillAnimationName(actions.lightAttack3Animation, animations, LightAttackKeywords[2]);
 	FillAnimationName(actions.heavyAttackAnimation,  animations, HeavyAttackKeyword);
+	FillAnimationName(actions.leapAttackAnimation,   animations, LeapAttackKeyword);
 	FillAnimationName(actions.hitReactionAnimation,  animations, HitReactionKeyword);
 	FillAnimationName(actions.deathAnimation,        animations, DeathKeyword);
 	FillAnimationName(actions.restAnimation,         animations, RestKeyword);

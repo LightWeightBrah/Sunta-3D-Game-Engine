@@ -23,6 +23,7 @@ bool DrawAnimations(CharacterActionsComponent& actions, const std::map<std::stri
 	edited |= DrawAnimationCombo("Light Attack 2", actions.lightAttack2Animation, animations);
 	edited |= DrawAnimationCombo("Light Attack 3", actions.lightAttack3Animation, animations);
 	edited |= DrawAnimationCombo("Heavy Attack",   actions.heavyAttackAnimation,  animations);
+	edited |= DrawAnimationCombo("Leap Attack",    actions.leapAttackAnimation,   animations);
 	edited |= DrawAnimationCombo("Hit Reaction",   actions.hitReactionAnimation,  animations);
 	edited |= DrawAnimationCombo("Death",          actions.deathAnimation,        animations);
 	edited |= DrawAnimationCombo("Rest",           actions.restAnimation,         animations);
@@ -42,6 +43,7 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Roll Speed",        &actions.rollSpeed,       0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Backstep Speed",    &actions.backstepSpeed,   0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Attack Step Speed", &actions.attackStepSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Leap Speed",        &actions.leapSpeed,       0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Heavy Damage Multiplier", &actions.heavyDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
 	edited |= ImGui::SliderFloat("Riposte Damage Multiplier", &actions.riposteDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
 
@@ -57,6 +59,8 @@ bool DrawTiming(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Light Hit To",      &actions.lightHitTo,       0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Heavy Hit From",    &actions.heavyHitFrom,     0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Heavy Hit To",      &actions.heavyHitTo,       0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Leap Hit From",     &actions.leapHitFrom,      0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Leap Hit To",       &actions.leapHitTo,        0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Parry From",        &actions.parryFrom,        0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Parry To",          &actions.parryTo,          0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Invulnerable From", &actions.invulnerableFrom, 0.0f, 1.0f);

@@ -23,6 +23,18 @@ Downloaded through the public Poly Haven API (`https://api.polyhaven.com/files/<
 
 | File | Made with | License | Used for |
 |---|---|---|---|
-| `../Concepts/boss_concept.png` | Z-Image-Turbo (Tongyi-MAI) | Apache 2.0 | concept of the boss, input of TRELLIS.2 |
-| `../Generated/boss_trellis.glb` | TRELLIS.2 (Microsoft) from the concept | MIT | the boss's body (`boss_generator.py`) |
-| `../Concepts/boss_axe_concept.png` | Z-Image-Turbo (Tongyi-MAI) | Apache 2.0 | the boss's great axe (`boss_generator.py` builds it from the picture) |
+| `../Concepts/boss_concept.png` | Z-Image-Turbo (Tongyi-MAI) | Apache 2.0 | concept of the boss, input of TRELLIS.2 and later of Meshy |
+| `../Generated/boss_trellis.glb` | TRELLIS.2 (Microsoft) from the concept | MIT | the first boss's body (replaced by Meshy's) |
+| `../Concepts/boss_axe_concept.png` | Z-Image-Turbo (Tongyi-MAI) | Apache 2.0 | the first boss's axe (replaced by Meshy's) |
+
+Made with Meshy (meshy.ai) on the user's paid plan: the user owns these, commercial use included. Every task (its id,
+prompt and settings) is in `../Generated/meshy_log.json`.
+
+| File | Made with | Used for |
+|---|---|---|
+| `../Concepts/knight_concept.png`, `../Concepts/rusted_knight_concept.png` | Meshy Text to Image | concepts of the knights |
+| `../Generated/knight_meshy.glb`, `../Generated/rusted_knight_meshy.glb` | Meshy Image to 3D | the knights' bodies (`characters_generator.py`) |
+| `../Generated/boss_meshy_rigged.glb` | Meshy Image to 3D of `boss_concept.png`, rigged by Meshy | the boss's body (`boss_generator.py`) |
+| `../Concepts/boss_great_axe_concept.png` | Meshy Text to Image | concept of the boss's long brass-bound axe |
+| `../Generated/boss_great_axe_meshy.glb` | Meshy Image to 3D | the boss's axe (`boss_generator.py`) |
+| `../Generated/Motions/leap_slam.fbx` | Meshy Text to Motion | the boss's jump attack |

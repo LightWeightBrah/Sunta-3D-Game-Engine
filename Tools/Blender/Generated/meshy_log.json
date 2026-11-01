@@ -1,0 +1,198 @@
+[
+  {
+    "task": "text-to-image",
+    "task_id": "01a1957f-0840-73a2-af9e-a6d6a6540a77",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "full body realistic medieval knight hero in polished but battle-worn steel full plate armor, closed great helm with a narrow visor slit, chainmail visible at the joints, brown leather belts and straps, short armored tassets above the knees, legs clearly separated, no cape, no cloak, no tabard, no weapon, empty open hands, dark fantasy souls-like, photorealistic, highly detailed, plain light grey background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/knight_concept.png",
+    "date": "2026-11-01T06:05:28"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1957f-aaf9-70b4-8bed-b55441d4b565",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "full body colossal undead knight boss, heavy blackened ornate plate armor with gold trim and dark rust, horned great helm with a dark visor, massive spiked pauldrons, armored legs clearly separated with greaves and sabatons, only short armored tassets at the hips, no long skirt, no long cloth hanging between the legs, no cape, no weapon, empty open hands, dark fantasy souls-like, photorealistic, highly detailed, plain light grey background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/boss_apose_concept.png",
+    "date": "2026-11-01T06:06:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1957f-aaf8-737a-be53-485571e7ea6d",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "full body undead hollow soldier in heavily rusted and dented steel plate armor with holes, corroded orange-brown rust, torn rotten leather straps, ragged short cloth under the armor, battered closed helm, legs clearly separated, no cape, no long robe, no weapon, empty open hands, dark fantasy souls-like, photorealistic, highly detailed, plain light grey background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/rusted_knight_concept.png",
+    "date": "2026-11-01T06:06:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1957f-aaed-7109-ba51-0a97a1dea6e4",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a colossal two-handed great axe for a giant boss, extremely long dark wooden haft wrapped in leather with heavy brass bands and a brass pommel, one enormous thick crescent shaped blade of blackened iron with brass ornament along its spine and a bright sharpened edge, a short spike on the back, dark fantasy souls-like, isolated single object standing perfectly vertical, the whole axe visible from end to end, side view, photorealistic, highly detailed, plain light grey background",
+      "remove_background": true,
+      "aspect_ratio": "9:16"
+    },
+    "output": "Concepts/boss_great_axe_concept.png",
+    "date": "2026-11-01T06:06:19"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a19580-56f4-72da-9125-ff09f4e0a52a",
+    "input": "Concepts/boss_great_axe_concept.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 12000
+    },
+    "output": "Generated/boss_great_axe_meshy.glb",
+    "date": "2026-11-01T06:07:37"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a19580-575a-7781-a56b-8fcf5b43e477",
+    "input": "Concepts/knight_concept.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/knight_meshy.glb",
+    "date": "2026-11-01T06:08:30"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a19580-56f3-75f5-a1e5-e5f38a37a673",
+    "input": "Concepts/boss_apose_concept.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 40000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/boss_meshy.glb",
+    "date": "2026-11-01T06:08:41"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a19580-5760-73aa-bc29-6e82e76237bc",
+    "input": "Concepts/rusted_knight_concept.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/rusted_knight_meshy.glb",
+    "date": "2026-11-01T06:08:57"
+  },
+  {
+    "task": "text-to-motion",
+    "task_id": "01a1958e-158f-730f-b7fb-166701d56c2f",
+    "settings": {
+      "prompt": "A giant armored warrior holding a huge heavy axe in both hands crouches, leaps high forward through the air with the axe raised over his head, lands and slams the axe down into the ground in front of him with all his weight, then slowly rises back to a ready stance",
+      "mode": "prime",
+      "duration": 4.0
+    },
+    "output": "Generated/Motions/leap_slam.fbx",
+    "date": "2026-11-01T06:22:01"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1958d-15cf-752a-b517-4394b4a63348",
+    "input": "Concepts/boss_concept.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 40000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/boss_meshy_original.glb",
+    "date": "2026-11-01T06:22:56"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1958f-f6a3-710c-8b0e-39a6b5b86e79",
+    "settings": {
+      "input_task_id": "01a1958d-15cf-752a-b517-4394b4a63348",
+      "height_meters": 3.0
+    },
+    "output": "Generated/boss_meshy_rigged.glb (and the rig of the library animations)",
+    "date": "2026-11-01T06:23:59"
+  },
+  {
+    "task": "animations",
+    "task_id": "01a19590-561d-742a-8a42-975f14eda062",
+    "settings": {
+      "rig_task_id": "01a1958f-f6a3-710c-8b0e-39a6b5b86e79",
+      "action_ids": [
+        128,
+        127,
+        237,
+        4,
+        335
+      ],
+      "names": [
+        "Heavy Hammer Swing",
+        "Charged Ground Slam",
+        "Charged Axe Chop",
+        "Attack",
+        "Axe Breathe and Look Around"
+      ]
+    },
+    "output": "Generated/Motions/boss_library.fbx",
+    "date": "2026-11-01T06:25:15"
+  }
+]

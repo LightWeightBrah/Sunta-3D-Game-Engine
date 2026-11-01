@@ -33,7 +33,7 @@
 	],
 	"meshes":[
 		{
-			"name":"BossAxeHead",
+			"name":"Mesh_0.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -64,61 +64,61 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":18068,
+			"count":17287,
 			"max":[
-				0.4040403962135315,
-				2.1831111907958984,
-				0.11717171967029572
+				0.3051646947860718,
+				1.7200000286102295,
+				0.0693388506770134
 			],
 			"min":[
-				-0.4040403962135315,
-				-0.2280000001192093,
-				-0.11717171967029572
+				-0.2873256206512451,
+				-0.2799999713897705,
+				-0.07053163647651672
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":18068,
+			"count":17287,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":18068,
+			"count":17287,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":64968,
+			"count":36579,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":216816,
+			"byteLength":207444,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":216816,
-			"byteOffset":216816,
+			"byteLength":207444,
+			"byteOffset":207444,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":144544,
-			"byteOffset":433632,
+			"byteLength":138296,
+			"byteOffset":414888,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":129936,
-			"byteOffset":578176,
+			"byteLength":73158,
+			"byteOffset":553184,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":708112,
+			"byteLength":626344,
 			"uri":"boss_axe.bin"
 		}
 	]

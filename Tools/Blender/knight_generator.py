@@ -1,27 +1,26 @@
 """
-Generates the Knight player model, its animations, its sword and its shield for the Sunta engine.
+The knights' sword and shield, and what every character of the engine shares: the skeleton (its bone names and the template
+of its proportions), the bones that hold a weapon and a shield, and the table of Mixamo animations
+
+The bodies of the knights come from generated meshes, see characters_generator.py (it uses this file)
 
 Run (from the repository root):
     blender --background --factory-startup --python Tools/Blender/knight_generator.py -- --out Sunta/res/Models
 
 Writes:
-    <out>/Knight/knight.gltf (+ .bin, knight_diffuse.png, knight_specular.png)                   the player
-    <out>/RustedKnight/rusted_knight.gltf (+ .bin, rusted_knight_diffuse.png, ...)               the enemy: same body, rusted armor
     <out>/KnightSword/knight_sword.gltf (+ .bin, knight_sword_diffuse.png, knight_sword_specular.png)
     <out>/KnightShield/knight_shield.gltf (+ .bin, knight_shield_diffuse.png, knight_shield_specular.png)
-Optional: --preview <folder> renders pictures of the model and of every animation, --blend <file> saves the .blend,
---icons <folder> renders the editor icons (souls_player_icon.png, rusted_knight_icon.png: pictures of the helmets)
+Optional: --preview <folder> renders the template skeleton holding them through every animation
 
-The armor is built from simple shapes, every color is a cell of a small palette. Cycles then bakes the final textures:
-the palette color with fine metal grain, large stains, darker crevices (ambient occlusion) and brighter worn edges
+The sword and the shield are built from simple shapes, every color is a cell of a small palette. Cycles then bakes the final
+textures: the palette color with fine metal grain, large stains, darker crevices (ambient occlusion) and brighter worn edges
 
-Conventions (Blender axes): X = the knight's right, Y = forward, Z = up
+Conventions (Blender axes): X = the character's right, Y = forward, Z = up
 The glTF exporter turns this into the engine's axes: Y up and forward along -Z
 
-Every armor piece follows exactly one bone (rigid skinning), the joints are hidden under overlapping plates
-The animations are Mixamo motion capture moved onto this skeleton (see ANIMATIONS): the Mixamo files must be downloaded first
-The sword and the shield are separate models. The bones 'Weapon_R' (right hand) and 'Shield_L' (left hand) are placed
-so that the model attached to them without any offset sits in the hand (in the engine: a child entity on that bone)
+The animations are Mixamo motion capture moved onto the skeleton (see ANIMATIONS): the Mixamo files must be downloaded first
+The bones 'Weapon_R' (right hand) and 'Shield_L' (left hand) are placed so that the model attached to them without any
+offset sits in the hand (in the engine: a child entity on that bone)
 """
 
 import argparse
@@ -34,7 +33,7 @@ from mathutils import Matrix, Quaternion, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mixamo_retarget import MixamoClip, retarget  # noqa: E402
+from motion_retarget import MotionClip, retarget  # noqa: E402
 from sunta_blender import (  # noqa: E402
     Palette,
     PartBuilder,
@@ -52,46 +51,8 @@ from sunta_blender import (  # noqa: E402
 # ========== Colors ==========
 
 # name: (diffuse RGB, specular intensity)
-KNIGHT_COLORS = {
-    "steel":        ((0.40, 0.41, 0.43), 0.75),
-    "steel_dark":   ((0.20, 0.21, 0.22), 0.55),
-    "steel_worn":   ((0.33, 0.33, 0.34), 0.55),
-    "mail":         ((0.24, 0.24, 0.25), 0.45),
-    "leather":      ((0.22, 0.14, 0.08), 0.12),
-    "leather_dark": ((0.12, 0.08, 0.05), 0.08),
-    "brass":        ((0.46, 0.35, 0.16), 0.70),
-    "black":        ((0.01, 0.01, 0.01), 0.00),
-}
-
-# The enemy: the same armor, rusted and dark, with rotten leather
-RUSTED_COLORS = {
-    "steel":        ((0.27, 0.24, 0.21), 0.45),
-    "steel_dark":   ((0.12, 0.11, 0.10), 0.30),
-    "steel_worn":   ((0.33, 0.21, 0.12), 0.25),
-    "mail":         ((0.17, 0.15, 0.13), 0.30),
-    "leather":      ((0.14, 0.10, 0.07), 0.08),
-    "leather_dark": ((0.08, 0.06, 0.04), 0.05),
-    "brass":        ((0.26, 0.19, 0.09), 0.35),
-    "black":        ((0.01, 0.01, 0.01), 0.00),
-}
-
-# Photo surfaces (Poly Haven, CC0): leather straps on both, the enemy's armor eaten by rust
+# Leather of the shield's grip and strap
 LEATHER_SURFACE = SurfaceTexture("brown_leather_diff_1k.jpg", meters=0.3)
-RUST_SURFACE = SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.5)
-
-KNIGHT_SURFACES = {
-    "leather":      LEATHER_SURFACE,
-    "leather_dark": LEATHER_SURFACE,
-}
-
-RUSTED_SURFACES = {
-    "steel":        RUST_SURFACE,
-    "steel_dark":   RUST_SURFACE,
-    "steel_worn":   RUST_SURFACE,
-    "mail":         SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.5, strength=0.6),
-    "leather":      LEATHER_SURFACE,
-    "leather_dark": LEATHER_SURFACE,
-}
 
 SHIELD_COLORS = {
     "wood":       ((0.30, 0.21, 0.13), 0.10),
@@ -119,7 +80,6 @@ SWORD_COLORS = {
     "wrap":        ((0.22, 0.14, 0.08), 0.12),
 }
 
-KNIGHT_TEXTURE_PIXELS = 2048
 
 SWORD_TEXTURE_PIXELS = 1024
 
@@ -194,8 +154,6 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", required=True)
     parser.add_argument("--preview", default="")
-    parser.add_argument("--blend", default="")
-    parser.add_argument("--icons", default="")
     return parser.parse_args(argv)
 
 
@@ -243,21 +201,21 @@ def add_held_item_bone(edit_bones, name, parent_name, item_rest_matrix):
     bone.use_deform = False
 
 
-def get_sword_rest_matrix():
+def get_sword_rest_matrix(grip_position=SWORD_GRIP_POSITION):
     """Where the sword object stands in the rest pose (Blender axes, sword built with the blade along +Z)"""
     angle = math.radians(SWORD_BLADE_DOWN_DEGREES)
     blade = Vector((0.0, math.cos(angle), -math.sin(angle)))
     edge = Vector((0.0, math.sin(angle), math.cos(angle)))
     flat = blade.cross(edge)
     rotation = Matrix((edge, flat, blade)).transposed()
-    return Matrix.Translation(SWORD_GRIP_POSITION) @ rotation.to_4x4()
+    return Matrix.Translation(grip_position) @ rotation.to_4x4()
 
 
-def get_shield_rest_matrix():
+def get_shield_rest_matrix(center=SHIELD_CENTER):
     """Where the shield object stands in the rest pose (Blender axes, shield built facing +Z with its top along +Y)"""
     side = SHIELD_TOP.cross(SHIELD_FACE)
     rotation = Matrix((side, SHIELD_TOP, SHIELD_FACE)).transposed()
-    return Matrix.Translation(SHIELD_CENTER) @ rotation.to_4x4()
+    return Matrix.Translation(center) @ rotation.to_4x4()
 
 
 # The glTF exporter turns Blender axes (Z up) into glTF axes (Y up): (x, y, z) -> (x, z, -y)
@@ -268,113 +226,6 @@ def get_held_item_bone_matrix(item_rest_matrix):
     """The held model's file is converted to glTF axes on its own, the bone must carry the same frame:
     bone frame in glTF = model placement in glTF, so in Blender the bone frame is model frame * (Blender->glTF)^-1"""
     return item_rest_matrix @ BLENDER_TO_GLTF.inverted()
-
-
-def build_head(parts):
-    """A close helm: rounded skull, a chin plate, a narrow eye slit and breathing holes"""
-    parts.sphere("Head", "steel", (0.0, 0.0, 1.725), (0.108, 0.118, 0.128), segments=28, rings=16)
-    parts.sphere("Head", "steel_worn", (0.0, 0.03, 1.662), (0.098, 0.1, 0.082), segments=28, rings=14)
-    parts.cylinder("Head", "steel_dark", make_matrix((0.0, 0.005, 1.612)), 0.1, 0.098, 0.03, segments=28)
-
-    # The eye slit follows the curve of the face in four short pieces
-    for angle_degrees in (-36, -12, 12, 36):
-        angle = math.radians(angle_degrees)
-        location = (math.sin(angle) * 0.106, math.cos(angle) * 0.116, 1.738)
-        parts.box("Head", "black", location, (0.048, 0.02, 0.011), rotation=(0, 0, -angle_degrees), bevel=0.0)
-
-    # Breathing holes on the right cheek
-    for row in range(3):
-        for column in range(2):
-            angle_degrees = 22 + column * 12
-            angle = math.radians(angle_degrees)
-            location = (math.sin(angle) * 0.098, math.cos(angle) * 0.1, 1.675 - row * 0.016)
-            parts.box("Head", "black", location, (0.008, 0.016, 0.006), rotation=(0, 0, -angle_degrees), bevel=0.0)
-
-
-def build_torso(parts):
-    # Gorget around the neck
-    parts.cylinder("Neck", "steel_worn", make_matrix((0, 0.0, 1.565)), 0.105, 0.088, 0.08)
-    parts.cylinder("Chest", "steel", make_matrix((0, 0.0, 1.515)), 0.15, 0.11, 0.05)
-
-    # Breastplate with a ridge down the middle and a dark rim at the bottom
-    parts.sphere("Chest", "steel", (0.0, 0.02, 1.37), (0.2, 0.152, 0.19), segments=28, rings=16)
-    parts.box("Chest", "steel_worn", (0.0, 0.158, 1.40), (0.024, 0.024, 0.2), rotation=(0, 0, 45))
-    parts.cylinder("Chest", "steel_dark", make_matrix((0, 0.015, 1.255)), 0.178, 0.186, 0.028, scale=(1.0, 0.8, 1.0))
-
-    # Belly under the plate, belt with a buckle
-    parts.cylinder("Spine", "mail", make_matrix((0, 0.0, 1.18)), 0.16, 0.17, 0.18, scale=(1.0, 0.8, 1.0))
-    parts.cylinder("Hips", "leather", make_matrix((0, 0.0, 1.05)), 0.175, 0.175, 0.05, scale=(1.0, 0.8, 1.0))
-    parts.box("Hips", "brass", (0.0, 0.145, 1.05), (0.05, 0.016, 0.045))
-
-    # Fauld (the plates over the hips) and a mail skirt that stays short, so the legs never cut through it
-    parts.cylinder("Hips", "steel", make_matrix((0, 0.0, 0.975)), 0.212, 0.18, 0.10, scale=(1.0, 0.82, 1.0))
-    parts.cylinder("Hips", "mail", make_matrix((0, 0.0, 0.90)), 0.20, 0.205, 0.07, scale=(1.0, 0.82, 1.0))
-
-
-def build_arm(parts, side):
-    suffix = "_R" if side > 0 else "_L"
-
-    def mirrored(point):
-        return (point[0] * side, point[1], point[2])
-
-    shoulder, upper_arm, lower_arm, hand = ("Shoulder" + suffix, "UpperArm" + suffix, "LowerArm" + suffix, "Hand" + suffix)
-
-    # Pauldron: three overlapping plates with a dark rim
-    for index, (radius, z) in enumerate(((0.1, 1.47), (0.092, 1.425), (0.084, 1.39))):
-        parts.half_sphere(shoulder, "steel" if index == 0 else "steel_worn", mirrored((0.20, 0.0, z)), (radius, radius * 0.95, radius * 0.7),
-                          rotation=(0, side * 25, 0))
-    parts.cylinder(shoulder, "steel_dark", make_matrix(mirrored((0.20, 0.0, 1.466)), (0, side * 25, 0)), 0.102, 0.102, 0.012)
-
-    # Upper arm: mail with a plate on the outside
-    parts.limb(upper_arm, "mail", mirrored((0.19, 0.0, 1.42)), mirrored((0.23, 0.0, 1.17)), 0.058, 0.05)
-    parts.limb(upper_arm, "steel_worn", mirrored((0.20, 0.0, 1.36)), mirrored((0.23, 0.0, 1.20)), 0.062, 0.055)
-
-    # Elbow cop with a small round wing
-    parts.sphere(lower_arm, "steel", mirrored((0.23, 0.0, 1.17)), (0.055, 0.055, 0.055))
-    parts.cylinder(lower_arm, "steel_worn", make_matrix(mirrored((0.265, -0.005, 1.17)), (0, 90, 0)), 0.045, 0.045, 0.012)
-
-    # Vambrace and gauntlet
-    parts.limb(lower_arm, "steel", mirrored((0.23, 0.0, 1.15)), mirrored((0.25, 0.03, 0.95)), 0.05, 0.042)
-    parts.limb(hand, "steel_worn", mirrored((0.25, 0.03, 0.96)), mirrored((0.25, 0.034, 0.90)), 0.05, 0.062)
-    parts.box(hand, "steel_dark", mirrored((0.25, 0.04, 0.86)), (0.05, 0.08, 0.09))
-    parts.box(hand, "steel_dark", mirrored((0.25, 0.075, 0.835)), (0.048, 0.04, 0.06))
-
-
-def build_leg(parts, side):
-    suffix = "_R" if side > 0 else "_L"
-
-    def mirrored(point):
-        return (point[0] * side, point[1], point[2])
-
-    thigh, shin, foot = "Thigh" + suffix, "Shin" + suffix, "Foot" + suffix
-
-    # Cuisse (thigh plate) with a tasset hanging over it
-    parts.limb(thigh, "mail", mirrored((0.10, 0.0, 0.97)), mirrored((0.11, 0.0, 0.56)), 0.085, 0.065)
-    parts.limb(thigh, "steel", mirrored((0.10, 0.012, 0.88)), mirrored((0.11, 0.012, 0.58)), 0.08, 0.066)
-    parts.box(thigh, "steel_worn", mirrored((0.105, 0.075, 0.86)), (0.14, 0.025, 0.14), rotation=(8, 0, 0))
-
-    # Knee cop with a pointed front
-    parts.sphere(shin, "steel", mirrored((0.11, 0.015, 0.54)), (0.065, 0.06, 0.065))
-    parts.box(shin, "steel_worn", mirrored((0.11, 0.07, 0.545)), (0.045, 0.04, 0.045), rotation=(0, 45, 0))
-
-    # Greave
-    parts.limb(shin, "steel", mirrored((0.11, 0.0, 0.52)), mirrored((0.11, -0.01, 0.13)), 0.062, 0.048)
-
-    # Sabaton
-    parts.cylinder(foot, "steel_worn", make_matrix(mirrored((0.11, -0.005, 0.11))), 0.055, 0.05, 0.07)
-    parts.box(foot, "steel_dark", mirrored((0.11, 0.04, 0.05)), (0.10, 0.20, 0.08))
-    parts.box(foot, "steel_worn", mirrored((0.11, 0.155, 0.04)), (0.085, 0.08, 0.06), rotation=(-12, 0, 0))
-    parts.box(foot, "leather_dark", mirrored((0.11, 0.03, 0.006)), (0.10, 0.22, 0.012), bevel=0.002)
-
-
-def build_knight_mesh(armature, palette, name):
-    parts = PartBuilder(palette)
-    build_head(parts)
-    build_torso(parts)
-    for side in (1, -1):
-        build_arm(parts, side)
-        build_leg(parts, side)
-    return parts.to_object(name, armature)
 
 
 # ========== The shield ==========
@@ -490,62 +341,61 @@ def add_blade(parts, blade_start, blade_end):
 
 # ========== Animations ==========
 
-# The motion comes from Mixamo (motion capture), moved onto the knight's skeleton by mixamo_retarget.py
+# The motion comes from Mixamo (motion capture), moved onto the knight's skeleton by motion_retarget.py
 # Every animation is a part of one Mixamo file (Mixamo frames at 30 fps, inclusive) played at some speed
 # The engine finds the animations by these names (Character Animation, Character Actions), so they stay the same
 #
-# Files (downloaded as "FBX Binary, Without Skin" into Tools/Blender/Mixamo, see MIXAMO_FOLDER):
+# Files (downloaded as "FBX Binary, Without Skin" into Tools/Blender/Mixamo, the paths start from Tools/Blender):
 #   ProSwordShield/   the "Pro Sword And Shield Pack", unzipped
 #   Sprinting Forward Roll.fbx, Standing Dodge Backward.fbx, Kneel Campfire.fbx ("Kneel", warming hands over a campfire)
 #
 # The attacks are cut so that the blade strikes inside the hit windows of Character Actions
 # (light: 0.28..0.56 of the animation, heavy: 0.45..0.66), check with check_attack_reach.py
 
-PACK = "ProSwordShield/sword and shield "
+PACK = "Mixamo/ProSwordShield/sword and shield "
 
 ANIMATIONS = {
     # Walking and standing, looped by the engine
-    "Idle":           MixamoClip(PACK + "idle (4).fbx"),
-    "Walk":           MixamoClip(PACK + "walk.fbx"),
-    "Run":            MixamoClip(PACK + "run.fbx"),
-    "Walk_Back":      MixamoClip(PACK + "walk (2).fbx"),
-    "Strafe_Left":    MixamoClip(PACK + "strafe (2).fbx"),
-    "Strafe_Right":   MixamoClip(PACK + "strafe.fbx"),
+    "Idle":           MotionClip(PACK + "idle (4).fbx"),
+    "Walk":           MotionClip(PACK + "walk.fbx"),
+    "Run":            MotionClip(PACK + "run.fbx"),
+    "Walk_Back":      MotionClip(PACK + "walk (2).fbx"),
+    "Strafe_Left":    MotionClip(PACK + "strafe (2).fbx"),
+    "Strafe_Right":   MotionClip(PACK + "strafe.fbx"),
 
     # Actions, played once. The roll and the backstep without the running before and after them
-    "Roll":           MixamoClip("Sprinting Forward Roll.fbx", 4, 36, speed=1.1),
-    "Backstep":       MixamoClip("Standing Dodge Backward.fbx", 4, 40, speed=1.2),
-    "Attack_Light_1": MixamoClip(PACK + "slash.fbx", 4, 40, speed=1.3),
-    "Attack_Light_2": MixamoClip(PACK + "slash (3).fbx", 10, 45, speed=1.3),
-    "Attack_Light_3": MixamoClip(PACK + "attack (2).fbx", 6, 34, speed=1.1),
-    "Attack_Heavy":   MixamoClip(PACK + "slash (2).fbx", 4, 36, speed=0.9),
-    "Hit":            MixamoClip(PACK + "impact (2).fbx"),
-    "Parried":        MixamoClip(PACK + "impact (3).fbx", speed=0.6),
-    "Death":          MixamoClip(PACK + "death.fbx"),
+    "Roll":           MotionClip("Mixamo/Sprinting Forward Roll.fbx", 4, 36, speed=1.1),
+    "Backstep":       MotionClip("Mixamo/Standing Dodge Backward.fbx", 4, 40, speed=1.2),
+    "Attack_Light_1": MotionClip(PACK + "slash.fbx", 4, 40, speed=1.3),
+    "Attack_Light_2": MotionClip(PACK + "slash (3).fbx", 10, 45, speed=1.3),
+    "Attack_Light_3": MotionClip(PACK + "attack (2).fbx", 6, 34, speed=1.1),
+    "Attack_Heavy":   MotionClip(PACK + "slash (2).fbx", 4, 36, speed=0.9),
+    "Hit":            MotionClip(PACK + "impact (2).fbx"),
+    "Parried":        MotionClip(PACK + "impact (3).fbx", speed=0.6),
+    "Death":          MotionClip(PACK + "death.fbx"),
 
     # The shield: held up (the engine fades into it, the last frame is held while blocking), a hit taken on it,
     # and a parry (a fast raise of the shield)
-    "Block":          MixamoClip(PACK + "block idle.fbx"),
-    "Block_Impact":   MixamoClip(PACK + "impact.fbx"),
-    "Parry":          MixamoClip(PACK + "block.fbx", speed=1.5),
+    "Block":          MotionClip(PACK + "block idle.fbx"),
+    "Block_Impact":   MotionClip(PACK + "impact.fbx"),
+    "Parry":          MotionClip(PACK + "block.fbx", speed=1.5),
 
     # Resting at a bonfire: kneeling down (the last frame is held), and getting up again
-    "Rest":           MixamoClip("Kneel Campfire.fbx", 50, 110, speed=1.2),
-    "Stand_Up":       MixamoClip("Kneel Campfire.fbx", 188, 238, speed=1.3),
+    "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
+    "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
 }
 
-MIXAMO_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Mixamo")
 
-
-def create_animations(armature):
+def create_animations(armature, animations=None):
+    """Every clip of the table (the knights' ANIMATIONS by default) as an action of the armature"""
     armature.animation_data_create()
     actions = []
 
-    for name, clip in ANIMATIONS.items():
+    for name, clip in (animations or ANIMATIONS).items():
         action = bpy.data.actions.new(name)
         action.use_fake_user = True
 
-        last_frame = retarget(armature, clip, MIXAMO_FOLDER, action)
+        last_frame = retarget(armature, clip, action)
         action.frame_range = (0, last_frame)
         actions.append(action)
 
@@ -616,59 +466,33 @@ def hang_on_bone(held_object, armature, bone_name, rest_matrix):
 def main():
     arguments = parse_arguments()
     out_folder = os.path.abspath(arguments.out)
-    knight_folder = os.path.join(out_folder, "Knight")
-    rusted_folder = os.path.join(out_folder, "RustedKnight")
     sword_folder = os.path.join(out_folder, "KnightSword")
     shield_folder = os.path.join(out_folder, "KnightShield")
-    for folder in (knight_folder, rusted_folder, sword_folder, shield_folder):
+    for folder in (sword_folder, shield_folder):
         os.makedirs(folder, exist_ok=True)
 
     clear_scene()
 
-    knight_palette = Palette(KNIGHT_COLORS, KNIGHT_SURFACES)
-    rusted_palette = Palette(RUSTED_COLORS, RUSTED_SURFACES)
     sword_palette = Palette(SWORD_COLORS)
     shield_palette = Palette(SHIELD_COLORS, SHIELD_SURFACES)
-
-    armature = build_skeleton()
-    knight = build_knight_mesh(armature, knight_palette, "Knight")
-    rusted_knight = build_knight_mesh(armature, rusted_palette, "RustedKnight")
-    actions = create_animations(armature)
     sword = build_sword_mesh(sword_palette)
     shield = build_shield_mesh(shield_palette)
 
-    # Baked in the rest pose: the armor must not be bent by an animation while its texture is made
-    reset_to_rest_pose(armature)
     setup_bake_render()
-    bake_textures(knight, knight_palette, "knight", knight_folder, KNIGHT_TEXTURE_PIXELS)
-    bake_textures(rusted_knight, rusted_palette, "rusted_knight", rusted_folder, KNIGHT_TEXTURE_PIXELS)
     bake_textures(sword, sword_palette, "knight_sword", sword_folder, SWORD_TEXTURE_PIXELS)
     bake_textures(shield, shield_palette, "knight_shield", shield_folder, SWORD_TEXTURE_PIXELS)
 
-    # Both characters share the skeleton and the animations, each file has its own armor
-    export_gltf(os.path.join(knight_folder, "knight.gltf"), [armature, knight], with_animations=True)
-    export_gltf(os.path.join(rusted_folder, "rusted_knight.gltf"), [armature, rusted_knight], with_animations=True)
     export_gltf(os.path.join(sword_folder, "knight_sword.gltf"), [sword], with_animations=False)
     export_gltf(os.path.join(shield_folder, "knight_shield.gltf"), [shield], with_animations=False)
 
-    # For the pictures (and the .blend) the sword and the shield hang on their bones, exactly as the engine attaches them
-    reset_to_rest_pose(armature)
-    hang_on_bone(sword, armature, WEAPON_BONE, get_sword_rest_matrix())
-    hang_on_bone(shield, armature, SHIELD_BONE, get_shield_rest_matrix())
-
-    if arguments.icons:
-        icons_folder = os.path.abspath(arguments.icons)
-        show_only([knight, sword, shield])
-        render_icon(os.path.join(icons_folder, "souls_player_icon.png"), armature)
-        show_only([rusted_knight, sword, shield])
-        render_icon(os.path.join(icons_folder, "rusted_knight_icon.png"), armature)
-
-    show_only([knight, sword, shield])
-
-    if arguments.blend:
-        bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath(arguments.blend))
-
     if arguments.preview:
+        # The template skeleton with the sword and the shield on their bones, exactly as the engine attaches them
+        armature = build_skeleton()
+        actions = create_animations(armature)
+        reset_to_rest_pose(armature)
+        hang_on_bone(sword, armature, WEAPON_BONE, get_sword_rest_matrix())
+        hang_on_bone(shield, armature, SHIELD_BONE, get_shield_rest_matrix())
+        show_only([sword, shield])
         render_previews(os.path.abspath(arguments.preview), armature, actions)
 
     print("KNIGHT_GENERATOR_DONE")

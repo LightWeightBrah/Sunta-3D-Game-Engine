@@ -7,6 +7,8 @@ namespace Sunta
 {
 
 // A kind of enemy: a sword fighter that chases the player, attacks up close, circles and gives up when the player gets away
+// With 'leapAttackDistance' set (and a Leap Attack animation in its Character Actions) it also jumps at a player who keeps
+// a distance: anywhere between 'attackDistance' and 'leapAttackDistance' (a boss closing the gap)
 //
 // How to use it: Add Component > Melee Enemy (it adds the Enemy it is built on). Its states are
 // Idle, Chase, Attack, Recover, ReturnHome (see MeleeEnemy.h), the numbers below tune them in the Inspector
@@ -20,6 +22,9 @@ struct MeleeEnemyComponent
 	float attackDistance = 2.0f;
 	float runDistance    = 6.0f;
 	float giveUpDistance = 18.0f;
+
+	// Up to this far it jumps at the player (Leap Attack) instead of walking up. 0: it never leaps
+	float leapAttackDistance = 0.0f;
 
 	// Time between two attacks, the chance (0..1) that an attack is a heavy one, how many light attacks it chains at most
 	float attackCooldownSeconds = 1.4f;
@@ -36,6 +41,7 @@ struct MeleeEnemyComponent
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, attackDistance,        PropertyDataType::Float, 0.0f, MaxDistance),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, runDistance,           PropertyDataType::Float, 0.0f, MaxDistance),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, giveUpDistance,        PropertyDataType::Float, 0.0f, MaxDistance),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, leapAttackDistance,    PropertyDataType::Float, 0.0f, MaxDistance),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, attackCooldownSeconds, PropertyDataType::Float, 0.0f, MaxSeconds),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, heavyAttackChance,     PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY(MeleeEnemyComponent, maxLightCombo, PropertyDataType::Int),

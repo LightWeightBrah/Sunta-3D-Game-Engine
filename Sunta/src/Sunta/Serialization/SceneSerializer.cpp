@@ -146,6 +146,11 @@ namespace SceneKeys
 	constexpr const char* LightAttack2Animation     = "light_attack_2_animation";
 	constexpr const char* LightAttack3Animation     = "light_attack_3_animation";
 	constexpr const char* HeavyAttackAnimation      = "heavy_attack_animation";
+	constexpr const char* LeapAttackAnimation       = "leap_attack_animation";
+	constexpr const char* LeapSpeed                 = "leap_speed";
+	constexpr const char* LeapHitFrom               = "leap_hit_from";
+	constexpr const char* LeapHitTo                 = "leap_hit_to";
+	constexpr const char* LeapAttackDistance        = "leap_attack_distance";
 	constexpr const char* RollSpeed                 = "roll_speed";
 	constexpr const char* BackstepSpeed             = "backstep_speed";
 	constexpr const char* AttackStepSpeed           = "attack_step_speed";
@@ -556,6 +561,10 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::LightAttack2Animation, actions->lightAttack2Animation },
 				{ SceneKeys::LightAttack3Animation, actions->lightAttack3Animation },
 				{ SceneKeys::HeavyAttackAnimation,  actions->heavyAttackAnimation  },
+				{ SceneKeys::LeapAttackAnimation,   actions->leapAttackAnimation   },
+				{ SceneKeys::LeapSpeed,             actions->leapSpeed             },
+				{ SceneKeys::LeapHitFrom,           actions->leapHitFrom           },
+				{ SceneKeys::LeapHitTo,             actions->leapHitTo             },
 				{ SceneKeys::RollSpeed,             actions->rollSpeed             },
 				{ SceneKeys::BackstepSpeed,         actions->backstepSpeed         },
 				{ SceneKeys::AttackStepSpeed,       actions->attackStepSpeed       },
@@ -713,7 +722,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::AttackCooldownSeconds, meleeEnemy->attackCooldownSeconds },
 				{ SceneKeys::HeavyAttackChance,     meleeEnemy->heavyAttackChance     },
 				{ SceneKeys::MaxLightCombo,         meleeEnemy->maxLightCombo         },
-				{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        }
+				{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        },
+				{ SceneKeys::LeapAttackDistance,    meleeEnemy->leapAttackDistance    }
 			};
 		}
 
@@ -1052,6 +1062,10 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.lightAttack2Animation = actionsData.value(SceneKeys::LightAttack2Animation, actions.lightAttack2Animation);
 			actions.lightAttack3Animation = actionsData.value(SceneKeys::LightAttack3Animation, actions.lightAttack3Animation);
 			actions.heavyAttackAnimation  = actionsData.value(SceneKeys::HeavyAttackAnimation,  actions.heavyAttackAnimation);
+			actions.leapAttackAnimation   = actionsData.value(SceneKeys::LeapAttackAnimation,   actions.leapAttackAnimation);
+			actions.leapSpeed             = actionsData.value(SceneKeys::LeapSpeed,             actions.leapSpeed);
+			actions.leapHitFrom           = actionsData.value(SceneKeys::LeapHitFrom,           actions.leapHitFrom);
+			actions.leapHitTo             = actionsData.value(SceneKeys::LeapHitTo,             actions.leapHitTo);
 			actions.rollSpeed             = actionsData.value(SceneKeys::RollSpeed,             actions.rollSpeed);
 			actions.backstepSpeed         = actionsData.value(SceneKeys::BackstepSpeed,         actions.backstepSpeed);
 			actions.attackStepSpeed       = actionsData.value(SceneKeys::AttackStepSpeed,       actions.attackStepSpeed);
@@ -1230,6 +1244,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			meleeEnemy.heavyAttackChance     = meleeData.value(SceneKeys::HeavyAttackChance,     meleeEnemy.heavyAttackChance);
 			meleeEnemy.maxLightCombo         = meleeData.value(SceneKeys::MaxLightCombo,         meleeEnemy.maxLightCombo);
 			meleeEnemy.recoverSeconds        = meleeData.value(SceneKeys::RecoverSeconds,        meleeEnemy.recoverSeconds);
+			meleeEnemy.leapAttackDistance    = meleeData.value(SceneKeys::LeapAttackDistance,    meleeEnemy.leapAttackDistance);
 		}
 
 	}

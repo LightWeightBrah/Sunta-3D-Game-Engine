@@ -17,6 +17,7 @@ enum class CharacterAction
 	Backstep,    // a short hop back, used when rolling without choosing a direction
 	LightAttack, // quick attacks that chain into a combo when pressed again in time
 	HeavyAttack, // a slow, strong attack
+	LeapAttack,  // a jump at a target further away that ends in a blow as strong as a heavy attack (closing the gap)
 	HitReaction, // staggering after being hit (started by the Health, not by a button)
 	Death,       // the last animation, the character never acts again (until it is brought back at a bonfire)
 	Rest,        // kneeling at a bonfire, ends when the bonfire stands the character up
@@ -58,6 +59,7 @@ struct CharacterActionsComponent
 	std::string lightAttack2Animation;
 	std::string lightAttack3Animation;
 	std::string heavyAttackAnimation;
+	std::string leapAttackAnimation;
 	std::string hitReactionAnimation;
 	std::string deathAnimation;
 	std::string restAnimation;
@@ -71,6 +73,8 @@ struct CharacterActionsComponent
 	float rollSpeed       = 5.5f;
 	float backstepSpeed   = 4.0f;
 	float attackStepSpeed = 1.5f;
+	// The fastest a leap may fly: it flies just far enough to land in front of its target (the locked-on one)
+	float leapSpeed       = 8.0f;
 
 	// Parts of an action are given as fractions of its animation: 0 is the start, 1 is the end
 	// The part of the roll and the backstep during which nothing can hurt the character
@@ -82,6 +86,8 @@ struct CharacterActionsComponent
 	float lightHitTo   = 0.56f;
 	float heavyHitFrom = 0.45f;
 	float heavyHitTo   = 0.66f;
+	float leapHitFrom  = 0.4f;
+	float leapHitTo    = 0.65f;
 
 	// How much more a heavy attack hurts than a light one
 	float heavyDamageMultiplier = 1.8f;
@@ -116,6 +122,9 @@ struct CharacterActionsComponent
 	// The direction the current action moves the character in (in the world, horizontal)
 	glm::vec3 actionDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 
+	// How fast the current leap flies (chosen when it starts, from the distance to the target)
+	float currentLeapSpeed = 0.0f;
+
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;
 
@@ -129,7 +138,10 @@ struct CharacterActionsComponent
 
 	bool IsResting() const { return currentAction == CharacterAction::Rest; }
 
-	bool IsAttacking() const { return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack; }
+	bool IsAttacking() const
+	{
+		return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack;
+	}
 
 	// The shield is up: blocking, or taking a hit on it
 	bool IsGuarding() const { return currentAction == CharacterAction::Block || currentAction == CharacterAction::BlockImpact; }
@@ -149,10 +161,17 @@ struct CharacterActionsComponent
 		if (currentAction == CharacterAction::HeavyAttack)
 			return actionProgress >= heavyHitFrom && actionProgress <= heavyHitTo;
 
+		if (currentAction == CharacterAction::LeapAttack)
+			return actionProgress >= leapHitFrom && actionProgress <= leapHitTo;
+
 		return false;
 	}
 
-	float GetDamageMultiplier() const { return currentAction == CharacterAction::HeavyAttack ? heavyDamageMultiplier : 1.0f; }
+	// A leap ends in a heavy blow
+	float GetDamageMultiplier() const
+	{
+		return (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack) ? heavyDamageMultiplier : 1.0f;
+	}
 
 	static void RegisterToInspector()
 	{
