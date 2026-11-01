@@ -173,6 +173,18 @@ struct CharacterActionsComponent
 	// Staggering after its attack was parried: the next hit it takes is a riposte
 	bool IsOpenToRiposte() const { return currentAction == CharacterAction::Parried; }
 
+	// Where the part of the current attack that hurts starts (0..1 of the attack), below 0 when no attack is going on
+	float GetHitFrom() const
+	{
+		switch (currentAction)
+		{
+		case CharacterAction::LightAttack: return lightHitFrom;
+		case CharacterAction::HeavyAttack: return heavyHitFrom;
+		case CharacterAction::LeapAttack:  return leapHitFrom;
+		default:                           return -1.0f;
+		}
+	}
+
 	// True during the part of the current attack that hurts
 	bool IsInHitWindow() const
 	{

@@ -9,6 +9,8 @@
 #include "ECS/Component.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CutsceneSystem.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/EnemyContext.h"
@@ -52,6 +54,7 @@ using ModelHandle         = ComponentHandle<ModelComponent>;
 using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
 using EnvironmentHandle   = ComponentHandle<EnvironmentComponent>;
 using CutsceneHandle      = ComponentHandle<CutsceneComponent>;
+using AudioSourceHandle   = ComponentHandle<AudioSourceComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -199,6 +202,7 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterMeleeEnemyComponent(lua);
 	RegisterBossComponents(lua);
 	RegisterLookComponents(lua);
+	RegisterAudio(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -661,7 +665,8 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"model",               ComponentHandleProperty<ModelComponent>(),
 		"particles",           ComponentHandleProperty<ParticleEmitterComponent>(),
 		"environment",         ComponentHandleProperty<EnvironmentComponent>(),
-		"cutscene",            ComponentHandleProperty<CutsceneComponent>()
+		"cutscene",            ComponentHandleProperty<CutsceneComponent>(),
+		"audioSource",         ComponentHandleProperty<AudioSourceComponent>()
 	);
 }
 
@@ -705,6 +710,64 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 			{
 				if (ParticleEmitterComponent* emitter = handle.TryGetComponent())
 					emitter->burstCount += glm::max(count, 0);
+			}
+	);
+}
+
+void LuaBindings::RegisterAudio(sol::state& lua)
+{
+	// Usage in Lua (on an entity with an Audio Source): this.audioSource:play(), this.audioSource:stop(2) (fading out
+	// for 2 seconds), if this.audioSource.isPlaying then ... end, this.audioSource.volume = 0.5
+	lua.new_usertype<AudioSourceHandle>("AudioSource", sol::no_constructor,
+		"volume", MemberProperty(&AudioSourceComponent::volume, 0.0f),
+
+		"play", [](const AudioSourceHandle& handle)
+			{
+				if (EntityManager* entityManager = handle.owner.GetEntityManager())
+					AudioSystem::Play(*entityManager, handle.owner.GetID());
+			},
+
+		"stop", [](const AudioSourceHandle& handle, sol::optional<float> fadeOutSeconds)
+			{
+				if (EntityManager* entityManager = handle.owner.GetEntityManager())
+					AudioSystem::Stop(*entityManager, handle.owner.GetID(), fadeOutSeconds.value_or(0.0f));
+			},
+
+		"isPlaying", sol::readonly_property([](const AudioSourceHandle& handle)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && AudioSystem::IsPlaying(*entityManager, handle.owner.GetID());
+			})
+	);
+
+	// Usage in Lua: Audio.play("@game/Sounds/UI/bell.ogg"), Audio.playAt("@game/Sounds/Combat/Hit", this.transform.position),
+	// Audio.playMusic("@game/Music/boss.ogg", 0.6), Audio.stopMusic(3) (fading out for 3 seconds)
+	// A sound may be a folder: one of its files plays at random. Volume 1 = as recorded
+	lua["Audio"] = lua.create_table_with(
+		"play", [](const std::string& sound, sol::optional<float> volume)
+			{
+				Audio::PlayOptions options;
+				options.volume = volume.value_or(1.0f);
+				Audio::Play(sound, options);
+			},
+
+		"playAt", [](const std::string& sound, const glm::vec3& position, sol::optional<float> volume)
+			{
+				Audio::PlayOptions options;
+				options.volume    = volume.value_or(1.0f);
+				options.isSpatial = true;
+				options.position  = position;
+				Audio::Play(sound, options);
+			},
+
+		"playMusic", [](const std::string& sound, sol::optional<float> volume, sol::optional<float> fadeSeconds)
+			{
+				Audio::PlayMusic(sound, volume.value_or(1.0f), fadeSeconds.value_or(2.0f));
+			},
+
+		"stopMusic", [](sol::optional<float> fadeSeconds)
+			{
+				Audio::StopMusic(fadeSeconds.value_or(2.0f));
 			}
 	);
 }

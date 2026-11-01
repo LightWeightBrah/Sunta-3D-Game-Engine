@@ -219,6 +219,8 @@ void EditorLayer::RegisterComponentsToInspector()
 	ParticleEmitterComponent::RegisterToInspector();
 	EnvironmentComponent::RegisterToInspector();
 	CutsceneComponent::RegisterToInspector();
+	AudioSourceComponent::RegisterToInspector();
+	CharacterSoundsComponent::RegisterToInspector();
 	EnemyComponent::RegisterToInspector();
 	MeleeEnemyComponent::RegisterToInspector();
 	PlayerHUDComponent::RegisterToInspector();

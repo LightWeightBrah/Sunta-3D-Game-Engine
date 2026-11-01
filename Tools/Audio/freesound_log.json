@@ -1,0 +1,938 @@
+[
+  {
+    "id": 59992,
+    "name": "Swosh Sword Swing",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/59992/",
+    "file": "59992.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 60004,
+    "name": "Fast Sword Swing Sound",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/60004/",
+    "file": "60004.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 59999,
+    "name": "Sword or Bullet Swish/Swosh 12.flac",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/59999/",
+    "file": "59999.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 60024,
+    "name": "swosh swinging sword 37.flac",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/60024/",
+    "file": "60024.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 59998,
+    "name": "Weapon Swing Air Sound",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/59998/",
+    "file": "59998.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 60007,
+    "name": "Swipe Whoosh",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/60007/",
+    "file": "60007.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547037,
+    "name": "Hit Swing Sword",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547037/",
+    "file": "547037.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547038,
+    "name": "Hit Swing Sword",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547038/",
+    "file": "547038.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547039,
+    "name": "Hit Swing Sword Small",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547039/",
+    "file": "547039.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547040,
+    "name": "Hit Swing Sword Small 2",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547040/",
+    "file": "547040.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547041,
+    "name": "Hit Swing Sword Small 3",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547041/",
+    "file": "547041.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 475135,
+    "name": "FX - Swoosh - Low Pitch",
+    "author": "bolkmar",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/bolkmar/sounds/475135/",
+    "file": "475135.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 475132,
+    "name": "FX - Swoosh - Light",
+    "author": "bolkmar",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/bolkmar/sounds/475132/",
+    "file": "475132.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 475133,
+    "name": "FX - Swoosh - Slow",
+    "author": "bolkmar",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/bolkmar/sounds/475133/",
+    "file": "475133.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 475134,
+    "name": "FX - Swoosh - Super Slow",
+    "author": "bolkmar",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/bolkmar/sounds/475134/",
+    "file": "475134.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547035,
+    "name": "Hit Impact Sword",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547035/",
+    "file": "547035.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547036,
+    "name": "Hit Impact Sword 2",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547036/",
+    "file": "547036.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 547042,
+    "name": "Hit Impact Sword 3",
+    "author": "CogFireStudios",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CogFireStudios/sounds/547042/",
+    "file": "547042.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 522091,
+    "name": "Pound of Flesh 1",
+    "author": "magnuswaker",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/magnuswaker/sounds/522091/",
+    "file": "522091.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 641046,
+    "name": "Gore Impact - \"LOT OF HEART\"",
+    "author": "magnuswaker",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/magnuswaker/sounds/641046/",
+    "file": "641046.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 641040,
+    "name": "GROSS IMPACT",
+    "author": "magnuswaker",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/magnuswaker/sounds/641040/",
+    "file": "641040.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 395365,
+    "name": "Sword stab 4",
+    "author": "ihitokage",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ihitokage/sounds/395365/",
+    "file": "395365.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 395372,
+    "name": "Sword stab 3",
+    "author": "ihitokage",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ihitokage/sounds/395372/",
+    "file": "395372.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 434896,
+    "name": "Sword Impact",
+    "author": "TheBuilder15",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/TheBuilder15/sounds/434896/",
+    "file": "434896.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326803,
+    "name": "Sword_Clash (3).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326803/",
+    "file": "326803.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326854,
+    "name": "Sword_Clash (44).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326854/",
+    "file": "326854.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326853,
+    "name": "Sword_Clash (45).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326853/",
+    "file": "326853.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326857,
+    "name": "Sword_Clash (49).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326857/",
+    "file": "326857.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326848,
+    "name": "Sword_Clash (40).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326848/",
+    "file": "326848.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 337837,
+    "name": "med-metal-hit-03.wav",
+    "author": "newagesoup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/newagesoup/sounds/337837/",
+    "file": "337837.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 337868,
+    "name": "small-metal-hit-07.wav",
+    "author": "newagesoup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/newagesoup/sounds/337868/",
+    "file": "337868.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 337873,
+    "name": "small-metal-hit-10.wav",
+    "author": "newagesoup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/newagesoup/sounds/337873/",
+    "file": "337873.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 337872,
+    "name": "small-metal-hit-11.wav",
+    "author": "newagesoup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/newagesoup/sounds/337872/",
+    "file": "337872.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 641896,
+    "name": "Block - [Rpg] 1",
+    "author": "colorsCrimsonTears",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/colorsCrimsonTears/sounds/641896/",
+    "file": "641896.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 641895,
+    "name": "Block - [Rpg] 2",
+    "author": "colorsCrimsonTears",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/colorsCrimsonTears/sounds/641895/",
+    "file": "641895.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 370203,
+    "name": "shield guard",
+    "author": "nekoninja",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/nekoninja/sounds/370203/",
+    "file": "370203.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 760633,
+    "name": "Metal_Sword_Parry_Impact_Hit_1",
+    "author": "chungkury",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/chungkury/sounds/760633/",
+    "file": "760633.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 760634,
+    "name": "Metal_Sword_Parry_Impact_Hit_2",
+    "author": "chungkury",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/chungkury/sounds/760634/",
+    "file": "760634.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 760635,
+    "name": "Metal_Sword_Parry_Impact_Hit_3",
+    "author": "chungkury",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/chungkury/sounds/760635/",
+    "file": "760635.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 760636,
+    "name": "Metal_Sword_Parry_Impact_Hit_4",
+    "author": "chungkury",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/chungkury/sounds/760636/",
+    "file": "760636.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326789,
+    "name": "Sword_Clash (13).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326789/",
+    "file": "326789.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326867,
+    "name": "Sword_Clash (9).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326867/",
+    "file": "326867.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326839,
+    "name": "Sword_Clash (21).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326839/",
+    "file": "326839.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 326868,
+    "name": "Sword_Clash (7).wav",
+    "author": "JohnBuhr",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JohnBuhr/sounds/326868/",
+    "file": "326868.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 334169,
+    "name": "Sword Clash",
+    "author": "loudernoises",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/loudernoises/sounds/334169/",
+    "file": "334169.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 37596,
+    "name": "Sword.wav",
+    "author": "hello_flowers",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/hello_flowers/sounds/37596/",
+    "file": "37596.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 67617,
+    "name": "Metal Crash Collision",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/67617/",
+    "file": "67617.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 384881,
+    "name": "Knight Left Footstep on Gravel 2 (With Chainmail)",
+    "author": "Ali_6868",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Ali_6868/sounds/384881/",
+    "file": "384881.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 384882,
+    "name": "Knight Left Footstep on Gravel 3 (With Chainmail)",
+    "author": "Ali_6868",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Ali_6868/sounds/384882/",
+    "file": "384882.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 384883,
+    "name": "Knight Left Footstep on Gravel 1 (With Chainmail)",
+    "author": "Ali_6868",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Ali_6868/sounds/384883/",
+    "file": "384883.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 384887,
+    "name": "Knight Right Footstep on Gravel 1 (With Chainmail)",
+    "author": "Ali_6868",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Ali_6868/sounds/384887/",
+    "file": "384887.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 384888,
+    "name": "Knight Right Footstep on Gravel 4 (With Chainmail)",
+    "author": "Ali_6868",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Ali_6868/sounds/384888/",
+    "file": "384888.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 384890,
+    "name": "Knight Right Footstep on Gravel 5 (With Chainmail)",
+    "author": "Ali_6868",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Ali_6868/sounds/384890/",
+    "file": "384890.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 197778,
+    "name": "Footstep on Stone",
+    "author": "sgossner",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/sgossner/sounds/197778/",
+    "file": "197778.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 197779,
+    "name": "Footstep on Stone 2",
+    "author": "sgossner",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/sgossner/sounds/197779/",
+    "file": "197779.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 197780,
+    "name": "Footstep on Stone 3",
+    "author": "sgossner",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/sgossner/sounds/197780/",
+    "file": "197780.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 197781,
+    "name": "Footstep on Stone 4",
+    "author": "sgossner",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/sgossner/sounds/197781/",
+    "file": "197781.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 778499,
+    "name": "Cloth_And_Shoes_On_Concrete_01",
+    "author": "BlondPanda",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/BlondPanda/sounds/778499/",
+    "file": "778499.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 778502,
+    "name": "Cloth_And_Shoes_On_Concrete_22",
+    "author": "BlondPanda",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/BlondPanda/sounds/778502/",
+    "file": "778502.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 778497,
+    "name": "Cloth_And_Shoes_On_Concrete_19",
+    "author": "BlondPanda",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/BlondPanda/sounds/778497/",
+    "file": "778497.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 778501,
+    "name": "Cloth_And_Shoes_On_Concrete_21",
+    "author": "BlondPanda",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/BlondPanda/sounds/778501/",
+    "file": "778501.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 778498,
+    "name": "Cloth_And_Shoes_On_Concrete_20",
+    "author": "BlondPanda",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/BlondPanda/sounds/778498/",
+    "file": "778498.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 320144,
+    "name": "Blanket Movement 6",
+    "author": "OwlStorm",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/OwlStorm/sounds/320144/",
+    "file": "320144.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 501013,
+    "name": "Leather Stress 3 (Short)",
+    "author": "Crinkem",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Crinkem/sounds/501013/",
+    "file": "501013.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 391551,
+    "name": "Movement.wav",
+    "author": "2create",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/2create/sounds/391551/",
+    "file": "391551.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 614064,
+    "name": "Bodyfall",
+    "author": "magnuswaker",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/magnuswaker/sounds/614064/",
+    "file": "614064.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 395331,
+    "name": "Body falling on the ground 1",
+    "author": "ihitokage",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ihitokage/sounds/395331/",
+    "file": "395331.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 346695,
+    "name": "Body fall_01.wav",
+    "author": "deleted_user_2104797",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/deleted_user_2104797/sounds/346695/",
+    "file": "346695.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 346692,
+    "name": "Body fall_04.wav",
+    "author": "deleted_user_2104797",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/deleted_user_2104797/sounds/346692/",
+    "file": "346692.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 346694,
+    "name": "Body fall_02.wav",
+    "author": "deleted_user_2104797",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/deleted_user_2104797/sounds/346694/",
+    "file": "346694.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 504626,
+    "name": "BODY FALL - V HVY - DIRT",
+    "author": "leonelmail",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/leonelmail/sounds/504626/",
+    "file": "504626.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 417994,
+    "name": "Body fall.wav",
+    "author": "DylanTheFish",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/DylanTheFish/sounds/417994/",
+    "file": "417994.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 325269,
+    "name": "Body fall 2.wav",
+    "author": "deleted_user_2104797",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/deleted_user_2104797/sounds/325269/",
+    "file": "325269.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 718003,
+    "name": "HeavyWobblyImpactHit_14",
+    "author": "Johnny25225",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Johnny25225/sounds/718003/",
+    "file": "718003.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 718004,
+    "name": "HeavyWobblyImpactHit_15",
+    "author": "Johnny25225",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Johnny25225/sounds/718004/",
+    "file": "718004.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 717992,
+    "name": "HeavyWobblyImpactHit_03",
+    "author": "Johnny25225",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Johnny25225/sounds/717992/",
+    "file": "717992.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 825392,
+    "name": "010 LOW IMPACT",
+    "author": "ROHHSADOTCOM",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ROHHSADOTCOM/sounds/825392/",
+    "file": "825392.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 825390,
+    "name": "008 LOW IMPACT",
+    "author": "ROHHSADOTCOM",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ROHHSADOTCOM/sounds/825390/",
+    "file": "825390.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 757038,
+    "name": "fx_explosion",
+    "author": "harrisonlace",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/harrisonlace/sounds/757038/",
+    "file": "757038.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 812593,
+    "name": "Collision",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/812593/",
+    "file": "812593.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 222523,
+    "name": "Deep Monster Growl",
+    "author": "uagadugu",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/uagadugu/sounds/222523/",
+    "file": "222523.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 267452,
+    "name": "Beast Roar.wav",
+    "author": "cylon8472",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/cylon8472/sounds/267452/",
+    "file": "267452.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 476083,
+    "name": "cloverfield roar.wav",
+    "author": "icyjim",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/icyjim/sounds/476083/",
+    "file": "476083.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 85568,
+    "name": "DRAGON_ROAR.wav",
+    "author": "JoelAudio",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/JoelAudio/sounds/85568/",
+    "file": "85568.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 222517,
+    "name": "Dramatic Hit",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/222517/",
+    "file": "222517.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 826216,
+    "name": "POWERFUL RUMBLY HELLISH IMPACT",
+    "author": "ROHHSADOTCOM",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ROHHSADOTCOM/sounds/826216/",
+    "file": "826216.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 408141,
+    "name": "Cinematic Low Pitch Impact",
+    "author": "Jofae",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Jofae/sounds/408141/",
+    "file": "408141.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 363092,
+    "name": "Fire Crackle and Flames 002",
+    "author": "TheWoodlandNomad",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/TheWoodlandNomad/sounds/363092/",
+    "file": "363092.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 350757,
+    "name": "campfire.wav",
+    "author": "aerror",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/aerror/sounds/350757/",
+    "file": "350757.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 558967,
+    "name": "Ambiance_Campfire_Loop_Stereo.wav",
+    "author": "Nox_Sound",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Nox_Sound/sounds/558967/",
+    "file": "558967.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 397091,
+    "name": "Soft Tonal Wind_01",
+    "author": "janbezouska",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/janbezouska/sounds/397091/",
+    "file": "397091.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 540837,
+    "name": "Temple Cave Desert Storm",
+    "author": "szegvari",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/szegvari/sounds/540837/",
+    "file": "540837.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 103340,
+    "name": "Dark_Ambience.wav",
+    "author": "CaCtUs2003",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/CaCtUs2003/sounds/103340/",
+    "file": "103340.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 608813,
+    "name": "Suspense Orchestral Soundtrack - Hurricane",
+    "author": "MusicByMisterbates",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/MusicByMisterbates/sounds/608813/",
+    "file": "608813.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 218744,
+    "name": "Epic Orchestra",
+    "author": "edtijo",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/edtijo/sounds/218744/",
+    "file": "218744.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 273804,
+    "name": "Dark Choir Singing",
+    "author": "BrainClaim",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/BrainClaim/sounds/273804/",
+    "file": "273804.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 387223,
+    "name": "Orchestral Suspense Loop 1",
+    "author": "awrmacd",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/awrmacd/sounds/387223/",
+    "file": "387223.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 608811,
+    "name": "Uplifting Dramatic Soundtrack - War Around Us",
+    "author": "MusicByMisterbates",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/MusicByMisterbates/sounds/608811/",
+    "file": "608811.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 559485,
+    "name": "Battle Tactics",
+    "author": "code_box",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/code_box/sounds/559485/",
+    "file": "559485.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 521417,
+    "name": "Heroic Charge",
+    "author": "code_box",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/code_box/sounds/521417/",
+    "file": "521417.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 346455,
+    "name": "Epic_Battle_Music_1.MP3",
+    "author": "Airwolf89",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Airwolf89/sounds/346455/",
+    "file": "epic_battle_choir.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 701688,
+    "name": "Epic Dark Fantasy",
+    "author": "Daniel Prellball",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Daniel%20Prellball/sounds/701688/",
+    "file": "epic_dark_fantasy.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 507747,
+    "name": "Hybrid Action Music 01",
+    "author": "Magmi.Soundtracks",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Magmi.Soundtracks/sounds/507747/",
+    "file": "hybrid_action.ogg",
+    "downloaded": "2026-11-01"
+  },
+  {
+    "id": 720981,
+    "name": "Monster Awakens Soundtrack",
+    "author": "MusicByMisterbates",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/MusicByMisterbates/sounds/720981/",
+    "file": "monster_awakens.ogg",
+    "downloaded": "2026-11-01"
+  }
+]

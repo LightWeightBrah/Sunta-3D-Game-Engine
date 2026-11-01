@@ -213,7 +213,7 @@ void EditorGUI::StopPlayMode(Scene& scene)
 	if (!scene.IsPlaying())
 		return;
 
-	scene.SetPlayState(PlayState::Stopped);
+	scene.EndPlay();
 
 	// Deserialize() sets the scene's file path to the file it loads from
 	// Here that is the temp snapshot, so we remember the real path and restore it afterwards
@@ -1117,6 +1117,18 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 				"Cutscene",
 				[&]() { return entityManager.GetComponent<CutsceneComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<CutsceneComponent>(inspectedEntity); }
+			},
+
+			{
+				"Audio Source",
+				[&]() { return entityManager.GetComponent<AudioSourceComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<AudioSourceComponent>(inspectedEntity); }
+			},
+
+			{
+				"Character Sounds",
+				[&]() { return entityManager.GetComponent<CharacterSoundsComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<CharacterSoundsComponent>(inspectedEntity); }
 			},
 
 			{

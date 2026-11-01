@@ -48,6 +48,8 @@ namespace SceneKeys
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
 	constexpr const char* EnvironmentComponent      = "environment";
 	constexpr const char* CutsceneComponent         = "cutscene";
+	constexpr const char* AudioSourceComponent      = "audio_source";
+	constexpr const char* CharacterSoundsComponent  = "character_sounds";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -219,6 +221,28 @@ namespace SceneKeys
 	constexpr const char* PhaseTwoAnimation         = "phase_two_animation";
 	constexpr const char* PhaseTwoGlow              = "phase_two_glow";
 	constexpr const char* PhaseTwoGrowth            = "phase_two_growth";
+	constexpr const char* PhaseTwoSound             = "phase_two_sound";
+	constexpr const char* PhaseTwoMusic             = "phase_two_music";
+
+	constexpr const char* Sound                     = "sound";
+	constexpr const char* SoundVolume               = "volume";
+	constexpr const char* IsLooping                 = "is_looping";
+	constexpr const char* PlayOnStart               = "play_on_start";
+	constexpr const char* IsSpatial                 = "is_spatial";
+	constexpr const char* MinDistance               = "min_distance";
+
+	constexpr const char* AttackSound               = "attack_sound";
+	constexpr const char* HurtSound                 = "hurt_sound";
+	constexpr const char* BlockSound                = "block_sound";
+	constexpr const char* ParrySound                = "parry_sound";
+	constexpr const char* DeathSound                = "death_sound";
+	constexpr const char* RollSound                 = "roll_sound";
+	constexpr const char* FootstepSound             = "footstep_sound";
+	constexpr const char* ShockwaveSound            = "shockwave_sound";
+	constexpr const char* FootstepMeters            = "footstep_meters";
+	constexpr const char* AttackSoundLeadSeconds    = "attack_sound_lead_seconds";
+	constexpr const char* LeftFootBone              = "left_foot_bone";
+	constexpr const char* RightFootBone             = "right_foot_bone";
 
 	constexpr const char* IsEmitting                = "is_emitting";
 	constexpr const char* ParticlesPerSecond        = "particles_per_second";
@@ -245,6 +269,9 @@ namespace SceneKeys
 	constexpr const char* VictoryMessage            = "victory_message";
 	constexpr const char* IsCrossedWithKey          = "is_crossed_with_key";
 	constexpr const char* FogCutscene               = "cutscene";
+	constexpr const char* BattleMusic               = "battle_music";
+	constexpr const char* BattleMusicVolume         = "battle_music_volume";
+	constexpr const char* VictorySound              = "victory_sound";
 	constexpr const char* DurationSeconds           = "duration_seconds";
 	constexpr const char* LookAtEntity              = "look_at_entity";
 	constexpr const char* LookAtHeight              = "look_at_height";
@@ -704,6 +731,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::PhaseTwoDamageMultiplier, boss->phaseTwoDamageMultiplier },
 				{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    },
 				{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
+				{ SceneKeys::PhaseTwoSound,            boss->phaseTwoSound            },
+				{ SceneKeys::PhaseTwoMusic,            boss->phaseTwoMusic            },
 				{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
 				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           },
 				{ SceneKeys::PhaseTwoLight1Animation,  boss->phaseTwoLight1Animation  },
@@ -776,7 +805,44 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::ArenaHalfExtents, SerializeVec3(fogGate->arenaHalfExtents) },
 				{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     },
 				{ SceneKeys::IsCrossedWithKey,              fogGate->isCrossedWithKey   },
-				{ SceneKeys::FogCutscene,                   fogGate->cutscene           }
+				{ SceneKeys::FogCutscene,                   fogGate->cutscene           },
+				{ SceneKeys::BattleMusic,                   fogGate->battleMusic        },
+				{ SceneKeys::BattleMusicVolume,             fogGate->battleMusicVolume  },
+				{ SceneKeys::VictorySound,                  fogGate->victorySound       }
+			};
+		}
+
+		if (auto* audioSource = entityManager.GetComponent<AudioSourceComponent>(i))
+		{
+			entityJson[SceneKeys::AudioSourceComponent] =
+			{
+				{ SceneKeys::Sound,       audioSource->sound       },
+				{ SceneKeys::SoundVolume, audioSource->volume      },
+				{ SceneKeys::IsLooping,   audioSource->isLooping   },
+				{ SceneKeys::PlayOnStart, audioSource->playOnStart },
+				{ SceneKeys::IsSpatial,   audioSource->isSpatial   },
+				{ SceneKeys::MinDistance, audioSource->minDistance },
+				{ SceneKeys::MaxDistance, audioSource->maxDistance }
+			};
+		}
+
+		if (auto* sounds = entityManager.GetComponent<CharacterSoundsComponent>(i))
+		{
+			entityJson[SceneKeys::CharacterSoundsComponent] =
+			{
+				{ SceneKeys::AttackSound,    sounds->attackSound    },
+				{ SceneKeys::HurtSound,      sounds->hurtSound      },
+				{ SceneKeys::BlockSound,     sounds->blockSound     },
+				{ SceneKeys::ParrySound,     sounds->parrySound     },
+				{ SceneKeys::DeathSound,     sounds->deathSound     },
+				{ SceneKeys::RollSound,      sounds->rollSound      },
+				{ SceneKeys::FootstepSound,  sounds->footstepSound  },
+				{ SceneKeys::ShockwaveSound, sounds->shockwaveSound },
+				{ SceneKeys::AttackSoundLeadSeconds, sounds->attackSoundLeadSeconds },
+				{ SceneKeys::LeftFootBone,   sounds->leftFootBone   },
+				{ SceneKeys::RightFootBone,  sounds->rightFootBone  },
+				{ SceneKeys::FootstepMeters, sounds->footstepMeters },
+				{ SceneKeys::SoundVolume,    sounds->volume         }
 			};
 		}
 
@@ -1283,6 +1349,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			boss.phaseTwoDamageMultiplier = bossData.value(SceneKeys::PhaseTwoDamageMultiplier, boss.phaseTwoDamageMultiplier);
 			boss.phaseTwoAttackSpeedup    = bossData.value(SceneKeys::PhaseTwoAttackSpeedup,    boss.phaseTwoAttackSpeedup);
 			boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
+			boss.phaseTwoSound            = bossData.value(SceneKeys::PhaseTwoSound,            boss.phaseTwoSound);
+			boss.phaseTwoMusic            = bossData.value(SceneKeys::PhaseTwoMusic,            boss.phaseTwoMusic);
 			boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
 			boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
 			boss.phaseTwoLight1Animation  = bossData.value(SceneKeys::PhaseTwoLight1Animation,  boss.phaseTwoLight1Animation);
@@ -1370,6 +1438,43 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			fogGate.victoryMessage   = fogData.value(SceneKeys::VictoryMessage,   fogGate.victoryMessage);
 			fogGate.isCrossedWithKey = fogData.value(SceneKeys::IsCrossedWithKey, fogGate.isCrossedWithKey);
 			fogGate.cutscene         = fogData.value(SceneKeys::FogCutscene,      fogGate.cutscene);
+			fogGate.battleMusic       = fogData.value(SceneKeys::BattleMusic,       fogGate.battleMusic);
+			fogGate.battleMusicVolume = fogData.value(SceneKeys::BattleMusicVolume, fogGate.battleMusicVolume);
+			fogGate.victorySound      = fogData.value(SceneKeys::VictorySound,      fogGate.victorySound);
+		}
+
+		if (entityJson.contains(SceneKeys::AudioSourceComponent))
+		{
+			const auto& sourceData = entityJson[SceneKeys::AudioSourceComponent];
+			auto& audioSource = entityManager.AddComponent<AudioSourceComponent>(entity);
+
+			audioSource.sound       = sourceData.value(SceneKeys::Sound,       audioSource.sound);
+			audioSource.volume      = sourceData.value(SceneKeys::SoundVolume, audioSource.volume);
+			audioSource.isLooping   = sourceData.value(SceneKeys::IsLooping,   audioSource.isLooping);
+			audioSource.playOnStart = sourceData.value(SceneKeys::PlayOnStart, audioSource.playOnStart);
+			audioSource.isSpatial   = sourceData.value(SceneKeys::IsSpatial,   audioSource.isSpatial);
+			audioSource.minDistance = sourceData.value(SceneKeys::MinDistance, audioSource.minDistance);
+			audioSource.maxDistance = sourceData.value(SceneKeys::MaxDistance, audioSource.maxDistance);
+		}
+
+		if (entityJson.contains(SceneKeys::CharacterSoundsComponent))
+		{
+			const auto& soundsData = entityJson[SceneKeys::CharacterSoundsComponent];
+			auto& sounds = entityManager.AddComponent<CharacterSoundsComponent>(entity);
+
+			sounds.attackSound    = soundsData.value(SceneKeys::AttackSound,    sounds.attackSound);
+			sounds.hurtSound      = soundsData.value(SceneKeys::HurtSound,      sounds.hurtSound);
+			sounds.blockSound     = soundsData.value(SceneKeys::BlockSound,     sounds.blockSound);
+			sounds.parrySound     = soundsData.value(SceneKeys::ParrySound,     sounds.parrySound);
+			sounds.deathSound     = soundsData.value(SceneKeys::DeathSound,     sounds.deathSound);
+			sounds.rollSound      = soundsData.value(SceneKeys::RollSound,      sounds.rollSound);
+			sounds.footstepSound  = soundsData.value(SceneKeys::FootstepSound,  sounds.footstepSound);
+			sounds.shockwaveSound = soundsData.value(SceneKeys::ShockwaveSound, sounds.shockwaveSound);
+			sounds.attackSoundLeadSeconds = soundsData.value(SceneKeys::AttackSoundLeadSeconds, sounds.attackSoundLeadSeconds);
+			sounds.leftFootBone   = soundsData.value(SceneKeys::LeftFootBone,   sounds.leftFootBone);
+			sounds.rightFootBone  = soundsData.value(SceneKeys::RightFootBone,  sounds.rightFootBone);
+			sounds.footstepMeters = soundsData.value(SceneKeys::FootstepMeters, sounds.footstepMeters);
+			sounds.volume         = soundsData.value(SceneKeys::SoundVolume,    sounds.volume);
 		}
 
 		if (entityJson.contains(SceneKeys::PoiseComponent))

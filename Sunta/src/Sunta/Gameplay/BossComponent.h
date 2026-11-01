@@ -22,6 +22,8 @@ namespace Sunta
 //    pulsing a little (models with an *_emissive texture start to glow: cracks with embers, red-hot metal). 0 = no change
 //  - 'phaseTwoGrowth': it grows to this size (1.2 = 20% bigger) during the first seconds of phase two
 //  - Particle Emitters on it or on its children start emitting (with a burst) in phase two
+//  - 'phaseTwoSound': heard from the boss when phase two starts (a roar); 'phaseTwoMusic': the music of the fight changes
+//    to it (a sound file or a folder, see Audio.h; empty = the fog gate's battle music goes on)
 //  - a different set of attacks (Character Actions): the 'phaseTwo...Animation' names (empty = keep the old one), their hit
 //    windows, a shockwave of heavy attacks and leaps ('phaseTwoShockwaveRadius', 0 = keep) and longer combos
 // A defeated boss stays dead: resting at a bonfire or dying brings back every other enemy, not this one
@@ -42,6 +44,8 @@ struct BossComponent
 	float phaseTwoAttackSpeedup    = 2.0f;
 
 	std::string phaseTwoAnimation;
+	std::string phaseTwoSound;
+	std::string phaseTwoMusic;
 	float       phaseTwoGlow   = 0.0f;
 	float       phaseTwoGrowth = 1.0f;
 
@@ -94,6 +98,8 @@ struct BossComponent
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoDamageMultiplier, PropertyDataType::Float, 1.0f, MaxMultiplier),
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoAttackSpeedup,    PropertyDataType::Float, 1.0f, MaxMultiplier),
 				ADD_PROPERTY(BossComponent, phaseTwoAnimation, PropertyDataType::String),
+				ADD_PROPERTY(BossComponent, phaseTwoSound, PropertyDataType::String),
+				ADD_PROPERTY(BossComponent, phaseTwoMusic, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoGlow,   PropertyDataType::Float, 0.0f, MaxGlow),
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoGrowth, PropertyDataType::Float, 0.5f, MaxGrowth),
 				ADD_PROPERTY(BossComponent, phaseTwoLight1Animation, PropertyDataType::String),

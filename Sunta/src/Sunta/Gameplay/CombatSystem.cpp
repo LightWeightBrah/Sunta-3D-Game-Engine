@@ -5,6 +5,7 @@
 #include <cmath>
 
 #include "CharacterActionsSystem.h"
+#include "CharacterSoundsSystem.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "StaminaSystem.h"
@@ -136,6 +137,7 @@ void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& h
 		lockOnTarget->isLockable = false;
 
 	CharacterActionsSystem::PlayDeath(entityManager, entityID);
+	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::deathSound);
 }
 
 // Takes the damage away from the health. True when the character is still alive
@@ -143,6 +145,7 @@ bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damag
 {
 	HealthComponent& health = *entityManager.GetComponent<HealthComponent>(entityID);
 	health.currentHealth = glm::max(health.currentHealth - damage, 0.0f);
+	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::hurtSound);
 
 	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' hit '{1}' for {2} ({3} health left)", GetEntityName(entityManager, attackerEntityID),
 		GetEntityName(entityManager, entityID), damage, health.currentHealth);
@@ -197,6 +200,7 @@ bool TryParry(EntityManager& entityManager, unsigned int defenderID, unsigned in
 		return false;
 
 	CharacterActionsSystem::PlayParried(entityManager, attackerID);
+	CharacterSoundsSystem::Play(entityManager, defenderID, &CharacterSoundsComponent::parrySound);
 
 	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' parried '{1}'", GetEntityName(entityManager, defenderID), GetEntityName(entityManager, attackerID));
 	return true;
@@ -246,6 +250,9 @@ BlockResult TryBlock(EntityManager& entityManager, unsigned int defenderID, unsi
 
 	if (!defender || !defender->IsGuarding() || !shield || !IsInFrontOfShield(entityManager, defenderID, attackerID, *shield))
 		return BlockResult::NotBlocked;
+
+	// The blow lands on the shield either way, held or broken through
+	CharacterSoundsSystem::Play(entityManager, defenderID, &CharacterSoundsComponent::blockSound);
 
 	if (!StaminaSystem::TrySpend(entityManager, defenderID, inOutDamage * shield->staminaPerDamage))
 	{
@@ -365,6 +372,7 @@ void UpdateShockwave(EntityManager& entityManager, unsigned int ownerID, Charact
 	const bool      isPlayerSide = IsOnPlayersSide(entityManager, ownerID);
 
 	BurstEffect(entityManager, ownerID, actions.shockwaveEffect);
+	CharacterSoundsSystem::Play(entityManager, ownerID, &CharacterSoundsComponent::shockwaveSound);
 
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
 	{

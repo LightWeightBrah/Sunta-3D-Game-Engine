@@ -49,6 +49,9 @@ public:
 	// Used by the game build on start and by the editor's Play button
 	void BeginPlay();
 
+	// Stops the game simulation (the editor's Stop button): silence, the scene stays as the game left it
+	void EndPlay();
+
 	int       GetEntityUnderMouse       (const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 	glm::vec3 GetWorldPositionUnderMouse(const glm::vec2& mousePosition, float viewportWidth, float viewportHeight);
 

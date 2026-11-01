@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "AnimationNames.h"
+#include "CharacterSoundsSystem.h"
 #include "Animation/Animation.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
@@ -398,6 +399,9 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 
 	if (action == CharacterAction::LeapAttack)
 		actions.currentLeapSpeed = ChooseLeapSpeed(entityManager, character, animationName);
+
+	if (IsDodge(action))
+		CharacterSoundsSystem::Play(entityManager, character.entityID, &CharacterSoundsComponent::rollSound);
 
 	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack || action == CharacterAction::LeapAttack)
 		actions.attackNumber++;

@@ -15,6 +15,7 @@
 #include "ResourceLoader.h"
 #include "Platform.h"
 #include "Scripting/ScriptingEngine.h"
+#include "Audio/Audio.h"
 
 namespace Sunta
 {
@@ -133,7 +134,10 @@ void Application::Init()
 	DebugRenderer::Init();
 	ResourceManager::Init(Renderer::GetDevice());
 	if (specification.loadEngineResources)
+	{
 		ResourceLoader::Init();
+		Audio::Init();
+	}
 
 	scene = std::make_unique<Scene>();
 	scene->Init(Renderer::GetDevice(), window->GetWidth(), window->GetHeight());
@@ -242,6 +246,7 @@ void Application::Shutdown()
 	layers.clear();
 
 	scene->Clear();
+	Audio::Shutdown();
 	ScriptingEngine::Shutdown();
 
 	if (window)

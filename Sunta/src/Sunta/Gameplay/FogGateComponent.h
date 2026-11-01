@@ -18,6 +18,8 @@ namespace Sunta
 // the fog becomes a wall and the boss wakes up. When every boss of the arena is dead the fog disappears for good
 // When the player dies, it comes back outside: the fog is passable again and the boss waits for the next try
 // Particle Emitters on the fog or its children (swirling mist) stop when the fog disappears
+// 'battleMusic' plays while the fog is closed (it fades out when the player dies or wins), 'victorySound' once when the
+// last boss falls. Both are sound files or folders (see Audio.h), empty = silence
 // A Lua script can read the fight: this.fogGate.isClosed, this.fogGate.isCleared
 struct FogGateComponent
 {
@@ -34,6 +36,10 @@ struct FogGateComponent
 
 	// The name of a Cutscene played the first time the fog closes behind the player (the boss shows itself). Empty: none
 	std::string cutscene;
+
+	std::string battleMusic;
+	float       battleMusicVolume = 0.6f;
+	std::string victorySound;
 
 	// ========== Filled while the game plays, not saved with the scene ==========
 
@@ -53,7 +59,10 @@ struct FogGateComponent
 				ADD_PROPERTY(FogGateComponent, arenaHalfExtents, PropertyDataType::Float3),
 				ADD_PROPERTY(FogGateComponent, victoryMessage,   PropertyDataType::String),
 				ADD_PROPERTY(FogGateComponent, isCrossedWithKey, PropertyDataType::Bool),
-				ADD_PROPERTY(FogGateComponent, cutscene,         PropertyDataType::String)
+				ADD_PROPERTY(FogGateComponent, cutscene,         PropertyDataType::String),
+				ADD_PROPERTY(FogGateComponent, battleMusic,      PropertyDataType::String),
+				ADD_PROPERTY_RANGED(FogGateComponent, battleMusicVolume, PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY(FogGateComponent, victorySound,     PropertyDataType::String)
 			});
 	}
 };

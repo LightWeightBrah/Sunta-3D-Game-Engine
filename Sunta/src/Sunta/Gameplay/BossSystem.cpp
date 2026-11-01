@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 
 #include "CharacterActionsSystem.h"
+#include "Audio/Audio.h"
+#include "Audio/AudioSystem.h"
 #include "CutsceneSystem.h"
 #include "CharacterControllerSystem.h"
 #include "GameplayMath.h"
@@ -39,6 +41,11 @@ constexpr float       CrossBehindFog     = 1.5f;
 
 // A defeated boss goes out like a fire: no new embers, the glow fades away in this time
 constexpr float GoingOutSeconds  = 3.0f;
+
+// The music of a fight comes in quickly when the fog closes, dies away slowly after a death and after a victory
+constexpr float BattleMusicFadeInSeconds  = 1.5f;
+constexpr float BattleMusicFadeOutSeconds = 3.0f;
+constexpr float VictoryMusicFadeOutSeconds = 4.0f;
 
 // ========== Small helpers ==========
 
@@ -161,6 +168,33 @@ void SwapAttacks(EntityManager& entityManager, unsigned int bossID, const BossCo
 		melee->maxLightCombo = (isInPhaseTwo && boss.phaseTwoMaxLightCombo > 0) ? boss.phaseTwoMaxLightCombo : boss.restingMaxLightCombo;
 }
 
+// The volume of the battle music of the fog gate whose arena the boss stands in (the volume of any fog without one)
+float GetBattleMusicVolume(EntityManager& entityManager, unsigned int bossID)
+{
+	float volume = FogGateComponent().battleMusicVolume;
+
+	glm::vec3 position;
+	if (!TryGetPosition(entityManager, bossID, position))
+		return volume;
+
+	for (const FogGateComponent& fog : entityManager.GetAllComponents<FogGateComponent>())
+	{
+		if (IsInside(fog, position))
+			volume = fog.battleMusicVolume;
+	}
+
+	return volume;
+}
+
+// Heard when phase two starts: the roar from the boss, the music of the fight changes
+void PlayPhaseTwoSounds(EntityManager& entityManager, unsigned int bossID, const BossComponent& boss)
+{
+	AudioSystem::PlayAtEntity(entityManager, bossID, boss.phaseTwoSound);
+
+	if (!boss.phaseTwoMusic.empty())
+		Audio::PlayMusic(boss.phaseTwoMusic, GetBattleMusicVolume(entityManager, bossID), BattleMusicFadeInSeconds);
+}
+
 void SetPhaseTwo(EntityManager& entityManager, unsigned int bossID, BossComponent& boss, bool isInPhaseTwo)
 {
 	boss.isInPhaseTwo = isInPhaseTwo;
@@ -188,6 +222,9 @@ void SetPhaseTwo(EntityManager& entityManager, unsigned int bossID, BossComponen
 
 	if (isInPhaseTwo && !boss.phaseTwoAnimation.empty())
 		CharacterActionsSystem::PlaySpecial(entityManager, bossID, boss.phaseTwoAnimation);
+
+	if (isInPhaseTwo)
+		PlayPhaseTwoSounds(entityManager, bossID, boss);
 
 	if (!isInPhaseTwo)
 	{
@@ -310,6 +347,18 @@ void ClearFog(EntityManager& entityManager, unsigned int fogID, FogGateComponent
 
 	if (!fog.victoryMessage.empty())
 		HUDSystem::ShowNotification(entityManager, fog.victoryMessage);
+
+	Audio::StopMusic(VictoryMusicFadeOutSeconds);
+	Audio::Play(fog.victorySound);
+}
+
+// The music plays while the fog keeps the player in the arena, and goes quiet when it lets the player out (a death)
+void UpdateBattleMusic(const FogGateComponent& fog)
+{
+	if (fog.isClosed)
+		Audio::PlayMusic(fog.battleMusic, fog.battleMusicVolume, BattleMusicFadeInSeconds);
+	else
+		Audio::StopMusic(BattleMusicFadeOutSeconds);
 }
 
 // Every boss standing in the arena of the fog wakes up (or rests again) with it
@@ -426,6 +475,7 @@ void UpdateFog(EntityManager& entityManager, unsigned int fogID, FogGateComponen
 
 	SetFogClosed(entityManager, fogID, fog, isPlayerAliveInside);
 	WakeBossesOfArena(entityManager, fog, isPlayerAliveInside);
+	UpdateBattleMusic(fog);
 
 	// The boss shows itself the first time (a cutscene plays only once)
 	if (isPlayerAliveInside && !fog.cutscene.empty())
@@ -444,6 +494,7 @@ void BossSystem::PrepareForPlay(EntityManager& entityManager)
 		boss.isInPhaseTwo = false;
 		boss.isDefeated   = false;
 		RememberRestingValues(entityManager, bossID, boss);
+		Audio::Preload(boss.phaseTwoSound);
 	}
 
 	for (FogGateComponent& fog : entityManager.GetAllComponents<FogGateComponent>())
@@ -453,6 +504,7 @@ void BossSystem::PrepareForPlay(EntityManager& entityManager)
 		fog.isCleared       = false;
 		fog.crossingSeconds = -1.0f;
 		SetFogClosed(entityManager, fogID, fog, false);
+		Audio::Preload(fog.victorySound);
 		SetFogEmitters(entityManager, fogID, true);
 
 		if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(fogID))

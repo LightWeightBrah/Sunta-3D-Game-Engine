@@ -38,6 +38,8 @@
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
 #include "Effects/ParticleSystem.h"
+#include "Audio/AudioSystem.h"
+#include "Gameplay/CharacterSoundsSystem.h"
 #include "Gameplay/CutsceneSystem.h"
 #include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
@@ -342,6 +344,7 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		CombatSystem::Update(entityManager, EngineTime::deltaTime);
+		CharacterSoundsSystem::Update(entityManager, EngineTime::deltaTime);
 		BossSystem::Update(entityManager, EngineTime::deltaTime);
 		ParticleSystem::Update(entityManager, EngineTime::deltaTime);
 		BonfireSystem::Update(entityManager);
@@ -364,6 +367,10 @@ void Scene::Update()
 
 	// After the transforms, so a camera that follows a moving entity is never a frame behind
 	UpdateActiveCameraData();
+
+	// After the camera: the game is heard from where it is seen
+	if (isPlaying)
+		AudioSystem::Update(entityManager, activeCameraData.viewMatrix);
 }
 	
 void Scene::Render(Renderer& renderer)
@@ -702,6 +709,8 @@ void Scene::BeginPlay()
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);
 	CutsceneSystem::PrepareForPlay(entityManager);
+	CharacterSoundsSystem::PrepareForPlay(entityManager);
+	AudioSystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;
@@ -784,8 +793,15 @@ void Scene::SetHUDArea(const glm::vec2& topLeft, const glm::vec2& size)
 	hasHUDArea     = true;
 }
 
+void Scene::EndPlay()
+{
+	AudioSystem::StopAll(entityManager);
+	playState = PlayState::Stopped;
+}
+
 void Scene::Clear()
 {
+	AudioSystem::StopAll(entityManager);
 	entityManager.Clear();
 }
 

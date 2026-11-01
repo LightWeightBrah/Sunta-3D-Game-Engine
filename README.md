@@ -95,6 +95,7 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 * **Rendering:** wrappers for OpenGL objects (VAO, VBO, EBO, textures, shaders), Phong lighting with directional, point and spot lights, specular maps, materials and a debug renderer for colliders.
 * **ECS:** a data-oriented entity component system. Components: Tag, Transform, Script, Mesh, Model, Animator, Directional / Point / Spot Light, Box Collider, Physics Body and Camera.
 * **Physics:** collisions (Separating Axis Theorem), collision layers, triggers (enter, stay, exit) and raycasts.
+* **Audio:** spatial sounds heard from the game camera, looping Audio Sources, character sounds played by the fight (swings, hits, blocks, parries, footsteps), battle music with fades; `.wav`, `.ogg`, `.flac` and `.mp3`.
 * **Scripting:** gameplay in Lua ([sol2](https://github.com/ThePhD/sol2)) with access to transforms, physics bodies and input.
 * **Assets:** OBJ, FBX, glTF and Collada models through Assimp. Scenes are JSON files, and resource paths are virtual (`@engine/...`, `@game/...`), so projects can be moved between computers.
 * **Platforms:** Windows, Linux and macOS, built by CI on every commit.
@@ -110,6 +111,8 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 * [**ImGuizmo**](https://github.com/CedricGuillemet/ImGuizmo) - transform gizmos in the editor.
 * [**Assimp**](https://www.assimp.org/) - 3D model and animation loading.
 * [**stb_image**](https://github.com/nothings/stb) - texture and image loading.
+* [**miniaudio**](https://github.com/mackron/miniaudio) and [**stb_vorbis**](https://github.com/nothings/stb) - sound playback and `.ogg` decoding.
+* [**pl_mpeg**](https://github.com/phoboslab/pl_mpeg) - MPEG-1 video for cutscenes.
 * [**Lua**](https://www.lua.org/) and [**sol2**](https://github.com/ThePhD/sol2) - gameplay scripting.
 * [**nlohmann/json**](https://github.com/nlohmann/json) - scene and config files.
 * [**nativefiledialog-extended**](https://github.com/btzy/nativefiledialog-extended) - native file and folder dialogs.
@@ -274,3 +277,7 @@ The following resources were used to study and implement the core systems of Sun
 * [**GamesWithGabe**](https://www.youtube.com/watch?v=Nm1Cgmbg5SQ) - Separating Axis Theorem explained.
 * [**tutorials123**](https://www.youtube.com/watch?v=Euuw72Ymu0M) - Sutherland-Hodgman polygon clipping.
 * [**DLBmaths**](https://www.youtube.com/watch?v=HC5YikQxwZA) - shortest distance between two skew lines in 3D space (closest points of two segments).
+
+**Sounds and music of the sample game**
+* Sound effects from [**Freesound**](https://freesound.org), all CC0 (authors listed in `Projects/MyGame/res/Sounds/CREDITS.md`).
+* Boss music: *Colossal Boss Battle* and *Heroic Demise* by [**Matthew Pablo**](http://www.matthewpablo.com), CC-BY 3.0, from [OpenGameArt](https://opengameart.org/users/matthew-pablo).

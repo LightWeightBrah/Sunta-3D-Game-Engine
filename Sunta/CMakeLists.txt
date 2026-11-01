@@ -34,7 +34,7 @@ if(WIN32)
 # Linux
 elseif(UNIX AND NOT APPLE)
 	file(GLOB_RECURSE PLATFORM_SOURCES "src/Sunta/Platform/Linux/*.cpp" "src/Sunta/Platform/Linux/*.h")
-	set(PLATFORM_LIBS GL X11 pthread dl)
+	set(PLATFORM_LIBS GL X11 pthread dl m)
 
 # Mac
 elseif(APPLE)
@@ -64,6 +64,7 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_truetype.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/pl_mpeg_wrapper/pl_mpeg/pl_mpeg.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/miniaudio_wrapper/miniaudio/miniaudio.c"
 )
 
 # ========================= IDE ORGANIZATION =============================  
@@ -95,6 +96,7 @@ set(SUNTA_PRIVATE_INCLUDE_DIRS
 "${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/pl_mpeg_wrapper"						# for #include <pl_mpeg/pl_mpeg.h> (MPEG-1 videos)
+"${CMAKE_SOURCE_DIR}/Dependencies/miniaudio_wrapper"						# for #include <miniaudio/miniaudio.h> (sound)
 "${CMAKE_SOURCE_DIR}/Dependencies/nlohmann_wrapper"
 "${CMAKE_SOURCE_DIR}/Dependencies/Lua"
 )
@@ -118,8 +120,9 @@ if(MSVC)
 	target_compile_options(${PROJECT_NAME} PRIVATE /bigobj)
 endif()
 
-# --- GLAD FIX TO HIDE PRECOMPILED HEADER ---
+# --- GLAD AND MINIAUDIO FIX TO HIDE PRECOMPILED HEADER (C files, the header is C++) ---
 set_source_files_properties("${CMAKE_SOURCE_DIR}/Dependencies/GLAD/src/glad.c" 
+"${CMAKE_SOURCE_DIR}/Dependencies/miniaudio_wrapper/miniaudio/miniaudio.c"
 PROPERTIES LANGUAGE C
 SKIP_PRECOMPILE_HEADERS ON)
 
