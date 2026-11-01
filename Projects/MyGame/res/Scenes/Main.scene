@@ -327,10 +327,6 @@
                 ],
                 "show_gizmos": false
             },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
-            },
             "tag": {
                 "name": "Floor Shrine"
             },
@@ -373,10 +369,6 @@
                     0
                 ],
                 "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
             },
             "tag": {
                 "name": "Floor Corridor"
@@ -421,10 +413,6 @@
                 ],
                 "show_gizmos": false
             },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
-            },
             "tag": {
                 "name": "Floor Courtyard"
             },
@@ -468,10 +456,6 @@
                 ],
                 "show_gizmos": false
             },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
-            },
             "tag": {
                 "name": "Floor Arena"
             },
@@ -502,22 +486,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -549,22 +533,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -596,22 +580,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -643,22 +627,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -690,398 +674,398 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    14
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    14
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    0.9,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    0.9,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall_broken"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    18
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    18
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    22
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    22
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    26
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    0.9,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    0.9,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall_broken"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    26
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    0.5,
                     2.0,
+                    3.0,
                     0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    14
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    14
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    1.3,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall_ruined"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    18
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    18
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    22
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    22
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    26
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    1.3,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall_ruined"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    26
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    0.6,
+                    3.5,
+                    0.6
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.5,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -1113,22 +1097,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -1207,398 +1191,398 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    0.9,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall_broken"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    -2
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    -2
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    2
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    0.9,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    0.9,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall_broken"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    2
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    0.9,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    0.9,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall_broken"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    6
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    0.9,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    0.9,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall_broken"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    6
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    -8,
-                    0,
-                    10
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    2,
-                    1.75,
-                    0.4
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    1.75,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_wall"
-            },
-            "tag": {
-                "name": "Wall"
-            },
-            "transform": {
-                "position": [
-                    8,
-                    0,
-                    10
-                ],
-                "rotation": [
-                    0,
-                    90.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    0.7071067811865476,
-                    0.0,
-                    0.7071067811865476,
-                    0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    0.5,
                     2.0,
+                    1.3,
                     0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_wall_ruined"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    -2
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    -2
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    1.3,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall_ruined"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    2
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    1.3,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall_ruined"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    6
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    1.3,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    1.3,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall_ruined"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    6
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -8,
+                    0,
+                    10
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2.0,
+                    3.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.0,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    8,
+                    0,
+                    10
+                ],
+                "rotation": [
+                    0,
+                    90.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    0.6,
+                    3.5,
+                    0.6
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    3.5,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -1630,22 +1614,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -1724,22 +1708,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -1771,22 +1755,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -1897,22 +1881,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -1944,22 +1928,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -1991,22 +1975,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -2038,22 +2022,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -2085,22 +2069,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2132,22 +2116,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -2179,22 +2163,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -2226,22 +2210,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2320,22 +2304,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -2431,7 +2415,7 @@
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_gate"
+                "model_name": "kit_wall_door"
             },
             "tag": {
                 "name": "Arena Gate"
@@ -2454,7 +2438,7 @@
                     0.0
                 ],
                 "scale": [
-                    1.0,
+                    1.5,
                     1.0,
                     1.0
                 ]
@@ -2549,22 +2533,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2596,22 +2580,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2643,22 +2627,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2690,22 +2674,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2737,22 +2721,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2784,22 +2768,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2831,22 +2815,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2878,22 +2862,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2925,22 +2909,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -2972,22 +2956,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3019,22 +3003,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3066,22 +3050,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3114,21 +3098,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3160,22 +3144,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3207,22 +3191,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3255,21 +3239,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3301,22 +3285,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3348,22 +3332,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3396,21 +3380,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3442,22 +3426,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3489,22 +3473,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -3536,22 +3520,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3583,22 +3567,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3630,22 +3614,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -3724,22 +3708,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -3771,22 +3755,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -3912,22 +3896,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -4967,22 +4951,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5014,22 +4998,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5061,22 +5045,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5109,21 +5093,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5155,22 +5139,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5202,22 +5186,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5250,21 +5234,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5296,22 +5280,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5343,22 +5327,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5391,21 +5375,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5437,22 +5421,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5484,22 +5468,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -5531,22 +5515,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5578,22 +5562,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5625,22 +5609,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5672,22 +5656,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -5719,22 +5703,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
+                    0.6,
+                    3.5,
+                    0.6
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    2.0,
-                    0
+                    0.0,
+                    3.5,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Pillar"
@@ -6765,22 +6749,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -6813,21 +6797,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -6859,22 +6843,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -6906,22 +6890,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -6954,21 +6938,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7000,22 +6984,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7047,22 +7031,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7094,22 +7078,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7141,22 +7125,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7189,21 +7173,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7235,22 +7219,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7282,22 +7266,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7330,21 +7314,21 @@
             "box_collider": {
                 "half_extents": [
                     2.0,
-                    1.75,
-                    0.4
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
                     0.0,
-                    1.75,
+                    3.0,
                     0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7376,22 +7360,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    0.9,
-                    0.4
+                    2.0,
+                    1.3,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    0.9,
-                    0
+                    0.0,
+                    1.3,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall_broken"
+                "model_name": "kit_wall_ruined"
             },
             "tag": {
                 "name": "Wall"
@@ -7423,22 +7407,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7470,22 +7454,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7517,22 +7501,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7564,22 +7548,22 @@
         {
             "box_collider": {
                 "half_extents": [
-                    2,
-                    1.75,
-                    0.4
+                    2.0,
+                    3.0,
+                    0.5
                 ],
                 "is_trigger": false,
                 "layer": 1,
                 "local_offset": [
-                    0,
-                    1.75,
-                    0
+                    0.0,
+                    3.0,
+                    0.0
                 ],
                 "show_gizmos": false
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_wall"
+                "model_name": "kit_wall"
             },
             "tag": {
                 "name": "Wall"
@@ -7624,10 +7608,6 @@
                 ],
                 "show_gizmos": false
             },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
-            },
             "tag": {
                 "name": "Floor Arena"
             },
@@ -7671,10 +7651,6 @@
                 ],
                 "show_gizmos": false
             },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
-            },
             "tag": {
                 "name": "Floor Arena"
             },
@@ -7717,10 +7693,6 @@
                     0
                 ],
                 "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_floor"
             },
             "tag": {
                 "name": "Floor Arena"
@@ -8279,7 +8251,7 @@
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_gate"
+                "model_name": "kit_wall_door"
             },
             "transform": {
                 "position": [
@@ -8299,7 +8271,7 @@
                     0.0
                 ],
                 "scale": [
-                    1.0,
+                    1.5,
                     1.0,
                     1.0
                 ]
@@ -8437,7 +8409,7 @@
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8460,16 +8432,16 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8492,16 +8464,16 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8524,16 +8496,16 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8556,16 +8528,16 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8588,16 +8560,16 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8620,16 +8592,16 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
         {
             "model": {
                 "is_visible": true,
-                "model_name": "castle_pillar"
+                "model_name": "kit_pillar"
             },
             "tag": {
                 "name": "Distant Pillar"
@@ -8652,9 +8624,9 @@
                     0.0
                 ],
                 "scale": [
-                    2.2,
-                    2.2,
-                    2.2
+                    1.3,
+                    1.3,
+                    1.3
                 ]
             }
         },
@@ -9294,12 +9266,12 @@
             },
             "model": {
                 "is_visible": true,
-                "model_name": "castle_floor"
+                "model_name": "kit_floor"
             },
             "transform": {
                 "position": [
                     0.0,
-                    -0.03,
+                    -0.35,
                     -30.0
                 ],
                 "rotation": [
@@ -9314,9 +9286,2441 @@
                     0.0
                 ],
                 "scale": [
-                    8.0,
-                    8.0,
+                    16.0,
+                    1.0,
+                    16.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    16.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    16.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
                     8.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    8.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -16.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -8.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -16.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -8.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -28.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -12.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    -4.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    4.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    12.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -24.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -32.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -40.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -48.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -64.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -72.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "tag": {
+                "name": "Floor Slab"
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "kit_floor"
+            },
+            "transform": {
+                "position": [
+                    28.0,
+                    0.0,
+                    -80.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
                 ]
             }
         }

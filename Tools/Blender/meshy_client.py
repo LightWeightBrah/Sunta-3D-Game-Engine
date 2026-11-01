@@ -182,6 +182,53 @@ def rig_model(model_task_id, height, out_path):
     return task_id
 
 
+def split_views(sheet_path):
+    """A concept sheet with the same object drawn twice side by side (front view, side view) cut into two pictures,
+    each tight around its drawing (needs Pillow). Returns their paths (<sheet>_front.png, <sheet>_side.png)"""
+    from PIL import Image
+
+    sheet = Image.open(sheet_path).convert("RGBA")
+    alpha = sheet.getchannel("A")
+    width, height = sheet.size
+    filled = [any(alpha.getpixel((x, y)) > 40 for y in range(0, height, 4)) for x in range(width)]
+
+    # The widest empty band of columns in the middle half separates the two drawings
+    best_start, best_length, start = width // 2, 0, None
+    for x in range(width // 4, width * 3 // 4 + 1):
+        if x < width and not filled[x]:
+            start = x if start is None else start
+        else:
+            if start is not None and x - start > best_length:
+                best_start, best_length = start, x - start
+            start = None
+    split = best_start + best_length // 2
+
+    paths = []
+    for name, box in (("front", (0, 0, split, height)), ("side", (split, 0, width, height))):
+        part = sheet.crop(box)
+        part = part.crop(part.getbbox())
+        path = sheet_path[:-4] + "_" + name + ".png"
+        part.save(path)
+        paths.append(path)
+    return paths
+
+
+def make_model_from_views(image_paths, out_path, faces=20000):
+    """A textured 3D model from several pictures of one object (e.g. its front and side views): the views tell the
+    generator how deep the object is (one front view of a wall gives a solid box, a doorway may stay closed)"""
+    body = dict(MODEL_SETTINGS, image_urls=[as_data_uri(path) for path in image_paths], target_polycount=faces)
+    body.pop("ai_model", None)
+
+    task_id = request("POST", "/multi-image-to-3d", body)["result"]
+    task = wait_for("multi-image-to-3d", task_id)
+    download(task["model_urls"]["glb"], out_path)
+
+    settings = {key: value for key, value in body.items() if key != "image_urls"}
+    write_log({"task": "multi-image-to-3d", "task_id": task_id, "input": [relative(path) for path in image_paths],
+               "settings": settings, "output": relative(out_path)})
+    return task_id
+
+
 def balance():
     return request("GET", "/balance")
 
@@ -212,6 +259,11 @@ def main():
     motion.add_argument("--seconds", type=float, default=3.0)
     motion.add_argument("--out", required=True)
 
+    views = commands.add_parser("views", help="a model from a sheet with a front and a side view of one object")
+    views.add_argument("sheet")
+    views.add_argument("--out", required=True)
+    views.add_argument("--faces", type=int, default=20000)
+
     rig = commands.add_parser("rig")
     rig.add_argument("model_task_id")
     rig.add_argument("--height", type=float, default=1.85)
@@ -226,6 +278,8 @@ def main():
         print(make_model(arguments.image, arguments.out, arguments.pose, arguments.faces))
     elif arguments.command == "edit":
         print(edit_image(arguments.image, arguments.prompt, arguments.out))
+    elif arguments.command == "views":
+        print(make_model_from_views(split_views(arguments.sheet), arguments.out, arguments.faces))
     elif arguments.command == "rig":
         print(rig_model(arguments.model_task_id, arguments.height, arguments.out))
     elif arguments.command == "motion":

@@ -779,5 +779,293 @@
     },
     "output": "Generated/Arena/corner_tower.glb",
     "date": "2026-11-01T17:00:38"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197f8-d714-7609-9d72-a28e6bff8976",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a straight castle wall module exactly 4 meters wide, 6 meters tall and 1 meter thick, irregular large stone blocks with deep mortar joints, a small stone ledge at the bottom and a weathered crenellated top, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side, left an orthographic front view, right an orthographic side view showing its true thickness, plain dark background, nothing else in the picture, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall.png",
+    "date": "2026-11-01T17:37:48"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197f8-d714-756e-b095-7355f60767e3",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a castle wall module exactly 4 meters wide, 6 meters tall and 1 meter thick with a gothic pointed arch doorway 2.4 meters wide in the middle, carved arch stones, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side, left an orthographic front view, right an orthographic side view showing its true thickness, plain dark background, nothing else in the picture, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall_door.png",
+    "date": "2026-11-01T17:37:49"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197f8-d73e-748e-ae7d-ffbdd3362759",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a massive square gothic stone pillar exactly 1.2 meters wide and 7 meters tall, carved base and capital, chipped edges, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side, left an orthographic front view, right an orthographic side view showing its true thickness, plain dark background, nothing else in the picture, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/pillar.png",
+    "date": "2026-11-01T17:37:49"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197f8-d71a-755d-b7c5-8e65509f5bd9",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a wide stone staircase module exactly 4 meters wide rising 2 meters over 4 meters length, eight worn steps with chipped edges, low side walls, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side, left an orthographic front view, right an orthographic side view showing its true thickness, plain dark background, nothing else in the picture, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/stairs.png",
+    "date": "2026-11-01T17:37:49"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197f8-d726-73f3-a88b-d0a154ff8738",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a square floor module exactly 4 by 4 meters and 0.3 meters thick made of old irregular worn flagstones of different sizes with cracks, ash and dirt in the joints, left a top view, right a side view of its thickness, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side, left an orthographic front view, right an orthographic side view showing its true thickness, plain dark background, nothing else in the picture, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/floor.png",
+    "date": "2026-11-01T17:37:49"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197f8-d716-7455-b46a-5ca2c2bb2772",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a ruined castle wall module exactly 4 meters wide and 1 meter thick, collapsed to about 2 meters tall with jagged broken top and fallen stones at its foot, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side, left an orthographic front view, right an orthographic side view showing its true thickness, plain dark background, nothing else in the picture, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall_ruined.png",
+    "date": "2026-11-01T17:37:49"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197fe-b28b-7732-b4a8-fe7871757506",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a castle wall module 4 meters wide, 6 meters tall and 1 meter thick with a gothic pointed arch doorway 2.4 meters wide and 4 meters tall in the middle going through the whole wall, carved arch stones, the side view is a narrow 1 meter wide tall slab, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side with space between, left an orthographic front view, right an orthographic side view showing its true thickness, both fully visible and equally well lit, plain dark background, absolutely no text, no labels, no dimension lines, no arrows, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall_door.png",
+    "date": "2026-11-01T17:44:12"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197fe-b28a-7341-afd8-094d64f27eaa",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a ruined castle wall module 4 meters wide and 1 meter thick, collapsed to about 2.5 meters tall with a jagged broken top, a few fallen stones at its foot, the front view shows the whole 4 meter wide wall clearly, the side view is a narrow 1 meter wide slab, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side with space between, left an orthographic front view, right an orthographic side view showing its true thickness, both fully visible and equally well lit, plain dark background, absolutely no text, no labels, no dimension lines, no arrows, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall_ruined.png",
+    "date": "2026-11-01T17:44:12"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a197fe-b289-75c1-90fc-6e590a18cf85",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a straight castle wall module 4 meters wide, 6 meters tall and 1 meter thick, irregular large stone blocks with deep mortar joints, a stone plinth at the bottom and a weathered crenellated top, the side view is a narrow 1 meter wide tall slab, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, game asset concept sheet: the SAME single object shown twice side by side with space between, left an orthographic front view, right an orthographic side view showing its true thickness, both fully visible and equally well lit, plain dark background, absolutely no text, no labels, no dimension lines, no arrows, no gaps or holes in the solid parts, also solid from below",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall.png",
+    "date": "2026-11-01T17:44:12"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197ff-acc2-74ac-b095-1c8464cefcb9",
+    "input": "Concepts/Kit/wall_door_front.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 18000
+    },
+    "output": "Generated/Kit/wall_door.glb",
+    "date": "2026-11-01T17:46:33"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a197ff-aca2-71b1-b9a2-feae910f5fb0",
+    "input": [
+      "Concepts/Kit/pillar_front.png",
+      "Concepts/Kit/pillar_side.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 12000
+    },
+    "output": "Generated/Kit/pillar.glb",
+    "date": "2026-11-01T17:47:04"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a197ff-accc-7586-b513-e3803c6f55e2",
+    "input": "Concepts/Kit/wall_ruined_front.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 15000
+    },
+    "output": "Generated/Kit/wall_ruined.glb",
+    "date": "2026-11-01T17:47:05"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a197ff-ac41-70e7-b0bf-be580f49290d",
+    "input": [
+      "Concepts/Kit/stairs_front.png",
+      "Concepts/Kit/stairs_side.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 15000
+    },
+    "output": "Generated/Kit/stairs.glb",
+    "date": "2026-11-01T17:47:06"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a197ff-acae-7073-8632-86e26de52cc8",
+    "input": [
+      "Concepts/Kit/wall_front.png",
+      "Concepts/Kit/wall_side.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 15000
+    },
+    "output": "Generated/Kit/wall.glb",
+    "date": "2026-11-01T17:47:06"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a197ff-ac59-71bf-9ec2-5bf320031ea2",
+    "input": [
+      "Concepts/Kit/floor_front.png",
+      "Concepts/Kit/floor_side.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 8000
+    },
+    "output": "Generated/Kit/floor.glb",
+    "date": "2026-11-01T17:47:26"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a19802-8b62-70ba-b821-5b773a3f817f",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "a ruined straight castle wall module, ONE flat straight wall only (not a corner), 4 meters wide and 1 meter thick, collapsed to about 2.5 meters tall with a jagged broken top edge running along the whole width, front orthographic view, realistic dark fantasy gothic castle ruin, weathered dark grey limestone blocks with soot, moss in the cracks, plain dark background, nothing else, no text",
+      "remove_background": true,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Concepts/Kit/wall_ruined_straight.png",
+    "date": "2026-11-01T17:48:24"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a19802-8817-7075-b659-d189a7063702",
+    "input": "Concepts/Kit/pillar_front.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 12000
+    },
+    "output": "Generated/Kit/pillar.glb",
+    "date": "2026-11-01T17:49:38"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a19804-305d-7686-b1f1-3356b2b8434a",
+    "input": "Concepts/Kit/wall_ruined_straight.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 15000
+    },
+    "output": "Generated/Kit/wall_ruined.glb",
+    "date": "2026-11-01T17:51:39"
   }
 ]

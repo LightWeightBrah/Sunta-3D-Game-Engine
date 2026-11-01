@@ -58,3 +58,7 @@ Arena props (Meshy, the user's paid plan, the user owns them; every task in `../
 |---|---|---|
 | `../Concepts/Arena/*.png` | Meshy Text to Image (approved by the user) | concepts of the throne, brazier, wall with an arch, knight statue, sword graves, corner tower |
 | `../Generated/Arena/*.glb` | Meshy Image to 3D of the concepts | the props (`arena_props_generator.py`) |
+
+Level kit (Meshy, the user's paid plan): `../Concepts/Kit/*.png` (Meshy Text to Image, front + side views, approved by the user;
+`*_front.png` / `*_side.png` are their halves) → `../Generated/Kit/*.glb` (Meshy Multi Image to 3D or Image to 3D) →
+`kit_generator.py`.
