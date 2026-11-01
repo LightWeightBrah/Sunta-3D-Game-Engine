@@ -14,7 +14,7 @@ class Texture;
 // Plays a video file frame by frame into a texture (the picture only, no sound yet)
 //
 // The decoding is done by pl_mpeg (Dependencies/pl_mpeg_wrapper, MIT license): it reads MPEG-1 video (.mpg).
-// Any video can be turned into one with ffmpeg, e.g.
+// Any video can be turned into one with Tools/Video/to_mpeg1.py (through Blender, nothing to install) or with ffmpeg, e.g.
 //     ffmpeg -i intro.mp4 -c:v mpeg1video -q:v 4 -an intro.mpg
 // Each Update decodes the frames that fall into the elapsed time, the newest one is copied into the texture
 class VideoPlayer
