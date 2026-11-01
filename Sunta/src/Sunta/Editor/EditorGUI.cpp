@@ -1102,6 +1102,18 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			},
 
 			{
+				"Boss",
+				[&]() { return entityManager.GetComponent<BossComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<BossComponent>(inspectedEntity); }
+			},
+
+			{
+				"Fog Gate",
+				[&]() { return entityManager.GetComponent<FogGateComponent>(inspectedEntity) != nullptr; },
+				[&]() { return entityManager.AddComponent<FogGateComponent>(inspectedEntity); }
+			},
+
+			{
 				"Poise",
 				[&]() { return entityManager.GetComponent<PoiseComponent>(inspectedEntity) != nullptr; },
 				[&]() { return entityManager.AddComponent<PoiseComponent>(inspectedEntity); }

@@ -45,6 +45,8 @@ namespace SceneKeys
 	constexpr const char* HitboxComponent           = "hitbox";
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
+	constexpr const char* BossComponent             = "boss";
+	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
 	constexpr const char* MeleeEnemyComponent       = "melee_enemy";
 	constexpr const char* PlayerHUDComponent        = "player_hud";
@@ -186,6 +188,14 @@ namespace SceneKeys
 	constexpr const char* GuardAngleDegrees         = "guard_angle_degrees";
 	constexpr const char* DamageThrough             = "damage_through";
 	constexpr const char* StaminaPerDamage          = "stamina_per_damage";
+
+	constexpr const char* PhaseTwoHealthFraction    = "phase_two_health_fraction";
+	constexpr const char* PhaseTwoDamageMultiplier  = "phase_two_damage_multiplier";
+	constexpr const char* PhaseTwoAttackSpeedup     = "phase_two_attack_speedup";
+
+	constexpr const char* ArenaCenter               = "arena_center";
+	constexpr const char* ArenaHalfExtents          = "arena_half_extents";
+	constexpr const char* VictoryMessage            = "victory_message";
 
 	constexpr const char* MaxPoise                  = "max_poise";
 	constexpr const char* RecoverAfterSeconds       = "recover_after_seconds";
@@ -614,6 +624,26 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::GuardAngleDegrees, shield->guardAngleDegrees },
 				{ SceneKeys::DamageThrough,     shield->damageThrough     },
 				{ SceneKeys::StaminaPerDamage,  shield->staminaPerDamage  }
+			};
+		}
+
+		if (auto* boss = entityManager.GetComponent<BossComponent>(i))
+		{
+			entityJson[SceneKeys::BossComponent] =
+			{
+				{ SceneKeys::PhaseTwoHealthFraction,   boss->phaseTwoHealthFraction   },
+				{ SceneKeys::PhaseTwoDamageMultiplier, boss->phaseTwoDamageMultiplier },
+				{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    }
+			};
+		}
+
+		if (auto* fogGate = entityManager.GetComponent<FogGateComponent>(i))
+		{
+			entityJson[SceneKeys::FogGateComponent] =
+			{
+				{ SceneKeys::ArenaCenter,      SerializeVec3(fogGate->arenaCenter)      },
+				{ SceneKeys::ArenaHalfExtents, SerializeVec3(fogGate->arenaHalfExtents) },
+				{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     }
 			};
 		}
 
@@ -1098,6 +1128,30 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			shield.guardAngleDegrees = shieldData.value(SceneKeys::GuardAngleDegrees, shield.guardAngleDegrees);
 			shield.damageThrough     = shieldData.value(SceneKeys::DamageThrough,     shield.damageThrough);
 			shield.staminaPerDamage  = shieldData.value(SceneKeys::StaminaPerDamage,  shield.staminaPerDamage);
+		}
+
+		if (entityJson.contains(SceneKeys::BossComponent))
+		{
+			const auto& bossData = entityJson[SceneKeys::BossComponent];
+			auto& boss = entityManager.AddComponent<BossComponent>(entity);
+
+			boss.phaseTwoHealthFraction   = bossData.value(SceneKeys::PhaseTwoHealthFraction,   boss.phaseTwoHealthFraction);
+			boss.phaseTwoDamageMultiplier = bossData.value(SceneKeys::PhaseTwoDamageMultiplier, boss.phaseTwoDamageMultiplier);
+			boss.phaseTwoAttackSpeedup    = bossData.value(SceneKeys::PhaseTwoAttackSpeedup,    boss.phaseTwoAttackSpeedup);
+		}
+
+		if (entityJson.contains(SceneKeys::FogGateComponent))
+		{
+			const auto& fogData = entityJson[SceneKeys::FogGateComponent];
+			auto& fogGate = entityManager.AddComponent<FogGateComponent>(entity);
+
+			if (fogData.contains(SceneKeys::ArenaCenter))
+				fogGate.arenaCenter = DeserializeVec3(fogData[SceneKeys::ArenaCenter]);
+
+			if (fogData.contains(SceneKeys::ArenaHalfExtents))
+				fogGate.arenaHalfExtents = DeserializeVec3(fogData[SceneKeys::ArenaHalfExtents]);
+
+			fogGate.victoryMessage = fogData.value(SceneKeys::VictoryMessage, fogGate.victoryMessage);
 		}
 
 		if (entityJson.contains(SceneKeys::PoiseComponent))

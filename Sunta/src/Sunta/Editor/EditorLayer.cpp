@@ -222,6 +222,8 @@ void EditorLayer::RegisterComponentsToInspector()
 	EnemyHealthBarComponent::RegisterToInspector();
 	RespawnComponent::RegisterToInspector();
 	BonfireComponent::RegisterToInspector();
+	BossComponent::RegisterToInspector();
+	FogGateComponent::RegisterToInspector();
 	PhysicsBodyComponent::RegisterToInspector();
 	BoxColliderComponent::RegisterToInspector();
 	HitboxComponent::RegisterToInspector();

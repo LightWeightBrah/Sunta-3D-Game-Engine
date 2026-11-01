@@ -36,6 +36,7 @@
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/HUDSystem.h"
 #include "Gameplay/RespawnSystem.h"
+#include "Gameplay/BossSystem.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
 #include "Gameplay/CharacterControllerSystem.h"
@@ -334,6 +335,7 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		CombatSystem::Update(entityManager, EngineTime::deltaTime);
+		BossSystem::Update(entityManager);
 		BonfireSystem::Update(entityManager);
 		RespawnSystem::Update(entityManager, EngineTime::deltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
@@ -663,6 +665,7 @@ void Scene::BeginPlay()
 	HUDSystem::PrepareForPlay(entityManager);
 	BonfireSystem::PrepareForPlay(entityManager);
 	RespawnSystem::PrepareForPlay(entityManager);
+	BossSystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 
 	CameraComponent* cameraComponent = nullptr;

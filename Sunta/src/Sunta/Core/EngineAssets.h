@@ -55,6 +55,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* Knight      = "knight";
 		constexpr const char* KnightSword = "knight_sword";
 		constexpr const char* KnightShield = "knight_shield";
+		constexpr const char* FogGate      = "fog_gate";
 
 		// The ready enemy (Rusted Knight): the same knight in rusted armor
 		constexpr const char* RustedKnight = "rusted_knight";

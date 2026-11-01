@@ -44,6 +44,8 @@ using HealthHandle        = ComponentHandle<HealthComponent>;
 using CharacterActionsHandle = ComponentHandle<CharacterActionsComponent>;
 using EnemyHandle         = ComponentHandle<EnemyComponent>;
 using MeleeEnemyHandle    = ComponentHandle<MeleeEnemyComponent>;
+using BossHandle          = ComponentHandle<BossComponent>;
+using FogGateHandle       = ComponentHandle<FogGateComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -188,6 +190,7 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterCharacterActionsComponent(lua);
 	RegisterEnemyComponent(lua);
 	RegisterMeleeEnemyComponent(lua);
+	RegisterBossComponents(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -551,6 +554,51 @@ void LuaBindings::RegisterEnemyComponent(sol::state& lua)
 	);
 }
 
+void LuaBindings::RegisterBossComponents(sol::state& lua)
+{
+	// Usage in Lua (on the boss): if this.boss.phase == 2 then ... end, this.boss.phaseTwoHealthFraction = 0.3
+	lua.new_usertype<BossHandle>("Boss", sol::no_constructor,
+		"phaseTwoHealthFraction",   MemberProperty(&BossComponent::phaseTwoHealthFraction,   0.0f),
+		"phaseTwoDamageMultiplier", MemberProperty(&BossComponent::phaseTwoDamageMultiplier, 0.0f),
+		"phaseTwoAttackSpeedup",    MemberProperty(&BossComponent::phaseTwoAttackSpeedup,    0.0f),
+
+		"phase", sol::readonly_property([](const BossHandle& handle)
+			{
+				const BossComponent* boss = handle.TryGetComponent();
+				return (boss && boss->isInPhaseTwo) ? 2 : 1;
+			}),
+
+		"isAwake", sol::readonly_property([](const BossHandle& handle)
+			{
+				const BossComponent* boss = handle.TryGetComponent();
+				return boss && boss->isAwake;
+			}),
+
+		"isDefeated", sol::readonly_property([](const BossHandle& handle)
+			{
+				const BossComponent* boss = handle.TryGetComponent();
+				return boss && boss->isDefeated;
+			})
+	);
+
+	// Usage in Lua (on the fog): if this.fogGate.isClosed then ... end (e.g. start the boss music)
+	lua.new_usertype<FogGateHandle>("FogGate", sol::no_constructor,
+		"victoryMessage", MemberProperty(&FogGateComponent::victoryMessage, std::string()),
+
+		"isClosed", sol::readonly_property([](const FogGateHandle& handle)
+			{
+				const FogGateComponent* fog = handle.TryGetComponent();
+				return fog && fog->isClosed;
+			}),
+
+		"isCleared", sol::readonly_property([](const FogGateHandle& handle)
+			{
+				const FogGateComponent* fog = handle.TryGetComponent();
+				return fog && fog->isCleared;
+			})
+	);
+}
+
 void LuaBindings::RegisterMeleeEnemyComponent(sol::state& lua)
 {
 	// The tuning of a Melee Enemy, e.g. a script makes it more aggressive when hurt: this.meleeEnemy.attackCooldownSeconds = 0.5
@@ -592,7 +640,9 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"health",              ComponentHandleProperty<HealthComponent>(),
 		"characterActions",    ComponentHandleProperty<CharacterActionsComponent>(),
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),
-		"meleeEnemy",          ComponentHandleProperty<MeleeEnemyComponent>()
+		"meleeEnemy",          ComponentHandleProperty<MeleeEnemyComponent>(),
+		"boss",                ComponentHandleProperty<BossComponent>(),
+		"fogGate",             ComponentHandleProperty<FogGateComponent>()
 	);
 }
 

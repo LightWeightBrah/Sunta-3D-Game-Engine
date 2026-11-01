@@ -466,9 +466,9 @@
             },
             "transform": {
                 "position": [
-                    0,
-                    0,
-                    -32
+                    0.0,
+                    0.0,
+                    -40.0
                 ],
                 "rotation": [
                     0,
@@ -482,9 +482,9 @@
                     0.0
                 ],
                 "scale": [
-                    1.5,
-                    1.5,
-                    1.5
+                    2.5,
+                    2.5,
+                    2.5
                 ]
             }
         },
@@ -2842,14 +2842,14 @@
             },
             "transform": {
                 "position": [
-                    -12,
-                    0,
-                    -22
+                    -20.0,
+                    0.0,
+                    -22.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -2889,14 +2889,14 @@
             },
             "transform": {
                 "position": [
-                    12,
-                    0,
-                    -22
+                    20.0,
+                    0.0,
+                    -22.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -2936,14 +2936,14 @@
             },
             "transform": {
                 "position": [
-                    -12,
-                    0,
-                    -26
+                    -20.0,
+                    0.0,
+                    -26.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -2983,14 +2983,14 @@
             },
             "transform": {
                 "position": [
-                    12,
-                    0,
-                    -26
+                    20.0,
+                    0.0,
+                    -26.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3030,14 +3030,14 @@
             },
             "transform": {
                 "position": [
-                    -12,
-                    0,
-                    -30
+                    -20.0,
+                    0.0,
+                    -30.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3077,14 +3077,14 @@
             },
             "transform": {
                 "position": [
-                    12,
-                    0,
-                    -30
+                    20.0,
+                    0.0,
+                    -30.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3124,14 +3124,14 @@
             },
             "transform": {
                 "position": [
-                    -12,
-                    0,
-                    -34
+                    -20.0,
+                    0.0,
+                    -34.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3171,14 +3171,14 @@
             },
             "transform": {
                 "position": [
-                    12,
-                    0,
-                    -34
+                    20.0,
+                    0.0,
+                    -34.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3218,14 +3218,14 @@
             },
             "transform": {
                 "position": [
-                    -12,
-                    0,
-                    -38
+                    -20.0,
+                    0.0,
+                    -38.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3265,14 +3265,14 @@
             },
             "transform": {
                 "position": [
-                    12,
-                    0,
-                    -38
+                    20.0,
+                    0.0,
+                    -38.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3312,14 +3312,14 @@
             },
             "transform": {
                 "position": [
-                    -12,
-                    0,
-                    -42
+                    -20.0,
+                    0.0,
+                    -42.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3359,14 +3359,14 @@
             },
             "transform": {
                 "position": [
-                    12,
-                    0,
-                    -42
+                    20.0,
+                    0.0,
+                    -42.0
                 ],
                 "rotation": [
-                    0,
+                    0.0,
                     90.0,
-                    0
+                    0.0
                 ],
                 "rotation_quaternion": [
                     0.7071067811865476,
@@ -3406,19 +3406,19 @@
             },
             "transform": {
                 "position": [
-                    -10,
-                    0,
-                    -44
+                    -20.0,
+                    0.0,
+                    -46.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    90.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    1.0,
+                    0.7071067811865476,
                     0.0,
-                    0.0,
+                    0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -3453,19 +3453,19 @@
             },
             "transform": {
                 "position": [
-                    -6,
-                    0,
-                    -44
+                    20.0,
+                    0.0,
+                    -46.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    90.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    1.0,
+                    0.7071067811865476,
                     0.0,
-                    0.0,
+                    0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -3500,19 +3500,19 @@
             },
             "transform": {
                 "position": [
-                    -2,
-                    0,
-                    -44
+                    -20.0,
+                    0.0,
+                    -50.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    90.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    1.0,
+                    0.7071067811865476,
                     0.0,
-                    0.0,
+                    0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -3547,19 +3547,19 @@
             },
             "transform": {
                 "position": [
-                    2,
-                    0,
-                    -44
+                    20.0,
+                    0.0,
+                    -50.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    90.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    1.0,
+                    0.7071067811865476,
                     0.0,
-                    0.0,
+                    0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -3594,19 +3594,19 @@
             },
             "transform": {
                 "position": [
-                    6,
-                    0,
-                    -44
+                    -20.0,
+                    0.0,
+                    -54.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    90.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    1.0,
+                    0.7071067811865476,
                     0.0,
-                    0.0,
+                    0.7071067811865476,
                     0.0
                 ],
                 "scale": [
@@ -3641,14 +3641,61 @@
             },
             "transform": {
                 "position": [
-                    10,
-                    0,
-                    -44
+                    20.0,
+                    0.0,
+                    -54.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
+                    90.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    0.5,
+                    2.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    2.0,
                     0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_pillar"
+            },
+            "tag": {
+                "name": "Pillar"
+            },
+            "transform": {
+                "position": [
+                    -14.0,
+                    0.0,
+                    -28.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
                     1.0,
@@ -3688,61 +3735,14 @@
             },
             "transform": {
                 "position": [
-                    -8.5,
-                    0,
-                    -26
+                    14.0,
+                    0.0,
+                    -28.0
                 ],
                 "rotation": [
-                    0,
-                    0.0,
-                    0
-                ],
-                "rotation_quaternion": [
-                    1.0,
                     0.0,
                     0.0,
                     0.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "box_collider": {
-                "half_extents": [
-                    0.5,
-                    2.0,
-                    0.5
-                ],
-                "is_trigger": false,
-                "layer": 1,
-                "local_offset": [
-                    0,
-                    2.0,
-                    0
-                ],
-                "show_gizmos": false
-            },
-            "model": {
-                "is_visible": true,
-                "model_name": "castle_pillar"
-            },
-            "tag": {
-                "name": "Pillar"
-            },
-            "transform": {
-                "position": [
-                    8.5,
-                    0,
-                    -26
-                ],
-                "rotation": [
-                    0,
-                    0.0,
-                    0
                 ],
                 "rotation_quaternion": [
                     1.0,
@@ -3782,20 +3782,20 @@
             },
             "transform": {
                 "position": [
-                    -8.5,
-                    0,
-                    -32
+                    -14.0,
+                    0.0,
+                    -40.0
                 ],
                 "rotation": [
-                    0,
-                    253.68088829072732,
-                    0
+                    0.0,
+                    116.57979533993846,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    -0.5995886722929407,
-                    -0.0,
-                    0.8003083306188863,
-                    -0.0
+                    0.5256216570003888,
+                    0.0,
+                    0.8507184456047522,
+                    0.0
                 ],
                 "scale": [
                     1.0,
@@ -3829,14 +3829,14 @@
             },
             "transform": {
                 "position": [
-                    8.5,
-                    0,
-                    -32
+                    14.0,
+                    0.0,
+                    -40.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    0.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
                     1.0,
@@ -3876,14 +3876,14 @@
             },
             "transform": {
                 "position": [
-                    -8.5,
-                    0,
-                    -38
+                    -14.0,
+                    0.0,
+                    -52.0
                 ],
                 "rotation": [
-                    0,
                     0.0,
-                    0
+                    0.0,
+                    0.0
                 ],
                 "rotation_quaternion": [
                     1.0,
@@ -3923,19 +3923,19 @@
             },
             "transform": {
                 "position": [
-                    8.5,
-                    0,
-                    -38
+                    14.0,
+                    0.0,
+                    -52.0
                 ],
                 "rotation": [
-                    0,
-                    20.52033463288438,
-                    0
+                    0.0,
+                    54.305702612820696,
+                    0.0
                 ],
                 "rotation_quaternion": [
-                    0.9840091055106108,
+                    0.8897922179656266,
                     0.0,
-                    0.17811816379080372,
+                    0.45636587169486154,
                     0.0
                 ],
                 "scale": [
@@ -4939,6 +4939,1167 @@
                     0.0,
                     0.0,
                     0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -20.0,
+                    0.0,
+                    -58.0
+                ],
+                "rotation": [
+                    0.0,
+                    90.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    20.0,
+                    0.0,
+                    -58.0
+                ],
+                "rotation": [
+                    0.0,
+                    90.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    0.7071067811865476,
+                    0.0,
+                    0.7071067811865476,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -18.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -14.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -10.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -6.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -2.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    2.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    6.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    10.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    14.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    18.0,
+                    0.0,
+                    -60.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -14.0,
+                    0.0,
+                    -20.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    14.0,
+                    0.0,
+                    -20.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    -18.0,
+                    0.0,
+                    -20.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    2,
+                    1.75,
+                    0.4
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    1.75,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_wall"
+            },
+            "tag": {
+                "name": "Wall"
+            },
+            "transform": {
+                "position": [
+                    18.0,
+                    0.0,
+                    -20.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    0.5,
+                    0.9,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    0.9,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_pillar_broken"
+            },
+            "tag": {
+                "name": "Broken Pillar"
+            },
+            "transform": {
+                "position": [
+                    -7.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    234.33641029434736,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    -0.4566042974416297,
+                    0.0,
+                    0.8896698913405104,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    0.5,
+                    2.0,
+                    0.5
+                ],
+                "is_trigger": false,
+                "layer": 1,
+                "local_offset": [
+                    0,
+                    2.0,
+                    0
+                ],
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "castle_pillar"
+            },
+            "tag": {
+                "name": "Pillar"
+            },
+            "transform": {
+                "position": [
+                    7.0,
+                    0.0,
+                    -56.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "animator": {
+                "current_animation_name": "Idle"
+            },
+            "boss": {
+                "phase_two_attack_speedup": 2.0,
+                "phase_two_damage_multiplier": 1.3,
+                "phase_two_health_fraction": 0.5
+            },
+            "box_collider": {
+                "half_extents": [
+                    0.3,
+                    0.9,
+                    0.3
+                ],
+                "is_trigger": false,
+                "layer": 4,
+                "local_offset": [
+                    0.0,
+                    0.9,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "character_actions": {
+                "attack_step_speed": 1.5,
+                "backstep_animation": "Backstep",
+                "backstep_speed": 4.0,
+                "blend_seconds": 0.08,
+                "block_animation": "Block",
+                "block_impact_animation": "Block_Impact",
+                "cancel_from": 0.75,
+                "death_animation": "Death",
+                "heavy_attack_animation": "Attack_Heavy",
+                "heavy_damage_multiplier": 1.8,
+                "heavy_hit_from": 0.45,
+                "heavy_hit_to": 0.66,
+                "hit_reaction_animation": "Hit",
+                "input_buffer_from": 0.3,
+                "invulnerable_from": 0.1,
+                "invulnerable_to": 0.55,
+                "light_attack_1_animation": "Attack_Light_1",
+                "light_attack_2_animation": "Attack_Light_2",
+                "light_attack_3_animation": "Attack_Light_3",
+                "light_hit_from": 0.28,
+                "light_hit_to": 0.56,
+                "parried_animation": "Parried",
+                "parry_animation": "Parry",
+                "rest_animation": "Rest",
+                "roll_animation": "Roll",
+                "roll_speed": 5.5,
+                "stand_up_animation": "Stand_Up"
+            },
+            "character_animation": {
+                "blend_seconds": 0.2,
+                "idle_animation": "Idle",
+                "run_animation": "Run",
+                "strafe_left_animation": "Strafe_Left",
+                "strafe_right_animation": "Strafe_Right",
+                "walk_animation": "Walk",
+                "walk_back_animation": "Walk_Back"
+            },
+            "character_controller": {
+                "acceleration": 30.0,
+                "facing_offset_degrees": 0.0,
+                "is_player_controlled": false,
+                "run_speed": 5.5,
+                "turn_speed": 720.0,
+                "walk_speed": 2.4
+            },
+            "enemy": {
+                "eye_height": 2.4,
+                "hearing_distance": 3.0,
+                "sight_angle_degrees": 75.0,
+                "sight_distance": 30.0
+            },
+            "enemy_health_bar": {
+                "display_name": "Warden of the Ashen Gate",
+                "height_above_feet": 2.15,
+                "is_boss": true,
+                "show_seconds_after_hit": 5.0
+            },
+            "health": {
+                "max_health": 900.0
+            },
+            "lock_on": {
+                "eye_height": 1.5,
+                "is_player_controlled": false,
+                "max_distance": 18.0,
+                "require_line_of_sight": true,
+                "search_angle_degrees": 60.0,
+                "switch_mouse_distance": 120.0
+            },
+            "lock_on_target": {
+                "aim_height": 1.25,
+                "is_lockable": true
+            },
+            "melee_enemy": {
+                "attack_cooldown_seconds": 1.8,
+                "attack_distance": 3.0,
+                "give_up_distance": 60.0,
+                "heavy_attack_chance": 0.35,
+                "max_light_combo": 3,
+                "recover_seconds": 1.0,
+                "run_distance": 10.0
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "rusted_knight"
+            },
+            "physics_body": {
+                "angular_damping": 0.05000000074505806,
+                "angular_velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "freeze_rotation_x": true,
+                "freeze_rotation_y": true,
+                "freeze_rotation_z": true,
+                "friction": 0.0,
+                "is_kinematic": false,
+                "linear_damping": 0.05000000074505806,
+                "mass": 300.0,
+                "restitution": 0.0,
+                "use_gravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "poise": {
+                "max_poise": 80.0,
+                "recover_after_seconds": 5.0
+            },
+            "tag": {
+                "name": "Boss"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    -50.0
+                ],
+                "rotation": [
+                    0,
+                    180.0,
+                    0
+                ],
+                "rotation_quaternion": [
+                    6.123233995736766e-17,
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "scale": [
+                    1.6,
+                    1.6,
+                    1.6
+                ]
+            }
+        },
+        {
+            "hitbox": {
+                "damage": 35.0,
+                "half_extents": [
+                    0.06,
+                    0.48,
+                    0.06
+                ],
+                "layer": 16,
+                "local_offset": [
+                    0.0,
+                    0.56,
+                    0.0
+                ],
+                "poise_damage": 45.0,
+                "show_gizmos": false
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_sword"
+            },
+            "parent": {
+                "bone_name": "Weapon_R",
+                "index": 115
+            },
+            "tag": {
+                "name": "Sword"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "model": {
+                "is_visible": true,
+                "model_name": "knight_shield"
+            },
+            "parent": {
+                "bone_name": "Shield_L",
+                "index": 115
+            },
+            "shield": {
+                "damage_through": 0.0,
+                "guard_angle_degrees": 140.0,
+                "stamina_per_damage": 1.0
+            },
+            "tag": {
+                "name": "Shield"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "box_collider": {
+                "half_extents": [
+                    1.75,
+                    2.3,
+                    0.25
+                ],
+                "is_trigger": true,
+                "layer": 1,
+                "local_offset": [
+                    0.0,
+                    2.3,
+                    0.0
+                ],
+                "show_gizmos": false
+            },
+            "fog_gate": {
+                "arena_center": [
+                    0.0,
+                    0.0,
+                    -40.0
+                ],
+                "arena_half_extents": [
+                    20.0,
+                    6.0,
+                    19.6
+                ]
+            },
+            "model": {
+                "is_visible": true,
+                "model_name": "fog_gate"
+            },
+            "tag": {
+                "name": "Arena Fog"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    -20.0
                 ],
                 "rotation": [
                     0.0,

@@ -16,6 +16,8 @@
 #include "ECS/Entity.h"
 #include "Utilities/MathUtilities.h"
 #include "Gameplay/BonfireComponent.h"
+#include "Gameplay/BossComponent.h"
+#include "Gameplay/FogGateComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/EnemyComponent.h"
 #include "Gameplay/EnemyHealthBarComponent.h"

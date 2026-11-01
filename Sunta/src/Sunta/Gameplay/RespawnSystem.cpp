@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "RespawnSystem.h"
 
+#include "BossSystem.h"
 #include "CharacterActionsSystem.h"
 #include "LockOnSystem.h"
 #include "ECS/Component.h"
@@ -120,6 +121,9 @@ void RespawnSystem::RespawnEnemies(EntityManager& entityManager)
 {
 	for (EnemyComponent& enemy : entityManager.GetAllComponents<EnemyComponent>())
 	{
+		if (!BossSystem::CanBeBroughtBack(entityManager, entityManager.GetEntityIDForComponent(enemy)))
+			continue;
+
 		Revive(entityManager, entityManager.GetEntityIDForComponent(enemy), enemy.homePosition, enemy.homeYawDegrees);
 
 		enemy.stateMachine.reset();

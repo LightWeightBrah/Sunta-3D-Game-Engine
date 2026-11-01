@@ -23,6 +23,7 @@ private:
 	static void RegisterCharacterActionsComponent(sol::state& lua);
 	static void RegisterEnemyComponent(sol::state& lua);
 	static void RegisterMeleeEnemyComponent(sol::state& lua);
+	static void RegisterBossComponents(sol::state& lua);
 	static void RegisterEntity(sol::state& lua);
 	static void RegisterInput(sol::state& lua);
 };

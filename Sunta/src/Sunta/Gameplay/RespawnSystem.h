@@ -24,6 +24,7 @@ public:
 	static void RestoreCharacter(EntityManager& entityManager, unsigned int entityID);
 
 	// Every enemy alive again, at the place and turned the way it started, with its state machine from the beginning
+	// (a defeated boss stays dead)
 	static void RespawnEnemies(EntityManager& entityManager);
 };
 
