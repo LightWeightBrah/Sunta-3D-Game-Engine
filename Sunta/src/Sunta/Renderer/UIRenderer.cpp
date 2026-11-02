@@ -124,9 +124,59 @@ void UIRenderer::DrawRectangle(const glm::vec2& topLeft, const glm::vec2& size, 
 	DrawQuad(topLeft, size, color, nullptr, WholeTexture);
 }
 
-void UIRenderer::DrawImage(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture)
+void UIRenderer::DrawImage(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture, const glm::vec4& tint)
 {
-	DrawQuad(topLeft, size, glm::vec4(1.0f), &texture, WholeTexture);
+	DrawQuad(topLeft, size, tint, &texture, WholeTexture);
+}
+
+void UIRenderer::DrawImageArea(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture, const glm::vec4& area, const glm::vec4& tint)
+{
+	DrawQuad(topLeft, size, tint, &texture, area);
+}
+
+void UIRenderer::DrawNineSlice(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture, const glm::vec4& borders,
+	float borderScale, const glm::vec4& tint)
+{
+	const glm::vec2 textureSize = glm::vec2((float)texture.GetWidth(), (float)texture.GetHeight());
+	if (textureSize.x <= 0.0f || textureSize.y <= 0.0f)
+		return;
+
+	// Where the three columns and the three rows begin and end: in the texture (0..1) and on the screen (pixels)
+	const float textureX[4] = { 0.0f, borders.x / textureSize.x, 1.0f - borders.z / textureSize.x, 1.0f };
+	const float textureY[4] = { 0.0f, borders.y / textureSize.y, 1.0f - borders.w / textureSize.y, 1.0f };
+
+	const float screenX[4] = { topLeft.x, topLeft.x + borders.x * borderScale, topLeft.x + size.x - borders.z * borderScale, topLeft.x + size.x };
+	const float screenY[4] = { topLeft.y, topLeft.y + borders.y * borderScale, topLeft.y + size.y - borders.w * borderScale, topLeft.y + size.y };
+
+	for (int row = 0; row < 3; ++row)
+	{
+		for (int column = 0; column < 3; ++column)
+		{
+			const glm::vec2 pieceSize = glm::vec2(screenX[column + 1] - screenX[column], screenY[row + 1] - screenY[row]);
+			if (pieceSize.x <= 0.0f || pieceSize.y <= 0.0f)
+				continue;
+
+			const glm::vec4 area = glm::vec4(textureX[column], textureY[row], textureX[column + 1] - textureX[column], textureY[row + 1] - textureY[row]);
+			DrawQuad(glm::vec2(screenX[column], screenY[row]), pieceSize, tint, &texture, area);
+		}
+	}
+}
+
+std::shared_ptr<Texture> UIRenderer::GetImage(const std::string& path)
+{
+	if (path.empty())
+		return nullptr;
+
+	auto found = images.find(path);
+	if (found == images.end())
+	{
+		// Loaded once, also when it failed (the error is logged once, not every frame)
+		// Not flipped: the first row of the picture is its top, like the UI's coordinates
+		std::shared_ptr<Texture> texture = Renderer::GetDevice().CreateTexture(VirtualFileSystem::Resolve(path), false);
+		found = images.emplace(path, texture && texture->GetWidth() > 0 ? texture : nullptr).first;
+	}
+
+	return found->second;
 }
 
 void UIRenderer::DrawRectangleOutline(const glm::vec2& topLeft, const glm::vec2& size, float thickness, const glm::vec4& color)

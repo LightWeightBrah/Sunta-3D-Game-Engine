@@ -57,3 +57,6 @@ __pycache__/
 !**/res/Models/**
 !**/res/Models/**/*.obj
 !**/res/Models/**/*.mtl
+
+# Intermediate pictures of Tools/UI (the finished ones are copied into Projects/MyGame/res/UI)
+Tools/UI/Generated/

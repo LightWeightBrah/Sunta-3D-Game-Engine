@@ -26,6 +26,10 @@ struct PlayerHUDComponent
 
 	std::string deathMessage = "YOU DIED";
 
+	// How the HUD looks: a style file of the game with the pictures of the bars, the boss bar and the corners
+	// (e.g. @game/UI/HUD/hud_style.json, see HUDStyle.h). Empty: simple flat bars
+	std::string style;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	// The pale part of the health bar: the health just lost, shrinking slowly after the hit
@@ -47,7 +51,8 @@ struct PlayerHUDComponent
 				ADD_PROPERTY_RANGED(PlayerHUDComponent, pixelsPerHealthPoint,  PropertyDataType::Float, 0.0f, MaxPixelsPerPoint),
 				ADD_PROPERTY_RANGED(PlayerHUDComponent, pixelsPerStaminaPoint, PropertyDataType::Float, 0.0f, MaxPixelsPerPoint),
 				ADD_PROPERTY(PlayerHUDComponent, showLockOnMarker, PropertyDataType::Bool),
-				ADD_PROPERTY(PlayerHUDComponent, deathMessage,     PropertyDataType::String)
+				ADD_PROPERTY(PlayerHUDComponent, deathMessage,     PropertyDataType::String),
+				ADD_PROPERTY(PlayerHUDComponent, style,            PropertyDataType::String)
 			});
 	}
 };

@@ -354,6 +354,7 @@ namespace SceneKeys
 	constexpr const char* PixelsPerStaminaPoint     = "pixels_per_stamina_point";
 	constexpr const char* ShowLockOnMarker          = "show_lock_on_marker";
 	constexpr const char* DeathMessage              = "death_message";
+	constexpr const char* HUDStyleFile              = "style";
 
 	constexpr const char* IsBoss                    = "is_boss";
 	constexpr const char* DisplayName               = "display_name";
@@ -1013,7 +1014,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::PixelsPerHealthPoint,  hud->pixelsPerHealthPoint  },
 				{ SceneKeys::PixelsPerStaminaPoint, hud->pixelsPerStaminaPoint },
 				{ SceneKeys::ShowLockOnMarker,      hud->showLockOnMarker      },
-				{ SceneKeys::DeathMessage,          hud->deathMessage          }
+				{ SceneKeys::DeathMessage,          hud->deathMessage          },
+				{ SceneKeys::HUDStyleFile,          hud->style                 }
 			};
 		}
 
@@ -1731,6 +1733,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			hud.pixelsPerStaminaPoint = hudData.value(SceneKeys::PixelsPerStaminaPoint, hud.pixelsPerStaminaPoint);
 			hud.showLockOnMarker      = hudData.value(SceneKeys::ShowLockOnMarker,      hud.showLockOnMarker);
 			hud.deathMessage          = hudData.value(SceneKeys::DeathMessage,          hud.deathMessage);
+			hud.style                 = hudData.value(SceneKeys::HUDStyleFile,          hud.style);
 		}
 
 		if (entityJson.contains(SceneKeys::EnemyHealthBarComponent))

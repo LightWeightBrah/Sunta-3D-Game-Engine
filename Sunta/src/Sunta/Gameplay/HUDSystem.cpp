@@ -5,10 +5,12 @@
 #include "CharacterControllerSystem.h"
 #include "EnemyStateMachine.h"
 #include "EntityName.h"
+#include "HUDStyle.h"
 #include "LevelUpSystem.h"
 #include "LockOnSystem.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "Renderer/Texture.h"
 #include "Renderer/UIRenderer.h"
 
 namespace Sunta
@@ -108,6 +110,72 @@ void DrawBar(const glm::vec2& topLeft, const glm::vec2& size, float fraction, fl
 	UIRenderer::DrawRectangle(topLeft, glm::vec2(size.x * fraction, size.y), fillColor);
 }
 
+// ========== Bars with pictures (a HUD style) ==========
+
+// A bar of a HUD style: the dark channel, the pale trail, the fill, then the frame over them (its ends keep their shape,
+// only its middle grows with 'channelLength'). Returns the size of the whole frame on the screen
+glm::vec2 DrawStyledBar(const HUDStyle& style, const HUDBarStyle& bar, const glm::vec2& topLeft, float channelLength,
+	float fraction, float trailFraction, const glm::vec4& fillColor)
+{
+	const float scale = bar.height / (float)glm::max(bar.frame->GetHeight(), 1);
+	const glm::vec2 frameSize = glm::vec2(channelLength + (bar.inner.x + bar.inner.z) * scale, bar.height);
+
+	const glm::vec2 channelTopLeft = topLeft + glm::vec2(bar.inner.x, bar.inner.y) * scale;
+	const float     channelHeight  = bar.height - (bar.inner.y + bar.inner.w) * scale;
+
+	UIRenderer::DrawRectangle(channelTopLeft, glm::vec2(channelLength, channelHeight), style.channelColor);
+
+	const auto drawFill = [&](float part, const glm::vec4& color)
+	{
+		const glm::vec2 size = glm::vec2(channelLength * glm::clamp(part, 0.0f, 1.0f), channelHeight);
+		if (size.x <= 0.0f)
+			return;
+
+		if (style.fill)
+			UIRenderer::DrawImage(channelTopLeft, size, *style.fill, color);
+		else
+			UIRenderer::DrawRectangle(channelTopLeft, size, color);
+	};
+
+	drawFill(trailFraction, style.trailColor);
+	drawFill(fraction, fillColor);
+
+	UIRenderer::DrawNineSlice(topLeft, frameSize, *bar.frame, glm::vec4(bar.capLeft, 0.0f, bar.capRight, 0.0f), scale);
+
+	if (bar.ornament)
+	{
+		const float width = bar.ornament->GetWidth() * scale;
+		UIRenderer::DrawImage(glm::vec2(topLeft.x + (frameSize.x - width) * 0.5f, topLeft.y), glm::vec2(width, bar.height), *bar.ornament);
+	}
+
+	return frameSize;
+}
+
+// The panel of a corner of a HUD style with its icon, the name and the number, e.g. the flask: "Estus Flask" over "3"
+// 'isOnRight' puts it in the bottom right corner. Returns the top left corner of the panel
+glm::vec2 DrawStyledCorner(const HUDStyle& style, const HUDArea& area, bool isOnRight, const Texture* icon,
+	const std::string& label, const std::string& value, const glm::vec4& valueColor)
+{
+	const glm::vec2 size    = style.cornerSize;
+	const float     x       = isOnRight ? area.topLeft.x + area.size.x - CornerMargin.x - size.x : area.topLeft.x + CornerMargin.x;
+	const glm::vec2 topLeft = glm::vec2(x, area.topLeft.y + area.size.y - CornerMargin.y - size.y);
+
+	UIRenderer::DrawNineSlice(topLeft, size, *style.panel, glm::vec4(style.panelBorder), 1.0f);
+
+	float textLeft = topLeft.x + CornerPadding * 1.5f;
+	if (icon)
+	{
+		const float iconWidth = icon->GetWidth() * style.iconHeight / (float)glm::max(icon->GetHeight(), 1);
+		UIRenderer::DrawImage(glm::vec2(textLeft, topLeft.y + (size.y - style.iconHeight) * 0.5f), glm::vec2(iconWidth, style.iconHeight), *icon);
+		textLeft += iconWidth + CornerPadding;
+	}
+
+	const float textTop = topLeft.y + (size.y - CornerLabelHeight - CornerTextHeight) * 0.5f;
+	UIRenderer::DrawTextAt(label, glm::vec2(textLeft, textTop), CornerLabelHeight, CornerLabelColor);
+	UIRenderer::DrawTextAt(value, glm::vec2(textLeft, textTop + CornerLabelHeight), CornerTextHeight, valueColor);
+	return topLeft;
+}
+
 // ========== The player ==========
 
 void UpdatePlayer(EntityManager& entityManager, float deltaTime)
@@ -133,6 +201,23 @@ PlayerHUDComponent* TryGetPlayerHUD(EntityManager& entityManager)
 {
 	unsigned int playerID = 0;
 	return CharacterControllerSystem::TryFindPlayer(entityManager, playerID) ? entityManager.GetComponent<PlayerHUDComponent>(playerID) : nullptr;
+}
+
+// Stamina first: the health bar's ornate end may reach over it
+void DrawStyledPlayerBars(const HUDStyle& style, const HUDArea& area, const PlayerHUDComponent& hud, const HealthComponent* health, const StaminaComponent* stamina)
+{
+	if (stamina && style.stamina.IsUsable())
+	{
+		const float fraction = GetFraction(stamina->currentStamina, stamina->maxStamina);
+		DrawStyledBar(style, style.stamina, area.topLeft + style.stamina.offset, stamina->maxStamina * hud.pixelsPerStaminaPoint,
+			fraction, fraction, style.staminaColor);
+	}
+
+	if (health)
+	{
+		DrawStyledBar(style, style.health, area.topLeft + style.health.offset, health->maxHealth * hud.pixelsPerHealthPoint,
+			GetFraction(health->currentHealth, health->maxHealth), GetFraction(hud.trailingHealth, health->maxHealth), style.healthColor);
+	}
 }
 
 void DrawPlayerBars(const HUDArea& area, const PlayerHUDComponent& hud, const HealthComponent* health, const StaminaComponent* stamina)
@@ -221,6 +306,20 @@ void DrawFlask(const HUDArea& area, const HealingFlaskComponent& flask)
 	UIRenderer::DrawTextAt(count, glm::vec2(topLeft.x + labelWidth + CornerPadding * 2.0f, topLeft.y + CornerPadding), CornerTextHeight, color);
 }
 
+// What was just gained ("+60"), fading above the panel of the currency
+void DrawCurrencyGain(const CurrencyComponent& currency, const glm::vec2& panelTopLeft, const glm::vec2& panelSize)
+{
+	if (currency.lastGainSecondsLeft <= 0.0f)
+		return;
+
+	const std::string gain = "+" + std::to_string(currency.lastGain);
+	const float alpha      = glm::clamp(currency.lastGainSecondsLeft / GainFadeOutSeconds, 0.0f, 1.0f);
+	const glm::vec2 gainTopLeft = glm::vec2(panelTopLeft.x + panelSize.x - UIRenderer::MeasureText(gain, GainTextHeight) - CornerPadding,
+		panelTopLeft.y - GainTextHeight - CornerPadding * 0.5f);
+
+	UIRenderer::DrawTextAt(gain, gainTopLeft, GainTextHeight, WithAlpha(GainColor, alpha));
+}
+
 // The amount counting up to its real value, the name next to it, and what was just gained above it
 void DrawCurrency(const HUDArea& area, const CurrencyComponent& currency)
 {
@@ -235,15 +334,14 @@ void DrawCurrency(const HUDArea& area, const CurrencyComponent& currency)
 	UIRenderer::DrawTextAt(currency.displayName, glm::vec2(topLeft.x + CornerPadding, labelTop), CornerLabelHeight, CornerLabelColor);
 	UIRenderer::DrawTextAt(amount, glm::vec2(topLeft.x + labelWidth + CornerPadding * 2.0f, topLeft.y + CornerPadding), CornerTextHeight, CornerTextColor);
 
-	if (currency.lastGainSecondsLeft <= 0.0f)
-		return;
+	DrawCurrencyGain(currency, topLeft, size);
+}
 
-	const std::string gain = "+" + std::to_string(currency.lastGain);
-	const float alpha      = glm::clamp(currency.lastGainSecondsLeft / GainFadeOutSeconds, 0.0f, 1.0f);
-	const glm::vec2 gainTopLeft = glm::vec2(topLeft.x + size.x - UIRenderer::MeasureText(gain, GainTextHeight) - CornerPadding,
-		topLeft.y - GainTextHeight - CornerPadding * 0.5f);
-
-	UIRenderer::DrawTextAt(gain, gainTopLeft, GainTextHeight, WithAlpha(GainColor, alpha));
+void DrawStyledCurrency(const HUDStyle& style, const HUDArea& area, const CurrencyComponent& currency)
+{
+	const glm::vec2 topLeft = DrawStyledCorner(style, area, true, style.currencyIcon.get(), currency.displayName,
+		std::to_string((int)currency.shownAmount), CornerTextColor);
+	DrawCurrencyGain(currency, topLeft, style.cornerSize);
 }
 
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
@@ -256,18 +354,36 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	if (!hud)
 		return;
 
+	const HUDStyle* style = HUDStyle::Get(hud->style);
 	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(playerID);
-	DrawPlayerBars(area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
+
+	if (style && style->health.IsUsable())
+		DrawStyledPlayerBars(*style, area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
+	else
+		DrawPlayerBars(area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
 
 	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(playerID);
 	if (hud->showLockOnMarker && lockOn)
 		DrawLockOnMarker(entityManager, *lockOn, viewProjection);
 
+	const bool hasStyledCorners = style && style->panel;
+
 	if (const HealingFlaskComponent* flask = entityManager.GetComponent<HealingFlaskComponent>(playerID))
-		DrawFlask(area, *flask);
+	{
+		if (hasStyledCorners)
+			DrawStyledCorner(*style, area, false, style->flaskIcon.get(), flask->displayName, std::to_string(flask->charges),
+				flask->charges > 0 ? CornerTextColor : EmptyFlaskColor);
+		else
+			DrawFlask(area, *flask);
+	}
 
 	if (const CurrencyComponent* currency = entityManager.GetComponent<CurrencyComponent>(playerID))
-		DrawCurrency(area, *currency);
+	{
+		if (hasStyledCorners)
+			DrawStyledCurrency(*style, area, *currency);
+		else
+			DrawCurrency(area, *currency);
+	}
 
 	LevelUpSystem::DrawMenu(entityManager, area);
 	DrawPrompt(area, *hud);
@@ -326,15 +442,33 @@ void DrawFloatingBar(EntityManager& entityManager, const EnemyHealthBarComponent
 	DrawBar(topLeft, EnemyBarSize, GetFraction(health.currentHealth, health.maxHealth), GetFraction(bar.trailingHealth, health.maxHealth), HealthColor);
 }
 
-void DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyHealthBarComponent& bar, unsigned int enemyID, const HealthComponent& health)
+void DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyHealthBarComponent& bar, unsigned int enemyID,
+	const HealthComponent& health, const HUDStyle* style)
 {
 	if (!bar.isEngaged)
 		return;
 
+	const std::string name = bar.displayName.empty() ? GetEntityName(entityManager, enemyID) : bar.displayName;
+
+	// With a style: the framed bar centered at the bottom, the name above its channel
+	if (style && style->boss.IsUsable())
+	{
+		const HUDBarStyle& boss = style->boss;
+		const float channelLength = area.size.x * BossBarWidthOfScreen;
+		const float scale         = boss.height / (float)glm::max(boss.frame->GetHeight(), 1);
+		const float frameWidth    = channelLength + (boss.inner.x + boss.inner.z) * scale;
+		const glm::vec2 topLeft   = area.topLeft + glm::vec2((area.size.x - frameWidth) * 0.5f, area.size.y - BossBarBottomMargin - boss.height) + boss.offset;
+
+		DrawStyledBar(*style, boss, topLeft, channelLength, GetFraction(health.currentHealth, health.maxHealth),
+			GetFraction(bar.trailingHealth, health.maxHealth), style->healthColor);
+
+		const glm::vec2 nameTopLeft = glm::vec2(topLeft.x + boss.inner.x * scale, topLeft.y + boss.inner.y * scale - BossNameHeight - BossNameGap);
+		UIRenderer::DrawTextAt(name, nameTopLeft, BossNameHeight, BossNameColor);
+		return;
+	}
+
 	const glm::vec2 size    = glm::vec2(area.size.x * BossBarWidthOfScreen, BossBarHeight);
 	const glm::vec2 topLeft = area.topLeft + glm::vec2((area.size.x - size.x) * 0.5f, area.size.y - BossBarBottomMargin - size.y);
-
-	const std::string name = bar.displayName.empty() ? GetEntityName(entityManager, enemyID) : bar.displayName;
 
 	UIRenderer::DrawTextAt(name, topLeft - glm::vec2(0.0f, BossNameHeight + BossNameGap), BossNameHeight, BossNameColor);
 	DrawBar(topLeft, size, GetFraction(health.currentHealth, health.maxHealth), GetFraction(bar.trailingHealth, health.maxHealth), HealthColor);
@@ -342,6 +476,9 @@ void DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 
 void DrawEnemies(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
+	const PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager);
+	const HUDStyle* style = hud ? HUDStyle::Get(hud->style) : nullptr;
+
 	for (EnemyHealthBarComponent& bar : entityManager.GetAllComponents<EnemyHealthBarComponent>())
 	{
 		const unsigned int enemyID = entityManager.GetEntityIDForComponent(bar);
@@ -351,7 +488,7 @@ void DrawEnemies(EntityManager& entityManager, const glm::mat4& viewProjection, 
 			continue;
 
 		if (bar.isBoss)
-			DrawBossBar(entityManager, area, bar, enemyID, *health);
+			DrawBossBar(entityManager, area, bar, enemyID, *health, style);
 		else
 			DrawFloatingBar(entityManager, bar, enemyID, *health, viewProjection);
 	}

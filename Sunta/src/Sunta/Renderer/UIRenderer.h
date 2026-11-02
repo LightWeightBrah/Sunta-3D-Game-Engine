@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <glm/glm.hpp>
 
 namespace Sunta
@@ -26,8 +27,22 @@ public:
 	static glm::vec2 GetScreenSize() { return screenSize; }
 
 	static void DrawRectangle(const glm::vec2& topLeft, const glm::vec2& size, const glm::vec4& color);
-	// A picture (e.g. a frame of a video) stretched over the rectangle
-	static void DrawImage(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture);
+	// A picture (e.g. a frame of a video) stretched over the rectangle, its colors multiplied by 'tint'
+	static void DrawImage(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture, const glm::vec4& tint = glm::vec4(1.0f));
+
+	// A part of a picture: 'area' is u, v, width, height in 0..1 of the texture (v = 0 is the top row)
+	static void DrawImageArea(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture, const glm::vec4& area,
+		const glm::vec4& tint = glm::vec4(1.0f));
+
+	// A frame that can be any size (nine-slice): the corners of the picture keep their shape, the edges stretch along
+	// their length and the middle stretches both ways. 'borders' is left, top, right, bottom in pixels of the texture,
+	// 'borderScale' how big one texture pixel of the borders is on the screen. A border of 0 makes that side stretch
+	// (left/right only = three-slice, e.g. a bar whose ornate ends keep their shape however long the bar grows)
+	static void DrawNineSlice(const glm::vec2& topLeft, const glm::vec2& size, const Texture& texture, const glm::vec4& borders,
+		float borderScale, const glm::vec4& tint = glm::vec4(1.0f));
+
+	// A picture for the UI from a file (@game/... or @engine/...), loaded once and kept. nullptr when it can't be read
+	static std::shared_ptr<Texture> GetImage(const std::string& path);
 
 	static void DrawRectangleOutline(const glm::vec2& topLeft, const glm::vec2& size, float thickness, const glm::vec4& color);
 
@@ -44,6 +59,7 @@ private:
 	static inline std::shared_ptr<Shader>      shader;
 	static inline std::shared_ptr<Font>        font;
 	static inline glm::vec2                    screenSize = glm::vec2(0.0f);
+	static inline std::unordered_map<std::string, std::shared_ptr<Texture>> images;
 
 	static void EnsureInitialized();
 	static void CreateQuad();
