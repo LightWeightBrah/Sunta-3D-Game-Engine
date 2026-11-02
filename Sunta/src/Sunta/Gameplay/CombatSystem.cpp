@@ -9,6 +9,7 @@
 #include "CurrencySystem.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
+#include "LevelUpSystem.h"
 #include "StaminaSystem.h"
 #include "Core/Log.h"
 #include "ECS/Component.h"
@@ -94,7 +95,7 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 	unsigned int ownerID, const CharacterActionsComponent& owner)
 {
 	const OBB   box         = GetWorldBox(entityManager, weaponEntityID, hitbox);
-	const float damage      = hitbox.damage      * owner.GetDamageMultiplier();
+	const float damage      = hitbox.damage      * owner.GetDamageMultiplier() * LevelUpSystem::GetDamageMultiplier(entityManager, ownerID);
 	const float poiseDamage = hitbox.poiseDamage * owner.GetDamageMultiplier();
 
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())

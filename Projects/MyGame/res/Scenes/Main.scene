@@ -203,6 +203,24 @@
                 "gain_sound": "",
                 "retrieve_sound": ""
             },
+            "level_up": {
+                "display_name": "Level",
+                "level": 1,
+                "first_level_cost": 200,
+                "cost_growth": 1.12,
+                "starting_attribute_value": 10,
+                "health_attribute": "Vigor",
+                "health_per_point": 10.0,
+                "health_points": 0,
+                "stamina_attribute": "Endurance",
+                "stamina_per_point": 8.0,
+                "stamina_points": 0,
+                "damage_attribute": "Strength",
+                "damage_per_point": 0.05,
+                "damage_points": 0,
+                "level_up_sound": "",
+                "level_up_effect": "Level Up Glow"
+            },
             "healing_flask": {
                 "display_name": "Estus Flask",
                 "max_charges": 5,
@@ -12339,6 +12357,73 @@
                 "position": [
                     0.0,
                     0.9,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "parent": {
+                "bone_name": "",
+                "index": 2
+            },
+            "particle_emitter": {
+                "end_color": [
+                    0.85,
+                    0.55,
+                    0.15
+                ],
+                "end_size": 0.02,
+                "gravity": [
+                    0.0,
+                    0.4,
+                    0.0
+                ],
+                "intensity": 2.6,
+                "is_emitting": false,
+                "lifetime_seconds": 1.4,
+                "max_particles": 160,
+                "particles_per_second": 0.0,
+                "spawn_half_extents": [
+                    0.45,
+                    0.1,
+                    0.45
+                ],
+                "start_color": [
+                    1.0,
+                    0.95,
+                    0.75
+                ],
+                "start_size": 0.09,
+                "velocity": [
+                    0.0,
+                    2.6,
+                    0.0
+                ],
+                "velocity_randomness": 0.35
+            },
+            "tag": {
+                "name": "Level Up Glow"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.1,
                     0.0
                 ],
                 "rotation": [

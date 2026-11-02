@@ -224,6 +224,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	HealingFlaskComponent::RegisterToInspector();
 	CurrencyComponent::RegisterToInspector();
 	CurrencyRewardComponent::RegisterToInspector();
+	LevelUpComponent::RegisterToInspector();
 	EnemyComponent::RegisterToInspector();
 	MeleeEnemyComponent::RegisterToInspector();
 	PlayerHUDComponent::RegisterToInspector();

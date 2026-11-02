@@ -13,6 +13,7 @@
 #include "Audio/AudioSystem.h"
 #include "Gameplay/CurrencySystem.h"
 #include "Gameplay/HealingFlaskSystem.h"
+#include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/EnemyContext.h"
@@ -60,6 +61,7 @@ using AudioSourceHandle   = ComponentHandle<AudioSourceComponent>;
 using HealingFlaskHandle  = ComponentHandle<HealingFlaskComponent>;
 using CurrencyHandle      = ComponentHandle<CurrencyComponent>;
 using CurrencyRewardHandle = ComponentHandle<CurrencyRewardComponent>;
+using LevelUpHandle       = ComponentHandle<LevelUpComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -675,7 +677,8 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"audioSource",         ComponentHandleProperty<AudioSourceComponent>(),
 		"healingFlask",        ComponentHandleProperty<HealingFlaskComponent>(),
 		"currency",            ComponentHandleProperty<CurrencyComponent>(),
-		"currencyReward",      ComponentHandleProperty<CurrencyRewardComponent>()
+		"currencyReward",      ComponentHandleProperty<CurrencyRewardComponent>(),
+		"levelUp",             ComponentHandleProperty<LevelUpComponent>()
 	);
 }
 
@@ -819,6 +822,28 @@ void LuaBindings::RegisterProgressComponents(sol::state& lua)
 	// Usage in Lua (on an enemy): this.currencyReward.amount = 1000
 	lua.new_usertype<CurrencyRewardHandle>("CurrencyReward", sol::no_constructor,
 		"amount", MemberProperty(&CurrencyRewardComponent::amount, 0)
+	);
+
+	// Usage in Lua: this.levelUp.level, this.levelUp.cost (of the next level), this.levelUp:raise("health") (false when the
+	// Currency is too low), this.levelUp.healthPoints / staminaPoints / damagePoints
+	lua.new_usertype<LevelUpHandle>("LevelUp", sol::no_constructor,
+		"level",         MemberProperty(&LevelUpComponent::level,         0),
+		"healthPoints",  MemberProperty(&LevelUpComponent::healthPoints,  0),
+		"staminaPoints", MemberProperty(&LevelUpComponent::staminaPoints, 0),
+		"damagePoints",  MemberProperty(&LevelUpComponent::damagePoints,  0),
+		"cost",          sol::readonly_property([](const LevelUpHandle& handle)
+			{
+				const LevelUpComponent* levelUp = handle.TryGetComponent();
+				return levelUp ? levelUp->GetCost() : 0;
+			}),
+
+		"raise", [](const LevelUpHandle& handle, const std::string& attributeWord)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				LevelUpAttribute attribute;
+				return entityManager && LevelUpSystem::TryParseAttribute(attributeWord, attribute)
+					&& LevelUpSystem::Raise(*entityManager, handle.owner.GetID(), attribute);
+			}
 	);
 }
 

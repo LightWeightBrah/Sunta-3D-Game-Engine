@@ -53,6 +53,7 @@ namespace SceneKeys
 	constexpr const char* HealingFlaskComponent     = "healing_flask";
 	constexpr const char* CurrencyComponent         = "currency";
 	constexpr const char* CurrencyRewardComponent   = "currency_reward";
+	constexpr const char* LevelUpComponent          = "level_up";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -262,6 +263,21 @@ namespace SceneKeys
 	constexpr const char* RetrievePrompt            = "retrieve_prompt";
 	constexpr const char* GainSound                 = "gain_sound";
 	constexpr const char* RetrieveSound             = "retrieve_sound";
+	constexpr const char* Level                     = "level";
+	constexpr const char* FirstLevelCost            = "first_level_cost";
+	constexpr const char* CostGrowth                = "cost_growth";
+	constexpr const char* StartingAttributeValue    = "starting_attribute_value";
+	constexpr const char* HealthAttribute           = "health_attribute";
+	constexpr const char* HealthPerPoint            = "health_per_point";
+	constexpr const char* HealthPoints              = "health_points";
+	constexpr const char* StaminaAttribute          = "stamina_attribute";
+	constexpr const char* StaminaPerPoint           = "stamina_per_point";
+	constexpr const char* StaminaPoints             = "stamina_points";
+	constexpr const char* DamageAttribute           = "damage_attribute";
+	constexpr const char* DamagePerPoint            = "damage_per_point";
+	constexpr const char* DamagePoints              = "damage_points";
+	constexpr const char* LevelUpSound              = "level_up_sound";
+	constexpr const char* LevelUpEffect             = "level_up_effect";
 	constexpr const char* AttackSoundLeadSeconds    = "attack_sound_lead_seconds";
 	constexpr const char* LeftFootBone              = "left_foot_bone";
 	constexpr const char* RightFootBone             = "right_foot_bone";
@@ -872,6 +888,29 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			entityJson[SceneKeys::CurrencyRewardComponent] =
 			{
 				{ SceneKeys::CurrencyAmount, reward->amount }
+			};
+		}
+
+		if (auto* levelUp = entityManager.GetComponent<LevelUpComponent>(i))
+		{
+			entityJson[SceneKeys::LevelUpComponent] =
+			{
+				{ SceneKeys::DisplayName,            levelUp->displayName            },
+				{ SceneKeys::Level,                  levelUp->level                  },
+				{ SceneKeys::FirstLevelCost,         levelUp->firstLevelCost         },
+				{ SceneKeys::CostGrowth,             levelUp->costGrowth             },
+				{ SceneKeys::StartingAttributeValue, levelUp->startingAttributeValue },
+				{ SceneKeys::HealthAttribute,        levelUp->healthAttribute        },
+				{ SceneKeys::HealthPerPoint,         levelUp->healthPerPoint         },
+				{ SceneKeys::HealthPoints,           levelUp->healthPoints           },
+				{ SceneKeys::StaminaAttribute,       levelUp->staminaAttribute       },
+				{ SceneKeys::StaminaPerPoint,        levelUp->staminaPerPoint        },
+				{ SceneKeys::StaminaPoints,          levelUp->staminaPoints          },
+				{ SceneKeys::DamageAttribute,        levelUp->damageAttribute        },
+				{ SceneKeys::DamagePerPoint,         levelUp->damagePerPoint         },
+				{ SceneKeys::DamagePoints,           levelUp->damagePoints           },
+				{ SceneKeys::LevelUpSound,           levelUp->levelUpSound           },
+				{ SceneKeys::LevelUpEffect,          levelUp->levelUpEffect          }
 			};
 		}
 
@@ -1546,6 +1585,29 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			auto& reward = entityManager.AddComponent<CurrencyRewardComponent>(entity);
 
 			reward.amount = rewardData.value(SceneKeys::CurrencyAmount, reward.amount);
+		}
+
+		if (entityJson.contains(SceneKeys::LevelUpComponent))
+		{
+			const auto& levelData = entityJson[SceneKeys::LevelUpComponent];
+			auto& levelUp = entityManager.AddComponent<LevelUpComponent>(entity);
+
+			levelUp.displayName            = levelData.value(SceneKeys::DisplayName,            levelUp.displayName);
+			levelUp.level                  = levelData.value(SceneKeys::Level,                  levelUp.level);
+			levelUp.firstLevelCost         = levelData.value(SceneKeys::FirstLevelCost,         levelUp.firstLevelCost);
+			levelUp.costGrowth             = levelData.value(SceneKeys::CostGrowth,             levelUp.costGrowth);
+			levelUp.startingAttributeValue = levelData.value(SceneKeys::StartingAttributeValue, levelUp.startingAttributeValue);
+			levelUp.healthAttribute        = levelData.value(SceneKeys::HealthAttribute,        levelUp.healthAttribute);
+			levelUp.healthPerPoint         = levelData.value(SceneKeys::HealthPerPoint,         levelUp.healthPerPoint);
+			levelUp.healthPoints           = levelData.value(SceneKeys::HealthPoints,           levelUp.healthPoints);
+			levelUp.staminaAttribute       = levelData.value(SceneKeys::StaminaAttribute,       levelUp.staminaAttribute);
+			levelUp.staminaPerPoint        = levelData.value(SceneKeys::StaminaPerPoint,        levelUp.staminaPerPoint);
+			levelUp.staminaPoints          = levelData.value(SceneKeys::StaminaPoints,          levelUp.staminaPoints);
+			levelUp.damageAttribute        = levelData.value(SceneKeys::DamageAttribute,        levelUp.damageAttribute);
+			levelUp.damagePerPoint         = levelData.value(SceneKeys::DamagePerPoint,         levelUp.damagePerPoint);
+			levelUp.damagePoints           = levelData.value(SceneKeys::DamagePoints,           levelUp.damagePoints);
+			levelUp.levelUpSound           = levelData.value(SceneKeys::LevelUpSound,           levelUp.levelUpSound);
+			levelUp.levelUpEffect          = levelData.value(SceneKeys::LevelUpEffect,          levelUp.levelUpEffect);
 		}
 
 		if (entityJson.contains(SceneKeys::AudioSourceComponent))

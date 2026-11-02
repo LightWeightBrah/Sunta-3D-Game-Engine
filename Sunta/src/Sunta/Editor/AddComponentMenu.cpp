@@ -154,6 +154,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<HealingFlaskComponent>    ("Healing Flask",     Progression, "Heals with a few drinks, filled again at every rest"),
 		Plain<CurrencyComponent>        ("Currency",          Progression, "What the player collects (souls, runes), lost on death"),
 		Plain<CurrencyRewardComponent>  ("Currency Reward",   Progression, "How much Currency defeating it gives"),
+		Plain<LevelUpComponent>         ("Level Up",          Progression, "Spends the Currency on attributes while resting at a bonfire"),
 
 		Plain<FogGateComponent>         ("Fog Gate",          World, "The fog in the doorway of a boss arena"),
 		Plain<CutsceneComponent>        ("Cutscene",          World, "A camera flight through points, or a video"),

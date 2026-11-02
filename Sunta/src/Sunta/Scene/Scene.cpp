@@ -42,6 +42,7 @@
 #include "Gameplay/CharacterSoundsSystem.h"
 #include "Gameplay/CurrencySystem.h"
 #include "Gameplay/HealingFlaskSystem.h"
+#include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CutsceneSystem.h"
 #include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
@@ -351,6 +352,7 @@ void Scene::Update()
 		BossSystem::Update(entityManager, EngineTime::deltaTime);
 		ParticleSystem::Update(entityManager, EngineTime::deltaTime);
 		BonfireSystem::Update(entityManager);
+		LevelUpSystem::Update(entityManager, EngineTime::deltaTime);
 		CurrencySystem::Update(entityManager, EngineTime::deltaTime);
 		RespawnSystem::Update(entityManager, EngineTime::deltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
@@ -702,6 +704,9 @@ void Scene::BeginPlay()
 	CharacterActionsSystem::ReportProblemsBeforePlay(entityManager);
 	CombatSystem::ReportProblemsBeforePlay(entityManager);
 	EnemySystem::ReportProblemsBeforePlay(entityManager);
+
+	// The level points raise the maximum health and stamina before they are filled
+	LevelUpSystem::PrepareForPlay(entityManager);
 
 	// Everyone starts alive, rested and at home
 	CombatSystem::PrepareForPlay(entityManager);

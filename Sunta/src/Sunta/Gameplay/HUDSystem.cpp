@@ -5,6 +5,7 @@
 #include "CharacterControllerSystem.h"
 #include "EnemyStateMachine.h"
 #include "EntityName.h"
+#include "LevelUpSystem.h"
 #include "LockOnSystem.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
@@ -268,6 +269,7 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	if (const CurrencyComponent* currency = entityManager.GetComponent<CurrencyComponent>(playerID))
 		DrawCurrency(area, *currency);
 
+	LevelUpSystem::DrawMenu(entityManager, area);
 	DrawPrompt(area, *hud);
 	DrawNotification(area, *hud);
 
