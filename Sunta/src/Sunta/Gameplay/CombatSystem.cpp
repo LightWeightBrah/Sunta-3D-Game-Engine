@@ -10,10 +10,13 @@
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "LevelUpSystem.h"
+#include "FollowCameraSystem.h"
 #include "StaminaSystem.h"
+#include "TimeScaleSystem.h"
 #include "Core/Log.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "Effects/ParticleSystem.h"
 #include "Physics/CollisionSettings.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/SAT.h"
@@ -29,6 +32,35 @@ using namespace GameplayMath;
 
 // How long a weapon's box stays red after it hurt someone
 constexpr float HitFlashSeconds = 0.4f;
+
+// ========== How a hit feels (hit stop, camera shake, sparks) ==========
+
+// How many specks the hit effects throw where the weapon landed
+constexpr int HitEffectBurst   = 24;
+constexpr int BlockEffectBurst = 18;
+constexpr int ParryEffectBurst = 60;
+
+// A heavy blow (and a leap) freezes and shakes this much more than a light one
+constexpr float HeavyFeelMultiplier = 1.5f;
+
+// A blow on a shield feels a little softer than one on the body
+constexpr float BlockedFeelMultiplier = 0.7f;
+
+// A parry and a riposte are the big moments of a duel: a long freeze and a strong shake
+constexpr float ParryHitStopSeconds   = 0.16f;
+constexpr float ParryCameraShake      = 0.35f;
+constexpr float RiposteHitStopSeconds = 0.2f;
+constexpr float RiposteCameraShake    = 0.5f;
+
+// What a weapon's hit came to
+enum class HitResult
+{
+	Missed,   // the target couldn't be hurt (dead, rolling)
+	Parried,  // turned away by a parry: nobody is hurt, the attacker staggers
+	Blocked,  // the shield took it (or the guard broke)
+	Hurt,     // it landed on the body
+	Riposte   // it landed on a parried attacker: a critical blow
+};
 
 // ========== The owner of a weapon ==========
 
@@ -89,7 +121,19 @@ bool CanHurt(const HitboxComponent& hitbox, const BoxColliderComponent& targetBo
 	return CollisionSettings::GetActive().CanCollide(hitbox.layer, targetBody.layer);
 }
 
-bool HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID);
+HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID);
+void      FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComponent& hitbox, const CharacterActionsComponent& owner,
+	unsigned int ownerID, unsigned int targetID, const glm::vec3& contactPoint);
+
+// Where the weapon touches the target: the point of the weapon's box nearest to the target, pulled into the target's box
+glm::vec3 GetContactPoint(const OBB& weapon, const OBB& target)
+{
+	const glm::vec3 inWeapon = glm::clamp(glm::transpose(weapon.orientation) * (target.center - weapon.center), -weapon.halfExtents, weapon.halfExtents);
+	const glm::vec3 onWeapon = weapon.center + weapon.orientation * inWeapon;
+	const glm::vec3 inTarget = glm::clamp(glm::transpose(target.orientation) * (onWeapon - target.center), -target.halfExtents, target.halfExtents);
+
+	return target.center + target.orientation * inTarget;
+}
 
 void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, unsigned int weaponEntityID,
 	unsigned int ownerID, const CharacterActionsComponent& owner)
@@ -111,8 +155,11 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 
 		hitbox.entitiesHitThisSwing.push_back(targetID);
 
-		if (HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID))
+		const HitResult result = HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID);
+		if (result == HitResult::Blocked || result == HitResult::Hurt || result == HitResult::Riposte)
 			hitbox.hitFlashSecondsLeft = HitFlashSeconds;
+
+		FeelTheHit(entityManager, result, hitbox, owner, ownerID, targetID, GetContactPoint(box, targetBody->worldOBB));
 	}
 }
 
@@ -133,6 +180,9 @@ bool CanBeHurt(EntityManager& entityManager, unsigned int entityID)
 void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& health, unsigned int attackerEntityID)
 {
 	health.isDead = true;
+
+	if (health.deathSlowMotionSeconds > 0.0f)
+		TimeScaleSystem::SlowMotion(health.deathSlowMotionSeconds, health.deathSlowMotionScale);
 
 	// Nobody keeps the lock on a dead body
 	if (LockOnTargetComponent* lockOnTarget = entityManager.GetComponent<LockOnTargetComponent>(entityID))
@@ -281,11 +331,13 @@ float GetRiposteMultiplier(EntityManager& entityManager, unsigned int defenderID
 // ========== A weapon's hit ==========
 
 // Goes through the target's defences: a parry turns it away, a shield takes it, poise keeps the target on its feet
-// True when the hit landed (on the body or on the shield)
-bool HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID)
+HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID)
 {
-	if (!CanBeHurt(entityManager, targetID) || TryParry(entityManager, targetID, attackerID))
-		return false;
+	if (!CanBeHurt(entityManager, targetID))
+		return HitResult::Missed;
+
+	if (TryParry(entityManager, targetID, attackerID))
+		return HitResult::Parried;
 
 	const BlockResult block = TryBlock(entityManager, targetID, attackerID, damage);
 
@@ -293,17 +345,83 @@ bool HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float da
 	{
 		if (damage <= 0.0f || LoseHealth(entityManager, targetID, damage, attackerID))
 			CharacterActionsSystem::PlayBlockImpact(entityManager, targetID);
-		return true;
+		return HitResult::Blocked;
 	}
 
-	damage *= GetRiposteMultiplier(entityManager, targetID, attackerID);
+	const float riposteMultiplier = GetRiposteMultiplier(entityManager, targetID, attackerID);
+	damage *= riposteMultiplier;
 
 	const bool staggers = block == BlockResult::GuardBroken || BreaksPoise(entityManager, targetID, poiseDamage);
 
 	if (LoseHealth(entityManager, targetID, damage, attackerID) && staggers)
 		CharacterActionsSystem::PlayHitReaction(entityManager, targetID);
 
-	return true;
+	if (block == BlockResult::GuardBroken)
+		return HitResult::Blocked;
+
+	return riposteMultiplier > 1.0f ? HitResult::Riposte : HitResult::Hurt;
+}
+
+// ========== How a hit feels ==========
+
+bool IsPlayerCharacter(EntityManager& entityManager, unsigned int entityID)
+{
+	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
+	return controller && controller->isPlayerControlled;
+}
+
+void BurstShieldEffect(EntityManager& entityManager, unsigned int defenderID, const glm::vec3& point, int count)
+{
+	const ShieldComponent* shield = FindShield(entityManager, defenderID);
+	if (shield && !shield->blockEffect.empty())
+		ParticleSystem::BurstAt(entityManager, shield->blockEffect, point, count);
+}
+
+void BurstBodyEffect(EntityManager& entityManager, unsigned int targetID, const glm::vec3& point, int count)
+{
+	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(targetID);
+	if (health && !health->hitEffect.empty())
+		ParticleSystem::BurstAt(entityManager, health->hitEffect, point, count);
+}
+
+// Sparks or blood where the weapon landed; a freeze and a shake when the player gives or takes the blow
+// (two enemies trading hits far away don't stop the game)
+void FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComponent& hitbox, const CharacterActionsComponent& owner,
+	unsigned int ownerID, unsigned int targetID, const glm::vec3& contactPoint)
+{
+	const float heaviness = owner.GetDamageMultiplier() > 1.0f ? HeavyFeelMultiplier : 1.0f;
+	float hitStopSeconds  = hitbox.hitStopSeconds * heaviness;
+	float cameraShake     = hitbox.cameraShake    * heaviness;
+
+	switch (result)
+	{
+	case HitResult::Missed:
+		return;
+	case HitResult::Parried:
+		BurstShieldEffect(entityManager, targetID, contactPoint, ParryEffectBurst);
+		hitStopSeconds = ParryHitStopSeconds;
+		cameraShake    = ParryCameraShake;
+		break;
+	case HitResult::Blocked:
+		BurstShieldEffect(entityManager, targetID, contactPoint, BlockEffectBurst);
+		hitStopSeconds *= BlockedFeelMultiplier;
+		cameraShake    *= BlockedFeelMultiplier;
+		break;
+	case HitResult::Hurt:
+		BurstBodyEffect(entityManager, targetID, contactPoint, (int)(HitEffectBurst * heaviness));
+		break;
+	case HitResult::Riposte:
+		BurstBodyEffect(entityManager, targetID, contactPoint, HitEffectBurst * 3);
+		hitStopSeconds = RiposteHitStopSeconds;
+		cameraShake    = RiposteCameraShake;
+		break;
+	}
+
+	if (!IsPlayerCharacter(entityManager, ownerID) && !IsPlayerCharacter(entityManager, targetID))
+		return;
+
+	TimeScaleSystem::HitStop(hitStopSeconds);
+	FollowCameraSystem::Shake(entityManager, cameraShake);
 }
 
 }
@@ -331,6 +449,9 @@ constexpr int ShockwaveBurst = 140;
 
 // Only targets within this height of the shockwave are hurt (not someone standing on a wall above)
 constexpr float ShockwaveHeight = 2.0f;
+
+// The camera feels a shockwave up to this many of its radii away
+constexpr float ShockwaveShakeReach = 3.0f;
 
 bool IsOnPlayersSide(EntityManager& entityManager, unsigned int entityID)
 {
@@ -376,6 +497,7 @@ void UpdateShockwave(EntityManager& entityManager, unsigned int ownerID, Charact
 
 	BurstEffect(entityManager, ownerID, actions.shockwaveEffect);
 	CharacterSoundsSystem::Play(entityManager, ownerID, &CharacterSoundsComponent::shockwaveSound);
+	FollowCameraSystem::ShakeFrom(entityManager, actions.shockwaveCameraShake, center, actions.shockwaveRadius * ShockwaveShakeReach);
 
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
 	{

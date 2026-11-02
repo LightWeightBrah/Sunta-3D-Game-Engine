@@ -6,6 +6,7 @@
 
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "Gameplay/EntityName.h"
 #include "Core/VirtualFileSystem.h"
 #include "Renderer/ElementBuffer.h"
 #include "Renderer/Renderer.h"
@@ -103,7 +104,32 @@ void ParticleSystem::Update(EntityManager& entityManager, float deltaTime)
 
 		for (int i = 0; i < newParticles; i++)
 			SpawnParticle(emitter, emitterMatrix);
+
+		// Around another point: the emitter's turn and size stay, only its place changes
+		for (const ParticleEmitterComponent::PointBurst& burst : emitter.pointBursts)
+		{
+			glm::mat4 burstMatrix = emitterMatrix;
+			burstMatrix[3] = glm::vec4(burst.position, 1.0f);
+
+			for (int i = 0; i < burst.count; i++)
+				SpawnParticle(emitter, burstMatrix);
+		}
+		emitter.pointBursts.clear();
 	}
+}
+
+bool ParticleSystem::BurstAt(EntityManager& entityManager, const std::string& emitterName, const glm::vec3& position, int count)
+{
+	unsigned int emitterID = 0;
+	if (!TryFindEntityByName(entityManager, emitterName, emitterID))
+		return false;
+
+	ParticleEmitterComponent* emitter = entityManager.GetComponent<ParticleEmitterComponent>(emitterID);
+	if (!emitter)
+		return false;
+
+	emitter->pointBursts.push_back({ position, count });
+	return true;
 }
 
 void ParticleSystem::Clear(EntityManager& entityManager)
@@ -113,6 +139,7 @@ void ParticleSystem::Clear(EntityManager& entityManager)
 		emitter.particles.clear();
 		emitter.unbornParticles = 0.0f;
 		emitter.burstCount      = 0;
+		emitter.pointBursts.clear();
 	}
 }
 

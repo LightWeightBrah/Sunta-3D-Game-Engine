@@ -41,6 +41,10 @@ bool CharacterAnimationComponentDrawer::Draw(void* componentData, unsigned int e
 	edited |= DrawAnimationCombo("Strafe Right", component->strafeRightAnimation, animations);
 
 	edited |= ImGui::SliderFloat("Blend Seconds", &component->blendSeconds, 0.0f, CharacterAnimationComponent::MaxBlendSeconds);
+	edited |= ImGui::SliderFloat("Walk Animation Speed", &component->walkAnimationSpeed, 0.0f, 10.0f);
+	edited |= ImGui::SliderFloat("Run Animation Speed",  &component->runAnimationSpeed,  0.0f, 15.0f);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Meters per second the character moves in the animation: it plays faster or slower with the real speed (0 = off)");
 
 	return edited;
 }

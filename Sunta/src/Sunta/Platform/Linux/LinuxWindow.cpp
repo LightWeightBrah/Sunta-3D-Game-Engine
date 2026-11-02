@@ -58,6 +58,16 @@ void LinuxWindow::SetFullscreen(bool enabled)
 	implementation.SetFullscreen(enabled);
 }
 
+void LinuxWindow::CenterOnScreen()
+{
+	implementation.CenterOnScreen();
+}
+
+void LinuxWindow::Maximize()
+{
+	implementation.Maximize();
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> LinuxWindow::CreateGUIBackend()
 {
 	return std::make_unique<LinuxOpenGLEditorGUIBackend>();

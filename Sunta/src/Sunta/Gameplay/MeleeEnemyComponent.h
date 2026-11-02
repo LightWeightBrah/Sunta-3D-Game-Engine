@@ -31,6 +31,9 @@ struct MeleeEnemyComponent
 	float heavyAttackChance     = 0.25f;
 	int   maxLightCombo         = 2;
 
+	// The chance (0..1) that a combo of light attacks ends with a heavy one (a finisher the player has to read)
+	float finisherChance = 0.0f;
+
 	// How long it circles the player after attacking before it comes in again
 	float recoverSeconds = 1.0f;
 
@@ -45,6 +48,7 @@ struct MeleeEnemyComponent
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, attackCooldownSeconds, PropertyDataType::Float, 0.0f, MaxSeconds),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, heavyAttackChance,     PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY(MeleeEnemyComponent, maxLightCombo, PropertyDataType::Int),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, finisherChance,        PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, recoverSeconds,        PropertyDataType::Float, 0.0f, MaxSeconds)
 			});
 	}

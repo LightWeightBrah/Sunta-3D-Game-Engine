@@ -38,6 +38,8 @@
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
 #include "Effects/ParticleSystem.h"
+#include "Effects/WeaponTrailSystem.h"
+#include "Gameplay/TimeScaleSystem.h"
 #include "Audio/AudioSystem.h"
 #include "Gameplay/CharacterSoundsSystem.h"
 #include "Gameplay/CurrencySystem.h"
@@ -319,18 +321,21 @@ void Scene::Update()
 	// While a cutscene plays nobody fights: the enemies don't think (the player's keys are off, see CutsceneSystem)
 	const bool isCutscene = isPlaying && CutsceneSystem::IsPlaying(entityManager);
 
+	// The game's time: slower during a hit stop or slow motion. The camera, the HUD and the cutscenes keep the real time
+	const float gameDeltaTime = isPlaying ? TimeScaleSystem::Update(EngineTime::deltaTime) : EngineTime::deltaTime;
+
 	if (isPlaying)
 	{
-		Systems::UpdateScripts(entityManager, EngineTime::deltaTime, isScriptHotReloadEnabled);
+		Systems::UpdateScripts(entityManager, gameDeltaTime, isScriptHotReloadEnabled);
 		LockOnSystem::SetRecordingSightRays(DebugRenderer::GetShowLockOnSightRays());
-		LockOnSystem::Update(entityManager, EngineTime::deltaTime, cameraForward, lookDelta);
+		LockOnSystem::Update(entityManager, gameDeltaTime, cameraForward, lookDelta);
 		if (!isCutscene)
-			EnemySystem::Update(entityManager, EngineTime::deltaTime);
-		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
-		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame);
+			EnemySystem::Update(entityManager, gameDeltaTime);
+		CharacterControllerSystem::Update(entityManager, gameDeltaTime, cameraForward);
+		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame, gameDeltaTime);
 		HealingFlaskSystem::Update(entityManager);
-		StaminaSystem::Update(entityManager, EngineTime::deltaTime);
-		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
+		StaminaSystem::Update(entityManager, gameDeltaTime);
+		PhysicsSystem::UpdatePhysics(entityManager, gameDeltaTime);
 	}
 
 	Systems::SyncMeshComponents(entityManager);
@@ -339,8 +344,8 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		// After physics (needs the speed of the character), before the animators play the chosen animation
-		CharacterAnimationSystem::Update(entityManager);
-		Systems::UpdateAnimators(entityManager, EngineTime::deltaTime);
+		CharacterAnimationSystem::Update(entityManager, gameDeltaTime);
+		Systems::UpdateAnimators(entityManager, gameDeltaTime);
 	}
 
 	// After the animators: a child on a bone (a sword in the hand) follows the pose of this frame
@@ -349,14 +354,15 @@ void Scene::Update()
 	// After the transforms: the sword hurts where the hand holds it in this frame
 	if (isPlaying)
 	{
-		CombatSystem::Update(entityManager, EngineTime::deltaTime);
-		CharacterSoundsSystem::Update(entityManager, EngineTime::deltaTime);
-		BossSystem::Update(entityManager, EngineTime::deltaTime);
-		ParticleSystem::Update(entityManager, EngineTime::deltaTime);
+		CombatSystem::Update(entityManager, gameDeltaTime);
+		CharacterSoundsSystem::Update(entityManager, gameDeltaTime);
+		BossSystem::Update(entityManager, gameDeltaTime);
+		ParticleSystem::Update(entityManager, gameDeltaTime);
+		WeaponTrailSystem::Update(entityManager, gameDeltaTime);
 		BonfireSystem::Update(entityManager);
 		LevelUpSystem::Update(entityManager, EngineTime::deltaTime);
-		CurrencySystem::Update(entityManager, EngineTime::deltaTime);
-		RespawnSystem::Update(entityManager, EngineTime::deltaTime);
+		CurrencySystem::Update(entityManager, gameDeltaTime);
+		RespawnSystem::Update(entityManager, gameDeltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
 	}
 
@@ -625,6 +631,7 @@ void Scene::Render(Renderer& renderer)
 
 	// After everything solid: the specks are hidden behind walls, but never hide what is behind them
 	ParticleSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix, sceneData.cameraPosition, sceneData.fogDensity);
+	WeaponTrailSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix);
 
 	for (const auto& item : gizmosQueue)
 		DebugRenderer::DrawBoxWireframe(item.corners, item.color, sceneData);
@@ -777,6 +784,8 @@ void Scene::BeginPlay()
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);
+	WeaponTrailSystem::Clear(entityManager);
+	TimeScaleSystem::Reset();
 	CutsceneSystem::PrepareForPlay(entityManager);
 	CharacterSoundsSystem::PrepareForPlay(entityManager);
 	HealingFlaskSystem::PrepareForPlay(entityManager);

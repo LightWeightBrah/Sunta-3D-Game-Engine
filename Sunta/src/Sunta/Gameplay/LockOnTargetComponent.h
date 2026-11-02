@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 
 #include "ECS/ComponentLayout.h"
 #include "Core/EngineAssets.h"
@@ -26,12 +27,17 @@ struct LockOnTargetComponent
 	// Where the lock-on aims, as a height above the position of the entity (the chest of a person, the middle of a big boss)
 	float aimHeight = 1.2f;
 
+	// A bone of its Model to aim at instead (e.g. "Chest"): the aim follows the body when an animation lifts it off the
+	// ground (a boss leaping, whose entity stays below on the floor). Empty or missing = 'aimHeight'
+	std::string aimBone;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<LockOnTargetComponent>("Lock On Target", EngineAssets::Icons::CharacterTarget,
 			{
 				ADD_PROPERTY(LockOnTargetComponent, isLockable, PropertyDataType::Bool),
-				ADD_PROPERTY_RANGED(LockOnTargetComponent, aimHeight, PropertyDataType::Float, 0.0f, MaxAimHeight)
+				ADD_PROPERTY_RANGED(LockOnTargetComponent, aimHeight, PropertyDataType::Float, 0.0f, MaxAimHeight),
+				ADD_PROPERTY(LockOnTargetComponent, aimBone, PropertyDataType::String)
 			});
 	}
 };

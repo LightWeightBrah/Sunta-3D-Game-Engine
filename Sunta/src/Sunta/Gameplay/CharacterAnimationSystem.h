@@ -10,7 +10,7 @@ class CharacterAnimationSystem
 {
 public:
 	// Call once per frame, AFTER physics (it reads the speed of the character) and BEFORE the animators are updated
-	static void Update(EntityManager& entityManager);
+	static void Update(EntityManager& entityManager, float deltaTime);
 
 	// Adds the Character Animation together with the Animator it needs
 	// When the Model is already loaded, the animations called Idle, Walk and Run are chosen

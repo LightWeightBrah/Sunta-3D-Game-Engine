@@ -217,6 +217,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	StaminaComponent::RegisterToInspector();
 	PoiseComponent::RegisterToInspector();
 	ParticleEmitterComponent::RegisterToInspector();
+	WeaponTrailComponent::RegisterToInspector();
 	EnvironmentComponent::RegisterToInspector();
 	CutsceneComponent::RegisterToInspector();
 	AudioSourceComponent::RegisterToInspector();

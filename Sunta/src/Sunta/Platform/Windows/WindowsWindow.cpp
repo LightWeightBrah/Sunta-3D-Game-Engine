@@ -59,6 +59,16 @@ void WindowsWindow::SetFullscreen(bool enabled)
 	implementation.SetFullscreen(enabled);
 }
 
+void WindowsWindow::CenterOnScreen()
+{
+	implementation.CenterOnScreen();
+}
+
+void WindowsWindow::Maximize()
+{
+	implementation.Maximize();
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> WindowsWindow::CreateGUIBackend()
 {
 	return std::make_unique<WindowsOpenGLEditorGUIBackend>();

@@ -80,6 +80,7 @@ void RunEditor(const std::filesystem::path& projectDirectory)
 {
 	Sunta::ApplicationSpecification specification;
 	specification.windowTitle      = "Sunta Editor";
+	specification.maximized        = true;
 	specification.assetSource      = Sunta::AssetSource::SourceTree;
 	specification.projectDirectory = projectDirectory;
 

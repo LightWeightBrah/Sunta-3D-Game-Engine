@@ -68,6 +68,14 @@ struct ParticleEmitterComponent
 	// Specks asked for by burst(), born in the next frame
 	int burstCount = 0;
 
+	// Bursts somewhere else than the emitter (sparks where a sword hit): born around that point in the next frame
+	struct PointBurst
+	{
+		glm::vec3 position;
+		int       count;
+	};
+	std::vector<PointBurst> pointBursts;
+
 	// 'isEmitting' as set in the scene (the game, e.g. a boss in its second phase, can switch it on and back)
 	bool wasEmittingAtStart = true;
 

@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CharacterActionsSystem.h"
 
+#include <random>
 #include <glm/glm.hpp>
 
 #include "AnimationNames.h"
@@ -62,6 +63,18 @@ constexpr MoveWindow LeapMove       = { 0.10f, 0.30f, 0.36f };  // In the air fr
 
 // A leap lands this far in front of its target (meters): close enough for the blow, not on top of it
 constexpr float LeapLandingDistance = 1.5f;
+
+// How fast a leap turns in the air towards where its target is now (degrees per second)
+constexpr float LeapTurnDegreesPerSecond = 360.0f;
+
+// A held (delayed) blow goes on slowly at this part of its speed: a long, tense wind-up instead of a freeze
+constexpr float HeldAttackPlaybackSpeed = 0.25f;
+
+std::mt19937& GetActionsRandom()
+{
+	static std::mt19937 random(std::random_device{}());
+	return random;
+}
 
 // The keywords the animations are found by when the component is added (the names of the Knight's animations contain them)
 constexpr const char* RollKeyword         = "roll";
@@ -253,6 +266,7 @@ int GetNextLightAttackStep(const Character& character)
 void PlayActionAnimation(Character& character, const std::string& name)
 {
 	character.animator->animator.CrossFadeTo(&character.animations->at(name), character.actions->blendSeconds, false);
+	character.animator->animator.SetPlaybackSpeed(1.0f);
 	character.animator->currentAnimationName = name;
 }
 
@@ -278,7 +292,7 @@ float GetActionSpeed(const CharacterActionsComponent& actions, CharacterAction a
 
 	case CharacterAction::LightAttack:
 	case CharacterAction::HeavyAttack:
-		return actions.attackStepSpeed * GetMoveFactor(AttackStepMove, progress);
+		return actions.currentAttackStepSpeed * GetMoveFactor(AttackStepMove, progress);
 
 	case CharacterAction::LeapAttack:
 		return actions.currentLeapSpeed * GetMoveFactor(LeapMove, progress);
@@ -299,6 +313,41 @@ void MoveBody(Character& character, float progress)
 	character.body->velocity.z = velocity.z;
 
 	PhysicsSystem::WakeUp(*character.body);
+}
+
+// A delayed blow: the animation creeps on very slowly for a moment in the wind-up (see attackDelayChance)
+void UpdateAttackDelay(Character& character, float progress, float deltaTime)
+{
+	CharacterActionsComponent& actions = *character.actions;
+	Animator& animator = character.animator->animator;
+
+	const bool isAtHold = actions.IsAttacking() && actions.attackDelayLeft > 0.0f && progress >= actions.GetHitFrom() * actions.attackDelayAt;
+	if (!isAtHold)
+	{
+		if (actions.isHoldingAttack)
+			animator.SetPlaybackSpeed(1.0f);
+		actions.isHoldingAttack = false;
+		return;
+	}
+
+	actions.isHoldingAttack  = true;
+	actions.attackDelayLeft -= deltaTime;
+	animator.SetPlaybackSpeed(actions.attackDelayLeft > 0.0f ? HeldAttackPlaybackSpeed : 1.0f);
+}
+
+// An attack that keeps turning towards its target until it starts to hit (see attackTurnDegreesPerSecond)
+void TrackTarget(EntityManager& entityManager, Character& character, float progress, float deltaTime)
+{
+	CharacterActionsComponent& actions = *character.actions;
+	if (actions.attackTurnDegreesPerSecond <= 0.0f || !actions.IsAttacking() || progress >= actions.GetHitFrom())
+		return;
+
+	const float currentYaw = GetYawToFace(actions.actionDirection);
+	const float difference = WrapDegrees(GetYawToFace(GetAttackDirection(entityManager, character)) - currentYaw);
+	const float largestTurn = actions.attackTurnDegreesPerSecond * deltaTime;
+
+	actions.actionDirection = GetDirectionFromYawAndPitch(currentYaw + glm::clamp(difference, -largestTurn, largestTurn), 0.0f);
+	FaceDirection(character, actions.actionDirection);
 }
 
 bool IsRemembered(CharacterAction request)
@@ -379,6 +428,65 @@ float ChooseLeapSpeed(EntityManager& entityManager, const Character& character, 
 	return glm::min(travel / glm::max(seconds, 0.01f), actions.leapSpeed);
 }
 
+// The flight of a leap homes in on where its target is NOW: each frame the speed is chosen to land in front of it in the
+// time the flight has left, and the leap turns towards it (a player who moved during the take-off is still met)
+void SteerLeap(EntityManager& entityManager, Character& character, float progress, float deltaTime)
+{
+	CharacterActionsComponent& actions = *character.actions;
+	if (actions.currentAction != CharacterAction::LeapAttack || progress < LeapMove.from || progress >= LeapMove.to)
+		return;
+
+	glm::vec3 targetPoint;
+	if (!character.lockOn || !LockOnSystem::TryGetTargetAimPoint(entityManager, *character.lockOn, targetPoint))
+		return;
+
+	const glm::vec3 toTarget = KeepOnlyHorizontalPart(targetPoint - character.transform->position);
+	const float     travel   = glm::max(glm::length(toTarget) - LeapLandingDistance, 0.0f);
+
+	// The time the flight still moves at full speed: the rest of the full part, and half of the slowing down
+	const Animation& animation = character.animations->at(GetAnimationName(actions, CharacterAction::LeapAttack));
+	const float seconds    = animation.GetDuration() / glm::max(animation.GetTicksPerSecond(), 1.0f);
+	const float slowPart   = LeapMove.to - LeapMove.fullUntil;
+	const float fullLeft   = progress < LeapMove.fullUntil ? (LeapMove.fullUntil - progress) + 0.5f * slowPart
+	                                                       : 0.5f * (LeapMove.to - progress) * (LeapMove.to - progress) / slowPart;
+	actions.currentLeapSpeed = glm::min(travel / glm::max(fullLeft * seconds, 0.05f), actions.leapSpeed);
+
+	if (glm::length(toTarget) < SmallestHeldDirection)
+		return;
+
+	const float currentYaw  = GetYawToFace(actions.actionDirection);
+	const float difference  = WrapDegrees(GetYawToFace(glm::normalize(toTarget)) - currentYaw);
+	const float largestTurn = LeapTurnDegreesPerSecond * deltaTime;
+	actions.actionDirection = GetDirectionFromYawAndPitch(currentYaw + glm::clamp(difference, -largestTurn, largestTurn), 0.0f);
+	FaceDirection(character, actions.actionDirection);
+}
+
+// Just fast enough to end the step 'attackReach' from the target, never slower than the usual step (see attackLungeSpeed)
+float ChooseAttackStepSpeed(EntityManager& entityManager, const Character& character, const std::string& animationName)
+{
+	const CharacterActionsComponent& actions = *character.actions;
+
+	glm::vec3 targetPoint;
+	if (actions.attackLungeSpeed <= 0.0f || !character.lockOn || !LockOnSystem::TryGetTargetAimPoint(entityManager, *character.lockOn, targetPoint))
+		return actions.attackStepSpeed;
+
+	const float distance = glm::length(KeepOnlyHorizontalPart(targetPoint - character.transform->position));
+	const float travel   = glm::max(distance - actions.attackReach, 0.0f);
+	const float seconds  = GetMoveSeconds(character.animations->at(animationName), AttackStepMove);
+
+	return glm::clamp(travel / glm::max(seconds, 0.01f), actions.attackStepSpeed, glm::max(actions.attackLungeSpeed, actions.attackStepSpeed));
+}
+
+// The dice for a delayed blow are thrown when the attack starts (see attackDelayChance)
+float ChooseAttackDelay(const CharacterActionsComponent& actions)
+{
+	if (actions.attackDelayChance <= 0.0f)
+		return 0.0f;
+
+	const float roll = std::uniform_real_distribution<float>(0.0f, 1.0f)(GetActionsRandom());
+	return roll < actions.attackDelayChance ? actions.attackDelaySeconds : 0.0f;
+}
+
 void StartAction(EntityManager& entityManager, Character& character, CharacterAction action, const std::string& animationName)
 {
 	CharacterActionsComponent& actions = *character.actions;
@@ -411,6 +519,13 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 
 	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack || action == CharacterAction::LeapAttack)
 		actions.attackNumber++;
+
+	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack)
+	{
+		actions.currentAttackStepSpeed = ChooseAttackStepSpeed(entityManager, character, animationName);
+		actions.attackDelayLeft        = ChooseAttackDelay(actions);
+	}
+	actions.isHoldingAttack = false;
 
 	actions.currentAction                  = action;
 	actions.queuedAction                   = CharacterAction::None;
@@ -532,7 +647,7 @@ void UpdateItemUse(Character& character)
 		FinishAction(character);
 }
 
-void UpdateCurrentAction(EntityManager& entityManager, Character& character, CharacterAction request)
+void UpdateCurrentAction(EntityManager& entityManager, Character& character, CharacterAction request, float deltaTime)
 {
 	CharacterActionsComponent& actions = *character.actions;
 	const float progress = character.animator->animator.GetProgress();
@@ -560,6 +675,9 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 	if (IsRemembered(request) && progress >= actions.inputBufferFrom && CanBeInterrupted(actions.currentAction))
 		actions.queuedAction = request;
 
+	TrackTarget(entityManager, character, progress, deltaTime);
+	SteerLeap(entityManager, character, progress, deltaTime);
+	UpdateAttackDelay(character, progress, deltaTime);
 	MoveBody(character, progress);
 	EndOrChainAction(entityManager, character, progress);
 }
@@ -602,7 +720,7 @@ void WarnAboutMissingAnimation(const std::string& entityName, const char* label,
 
 }
 
-void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMouse)
+void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMouse, float deltaTime)
 {
 	for (CharacterActionsComponent& actions : entityManager.GetAllComponents<CharacterActionsComponent>())
 	{
@@ -613,7 +731,7 @@ void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMou
 		const CharacterAction request = TakeRequest(character, canUseMouse);
 
 		if (actions.IsBusy())
-			UpdateCurrentAction(entityManager, character, request);
+			UpdateCurrentAction(entityManager, character, request, deltaTime);
 		else if (request != CharacterAction::None && TryStartAction(entityManager, character, request))
 			MoveBody(character, 0.0f);
 	}

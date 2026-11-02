@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <glm/glm.hpp>
 
 namespace Sunta
@@ -26,6 +27,10 @@ public:
 
 	// When the game starts and stops: no specks left over from the last time
 	static void Clear(EntityManager& entityManager);
+
+	// Throws 'count' specks of the emitter named 'emitterName' around 'position' (in the next Update), e.g. sparks where
+	// a sword hit a shield. One emitter in the scene serves every hit. False when there is no such emitter
+	static bool BurstAt(EntityManager& entityManager, const std::string& emitterName, const glm::vec3& position, int count);
 
 private:
 	static inline std::shared_ptr<VertexArray> quad;

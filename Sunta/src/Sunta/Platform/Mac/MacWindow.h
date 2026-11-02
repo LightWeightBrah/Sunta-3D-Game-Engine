@@ -25,6 +25,8 @@ public:
 	virtual bool SetIcon(const std::string& imagePath) override;
 	virtual void SetVSync(bool enabled) override;
 	virtual void SetFullscreen(bool enabled) override;
+	virtual void CenterOnScreen() override;
+	virtual void Maximize() override;
 
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() override;
 

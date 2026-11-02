@@ -39,6 +39,15 @@ struct CharacterAnimationComponent
 	// How long one animation takes to change into the next one. 0 is a hard cut
 	float blendSeconds = 0.2f;
 
+	// How fast the character moves in the walking and the running animation (meters per second, at the model's size).
+	// The animation then plays faster or slower with the real speed, so the feet stay planted on the ground
+	// (slowing down, walking behind a shield). 0 = always at its own speed
+	float walkAnimationSpeed = 0.0f;
+	float runAnimationSpeed  = 0.0f;
+
+	// The speed the walking animation plays at now (eased, the measured speed jitters). Not saved with the scene
+	float currentPlaybackSpeed = 1.0f;
+
 	static void RegisterToInspector()
 	{
 		// The Inspector draws it with a drawer (dropdowns of the animations), so there is no list of properties

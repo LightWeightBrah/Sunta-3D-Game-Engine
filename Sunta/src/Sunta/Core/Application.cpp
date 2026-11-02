@@ -185,6 +185,9 @@ void Application::ApplyGameWindowIcon()
 void Application::ApplyWindowSettings()
 {
 	window->SetVSync(specification.vsync);
+	window->CenterOnScreen();
+	if (specification.maximized)
+		window->Maximize();
 	window->SetFullscreen(specification.fullscreen);
 }
 

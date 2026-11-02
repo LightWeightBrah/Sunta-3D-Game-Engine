@@ -29,10 +29,14 @@ from mathutils import Matrix
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import character_from_mesh  # noqa: E402
+import hand_pinning  # noqa: E402
+import held_item_check  # noqa: E402
+import strike_windows  # noqa: E402
 import knight_generator  # noqa: E402
 import motion_retarget  # noqa: E402
 from motion_retarget import MotionClip  # noqa: E402
-from sunta_blender import clear_scene, export_gltf, place_preview_camera, setup_preview_render, show_only  # noqa: E402
+from sunta_blender import (clear_scene, export_gltf, place_preview_camera, render_hand_closeups,  # noqa: E402
+                           setup_preview_render, show_only)
 
 BLENDER_FOLDER = os.path.dirname(os.path.abspath(__file__))
 # Rigged by Meshy (its own bones and weights), from the first concept of the boss
@@ -60,6 +64,8 @@ LEAP_SLAM = "Generated/Motions/leap_slam.fbx"
 BOSS_ANIMATIONS = {
     "Idle":           MotionClip(GREAT_SWORD + "idle.fbx"),
     "Walk":           MotionClip(GREAT_SWORD + "walk.fbx"),
+    # Runs forward carrying the axe at the shoulder ("run.fbx" of the pack runs backwards: the body went one way, the legs
+    # the other). The scene fades walking and running into each other slowly, so the axe moves up instead of jumping
     "Run":            MotionClip(GREAT_SWORD + "run (2).fbx"),
     "Walk_Back":      MotionClip(GREAT_SWORD + "walk (2).fbx"),
     "Strafe_Left":    MotionClip(GREAT_SWORD + "strafe.fbx"),
@@ -71,19 +77,22 @@ BOSS_ANIMATIONS = {
     "Attack_Light_2": MotionClip(GREAT_SWORD + "slash (3).fbx", speed=0.9),
     "Attack_Light_3": MotionClip(GREAT_SWORD + "slash.fbx", speed=0.8),
     "Attack_Heavy":   MotionClip(GREAT_SWORD + "slash (2).fbx", speed=0.8),
-    "Attack_Leap":    MotionClip(LEAP_SLAM, rig=motion_retarget.SMPL),
+    # Without its last frames: getting up after the landing flipped a hand around (Text to Motion)
+    "Attack_Leap":    MotionClip(LEAP_SLAM, 1, 108, rig=motion_retarget.SMPL),
 
     # Phase two starts with this (BossComponent.phaseTwoAnimation): it raises the axe and bursts into embers
     "Phase_Two":      MotionClip(GREAT_SWORD + "power up.fbx"),
 
-    # The boss shows itself before the fight (a Cutscene plays it): it raises its head and the axe, slams it down, roars
-    "Intro":          MotionClip("Generated/Motions/boss_intro.fbx", rig=motion_retarget.SMPL, keeps_facing=True),
+    # The boss shows itself before the fight (a Cutscene plays it): it raises the axe high over its head, then kneels and
+    # drives the blade into the ground (motion capture; Text to Motion's intro turned the wrists at random)
+    "Intro":          MotionClip(GREAT_SWORD + "casting.fbx"),
 
-    # Phase two fights differently (BossComponent swaps these in): a charge with a wide sweep, a combo of two chops and
-    # a jump slam, and an overhead slam into the ground with a fire shockwave. Made by Meshy's Text to Motion
-    "Fury_Sweep":     MotionClip("Generated/Motions/boss_charge_sweep.fbx", rig=motion_retarget.SMPL),
-    "Fury_Combo":     MotionClip("Generated/Motions/boss_combo_slam.fbx", rig=motion_retarget.SMPL),
-    "Fury_Slam":      MotionClip("Generated/Motions/boss_overhead_slam.fbx", rig=motion_retarget.SMPL),
+    # Phase two fights differently (BossComponent swaps these in): a wide low sweep sliding on one knee, a leap with
+    # a spinning cleave, and three great cuts ending in a fire shockwave. Motion capture (Mixamo's Great Sword Pack):
+    # the moves Meshy's Text to Motion made turned the wrists at random, the hands flipped half around in single frames
+    "Fury_Sweep":     MotionClip(GREAT_SWORD + "slide attack.fbx"),
+    "Fury_Combo":     MotionClip(GREAT_SWORD + "jump attack.fbx", speed=1.1),
+    "Fury_Slam":      MotionClip(GREAT_SWORD + "slash (2).fbx", speed=0.95),
 
     "Hit":            MotionClip(GREAT_SWORD + "impact.fbx"),
     "Parried":        MotionClip(GREAT_SWORD + "impact (3).fbx", speed=0.6),
@@ -96,6 +105,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", required=True)
     parser.add_argument("--preview", default="")
+    parser.add_argument("--hands", default="", help="a folder for close-ups of the hands holding the axe")
+    parser.add_argument("--hands-actions", default="Idle,Attack_Heavy,Attack_Leap,Fury_Sweep,Fury_Combo,Fury_Slam")
     return parser.parse_args(argv)
 
 
@@ -217,10 +228,10 @@ def load_axe(folder):
 
 def axe_in_fists(armature, body):
     """Both hands closed into fists; the axe (built with the haft along +Z, the blade towards -X) goes through the right
-    one towards the thumb, its blade where the straight fingers pointed. Returns the axe's rest matrix"""
+    one towards the thumb, its blade where the straight fingers pointed. Returns the axe's rest matrix and both fists"""
     right = character_from_mesh.make_fist(armature, body, "_R")
-    character_from_mesh.make_fist(armature, body, "_L")
-    return right.item_matrix(-right.fingers, right.fingers.cross(right.along), right.along)
+    left = character_from_mesh.make_fist(armature, body, "_L")
+    return right.item_matrix(-right.fingers, right.fingers.cross(right.along), right.along), right, left
 
 
 # ========== Pictures ==========
@@ -262,9 +273,25 @@ def main():
     character_from_mesh.make_engine_textures(body, boss_folder, "boss", BODY_BRIGHTNESS)
     character_from_mesh.bake_emission(body, boss_folder, "boss_emissive", ember_cracks, size=2048)
 
-    axe_matrix = axe_in_fists(armature, body)
+    axe_matrix, right, left = axe_in_fists(armature, body)
     character_from_mesh.add_held_item_bones(armature, [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE, axe_matrix)])
-    knight_generator.create_animations(armature, BOSS_ANIMATIONS)
+    actions = knight_generator.create_animations(armature, BOSS_ANIMATIONS,
+                                                 character_from_mesh.hand_frames(armature, {"_R": right, "_L": left}))
+    # Both fists stay on the haft, also in the motions made by Text to Motion (they swing it with one hand)
+    spacing = hand_pinning.FIST_SPACING * BODY_HEIGHT / 1.8
+    made_by_text = [name for name, clip in BOSS_ANIMATIONS.items() if clip.rig is motion_retarget.SMPL]
+    hand_pinning.straight_hands(armature, [action for action in actions if action.name in made_by_text])
+    hand_pinning.smooth_jerks(armature, [action for action in actions if action.name in made_by_text])
+    # The leap keeps the axe as its straight right wrist holds it: aimed at the left hand it turned half around mid-air
+    made_by_text = [name for name in made_by_text if name != "Attack_Leap"]
+    hand_pinning.hold_with_both_hands(armature, knight_generator.WEAPON_BONE, actions, left, right.along,
+                                      right.center, spacing, aimed_actions=made_by_text)
+    hand_pinning.spread_twist(armature, actions)
+    held_item_check.check_actions(armature, body, actions)
+    held_item_check.check_arms(armature, actions)
+    strike_windows.print_strike_windows(armature, knight_generator.WEAPON_BONE, axe_matrix,
+                                        AXE_LENGTH * (1.0 - AXE_GRIP_FROM_BOTTOM), actions)
+    strike_windows.print_stride_speeds(armature, actions)
     knight_generator.reset_to_rest_pose(armature)
 
     axe = load_axe(axe_folder)
@@ -275,6 +302,9 @@ def main():
     if arguments.preview:
         knight_generator.hang_on_bone(axe, armature, knight_generator.WEAPON_BONE, axe_matrix)
         render_previews(os.path.abspath(arguments.preview), armature, body, axe)
+        if arguments.hands:
+            render_hand_closeups(os.path.abspath(arguments.hands), "boss_", armature, arguments.hands_actions.split(","),
+                                 steps=4, distance=1.1)
 
     print("BOSS_GENERATOR_DONE")
 

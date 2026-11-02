@@ -21,6 +21,9 @@ struct ApplicationSpecification
 	unsigned int windowWidth  = 1600;
 	unsigned int windowHeight = 800;
 	bool         fullscreen   = false;
+	// The window fills the screen when it opens, with its title bar and the taskbar still there (the editor).
+	// Otherwise it opens in the middle of the screen
+	bool         maximized    = false;
 	bool         vsync        = true;
 
 	AssetSource assetSource = AssetSource::SourceTree;

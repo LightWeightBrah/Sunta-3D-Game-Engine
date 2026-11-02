@@ -60,6 +60,11 @@ struct BossComponent
 	float       phaseTwoShockwaveRadius = 0.0f;
 	int         phaseTwoMaxLightCombo   = 0;   // 0 = keep
 
+	// A cutscene after the boss falls (the name of an entity with a Cutscene, empty = none), started this many seconds
+	// after its death (the killing blow's slow motion and the fall play first)
+	std::string defeatCutscene;
+	float       defeatCutsceneDelay = 3.0f;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	bool isAwake      = false;
@@ -90,6 +95,10 @@ struct BossComponent
 	// How long phase two lasts (it grows and glows from the start of it)
 	float phaseTwoSeconds = 0.0f;
 
+	// Since the boss fell (seconds), and whether its defeat cutscene was started
+	float secondsSinceDefeat     = 0.0f;
+	bool  hasStartedDefeatCutscene = false;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<BossComponent>("Boss", EngineAssets::Icons::StateMachine,
@@ -111,7 +120,9 @@ struct BossComponent
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoHeavyHitFrom, PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoHeavyHitTo,   PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(BossComponent, phaseTwoShockwaveRadius, PropertyDataType::Float, 0.0f, MaxShockwaveRadius),
-				ADD_PROPERTY(BossComponent, phaseTwoMaxLightCombo, PropertyDataType::Int)
+				ADD_PROPERTY(BossComponent, phaseTwoMaxLightCombo, PropertyDataType::Int),
+				ADD_PROPERTY(BossComponent, defeatCutscene, PropertyDataType::String),
+				ADD_PROPERTY_RANGED(BossComponent, defeatCutsceneDelay, PropertyDataType::Float, 0.0f, 20.0f)
 			});
 	}
 };

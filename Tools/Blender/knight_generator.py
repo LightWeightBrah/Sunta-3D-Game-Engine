@@ -33,7 +33,7 @@ from mathutils import Matrix, Quaternion, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from motion_retarget import SMPL, MotionClip, retarget  # noqa: E402
+from motion_retarget import MotionClip, retarget  # noqa: E402
 from sunta_blender import (  # noqa: E402
     Palette,
     PartBuilder,
@@ -137,7 +137,10 @@ SHIELD_TOP = Vector((0.0, 1.0, 0.0))
 
 SHIELD_RADIUS = 0.30
 SHIELD_THICKNESS = 0.03
-SHIELD_GRIP_BEHIND_FACE = 0.035  # the middle of the grip, behind the back of the planks
+# The middle of the grip, behind the back of the planks: the fist closes around it, the back of the fist just touches the planks
+# (a fist of a rigged knight reaches about 8 cm from the middle of its hole to its back), so the grip stands on two posts
+SHIELD_GRIP_BEHIND_FACE = 0.088
+SHIELD_GRIP_LENGTH = 0.13
 
 # ========== Sword size (meters) ==========
 
@@ -255,10 +258,12 @@ def build_shield_mesh(palette):
         location = (math.cos(angle) * (SHIELD_RADIUS - 0.03), math.sin(angle) * (SHIELD_RADIUS - 0.03), face_z + 0.006)
         parts.sphere(None, "steel_dark", location, (0.011, 0.011, 0.008), segments=8, rings=6)
 
-    # The grip behind the boss, across the shield, and the strap over the forearm
-    parts.box(None, "leather", (0.0, 0.0, -face_z - SHIELD_GRIP_BEHIND_FACE), (0.13, 0.03, 0.025))
-    parts.box(None, "iron", (-0.08, 0.0, -face_z - 0.018), (0.02, 0.035, 0.035))
-    parts.box(None, "iron", (0.08, 0.0, -face_z - 0.018), (0.02, 0.035, 0.035))
+    # The grip behind the boss, across the shield, on two iron posts, and the strap over the forearm
+    grip_depth = SHIELD_GRIP_BEHIND_FACE + 0.0125
+    post_x = SHIELD_GRIP_LENGTH * 0.5 + 0.01
+    parts.box(None, "leather", (0.0, 0.0, -face_z - SHIELD_GRIP_BEHIND_FACE), (SHIELD_GRIP_LENGTH, 0.03, 0.025))
+    parts.box(None, "iron", (-post_x, 0.0, -face_z - grip_depth * 0.5), (0.02, 0.03, grip_depth))
+    parts.box(None, "iron", (post_x, 0.0, -face_z - grip_depth * 0.5), (0.02, 0.03, grip_depth))
     parts.box(None, "leather", (0.0, -0.12, -face_z - 0.03), (0.16, 0.035, 0.012))
 
     return parts.to_object("KnightShield")
@@ -380,8 +385,9 @@ ANIMATIONS = {
     # and a parry (a fast raise of the shield)
     "Block":          MotionClip(PACK + "block idle.fbx"),
     "Block_Impact":   MotionClip(PACK + "impact.fbx"),
-    # A quick swipe of the shield outward (Meshy Text to Motion): the blow that lands in it early is turned away
-    "Parry":          MotionClip("Generated/Motions/knight_parry.fbx", rig=SMPL, keeps_facing=True),
+    # A quick flick of the shield outward: the body stands in its guard, the left arm is moved through key poses
+    # of the shield afterwards (characters_generator.PARRY_POSES). The blow that lands in it early is turned away
+    "Parry":          MotionClip(PACK + "idle (4).fbx", 0, 22),
 
     # Resting at a bonfire: kneeling down (the last frame is held), and getting up again
     "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
@@ -393,8 +399,9 @@ ANIMATIONS = {
 }
 
 
-def create_animations(armature, animations=None):
-    """Every clip of the table (the knights' ANIMATIONS by default) as an action of the armature"""
+def create_animations(armature, animations=None, hand_frames=None):
+    """Every clip of the table (the knights' ANIMATIONS by default) as an action of the armature.
+    'hand_frames': the fists of the character (character_from_mesh.hand_frames), matched to the clips' hands"""
     armature.animation_data_create()
     actions = []
 
@@ -402,7 +409,7 @@ def create_animations(armature, animations=None):
         action = bpy.data.actions.new(name)
         action.use_fake_user = True
 
-        last_frame = retarget(armature, clip, action)
+        last_frame = retarget(armature, clip, action, hand_frames)
         action.frame_range = (0, last_frame)
         actions.append(action)
 

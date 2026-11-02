@@ -518,6 +518,36 @@ def setup_preview_render(width=480, height=600, is_transparent=False):
     return camera
 
 
+def aim_camera_at(camera, target, angle_degrees, distance, rise=0.15):
+    """The camera 'distance' away from a point, around it at 'angle_degrees' (0 = in front of the character, +Y),
+    a little above it: close-ups of the hands holding a weapon"""
+    angle = math.radians(angle_degrees)
+    camera.location = target + Vector((math.sin(angle) * distance, math.cos(angle) * distance, rise))
+    camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
+
+
+def render_hand_closeups(folder, prefix, armature, actions, steps=4, angles=(70, -70, 180), distance=0.75):
+    """Close-ups of each hand through the actions: whether the fist really holds the grip, the wrist doesn't twist
+    and no hand or forearm goes through the shield. The camera follows the hand (from outside, inside and behind),
+    the held models must already hang on their bones"""
+    os.makedirs(folder, exist_ok=True)
+    camera = bpy.context.scene.camera or setup_preview_render(320, 320)
+    scene = bpy.context.scene
+    for action_name in actions:
+        armature.animation_data.action = bpy.data.actions[action_name]
+        start, end = (int(frame) for frame in armature.animation_data.action.frame_range)
+        for step in range(steps):
+            scene.frame_set(start + round((end - start) * step / max(steps - 1, 1)))
+            for hand in ("Hand_L", "Hand_R"):
+                bone = armature.pose.bones[hand]
+                center = armature.matrix_world @ ((bone.head + bone.tail) * 0.5)
+                side = -1.0 if hand.endswith("_L") else 1.0
+                for angle in angles:
+                    aim_camera_at(camera, center, angle * side, distance)
+                    scene.render.filepath = os.path.join(folder, "{}{}_{}_{}_{}.png".format(prefix, action_name, step, hand, angle))
+                    bpy.ops.render.render(write_still=True)
+
+
 def place_preview_camera(camera, angle_degrees, distance=3.4, height=1.1, target_height=0.85):
     angle = math.radians(angle_degrees)
     camera.location = (math.sin(angle) * distance, math.cos(angle) * distance, height)

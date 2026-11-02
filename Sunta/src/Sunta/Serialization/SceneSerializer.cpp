@@ -46,6 +46,7 @@ namespace SceneKeys
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
+	constexpr const char* WeaponTrailComponent      = "weapon_trail";
 	constexpr const char* EnvironmentComponent      = "environment";
 	constexpr const char* CutsceneComponent         = "cutscene";
 	constexpr const char* AudioSourceComponent      = "audio_source";
@@ -142,6 +143,9 @@ namespace SceneKeys
 	constexpr const char* FollowSharpness           = "follow_sharpness";
 	constexpr const char* LockOnPitchDegrees        = "lock_on_pitch_degrees";
 	constexpr const char* LockOnSharpness           = "lock_on_sharpness";
+	constexpr const char* ShakeDegrees              = "shake_degrees";
+	constexpr const char* ShakeFrequency            = "shake_frequency";
+	constexpr const char* ShakeFadePerSecond        = "shake_fade_per_second";
 
 	constexpr const char* MaxDistance               = "max_distance";
 	constexpr const char* SearchAngleDegrees        = "search_angle_degrees";
@@ -157,9 +161,12 @@ namespace SceneKeys
 	constexpr const char* StrafeLeftAnimation       = "strafe_left_animation";
 	constexpr const char* StrafeRightAnimation      = "strafe_right_animation";
 	constexpr const char* BlendSeconds              = "blend_seconds";
+	constexpr const char* WalkAnimationSpeed        = "walk_animation_speed";
+	constexpr const char* RunAnimationSpeed         = "run_animation_speed";
 
 	constexpr const char* IsLockable                = "is_lockable";
 	constexpr const char* AimHeight                 = "aim_height";
+	constexpr const char* AimBone                   = "aim_bone";
 
 	constexpr const char* RollAnimation             = "roll_animation";
 	constexpr const char* BackstepAnimation         = "backstep_animation";
@@ -192,6 +199,16 @@ namespace SceneKeys
 	constexpr const char* ShockwaveDamage           = "shockwave_damage";
 	constexpr const char* ShockwaveDistance         = "shockwave_distance";
 	constexpr const char* ShockwaveEffect           = "shockwave_effect";
+	constexpr const char* ShockwaveCameraShake      = "shockwave_camera_shake";
+	constexpr const char* AttackTurnDegreesPerSecond = "attack_turn_degrees_per_second";
+	constexpr const char* AttackLungeSpeed          = "attack_lunge_speed";
+	constexpr const char* AttackReach               = "attack_reach";
+	constexpr const char* AttackDelayChance         = "attack_delay_chance";
+	constexpr const char* AttackDelaySeconds        = "attack_delay_seconds";
+	constexpr const char* AttackDelayAt             = "attack_delay_at";
+	constexpr const char* FinisherChance            = "finisher_chance";
+	constexpr const char* FootstepCameraShake       = "footstep_camera_shake";
+	constexpr const char* FootstepShakeRadius       = "footstep_shake_radius";
 	constexpr const char* PhaseTwoLight1Animation   = "phase_two_light_attack_1_animation";
 	constexpr const char* PhaseTwoLight2Animation   = "phase_two_light_attack_2_animation";
 	constexpr const char* PhaseTwoLight3Animation   = "phase_two_light_attack_3_animation";
@@ -212,6 +229,9 @@ namespace SceneKeys
 	constexpr const char* HeavyDamageMultiplier     = "heavy_damage_multiplier";
 
 	constexpr const char* MaxHealth                 = "max_health";
+	constexpr const char* HitEffect                 = "hit_effect";
+	constexpr const char* DeathSlowMotionSeconds    = "death_slow_motion_seconds";
+	constexpr const char* DeathSlowMotionScale      = "death_slow_motion_scale";
 
 	constexpr const char* MaxStamina                = "max_stamina";
 	constexpr const char* RegenerationPerSecond     = "regeneration_per_second";
@@ -225,10 +245,13 @@ namespace SceneKeys
 
 	constexpr const char* Damage                    = "damage";
 	constexpr const char* PoiseDamage               = "poise_damage";
+	constexpr const char* HitStopSeconds            = "hit_stop_seconds";
+	constexpr const char* CameraShake               = "camera_shake";
 
 	constexpr const char* GuardAngleDegrees         = "guard_angle_degrees";
 	constexpr const char* DamageThrough             = "damage_through";
 	constexpr const char* StaminaPerDamage          = "stamina_per_damage";
+	constexpr const char* BlockEffect               = "block_effect";
 
 	constexpr const char* PhaseTwoHealthFraction    = "phase_two_health_fraction";
 	constexpr const char* PhaseTwoDamageMultiplier  = "phase_two_damage_multiplier";
@@ -238,6 +261,8 @@ namespace SceneKeys
 	constexpr const char* PhaseTwoGrowth            = "phase_two_growth";
 	constexpr const char* PhaseTwoSound             = "phase_two_sound";
 	constexpr const char* PhaseTwoMusic             = "phase_two_music";
+	constexpr const char* DefeatCutscene            = "defeat_cutscene";
+	constexpr const char* DefeatCutsceneDelay       = "defeat_cutscene_delay";
 
 	constexpr const char* Sound                     = "sound";
 	constexpr const char* SoundVolume               = "volume";
@@ -305,6 +330,9 @@ namespace SceneKeys
 	constexpr const char* StartColor                = "start_color";
 	constexpr const char* EndColor                  = "end_color";
 	constexpr const char* ParticleIntensity         = "intensity";
+	constexpr const char* BaseOffset                = "base_offset";
+	constexpr const char* TipOffset                 = "tip_offset";
+	constexpr const char* OnlyWhileStriking         = "only_while_striking";
 	constexpr const char* MaxParticles              = "max_particles";
 
 	constexpr const char* SkyboxFolder              = "skybox_folder";
@@ -644,7 +672,9 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::WalkBackAnimation,    characterAnimation->walkBackAnimation    },
 				{ SceneKeys::StrafeLeftAnimation,  characterAnimation->strafeLeftAnimation  },
 				{ SceneKeys::StrafeRightAnimation, characterAnimation->strafeRightAnimation },
-				{ SceneKeys::BlendSeconds,  characterAnimation->blendSeconds  }
+				{ SceneKeys::BlendSeconds,  characterAnimation->blendSeconds  },
+				{ SceneKeys::WalkAnimationSpeed, characterAnimation->walkAnimationSpeed },
+				{ SceneKeys::RunAnimationSpeed,  characterAnimation->runAnimationSpeed  }
 			};
 		}
 
@@ -663,7 +693,10 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::MaxPitchDegrees,  followCamera->maxPitchDegrees    },
 				{ SceneKeys::FollowSharpness,  followCamera->followSharpness    },
 				{ SceneKeys::LockOnPitchDegrees, followCamera->lockOnPitchDegrees },
-				{ SceneKeys::LockOnSharpness,  followCamera->lockOnSharpness    }
+				{ SceneKeys::LockOnSharpness,  followCamera->lockOnSharpness    },
+				{ SceneKeys::ShakeDegrees,       followCamera->shakeDegrees       },
+				{ SceneKeys::ShakeFrequency,     followCamera->shakeFrequency     },
+				{ SceneKeys::ShakeFadePerSecond, followCamera->shakeFadePerSecond }
 			};
 		}
 
@@ -686,7 +719,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			entityJson[SceneKeys::LockOnTargetComponent] =
 			{
 				{ SceneKeys::IsLockable, lockOnTarget->isLockable },
-				{ SceneKeys::AimHeight,  lockOnTarget->aimHeight  }
+				{ SceneKeys::AimHeight,  lockOnTarget->aimHeight  },
+				{ SceneKeys::AimBone,    lockOnTarget->aimBone    }
 			};
 		}
 
@@ -725,6 +759,13 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::ShockwaveDamage,       actions->shockwaveDamage       },
 				{ SceneKeys::ShockwaveDistance,     actions->shockwaveDistance     },
 				{ SceneKeys::ShockwaveEffect,       actions->shockwaveEffect       },
+				{ SceneKeys::ShockwaveCameraShake,  actions->shockwaveCameraShake  },
+				{ SceneKeys::AttackTurnDegreesPerSecond, actions->attackTurnDegreesPerSecond },
+				{ SceneKeys::AttackLungeSpeed,      actions->attackLungeSpeed      },
+				{ SceneKeys::AttackReach,           actions->attackReach           },
+				{ SceneKeys::AttackDelayChance,     actions->attackDelayChance     },
+				{ SceneKeys::AttackDelaySeconds,    actions->attackDelaySeconds    },
+				{ SceneKeys::AttackDelayAt,         actions->attackDelayAt         },
 				{ SceneKeys::ParryFrom,             actions->parryFrom             },
 				{ SceneKeys::ParryTo,               actions->parryTo               },
 				{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
@@ -738,7 +779,13 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 
 		if (auto* health = entityManager.GetComponent<HealthComponent>(i))
 		{
-			entityJson[SceneKeys::HealthComponent] = { { SceneKeys::MaxHealth, health->maxHealth } };
+			entityJson[SceneKeys::HealthComponent] =
+			{
+				{ SceneKeys::MaxHealth,              health->maxHealth              },
+				{ SceneKeys::HitEffect,              health->hitEffect              },
+				{ SceneKeys::DeathSlowMotionSeconds, health->deathSlowMotionSeconds },
+				{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   }
+			};
 		}
 
 		if (auto* stamina = entityManager.GetComponent<StaminaComponent>(i))
@@ -763,6 +810,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			{
 				{ SceneKeys::Damage,                     hitbox->damage       },
 				{ SceneKeys::PoiseDamage,                hitbox->poiseDamage  },
+				{ SceneKeys::HitStopSeconds,             hitbox->hitStopSeconds },
+				{ SceneKeys::CameraShake,                hitbox->cameraShake  },
 				{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
 				{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
 				{ SceneKeys::Layer, static_cast<unsigned int>(hitbox->layer)  },
@@ -776,7 +825,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			{
 				{ SceneKeys::GuardAngleDegrees, shield->guardAngleDegrees },
 				{ SceneKeys::DamageThrough,     shield->damageThrough     },
-				{ SceneKeys::StaminaPerDamage,  shield->staminaPerDamage  }
+				{ SceneKeys::StaminaPerDamage,  shield->staminaPerDamage  },
+				{ SceneKeys::BlockEffect,       shield->blockEffect       }
 			};
 		}
 
@@ -790,6 +840,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
 				{ SceneKeys::PhaseTwoSound,            boss->phaseTwoSound            },
 				{ SceneKeys::PhaseTwoMusic,            boss->phaseTwoMusic            },
+				{ SceneKeys::DefeatCutscene,           boss->defeatCutscene           },
+				{ SceneKeys::DefeatCutsceneDelay,      boss->defeatCutsceneDelay      },
 				{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
 				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           },
 				{ SceneKeys::PhaseTwoLight1Animation,  boss->phaseTwoLight1Animation  },
@@ -857,6 +909,19 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::EndColor,           SerializeVec3(emitter->endColor)        },
 				{ SceneKeys::ParticleIntensity,  emitter->intensity                      },
 				{ SceneKeys::MaxParticles,       emitter->maxParticles                   }
+			};
+		}
+
+		if (auto* trail = entityManager.GetComponent<WeaponTrailComponent>(i))
+		{
+			entityJson[SceneKeys::WeaponTrailComponent] =
+			{
+				{ SceneKeys::BaseOffset,        SerializeVec3(trail->baseOffset) },
+				{ SceneKeys::TipOffset,         SerializeVec3(trail->tipOffset)  },
+				{ SceneKeys::Color,        SerializeVec3(trail->color)      },
+				{ SceneKeys::ParticleIntensity, trail->intensity                 },
+				{ SceneKeys::LifetimeSeconds,   trail->lifetimeSeconds           },
+				{ SceneKeys::OnlyWhileStriking, trail->onlyWhileStriking         }
 			};
 		}
 
@@ -969,6 +1034,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::LeftFootBone,   sounds->leftFootBone   },
 				{ SceneKeys::RightFootBone,  sounds->rightFootBone  },
 				{ SceneKeys::FootstepMeters, sounds->footstepMeters },
+				{ SceneKeys::FootstepCameraShake, sounds->footstepCameraShake },
+				{ SceneKeys::FootstepShakeRadius, sounds->footstepShakeRadius },
 				{ SceneKeys::SoundVolume,    sounds->volume         }
 			};
 		}
@@ -1040,6 +1107,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::AttackCooldownSeconds, meleeEnemy->attackCooldownSeconds },
 				{ SceneKeys::HeavyAttackChance,     meleeEnemy->heavyAttackChance     },
 				{ SceneKeys::MaxLightCombo,         meleeEnemy->maxLightCombo         },
+				{ SceneKeys::FinisherChance,        meleeEnemy->finisherChance        },
 				{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        },
 				{ SceneKeys::LeapAttackDistance,    meleeEnemy->leapAttackDistance    }
 			};
@@ -1330,6 +1398,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			characterAnimation.strafeLeftAnimation  = animationData.value(SceneKeys::StrafeLeftAnimation,  characterAnimation.strafeLeftAnimation);
 			characterAnimation.strafeRightAnimation = animationData.value(SceneKeys::StrafeRightAnimation, characterAnimation.strafeRightAnimation);
 			characterAnimation.blendSeconds  = animationData.value(SceneKeys::BlendSeconds,  characterAnimation.blendSeconds);
+			characterAnimation.walkAnimationSpeed = animationData.value(SceneKeys::WalkAnimationSpeed, characterAnimation.walkAnimationSpeed);
+			characterAnimation.runAnimationSpeed  = animationData.value(SceneKeys::RunAnimationSpeed,  characterAnimation.runAnimationSpeed);
 		}
 
 		if (entityJson.contains(SceneKeys::FollowCameraComponent))
@@ -1350,6 +1420,9 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			followCamera.followSharpness     = followData.value(SceneKeys::FollowSharpness,    followCamera.followSharpness);
 			followCamera.lockOnPitchDegrees  = followData.value(SceneKeys::LockOnPitchDegrees, followCamera.lockOnPitchDegrees);
 			followCamera.lockOnSharpness     = followData.value(SceneKeys::LockOnSharpness,    followCamera.lockOnSharpness);
+			followCamera.shakeDegrees        = followData.value(SceneKeys::ShakeDegrees,       followCamera.shakeDegrees);
+			followCamera.shakeFrequency      = followData.value(SceneKeys::ShakeFrequency,     followCamera.shakeFrequency);
+			followCamera.shakeFadePerSecond  = followData.value(SceneKeys::ShakeFadePerSecond, followCamera.shakeFadePerSecond);
 		}
 
 		if (entityJson.contains(SceneKeys::LockOnComponent))
@@ -1374,6 +1447,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			lockOnTarget.isLockable = targetData.value(SceneKeys::IsLockable, lockOnTarget.isLockable);
 			lockOnTarget.aimHeight  = targetData.value(SceneKeys::AimHeight,  lockOnTarget.aimHeight);
+			lockOnTarget.aimBone    = targetData.value(SceneKeys::AimBone,    lockOnTarget.aimBone);
 		}
 
 		if (entityJson.contains(SceneKeys::CharacterActionsComponent))
@@ -1413,6 +1487,13 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.shockwaveDamage       = actionsData.value(SceneKeys::ShockwaveDamage,       actions.shockwaveDamage);
 			actions.shockwaveDistance     = actionsData.value(SceneKeys::ShockwaveDistance,     actions.shockwaveDistance);
 			actions.shockwaveEffect       = actionsData.value(SceneKeys::ShockwaveEffect,       actions.shockwaveEffect);
+			actions.shockwaveCameraShake  = actionsData.value(SceneKeys::ShockwaveCameraShake,  actions.shockwaveCameraShake);
+			actions.attackTurnDegreesPerSecond = actionsData.value(SceneKeys::AttackTurnDegreesPerSecond, actions.attackTurnDegreesPerSecond);
+			actions.attackLungeSpeed      = actionsData.value(SceneKeys::AttackLungeSpeed,      actions.attackLungeSpeed);
+			actions.attackReach           = actionsData.value(SceneKeys::AttackReach,           actions.attackReach);
+			actions.attackDelayChance     = actionsData.value(SceneKeys::AttackDelayChance,     actions.attackDelayChance);
+			actions.attackDelaySeconds    = actionsData.value(SceneKeys::AttackDelaySeconds,    actions.attackDelaySeconds);
+			actions.attackDelayAt         = actionsData.value(SceneKeys::AttackDelayAt,         actions.attackDelayAt);
 			actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
 			actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
 			actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
@@ -1425,8 +1506,12 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 		if (entityJson.contains(SceneKeys::HealthComponent))
 		{
+			const auto& healthData = entityJson[SceneKeys::HealthComponent];
 			auto& health = entityManager.AddComponent<HealthComponent>(entity);
-			health.maxHealth     = entityJson[SceneKeys::HealthComponent].value(SceneKeys::MaxHealth, health.maxHealth);
+			health.maxHealth     = healthData.value(SceneKeys::MaxHealth, health.maxHealth);
+			health.hitEffect     = healthData.value(SceneKeys::HitEffect, health.hitEffect);
+			health.deathSlowMotionSeconds = healthData.value(SceneKeys::DeathSlowMotionSeconds, health.deathSlowMotionSeconds);
+			health.deathSlowMotionScale   = healthData.value(SceneKeys::DeathSlowMotionScale,   health.deathSlowMotionScale);
 			health.currentHealth = health.maxHealth;
 		}
 
@@ -1455,6 +1540,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			hitbox.damage      = hitboxData.value(SceneKeys::Damage,      hitbox.damage);
 			hitbox.poiseDamage = hitboxData.value(SceneKeys::PoiseDamage, hitbox.poiseDamage);
+			hitbox.hitStopSeconds = hitboxData.value(SceneKeys::HitStopSeconds, hitbox.hitStopSeconds);
+			hitbox.cameraShake    = hitboxData.value(SceneKeys::CameraShake,    hitbox.cameraShake);
 			hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
 			hitbox.layer      = static_cast<CollisionLayer>(hitboxData.value(SceneKeys::Layer, static_cast<unsigned int>(hitbox.layer)));
 
@@ -1473,6 +1560,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			shield.guardAngleDegrees = shieldData.value(SceneKeys::GuardAngleDegrees, shield.guardAngleDegrees);
 			shield.damageThrough     = shieldData.value(SceneKeys::DamageThrough,     shield.damageThrough);
 			shield.staminaPerDamage  = shieldData.value(SceneKeys::StaminaPerDamage,  shield.staminaPerDamage);
+			shield.blockEffect       = shieldData.value(SceneKeys::BlockEffect,       shield.blockEffect);
 		}
 
 		if (entityJson.contains(SceneKeys::BossComponent))
@@ -1486,6 +1574,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
 			boss.phaseTwoSound            = bossData.value(SceneKeys::PhaseTwoSound,            boss.phaseTwoSound);
 			boss.phaseTwoMusic            = bossData.value(SceneKeys::PhaseTwoMusic,            boss.phaseTwoMusic);
+			boss.defeatCutscene           = bossData.value(SceneKeys::DefeatCutscene,           boss.defeatCutscene);
+			boss.defeatCutsceneDelay      = bossData.value(SceneKeys::DefeatCutsceneDelay,      boss.defeatCutsceneDelay);
 			boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
 			boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
 			boss.phaseTwoLight1Animation  = bossData.value(SceneKeys::PhaseTwoLight1Animation,  boss.phaseTwoLight1Animation);
@@ -1536,6 +1626,24 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			if (environmentData.contains(SceneKeys::FogColor))
 				environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);
+		}
+
+		if (entityJson.contains(SceneKeys::WeaponTrailComponent))
+		{
+			const auto& trailData = entityJson[SceneKeys::WeaponTrailComponent];
+			auto& trail = entityManager.AddComponent<WeaponTrailComponent>(entity);
+
+			// A missing key keeps the default written in WeaponTrailComponent.h
+			trail.intensity         = trailData.value(SceneKeys::ParticleIntensity, trail.intensity);
+			trail.lifetimeSeconds   = trailData.value(SceneKeys::LifetimeSeconds,   trail.lifetimeSeconds);
+			trail.onlyWhileStriking = trailData.value(SceneKeys::OnlyWhileStriking, trail.onlyWhileStriking);
+
+			if (trailData.contains(SceneKeys::BaseOffset))
+				trail.baseOffset = DeserializeVec3(trailData[SceneKeys::BaseOffset]);
+			if (trailData.contains(SceneKeys::TipOffset))
+				trail.tipOffset = DeserializeVec3(trailData[SceneKeys::TipOffset]);
+			if (trailData.contains(SceneKeys::Color))
+				trail.color = DeserializeVec3(trailData[SceneKeys::Color]);
 		}
 
 		if (entityJson.contains(SceneKeys::ParticleEmitterComponent))
@@ -1681,6 +1789,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			sounds.leftFootBone   = soundsData.value(SceneKeys::LeftFootBone,   sounds.leftFootBone);
 			sounds.rightFootBone  = soundsData.value(SceneKeys::RightFootBone,  sounds.rightFootBone);
 			sounds.footstepMeters = soundsData.value(SceneKeys::FootstepMeters, sounds.footstepMeters);
+			sounds.footstepCameraShake = soundsData.value(SceneKeys::FootstepCameraShake, sounds.footstepCameraShake);
+			sounds.footstepShakeRadius = soundsData.value(SceneKeys::FootstepShakeRadius, sounds.footstepShakeRadius);
 			sounds.volume         = soundsData.value(SceneKeys::SoundVolume,    sounds.volume);
 		}
 
@@ -1760,6 +1870,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			meleeEnemy.attackCooldownSeconds = meleeData.value(SceneKeys::AttackCooldownSeconds, meleeEnemy.attackCooldownSeconds);
 			meleeEnemy.heavyAttackChance     = meleeData.value(SceneKeys::HeavyAttackChance,     meleeEnemy.heavyAttackChance);
 			meleeEnemy.maxLightCombo         = meleeData.value(SceneKeys::MaxLightCombo,         meleeEnemy.maxLightCombo);
+			meleeEnemy.finisherChance        = meleeData.value(SceneKeys::FinisherChance,        meleeEnemy.finisherChance);
 			meleeEnemy.recoverSeconds        = meleeData.value(SceneKeys::RecoverSeconds,        meleeEnemy.recoverSeconds);
 			meleeEnemy.leapAttackDistance    = meleeData.value(SceneKeys::LeapAttackDistance,    meleeEnemy.leapAttackDistance);
 		}

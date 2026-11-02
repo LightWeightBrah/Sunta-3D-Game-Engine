@@ -42,6 +42,8 @@ bin-intermediates/**.obj
 
 # Raw Mixamo downloads: their license forbids sharing the files, only the knight with the animations baked in is committed
 Tools/Blender/Mixamo/
+# Quaternius animation libraries (CC0) as served by Mesh2Motion, downloaded by hand (see enemies_generator.py)
+Tools/Blender/Mesh2Motion/
 
 # Python caches (made when Blender runs the Tools/Blender scripts)
 __pycache__/

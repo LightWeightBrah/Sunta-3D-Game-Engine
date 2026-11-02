@@ -45,6 +45,10 @@ struct CharacterSoundsComponent
 	std::string leftFootBone           = "Foot_L";
 	std::string rightFootBone          = "Foot_R";
 	float       footstepMeters         = 1.4f;
+
+	// A giant's footsteps shake the camera (0..1, 0 = not at all) of a player within 'footstepShakeRadius' meters
+	float       footstepCameraShake    = 0.0f;
+	float       footstepShakeRadius    = 10.0f;
 	float       volume                 = 1.0f;
 
 	// ========== Filled while the game plays, not saved with the scene ==========
@@ -78,6 +82,8 @@ struct CharacterSoundsComponent
 				ADD_PROPERTY(CharacterSoundsComponent, leftFootBone, PropertyDataType::String),
 				ADD_PROPERTY(CharacterSoundsComponent, rightFootBone, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(CharacterSoundsComponent, footstepMeters, PropertyDataType::Float, 0.2f, MaxFootstepMeters),
+				ADD_PROPERTY_RANGED(CharacterSoundsComponent, footstepCameraShake, PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(CharacterSoundsComponent, footstepShakeRadius, PropertyDataType::Float, 0.0f, 50.0f),
 				ADD_PROPERTY_RANGED(CharacterSoundsComponent, volume, PropertyDataType::Float, 0.0f, MaxVolume)
 			});
 	}

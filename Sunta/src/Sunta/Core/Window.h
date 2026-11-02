@@ -32,6 +32,13 @@ public:
 	// Fullscreen covers the whole main screen. Leaving it brings back the size and position the window had before
 	virtual void SetFullscreen(bool enabled) = 0;
 
+	// Puts the window in the middle of the main screen (the part not taken by the taskbar)
+	virtual void CenterOnScreen() = 0;
+
+	// The window fills the screen with its title bar and the taskbar still there (not fullscreen). Before the window
+	// is shown it is maximized when it shows up
+	virtual void Maximize() = 0;
+
 	virtual std::unique_ptr<EditorGUIBackend> CreateGUIBackend() = 0;
 
 	virtual unsigned int GetWidth() const = 0;

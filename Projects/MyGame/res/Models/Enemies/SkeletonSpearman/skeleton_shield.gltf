@@ -21,7 +21,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"skeleton_shield.001",
+			"name":"skeleton_shield",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -33,7 +33,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh_0.003",
+			"name":"Mesh_0.001",
 			"primitives":[
 				{
 					"attributes":{

@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 import bpy
 import numpy
-from mathutils import Matrix, Vector
+from mathutils import Matrix, Quaternion, Vector
 
 import knight_generator
 from sunta_blender import make_textured_material, select_only
@@ -187,6 +187,18 @@ class Grip:
         with its local axes along the given world directions"""
         rotation = Matrix((x, y, z)).transposed().to_4x4()
         return Matrix.Translation(self.center - rotation.to_3x3() @ grip_in_item) @ rotation
+
+
+def hand_frames(armature, grips):
+    """Per side ("_L", "_R" -> Grip): the knuckle line (the hole of the fist) and the straight fingers of the hand,
+    in the space of its bone, for motion_retarget.match_hands"""
+    frames = {}
+    for side, grip in grips.items():
+        if grip is None:
+            continue
+        rest = (armature.matrix_world @ armature.data.bones["Hand" + side].matrix_local).to_quaternion().inverted()
+        frames[side] = (rest @ grip.along, rest @ grip.fingers)
+    return frames
 
 
 def make_fist(armature, mesh, side):
@@ -500,3 +512,49 @@ def build_character(mesh, held_items, animations=None):
     knight_generator.create_animations(armature, animations)
     knight_generator.reset_to_rest_pose(armature)
     return armature, skeleton
+
+
+# ========== A held shield clear of the arm ==========
+
+
+def depth_through_disc(mesh, bone_names, center, face, radius, back_offset):
+    """How deep the body of these bones (their vertices, in the rest pose) goes through a disc: the plane 'back_offset'
+    behind 'center' along -'face' (the back of a shield's planks), within 'radius' of its middle. Below 0 = clear of it"""
+    groups = {mesh.vertex_groups[name].index for name in bone_names if name in mesh.vertex_groups}
+    back = center - face * back_offset
+    deepest = -1.0
+    for vertex in mesh.data.vertices:
+        if not any(slot.group in groups and slot.weight >= 0.2 for slot in vertex.groups):
+            continue
+        point = mesh.matrix_world @ vertex.co
+        offset = point - center
+        if (offset - face * offset.dot(face)).length <= radius:
+            deepest = max(deepest, (point - back).dot(face))
+    return deepest
+
+
+# How far a shield may be turned around its grip to keep the forearm behind it (degrees, both ways)
+SHIELD_MOST_TILT = 45
+
+
+def shield_along_forearm(armature, mesh, grip, side, make_matrix, face_in_model, radius, half_thickness):
+    """Where a shield held by this fist stands at rest: its face on the side of the back of the fist, lying along the
+    forearm and turned around the grip until the forearm (and the hand) goes away from it instead of through it.
+    'make_matrix(face)': the shield's rest matrix for a face direction, 'face_in_model': the model's axis its face
+    looks along. Prints how deep the arm still goes into it"""
+    forearm = (armature.data.bones["Hand" + side].head_local - armature.data.bones["LowerArm" + side].head_local).normalized()
+    face = grip.along.cross(forearm).normalized()
+    if face.dot(-grip.palm) < 0.0:
+        face = -face
+
+    def turned(degrees):
+        return make_matrix(Quaternion(grip.along, math.radians(degrees)) @ face)
+
+    def depth(matrix):
+        return depth_through_disc(mesh, ("Hand" + side, "LowerArm" + side), matrix.translation,
+                                  (matrix.to_3x3() @ face_in_model).normalized(), radius, half_thickness)
+
+    tilt = min(range(-SHIELD_MOST_TILT, SHIELD_MOST_TILT + 1, 3), key=lambda degrees: (round(max(depth(turned(degrees)), 0.0), 3), abs(degrees)))
+    matrix = turned(tilt)
+    print("Shield turned {} degrees around the grip, the arm goes {:.3f} m into it".format(tilt, max(depth(matrix), 0.0)))
+    return matrix

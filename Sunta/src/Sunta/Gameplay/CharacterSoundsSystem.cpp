@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 
+#include "FollowCameraSystem.h"
 #include "Animation/Animation.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioSystem.h"
@@ -81,6 +82,16 @@ void UpdateAttackSound(EntityManager& entityManager, unsigned int entityID, Char
 
 // ========== Footsteps ==========
 
+// The sound of a step, and the ground trembling under a heavy one (footstepCameraShake)
+void PlayFootstep(EntityManager& entityManager, unsigned int entityID, const CharacterSoundsComponent& sounds)
+{
+	AudioSystem::PlayAtEntity(entityManager, entityID, sounds.footstepSound, sounds.volume);
+
+	const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityID);
+	if (sounds.footstepCameraShake > 0.0f && transform)
+		FollowCameraSystem::ShakeFrom(entityManager, sounds.footstepCameraShake, transform->position, sounds.footstepShakeRadius);
+}
+
 // Walking on its own feet: alive, not rolling or attacking (the action moves the body then), not jumping, not standing
 bool IsWalking(EntityManager& entityManager, unsigned int entityID, const glm::vec3& step, float deltaTime)
 {
@@ -150,7 +161,7 @@ void UpdateFeet(EntityManager& entityManager, unsigned int entityID, CharacterSo
 
 		sounds.isFootLifted[foot] = false;
 		if (isWalking)
-			AudioSystem::PlayAtEntity(entityManager, entityID, sounds.footstepSound, sounds.volume);
+			PlayFootstep(entityManager, entityID, sounds);
 	}
 }
 
@@ -162,7 +173,7 @@ void CountMeters(EntityManager& entityManager, unsigned int entityID, CharacterS
 		return;
 
 	sounds.metersSinceFootstep = 0.0f;
-	AudioSystem::PlayAtEntity(entityManager, entityID, sounds.footstepSound, sounds.volume);
+	PlayFootstep(entityManager, entityID, sounds);
 }
 
 void UpdateFootsteps(EntityManager& entityManager, unsigned int entityID, CharacterSoundsComponent& sounds, float deltaTime)

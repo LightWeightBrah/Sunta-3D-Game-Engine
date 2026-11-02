@@ -123,6 +123,7 @@ public:
 		const bool isHeavy = EnemyContext::GetRandomFraction() < settings.heavyAttackChance;
 
 		lightAttacksLeft      = isHeavy ? 0 : RandomLightCombo(settings.maxLightCombo) - 1;
+		endsWithFinisher      = !isHeavy && EnemyContext::GetRandomFraction() < settings.finisherChance;
 		lastAttackNumber      = context.GetAttackNumber();
 		hasStartedFirstAttack = false;
 
@@ -149,6 +150,7 @@ public:
 
 private:
 	int          lightAttacksLeft      = 0;
+	bool         endsWithFinisher      = false;
 	unsigned int lastAttackNumber      = 0;
 	bool         hasStartedFirstAttack = false;
 
@@ -159,6 +161,9 @@ private:
 		if (attackNumber == lastAttackNumber)
 			return;
 
+		// The finisher is the last link: once a heavy attack started after the light ones nothing more is asked for
+		if (hasStartedFirstAttack && lightAttacksLeft == 0)
+			endsWithFinisher = false;
 		if (hasStartedFirstAttack)
 			lightAttacksLeft = std::max(lightAttacksLeft - 1, 0);
 
@@ -169,9 +174,13 @@ private:
 	void AskForNextLightAttack(EnemyContext& context)
 	{
 		const bool isTargetClose = context.GetDistanceToTarget() <= GetSettings(context).attackDistance * ComboReachFactor;
+		if (!isTargetClose)
+			return;
 
-		if (lightAttacksLeft > 0 && isTargetClose)
+		if (lightAttacksLeft > 0)
 			context.RequestAction(CharacterAction::LightAttack);
+		else if (endsWithFinisher && hasStartedFirstAttack)
+			context.RequestAction(CharacterAction::HeavyAttack);
 	}
 };
 

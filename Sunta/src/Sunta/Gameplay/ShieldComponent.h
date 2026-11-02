@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "ECS/ComponentLayout.h"
 #include "Core/EngineAssets.h"
 
@@ -28,13 +30,18 @@ struct ShieldComponent
 
 	float staminaPerDamage = 1.0f;
 
+	// Sparks where a blow lands on the shield (a parry throws three times as many): the name of an entity with
+	// a Particle Emitter. Empty = nothing
+	std::string blockEffect;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<ShieldComponent>("Shield", EngineAssets::Icons::BoxCollider,
 			{
 				ADD_PROPERTY_RANGED(ShieldComponent, guardAngleDegrees, PropertyDataType::Float, 0.0f, MaxGuardAngleDegrees),
 				ADD_PROPERTY_RANGED(ShieldComponent, damageThrough,     PropertyDataType::Float, 0.0f, 1.0f),
-				ADD_PROPERTY_RANGED(ShieldComponent, staminaPerDamage,  PropertyDataType::Float, 0.0f, MaxStaminaPerDamage)
+				ADD_PROPERTY_RANGED(ShieldComponent, staminaPerDamage,  PropertyDataType::Float, 0.0f, MaxStaminaPerDamage),
+				ADD_PROPERTY(ShieldComponent, blockEffect, PropertyDataType::String)
 			});
 	}
 };

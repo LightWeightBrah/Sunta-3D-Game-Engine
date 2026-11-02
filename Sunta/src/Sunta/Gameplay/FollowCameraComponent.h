@@ -30,6 +30,8 @@ struct FollowCameraComponent
 	static constexpr float MaxSharpness       = 50.0f;
 	static constexpr float MaxShoulderOffset  = 2.0f;
 	static constexpr float MaxViewOffset      = 45.0f;
+	static constexpr float MaxShakeDegrees    = 15.0f;
+	static constexpr float MaxShakeFrequency  = 60.0f;
 
 	// How far behind the player the camera is (meters)
 	float distance = 4.0f;
@@ -64,12 +66,20 @@ struct FollowCameraComponent
 	float lockOnPitchDegrees = 15.0f;
 	float lockOnSharpness    = 6.0f;
 
+	// Shaking when a heavy blow lands (see FollowCameraSystem::Shake): how far the view turns at the strongest shake (degrees),
+	// how quickly it trembles (times per second) and how much of the shake fades every second (1 = a full shake lasts a second)
+	float shakeDegrees          = 3.0f;
+	float shakeFrequency        = 22.0f;
+	float shakeFadePerSecond    = 1.8f;
+
 	// Working values of the camera. Not saved with the scene
 	bool      isInitialized   = false;
 	float     yawDegrees      = 0.0f;
 	float     pitchDegrees    = 0.0f;
 	float     currentDistance = 0.0f; // 'distance', or less while a wall pushes the camera
 	glm::vec3 pivot           = glm::vec3(0.0f);
+	float     shakeTrauma     = 0.0f; // 0..1, the shake is its square (small shakes stay subtle, big ones are wild)
+	float     shakeSeconds    = 0.0f; // runs on while shaking, the noise of the shake follows it
 
 	static void RegisterToInspector()
 	{
@@ -86,7 +96,10 @@ struct FollowCameraComponent
 				ADD_PROPERTY_RANGED(FollowCameraComponent, maxPitchDegrees,    PropertyDataType::Float, -MaxPitchLimit, MaxPitchLimit),
 				ADD_PROPERTY_RANGED(FollowCameraComponent, followSharpness,    PropertyDataType::Float, 1.0f,  MaxSharpness),
 				ADD_PROPERTY_RANGED(FollowCameraComponent, lockOnPitchDegrees, PropertyDataType::Float, -MaxPitchLimit, MaxPitchLimit),
-				ADD_PROPERTY_RANGED(FollowCameraComponent, lockOnSharpness,    PropertyDataType::Float, 1.0f,  MaxSharpness)
+				ADD_PROPERTY_RANGED(FollowCameraComponent, lockOnSharpness,    PropertyDataType::Float, 1.0f,  MaxSharpness),
+				ADD_PROPERTY_RANGED(FollowCameraComponent, shakeDegrees,       PropertyDataType::Float, 0.0f,  MaxShakeDegrees),
+				ADD_PROPERTY_RANGED(FollowCameraComponent, shakeFrequency,     PropertyDataType::Float, 1.0f,  MaxShakeFrequency),
+				ADD_PROPERTY_RANGED(FollowCameraComponent, shakeFadePerSecond, PropertyDataType::Float, 0.1f,  10.0f)
 			});
 	}
 };

@@ -176,9 +176,34 @@ void FillNamesFromModel(CharacterAnimationComponent& component, const AnimationM
 	}
 }
 
+// ========== Playing as fast as the character moves ==========
+
+// The playback speed never goes beyond these (a character pushed by a wall doesn't moonwalk)
+constexpr float SlowestPlayback = 0.5f;
+constexpr float FastestPlayback = 1.6f;
+
+// How quickly the playback speed follows the measured speed
+constexpr float PlaybackSharpness = 8.0f;
+
+float GetWantedPlaybackSpeed(const CharacterAnimationComponent& component, MoveState state, float speed)
+{
+	const float animationSpeed = state == MoveState::Idle ? 0.0f : (state == MoveState::Run ? component.runAnimationSpeed : component.walkAnimationSpeed);
+	if (animationSpeed <= 0.0f)
+		return 1.0f;
+
+	return glm::clamp(speed / animationSpeed, SlowestPlayback, FastestPlayback);
 }
 
-void CharacterAnimationSystem::Update(EntityManager& entityManager)
+void MatchPlaybackToSpeed(CharacterAnimationComponent& component, Animator& animator, MoveState state, float speed, float deltaTime)
+{
+	const float wanted = GetWantedPlaybackSpeed(component, state, speed);
+	component.currentPlaybackSpeed = SmoothValue(component.currentPlaybackSpeed, wanted, PlaybackSharpness, deltaTime);
+	animator.SetPlaybackSpeed(component.currentPlaybackSpeed);
+}
+
+}
+
+void CharacterAnimationSystem::Update(EntityManager& entityManager, float deltaTime)
 {
 	for (CharacterAnimationComponent& component : entityManager.GetAllComponents<CharacterAnimationComponent>())
 	{
@@ -193,9 +218,13 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager)
 
 		const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
 
-		// A roll or an attack plays its own animation (Character Actions), walking takes over again when it ends
+		// A roll or an attack plays its own animation at its own speed (Character Actions sets it), walking takes over
+		// again when it ends
 		if (controller && controller->isDrivenByAction)
+		{
+			component.currentPlaybackSpeed = 1.0f;
 			continue;
+		}
 
 		const float speed = GetHorizontalSpeed(entityManager.GetComponent<PhysicsBodyComponent>(entityID));
 		MoveState   state = GetMoveState(speed, controller);
@@ -204,6 +233,8 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager)
 
 		if (state == MoveState::Walk && transform && CharacterControllerSystem::IsFacingLockedTarget(entityManager, entityID))
 			state = GetStepState(*controller, *transform);
+
+		MatchPlaybackToSpeed(component, animatorComponent->animator, state, speed, deltaTime);
 
 		AnimationMap& animations = modelComponent->modelData->animations;
 

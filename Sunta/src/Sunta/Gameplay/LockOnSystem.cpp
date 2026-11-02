@@ -16,6 +16,7 @@
 #include "ECS/EntityManager.h"
 #include "Physics/CollisionShapes.h"
 #include "Physics/Raycast.h"
+#include "Scene/EntityHierarchy.h"
 
 namespace Sunta
 {
@@ -87,6 +88,13 @@ bool TryGetAimPoint(EntityManager& entityManager, unsigned int targetEntityID, g
 
 	if (!transform || !target)
 		return false;
+
+	glm::mat4 bone;
+	if (!target->aimBone.empty() && EntityHierarchy::TryGetBoneWorldTransform(entityManager, targetEntityID, target->aimBone, bone))
+	{
+		outAimPoint = glm::vec3(bone[3]);
+		return true;
+	}
 
 	outAimPoint = transform->position + WorldUp * target->aimHeight;
 	return true;

@@ -82,6 +82,27 @@ struct CharacterActionsComponent
 	float       shockwaveDamage   = 30.0f;
 	float       shockwaveDistance = 2.5f;
 	std::string shockwaveEffect;
+	// How hard the shockwave shakes the camera (0..1) when the player stands where it lands, fading to nothing
+	// at three times its radius
+	float       shockwaveCameraShake = 0.6f;
+
+	// How fast an attack keeps turning towards its target (degrees per second) until it starts to hit: a boss tracks
+	// the player during its wind-up and commits only for the blow itself, so walking around it doesn't dodge it.
+	// 0 = the attack commits to its direction when it starts (the player's attacks)
+	float attackTurnDegreesPerSecond = 0.0f;
+
+	// An attack steps in to reach its target: up to this fast (meters per second) during its step, just enough to end
+	// 'attackReach' meters from the target (a boss never swings at the air in front of a player who backed off).
+	// 0 = every attack steps at 'attackStepSpeed'
+	float attackLungeSpeed = 0.0f;
+	float attackReach      = 1.8f;
+
+	// A delayed blow (the cruel timing of the Souls bosses): with this chance (0..1) an attack holds still in its wind-up
+	// for 'attackDelaySeconds', at 'attackDelayAt' of the way to its hit (keeps tracking its target meanwhile),
+	// then strikes. A player who rolls on the usual rhythm is caught
+	float attackDelayChance  = 0.0f;
+	float attackDelaySeconds = 0.5f;
+	float attackDelayAt      = 0.7f;
 
 	// The bone where the upper body starts: an animation of the upper body only (the block) moves it and the bones above it
 	std::string upperBodyBone = "Spine";
@@ -141,6 +162,13 @@ struct CharacterActionsComponent
 
 	// How fast the current leap flies (chosen when it starts, from the distance to the target)
 	float currentLeapSpeed = 0.0f;
+
+	// How fast the current attack steps in (chosen when it starts, see attackLungeSpeed)
+	float currentAttackStepSpeed = 0.0f;
+
+	// The hold of the current attack's wind-up still to come (seconds), and whether it is going on now
+	float attackDelayLeft = 0.0f;
+	bool  isHoldingAttack = false;
 
 	// The animation of the current Special action
 	std::string specialAnimation;

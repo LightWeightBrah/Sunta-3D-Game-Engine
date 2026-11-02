@@ -13,7 +13,8 @@ class CharacterActionsSystem
 public:
 	// Call once per frame AFTER the Character Controller (it reads the held direction) and BEFORE physics (it sets the speed)
 	// 'canUseMouse' is false while the mouse belongs to the editor, so clicking a window doesn't swing the sword
-	static void Update(EntityManager& entityManager, bool canUseMouse);
+	// 'deltaTime' is the game's frame time (an attack turns towards its target during its wind-up)
+	static void Update(EntityManager& entityManager, bool canUseMouse, float deltaTime);
 
 	// Started by the Health: the character staggers (interrupting what it does), or dies and never acts again
 	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID);

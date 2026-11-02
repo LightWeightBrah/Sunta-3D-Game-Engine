@@ -58,6 +58,16 @@ void MacWindow::SetFullscreen(bool enabled)
 	implementation.SetFullscreen(enabled);
 }
 
+void MacWindow::CenterOnScreen()
+{
+	implementation.CenterOnScreen();
+}
+
+void MacWindow::Maximize()
+{
+	implementation.Maximize();
+}
+
 std::unique_ptr<Sunta::EditorGUIBackend> MacWindow::CreateGUIBackend()
 {
 	return std::make_unique<MacOpenGLEditorGUIBackend>();

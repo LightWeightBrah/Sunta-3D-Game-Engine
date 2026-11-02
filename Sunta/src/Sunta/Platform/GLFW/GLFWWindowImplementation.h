@@ -26,6 +26,8 @@ public:
 	bool SetIcon(const std::string& imagePath);
 	void SetVSync(bool enabled);
 	void SetFullscreen(bool enabled);
+	void CenterOnScreen();
+	void Maximize();
 
 	unsigned int GetWidth()  const { return width; }
 	unsigned int GetHeight() const { return height; }
@@ -41,6 +43,10 @@ private:
 
 	bool isVSyncEnabled = true;
 	bool isFullscreen   = false;
+	bool isShown        = false;
+
+	// Maximize() asked for before the window was shown: done when it shows up
+	bool isMaximizedWhenShown = false;
 
 	// The window before it went fullscreen, to bring it back there
 	int windowedX = 0, windowedY = 0;

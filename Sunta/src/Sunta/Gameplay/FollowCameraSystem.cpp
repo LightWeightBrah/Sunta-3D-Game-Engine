@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "FollowCameraSystem.h"
 
+#include <cmath>
 #include <optional>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -143,7 +144,7 @@ void UpdateDistance(FollowCameraComponent& follow, float freeDistance, float del
 		follow.currentDistance = SmoothValue(follow.currentDistance, freeDistance, DistanceReturnSharpness, deltaTime);
 }
 
-// ========== Placing the camera ==========
+// ========== Looking along a direction ==========
 
 // The rotation of an entity that looks along 'forward' (its -Z axis) with +Y up
 glm::quat MakeRotationLookingAlong(const glm::vec3& forward)
@@ -154,22 +155,51 @@ glm::quat MakeRotationLookingAlong(const glm::vec3& forward)
 	return glm::quat_cast(glm::mat3(right, up, -forward));
 }
 
-// The view of the camera: where it is turned to, plus the offsets that move the player around the screen
-glm::vec3 GetViewDirection(const FollowCameraComponent& follow)
+// The view of the camera: where it is turned to, plus the offsets that move the player around the screen (and the shake)
+glm::vec3 GetViewDirection(const FollowCameraComponent& follow, const glm::vec2& shakeDegrees = glm::vec2(0.0f))
 {
-	const float yaw   = follow.yawDegrees + follow.viewYawOffsetDegrees;
-	const float pitch = glm::clamp(follow.pitchDegrees + follow.viewPitchOffsetDegrees, -MaxViewPitchDegrees, MaxViewPitchDegrees);
+	const float yaw   = follow.yawDegrees + follow.viewYawOffsetDegrees + shakeDegrees.x;
+	const float pitch = glm::clamp(follow.pitchDegrees + follow.viewPitchOffsetDegrees + shakeDegrees.y, -MaxViewPitchDegrees, MaxViewPitchDegrees);
 
 	return GetDirectionFromYawAndPitch(yaw, pitch);
 }
 
-void PlaceCamera(TransformComponent& cameraTransform, const FollowCameraComponent& follow, const glm::vec3& cameraOffset)
+// ========== Shaking ==========
+
+// A smooth wobble between -1 and 1: waves of unrelated speeds added up, so it never repeats visibly
+float Wobble(float seconds, float frequency, float seed)
+{
+	const float t = seconds * frequency;
+	return (std::sin(t + seed) + 0.6f * std::sin(t * 2.13f + seed * 3.1f) + 0.3f * std::sin(t * 4.37f + seed * 7.7f)) / 1.9f;
+}
+
+// How far the shake turns the view now (degrees: yaw, pitch, roll). The shake fades away by itself
+glm::vec3 UpdateShake(FollowCameraComponent& follow, float deltaTime)
+{
+	if (follow.shakeTrauma <= 0.0f)
+		return glm::vec3(0.0f);
+
+	follow.shakeSeconds += deltaTime;
+	const float strength = follow.shakeTrauma * follow.shakeTrauma * follow.shakeDegrees;
+	follow.shakeTrauma   = glm::max(follow.shakeTrauma - follow.shakeFadePerSecond * deltaTime, 0.0f);
+
+	return strength * glm::vec3(Wobble(follow.shakeSeconds, follow.shakeFrequency, 0.0f),
+	                            Wobble(follow.shakeSeconds, follow.shakeFrequency, 11.0f),
+	                            0.5f * Wobble(follow.shakeSeconds, follow.shakeFrequency, 23.0f));
+}
+
+// ========== Placing the camera ==========
+
+void PlaceCamera(TransformComponent& cameraTransform, const FollowCameraComponent& follow, const glm::vec3& cameraOffset,
+	const glm::vec3& shakeDegrees)
 {
 	// 'currentDistance' is shorter than 'distance' while a wall pushes the camera, the whole offset shrinks with it
 	const float shrink = follow.distance > SmallestUsableLength ? follow.currentDistance / follow.distance : 1.0f;
 
+	const glm::vec3 viewDirection = GetViewDirection(follow, glm::vec2(shakeDegrees));
+
 	cameraTransform.position           = follow.pivot + cameraOffset * shrink;
-	cameraTransform.rotationQuaternion = MakeRotationLookingAlong(GetViewDirection(follow));
+	cameraTransform.rotationQuaternion = glm::angleAxis(glm::radians(shakeDegrees.z), viewDirection) * MakeRotationLookingAlong(viewDirection);
 
 	// The Inspector shows the angles, so they follow the quaternion
 	cameraTransform.SyncEulerFromQuaternion();
@@ -195,7 +225,7 @@ void UpdateCamera(const FrameInfo& frame, FollowCameraComponent& follow, Transfo
 	const glm::vec3 cameraOffset   = GetCameraOffset(follow, orbitDirection);
 
 	UpdateDistance(follow, GetFreeDistance(frame, follow, cameraOffset), frame.deltaTime);
-	PlaceCamera(cameraTransform, follow, cameraOffset);
+	PlaceCamera(cameraTransform, follow, cameraOffset, UpdateShake(follow, frame.deltaTime));
 }
 
 }
@@ -234,6 +264,27 @@ void FollowCameraSystem::Update(EntityManager& entityManager, float deltaTime, c
 
 		UpdateCamera(frame, follow, *cameraTransform);
 	}
+}
+
+void FollowCameraSystem::Shake(EntityManager& entityManager, float strength)
+{
+	for (FollowCameraComponent& follow : entityManager.GetAllComponents<FollowCameraComponent>())
+		follow.shakeTrauma = glm::clamp(follow.shakeTrauma + strength, 0.0f, 1.0f);
+}
+
+void FollowCameraSystem::ShakeFrom(EntityManager& entityManager, float strength, const glm::vec3& worldPosition, float radius)
+{
+	unsigned int playerEntityID = 0;
+	if (radius <= 0.0f || !CharacterControllerSystem::TryFindPlayer(entityManager, playerEntityID))
+		return;
+
+	const TransformComponent* player = entityManager.GetComponent<TransformComponent>(playerEntityID);
+	if (!player)
+		return;
+
+	const float closeness = 1.0f - glm::length(player->position - worldPosition) / radius;
+	if (closeness > 0.0f)
+		Shake(entityManager, strength * closeness);
 }
 
 void FollowCameraSystem::AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID)

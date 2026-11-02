@@ -210,7 +210,7 @@ void Animator::UpdateAnimation(float deltaTime)
 	if (!currentAnimation) 
 	    return;
 	
-	currentTime = AdvanceTime(*currentAnimation, currentTime, deltaTime, isLooping);
+	currentTime = AdvanceTime(*currentAnimation, currentTime, deltaTime * playbackSpeed, isLooping);
 
 	AdvanceBlend(deltaTime);
 	AdvanceLayer(deltaTime);

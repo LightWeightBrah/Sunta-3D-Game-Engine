@@ -18,6 +18,9 @@ namespace Sunta
 	    // A looping animation starts over at the end, one played once stops on its last frame
 	    bool                   isLooping        = true;
 
+	    // How fast the main animation plays (1 = as made). Walking slower than the clip plays it slower, so feet don't slide
+	    float                  playbackSpeed    = 1.0f;
+
 	    // While one animation changes into another, the old one is still played and fades out (see CrossFadeTo)
 	    Animation*             previousAnimation = nullptr;
 	    float                  previousTime      = 0.0f;
@@ -47,6 +50,10 @@ namespace Sunta
 	
 	    void UpdateAnimation       (float deltaTime);
 	    void PlayAnimation         (Animation* animation, bool shouldLoop = true);
+
+	    // Only the main animation (not the fading old one, not the layer). Kept until changed
+	    void  SetPlaybackSpeed(float speed) { playbackSpeed = speed; }
+	    float GetPlaybackSpeed() const      { return playbackSpeed; }
 
 	    // Changes to another animation smoothly: the old one fades out while the new one fades in
 	    // Without a current animation (or with a zero duration) it is the same as PlayAnimation

@@ -193,6 +193,43 @@ void GLFWWindowImplementation::SetAsGraphicsTarget()
 void GLFWWindowImplementation::Show()
 {
 	glfwShowWindow(window);
+	isShown = true;
+
+	if (isMaximizedWhenShown)
+		glfwMaximizeWindow(window);
+	isMaximizedWhenShown = false;
+}
+
+void GLFWWindowImplementation::CenterOnScreen()
+{
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	if (!monitor || isFullscreen)
+		return;
+
+	int areaX = 0, areaY = 0, areaWidth = 0, areaHeight = 0;
+	glfwGetMonitorWorkarea(monitor, &areaX, &areaY, &areaWidth, &areaHeight);
+
+	int windowWidth = 0, windowHeight = 0;
+	glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+	// The title bar and the borders are outside the window's size: the whole frame is centered
+	int left = 0, top = 0, right = 0, bottom = 0;
+	glfwGetWindowFrameSize(window, &left, &top, &right, &bottom);
+
+	const int frameWidth  = windowWidth  + left + right;
+	const int frameHeight = windowHeight + top  + bottom;
+	glfwSetWindowPos(window, areaX + (areaWidth - frameWidth) / 2 + left, areaY + (areaHeight - frameHeight) / 2 + top);
+}
+
+void GLFWWindowImplementation::Maximize()
+{
+	if (isFullscreen)
+		return;
+
+	if (isShown)
+		glfwMaximizeWindow(window);
+	else
+		isMaximizedWhenShown = true;
 }
 
 void GLFWWindowImplementation::Hide()

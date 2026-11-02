@@ -27,6 +27,11 @@ struct HitboxComponent
 	// How much poise a hit takes from the target (see PoiseComponent), a heavy attack multiplies it like the damage
 	float poiseDamage = 20.0f;
 
+	// How a landed hit feels when the player gives or takes it: the game's time stands still for a moment (hit stop,
+	// seconds; a heavy attack holds it half again as long) and the camera shakes (0..1, see FollowCameraComponent)
+	float hitStopSeconds = 0.06f;
+	float cameraShake    = 0.2f;
+
 	// The box, in the space of the weapon (the Knight's sword: the blade goes up along +Y from the grip)
 	glm::vec3 localOffset = glm::vec3(0.0f, 0.56f, 0.0f);
 	glm::vec3 halfExtents = glm::vec3(0.06f, 0.48f, 0.06f);
@@ -49,6 +54,8 @@ struct HitboxComponent
 			{
 				ADD_PROPERTY_RANGED(HitboxComponent, damage, PropertyDataType::Float, 0.0f, MaxDamage),
 				ADD_PROPERTY_RANGED(HitboxComponent, poiseDamage, PropertyDataType::Float, 0.0f, MaxDamage),
+				ADD_PROPERTY_RANGED(HitboxComponent, hitStopSeconds, PropertyDataType::Float, 0.0f, 0.3f),
+				ADD_PROPERTY_RANGED(HitboxComponent, cameraShake,    PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY(HitboxComponent, localOffset, PropertyDataType::Float3),
 				ADD_PROPERTY(HitboxComponent, halfExtents, PropertyDataType::Float3),
 				ADD_PROPERTY(HitboxComponent, layer,       PropertyDataType::CollisionLayer),

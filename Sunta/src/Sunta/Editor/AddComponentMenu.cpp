@@ -119,6 +119,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<CameraComponent>          ("Camera",            Rendering, "What the game is seen from"),
 		Plain<EnvironmentComponent>     ("Environment",       Rendering, "The sky and the fog of the whole scene"),
 		Plain<ParticleEmitterComponent> ("Particle Emitter",  Rendering, "Specks of fire, sparks, mist, embers"),
+		Plain<WeaponTrailComponent>     ("Weapon Trail",      Rendering, "A glowing streak behind a swung weapon"),
 
 		Plain<BoxColliderComponent>     ("Box Collider",      Physics, "A box others collide with (or a trigger)"),
 		Plain<PhysicsBodyComponent>     ("Physics Body",      Physics, "Gravity, speed and being pushed around"),

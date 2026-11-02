@@ -15,6 +15,12 @@ public:
 	// 'lookDelta' is how far the mouse moved in this frame (pixels), zero when the game doesn't own the mouse
 	static void Update(EntityManager& entityManager, float deltaTime, const glm::vec2& lookDelta);
 
+	// Shakes every follow camera: 'strength' 0..1 is added to the shake going on (0.2 a sword hit, 0.6 a giant's slam)
+	static void Shake(EntityManager& entityManager, float strength);
+
+	// A shake from something that happens at 'worldPosition' (a slam into the ground): full next to it, none beyond 'radius'
+	static void ShakeFrom(EntityManager& entityManager, float strength, const glm::vec3& worldPosition, float radius);
+
 	// Adds the Follow Camera together with the Camera component it needs
 	// A Camera that the entity already has is left as it is
 	static void AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID);

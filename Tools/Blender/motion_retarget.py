@@ -34,9 +34,18 @@ class Rig:
     aims_at: dict = field(default_factory=dict)
     # Characters in both kinds of file look along -Y in Blender, ours along +Y
     turn_degrees: float = 180.0
+    # Per side ("_L", "_R"): its bones at the bases of the index, the little and the middle finger, and the wrist. The
+    # hand of ours turns so its fist matches the clip's hand (see match_hands): a hand bone alone lies differently in
+    # the two skeletons, and a held weapon stuck out a quarter turn away from where the motion capture held its prop
+    hand_markers: dict = field(default_factory=dict)
 
 
-MIXAMO = Rig(bone_of={
+def mixamo_hand(side):
+    name = "Right" if side == "_R" else "Left"
+    return tuple("mixamorig:{}{}".format(name, part) for part in ("HandIndex1", "HandPinky1", "HandMiddle1", "Hand"))
+
+
+MIXAMO = Rig(hand_markers={"_R": mixamo_hand("_R"), "_L": mixamo_hand("_L")}, bone_of={
     "Hips":       "mixamorig:Hips",
     "Spine":      "mixamorig:Spine1",
     "Chest":      "mixamorig:Spine2",
@@ -115,10 +124,49 @@ SMPL = Rig(
 )
 
 
+def ue_side(side):
+    theirs = side.lower()
+    return {
+        "Shoulder_" + side: "clavicle_" + theirs,
+        "UpperArm_" + side: "upperarm_" + theirs,
+        "LowerArm_" + side: "lowerarm_" + theirs,
+        "Hand_" + side:     "hand_" + theirs,
+        "Thigh_" + side:    "thigh_" + theirs,
+        "Shin_" + side:     "calf_" + theirs,
+        "Foot_" + side:     "foot_" + theirs,
+    }
+
+
+def ue_aims(side):
+    theirs = side.lower()
+    return {
+        "clavicle_" + theirs:  "upperarm_" + theirs,
+        "upperarm_" + theirs:  "lowerarm_" + theirs,
+        "lowerarm_" + theirs:  "hand_" + theirs,
+        "hand_" + theirs:      "middle_01_" + theirs,
+        "thigh_" + theirs:     "calf_" + theirs,
+        "calf_" + theirs:      "foot_" + theirs,
+        "foot_" + theirs:      "ball_" + theirs,
+    }
+
+
+# Quaternius' Universal Animation Library (CC0), as Mesh2Motion serves it: a skeleton with Unreal's bone names
+# (glTF files with many clips each, MotionClip.action picks one)
+QUATERNIUS = Rig(
+    hand_markers={side: tuple(part + side.lower() for part in ("index_01", "pinky_01", "middle_01", "hand"))
+                  for side in ("_L", "_R")},
+    bone_of=dict({"Hips": "pelvis", "Spine": "spine_02", "Chest": "spine_03", "Neck": "neck_01", "Head": "head"},
+                 **ue_side("R"), **ue_side("L")),
+    aims_at=dict({"pelvis": "spine_01", "spine_02": "spine_03", "spine_03": "neck_01", "neck_01": "head"},
+                 **ue_aims("R"), **ue_aims("L")),
+)
+
+
 @dataclass
 class MotionClip:
     """One animation taken from a clip file (a path from Tools/Blender): the whole file or a part of it
-    (the file's frames, inclusive), played at some speed. 'action' picks one clip of a file that has several"""
+    (the file's frames, inclusive; a last frame before the first goes on through the end of a looping clip into
+    its beginning), played at some speed. 'action' picks one clip of a file that has several"""
     file_name: str
     first_frame: int = None
     last_frame: int = None
@@ -153,12 +201,27 @@ def world_rest_direction(armature, bone_name, aims_at=None):
     return (end - world_rest_head(armature, bone_name)).normalized()
 
 
+def rest_frame(direction):
+    """A rotation whose Y axis is the bone's direction and whose Z axis leans towards the character's front (towards its
+    top for a bone pointing forward, a foot). Two skeletons in their rest poses (a T or an A pose: thumbs forward,
+    knees forward) match bone by bone this way, the turn of each bone around its own length included"""
+    direction = direction.normalized()
+    reference = Vector((0.0, 1.0, 0.0)) if abs(direction.y) < 0.8 else Vector((0.0, 0.0, 1.0))
+    front = (reference - direction * reference.dot(direction)).normalized()
+    side = direction.cross(front)
+    return Matrix((side, direction, front)).transposed().to_quaternion()
+
+
 def make_rest_corrections(source, rig, character):
     """Per bone of ours: the rotation added after its clip bone's rotation, so that the clip's rest pose turned onto
-    our bone directions gives our rest pose"""
+    our bone directions gives our rest pose. The bones match in their turn around their length too (rest_frame): with
+    the direction alone a hand could be turned a quarter around against the clip's, holding a weapon differently than
+    the motion capture did (an axe hanging down stuck out sideways)"""
     corrections = {}
     for our_bone, their_bone in rig.bone_of.items():
-        to_our_direction = world_rest_direction(source, their_bone, rig.aims_at).rotation_difference(world_rest_direction(character, our_bone))
+        their_direction = world_rest_direction(source, their_bone, rig.aims_at)
+        our_direction = world_rest_direction(character, our_bone)
+        to_our_direction = rest_frame(our_direction) @ rest_frame(their_direction).inverted()
         corrections[our_bone] = (world_rest_rotation(source, their_bone).inverted()
                                  @ to_our_direction.inverted()
                                  @ world_rest_rotation(character, our_bone))
@@ -178,7 +241,12 @@ def load_source_armature(path, rig, action_name=None):
     fps, fps_base = scene.render.fps, scene.render.fps_base
 
     objects_before = set(bpy.data.objects)
-    bpy.ops.import_scene.fbx(filepath=path)
+    actions_before = set(bpy.data.actions)
+    if path.lower().endswith((".glb", ".gltf")):
+        # glTF keeps time in seconds: the importer keys it at the scene's frame rate
+        bpy.ops.import_scene.gltf(filepath=path)
+    else:
+        bpy.ops.import_scene.fbx(filepath=path)
     source_fps = scene.render.fps / scene.render.fps_base
     scene.render.fps, scene.render.fps_base = fps, fps_base
 
@@ -189,7 +257,15 @@ def load_source_armature(path, rig, action_name=None):
             bpy.data.objects.remove(obj)
 
     if action_name:
-        armature.animation_data.action = next(action for action in bpy.data.actions if action.name.endswith(action_name))
+        # The clip of that name: exactly it, or the name with the importer's suffix (a glTF clip of an armature
+        # becomes "<clip>_<armature>"), or the old way of Meshy's files ("<armature>|<clip>")
+        new_actions = [action for action in bpy.data.actions if action not in actions_before]
+        armature.animation_data_create()
+        armature.animation_data.action = next(
+            (action for action in new_actions if action.name == action_name), None) or next(
+            (action for action in new_actions if action.name.startswith(action_name + "_") and
+             not any(other.name == action_name for other in new_actions)), None) or next(
+            action for action in new_actions if action.name.endswith(action_name))
 
     armature.matrix_world = Matrix.Rotation(math.radians(rig.turn_degrees), 4, "Z") @ armature.matrix_world
     bpy.context.view_layer.update()
@@ -348,14 +424,58 @@ def clip_frame_range(source, clip):
             clip.last_frame if clip.last_frame is not None else int(last))
 
 
-def retarget(character, clip, action):
-    """Keys 'action' on our character with the clip, at the scene's frame rate. Returns the last frame"""
+def match_hands(source, rig, character, rotations, hand_frames):
+    """Turns each hand of ours so its fist lies as the clip's hand does: its knuckle line (from the little finger to the
+    index, which is the hole of a fist) and its fingers along the clip's. 'hand_frames': per side, the knuckle line and
+    the fingers of our hand in the space of its bone (character_from_mesh.Grip). The bones the hand carries (a weapon)
+    follow it"""
+    def head(name):
+        return source.matrix_world @ source.pose.bones[name].head
+
+    changed = False
+    for side, (along_in_hand, fingers_in_hand) in (hand_frames or {}).items():
+        markers = rig.hand_markers.get(side)
+        if not markers or any(name not in source.pose.bones for name in markers):
+            continue
+        index, little, middle, wrist = (head(name) for name in markers)
+        wanted = frame_of(index - little, middle - wrist)
+        ours = frame_of(along_in_hand, fingers_in_hand)
+        rotations["Hand" + side] = wanted @ ours.inverted()
+        changed = True
+
+    if not changed:
+        return rotations
+    # Bones without a clip bone (the weapon, the shield) keep their place under their hand
+    for bone in parent_first(character):
+        if bone.parent is not None and bone.name not in rig.bone_of:
+            parent_change = rotations[bone.parent.name] @ world_rest_rotation(character, bone.parent.name).inverted()
+            rotations[bone.name] = parent_change @ world_rest_rotation(character, bone.name)
+    return rotations
+
+
+def frame_of(first, second):
+    """A rotation from two directions: the first exactly, the second as close as it can be"""
+    first = first.normalized()
+    third = first.cross(second).normalized()
+    second = third.cross(first)
+    return Matrix((first, second, third)).transposed().to_quaternion()
+
+
+def retarget(character, clip, action, hand_frames=None):
+    """Keys 'action' on our character with the clip, at the scene's frame rate. Returns the last frame.
+    'hand_frames': see match_hands (without it the hands copy the clip's hand bones)"""
     actions_before = set(bpy.data.actions)
     source, source_fps = load_source_armature(os.path.join(BLENDER_FOLDER, clip.file_name), clip.rig, clip.action)
     corrections = make_rest_corrections(source, clip.rig, character)
 
     scene = bpy.context.scene
     first, last = clip_frame_range(source, clip)
+    # A looping clip may start in its middle and go on through its end into its beginning ('last' before 'first'):
+    # a chop that the loop starts with gets its wind-up before it
+    loop_start, loop_end = source.animation_data.action.frame_range
+    loop_length = loop_end - loop_start
+    if last < first:
+        last += loop_length
     source_frames_per_frame = source_fps * clip.speed / (scene.render.fps / scene.render.fps_base)
     frames = int((last - first) / source_frames_per_frame)
 
@@ -365,9 +485,12 @@ def retarget(character, clip, action):
 
     for frame in range(frames + 1):
         source_frame = first + frame * source_frames_per_frame
+        if source_frame > loop_end:
+            source_frame -= loop_length
         scene.frame_set(int(source_frame), subframe=source_frame - int(source_frame))
 
         rotations = character_world_rotations(source, clip.rig, character, corrections)
+        rotations = match_hands(source, clip.rig, character, rotations, hand_frames)
         if clip.keeps_facing:
             now = heading(source, clip.rig)
             first_heading = now if first_heading is None else first_heading

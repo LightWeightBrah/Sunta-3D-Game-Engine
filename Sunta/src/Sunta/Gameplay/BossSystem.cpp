@@ -7,6 +7,7 @@
 #include "Audio/Audio.h"
 #include "Audio/AudioSystem.h"
 #include "CutsceneSystem.h"
+#include "FollowCameraSystem.h"
 #include "CharacterControllerSystem.h"
 #include "GameplayMath.h"
 #include "HUDSystem.h"
@@ -21,6 +22,11 @@ namespace Sunta
 
 namespace
 {
+
+// The roar of phase two shakes the camera of a player this close (strength 0..1, meters)
+constexpr float PhaseTwoRoarShake       = 0.7f;
+constexpr float PhaseTwoRoarShakeRadius = 30.0f;
+
 
 // An awake boss hears the player anywhere in its arena, so it never stands waiting while the player walks around it
 constexpr float AwakeHearingDistance = 100.0f;
@@ -190,6 +196,10 @@ float GetBattleMusicVolume(EntityManager& entityManager, unsigned int bossID)
 void PlayPhaseTwoSounds(EntityManager& entityManager, unsigned int bossID, const BossComponent& boss)
 {
 	AudioSystem::PlayAtEntity(entityManager, bossID, boss.phaseTwoSound);
+
+	const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(bossID);
+	if (transform)
+		FollowCameraSystem::ShakeFrom(entityManager, PhaseTwoRoarShake, transform->position, PhaseTwoRoarShakeRadius);
 
 	if (!boss.phaseTwoMusic.empty())
 		Audio::PlayMusic(boss.phaseTwoMusic, GetBattleMusicVolume(entityManager, bossID), BattleMusicFadeInSeconds);
@@ -484,6 +494,26 @@ void UpdateFog(EntityManager& entityManager, unsigned int fogID, FogGateComponen
 
 }
 
+namespace
+{
+
+// The cutscene after the fall, once, when its delay has passed (see BossComponent::defeatCutscene)
+void StartDefeatCutsceneWhenDue(EntityManager& entityManager, BossComponent& boss, float deltaTime)
+{
+	if (boss.defeatCutscene.empty() || boss.hasStartedDefeatCutscene)
+		return;
+
+	boss.secondsSinceDefeat += deltaTime;
+	if (boss.secondsSinceDefeat < boss.defeatCutsceneDelay)
+		return;
+
+	boss.hasStartedDefeatCutscene = true;
+	if (!CutsceneSystem::PlayByName(entityManager, boss.defeatCutscene))
+		SUNTA_ENGINE_LOG_WARNING("Boss: no cutscene named '{0}' to play after its defeat", boss.defeatCutscene);
+}
+
+}
+
 void BossSystem::PrepareForPlay(EntityManager& entityManager)
 {
 	for (BossComponent& boss : entityManager.GetAllComponents<BossComponent>())
@@ -493,6 +523,8 @@ void BossSystem::PrepareForPlay(EntityManager& entityManager)
 		boss.isAwake      = false;
 		boss.isInPhaseTwo = false;
 		boss.isDefeated   = false;
+		boss.secondsSinceDefeat       = 0.0f;
+		boss.hasStartedDefeatCutscene = false;
 		RememberRestingValues(entityManager, bossID, boss);
 		Audio::Preload(boss.phaseTwoSound);
 	}
@@ -524,7 +556,10 @@ void BossSystem::Update(EntityManager& entityManager, float deltaTime)
 		UpdatePhase(entityManager, bossID, boss);
 
 		if (boss.isDefeated)
+		{
 			GoOut(entityManager, bossID, boss, deltaTime);
+			StartDefeatCutsceneWhenDue(entityManager, boss, deltaTime);
+		}
 		else if (boss.isInPhaseTwo)
 			UpdatePhaseTwoLook(entityManager, bossID, boss, deltaTime);
 	}

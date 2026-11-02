@@ -51,6 +51,19 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Shockwave Distance", &actions.shockwaveDistance, 0.0f, CharacterActionsComponent::MaxSpeed);
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("A heavy attack or a leap hurts everyone around where it lands (0 radius = no shockwave)");
+	edited |= ImGui::SliderFloat("Shockwave Camera Shake", &actions.shockwaveCameraShake, 0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Attack Turn Speed", &actions.attackTurnDegreesPerSecond, 0.0f, 720.0f);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("Degrees per second an attack keeps turning towards its target until it starts to hit (0 = commits at once)");
+	edited |= ImGui::SliderFloat("Attack Lunge Speed", &actions.attackLungeSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Attack Reach",       &actions.attackReach,      0.0f, CharacterActionsComponent::MaxSpeed);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("An attack steps in (up to the lunge speed) to end this far from its target (0 lunge speed = a fixed step)");
+	edited |= ImGui::SliderFloat("Delayed Blow Chance",  &actions.attackDelayChance,  0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Delayed Blow Seconds", &actions.attackDelaySeconds, 0.0f, 2.0f);
+	edited |= ImGui::SliderFloat("Delayed Blow At",      &actions.attackDelayAt,      0.0f, 1.0f);
+	if (ImGui::IsItemHovered())
+		ImGui::SetTooltip("An attack sometimes holds still in its wind-up (at this part of the way to its hit), then strikes");
 
 	return edited;
 }

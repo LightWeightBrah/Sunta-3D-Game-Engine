@@ -28,10 +28,15 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import boss_generator  # noqa: E402
 import character_from_mesh  # noqa: E402
+import hand_pinning  # noqa: E402
+import held_item_check  # noqa: E402
+import strike_windows  # noqa: E402
 import knight_generator  # noqa: E402
 import motion_retarget  # noqa: E402
+from hand_pinning import HandPin  # noqa: E402
 from motion_retarget import MotionClip  # noqa: E402
-from sunta_blender import clear_scene, export_gltf, place_preview_camera, setup_preview_render, show_only  # noqa: E402
+from sunta_blender import (clear_scene, export_gltf, place_preview_camera, render_hand_closeups,  # noqa: E402
+                           setup_preview_render, show_only)
 
 BLENDER_FOLDER = os.path.dirname(os.path.abspath(__file__))
 ENEMIES_FOLDER = os.path.join(BLENDER_FOLDER, "Generated", "Enemies")
@@ -41,12 +46,63 @@ ONE_HANDED = knight_generator.ANIMATIONS
 TWO_HANDED = {name: clip for name, clip in boss_generator.BOSS_ANIMATIONS.items()
               if name not in ("Attack_Leap", "Phase_Two", "Intro") and not name.startswith("Fury_")}
 
-# The executioner's own blows (Meshy's Text to Motion): a slow diagonal chop, a wide cleave, a double hack like chopping wood
-EXECUTIONER = dict(TWO_HANDED,
-                   Attack_Light_1=MotionClip("Generated/Motions/executioner_chop.fbx", rig=motion_retarget.SMPL),
-                   Attack_Light_2=MotionClip("Generated/Motions/executioner_cleave.fbx", rig=motion_retarget.SMPL),
-                   Attack_Light_3=MotionClip("Generated/Motions/executioner_chop.fbx", rig=motion_retarget.SMPL, speed=1.15),
-                   Attack_Heavy=MotionClip("Generated/Motions/executioner_double_hack.fbx", rig=motion_retarget.SMPL))
+# The executioner: a butcher sure of himself, the cleaver in one hand, the other free (Mixamo's Pro Melee Axe Pack: one
+# axe, so one hand). Chops down, across and back up, a heavy combo of two blows, and thumping his chest with the cleaver
+# (a taunt a script can play). Quaternius' Universal Animation Library (CC0, from Mesh2Motion, see below) stays for
+# other enemies
+AXE = "Mixamo/ProMeleeAxe/"
+# Download (not in the repository, 13 MB): https://app.mesh2motion.org/animations/human-base-animations.glb and
+# .../human-addon-animations.glb into Tools/Blender/Mesh2Motion/
+QUATERNIUS_BASE = "Mesh2Motion/human-base-animations.glb"
+QUATERNIUS_ADDON = "Mesh2Motion/human-addon-animations.glb"
+EXECUTIONER = {
+    "Idle":           MotionClip(AXE + "standing idle.fbx"),
+    "Walk":           MotionClip(AXE + "standing walk forward.fbx"),
+    "Run":            MotionClip(AXE + "standing run forward.fbx"),
+    "Walk_Back":      MotionClip(AXE + "standing walk back.fbx"),
+    "Strafe_Left":    MotionClip(AXE + "standing walk left.fbx"),
+    "Strafe_Right":   MotionClip(AXE + "standing walk right.fbx"),
+    "Attack_Light_1": MotionClip(AXE + "standing melee attack downward.fbx"),
+    "Attack_Light_2": MotionClip(AXE + "standing melee attack horizontal.fbx"),
+    "Attack_Light_3": MotionClip(AXE + "standing melee attack backhand.fbx"),
+    # Three blows: a cut from the side, back across, and a great chop down from over the head ("ver. 1" threw the
+    # whole body forward and the free arm back: it looked odd)
+    "Attack_Heavy":   MotionClip(AXE + "standing melee combo attack ver. 2.fbx"),
+    "Taunt":          MotionClip(AXE + "standing taunt chest thump.fbx"),
+    "Hit":            MotionClip(AXE + "standing react large gut.fbx"),
+    "Parried":        MotionClip(AXE + "standing react large from left.fbx", speed=0.7),
+    "Death":          TWO_HANDED["Death"],
+}
+
+
+# The ash cultist: a mage (Mixamo's Pro Magic Pack) with a staff upright in its left hand. Its blows push the staff
+# forward with both hands and slam it into the ground (a burst of fire there: the shockwave of its heavy attack);
+# Cast_Spell throws a spell with the right hand
+MAGIC = "Mixamo/ProMagic/"
+CULTIST = {
+    "Idle":           MotionClip(MAGIC + "standing idle.fbx"),
+    "Walk":           MotionClip(MAGIC + "Standing Walk Forward.fbx"),
+    "Run":            MotionClip(MAGIC + "Standing Run Forward.fbx"),
+    "Walk_Back":      MotionClip(MAGIC + "Standing Walk Back.fbx"),
+    "Strafe_Left":    MotionClip(MAGIC + "Standing Walk Left.fbx"),
+    "Strafe_Right":   MotionClip(MAGIC + "Standing Walk Right.fbx"),
+    "Attack_Light_1": MotionClip(MAGIC + "Standing 2H Magic Attack 01.fbx"),
+    "Attack_Light_2": MotionClip(MAGIC + "Standing 2H Magic Attack 02.fbx"),
+    "Attack_Light_3": MotionClip(MAGIC + "Standing 2H Magic Attack 01.fbx", speed=1.2),
+    "Attack_Heavy":   MotionClip(MAGIC + "Standing 2H Magic Area Attack 01.fbx"),
+    "Cast_Spell":     MotionClip(MAGIC + "Standing 1H Magic Attack 01.fbx"),
+    "Hit":            MotionClip(MAGIC + "Standing React Small From Front.fbx"),
+    "Parried":        MotionClip(MAGIC + "Standing React Large From Front.fbx", speed=0.8),
+    "Death":          MotionClip(MAGIC + "Standing React Death Backward.fbx"),
+}
+
+# Where the cultist holds its staff at rest (meters for a 1.9 m cultist, the character's space): at the left side,
+# the forearm forward. In its blows the fist goes this part of the way to where the clip has it
+STAFF_HAND_POINT = (-0.27, 0.33, 1.13)
+STAFF_FOLLOWS_BLOWS = 0.65
+# The slam into the ground: the clip's hands go down to the knees, the staff only plants itself before the cultist
+STAFF_FOLLOWS_SLAM = 0.3
+STAFF_BONE = "Weapon_L"
 
 
 @dataclass
@@ -70,6 +126,8 @@ class Enemy:
     right_hand: Weapon
     left_hand: Weapon = None
     is_left_fist: bool = False  # two-handed weapons: the left hand closes around the haft too
+    is_two_handed: bool = False  # the left hand stays on the haft in every animation (where the Idle holds it)
+    is_staff_in_left: bool = False  # the weapon is a staff held upright in the left fist (the right hand casts spells)
     brightness: float = 1.3
     weapons: list = field(default_factory=list)
 
@@ -77,16 +135,22 @@ class Enemy:
 ENEMIES = [
     Enemy("hollow_ghoul_rigged.glb", "HollowGhoul", "hollow_ghoul", 1.8, ONE_HANDED,
           Weapon("ghoul_cleaver.glb", "ghoul_cleaver", 0.55, 0.18)),
-    Enemy("ash_cultist_rigged.glb", "AshCultist", "ash_cultist", 1.9, TWO_HANDED,
-          Weapon("cultist_staff.glb", "cultist_staff", 1.9, 0.42), is_left_fist=True, brightness=1.7),
+    Enemy("ash_cultist_rigged.glb", "AshCultist", "ash_cultist", 1.9, CULTIST,
+          Weapon("cultist_staff.glb", "cultist_staff", 1.9, 0.42), is_staff_in_left=True, brightness=1.7),
     Enemy("executioner_rigged.glb", "Executioner", "executioner", 2.1, EXECUTIONER,
-          Weapon("executioner_cleaver.glb", "executioner_cleaver", 1.6, 0.1, is_handle_on_top=True), is_left_fist=True),
+          Weapon("executioner_cleaver.glb", "executioner_cleaver", 1.6, 0.1, is_handle_on_top=True)),
     Enemy("skeleton_spearman_rigged.glb", "SkeletonSpearman", "skeleton_spearman", 1.8, ONE_HANDED,
           Weapon("skeleton_spear.glb", "skeleton_spear", 2.2, 0.4),
           left_hand=Weapon("skeleton_shield.glb", "skeleton_shield", 0.62, 0.5, is_shield=True)),
 ]
 
 SHIELD_GAP = 0.008
+
+# How far the hand holding a shield may bend from its forearm in any animation (degrees)
+SHIELD_WRIST_MOST_BEND = 8.0
+
+# How far an arm bone may turn between two frames (degrees): faster than that is a jump, not a swing
+MOST_ARM_TURN_PER_FRAME = 75.0
 
 
 def parse_arguments():
@@ -95,6 +159,9 @@ def parse_arguments():
     parser.add_argument("--out", required=True)
     parser.add_argument("--preview", default="")
     parser.add_argument("--only", default="")
+    parser.add_argument("--preview-actions", default="Idle,Walk,Attack_Light_1,Attack_Heavy")
+    parser.add_argument("--preview-steps", type=int, default=3)
+    parser.add_argument("--hands", default="", help="a folder for close-ups of the hands in the preview actions")
     return parser.parse_args(argv)
 
 
@@ -148,14 +215,18 @@ def weapon_in_fist(weapon, grip):
     return grip.item_matrix(-grip.fingers, grip.fingers.cross(grip.along), grip.along)
 
 
-def shield_on_fist(grip, thickness):
-    """Its back just outside the back of the fist, its face outwards, its top towards the fingers"""
-    face = -grip.palm
-    top = grip.fingers
-    side = (-face).cross(top)
+def shield_on_fist(armature, body, grip, weapon, thickness):
+    """Its back just outside the back of the fist, its face outwards, lying along the forearm (turned around the grip
+    until the forearm stays behind it, see character_from_mesh.shield_along_forearm)"""
     # The fist is behind the shield (towards +Y of the shield, whose face looks at -Y)
     middle = Vector((0.0, grip.back_of_fist + SHIELD_GAP + thickness * 0.5, 0.0))
-    return grip.item_matrix(side, -face, top, middle)
+
+    def make_matrix(face):
+        top = face.cross(grip.along).normalized()
+        return grip.item_matrix(grip.along, -face, top, middle)
+
+    return character_from_mesh.shield_along_forearm(armature, body, grip, "_L", make_matrix, Vector((0.0, -1.0, 0.0)),
+                                                    weapon.length * 0.5, thickness * 0.5)
 
 
 # ========== Enemies ==========
@@ -171,46 +242,94 @@ def make_enemy(enemy, arguments):
     body.name = enemy.name
     character_from_mesh.make_engine_textures(body, out_folder, enemy.name, enemy.brightness)
 
-    right = character_from_mesh.make_fist(armature, body, "_R")
-    held = [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE, weapon_in_fist(enemy.right_hand, right))]
+    if enemy.is_staff_in_left:
+        # The right hand stays open (it casts), the staff goes through the left fist
+        weapon_bone = STAFF_BONE
+        staff_fist = character_from_mesh.make_fist(armature, body, "_L")
+        held = [(STAFF_BONE, "Hand_L", weapon_in_fist(enemy.right_hand, staff_fist))]
+    else:
+        weapon_bone = knight_generator.WEAPON_BONE
+        right = character_from_mesh.make_fist(armature, body, "_R")
+        held = [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE, weapon_in_fist(enemy.right_hand, right))]
     weapons = [(enemy.right_hand, held[0])]
 
+    left = None
     if enemy.left_hand or enemy.is_left_fist:
         left = character_from_mesh.make_fist(armature, body, "_L")
         if enemy.left_hand:
             shield = load_weapon(enemy.left_hand, out_folder, enemy.brightness)
             thickness = max(v.co.y for v in shield.data.vertices) - min(v.co.y for v in shield.data.vertices)
-            held.append((knight_generator.SHIELD_BONE, knight_generator.SHIELD_PARENT_BONE, shield_on_fist(left, thickness)))
+            held.append((knight_generator.SHIELD_BONE, knight_generator.SHIELD_PARENT_BONE, shield_on_fist(armature, body, left, enemy.left_hand, thickness)))
             weapons.append((enemy.left_hand, held[1]))
             bpy.data.objects.remove(shield)
 
     character_from_mesh.add_held_item_bones(armature, held)
-    knight_generator.create_animations(armature, enemy.animations)
+    # The fists turn as the clips' hands do (the weapons lie in them as the motion capture held its props)
+    grips = {"_R": None if enemy.is_staff_in_left else right, "_L": staff_fist if enemy.is_staff_in_left else left}
+    actions = knight_generator.create_animations(armature, enemy.animations, character_from_mesh.hand_frames(armature, grips))
+    if enemy.is_two_handed:
+        # The left fist one fist from the right one on the haft (on the side the Idle holds it, see hold_with_both_hands)
+        spacing = hand_pinning.FIST_SPACING * enemy.height / 1.8
+        made_by_text = [name for name, clip in enemy.animations.items() if clip.rig is motion_retarget.SMPL]
+        hand_pinning.straight_hands(armature, [action for action in actions if action.name in made_by_text])
+        hand_pinning.hold_with_both_hands(armature, knight_generator.WEAPON_BONE, actions, left, right.along,
+                                          right.center, spacing, aimed_actions=made_by_text)
+    if enemy.is_staff_in_left:
+        scale = enemy.height / 1.9
+        point = tuple(value * scale for value in STAFF_HAND_POINT)
+        free_turn = hand_pinning.staff_free_turn(armature, staff_fist, "_L")
+        for action in actions:
+            follow = STAFF_FOLLOWS_BLOWS if action.name.startswith(("Attack", "Cast")) else 0.0
+            if action.name == "Attack_Heavy":
+                follow = STAFF_FOLLOWS_SLAM
+            weight = hand_pinning.fade(0.0, 0.35) if action.name == "Death" else (lambda progress: 1.0)
+            hand_pinning.pin_hands(armature, action, [HandPin("_L", hand_pinning.staff_upright(staff_fist, "_L", point, follow),
+                                                              weight, free_turn=free_turn)])
+    shield = None
+    if enemy.left_hand:
+        # The shield lies along the forearm and never cuts through the body (see characters_generator, the knight)
+        shield = (knight_generator.SHIELD_BONE, held[1][2], enemy.left_hand.length * 0.5, thickness * 0.5, Vector((0.0, -1.0, 0.0)))
+        hand_pinning.straighten_wrist(armature, actions, "_L", SHIELD_WRIST_MOST_BEND)
+        held_item_check.push_shield_out_of_body(armature, body, actions, shield)
+    # Last: the twists of the hands spread up the arms (after every pin, which set the hands), and no arm bone jumps
+    # further than a fast swing turns it in one frame
+    hand_pinning.spread_twist(armature, actions)
+    hand_pinning.smooth_jerks(armature, actions, MOST_ARM_TURN_PER_FRAME)
+    held_item_check.check_actions(armature, body, actions, shield=shield)
+    held_item_check.check_arms(armature, actions)
+    weapon = enemy.right_hand
+    reach = weapon.length * (1.0 - weapon.grip)
+    strike_windows.print_strike_windows(armature, weapon_bone, held[0][2], reach, actions)
+    strike_windows.print_stride_speeds(armature, actions)
     knight_generator.reset_to_rest_pose(armature)
     export_gltf(os.path.join(out_folder, enemy.name + ".gltf"), [armature, body], with_animations=True)
 
     weapon_object = load_weapon(enemy.right_hand, out_folder, enemy.brightness)
     if arguments.preview:
         shown = [body, weapon_object]
-        knight_generator.hang_on_bone(weapon_object, armature, knight_generator.WEAPON_BONE, held[0][2])
+        knight_generator.hang_on_bone(weapon_object, armature, weapon_bone, held[0][2])
         if enemy.left_hand:
             shield = load_weapon(enemy.left_hand, out_folder, enemy.brightness)
             knight_generator.hang_on_bone(shield, armature, knight_generator.SHIELD_BONE, held[1][2])
             shown.append(shield)
-        render_previews(os.path.abspath(arguments.preview), armature, shown, enemy)
+        render_previews(os.path.abspath(arguments.preview), armature, shown, enemy, arguments.preview_actions.split(","),
+                        arguments.preview_steps)
+        if arguments.hands:
+            render_hand_closeups(os.path.abspath(arguments.hands), enemy.name + "_", armature,
+                                 arguments.preview_actions.split(","), arguments.preview_steps)
 
 
-def render_previews(folder, armature, shown, enemy):
+def render_previews(folder, armature, shown, enemy, actions, steps):
     os.makedirs(folder, exist_ok=True)
     show_only(shown)
     camera = setup_preview_render(360, 440)
     scene = bpy.context.scene
     size = enemy.height / 1.8
-    for action_name in ("Idle", "Walk", "Attack_Light_1", "Attack_Heavy"):
+    for action_name in actions:
         armature.animation_data.action = bpy.data.actions[action_name]
         start, end = (int(frame) for frame in armature.animation_data.action.frame_range)
-        for step in range(3):
-            scene.frame_set(start + round((end - start) * step / 2))
+        for step in range(steps):
+            scene.frame_set(start + round((end - start) * step / max(steps - 1, 1)))
             place_preview_camera(camera, 35, distance=4.2 * size, height=1.2 * size, target_height=1.0 * size)
             scene.render.filepath = os.path.join(folder, "{}_{}_{}.png".format(enemy.name, action_name, step))
             bpy.ops.render.render(write_still=True)
