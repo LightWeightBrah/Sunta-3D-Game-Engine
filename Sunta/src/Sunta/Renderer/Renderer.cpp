@@ -14,6 +14,7 @@
 #include "Scene/Camera.h"
 #include "Core/Log.h"
 #include "RendererDevice.h"
+#include "ShadowRenderer.h"
 
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
@@ -23,6 +24,14 @@ namespace Sunta
 {
 
 std::unique_ptr<RendererDevice> Renderer::rendererDevice;
+
+namespace
+{
+
+// The shadow map's texture slot: above the slots the materials use for their maps
+constexpr unsigned int ShadowMapSlot = 10;
+
+}
 	
 void Renderer::Init()
 {
@@ -122,6 +131,17 @@ void Renderer::SetBaseLighting(Shader& shader, const SceneData& sceneData) const
 	shader.SetUniform3f("viewerPosition", sceneData.cameraPosition);
 	shader.TrySetUniform3f("fogColor", sceneData.fogColor);
 	shader.TrySetUniform1f("fogDensity", sceneData.fogDensity);
+
+	shader.TrySetUniformBool("hasShadows", sceneData.hasShadows);
+	if (sceneData.hasShadows)
+	{
+		ShadowRenderer::BindShadowMap(ShadowMapSlot);
+		shader.TrySetUniform1i("shadowMap", ShadowMapSlot);
+		shader.TrySetUniformMatrix4fv("lightSpaceMatrix", sceneData.lightSpaceMatrix);
+		shader.TrySetUniform1f("shadowStrength", sceneData.shadowStrength);
+		shader.TrySetUniform1f("shadowNormalOffset", sceneData.shadowNormalOffset);
+		shader.TrySetUniform1i("shadowSoftness", sceneData.shadowSoftness);
+	}
 
 	SetDirectionalLights(shader, sceneData);
 	SetPointLights(shader, sceneData);

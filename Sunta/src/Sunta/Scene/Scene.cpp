@@ -44,6 +44,7 @@
 #include "Gameplay/HealingFlaskSystem.h"
 #include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CutsceneSystem.h"
+#include "Renderer/ShadowRenderer.h"
 #include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
 #include "Gameplay/CharacterAnimationSystem.h"
@@ -423,6 +424,10 @@ void Scene::Render(Renderer& renderer)
 
 	std::vector<GizmosDrawItem>  gizmosQueue;
 
+	// The first directional light that casts shadows
+	const DirectionalLightComponent* shadowLight = nullptr;
+	glm::vec3 shadowLightDirection = glm::vec3(0.0f, -1.0f, 0.0f);
+
 	for (unsigned int i = 0; i < totalEntites; i++)
 	{
 		auto* transformComponent        = entityManager.GetComponent<TransformComponent>(i);
@@ -444,6 +449,12 @@ void Scene::Render(Renderer& renderer)
 			data.color       = directionalLightComponent->color;
 
 			sceneData.directionalLights.push_back(data);
+
+			if (!shadowLight && directionalLightComponent->castsShadows && sceneData.directionalLights.size() == 1)
+			{
+				shadowLight          = directionalLightComponent;
+				shadowLightDirection = data.direction;
+			}
 		}
 
 		if (pointLightComponent && transformComponent)
@@ -542,6 +553,27 @@ void Scene::Render(Renderer& renderer)
 			}
 		}
 
+	}
+
+	// The shadows first: everything solid is drawn once more, from the light, into the shadow map
+	if (shadowLight)
+	{
+		ShadowSettings shadowSettings;
+		shadowSettings.distance   = shadowLight->shadowDistance;
+		shadowSettings.strength   = shadowLight->shadowStrength;
+		shadowSettings.softness   = shadowLight->shadowSoftness;
+		shadowSettings.resolution = shadowLight->shadowResolution;
+
+		if (ShadowRenderer::Begin(shadowSettings, shadowLightDirection, sceneData))
+		{
+			for (const auto& item : litQueue)
+				ShadowRenderer::DrawMesh(*item.mesh, item.matrix);
+
+			for (const auto& item : modelQueue)
+				ShadowRenderer::DrawModel(*item.model, item.matrix, item.animator);
+
+			ShadowRenderer::End(sceneData);
+		}
 	}
 
 	// The scene's Environment (the first one): the sky first, behind everything, and the fog of every lit thing

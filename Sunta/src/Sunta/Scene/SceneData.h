@@ -50,6 +50,13 @@ struct SceneData
 	// Distance fog (from the scene's Environment): far things fade into 'fogColor'. Density 0 = no fog
 	glm::vec3 fogColor   = glm::vec3(0.0f);
 	float     fogDensity = 0.0f;
+
+	// The shadows of the first directional light (filled by ShadowRenderer when its shadow map was drawn this frame)
+	bool      hasShadows         = false;
+	glm::mat4 lightSpaceMatrix   = glm::mat4(1.0f);
+	float     shadowStrength     = 0.0f;
+	float     shadowNormalOffset = 0.0f;
+	int       shadowSoftness     = 1;
 };
 
 }

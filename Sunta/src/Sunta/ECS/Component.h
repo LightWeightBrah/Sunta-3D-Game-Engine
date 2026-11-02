@@ -563,9 +563,23 @@ struct PhysicsBodyComponent
 	}
 };
 
+// The light of the sun or the moon: parallel rays from one direction (the entity's rotation)
+// The first one with 'castsShadows' casts shadows (see ShadowRenderer): 'shadowDistance' meters around the camera,
+// 'shadowStrength' how dark they are (1 = only the ambient light is left), 'shadowSoftness' how soft their edge is
+// (0 = hard, 1..3 = more samples), 'shadowResolution' the pixels of the shadow map (sharper for more memory and time)
 struct DirectionalLightComponent
 {
+	// Limits of the sliders in the Inspector
+	static constexpr float MinShadowDistance = 5.0f;
+	static constexpr float MaxShadowDistance = 200.0f;
+
 	LightColor color;
+
+	bool  castsShadows     = true;
+	float shadowDistance   = 30.0f;
+	float shadowStrength   = 0.85f;
+	int   shadowSoftness   = 1;
+	int   shadowResolution = 2048;
 
 	static void RegisterToInspector()
 	{
@@ -574,6 +588,11 @@ struct DirectionalLightComponent
 				ADD_PROPERTY(DirectionalLightComponent, color.ambientIntensity,	 PropertyDataType::Color),
 				ADD_PROPERTY(DirectionalLightComponent, color.diffuseIntensity,	 PropertyDataType::Color),
 				ADD_PROPERTY(DirectionalLightComponent, color.specularIntensity, PropertyDataType::Color),
+				ADD_PROPERTY(DirectionalLightComponent, castsShadows,            PropertyDataType::Bool),
+				ADD_PROPERTY_RANGED(DirectionalLightComponent, shadowDistance,   PropertyDataType::Float, MinShadowDistance, MaxShadowDistance),
+				ADD_PROPERTY_RANGED(DirectionalLightComponent, shadowStrength,   PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY(DirectionalLightComponent, shadowSoftness,          PropertyDataType::Int),
+				ADD_PROPERTY(DirectionalLightComponent, shadowResolution,        PropertyDataType::Int)
 			});
 	}
 };

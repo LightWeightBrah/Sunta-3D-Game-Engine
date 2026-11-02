@@ -54,6 +54,11 @@ namespace SceneKeys
 	constexpr const char* CurrencyComponent         = "currency";
 	constexpr const char* CurrencyRewardComponent   = "currency_reward";
 	constexpr const char* LevelUpComponent          = "level_up";
+	constexpr const char* CastsShadows              = "casts_shadows";
+	constexpr const char* ShadowDistance            = "shadow_distance";
+	constexpr const char* ShadowStrength            = "shadow_strength";
+	constexpr const char* ShadowSoftness            = "shadow_softness";
+	constexpr const char* ShadowResolution          = "shadow_resolution";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -568,7 +573,14 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 
 		if (auto* directionalLight = entityManager.GetComponent<DirectionalLightComponent>(i))
 		{
-			entityJson[SceneKeys::DirectionalLightComponent] = SerializeLightColor(directionalLight->color);
+			json lightJson = SerializeLightColor(directionalLight->color);
+			lightJson[SceneKeys::CastsShadows]     = directionalLight->castsShadows;
+			lightJson[SceneKeys::ShadowDistance]   = directionalLight->shadowDistance;
+			lightJson[SceneKeys::ShadowStrength]   = directionalLight->shadowStrength;
+			lightJson[SceneKeys::ShadowSoftness]   = directionalLight->shadowSoftness;
+			lightJson[SceneKeys::ShadowResolution] = directionalLight->shadowResolution;
+
+			entityJson[SceneKeys::DirectionalLightComponent] = lightJson;
 		}
 
 		if (auto* pointLight = entityManager.GetComponent<PointLightComponent>(i))
@@ -1228,8 +1240,15 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 		if (entityJson.contains(SceneKeys::DirectionalLightComponent))
 		{
+			const auto& lightData = entityJson[SceneKeys::DirectionalLightComponent];
 			auto& directionalLight = entityManager.AddComponent<DirectionalLightComponent>(entity);
-			DeserializeLightColor(entityJson[SceneKeys::DirectionalLightComponent], directionalLight.color);
+			DeserializeLightColor(lightData, directionalLight.color);
+
+			directionalLight.castsShadows     = lightData.value(SceneKeys::CastsShadows,     directionalLight.castsShadows);
+			directionalLight.shadowDistance   = lightData.value(SceneKeys::ShadowDistance,   directionalLight.shadowDistance);
+			directionalLight.shadowStrength   = lightData.value(SceneKeys::ShadowStrength,   directionalLight.shadowStrength);
+			directionalLight.shadowSoftness   = lightData.value(SceneKeys::ShadowSoftness,   directionalLight.shadowSoftness);
+			directionalLight.shadowResolution = lightData.value(SceneKeys::ShadowResolution, directionalLight.shadowResolution);
 		}
 
 		if (entityJson.contains(SceneKeys::PointLightComponent))

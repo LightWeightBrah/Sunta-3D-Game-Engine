@@ -11,6 +11,8 @@ class VertexArray;
 class Texture;
 class Shader;
 class Cubemap;
+class Framebuffer;
+struct FramebufferSpecification;
 
 enum class BufferUsage 
 { 
@@ -47,6 +49,10 @@ public:
 	virtual void SetAdditiveBlending(bool isEnabled) = 0;
 	virtual void SetDepthWrite(bool isEnabled) = 0;
 
+	// Pushes the depth of what is drawn a little farther away: 'factor' more on surfaces seen at a steep angle, 'units'
+	// a fixed amount (e.g. a shadow map, so that a surface doesn't shadow itself with stripes)
+	virtual void SetPolygonOffset(bool isEnabled, float factor = 0.0f, float units = 0.0f) = 0;
+
 	virtual void DrawElements(const VertexArray& vertexArray) = 0;
 	virtual void DrawLines(const VertexArray& vertexArray) = 0;
 
@@ -61,6 +67,9 @@ public:
 
 	// Six pictures of a folder (right, left, top, bottom, front, back) as one cubemap (the sky)
 	virtual std::shared_ptr<Cubemap>       CreateCubemap(const std::string& folder) = 0;
+
+	// Somewhere to draw other than the screen: its pictures (colors, depth) can be read by shaders afterwards
+	virtual std::shared_ptr<Framebuffer>   CreateFramebuffer(const FramebufferSpecification& specification) = 0;
 
 	static std::unique_ptr<RendererDevice> Create();
 };

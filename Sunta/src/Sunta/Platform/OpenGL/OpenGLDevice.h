@@ -15,6 +15,7 @@ public:
 	virtual void SetAlphaBlending(bool isEnabled) override;
 	virtual void SetAdditiveBlending(bool isEnabled) override;
 	virtual void SetDepthWrite(bool isEnabled) override;
+	virtual void SetPolygonOffset(bool isEnabled, float factor = 0.0f, float units = 0.0f) override;
 
 	virtual void DrawElements(const VertexArray& vertexArray) override;
 	virtual void DrawLines(const VertexArray& vertexArray) override;
@@ -26,6 +27,7 @@ public:
 	virtual std::shared_ptr<Texture>       CreateTexture(int width, int height, const unsigned char* rgbaPixels) override;
 	virtual std::shared_ptr<Shader>        CreateShader(const std::string& filepath) override;
 	virtual std::shared_ptr<Cubemap>       CreateCubemap(const std::string& folder) override;
+	virtual std::shared_ptr<Framebuffer>   CreateFramebuffer(const FramebufferSpecification& specification) override;
 };
 
 

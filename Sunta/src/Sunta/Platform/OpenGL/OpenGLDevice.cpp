@@ -5,6 +5,7 @@
 
 #include "OpenGLTexture.h"
 #include "OpenGLCubemap.h"
+#include "OpenGLFramebuffer.h"
 #include "OpenGLShader.h"
 #include "OpenGLVertexArray.h"
 #include "OpenGLVertexBuffer.h"
@@ -72,6 +73,18 @@ void OpenGLDevice::SetDepthWrite(bool isEnabled)
 	GLCall(glDepthMask(isEnabled ? GL_TRUE : GL_FALSE));
 }
 
+void OpenGLDevice::SetPolygonOffset(bool isEnabled, float factor, float units)
+{
+	if (!isEnabled)
+	{
+		GLCall(glDisable(GL_POLYGON_OFFSET_FILL));
+		return;
+	}
+
+	GLCall(glEnable(GL_POLYGON_OFFSET_FILL));
+	GLCall(glPolygonOffset(factor, units));
+}
+
 void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 {
 	vertexArray.Bind();
@@ -122,6 +135,11 @@ std::shared_ptr<Shader> OpenGLDevice::CreateShader(const std::string& filepath)
 std::shared_ptr<Cubemap> OpenGLDevice::CreateCubemap(const std::string& folder)
 {
 	return std::make_shared<OpenGLCubemap>(folder);
+}
+
+std::shared_ptr<Framebuffer> OpenGLDevice::CreateFramebuffer(const FramebufferSpecification& specification)
+{
+	return std::make_shared<OpenGLFramebuffer>(specification);
 }
 
 }

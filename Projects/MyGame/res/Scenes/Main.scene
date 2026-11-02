@@ -12,20 +12,25 @@
             },
             "directional_light": {
                 "ambient": [
-                    0.16,
-                    0.16,
-                    0.19
+                    0.13,
+                    0.13,
+                    0.16
                 ],
                 "diffuse": [
-                    0.42,
-                    0.42,
-                    0.48
+                    0.62,
+                    0.62,
+                    0.7
                 ],
                 "specular": [
                     0.35,
                     0.35,
                     0.4
-                ]
+                ],
+                "casts_shadows": true,
+                "shadow_distance": 30.0,
+                "shadow_strength": 1.0,
+                "shadow_softness": 1,
+                "shadow_resolution": 2048
             },
             "tag": {
                 "name": "Moonlight"

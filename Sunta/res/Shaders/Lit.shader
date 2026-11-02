@@ -134,7 +134,17 @@ uniform		float				emissiveStrength;
 uniform		vec3				fogColor;
 uniform		float				fogDensity;
 
-vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, 			  vec3 viewerDirection);
+// The shadows of the first directional light (see ShadowRenderer and learnopengl.com: Shadow Mapping)
+// The shadow map keeps, for every point of a square around the camera, how far from the light the nearest surface is
+uniform		bool				hasShadows;
+uniform		sampler2D			shadowMap;
+uniform		mat4				lightSpaceMatrix;
+uniform		float				shadowStrength;		// 0 = no darkening, 1 = only the ambient light is left
+uniform		float				shadowNormalOffset;	// meters along the normal before the map is read (no self-shadowing)
+uniform		int					shadowSoftness;		// PCF radius in pixels of the map: 1 = 3x3 samples
+
+float CalculateShadowVisibility(vec3 normal);
+vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, 			  vec3 viewerDirection, float lightVisibility);
 vec3 CalculatePointLights(      PointLight       light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
 vec3 CalculateSpotLights(       SpotLight        light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
 
@@ -156,8 +166,11 @@ void main()
 
 	vec3 result = vec3(0.0f);
 
+	// Only the first directional light (the moon, the sun) casts shadows
+	float shadowVisibility = CalculateShadowVisibility(normalVector);
+
 	for(int i = 0; i < directionalLightsCount; i++)
-		result += CalculateDirectionalLights(directionalLights[i], normalVector, viewerDirection);
+		result += CalculateDirectionalLights(directionalLights[i], normalVector, viewerDirection, i == 0 ? shadowVisibility : 1.0f);
 
 	for(int i = 0; i < pointLightsCount; i++)
 		result += CalculatePointLights(pointLights[i], normalVector, FragPos, viewerDirection);
@@ -176,7 +189,49 @@ void main()
 
 }
 
-vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, vec3 viewerDirection)
+// 1 = in the light, less = in a shadow. Each point is moved into the light's view (lightSpaceMatrix) and its depth there
+// compared with the map: farther than what the map keeps = something nearer to the light hides it. The neighbouring
+// pixels of the map are compared too and averaged, so the shadow's edge is soft (PCF: percentage-closer filtering)
+float CalculateShadowVisibility(vec3 normal)
+{
+	if(!hasShadows || directionalLightsCount == 0)
+		return 1.0f;
+
+	vec4 lightSpacePosition = lightSpaceMatrix * vec4(FragPos + normal * shadowNormalOffset, 1.0f);
+	vec3 mapCoords = lightSpacePosition.xyz / lightSpacePosition.w * 0.5f + 0.5f;
+
+	// Beyond the far end of the light's view nothing is shadowed
+	if(mapCoords.z > 1.0f)
+		return 1.0f;
+
+	const float depthBias = 0.0003f;
+	vec2 texelSize = 1.0f / vec2(textureSize(shadowMap, 0));
+
+	float shadow  = 0.0f;
+	int   samples = 0;
+
+	for(int x = -shadowSoftness; x <= shadowSoftness; x++)
+	{
+		for(int y = -shadowSoftness; y <= shadowSoftness; y++)
+		{
+			float nearestDepth = texture(shadowMap, mapCoords.xy + vec2(x, y) * texelSize).r;
+			shadow  += (mapCoords.z - depthBias > nearestDepth) ? 1.0f : 0.0f;
+			samples += 1;
+		}
+	}
+
+	shadow /= float(samples);
+
+	// The shadows fade out at the edge of the square around the camera instead of ending on a line
+	vec2  fromCenter = abs(mapCoords.xy * 2.0f - 1.0f);
+	float edgeFade   = smoothstep(0.8f, 1.0f, max(fromCenter.x, fromCenter.y));
+	shadow *= 1.0f - edgeFade;
+
+	return 1.0f - shadow * shadowStrength;
+}
+
+// 'lightVisibility' darkens the light's diffuse and specular part in a shadow (the ambient part stays)
+vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, vec3 viewerDirection, float lightVisibility)
 {
 	vec3 lightDirection   = normalize(-light.direction);
 	float dotProductAngle = max(dot(normal, lightDirection), 0.0f);
@@ -188,7 +243,7 @@ vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, vec3 viewer
 	vec3 diffuse  = light.color.diffuseIntensity  * (dotProductAngle * material.diffuseColor  * vec3(texture(materialDiffuseMap1, TexCoord)).rgb);
 	vec3 specular = light.color.specularIntensity * (spec 		     * material.specularColor * vec3(texture(materialSpecularMap1, TexCoord)).rgb);
 
-	return (ambient + diffuse + specular);
+	return ambient + (diffuse + specular) * lightVisibility;
 }
 
 vec3 CalculatePointLights(PointLight light, vec3 normal, vec3 fragPos, vec3 viewerDirection)
