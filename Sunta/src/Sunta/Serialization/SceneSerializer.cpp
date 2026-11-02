@@ -55,6 +55,12 @@ namespace SceneKeys
 	constexpr const char* CurrencyRewardComponent   = "currency_reward";
 	constexpr const char* LevelUpComponent          = "level_up";
 	constexpr const char* CastsShadows              = "casts_shadows";
+	constexpr const char* IsPostProcessingEnabled   = "is_post_processing_enabled";
+	constexpr const char* Exposure                  = "exposure";
+	constexpr const char* IsBloomEnabled            = "is_bloom_enabled";
+	constexpr const char* BloomThreshold            = "bloom_threshold";
+	constexpr const char* BloomIntensity            = "bloom_intensity";
+	constexpr const char* BloomBlurPasses           = "bloom_blur_passes";
 	constexpr const char* ShadowDistance            = "shadow_distance";
 	constexpr const char* ShadowStrength            = "shadow_strength";
 	constexpr const char* ShadowSoftness            = "shadow_softness";
@@ -823,7 +829,13 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::SkyBrightness, environment->skyBrightness          },
 				{ SceneKeys::IsFogEnabled,  environment->isFogEnabled           },
 				{ SceneKeys::FogColor,      SerializeVec3(environment->fogColor) },
-				{ SceneKeys::FogDensity,    environment->fogDensity             }
+				{ SceneKeys::FogDensity,    environment->fogDensity             },
+				{ SceneKeys::IsPostProcessingEnabled, environment->isPostProcessingEnabled },
+				{ SceneKeys::Exposure,                environment->exposure                },
+				{ SceneKeys::IsBloomEnabled,          environment->isBloomEnabled          },
+				{ SceneKeys::BloomThreshold,          environment->bloomThreshold          },
+				{ SceneKeys::BloomIntensity,          environment->bloomIntensity          },
+				{ SceneKeys::BloomBlurPasses,         environment->bloomBlurPasses         }
 			};
 		}
 
@@ -1512,6 +1524,13 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			environment.skyBrightness = environmentData.value(SceneKeys::SkyBrightness, environment.skyBrightness);
 			environment.isFogEnabled  = environmentData.value(SceneKeys::IsFogEnabled,  environment.isFogEnabled);
 			environment.fogDensity    = environmentData.value(SceneKeys::FogDensity,    environment.fogDensity);
+
+			environment.isPostProcessingEnabled = environmentData.value(SceneKeys::IsPostProcessingEnabled, environment.isPostProcessingEnabled);
+			environment.exposure                = environmentData.value(SceneKeys::Exposure,                environment.exposure);
+			environment.isBloomEnabled          = environmentData.value(SceneKeys::IsBloomEnabled,          environment.isBloomEnabled);
+			environment.bloomThreshold          = environmentData.value(SceneKeys::BloomThreshold,          environment.bloomThreshold);
+			environment.bloomIntensity          = environmentData.value(SceneKeys::BloomIntensity,          environment.bloomIntensity);
+			environment.bloomBlurPasses         = environmentData.value(SceneKeys::BloomBlurPasses,         environment.bloomBlurPasses);
 
 			if (environmentData.contains(SceneKeys::FogColor))
 				environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);

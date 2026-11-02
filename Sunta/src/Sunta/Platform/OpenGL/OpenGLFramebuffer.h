@@ -15,7 +15,7 @@ public:
 
 	virtual void Bind() override;
 	virtual void Unbind() override;
-	virtual void Clear() override;
+	virtual void Clear(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) override;
 	virtual void Resize(int width, int height) override;
 
 	virtual void BindColorTexture(unsigned int index, unsigned int slot) const override;

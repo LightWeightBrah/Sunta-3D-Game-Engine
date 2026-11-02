@@ -32,6 +32,9 @@ public:
 	static void Init();
 	static void Clear(float r, float g, float b, float a);
 
+	// The color of the last Clear: the background where nothing is drawn (also of a scene drawn off screen)
+	static glm::vec4 GetClearColor() { return clearColor; }
+
 	void DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 	// 'emissiveStrength' scales the model's own light (its emissive maps, 0 = off)
 	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator, float emissiveStrength = 1.0f) const;
@@ -44,6 +47,7 @@ private:
 	// inline static with unique_ptr would require full definition of RendererDevice 
 	// in all files that includes Renderer.h in order to know the destructor of RendererDevice
 	static std::unique_ptr<RendererDevice> rendererDevice;
+	static inline glm::vec4 clearColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	SceneData sceneData;
 
 	void SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;

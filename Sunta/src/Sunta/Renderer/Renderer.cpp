@@ -50,6 +50,7 @@ void Renderer::Init()
 
 void Renderer::Clear(float r, float g, float b, float a)
 {
+	clearColor = glm::vec4(r, g, b, a);
 	rendererDevice->Clear(r, g, b, a);
 }
 

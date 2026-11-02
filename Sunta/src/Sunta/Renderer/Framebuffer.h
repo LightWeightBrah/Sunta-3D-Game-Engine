@@ -39,8 +39,8 @@ public:
 	// Back to the framebuffer and the viewport used before Bind
 	virtual void Unbind() = 0;
 
-	// Clears the color pictures to black and the depth to the farthest
-	virtual void Clear() = 0;
+	// Clears the color pictures to this color (black by default) and the depth to the farthest
+	virtual void Clear(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) = 0;
 
 	// New pictures of this size (the old content is lost)
 	virtual void Resize(int width, int height) = 0;

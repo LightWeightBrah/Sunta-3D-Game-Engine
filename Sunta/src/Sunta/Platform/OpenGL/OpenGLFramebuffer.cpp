@@ -134,9 +134,9 @@ void OpenGLFramebuffer::Unbind()
 	GLCall(glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]));
 }
 
-void OpenGLFramebuffer::Clear()
+void OpenGLFramebuffer::Clear(float r, float g, float b, float a)
 {
-	GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+	GLCall(glClearColor(r, g, b, a));
 	GLCall(glDepthMask(GL_TRUE));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

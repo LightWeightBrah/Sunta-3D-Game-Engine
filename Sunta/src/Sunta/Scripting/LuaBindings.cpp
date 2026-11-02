@@ -705,11 +705,15 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 			})
 	);
 
-	// Usage in Lua (on the entity with the Environment): this.environment.fogDensity = 0.1, this.environment.skyBrightness = 0.5
+	// Usage in Lua (on the entity with the Environment): this.environment.fogDensity = 0.1, this.environment.skyBrightness = 0.5,
+	// this.environment.exposure = 1.2, this.environment.bloomIntensity = 1.5 (the boss fight glows more)
 	lua.new_usertype<EnvironmentHandle>("Environment", sol::no_constructor,
 		"skyBrightness", MemberProperty(&EnvironmentComponent::skyBrightness, 0.0f),
 		"isFogEnabled",  MemberProperty(&EnvironmentComponent::isFogEnabled,  false),
-		"fogDensity",    MemberProperty(&EnvironmentComponent::fogDensity,    0.0f)
+		"fogDensity",    MemberProperty(&EnvironmentComponent::fogDensity,    0.0f),
+		"exposure",       MemberProperty(&EnvironmentComponent::exposure,       0.0f),
+		"bloomIntensity", MemberProperty(&EnvironmentComponent::bloomIntensity, 0.0f),
+		"bloomThreshold", MemberProperty(&EnvironmentComponent::bloomThreshold, 0.0f)
 	);
 
 	// Usage in Lua: this.particles.isEmitting = true, this.particles:burst(40) (40 specks at once), this.particles.particlesPerSecond = 80

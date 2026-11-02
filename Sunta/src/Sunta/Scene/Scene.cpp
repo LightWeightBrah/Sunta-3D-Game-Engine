@@ -44,6 +44,7 @@
 #include "Gameplay/HealingFlaskSystem.h"
 #include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CutsceneSystem.h"
+#include "Renderer/PostProcessing.h"
 #include "Renderer/ShadowRenderer.h"
 #include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
@@ -576,18 +577,38 @@ void Scene::Render(Renderer& renderer)
 		}
 	}
 
-	// The scene's Environment (the first one): the sky first, behind everything, and the fog of every lit thing
+	// The scene's Environment (the first one) decides the sky, the fog and the post-processing
 	auto& environments = entityManager.GetAllComponents<EnvironmentComponent>();
-	if (!environments.empty())
+	const EnvironmentComponent* environment = environments.empty() ? nullptr : &environments.front();
+
+	// HDR: the scene is drawn into floating point colors and put on the screen at the end, with bloom (PostProcessing)
+	PostProcessSettings postProcessSettings;
+	bool isPostProcessingWanted = true;
+
+	if (environment)
 	{
-		const EnvironmentComponent& environment = environments.front();
-		if (environment.isFogEnabled)
+		isPostProcessingWanted              = environment->isPostProcessingEnabled;
+		postProcessSettings.exposure        = environment->exposure;
+		postProcessSettings.isBloomEnabled  = environment->isBloomEnabled;
+		postProcessSettings.bloomThreshold  = environment->bloomThreshold;
+		postProcessSettings.bloomIntensity  = environment->bloomIntensity;
+		postProcessSettings.bloomBlurPasses = environment->bloomBlurPasses;
+	}
+
+	const glm::vec4 background = Renderer::GetClearColor();
+	const bool isPostProcessing = isPostProcessingWanted
+		&& PostProcessing::Begin((int)screenSize.x, (int)screenSize.y, background.r, background.g, background.b);
+
+	// The sky first, behind everything, and the fog of every lit thing
+	if (environment)
+	{
+		if (environment->isFogEnabled)
 		{
-			sceneData.fogColor   = environment.fogColor;
-			sceneData.fogDensity = environment.fogDensity;
+			sceneData.fogColor   = environment->fogColor;
+			sceneData.fogDensity = environment->fogDensity;
 		}
 
-		SkyboxRenderer::Draw(environment.skyboxFolder, sceneData.viewMatrix, sceneData.projectionMatrix, environment.skyBrightness);
+		SkyboxRenderer::Draw(environment->skyboxFolder, sceneData.viewMatrix, sceneData.projectionMatrix, environment->skyBrightness);
 	}
 
 	for (const auto& item : lightSourceQueue)
@@ -612,7 +633,14 @@ void Scene::Render(Renderer& renderer)
 	{
 		for (const LockOnSystem::SightRay& sightRay : LockOnSystem::GetSightRays())
 			DrawSightRay(sightRay, sceneData);
+	}
 
+	// The finished scene on the screen, then the HUD over it (the HUD is neither tone mapped nor glowing)
+	if (isPostProcessing)
+		PostProcessing::End(postProcessSettings);
+
+	if (isPlaying)
+	{
 		// Last: the HUD is drawn over the whole scene
 		const HUDArea hudArea = hasHUDArea ? HUDArea{ hudAreaTopLeft, hudAreaSize } : HUDArea{ glm::vec2(0.0f), screenSize };
 		if (CutsceneSystem::IsPlaying(entityManager))
