@@ -39,9 +39,9 @@ struct EnvironmentComponent
 	bool  isPostProcessingEnabled = true;
 	float exposure                = 0.8f;
 	bool  isBloomEnabled          = true;
-	float bloomThreshold          = 1.0f;
-	float bloomIntensity          = 0.6f;
-	int   bloomBlurPasses         = 5;
+	float bloomThreshold          = 0.7f;
+	float bloomIntensity          = 1.2f;
+	int   bloomBlurPasses         = 6;
 
 	static void RegisterToInspector()
 	{

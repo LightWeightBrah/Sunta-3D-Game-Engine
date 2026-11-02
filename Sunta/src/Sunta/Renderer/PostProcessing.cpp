@@ -24,8 +24,8 @@ constexpr const char* BrightPassShaderPath = "@engine/Shaders/BloomBrightPass.sh
 constexpr const char* BlurShaderPath       = "@engine/Shaders/BloomBlur.shader";
 constexpr const char* CompositeShaderPath  = "@engine/Shaders/Composite.shader";
 
-// The glow is made in a picture this many times smaller than the screen: faster, and the blur reaches farther
-constexpr int BloomDownscale = 2;
+// The glow is made in a picture this many times smaller than the screen: faster, and the blur reaches farther (a quarter: a glow wide enough to see around a fire)
+constexpr int BloomDownscale = 4;
 
 constexpr int MaxBlurPasses = 20;
 

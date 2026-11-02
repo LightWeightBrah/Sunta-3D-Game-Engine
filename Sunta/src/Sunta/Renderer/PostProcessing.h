@@ -18,16 +18,16 @@ struct PostProcessSettings
 	// The glow around bright things (fire, embers, glowing armor): what is brighter than 'bloomThreshold' spreads
 	// around itself, added 'bloomIntensity' strong. More 'bloomBlurPasses' = a wider glow
 	bool  isBloomEnabled  = true;
-	float bloomThreshold  = 1.0f;
-	float bloomIntensity  = 0.6f;
-	int   bloomBlurPasses = 5;
+	float bloomThreshold  = 0.7f;
+	float bloomIntensity  = 1.2f;
+	int   bloomBlurPasses = 6;
 };
 
 // HDR and bloom (see learnopengl.com: HDR, Bloom)
 //
 // Between Begin and End the scene is drawn into a framebuffer of floating point colors, so a light brighter than white
 // (a fire up close, the boss's glowing cracks) keeps how bright it really is instead of being cut at 1. End then:
-//  1. bright pass: keeps only what is brighter than the threshold, in a picture of half the size
+//  1. bright pass: keeps only what is brighter than the threshold, in a picture of a quarter of the size
 //  2. blur: blurs that picture with a Gaussian blur, horizontally and vertically in turns (two framebuffers in turns)
 //  3. composite: the scene + the blurred glow, multiplied by the exposure and tone mapped (ACES) back into 0..1,
 //     drawn over the whole screen, where the HUD then goes on top
