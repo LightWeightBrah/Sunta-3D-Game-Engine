@@ -3,6 +3,7 @@
 
 #include "BossSystem.h"
 #include "CharacterActionsSystem.h"
+#include "HealingFlaskSystem.h"
 #include "LockOnSystem.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
@@ -115,6 +116,8 @@ void RespawnSystem::RestoreCharacter(EntityManager& entityManager, unsigned int 
 
 	if (StaminaComponent* stamina = entityManager.GetComponent<StaminaComponent>(entityID))
 		stamina->currentStamina = stamina->maxStamina;
+
+	HealingFlaskSystem::Refill(entityManager, entityID);
 }
 
 void RespawnSystem::RespawnEnemies(EntityManager& entityManager)

@@ -26,6 +26,7 @@ private:
 	static void RegisterBossComponents(sol::state& lua);
 	static void RegisterLookComponents(sol::state& lua);
 	static void RegisterAudio(sol::state& lua);
+	static void RegisterProgressComponents(sol::state& lua);
 	static void RegisterEntity(sol::state& lua);
 	static void RegisterInput(sol::state& lua);
 };

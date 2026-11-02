@@ -64,6 +64,19 @@ constexpr float NotificationHeight  = 72.0f;
 constexpr float NotificationAreaY   = 0.3f; // part of the HUD area from the top
 const glm::vec4 NotificationColor   = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
 
+// The flask in the bottom left corner, the currency in the bottom right one (margins from those corners)
+const glm::vec2 CornerMargin        = glm::vec2(40.0f, 40.0f);
+constexpr float CornerTextHeight    = 26.0f;
+constexpr float CornerLabelHeight   = 18.0f;
+constexpr float CornerPadding       = 10.0f;
+constexpr float GainTextHeight      = 22.0f;
+constexpr float GainFadeOutSeconds  = 0.8f;
+const glm::vec4 CornerBackground    = glm::vec4(0.0f, 0.0f, 0.0f, 0.55f);
+const glm::vec4 CornerTextColor     = glm::vec4(0.92f, 0.88f, 0.8f, 1.0f);
+const glm::vec4 CornerLabelColor    = glm::vec4(0.7f, 0.65f, 0.56f, 1.0f);
+const glm::vec4 EmptyFlaskColor     = glm::vec4(0.45f, 0.42f, 0.38f, 1.0f);
+const glm::vec4 GainColor           = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
+
 // How fast the pale part of a bar (the health just lost) shrinks: this part of the whole bar per second
 constexpr float TrailShrinkPerSecond = 0.35f;
 
@@ -190,6 +203,48 @@ void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
 	UIRenderer::DrawTextCentered(hud.notificationText, center, NotificationHeight, WithAlpha(NotificationColor, alpha));
 }
 
+// The flask's name and the drinks left, e.g. "Estus Flask  3"
+void DrawFlask(const HUDArea& area, const HealingFlaskComponent& flask)
+{
+	const std::string count = std::to_string(flask.charges);
+	const float labelWidth  = UIRenderer::MeasureText(flask.displayName, CornerLabelHeight);
+	const float countWidth  = UIRenderer::MeasureText(count, CornerTextHeight);
+	const glm::vec2 size    = glm::vec2(labelWidth + countWidth + CornerPadding * 3.0f, CornerTextHeight + CornerPadding * 2.0f);
+	const glm::vec2 topLeft = glm::vec2(area.topLeft.x + CornerMargin.x, area.topLeft.y + area.size.y - CornerMargin.y - size.y);
+
+	const glm::vec4 color = flask.charges > 0 ? CornerTextColor : EmptyFlaskColor;
+	const float labelTop  = topLeft.y + CornerPadding + (CornerTextHeight - CornerLabelHeight);
+
+	UIRenderer::DrawRectangle(topLeft, size, CornerBackground);
+	UIRenderer::DrawTextAt(flask.displayName, glm::vec2(topLeft.x + CornerPadding, labelTop), CornerLabelHeight, CornerLabelColor);
+	UIRenderer::DrawTextAt(count, glm::vec2(topLeft.x + labelWidth + CornerPadding * 2.0f, topLeft.y + CornerPadding), CornerTextHeight, color);
+}
+
+// The amount counting up to its real value, the name next to it, and what was just gained above it
+void DrawCurrency(const HUDArea& area, const CurrencyComponent& currency)
+{
+	const std::string amount = std::to_string((int)currency.shownAmount);
+	const float labelWidth   = UIRenderer::MeasureText(currency.displayName, CornerLabelHeight);
+	const float amountWidth  = UIRenderer::MeasureText(amount, CornerTextHeight);
+	const glm::vec2 size     = glm::vec2(labelWidth + amountWidth + CornerPadding * 3.0f, CornerTextHeight + CornerPadding * 2.0f);
+	const glm::vec2 topLeft  = area.topLeft + area.size - CornerMargin - size;
+	const float labelTop     = topLeft.y + CornerPadding + (CornerTextHeight - CornerLabelHeight);
+
+	UIRenderer::DrawRectangle(topLeft, size, CornerBackground);
+	UIRenderer::DrawTextAt(currency.displayName, glm::vec2(topLeft.x + CornerPadding, labelTop), CornerLabelHeight, CornerLabelColor);
+	UIRenderer::DrawTextAt(amount, glm::vec2(topLeft.x + labelWidth + CornerPadding * 2.0f, topLeft.y + CornerPadding), CornerTextHeight, CornerTextColor);
+
+	if (currency.lastGainSecondsLeft <= 0.0f)
+		return;
+
+	const std::string gain = "+" + std::to_string(currency.lastGain);
+	const float alpha      = glm::clamp(currency.lastGainSecondsLeft / GainFadeOutSeconds, 0.0f, 1.0f);
+	const glm::vec2 gainTopLeft = glm::vec2(topLeft.x + size.x - UIRenderer::MeasureText(gain, GainTextHeight) - CornerPadding,
+		topLeft.y - GainTextHeight - CornerPadding * 0.5f);
+
+	UIRenderer::DrawTextAt(gain, gainTopLeft, GainTextHeight, WithAlpha(GainColor, alpha));
+}
+
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	unsigned int playerID = 0;
@@ -206,6 +261,12 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(playerID);
 	if (hud->showLockOnMarker && lockOn)
 		DrawLockOnMarker(entityManager, *lockOn, viewProjection);
+
+	if (const HealingFlaskComponent* flask = entityManager.GetComponent<HealingFlaskComponent>(playerID))
+		DrawFlask(area, *flask);
+
+	if (const CurrencyComponent* currency = entityManager.GetComponent<CurrencyComponent>(playerID))
+		DrawCurrency(area, *currency);
 
 	DrawPrompt(area, *hud);
 	DrawNotification(area, *hud);

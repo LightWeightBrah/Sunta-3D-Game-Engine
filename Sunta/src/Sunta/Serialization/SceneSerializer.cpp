@@ -50,6 +50,9 @@ namespace SceneKeys
 	constexpr const char* CutsceneComponent         = "cutscene";
 	constexpr const char* AudioSourceComponent      = "audio_source";
 	constexpr const char* CharacterSoundsComponent  = "character_sounds";
+	constexpr const char* HealingFlaskComponent     = "healing_flask";
+	constexpr const char* CurrencyComponent         = "currency";
+	constexpr const char* CurrencyRewardComponent   = "currency_reward";
 	constexpr const char* BossComponent             = "boss";
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
@@ -240,6 +243,25 @@ namespace SceneKeys
 	constexpr const char* FootstepSound             = "footstep_sound";
 	constexpr const char* ShockwaveSound            = "shockwave_sound";
 	constexpr const char* FootstepMeters            = "footstep_meters";
+
+	constexpr const char* MaxCharges                = "max_charges";
+	constexpr const char* HealAmount                = "heal_amount";
+	constexpr const char* DrinkAnimation            = "drink_animation";
+	constexpr const char* HealAtProgress            = "heal_at_progress";
+	constexpr const char* HealEffect                = "heal_effect";
+	constexpr const char* HiddenWhileDrinking       = "hidden_while_drinking";
+	constexpr const char* ShownWhileDrinking        = "shown_while_drinking";
+	constexpr const char* DrinkSound                = "drink_sound";
+	constexpr const char* HealSound                 = "heal_sound";
+
+	constexpr const char* CurrencyAmount            = "amount";
+	constexpr const char* IsDroppedOnDeath          = "is_dropped_on_death";
+	constexpr const char* DropMarker                = "drop_marker";
+	constexpr const char* RetrieveDistance          = "retrieve_distance";
+	constexpr const char* IsRetrievedWithKey        = "is_retrieved_with_key";
+	constexpr const char* RetrievePrompt            = "retrieve_prompt";
+	constexpr const char* GainSound                 = "gain_sound";
+	constexpr const char* RetrieveSound             = "retrieve_sound";
 	constexpr const char* AttackSoundLeadSeconds    = "attack_sound_lead_seconds";
 	constexpr const char* LeftFootBone              = "left_foot_bone";
 	constexpr const char* RightFootBone             = "right_foot_bone";
@@ -809,6 +831,47 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::BattleMusic,                   fogGate->battleMusic        },
 				{ SceneKeys::BattleMusicVolume,             fogGate->battleMusicVolume  },
 				{ SceneKeys::VictorySound,                  fogGate->victorySound       }
+			};
+		}
+
+		if (auto* flask = entityManager.GetComponent<HealingFlaskComponent>(i))
+		{
+			entityJson[SceneKeys::HealingFlaskComponent] =
+			{
+				{ SceneKeys::DisplayName,    flask->displayName    },
+				{ SceneKeys::MaxCharges,     flask->maxCharges     },
+				{ SceneKeys::HealAmount,     flask->healAmount     },
+				{ SceneKeys::DrinkAnimation, flask->drinkAnimation },
+				{ SceneKeys::HealAtProgress, flask->healAtProgress },
+				{ SceneKeys::HiddenWhileDrinking, flask->hiddenWhileDrinking },
+				{ SceneKeys::ShownWhileDrinking,  flask->shownWhileDrinking  },
+				{ SceneKeys::HealEffect,     flask->healEffect     },
+				{ SceneKeys::DrinkSound,     flask->drinkSound     },
+				{ SceneKeys::HealSound,      flask->healSound      }
+			};
+		}
+
+		if (auto* currency = entityManager.GetComponent<CurrencyComponent>(i))
+		{
+			entityJson[SceneKeys::CurrencyComponent] =
+			{
+				{ SceneKeys::DisplayName,        currency->displayName        },
+				{ SceneKeys::CurrencyAmount,     currency->amount             },
+				{ SceneKeys::IsDroppedOnDeath,   currency->isDroppedOnDeath   },
+				{ SceneKeys::DropMarker,         currency->dropMarker         },
+				{ SceneKeys::RetrieveDistance,   currency->retrieveDistance   },
+				{ SceneKeys::IsRetrievedWithKey, currency->isRetrievedWithKey },
+				{ SceneKeys::RetrievePrompt,     currency->retrievePrompt     },
+				{ SceneKeys::GainSound,          currency->gainSound          },
+				{ SceneKeys::RetrieveSound,      currency->retrieveSound      }
+			};
+		}
+
+		if (auto* reward = entityManager.GetComponent<CurrencyRewardComponent>(i))
+		{
+			entityJson[SceneKeys::CurrencyRewardComponent] =
+			{
+				{ SceneKeys::CurrencyAmount, reward->amount }
 			};
 		}
 
@@ -1441,6 +1504,48 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			fogGate.battleMusic       = fogData.value(SceneKeys::BattleMusic,       fogGate.battleMusic);
 			fogGate.battleMusicVolume = fogData.value(SceneKeys::BattleMusicVolume, fogGate.battleMusicVolume);
 			fogGate.victorySound      = fogData.value(SceneKeys::VictorySound,      fogGate.victorySound);
+		}
+
+		if (entityJson.contains(SceneKeys::HealingFlaskComponent))
+		{
+			const auto& flaskData = entityJson[SceneKeys::HealingFlaskComponent];
+			auto& flask = entityManager.AddComponent<HealingFlaskComponent>(entity);
+
+			flask.displayName    = flaskData.value(SceneKeys::DisplayName,    flask.displayName);
+			flask.maxCharges     = flaskData.value(SceneKeys::MaxCharges,     flask.maxCharges);
+			flask.healAmount     = flaskData.value(SceneKeys::HealAmount,     flask.healAmount);
+			flask.drinkAnimation = flaskData.value(SceneKeys::DrinkAnimation, flask.drinkAnimation);
+			flask.healAtProgress = flaskData.value(SceneKeys::HealAtProgress, flask.healAtProgress);
+			flask.hiddenWhileDrinking = flaskData.value(SceneKeys::HiddenWhileDrinking, flask.hiddenWhileDrinking);
+			flask.shownWhileDrinking  = flaskData.value(SceneKeys::ShownWhileDrinking,  flask.shownWhileDrinking);
+			flask.healEffect     = flaskData.value(SceneKeys::HealEffect,     flask.healEffect);
+			flask.drinkSound     = flaskData.value(SceneKeys::DrinkSound,     flask.drinkSound);
+			flask.healSound      = flaskData.value(SceneKeys::HealSound,      flask.healSound);
+			flask.charges        = flask.maxCharges;
+		}
+
+		if (entityJson.contains(SceneKeys::CurrencyComponent))
+		{
+			const auto& currencyData = entityJson[SceneKeys::CurrencyComponent];
+			auto& currency = entityManager.AddComponent<CurrencyComponent>(entity);
+
+			currency.displayName        = currencyData.value(SceneKeys::DisplayName,        currency.displayName);
+			currency.amount             = currencyData.value(SceneKeys::CurrencyAmount,     currency.amount);
+			currency.isDroppedOnDeath   = currencyData.value(SceneKeys::IsDroppedOnDeath,   currency.isDroppedOnDeath);
+			currency.dropMarker         = currencyData.value(SceneKeys::DropMarker,         currency.dropMarker);
+			currency.retrieveDistance   = currencyData.value(SceneKeys::RetrieveDistance,   currency.retrieveDistance);
+			currency.isRetrievedWithKey = currencyData.value(SceneKeys::IsRetrievedWithKey, currency.isRetrievedWithKey);
+			currency.retrievePrompt     = currencyData.value(SceneKeys::RetrievePrompt,     currency.retrievePrompt);
+			currency.gainSound          = currencyData.value(SceneKeys::GainSound,          currency.gainSound);
+			currency.retrieveSound      = currencyData.value(SceneKeys::RetrieveSound,      currency.retrieveSound);
+		}
+
+		if (entityJson.contains(SceneKeys::CurrencyRewardComponent))
+		{
+			const auto& rewardData = entityJson[SceneKeys::CurrencyRewardComponent];
+			auto& reward = entityManager.AddComponent<CurrencyRewardComponent>(entity);
+
+			reward.amount = rewardData.value(SceneKeys::CurrencyAmount, reward.amount);
 		}
 
 		if (entityJson.contains(SceneKeys::AudioSourceComponent))

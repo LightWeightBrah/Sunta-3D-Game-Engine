@@ -45,21 +45,6 @@ VideoPlayer& GetVideo()
 	return video;
 }
 
-bool TryFindByName(EntityManager& entityManager, const std::string& name, unsigned int& outEntityID)
-{
-	if (name.empty())
-		return false;
-
-	for (TagComponent& tag : entityManager.GetAllComponents<TagComponent>())
-	{
-		if (tag.name == name)
-		{
-			outEntityID = entityManager.GetEntityIDForComponent(tag);
-			return true;
-		}
-	}
-	return false;
-}
 
 glm::vec3 GetWorldPosition(EntityManager& entityManager, unsigned int entityID)
 {
@@ -138,7 +123,7 @@ void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, const Cu
 
 	glm::vec3 lookDirection = PointOnPath(points, glm::min(along + 0.02f, 1.0f)) - position;
 	unsigned int targetID = 0;
-	if (TryFindByName(entityManager, cutscene.lookAtEntity, targetID))
+	if (TryFindEntityByName(entityManager, cutscene.lookAtEntity, targetID))
 		lookDirection = GetWorldPosition(entityManager, targetID) + WorldUp * cutscene.lookAtHeight - position;
 
 	if (glm::length(lookDirection) < 0.001f || std::abs(glm::normalize(lookDirection).y) > 0.999f)
@@ -183,7 +168,7 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 bool CutsceneSystem::PlayByName(EntityManager& entityManager, const std::string& name)
 {
 	unsigned int entityID = 0;
-	if (!TryFindByName(entityManager, name, entityID) || !entityManager.GetComponent<CutsceneComponent>(entityID))
+	if (!TryFindEntityByName(entityManager, name, entityID) || !entityManager.GetComponent<CutsceneComponent>(entityID))
 		return false;
 
 	Play(entityManager, entityID);
@@ -226,7 +211,7 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 			cutscene.hasStartedAnimation = true;
 
 			unsigned int actorID = 0;
-			if (TryFindByName(entityManager, cutscene.animationEntity, actorID) && !cutscene.animationName.empty())
+			if (TryFindEntityByName(entityManager, cutscene.animationEntity, actorID) && !cutscene.animationName.empty())
 				CharacterActionsSystem::PlaySpecial(entityManager, actorID, cutscene.animationName);
 		}
 

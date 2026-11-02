@@ -102,6 +102,19 @@ bool Animator::IsFinished() const
 	return currentAnimation && !isLooping && GetProgress() >= 1.0f;
 }
 
+float Animator::GetLayerProgress() const
+{
+	if (!layerAnimation || layerAnimation->GetDuration() <= 0.0f)
+		return 0.0f;
+
+	return glm::clamp(layerTime / layerAnimation->GetDuration(), 0.0f, 1.0f);
+}
+
+bool Animator::IsLayerFinished() const
+{
+	return layerAnimation && !isLayerLooping && GetLayerProgress() >= 1.0f;
+}
+
 bool Animator::TryGetNodeModelTransform(unsigned int nodeIndex, glm::mat4& outTransform) const
 {
 	if (nodeIndex >= nodeModelTransforms.size())

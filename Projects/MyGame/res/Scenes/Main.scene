@@ -192,6 +192,29 @@
                 "footstep_meters": 1.4,
                 "volume": 0.8
             },
+            "currency": {
+                "display_name": "Souls",
+                "amount": 0,
+                "is_dropped_on_death": true,
+                "drop_marker": "Lost Souls",
+                "retrieve_distance": 1.5,
+                "is_retrieved_with_key": true,
+                "retrieve_prompt": "Retrieve souls",
+                "gain_sound": "",
+                "retrieve_sound": ""
+            },
+            "healing_flask": {
+                "display_name": "Estus Flask",
+                "max_charges": 5,
+                "heal_amount": 60.0,
+                "drink_animation": "Drink",
+                "heal_at_progress": 0.45,
+                "heal_effect": "Heal Glow",
+                "hidden_while_drinking": "Shield",
+                "shown_while_drinking": "",
+                "drink_sound": "",
+                "heal_sound": ""
+            },
             "health": {
                 "max_health": 100.0
             },
@@ -4350,6 +4373,9 @@
                 "footstep_meters": 1.4,
                 "volume": 1.0
             },
+            "currency_reward": {
+                "amount": 60
+            },
             "enemy": {
                 "eye_height": 1.5,
                 "hearing_distance": 3.0,
@@ -4571,6 +4597,9 @@
                 "shockwave_sound": "",
                 "footstep_meters": 1.4,
                 "volume": 1.0
+            },
+            "currency_reward": {
+                "amount": 90
             },
             "enemy": {
                 "eye_height": 1.5,
@@ -4797,6 +4826,9 @@
                 "shockwave_sound": "",
                 "footstep_meters": 1.4,
                 "volume": 1.3
+            },
+            "currency_reward": {
+                "amount": 400
             },
             "enemy": {
                 "eye_height": 1.5,
@@ -5976,6 +6008,9 @@
                 "footstep_meters": 2.2,
                 "volume": 1.5
             },
+            "currency_reward": {
+                "amount": 8000
+            },
             "enemy": {
                 "eye_height": 2.4,
                 "hearing_distance": 3.0,
@@ -6524,6 +6559,9 @@
                 "shockwave_sound": "",
                 "footstep_meters": 1.4,
                 "volume": 1.0
+            },
+            "currency_reward": {
+                "amount": 120
             },
             "enemy": {
                 "eye_height": 1.5,
@@ -12189,6 +12227,136 @@
             },
             "parent": {
                 "index": 258
+            }
+        },
+        {
+            "particle_emitter": {
+                "end_color": [
+                    0.05,
+                    0.25,
+                    0.12
+                ],
+                "end_size": 0.02,
+                "gravity": [
+                    0.0,
+                    0.25,
+                    0.0
+                ],
+                "intensity": 2.5,
+                "is_emitting": false,
+                "lifetime_seconds": 1.8,
+                "max_particles": 200,
+                "particles_per_second": 55.0,
+                "spawn_half_extents": [
+                    0.25,
+                    0.05,
+                    0.25
+                ],
+                "start_color": [
+                    0.45,
+                    1.0,
+                    0.6
+                ],
+                "start_size": 0.09,
+                "velocity": [
+                    0.0,
+                    0.7,
+                    0.0
+                ],
+                "velocity_randomness": 0.35
+            },
+            "tag": {
+                "name": "Lost Souls"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "parent": {
+                "bone_name": "",
+                "index": 2
+            },
+            "particle_emitter": {
+                "end_color": [
+                    0.6,
+                    0.25,
+                    0.02
+                ],
+                "end_size": 0.02,
+                "gravity": [
+                    0.0,
+                    0.6,
+                    0.0
+                ],
+                "intensity": 2.2,
+                "is_emitting": false,
+                "lifetime_seconds": 1.2,
+                "max_particles": 150,
+                "particles_per_second": 0.0,
+                "spawn_half_extents": [
+                    0.35,
+                    0.8,
+                    0.35
+                ],
+                "start_color": [
+                    1.0,
+                    0.85,
+                    0.45
+                ],
+                "start_size": 0.07,
+                "velocity": [
+                    0.0,
+                    0.8,
+                    0.0
+                ],
+                "velocity_randomness": 0.5
+            },
+            "tag": {
+                "name": "Heal Glow"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    0.9,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
             }
         }
     ],

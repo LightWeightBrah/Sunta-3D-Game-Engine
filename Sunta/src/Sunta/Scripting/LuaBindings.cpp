@@ -11,6 +11,8 @@
 #include "Gameplay/CutsceneSystem.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioSystem.h"
+#include "Gameplay/CurrencySystem.h"
+#include "Gameplay/HealingFlaskSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/EnemyContext.h"
@@ -55,6 +57,9 @@ using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
 using EnvironmentHandle   = ComponentHandle<EnvironmentComponent>;
 using CutsceneHandle      = ComponentHandle<CutsceneComponent>;
 using AudioSourceHandle   = ComponentHandle<AudioSourceComponent>;
+using HealingFlaskHandle  = ComponentHandle<HealingFlaskComponent>;
+using CurrencyHandle      = ComponentHandle<CurrencyComponent>;
+using CurrencyRewardHandle = ComponentHandle<CurrencyRewardComponent>;
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -203,6 +208,7 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterBossComponents(lua);
 	RegisterLookComponents(lua);
 	RegisterAudio(lua);
+	RegisterProgressComponents(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -666,7 +672,10 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"particles",           ComponentHandleProperty<ParticleEmitterComponent>(),
 		"environment",         ComponentHandleProperty<EnvironmentComponent>(),
 		"cutscene",            ComponentHandleProperty<CutsceneComponent>(),
-		"audioSource",         ComponentHandleProperty<AudioSourceComponent>()
+		"audioSource",         ComponentHandleProperty<AudioSourceComponent>(),
+		"healingFlask",        ComponentHandleProperty<HealingFlaskComponent>(),
+		"currency",            ComponentHandleProperty<CurrencyComponent>(),
+		"currencyReward",      ComponentHandleProperty<CurrencyRewardComponent>()
 	);
 }
 
@@ -769,6 +778,47 @@ void LuaBindings::RegisterAudio(sol::state& lua)
 			{
 				Audio::StopMusic(fadeSeconds.value_or(2.0f));
 			}
+	);
+}
+
+void LuaBindings::RegisterProgressComponents(sol::state& lua)
+{
+	// Usage in Lua: this.healingFlask:drink() (false when empty or busy), this.healingFlask.charges, this.healingFlask.maxCharges = 7
+	lua.new_usertype<HealingFlaskHandle>("HealingFlask", sol::no_constructor,
+		"charges",    MemberProperty(&HealingFlaskComponent::charges,    0),
+		"maxCharges", MemberProperty(&HealingFlaskComponent::maxCharges, 0),
+		"healAmount", MemberProperty(&HealingFlaskComponent::healAmount, 0.0f),
+
+		"drink", [](const HealingFlaskHandle& handle)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && HealingFlaskSystem::Drink(*entityManager, handle.owner.GetID());
+			}
+	);
+
+	// Usage in Lua: this.currency.amount, this.currency:add(500) (shown as a gain), this.currency:add(-100) (spent)
+	lua.new_usertype<CurrencyHandle>("Currency", sol::no_constructor,
+		"amount",        sol::readonly_property([](const CurrencyHandle& handle)
+			{
+				const CurrencyComponent* currency = handle.TryGetComponent();
+				return currency ? currency->amount : 0;
+			}),
+		"droppedAmount", sol::readonly_property([](const CurrencyHandle& handle)
+			{
+				const CurrencyComponent* currency = handle.TryGetComponent();
+				return currency ? currency->droppedAmount : 0;
+			}),
+
+		"add", [](const CurrencyHandle& handle, int amount)
+			{
+				if (EntityManager* entityManager = handle.owner.GetEntityManager())
+					CurrencySystem::Add(*entityManager, handle.owner.GetID(), amount);
+			}
+	);
+
+	// Usage in Lua (on an enemy): this.currencyReward.amount = 1000
+	lua.new_usertype<CurrencyRewardHandle>("CurrencyReward", sol::no_constructor,
+		"amount", MemberProperty(&CurrencyRewardComponent::amount, 0)
 	);
 }
 

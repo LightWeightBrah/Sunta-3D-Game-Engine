@@ -6,6 +6,7 @@
 
 #include "CharacterActionsSystem.h"
 #include "CharacterSoundsSystem.h"
+#include "CurrencySystem.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "StaminaSystem.h"
@@ -128,7 +129,7 @@ bool CanBeHurt(EntityManager& entityManager, unsigned int entityID)
 	return health && !health->isDead && !IsInvulnerable(entityManager, entityID);
 }
 
-void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& health)
+void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& health, unsigned int attackerEntityID)
 {
 	health.isDead = true;
 
@@ -138,6 +139,7 @@ void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& h
 
 	CharacterActionsSystem::PlayDeath(entityManager, entityID);
 	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::deathSound);
+	CurrencySystem::OnDeath(entityManager, entityID, attackerEntityID);
 }
 
 // Takes the damage away from the health. True when the character is still alive
@@ -153,7 +155,7 @@ bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damag
 	if (health.currentHealth > 0.0f)
 		return true;
 
-	Die(entityManager, entityID, health);
+	Die(entityManager, entityID, health, attackerEntityID);
 	return false;
 }
 

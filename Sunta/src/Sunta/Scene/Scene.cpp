@@ -40,6 +40,8 @@
 #include "Effects/ParticleSystem.h"
 #include "Audio/AudioSystem.h"
 #include "Gameplay/CharacterSoundsSystem.h"
+#include "Gameplay/CurrencySystem.h"
+#include "Gameplay/HealingFlaskSystem.h"
 #include "Gameplay/CutsceneSystem.h"
 #include "Renderer/SkyboxRenderer.h"
 #include "Gameplay/StaminaSystem.h"
@@ -323,6 +325,7 @@ void Scene::Update()
 			EnemySystem::Update(entityManager, EngineTime::deltaTime);
 		CharacterControllerSystem::Update(entityManager, EngineTime::deltaTime, cameraForward);
 		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame);
+		HealingFlaskSystem::Update(entityManager);
 		StaminaSystem::Update(entityManager, EngineTime::deltaTime);
 		PhysicsSystem::UpdatePhysics(entityManager, EngineTime::deltaTime);
 	}
@@ -348,6 +351,7 @@ void Scene::Update()
 		BossSystem::Update(entityManager, EngineTime::deltaTime);
 		ParticleSystem::Update(entityManager, EngineTime::deltaTime);
 		BonfireSystem::Update(entityManager);
+		CurrencySystem::Update(entityManager, EngineTime::deltaTime);
 		RespawnSystem::Update(entityManager, EngineTime::deltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
 	}
@@ -710,6 +714,8 @@ void Scene::BeginPlay()
 	ParticleSystem::Clear(entityManager);
 	CutsceneSystem::PrepareForPlay(entityManager);
 	CharacterSoundsSystem::PrepareForPlay(entityManager);
+	HealingFlaskSystem::PrepareForPlay(entityManager);
+	CurrencySystem::PrepareForPlay(entityManager);
 	AudioSystem::PrepareForPlay(entityManager);
 	playState = PlayState::Playing;
 

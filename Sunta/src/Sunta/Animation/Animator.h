@@ -62,6 +62,10 @@ namespace Sunta
 	    void ClearLayer(float fadeSeconds);
 	    inline const Animation* GetLayerAnimation() const { return layerTarget > 0.0f ? layerAnimation : nullptr; }
 
+	    // How far the layer's animation is (0..1), and whether one played once reached its last frame
+	    float GetLayerProgress() const;
+	    bool  IsLayerFinished () const;
+
 		// For Raycasting Boundding Box fixes
 		void SampleAtTime(float time);
 

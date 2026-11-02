@@ -24,6 +24,8 @@
 #include "Gameplay/FogGateComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
 #include "Gameplay/CharacterSoundsComponent.h"
+#include "Gameplay/CurrencyComponent.h"
+#include "Gameplay/HealingFlaskComponent.h"
 #include "Gameplay/EnemyComponent.h"
 #include "Gameplay/EnemyHealthBarComponent.h"
 #include "Gameplay/HealthComponent.h"

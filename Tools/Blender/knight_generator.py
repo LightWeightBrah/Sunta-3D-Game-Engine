@@ -348,7 +348,8 @@ def add_blade(parts, blade_start, blade_end):
 #
 # Files (downloaded as "FBX Binary, Without Skin" into Tools/Blender/Mixamo, the paths start from Tools/Blender):
 #   ProSwordShield/   the "Pro Sword And Shield Pack", unzipped
-#   Sprinting Forward Roll.fbx, Standing Dodge Backward.fbx, Kneel Campfire.fbx ("Kneel", warming hands over a campfire)
+#   Sprinting Forward Roll.fbx, Standing Dodge Backward.fbx, Kneel Campfire.fbx ("Kneel", warming hands over a campfire),
+#   Drinking.fbx ("Male Drinking": the left hand lifts a bottle, the head tips back)
 #
 # The attacks are cut so that the blade strikes inside the hit windows of Character Actions
 # (light: 0.28..0.56 of the animation, heavy: 0.45..0.66), check with check_attack_reach.py
@@ -385,6 +386,10 @@ ANIMATIONS = {
     # Resting at a bonfire: kneeling down (the last frame is held), and getting up again
     "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
     "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
+
+    # Drinking from a Healing Flask (played on the upper body): the hand comes up, the head tips back, the hand goes down.
+    # The hand is at the mouth from about 0.2 to 0.7 of the clip, the heal comes in the middle of that
+    "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
 }
 
 

@@ -26,8 +26,10 @@ enum class CharacterAction
 	BlockImpact, // a hit taken on the shield
 	Parry,       // a quick turn of the shield: an attack that lands early in it is turned away (see 'parryFrom')
 	Parried,     // the long stagger of an attacker whose attack was parried: its next hit taken is a riposte
-	Special      // any animation played once by name (a roar, a taunt), started by a script or a boss;
+	Special,     // any animation played once by name (a roar, a taunt), started by a script or a boss;
 	             // hits still hurt but don't stagger the character (it can't be interrupted)
+	UseItem      // drinking from a flask or using any item: an animation played once on the upper body (as the block),
+	             // the character walks slowly meanwhile. A roll or an attack can't cut it short, a hit can
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -143,6 +145,9 @@ struct CharacterActionsComponent
 	// The animation of the current Special action
 	std::string specialAnimation;
 
+	// The animation of the current UseItem action
+	std::string itemAnimation;
+
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;
 
@@ -158,6 +163,8 @@ struct CharacterActionsComponent
 	bool IsBusy() const { return currentAction != CharacterAction::None; }
 
 	bool IsResting() const { return currentAction == CharacterAction::Rest; }
+
+	bool IsUsingItem() const { return currentAction == CharacterAction::UseItem; }
 
 	bool IsAttacking() const
 	{

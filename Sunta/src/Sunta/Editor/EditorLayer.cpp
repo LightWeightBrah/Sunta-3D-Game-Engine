@@ -221,6 +221,9 @@ void EditorLayer::RegisterComponentsToInspector()
 	CutsceneComponent::RegisterToInspector();
 	AudioSourceComponent::RegisterToInspector();
 	CharacterSoundsComponent::RegisterToInspector();
+	HealingFlaskComponent::RegisterToInspector();
+	CurrencyComponent::RegisterToInspector();
+	CurrencyRewardComponent::RegisterToInspector();
 	EnemyComponent::RegisterToInspector();
 	MeleeEnemyComponent::RegisterToInspector();
 	PlayerHUDComponent::RegisterToInspector();

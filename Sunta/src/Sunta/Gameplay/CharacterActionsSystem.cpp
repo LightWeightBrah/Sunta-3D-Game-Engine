@@ -36,6 +36,9 @@ constexpr int ParryKey          = SUNTA_KEY_F;
 // The upper body fades into the block (and out of it) in this time
 constexpr float BlockFadeSeconds = 0.15f;
 
+// Using an item (drinking from a flask) the character walks at this part of its walking speed
+constexpr float ItemWalkSpeedFactor = 0.5f;
+
 // ========== Numbers used below ==========
 
 constexpr int LightAttackCount = 3;
@@ -223,6 +226,7 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::Parry:       return actions.parryAnimation;
 	case CharacterAction::Parried:     return actions.parriedAnimation;
 	case CharacterAction::Special:     return actions.specialAnimation;
+	case CharacterAction::UseItem:     return actions.itemAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -319,6 +323,7 @@ bool CanBeInterrupted(CharacterAction action)
 	case CharacterAction::BlockImpact:
 	case CharacterAction::Parried:
 	case CharacterAction::Special:
+	case CharacterAction::UseItem:
 	case CharacterAction::Death:
 		return false;
 
@@ -386,11 +391,12 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 			FaceDirection(character, actions.actionDirection);
 	}
 
-	// The block raises the shield with the upper body only, the walking animation keeps the legs (and the controller
+	// The block and using an item play on the upper body only, the walking animation keeps the legs (and the controller
 	// keeps moving the character). Every other action plays on the whole body
-	const bool isBlock = action == CharacterAction::Block;
-	if (isBlock)
-		character.animator->animator.SetLayer(&character.animations->at(animationName), actions.upperBodyBone, BlockFadeSeconds);
+	const bool isBlock       = action == CharacterAction::Block;
+	const bool isUpperBody   = isBlock || action == CharacterAction::UseItem;
+	if (isUpperBody)
+		character.animator->animator.SetLayer(&character.animations->at(animationName), actions.upperBodyBone, BlockFadeSeconds, isBlock);
 	else
 	{
 		character.animator->animator.ClearLayer(actions.blendSeconds);
@@ -410,7 +416,7 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	actions.queuedAction                   = CharacterAction::None;
 	actions.actionProgress                 = 0.0f;
 	actions.isInvulnerable                 = false;
-	character.controller->isDrivenByAction = !isBlock;
+	character.controller->isDrivenByAction = !isUpperBody;
 }
 
 // An action asked for by a button or a script: it needs its animation and some stamina
@@ -456,7 +462,7 @@ void FinishAction(Character& character)
 {
 	CharacterActionsComponent& actions = *character.actions;
 
-	if (actions.currentAction == CharacterAction::Block)
+	if (actions.currentAction == CharacterAction::Block || actions.currentAction == CharacterAction::UseItem)
 		character.animator->animator.ClearLayer(BlockFadeSeconds);
 
 	actions.currentAction                  = CharacterAction::None;
@@ -501,6 +507,31 @@ void UpdateBlock(EntityManager& entityManager, Character& character, CharacterAc
 		FinishAction(character);
 }
 
+// The controller moves the character during an upper body action, but never faster than this
+void LimitWalkingSpeed(Character& character, float maxSpeed)
+{
+	character.controller->wantsToRun = false;
+	glm::vec3& velocity = character.body->velocity;
+	const float speed = glm::length(glm::vec2(velocity.x, velocity.z));
+	if (speed > maxSpeed)
+	{
+		velocity.x *= maxSpeed / speed;
+		velocity.z *= maxSpeed / speed;
+	}
+}
+
+// Using an item lasts as long as its animation on the upper body, whatever is pressed meanwhile
+void UpdateItemUse(Character& character)
+{
+	const Animator& animator = character.animator->animator;
+
+	LimitWalkingSpeed(character, character.controller->walkSpeed * ItemWalkSpeedFactor);
+	character.actions->actionProgress = animator.GetLayerProgress();
+
+	if (animator.IsLayerFinished())
+		FinishAction(character);
+}
+
 void UpdateCurrentAction(EntityManager& entityManager, Character& character, CharacterAction request)
 {
 	CharacterActionsComponent& actions = *character.actions;
@@ -508,17 +539,15 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 
 	if (actions.currentAction == CharacterAction::Block)
 	{
-		// Walking behind the shield: the controller moves the character, but never faster than a walk
-		character.controller->wantsToRun = false;
-		glm::vec3& velocity = character.body->velocity;
-		const float speed = glm::length(glm::vec2(velocity.x, velocity.z));
-		if (speed > character.controller->walkSpeed)
-		{
-			velocity.x *= character.controller->walkSpeed / speed;
-			velocity.z *= character.controller->walkSpeed / speed;
-		}
-
+		// Walking behind the shield
+		LimitWalkingSpeed(character, character.controller->walkSpeed);
 		UpdateBlock(entityManager, character, request);
+		return;
+	}
+
+	if (actions.currentAction == CharacterAction::UseItem)
+	{
+		UpdateItemUse(character);
 		return;
 	}
 
@@ -608,6 +637,23 @@ bool CharacterActionsSystem::PlaySpecial(EntityManager& entityManager, unsigned 
 
 	actions->specialAnimation = animationName;
 	return ForceAction(entityManager, entityID, CharacterAction::Special);
+}
+
+bool CharacterActionsSystem::UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName)
+{
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+
+	Character character;
+	if (!actions || !TryGetCharacter(entityManager, *actions, character) || !HasAnimation(character, animationName))
+		return false;
+
+	// Only a character free to act (or behind its shield: drinking lowers it)
+	if (actions->IsBusy() && actions->currentAction != CharacterAction::Block)
+		return false;
+
+	actions->itemAnimation = animationName;
+	StartAction(entityManager, character, CharacterAction::UseItem, animationName);
+	return true;
 }
 
 void CharacterActionsSystem::PlayDeath(EntityManager& entityManager, unsigned int entityID)

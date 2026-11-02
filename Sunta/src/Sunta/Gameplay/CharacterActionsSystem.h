@@ -17,6 +17,10 @@ public:
 
 	// Started by the Health: the character staggers (interrupting what it does), or dies and never acts again
 	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID);
+	// Drinking from a flask or using any item: the animation plays once on the upper body, the character walks slowly.
+	// False when the character is busy (attacking, rolling, staggering) or has no such animation
+	static bool UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);
+
 	static void PlayDeath(EntityManager& entityManager, unsigned int entityID);
 
 	// Started by a hit: taken on the shield (the character stays behind it), or the attacker's own attack was parried
