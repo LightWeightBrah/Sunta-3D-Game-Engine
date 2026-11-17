@@ -71,11 +71,8 @@ Projects/StrongestInHistoryVsToday/res/Videos/
 Projects/StrongestInHistoryVsToday/res/Sounds/Film/
 Projects/StrongestInHistoryVsToday/res/Sounds/Voice/
 
-# The user's reference pictures and the generated meshes of the second sample project (real people's likenesses: local only)
+# The user's reference pictures for the second sample project (local only; the models made from them are committed)
 Tools/Blender/Concepts/StrongestInHistory/
-Tools/Blender/Generated/StrongestInHistory/
-# ... and the characters made from them (the game's own models of those real people)
-Projects/StrongestInHistoryVsToday/res/Models/Characters/
 
 # Materials for the AI assistant: film frames, screenshots, previews, helper scripts (local only)
 AIContext/
