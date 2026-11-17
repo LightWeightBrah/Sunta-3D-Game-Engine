@@ -1,0 +1,7 @@
+# For Tools/fetch_film_assets.py (the film's videos, soundtrack and voices, not kept in the repository)
+yt-dlp
+imageio-ffmpeg
+# The voices without the music (CPU is enough)
+demucs
+soundfile
+torch

@@ -76,3 +76,6 @@ Tools/Blender/Concepts/StrongestInHistory/
 
 # Materials for the AI assistant: film frames, screenshots, previews, helper scripts (local only)
 AIContext/
+
+# Downloads of Projects/StrongestInHistoryVsToday/Tools/fetch_film_assets.py
+Projects/StrongestInHistoryVsToday/Tools/.film_cache/
