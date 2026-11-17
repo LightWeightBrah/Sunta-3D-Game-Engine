@@ -130,6 +130,10 @@ uniform		sampler2D			materialEmissiveMap1;
 // How strongly the emissive map shines (0 = off), set per model by its Model component
 uniform		float				emissiveStrength;
 
+// A model darkened to a silhouette (1 = black) and light it gives off all over (see ModelComponent)
+uniform		float				modelDarkness;
+uniform		vec3				modelGlow;
+
 // Distance fog (exponential squared, see learnopengl.com): the farther, the more of the fog's color. Density 0 = none
 uniform		vec3				fogColor;
 uniform		float				fogDensity;
@@ -184,6 +188,9 @@ void main()
 	float distanceToViewer = length(viewerPosition - FragPos);
 	float visibility       = exp(-pow(fogDensity * distanceToViewer, 2.0));
 	result = mix(fogColor, result, clamp(visibility, 0.0, 1.0));
+
+	// After the fog: a silhouette is black however far it stands, an aura shines through the haze
+	result = result * (1.0f - clamp(modelDarkness, 0.0f, 1.0f)) + modelGlow;
 
 	FragColor = vec4(result, 1.0f);
 

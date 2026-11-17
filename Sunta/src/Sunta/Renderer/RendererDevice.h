@@ -54,6 +54,9 @@ public:
 	virtual void SetPolygonOffset(bool isEnabled, float factor = 0.0f, float units = 0.0f) = 0;
 
 	virtual void DrawElements(const VertexArray& vertexArray) = 0;
+	// The same triangles 'instanceCount' times in one call: per-instance data comes from the vertex array's
+	// instanced attributes (BufferLayoutElement 'instanced'), e.g. a place and a color for each of thousands of specks
+	virtual void DrawElementsInstanced(const VertexArray& vertexArray, unsigned int instanceCount) = 0;
 	virtual void DrawLines(const VertexArray& vertexArray) = 0;
 
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) = 0;

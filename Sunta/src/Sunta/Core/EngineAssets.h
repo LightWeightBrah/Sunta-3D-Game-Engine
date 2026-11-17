@@ -20,6 +20,9 @@ namespace Sunta::Scripting
 		constexpr const char* OnCollisionEnter = "OnCollisionEnter";
 		constexpr const char* OnCollisionStay  = "OnCollisionStay";
 		constexpr const char* OnCollisionExit  = "OnCollisionExit";
+
+		// The entity lost health: OnDamaged(amount, kind, attacker), kind is "weapon", "spell" or "other"
+		constexpr const char* OnDamaged = "OnDamaged";
 	}
 }
 

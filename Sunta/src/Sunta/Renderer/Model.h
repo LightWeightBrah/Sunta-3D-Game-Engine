@@ -54,6 +54,17 @@ public:
 	inline const glm::vec3& GetLocalBoundsMin()						 const { return localBoundsMin; }
 	inline const glm::vec3& GetLocalBoundsMax()						 const { return localBoundsMax; }
 
+	// A ray against the triangles of a model without bones (scenery: a ruin, a heap of rubble), in the model's own
+	// space: the distance along 'direction' (not normalized: in its units) to the closest triangle in front of 'origin',
+	// and whether the ray enters the model there (its outer side) or leaves it ('origin' is inside the model).
+	// Used where boxes are too rough, e.g. a cutscene's camera that must not end up behind a wall. False for a model with bones
+	bool RaycastTriangles(const glm::vec3& origin, const glm::vec3& direction, float& outDistance, bool& outIsEntering) const;
+
+	// Every mesh without bones as one list of vertices and triangles (indices into it), in the model's space:
+	// for drawing the model in another way (thousands of copies at once, see SwarmRenderer). Empty for a model with bones
+	inline const std::vector<StaticVertex>& GetStaticVertices() const { return staticVertices; }
+	inline const std::vector<unsigned int>& GetStaticIndices()  const { return staticIndices;  }
+
 private:
 	RendererDevice*					rendererDevice;
 
@@ -77,6 +88,10 @@ private:
 	glm::vec3						localBoundsMin = glm::vec3(0.0f);
 	glm::vec3						localBoundsMax = glm::vec3(0.0f);
 	std::vector<SkinnedVertex>	    skinnedVerticesForBounds;
+
+	// The meshes without bones, kept on the CPU (RaycastTriangles, GetStaticVertices)
+	std::vector<StaticVertex>		staticVertices;
+	std::vector<unsigned int>		staticIndices;
 
 
 	void LoadModel(std::string path, bool flipUV);

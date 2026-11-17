@@ -375,6 +375,11 @@ bool LockOnSystem::TryGetTargetAimPoint(EntityManager& entityManager, const Lock
 	return lockOn.hasTarget && TryGetAimPoint(entityManager, lockOn.targetEntityID, outAimPoint);
 }
 
+bool LockOnSystem::TryGetAimPointOf(EntityManager& entityManager, unsigned int targetEntityID, glm::vec3& outAimPoint)
+{
+	return TryGetAimPoint(entityManager, targetEntityID, outAimPoint);
+}
+
 bool LockOnSystem::TrySetTarget(EntityManager& entityManager, LockOnComponent& lockOn, unsigned int targetEntityID)
 {
 	glm::vec3 aimPoint;

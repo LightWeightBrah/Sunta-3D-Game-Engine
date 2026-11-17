@@ -2,13 +2,16 @@
 #include "ParticleSystem.h"
 
 #include <algorithm>
+#include <cmath>
 #include <random>
+#include <glm/gtc/constants.hpp>
 
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 #include "Gameplay/EntityName.h"
 #include "Core/VirtualFileSystem.h"
 #include "Renderer/ElementBuffer.h"
+#include "Renderer/InstancedDrawer.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/RendererDevice.h"
 #include "Renderer/ScopedVertexArrayBind.h"
@@ -54,19 +57,75 @@ glm::vec3 RandomInBox(const glm::vec3& halfExtents)
 	return glm::vec3(RandomSigned() * halfExtents.x, RandomSigned() * halfExtents.y, RandomSigned() * halfExtents.z);
 }
 
-// Born in the box around the emitter (turned and scaled with it), flying in world space
+// 0..1
+float RandomUnit()
+{
+	return (RandomSigned() + 1.0f) * 0.5f;
+}
+
+glm::vec3 RandomDirection()
+{
+	for (;;)
+	{
+		const glm::vec3 point(RandomSigned(), RandomSigned(), RandomSigned());
+		const float length = glm::length(point);
+		if (length > 0.05f && length <= 1.0f)
+			return point / length;
+	}
+}
+
+// Where it is born around the emitter (in the emitter's own space) and which way is "out" from there
+void PickBirthPlace(const ParticleEmitterComponent& emitter, glm::vec3& outPlace, glm::vec3& outOutward)
+{
+	switch ((ParticleSpawnShape)emitter.spawnShape)
+	{
+	case ParticleSpawnShape::Sphere:
+		outOutward = RandomDirection();
+		// Evenly through the ball (more of them far from the middle, where there is more room)
+		outPlace = outOutward * emitter.spawnRadius * std::cbrt(RandomUnit());
+		return;
+
+	case ParticleSpawnShape::Dome:
+		outOutward = RandomDirection();
+		outOutward.y = std::abs(outOutward.y);
+		// On the shell, a little into it (the swelling surface of a hill of fire)
+		outPlace = outOutward * emitter.spawnRadius * (0.92f + 0.08f * RandomUnit());
+		return;
+
+	case ParticleSpawnShape::Box:
+	default:
+		outPlace   = RandomInBox(emitter.spawnHalfExtents);
+		outOutward = glm::length(outPlace) > 0.0001f ? glm::normalize(outPlace) : glm::vec3(0.0f, 1.0f, 0.0f);
+		return;
+	}
+}
+
+// Born around the emitter (turned and scaled with it), flying in world space
 void SpawnParticle(ParticleEmitterComponent& emitter, const glm::mat4& emitterMatrix)
 {
 	if (emitter.maxParticles <= 0)
 		return;
 
-	if ((int)emitter.particles.size() >= emitter.maxParticles)
-		emitter.particles.erase(emitter.particles.begin());
+	glm::vec3 place, outward;
+	PickBirthPlace(emitter, place, outward);
 
 	Particle particle;
-	particle.position = glm::vec3(emitterMatrix * glm::vec4(RandomInBox(emitter.spawnHalfExtents), 1.0f));
-	particle.velocity = emitter.velocity + RandomInBox(glm::vec3(emitter.velocityRandomness));
+	particle.position = glm::vec3(emitterMatrix * glm::vec4(place, 1.0f));
+	particle.velocity = emitter.velocity + RandomInBox(glm::vec3(emitter.velocityRandomness))
+		+ glm::vec3(emitterMatrix * glm::vec4(outward, 0.0f)) * emitter.outwardSpeed;
 	particle.lifetime = emitter.lifetimeSeconds * (0.75f + 0.25f * (RandomSigned() + 1.0f));
+	particle.size     = 1.0f + RandomSigned() * emitter.sizeRandomness;
+	particle.rotation = RandomUnit() * glm::two_pi<float>();
+	particle.spin     = RandomSigned() * glm::radians(emitter.spinDegreesPerSecond);
+	particle.seed     = RandomUnit();
+
+	// Full: over the oldest ones in turn (not by moving all the others: there may be tens of thousands)
+	if ((int)emitter.particles.size() >= emitter.maxParticles)
+	{
+		emitter.particles[emitter.nextOverwrite % emitter.particles.size()] = particle;
+		emitter.nextOverwrite++;
+		return;
+	}
 	emitter.particles.push_back(particle);
 }
 
@@ -76,11 +135,58 @@ void MoveParticles(ParticleEmitterComponent& emitter, float deltaTime)
 	{
 		particle.velocity += emitter.gravity * deltaTime;
 		particle.position += particle.velocity * deltaTime;
+		particle.rotation += particle.spin * deltaTime;
 		particle.age      += deltaTime;
 	}
 
-	auto isDead = [](const Particle& particle) { return particle.age >= particle.lifetime; };
-	emitter.particles.erase(std::remove_if(emitter.particles.begin(), emitter.particles.end(), isDead), emitter.particles.end());
+	// The dead ones swapped with the last (the order of specks doesn't matter)
+	for (size_t i = 0; i < emitter.particles.size();)
+	{
+		if (emitter.particles[i].age >= emitter.particles[i].lifetime)
+		{
+			emitter.particles[i] = emitter.particles.back();
+			emitter.particles.pop_back();
+		}
+		else
+		{
+			i++;
+		}
+	}
+}
+
+// What each speck gives the shader (one block per speck, see Particle.shader)
+struct SpeckInstance
+{
+	glm::vec4 centerAndSize;
+	glm::vec4 colorAndOpacity;
+	glm::vec4 rotationSeedStyle;   // rotation (radians), seed (0..1), style, part of its life
+};
+
+BufferLayout GetSpeckLayout()
+{
+	return BufferLayout
+	{
+		{ ShaderDataType::Float4, "iCenterSize",        false, true },
+		{ ShaderDataType::Float4, "iColorOpacity",      false, true },
+		{ ShaderDataType::Float4, "iRotationSeedStyle", false, true }
+	};
+}
+
+std::unique_ptr<InstancedDrawer>& GetDrawer()
+{
+	static std::unique_ptr<InstancedDrawer> drawer;
+	return drawer;
+}
+
+std::vector<SpeckInstance>& GetSpecks()
+{
+	static std::vector<SpeckInstance> specks;
+	return specks;
+}
+
+bool IsDrawnDark(const ParticleEmitterComponent& emitter)
+{
+	return emitter.isDark || emitter.style == (int)ParticleStyle::Smoke;
 }
 
 }
@@ -139,6 +245,7 @@ void ParticleSystem::Clear(EntityManager& entityManager)
 		emitter.particles.clear();
 		emitter.unbornParticles = 0.0f;
 		emitter.burstCount      = 0;
+		emitter.nextOverwrite   = 0;
 		emitter.pointBursts.clear();
 	}
 }
@@ -164,8 +271,11 @@ void ParticleSystem::EnsureInitialized()
 	elementBufferDescriptor.data = QuadIndices;
 	elementBufferDescriptor.size = sizeof(QuadIndices);
 
+	auto elementBuffer = rendererDevice.CreateElementBuffer(elementBufferDescriptor);
 	quad->AddVertexBuffer(vertexBuffer);
-	quad->SetElementBuffer(rendererDevice.CreateElementBuffer(elementBufferDescriptor));
+	quad->SetElementBuffer(elementBuffer);
+
+	GetDrawer() = std::make_unique<InstancedDrawer>(vertexBuffer, elementBuffer, GetSpeckLayout());
 
 	shader = rendererDevice.CreateShader(VirtualFileSystem::Resolve(ShaderPath));
 }
@@ -175,17 +285,18 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 {
 	auto& emitters = entityManager.GetAllComponents<ParticleEmitterComponent>();
 
-	bool hasParticles = false;
-	for (const ParticleEmitterComponent& emitter : emitters)
-		hasParticles = hasParticles || !emitter.particles.empty();
+	auto& sprites = entityManager.GetAllComponents<GlowSpriteComponent>();
 
-	if (!hasParticles)
+	bool hasAnything = std::any_of(sprites.begin(), sprites.end(), [](const GlowSpriteComponent& sprite) { return sprite.isVisible; });
+	for (const ParticleEmitterComponent& emitter : emitters)
+		hasAnything = hasAnything || !emitter.particles.empty();
+
+	if (!hasAnything)
 		return;
 
 	EnsureInitialized();
 
 	RendererDevice& rendererDevice = Renderer::GetDevice();
-	rendererDevice.SetAdditiveBlending(true);
 	rendererDevice.SetDepthWrite(false);
 
 	// The camera's right and up directions in the world: the first two rows of the view matrix
@@ -199,20 +310,63 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 	shader->SetUniform3f("cameraPosition", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	shader->SetUniform1f("fogDensity", fogDensity);
 
-	for (const ParticleEmitterComponent& emitter : emitters)
+	std::vector<SpeckInstance>& specks = GetSpecks();
+
+	// The dark specks first (they cover what is behind them), then everything that is light (added on top).
+	// All the specks of a pass are drawn at once
+	for (const bool isDarkPass : { true, false })
 	{
-		for (const Particle& particle : emitter.particles)
+		specks.clear();
+
+		for (const ParticleEmitterComponent& emitter : emitters)
 		{
-			const float     lifePart = glm::clamp(particle.age / particle.lifetime, 0.0f, 1.0f);
-			const float     size     = glm::mix(emitter.startSize, emitter.endSize, lifePart);
-			const glm::vec3 color    = glm::mix(emitter.startColor, emitter.endColor, lifePart) * emitter.intensity;
+			if (IsDrawnDark(emitter) != isDarkPass)
+				continue;
 
-			shader->SetUniform3f("center", particle.position.x, particle.position.y, particle.position.z);
-			shader->SetUniform1f("size", size);
-			shader->SetUniform3f("color", color.r, color.g, color.b);
+			const bool isGlow = emitter.style == (int)ParticleStyle::Glow;
 
-			rendererDevice.DrawElements(*quad);
+			for (const Particle& particle : emitter.particles)
+			{
+				const float     lifePart = glm::clamp(particle.age / particle.lifetime, 0.0f, 1.0f);
+				const float     size     = glm::mix(emitter.startSize, emitter.endSize, lifePart) * particle.size;
+				// A dark speck keeps its color and fades by its 'intensity' (how solid it is); a light one shines by it
+				const glm::vec3 color    = glm::mix(emitter.startColor, emitter.endColor, lifePart) * (isDarkPass ? 1.0f : emitter.intensity);
+				float           opacity  = isDarkPass ? glm::clamp(emitter.intensity, 0.0f, 1.0f) * (1.0f - lifePart * lifePart) : 1.0f;
+				// Fire and smoke swell in at their birth and fade at their end, so a dense fire doesn't flicker
+				const float     fade     = isGlow ? 1.0f : glm::smoothstep(0.0f, 0.12f, lifePart) * (1.0f - glm::smoothstep(0.7f, 1.0f, lifePart));
+				if (isDarkPass)
+					opacity *= fade;
+
+				specks.push_back({ glm::vec4(particle.position, size),
+					glm::vec4(isDarkPass ? color : color * fade, opacity),
+					glm::vec4(particle.rotation, particle.seed, (float)emitter.style, lifePart) });
+			}
 		}
+
+		// The sprites of light (see GlowSpriteComponent): one soft spot each, where their entity is
+		if (!isDarkPass)
+		{
+			for (const GlowSpriteComponent& sprite : sprites)
+			{
+				const WorldMatrixComponent* worldMatrix = entityManager.GetComponent<WorldMatrixComponent>(entityManager.GetEntityIDForComponent(sprite));
+				if (!sprite.isVisible || !worldMatrix || sprite.intensity <= 0.0f)
+					continue;
+
+				specks.push_back({ glm::vec4(glm::vec3(worldMatrix->matrix[3]), sprite.size),
+					glm::vec4(sprite.color * sprite.intensity, 1.0f), glm::vec4(0.0f) });
+			}
+		}
+
+		if (specks.empty())
+			continue;
+
+		if (isDarkPass)
+			rendererDevice.SetAlphaBlending(true);
+		else
+			rendererDevice.SetAdditiveBlending(true);
+
+		shader->SetUniformBool("isDark", isDarkPass);
+		GetDrawer()->Draw(specks.data(), (unsigned int)specks.size());
 	}
 
 	rendererDevice.SetDepthWrite(true);

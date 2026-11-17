@@ -12,6 +12,7 @@
 #include "ECS/EntityManager.h"
 #include "Renderer/Texture.h"
 #include "Renderer/UIRenderer.h"
+#include "Scene/EntityHierarchy.h"
 
 namespace Sunta
 {
@@ -33,6 +34,8 @@ const glm::vec2 EnemyBarSize = glm::vec2(90.0f, 6.0f);
 constexpr float BossBarWidthOfScreen = 0.6f;
 constexpr float BossBarHeight        = 12.0f;
 constexpr float BossBarBottomMargin  = 70.0f;
+// Two bosses fighting at once: the bar of the second one sits this much above the first
+constexpr float BossBarRowSpacing    = 84.0f;
 constexpr float BossNameHeight       = 26.0f;
 constexpr float BossNameGap          = 6.0f;
 
@@ -56,7 +59,8 @@ const glm::vec4 DeathBandColor     = glm::vec4(0.0f, 0.0f, 0.0f, 0.65f);
 const glm::vec4 DeathMessageColor  = glm::vec4(0.62f, 0.05f, 0.04f, 1.0f);
 
 constexpr float PromptHeight        = 28.0f;
-constexpr float PromptBottomMargin  = 150.0f;
+// Above the bars of two bosses fighting at once
+constexpr float PromptBottomMargin  = 250.0f;
 constexpr float PromptPadding       = 14.0f;
 const glm::vec4 PromptColor         = glm::vec4(0.92f, 0.88f, 0.8f, 1.0f);
 const glm::vec4 PromptBackground    = glm::vec4(0.0f, 0.0f, 0.0f, 0.55f);
@@ -79,6 +83,19 @@ const glm::vec4 CornerTextColor     = glm::vec4(0.92f, 0.88f, 0.8f, 1.0f);
 const glm::vec4 CornerLabelColor    = glm::vec4(0.7f, 0.65f, 0.56f, 1.0f);
 const glm::vec4 EmptyFlaskColor     = glm::vec4(0.45f, 0.42f, 0.38f, 1.0f);
 const glm::vec4 GainColor           = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
+
+// The player's spells: a row of slots under the player's bars, each with its key, its name and a thin bar
+// that fills while the spell comes back
+constexpr float SpellSlotHeight      = 34.0f;
+constexpr float SpellSlotGap         = 8.0f;
+constexpr float SpellTextHeight      = 18.0f;
+constexpr float SpellKeyBoxWidth     = 26.0f;
+constexpr float SpellCooldownHeight  = 4.0f;
+constexpr float SpellRowBelowBars    = 16.0f; // from the bottom of the player's bars to the top of the row
+const glm::vec4 SpellKeyBackground   = glm::vec4(0.45f, 0.39f, 0.28f, 0.9f);
+const glm::vec4 SpellKeyColor        = glm::vec4(0.05f, 0.04f, 0.04f, 1.0f);
+const glm::vec4 SpellReadyColor      = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
+const glm::vec4 SpellWaitingColor    = glm::vec4(0.5f, 0.47f, 0.42f, 1.0f);
 
 // How fast the pale part of a bar (the health just lost) shrinks: this part of the whole bar per second
 constexpr float TrailShrinkPerSecond = 0.35f;
@@ -204,20 +221,27 @@ PlayerHUDComponent* TryGetPlayerHUD(EntityManager& entityManager)
 }
 
 // Stamina first: the health bar's ornate end may reach over it
-void DrawStyledPlayerBars(const HUDStyle& style, const HUDArea& area, const PlayerHUDComponent& hud, const HealthComponent* health, const StaminaComponent* stamina)
+// Returns where the lower of the two bars ends on the screen (what is drawn under them starts there)
+float DrawStyledPlayerBars(const HUDStyle& style, const HUDArea& area, const PlayerHUDComponent& hud, const HealthComponent* health, const StaminaComponent* stamina)
 {
+	float bottom = area.topLeft.y;
+
 	if (stamina && style.stamina.IsUsable())
 	{
 		const float fraction = GetFraction(stamina->currentStamina, stamina->maxStamina);
-		DrawStyledBar(style, style.stamina, area.topLeft + style.stamina.offset, stamina->maxStamina * hud.pixelsPerStaminaPoint,
-			fraction, fraction, style.staminaColor);
+		const glm::vec2 topLeft = area.topLeft + style.stamina.offset;
+		bottom = glm::max(bottom, topLeft.y + DrawStyledBar(style, style.stamina, topLeft, stamina->maxStamina * hud.pixelsPerStaminaPoint,
+			fraction, fraction, style.staminaColor).y);
 	}
 
 	if (health)
 	{
-		DrawStyledBar(style, style.health, area.topLeft + style.health.offset, health->maxHealth * hud.pixelsPerHealthPoint,
-			GetFraction(health->currentHealth, health->maxHealth), GetFraction(hud.trailingHealth, health->maxHealth), style.healthColor);
+		const glm::vec2 topLeft = area.topLeft + style.health.offset;
+		bottom = glm::max(bottom, topLeft.y + DrawStyledBar(style, style.health, topLeft, health->maxHealth * hud.pixelsPerHealthPoint,
+			GetFraction(health->currentHealth, health->maxHealth), GetFraction(hud.trailingHealth, health->maxHealth), style.healthColor).y);
 	}
+
+	return bottom;
 }
 
 void DrawPlayerBars(const HUDArea& area, const PlayerHUDComponent& hud, const HealthComponent* health, const StaminaComponent* stamina)
@@ -344,6 +368,60 @@ void DrawStyledCurrency(const HUDStyle& style, const HUDArea& area, const Curren
 	DrawCurrencyGain(currency, topLeft, style.cornerSize);
 }
 
+// True when the spell is one of this character's (a Spell Caster on it or anywhere below it)
+bool BelongsTo(EntityManager& entityManager, unsigned int spellEntityID, unsigned int characterID)
+{
+	unsigned int entityID = spellEntityID;
+	while (entityID != characterID)
+	{
+		if (!EntityHierarchy::TryGetParent(entityManager, entityID, entityID))
+			return false;
+	}
+
+	return true;
+}
+
+// The spells the player casts with keys, in the order of their keys: "[1] Orb", dim with a filling bar while it comes back
+void DrawSpells(EntityManager& entityManager, unsigned int playerID, const HUDArea& area, float barsBottom)
+{
+	std::vector<const SpellCasterComponent*> spells;
+	for (SpellCasterComponent& spell : entityManager.GetAllComponents<SpellCasterComponent>())
+	{
+		if (!spell.castKey.empty() && BelongsTo(entityManager, entityManager.GetEntityIDForComponent(spell), playerID))
+			spells.push_back(&spell);
+	}
+
+	std::sort(spells.begin(), spells.end(), [](const SpellCasterComponent* left, const SpellCasterComponent* right)
+		{ return left->castKey < right->castKey; });
+
+	float x = area.topLeft.x + CornerMargin.x;
+	const float top = barsBottom + SpellRowBelowBars;
+
+	for (const SpellCasterComponent* spell : spells)
+	{
+		const std::string key  = spell->castKey.substr(0, 1);
+		const std::string name = spell->displayName.empty()
+			? GetEntityName(entityManager, entityManager.GetEntityIDForComponent(*spell)) : spell->displayName;
+
+		const bool  isReady   = spell->cooldownLeft <= 0.0f;
+		const float nameWidth = UIRenderer::MeasureText(name, SpellTextHeight);
+		const glm::vec2 size  = glm::vec2(SpellKeyBoxWidth + nameWidth + CornerPadding * 2.0f, SpellSlotHeight);
+		const glm::vec2 slot  = glm::vec2(x, top);
+		const float textTop   = top + (SpellSlotHeight - SpellCooldownHeight - SpellTextHeight) * 0.5f;
+
+		UIRenderer::DrawRectangle(slot, size, CornerBackground);
+		UIRenderer::DrawRectangle(slot, glm::vec2(SpellKeyBoxWidth, SpellSlotHeight - SpellCooldownHeight), isReady ? SpellReadyColor : SpellKeyBackground);
+		UIRenderer::DrawTextCentered(key, slot + glm::vec2(SpellKeyBoxWidth, SpellSlotHeight - SpellCooldownHeight) * 0.5f, SpellTextHeight, SpellKeyColor);
+		UIRenderer::DrawTextAt(name, glm::vec2(x + SpellKeyBoxWidth + CornerPadding, textTop), SpellTextHeight, isReady ? CornerTextColor : SpellWaitingColor);
+
+		const float ready = 1.0f - GetFraction(spell->cooldownLeft, spell->cooldownSeconds);
+		UIRenderer::DrawRectangle(glm::vec2(x, top + SpellSlotHeight - SpellCooldownHeight), glm::vec2(size.x * ready, SpellCooldownHeight),
+			isReady ? SpellReadyColor : SpellWaitingColor);
+
+		x += size.x + SpellSlotGap;
+	}
+}
+
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	unsigned int playerID = 0;
@@ -357,8 +435,11 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	const HUDStyle* style = HUDStyle::Get(hud->style);
 	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(playerID);
 
+	// Where the two bars end: the spells are listed under them
+	float barsBottom = area.topLeft.y + PlayerBarsOffset.y + HealthBarHeight + GapBetweenBars + StaminaBarHeight;
+
 	if (style && style->health.IsUsable())
-		DrawStyledPlayerBars(*style, area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
+		barsBottom = DrawStyledPlayerBars(*style, area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
 	else
 		DrawPlayerBars(area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
 
@@ -384,6 +465,8 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 		else
 			DrawCurrency(area, *currency);
 	}
+
+	DrawSpells(entityManager, playerID, area, barsBottom);
 
 	LevelUpSystem::DrawMenu(entityManager, area);
 	DrawPrompt(area, *hud);
@@ -442,11 +525,14 @@ void DrawFloatingBar(EntityManager& entityManager, const EnemyHealthBarComponent
 	DrawBar(topLeft, EnemyBarSize, GetFraction(health.currentHealth, health.maxHealth), GetFraction(bar.trailingHealth, health.maxHealth), HealthColor);
 }
 
-void DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyHealthBarComponent& bar, unsigned int enemyID,
-	const HealthComponent& health, const HUDStyle* style)
+// 'row' 0 is the bar at the bottom, every next boss gets the row above. False when the bar is not shown yet
+bool DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyHealthBarComponent& bar, unsigned int enemyID,
+	const HealthComponent& health, const HUDStyle* style, int row)
 {
 	if (!bar.isEngaged)
-		return;
+		return false;
+
+	const glm::vec2 rise = glm::vec2(0.0f, -BossBarRowSpacing * row);
 
 	const std::string name = bar.displayName.empty() ? GetEntityName(entityManager, enemyID) : bar.displayName;
 
@@ -457,27 +543,29 @@ void DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 		const float channelLength = area.size.x * BossBarWidthOfScreen;
 		const float scale         = boss.height / (float)glm::max(boss.frame->GetHeight(), 1);
 		const float frameWidth    = channelLength + (boss.inner.x + boss.inner.z) * scale;
-		const glm::vec2 topLeft   = area.topLeft + glm::vec2((area.size.x - frameWidth) * 0.5f, area.size.y - BossBarBottomMargin - boss.height) + boss.offset;
+		const glm::vec2 topLeft   = area.topLeft + glm::vec2((area.size.x - frameWidth) * 0.5f, area.size.y - BossBarBottomMargin - boss.height) + boss.offset + rise;
 
 		DrawStyledBar(*style, boss, topLeft, channelLength, GetFraction(health.currentHealth, health.maxHealth),
 			GetFraction(bar.trailingHealth, health.maxHealth), style->healthColor);
 
 		const glm::vec2 nameTopLeft = glm::vec2(topLeft.x + boss.inner.x * scale, topLeft.y + boss.inner.y * scale - BossNameHeight - BossNameGap);
 		UIRenderer::DrawTextAt(name, nameTopLeft, BossNameHeight, BossNameColor);
-		return;
+		return true;
 	}
 
 	const glm::vec2 size    = glm::vec2(area.size.x * BossBarWidthOfScreen, BossBarHeight);
-	const glm::vec2 topLeft = area.topLeft + glm::vec2((area.size.x - size.x) * 0.5f, area.size.y - BossBarBottomMargin - size.y);
+	const glm::vec2 topLeft = area.topLeft + glm::vec2((area.size.x - size.x) * 0.5f, area.size.y - BossBarBottomMargin - size.y) + rise;
 
 	UIRenderer::DrawTextAt(name, topLeft - glm::vec2(0.0f, BossNameHeight + BossNameGap), BossNameHeight, BossNameColor);
 	DrawBar(topLeft, size, GetFraction(health.currentHealth, health.maxHealth), GetFraction(bar.trailingHealth, health.maxHealth), HealthColor);
+	return true;
 }
 
 void DrawEnemies(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	const PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager);
 	const HUDStyle* style = hud ? HUDStyle::Get(hud->style) : nullptr;
+	int bossBarsDrawn = 0;
 
 	for (EnemyHealthBarComponent& bar : entityManager.GetAllComponents<EnemyHealthBarComponent>())
 	{
@@ -488,7 +576,7 @@ void DrawEnemies(EntityManager& entityManager, const glm::mat4& viewProjection, 
 			continue;
 
 		if (bar.isBoss)
-			DrawBossBar(entityManager, area, bar, enemyID, *health, style);
+			bossBarsDrawn += DrawBossBar(entityManager, area, bar, enemyID, *health, style, bossBarsDrawn) ? 1 : 0;
 		else
 			DrawFloatingBar(entityManager, bar, enemyID, *health, viewProjection);
 	}
@@ -496,8 +584,30 @@ void DrawEnemies(EntityManager& entityManager, const glm::mat4& viewProjection, 
 
 }
 
+namespace
+{
+
+// The flash of the screen going on now (see HUDSystem::FlashScreen)
+struct ScreenFlash
+{
+	glm::vec3 color       = glm::vec3(1.0f);
+	float     holdLeft    = 0.0f;
+	float     fadeSeconds = 0.0f;
+	float     fadeLeft    = 0.0f;
+};
+
+ScreenFlash& GetScreenFlash()
+{
+	static ScreenFlash flash;
+	return flash;
+}
+
+}
+
 void HUDSystem::PrepareForPlay(EntityManager& entityManager)
 {
+	GetScreenFlash() = ScreenFlash();
+
 	for (PlayerHUDComponent& hud : entityManager.GetAllComponents<PlayerHUDComponent>())
 	{
 		const HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityManager.GetEntityIDForComponent(hud));
@@ -520,10 +630,38 @@ void HUDSystem::PrepareForPlay(EntityManager& entityManager)
 
 void HUDSystem::Update(EntityManager& entityManager, float deltaTime)
 {
+	ScreenFlash& flash = GetScreenFlash();
+	if (flash.holdLeft > 0.0f)
+		flash.holdLeft -= deltaTime;
+	else
+		flash.fadeLeft = glm::max(flash.fadeLeft - deltaTime, 0.0f);
+
 	UpdatePlayer(entityManager, deltaTime);
 
 	for (EnemyHealthBarComponent& bar : entityManager.GetAllComponents<EnemyHealthBarComponent>())
 		UpdateEnemyBar(entityManager, bar, deltaTime);
+}
+
+void HUDSystem::FlashScreen(const glm::vec3& color, float seconds, float holdSeconds)
+{
+	ScreenFlash& flash = GetScreenFlash();
+	flash.color       = color;
+	flash.holdLeft    = glm::max(holdSeconds, 0.0f);
+	flash.fadeSeconds = glm::max(seconds, 0.01f);
+	flash.fadeLeft    = flash.fadeSeconds;
+}
+
+void HUDSystem::DrawScreenFlash(const glm::vec2& screenSize)
+{
+	const ScreenFlash& flash = GetScreenFlash();
+	if (flash.fadeLeft <= 0.0f)
+		return;
+
+	const float alpha = flash.holdLeft > 0.0f ? 1.0f : glm::clamp(flash.fadeLeft / flash.fadeSeconds, 0.0f, 1.0f);
+
+	UIRenderer::Begin(screenSize);
+	UIRenderer::DrawRectangle(glm::vec2(0.0f), screenSize, glm::vec4(flash.color, alpha));
+	UIRenderer::End();
 }
 
 void HUDSystem::ShowPrompt(EntityManager& entityManager, const std::string& text)

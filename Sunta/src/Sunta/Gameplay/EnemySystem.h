@@ -23,6 +23,10 @@ public:
 	// The state machine of the enemy, made with the states of its kind the first time it is asked for. nullptr for a non-enemy
 	static EnemyStateMachine* GetOrCreateStateMachine(EntityManager& entityManager, unsigned int entityID);
 
+	// Puts the enemy away or calls it (see EnemyComponent::startsDormant): a dormant enemy is hidden with everything
+	// it holds, doesn't think, can't be hurt or locked on to. Called, it takes the place it stands on as its home
+	static void SetDormant(EntityManager& entityManager, unsigned int entityID, bool isDormant);
+
 	// Adds Enemy together with what an enemy needs: a Character Controller not driven by the keyboard and Lock On (to face the player)
 	static void AddWithRequiredComponents(EntityManager& entityManager, unsigned int entityID);
 

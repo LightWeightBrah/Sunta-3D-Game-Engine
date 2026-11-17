@@ -31,6 +31,9 @@ public:
 	// The point of the locked enemy that the camera and the character aim at. False when nothing is locked on to
 	static bool TryGetTargetAimPoint(EntityManager& entityManager, const LockOnComponent& lockOn, glm::vec3& outAimPoint);
 
+	// Where to aim at any entity with a Lock On Target (its aim bone or height). False without one
+	static bool TryGetAimPointOf(EntityManager& entityManager, unsigned int targetEntityID, glm::vec3& outAimPoint);
+
 	// For scripts. False (and a warning in the log) when the entity can't be locked on to, because it has no Lock On Target
 	static bool TrySetTarget(EntityManager& entityManager, LockOnComponent& lockOn, unsigned int targetEntityID);
 

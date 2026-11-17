@@ -12,6 +12,8 @@ namespace MeleeEnemyStateNames
 	constexpr const char* Chase      = "Chase";      // walks (or runs) to the player, facing it
 	constexpr const char* Attack     = "Attack";     // a light combo or a heavy attack
 	constexpr const char* Leap       = "Leap";       // a jump at a player who keeps a distance
+	constexpr const char* Cast       = "Cast";       // a spell at a player who keeps a distance (a Spell Caster child)
+	constexpr const char* Evade      = "Evade";      // a backstep or a roll out of the way of a blow or a spell
 	constexpr const char* Recover    = "Recover";    // circles the player for a moment after attacking
 	constexpr const char* ReturnHome = "ReturnHome"; // lost the player: walks back to where it started
 }
@@ -20,7 +22,7 @@ namespace MeleeEnemyStateNames
 class MeleeEnemy
 {
 public:
-	// Replaces Idle (now it waits until it sees the player) and adds Chase, Attack, Leap, Recover and ReturnHome
+	// Replaces Idle (now it waits until it sees the player) and adds Chase, Attack, Leap, Cast, Evade, Recover and ReturnHome
 	static void AddStates(EnemyStateMachine& stateMachine);
 
 	// Adds Melee Enemy together with the Enemy it is built on (and what that one needs)

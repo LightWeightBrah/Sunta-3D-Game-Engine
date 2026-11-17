@@ -28,8 +28,10 @@ enum class CharacterAction
 	Parried,     // the long stagger of an attacker whose attack was parried: its next hit taken is a riposte
 	Special,     // any animation played once by name (a roar, a taunt), started by a script or a boss;
 	             // hits still hurt but don't stagger the character (it can't be interrupted)
-	UseItem      // drinking from a flask or using any item: an animation played once on the upper body (as the block),
+	UseItem,     // drinking from a flask or using any item: an animation played once on the upper body (as the block),
 	             // the character walks slowly meanwhile. A roll or an attack can't cut it short, a hit can
+	Cast         // casting a spell (see SpellCasterComponent): an animation played once by name, turning after the target
+	             // until the spell leaves. A roll or an attack can't cut it short, a hit can (the spell is lost)
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -57,6 +59,8 @@ struct CharacterActionsComponent
 	static constexpr float MaxSpeed        = 15.0f;
 	static constexpr float MaxBlendSeconds = 0.5f;
 	static constexpr float MaxDamageMultiplier = 5.0f;
+	static constexpr float MinAttackSpeed      = 0.25f;
+	static constexpr float MaxAttackSpeed      = 3.0f;
 
 	// Names of the animations of the Model, empty means "this action is not available"
 	std::string rollAnimation;
@@ -130,6 +134,10 @@ struct CharacterActionsComponent
 	// How much more a heavy attack hurts than a light one
 	float heavyDamageMultiplier = 1.8f;
 
+	// How fast the attacks play (1 = as the animations were made): quick hands for a boxer, and a script can raise it
+	// during a fight (a boss that speeds up in its last phase: this.characterActions.attackSpeed = 1.3)
+	float attackSpeed = 1.0f;
+
 	// The part of the parry during which an attack that lands is turned away
 	float parryFrom = 0.0f;
 	float parryTo   = 0.4f;
@@ -176,8 +184,15 @@ struct CharacterActionsComponent
 	// The animation of the current UseItem action
 	std::string itemAnimation;
 
+	// The animation of the current Cast action, and when its spell leaves (0..1): the caster turns after its target until then
+	std::string castAnimation;
+	float       castReleaseAt = 0.5f;
+
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;
+
+	// The block was asked for in this frame (the key is held, or a script keeps asking)
+	bool isBlockHeld = false;
 
 	// How far the current action is (0 = start, 1 = end of its animation)
 	float actionProgress = 0.0f;
@@ -199,8 +214,12 @@ struct CharacterActionsComponent
 		return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack;
 	}
 
-	// The shield is up: blocking, or taking a hit on it
-	bool IsGuarding() const { return currentAction == CharacterAction::Block || currentAction == CharacterAction::BlockImpact; }
+	// The shield is up: blocking, or taking a hit on it while the block is still asked for (a character that let go of
+	// the block during the impact is open to the next blow: nobody stays behind a shield just by being hit)
+	bool IsGuarding() const
+	{
+		return currentAction == CharacterAction::Block || (currentAction == CharacterAction::BlockImpact && isBlockHeld);
+	}
 
 	// True during the part of a parry that turns attacks away
 	bool IsParrying() const { return currentAction == CharacterAction::Parry && actionProgress >= parryFrom && actionProgress <= parryTo; }

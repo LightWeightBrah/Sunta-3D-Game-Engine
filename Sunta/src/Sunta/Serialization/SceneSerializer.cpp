@@ -46,6 +46,47 @@ namespace SceneKeys
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
+	constexpr const char* GlowSpriteComponent       = "glow_sprite";
+	constexpr const char* LiquidOrbComponent        = "liquid_orb";
+	constexpr const char* SwarmComponent            = "swarm";
+	constexpr const char* SwarmCount                = "count";
+	constexpr const char* SwarmSeed                 = "seed";
+	constexpr const char* SwarmPieceSize            = "piece_size";
+	constexpr const char* SwarmSizeVariation        = "size_variation";
+	constexpr const char* SwarmRadius               = "radius";
+	constexpr const char* SwarmShellThickness       = "shell_thickness";
+	constexpr const char* SwarmSpin                 = "spin_degrees_per_second";
+	constexpr const char* SwarmTumble               = "tumble_degrees_per_second";
+	constexpr const char* SwarmSkyCenter            = "sky_center";
+	constexpr const char* SwarmSkyHalfExtents       = "sky_half_extents";
+	constexpr const char* SwarmFallSpeed            = "fall_speed";
+	constexpr const char* SwarmFallSpread           = "fall_spread_seconds";
+	constexpr const char* SwarmGroundHeight         = "ground_height";
+	constexpr const char* SwarmStuckSeconds         = "stuck_seconds";
+	constexpr const char* SwarmGlowColor            = "glow_color";
+	constexpr const char* SwarmTrailLength          = "trail_length";
+	constexpr const char* SwarmHitEffect            = "hit_effect";
+	constexpr const char* SwarmHitBurst             = "hit_burst";
+	constexpr const char* SwarmModelName            = "model_name";
+	constexpr const char* IsDark                    = "is_dark";
+	constexpr const char* ParticleStyle             = "style";
+	constexpr const char* SpawnShape                = "spawn_shape";
+	constexpr const char* SpawnRadius               = "spawn_radius";
+	constexpr const char* OutwardSpeed              = "outward_speed";
+	constexpr const char* SizeRandomness            = "size_randomness";
+	constexpr const char* ParticleSpin              = "spin_degrees_per_second";
+	constexpr const char* SpriteColor               = "color";
+	constexpr const char* SpriteSize                = "size";
+	constexpr const char* OrbTint                   = "tint";
+	constexpr const char* OrbBrightness             = "brightness";
+	constexpr const char* OrbWobble                 = "wobble";
+	constexpr const char* OrbWobbleSpeed            = "wobble_speed";
+	constexpr const char* OrbClearness              = "clearness";
+	constexpr const char* LaunchDelaySeconds        = "launch_delay_seconds";
+	constexpr const char* BodyFacesFlight           = "body_faces_flight";
+	constexpr const char* SpinsAroundFlight         = "spins_around_flight";
+	constexpr const char* FormSeconds               = "form_seconds";
+	constexpr const char* AimsAfterForming          = "aims_after_forming";
 	constexpr const char* WeaponTrailComponent      = "weapon_trail";
 	constexpr const char* EnvironmentComponent      = "environment";
 	constexpr const char* CutsceneComponent         = "cutscene";
@@ -70,6 +111,32 @@ namespace SceneKeys
 	constexpr const char* FogGateComponent          = "fog_gate";
 	constexpr const char* EnemyComponent            = "enemy";
 	constexpr const char* MeleeEnemyComponent       = "melee_enemy";
+	constexpr const char* SpellCasterComponent      = "spell_caster";
+	constexpr const char* ProjectileComponent       = "projectile";
+
+	constexpr const char* CastAnimation             = "cast_animation";
+	constexpr const char* ProjectileName            = "projectile";
+	constexpr const char* ProjectileCount           = "projectile_count";
+	constexpr const char* SpreadDegrees             = "spread_degrees";
+	constexpr const char* ReleaseAt                 = "release_at";
+	constexpr const char* AtTargetsFeet             = "at_targets_feet";
+	constexpr const char* DropHeight                = "drop_height";
+	constexpr const char* SpellCooldownSeconds      = "cooldown_seconds";
+	constexpr const char* ChargeEffect              = "charge_effect";
+	constexpr const char* ChargeParticlesPerSecond  = "charge_particles_per_second";
+	constexpr const char* CastSound                 = "cast_sound";
+	constexpr const char* CastKey                   = "cast_key";
+	constexpr const char* IsCastOnRequestOnly       = "cast_on_request_only";
+	constexpr const char* StartsDormant             = "starts_dormant";
+	constexpr const char* ProjectileSpeed           = "speed";
+	constexpr const char* ProjectileRadius          = "radius";
+	constexpr const char* HomingDegreesPerSecond    = "homing_degrees_per_second";
+	constexpr const char* FuseSeconds               = "fuse_seconds";
+	constexpr const char* TrailEffect               = "trail_effect";
+	constexpr const char* TrailParticlesPerSecond   = "trail_particles_per_second";
+	constexpr const char* SpinDegreesPerSecond      = "spin_degrees_per_second";
+	constexpr const char* HitBurst                  = "hit_burst";
+	constexpr const char* HitSound                  = "hit_sound";
 	constexpr const char* PlayerHUDComponent        = "player_hud";
 	constexpr const char* BonfireComponent          = "bonfire";
 	constexpr const char* RespawnComponent          = "respawn";
@@ -207,6 +274,11 @@ namespace SceneKeys
 	constexpr const char* AttackDelaySeconds        = "attack_delay_seconds";
 	constexpr const char* AttackDelayAt             = "attack_delay_at";
 	constexpr const char* FinisherChance            = "finisher_chance";
+	constexpr const char* DodgeChance               = "dodge_chance";
+	constexpr const char* DodgeDistance             = "dodge_distance";
+	constexpr const char* DodgeCooldownSeconds      = "dodge_cooldown_seconds";
+	constexpr const char* WeaponDamageTaken         = "weapon_damage_taken";
+	constexpr const char* SpellDamageTaken          = "spell_damage_taken";
 	constexpr const char* FootstepCameraShake       = "footstep_camera_shake";
 	constexpr const char* FootstepShakeRadius       = "footstep_shake_radius";
 	constexpr const char* PhaseTwoLight1Animation   = "phase_two_light_attack_1_animation";
@@ -227,6 +299,7 @@ namespace SceneKeys
 	constexpr const char* HeavyHitFrom              = "heavy_hit_from";
 	constexpr const char* HeavyHitTo                = "heavy_hit_to";
 	constexpr const char* HeavyDamageMultiplier     = "heavy_damage_multiplier";
+	constexpr const char* AttackSpeed               = "attack_speed";
 
 	constexpr const char* MaxHealth                 = "max_health";
 	constexpr const char* HitEffect                 = "hit_effect";
@@ -773,7 +846,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::LightHitTo,            actions->lightHitTo            },
 				{ SceneKeys::HeavyHitFrom,          actions->heavyHitFrom          },
 				{ SceneKeys::HeavyHitTo,            actions->heavyHitTo            },
-				{ SceneKeys::HeavyDamageMultiplier, actions->heavyDamageMultiplier }
+				{ SceneKeys::HeavyDamageMultiplier, actions->heavyDamageMultiplier },
+				{ SceneKeys::AttackSpeed,           actions->attackSpeed           }
 			};
 		}
 
@@ -784,7 +858,9 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::MaxHealth,              health->maxHealth              },
 				{ SceneKeys::HitEffect,              health->hitEffect              },
 				{ SceneKeys::DeathSlowMotionSeconds, health->deathSlowMotionSeconds },
-				{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   }
+				{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   },
+				{ SceneKeys::WeaponDamageTaken,      health->weaponDamageTaken      },
+				{ SceneKeys::SpellDamageTaken,       health->spellDamageTaken       }
 			};
 		}
 
@@ -908,7 +984,65 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::StartColor,         SerializeVec3(emitter->startColor)      },
 				{ SceneKeys::EndColor,           SerializeVec3(emitter->endColor)        },
 				{ SceneKeys::ParticleIntensity,  emitter->intensity                      },
-				{ SceneKeys::MaxParticles,       emitter->maxParticles                   }
+				{ SceneKeys::MaxParticles,       emitter->maxParticles                   },
+				{ SceneKeys::IsDark,             emitter->isDark                         },
+				{ SceneKeys::ParticleStyle,      emitter->style                          },
+				{ SceneKeys::SpawnShape,         emitter->spawnShape                     },
+				{ SceneKeys::SpawnRadius,        emitter->spawnRadius                    },
+				{ SceneKeys::OutwardSpeed,       emitter->outwardSpeed                   },
+				{ SceneKeys::SizeRandomness,     emitter->sizeRandomness                 },
+				{ SceneKeys::ParticleSpin,       emitter->spinDegreesPerSecond           }
+			};
+		}
+
+		if (auto* sprite = entityManager.GetComponent<GlowSpriteComponent>(i))
+		{
+			entityJson[SceneKeys::GlowSpriteComponent] =
+			{
+				{ SceneKeys::IsVisible,         sprite->isVisible            },
+				{ SceneKeys::SpriteColor,       SerializeVec3(sprite->color) },
+				{ SceneKeys::SpriteSize,        sprite->size                 },
+				{ SceneKeys::ParticleIntensity, sprite->intensity            }
+			};
+		}
+
+		if (auto* orb = entityManager.GetComponent<LiquidOrbComponent>(i))
+		{
+			entityJson[SceneKeys::LiquidOrbComponent] =
+			{
+				{ SceneKeys::IsVisible,      orb->isVisible           },
+				{ SceneKeys::OrbTint,        SerializeVec3(orb->tint) },
+				{ SceneKeys::OrbBrightness,  orb->brightness          },
+				{ SceneKeys::OrbWobble,      orb->wobble              },
+				{ SceneKeys::OrbWobbleSpeed, orb->wobbleSpeed         },
+				{ SceneKeys::OrbClearness,   orb->clearness           }
+			};
+		}
+
+		if (auto* swarm = entityManager.GetComponent<SwarmComponent>(i))
+		{
+			entityJson[SceneKeys::SwarmComponent] =
+			{
+				{ SceneKeys::IsVisible,           swarm->isVisible                      },
+				{ SceneKeys::SwarmModelName,      swarm->modelName                      },
+				{ SceneKeys::SwarmCount,          swarm->count                          },
+				{ SceneKeys::SwarmSeed,           swarm->seed                           },
+				{ SceneKeys::SwarmPieceSize,      swarm->pieceSize                      },
+				{ SceneKeys::SwarmSizeVariation,  swarm->sizeVariation                  },
+				{ SceneKeys::SwarmRadius,         swarm->radius                         },
+				{ SceneKeys::SwarmShellThickness, swarm->shellThickness                 },
+				{ SceneKeys::SwarmSpin,           swarm->spinDegreesPerSecond           },
+				{ SceneKeys::SwarmTumble,         swarm->tumbleDegreesPerSecond         },
+				{ SceneKeys::SwarmSkyCenter,      SerializeVec3(swarm->skyCenter)       },
+				{ SceneKeys::SwarmSkyHalfExtents, SerializeVec3(swarm->skyHalfExtents)  },
+				{ SceneKeys::SwarmFallSpeed,      swarm->fallSpeed                      },
+				{ SceneKeys::SwarmFallSpread,     swarm->fallSpreadSeconds              },
+				{ SceneKeys::SwarmGroundHeight,   swarm->groundHeight                   },
+				{ SceneKeys::SwarmStuckSeconds,   swarm->stuckSeconds                   },
+				{ SceneKeys::SwarmGlowColor,      SerializeVec3(swarm->glowColor)       },
+				{ SceneKeys::SwarmTrailLength,    swarm->trailLength                    },
+				{ SceneKeys::SwarmHitEffect,      swarm->hitEffect                      },
+				{ SceneKeys::SwarmHitBurst,       swarm->hitBurst                       }
 			};
 		}
 
@@ -1056,7 +1190,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::SightDistance,     enemy->sightDistance     },
 				{ SceneKeys::SightAngleDegrees, enemy->sightAngleDegrees },
 				{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
-				{ SceneKeys::EyeHeight,         enemy->eyeHeight         }
+				{ SceneKeys::EyeHeight,         enemy->eyeHeight         },
+				{ SceneKeys::StartsDormant,     enemy->startsDormant     }
 			};
 		}
 
@@ -1109,7 +1244,60 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::MaxLightCombo,         meleeEnemy->maxLightCombo         },
 				{ SceneKeys::FinisherChance,        meleeEnemy->finisherChance        },
 				{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        },
+				{ SceneKeys::DodgeChance,           meleeEnemy->dodgeChance           },
+				{ SceneKeys::DodgeDistance,         meleeEnemy->dodgeDistance         },
+				{ SceneKeys::DodgeCooldownSeconds,  meleeEnemy->dodgeCooldownSeconds  },
 				{ SceneKeys::LeapAttackDistance,    meleeEnemy->leapAttackDistance    }
+			};
+		}
+
+		if (auto* spell = entityManager.GetComponent<SpellCasterComponent>(i))
+		{
+			entityJson[SceneKeys::SpellCasterComponent] =
+			{
+				{ SceneKeys::CastAnimation,            spell->castAnimation            },
+				{ SceneKeys::ProjectileName,           spell->projectile               },
+				{ SceneKeys::ProjectileCount,          spell->projectileCount          },
+				{ SceneKeys::SpreadDegrees,            spell->spreadDegrees            },
+				{ SceneKeys::ReleaseAt,                spell->releaseAt                },
+				{ SceneKeys::AtTargetsFeet,            spell->atTargetsFeet            },
+				{ SceneKeys::DropHeight,               spell->dropHeight               },
+				{ SceneKeys::MinDistance,              spell->minDistance              },
+				{ SceneKeys::MaxDistance,              spell->maxDistance              },
+				{ SceneKeys::SpellCooldownSeconds,     spell->cooldownSeconds          },
+				{ SceneKeys::ChargeEffect,             spell->chargeEffect             },
+				{ SceneKeys::ChargeParticlesPerSecond, spell->chargeParticlesPerSecond },
+				{ SceneKeys::CastSound,                spell->castSound                },
+				{ SceneKeys::CastKey,                  spell->castKey                  },
+				{ SceneKeys::DisplayName,              spell->displayName              },
+				{ SceneKeys::IsCastOnRequestOnly,      spell->isCastOnRequestOnly      }
+			};
+		}
+
+		if (auto* projectile = entityManager.GetComponent<ProjectileComponent>(i))
+		{
+			entityJson[SceneKeys::ProjectileComponent] =
+			{
+				{ SceneKeys::ProjectileSpeed,         projectile->speed                   },
+				{ SceneKeys::Damage,                  projectile->damage                  },
+				{ SceneKeys::PoiseDamage,             projectile->poiseDamage             },
+				{ SceneKeys::ProjectileRadius,        projectile->radius                  },
+				{ SceneKeys::HomingDegreesPerSecond,  projectile->homingDegreesPerSecond  },
+				{ SceneKeys::LifetimeSeconds,         projectile->lifetimeSeconds         },
+				{ SceneKeys::FuseSeconds,             projectile->fuseSeconds             },
+				{ SceneKeys::TrailEffect,             projectile->trailEffect             },
+				{ SceneKeys::TrailParticlesPerSecond, projectile->trailParticlesPerSecond },
+				{ SceneKeys::SpinDegreesPerSecond,    projectile->spinDegreesPerSecond    },
+				{ SceneKeys::LaunchDelaySeconds,      projectile->launchDelaySeconds      },
+				{ SceneKeys::BodyFacesFlight,         projectile->bodyFacesFlight         },
+				{ SceneKeys::SpinsAroundFlight,       projectile->spinsAroundFlight       },
+				{ SceneKeys::FormSeconds,             projectile->formSeconds             },
+				{ SceneKeys::AimsAfterForming,        projectile->aimsAfterForming        },
+				{ SceneKeys::HitEffect,               projectile->hitEffect               },
+				{ SceneKeys::HitBurst,                projectile->hitBurst                },
+				{ SceneKeys::HitSound,                projectile->hitSound                },
+				{ SceneKeys::HitStopSeconds,          projectile->hitStopSeconds          },
+				{ SceneKeys::CameraShake,             projectile->cameraShake             }
 			};
 		}
 
@@ -1502,6 +1690,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.heavyHitFrom          = actionsData.value(SceneKeys::HeavyHitFrom,          actions.heavyHitFrom);
 			actions.heavyHitTo            = actionsData.value(SceneKeys::HeavyHitTo,            actions.heavyHitTo);
 			actions.heavyDamageMultiplier = actionsData.value(SceneKeys::HeavyDamageMultiplier, actions.heavyDamageMultiplier);
+			actions.attackSpeed           = actionsData.value(SceneKeys::AttackSpeed,           actions.attackSpeed);
 		}
 
 		if (entityJson.contains(SceneKeys::HealthComponent))
@@ -1512,6 +1701,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			health.hitEffect     = healthData.value(SceneKeys::HitEffect, health.hitEffect);
 			health.deathSlowMotionSeconds = healthData.value(SceneKeys::DeathSlowMotionSeconds, health.deathSlowMotionSeconds);
 			health.deathSlowMotionScale   = healthData.value(SceneKeys::DeathSlowMotionScale,   health.deathSlowMotionScale);
+			health.weaponDamageTaken      = healthData.value(SceneKeys::WeaponDamageTaken,      health.weaponDamageTaken);
+			health.spellDamageTaken       = healthData.value(SceneKeys::SpellDamageTaken,       health.spellDamageTaken);
 			health.currentHealth = health.maxHealth;
 		}
 
@@ -1659,6 +1850,13 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			emitter.endSize            = emitterData.value(SceneKeys::EndSize,            emitter.endSize);
 			emitter.intensity          = emitterData.value(SceneKeys::ParticleIntensity,  emitter.intensity);
 			emitter.maxParticles       = emitterData.value(SceneKeys::MaxParticles,       emitter.maxParticles);
+			emitter.isDark             = emitterData.value(SceneKeys::IsDark,             emitter.isDark);
+			emitter.style              = emitterData.value(SceneKeys::ParticleStyle,      emitter.style);
+			emitter.spawnShape         = emitterData.value(SceneKeys::SpawnShape,         emitter.spawnShape);
+			emitter.spawnRadius        = emitterData.value(SceneKeys::SpawnRadius,        emitter.spawnRadius);
+			emitter.outwardSpeed       = emitterData.value(SceneKeys::OutwardSpeed,       emitter.outwardSpeed);
+			emitter.sizeRandomness     = emitterData.value(SceneKeys::SizeRandomness,     emitter.sizeRandomness);
+			emitter.spinDegreesPerSecond = emitterData.value(SceneKeys::ParticleSpin,     emitter.spinDegreesPerSecond);
 
 			if (emitterData.contains(SceneKeys::SpawnHalfExtents))
 				emitter.spawnHalfExtents = DeserializeVec3(emitterData[SceneKeys::SpawnHalfExtents]);
@@ -1672,6 +1870,65 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 				emitter.endColor = DeserializeVec3(emitterData[SceneKeys::EndColor]);
 
 			emitter.wasEmittingAtStart = emitter.isEmitting;
+		}
+
+		if (entityJson.contains(SceneKeys::GlowSpriteComponent))
+		{
+			const auto& spriteData = entityJson[SceneKeys::GlowSpriteComponent];
+			auto& sprite = entityManager.AddComponent<GlowSpriteComponent>(entity);
+
+			sprite.isVisible = spriteData.value(SceneKeys::IsVisible,         sprite.isVisible);
+			sprite.size      = spriteData.value(SceneKeys::SpriteSize,        sprite.size);
+			sprite.intensity = spriteData.value(SceneKeys::ParticleIntensity, sprite.intensity);
+
+			if (spriteData.contains(SceneKeys::SpriteColor))
+				sprite.color = DeserializeVec3(spriteData[SceneKeys::SpriteColor]);
+		}
+
+		if (entityJson.contains(SceneKeys::LiquidOrbComponent))
+		{
+			const auto& orbData = entityJson[SceneKeys::LiquidOrbComponent];
+			auto& orb = entityManager.AddComponent<LiquidOrbComponent>(entity);
+
+			orb.isVisible   = orbData.value(SceneKeys::IsVisible,      orb.isVisible);
+			orb.brightness  = orbData.value(SceneKeys::OrbBrightness,  orb.brightness);
+			orb.wobble      = orbData.value(SceneKeys::OrbWobble,      orb.wobble);
+			orb.wobbleSpeed = orbData.value(SceneKeys::OrbWobbleSpeed, orb.wobbleSpeed);
+			orb.clearness   = orbData.value(SceneKeys::OrbClearness,   orb.clearness);
+
+			if (orbData.contains(SceneKeys::OrbTint))
+				orb.tint = DeserializeVec3(orbData[SceneKeys::OrbTint]);
+		}
+
+		if (entityJson.contains(SceneKeys::SwarmComponent))
+		{
+			const auto& swarmData = entityJson[SceneKeys::SwarmComponent];
+			auto& swarm = entityManager.AddComponent<SwarmComponent>(entity);
+
+			swarm.isVisible              = swarmData.value(SceneKeys::IsVisible,           swarm.isVisible);
+			swarm.modelName              = swarmData.value(SceneKeys::SwarmModelName,      swarm.modelName);
+			swarm.count                  = swarmData.value(SceneKeys::SwarmCount,          swarm.count);
+			swarm.seed                   = swarmData.value(SceneKeys::SwarmSeed,           swarm.seed);
+			swarm.pieceSize              = swarmData.value(SceneKeys::SwarmPieceSize,      swarm.pieceSize);
+			swarm.sizeVariation          = swarmData.value(SceneKeys::SwarmSizeVariation,  swarm.sizeVariation);
+			swarm.radius                 = swarmData.value(SceneKeys::SwarmRadius,         swarm.radius);
+			swarm.shellThickness         = swarmData.value(SceneKeys::SwarmShellThickness, swarm.shellThickness);
+			swarm.spinDegreesPerSecond   = swarmData.value(SceneKeys::SwarmSpin,           swarm.spinDegreesPerSecond);
+			swarm.tumbleDegreesPerSecond = swarmData.value(SceneKeys::SwarmTumble,         swarm.tumbleDegreesPerSecond);
+			swarm.fallSpeed              = swarmData.value(SceneKeys::SwarmFallSpeed,      swarm.fallSpeed);
+			swarm.fallSpreadSeconds      = swarmData.value(SceneKeys::SwarmFallSpread,     swarm.fallSpreadSeconds);
+			swarm.groundHeight           = swarmData.value(SceneKeys::SwarmGroundHeight,   swarm.groundHeight);
+			swarm.stuckSeconds           = swarmData.value(SceneKeys::SwarmStuckSeconds,   swarm.stuckSeconds);
+			swarm.trailLength            = swarmData.value(SceneKeys::SwarmTrailLength,    swarm.trailLength);
+			swarm.hitEffect              = swarmData.value(SceneKeys::SwarmHitEffect,      swarm.hitEffect);
+			swarm.hitBurst               = swarmData.value(SceneKeys::SwarmHitBurst,       swarm.hitBurst);
+
+			if (swarmData.contains(SceneKeys::SwarmSkyCenter))
+				swarm.skyCenter = DeserializeVec3(swarmData[SceneKeys::SwarmSkyCenter]);
+			if (swarmData.contains(SceneKeys::SwarmSkyHalfExtents))
+				swarm.skyHalfExtents = DeserializeVec3(swarmData[SceneKeys::SwarmSkyHalfExtents]);
+			if (swarmData.contains(SceneKeys::SwarmGlowColor))
+				swarm.glowColor = DeserializeVec3(swarmData[SceneKeys::SwarmGlowColor]);
 		}
 
 		if (entityJson.contains(SceneKeys::FogGateComponent))
@@ -1814,6 +2071,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			enemy.sightAngleDegrees = enemyData.value(SceneKeys::SightAngleDegrees, enemy.sightAngleDegrees);
 			enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
 			enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
+			enemy.startsDormant     = enemyData.value(SceneKeys::StartsDormant,     enemy.startsDormant);
 		}
 
 		if (entityJson.contains(SceneKeys::BonfireComponent))
@@ -1872,7 +2130,62 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			meleeEnemy.maxLightCombo         = meleeData.value(SceneKeys::MaxLightCombo,         meleeEnemy.maxLightCombo);
 			meleeEnemy.finisherChance        = meleeData.value(SceneKeys::FinisherChance,        meleeEnemy.finisherChance);
 			meleeEnemy.recoverSeconds        = meleeData.value(SceneKeys::RecoverSeconds,        meleeEnemy.recoverSeconds);
+			meleeEnemy.dodgeChance           = meleeData.value(SceneKeys::DodgeChance,           meleeEnemy.dodgeChance);
+			meleeEnemy.dodgeDistance         = meleeData.value(SceneKeys::DodgeDistance,         meleeEnemy.dodgeDistance);
+			meleeEnemy.dodgeCooldownSeconds  = meleeData.value(SceneKeys::DodgeCooldownSeconds,  meleeEnemy.dodgeCooldownSeconds);
 			meleeEnemy.leapAttackDistance    = meleeData.value(SceneKeys::LeapAttackDistance,    meleeEnemy.leapAttackDistance);
+		}
+
+		if (entityJson.contains(SceneKeys::SpellCasterComponent))
+		{
+			const auto& spellData = entityJson[SceneKeys::SpellCasterComponent];
+			auto& spell = entityManager.AddComponent<SpellCasterComponent>(entity);
+
+			// A missing key keeps the default written in SpellCasterComponent.h
+			spell.castAnimation            = spellData.value(SceneKeys::CastAnimation,            spell.castAnimation);
+			spell.projectile               = spellData.value(SceneKeys::ProjectileName,           spell.projectile);
+			spell.projectileCount          = spellData.value(SceneKeys::ProjectileCount,          spell.projectileCount);
+			spell.spreadDegrees            = spellData.value(SceneKeys::SpreadDegrees,            spell.spreadDegrees);
+			spell.releaseAt                = spellData.value(SceneKeys::ReleaseAt,                spell.releaseAt);
+			spell.atTargetsFeet            = spellData.value(SceneKeys::AtTargetsFeet,            spell.atTargetsFeet);
+			spell.dropHeight               = spellData.value(SceneKeys::DropHeight,               spell.dropHeight);
+			spell.minDistance              = spellData.value(SceneKeys::MinDistance,              spell.minDistance);
+			spell.maxDistance              = spellData.value(SceneKeys::MaxDistance,              spell.maxDistance);
+			spell.cooldownSeconds          = spellData.value(SceneKeys::SpellCooldownSeconds,     spell.cooldownSeconds);
+			spell.chargeEffect             = spellData.value(SceneKeys::ChargeEffect,             spell.chargeEffect);
+			spell.chargeParticlesPerSecond = spellData.value(SceneKeys::ChargeParticlesPerSecond, spell.chargeParticlesPerSecond);
+			spell.castSound                = spellData.value(SceneKeys::CastSound,                spell.castSound);
+			spell.castKey                  = spellData.value(SceneKeys::CastKey,                  spell.castKey);
+			spell.displayName              = spellData.value(SceneKeys::DisplayName,              spell.displayName);
+			spell.isCastOnRequestOnly      = spellData.value(SceneKeys::IsCastOnRequestOnly,      spell.isCastOnRequestOnly);
+		}
+
+		if (entityJson.contains(SceneKeys::ProjectileComponent))
+		{
+			const auto& projectileData = entityJson[SceneKeys::ProjectileComponent];
+			auto& projectile = entityManager.AddComponent<ProjectileComponent>(entity);
+
+			// A missing key keeps the default written in ProjectileComponent.h
+			projectile.speed                   = projectileData.value(SceneKeys::ProjectileSpeed,         projectile.speed);
+			projectile.damage                  = projectileData.value(SceneKeys::Damage,                  projectile.damage);
+			projectile.poiseDamage             = projectileData.value(SceneKeys::PoiseDamage,             projectile.poiseDamage);
+			projectile.radius                  = projectileData.value(SceneKeys::ProjectileRadius,        projectile.radius);
+			projectile.homingDegreesPerSecond  = projectileData.value(SceneKeys::HomingDegreesPerSecond,  projectile.homingDegreesPerSecond);
+			projectile.lifetimeSeconds         = projectileData.value(SceneKeys::LifetimeSeconds,         projectile.lifetimeSeconds);
+			projectile.fuseSeconds             = projectileData.value(SceneKeys::FuseSeconds,             projectile.fuseSeconds);
+			projectile.trailEffect             = projectileData.value(SceneKeys::TrailEffect,             projectile.trailEffect);
+			projectile.trailParticlesPerSecond = projectileData.value(SceneKeys::TrailParticlesPerSecond, projectile.trailParticlesPerSecond);
+			projectile.spinDegreesPerSecond    = projectileData.value(SceneKeys::SpinDegreesPerSecond,    projectile.spinDegreesPerSecond);
+			projectile.launchDelaySeconds      = projectileData.value(SceneKeys::LaunchDelaySeconds,      projectile.launchDelaySeconds);
+			projectile.bodyFacesFlight         = projectileData.value(SceneKeys::BodyFacesFlight,         projectile.bodyFacesFlight);
+			projectile.spinsAroundFlight       = projectileData.value(SceneKeys::SpinsAroundFlight,       projectile.spinsAroundFlight);
+			projectile.formSeconds             = projectileData.value(SceneKeys::FormSeconds,             projectile.formSeconds);
+			projectile.aimsAfterForming        = projectileData.value(SceneKeys::AimsAfterForming,        projectile.aimsAfterForming);
+			projectile.hitEffect               = projectileData.value(SceneKeys::HitEffect,               projectile.hitEffect);
+			projectile.hitBurst                = projectileData.value(SceneKeys::HitBurst,                projectile.hitBurst);
+			projectile.hitSound                = projectileData.value(SceneKeys::HitSound,                projectile.hitSound);
+			projectile.hitStopSeconds          = projectileData.value(SceneKeys::HitStopSeconds,          projectile.hitStopSeconds);
+			projectile.cameraShake             = projectileData.value(SceneKeys::CameraShake,             projectile.cameraShake);
 		}
 
 	}

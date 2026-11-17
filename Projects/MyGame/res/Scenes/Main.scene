@@ -13204,6 +13204,499 @@
             "parent": {
                 "index": 274
             }
+        },
+        {
+            "tag": {
+                "name": "Spell Charge"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "particle_emitter": {
+                "is_emitting": false,
+                "particles_per_second": 0.0,
+                "lifetime_seconds": 0.3,
+                "spawn_half_extents": [
+                    0.05,
+                    0.05,
+                    0.05
+                ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "velocity_randomness": 0.9,
+                "gravity": [
+                    0.0,
+                    1.2,
+                    0.0
+                ],
+                "start_size": 0.14,
+                "end_size": 0.02,
+                "start_color": [
+                    1.0,
+                    0.7,
+                    0.3
+                ],
+                "end_color": [
+                    0.45,
+                    0.04,
+                    0.0
+                ],
+                "intensity": 3.2,
+                "max_particles": 300
+            }
+        },
+        {
+            "tag": {
+                "name": "Fireball Trail"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "particle_emitter": {
+                "is_emitting": false,
+                "particles_per_second": 0.0,
+                "lifetime_seconds": 0.32,
+                "spawn_half_extents": [
+                    0.07,
+                    0.07,
+                    0.07
+                ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "velocity_randomness": 0.45,
+                "gravity": [
+                    0.0,
+                    0.9,
+                    0.0
+                ],
+                "start_size": 0.34,
+                "end_size": 0.04,
+                "start_color": [
+                    1.0,
+                    0.55,
+                    0.18
+                ],
+                "end_color": [
+                    0.45,
+                    0.04,
+                    0.0
+                ],
+                "intensity": 3.0,
+                "max_particles": 1200
+            }
+        },
+        {
+            "tag": {
+                "name": "Fireball Burst"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "particle_emitter": {
+                "is_emitting": false,
+                "particles_per_second": 0.0,
+                "lifetime_seconds": 0.6,
+                "spawn_half_extents": [
+                    0.1,
+                    0.1,
+                    0.1
+                ],
+                "velocity": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "velocity_randomness": 4.0,
+                "gravity": [
+                    0.0,
+                    -3.0,
+                    0.0
+                ],
+                "start_size": 0.22,
+                "end_size": 0.03,
+                "start_color": [
+                    1.0,
+                    0.55,
+                    0.18
+                ],
+                "end_color": [
+                    0.45,
+                    0.04,
+                    0.0
+                ],
+                "intensity": 3.0,
+                "max_particles": 800
+            }
+        },
+        {
+            "tag": {
+                "name": "Pillar Warning"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "particle_emitter": {
+                "is_emitting": false,
+                "particles_per_second": 0.0,
+                "lifetime_seconds": 0.7,
+                "spawn_half_extents": [
+                    0.55,
+                    0.02,
+                    0.55
+                ],
+                "velocity": [
+                    0.0,
+                    0.7,
+                    0.0
+                ],
+                "velocity_randomness": 0.25,
+                "gravity": [
+                    0.0,
+                    0.4,
+                    0.0
+                ],
+                "start_size": 0.12,
+                "end_size": 0.02,
+                "start_color": [
+                    1.0,
+                    0.55,
+                    0.18
+                ],
+                "end_color": [
+                    0.45,
+                    0.04,
+                    0.0
+                ],
+                "intensity": 2.2,
+                "max_particles": 1200
+            }
+        },
+        {
+            "tag": {
+                "name": "Pillar Burst"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "particle_emitter": {
+                "is_emitting": false,
+                "particles_per_second": 0.0,
+                "lifetime_seconds": 0.6,
+                "spawn_half_extents": [
+                    0.4,
+                    0.1,
+                    0.4
+                ],
+                "velocity": [
+                    0.0,
+                    5.5,
+                    0.0
+                ],
+                "velocity_randomness": 1.0,
+                "gravity": [
+                    0.0,
+                    -2.5,
+                    0.0
+                ],
+                "start_size": 0.3,
+                "end_size": 0.04,
+                "start_color": [
+                    1.0,
+                    0.55,
+                    0.18
+                ],
+                "end_color": [
+                    0.45,
+                    0.04,
+                    0.0
+                ],
+                "intensity": 2.6,
+                "max_particles": 1500
+            }
+        },
+        {
+            "tag": {
+                "name": "Cultist Fireball"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "projectile": {
+                "speed": 11.0,
+                "damage": 24.0,
+                "poise_damage": 18.0,
+                "radius": 0.45,
+                "homing_degrees_per_second": 28.0,
+                "lifetime_seconds": 3.5,
+                "fuse_seconds": 0.0,
+                "trail_effect": "Fireball Trail",
+                "trail_particles_per_second": 180.0,
+                "hit_effect": "Fireball Burst",
+                "hit_burst": 70,
+                "hit_sound": "",
+                "hit_stop_seconds": 0.05,
+                "camera_shake": 0.3
+            }
+        },
+        {
+            "tag": {
+                "name": "Cultist Fire Pillar"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    -100.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "projectile": {
+                "speed": 0.0,
+                "damage": 36.0,
+                "poise_damage": 40.0,
+                "radius": 1.25,
+                "homing_degrees_per_second": 0.0,
+                "lifetime_seconds": 3.0,
+                "fuse_seconds": 1.3,
+                "trail_effect": "Pillar Warning",
+                "trail_particles_per_second": 110.0,
+                "hit_effect": "Pillar Burst",
+                "hit_burst": 170,
+                "hit_sound": "@game/Sounds/Combat/Shockwave",
+                "hit_stop_seconds": 0.07,
+                "camera_shake": 0.45
+            }
+        },
+        {
+            "tag": {
+                "name": "Fire Volley Spell"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    1.05,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 122
+            },
+            "spell_caster": {
+                "cast_animation": "Cast_Spell",
+                "projectile": "Cultist Fireball",
+                "projectile_count": 3,
+                "spread_degrees": 12.0,
+                "release_at": 0.42,
+                "at_targets_feet": false,
+                "min_distance": 4.5,
+                "max_distance": 15.0,
+                "cooldown_seconds": 6.0,
+                "charge_effect": "Spell Charge",
+                "charge_particles_per_second": 90.0,
+                "cast_sound": "@game/Sounds/Combat/Swing"
+            }
+        },
+        {
+            "tag": {
+                "name": "Fire Pillar Spell"
+            },
+            "transform": {
+                "position": [
+                    0.0,
+                    1.05,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation_quaternion": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "parent": {
+                "index": 122
+            },
+            "spell_caster": {
+                "cast_animation": "Attack_Heavy",
+                "projectile": "Cultist Fire Pillar",
+                "projectile_count": 3,
+                "spread_degrees": 0.0,
+                "release_at": 0.36,
+                "at_targets_feet": true,
+                "min_distance": 5.0,
+                "max_distance": 16.0,
+                "cooldown_seconds": 11.0,
+                "charge_effect": "Spell Charge",
+                "charge_particles_per_second": 140.0,
+                "cast_sound": ""
+            }
         }
     ],
     "scene_name": "Main"

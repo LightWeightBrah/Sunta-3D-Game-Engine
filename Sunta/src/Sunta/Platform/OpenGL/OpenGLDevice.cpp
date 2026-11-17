@@ -92,6 +92,16 @@ void OpenGLDevice::DrawElements(const VertexArray& vertexArray)
 	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0));
 }
 
+void OpenGLDevice::DrawElementsInstanced(const VertexArray& vertexArray, unsigned int instanceCount)
+{
+	if (instanceCount == 0)
+		return;
+
+	vertexArray.Bind();
+	unsigned int count = vertexArray.GetElementBuffer()->GetCount();
+	GLCall(glDrawElementsInstanced(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0, instanceCount));
+}
+
 void OpenGLDevice::DrawLines(const VertexArray& vertexArray)
 {
 	vertexArray.Bind();

@@ -143,6 +143,33 @@ unsigned int EnemyContext::GetAttackNumber() const
 	return actions ? actions->attackNumber : 0;
 }
 
+bool EnemyContext::IsTargetAttacking() const
+{
+	const CharacterActionsComponent* targetActions = hasTarget ? entityManager.GetComponent<CharacterActionsComponent>(targetID) : nullptr;
+	return targetActions && targetActions->IsAttacking();
+}
+
+unsigned int EnemyContext::GetTargetAttackNumber() const
+{
+	const CharacterActionsComponent* targetActions = hasTarget ? entityManager.GetComponent<CharacterActionsComponent>(targetID) : nullptr;
+	return targetActions ? targetActions->attackNumber : 0;
+}
+
+bool EnemyContext::HasRoll() const
+{
+	return actions && !actions->rollAnimation.empty();
+}
+
+bool EnemyContext::HasBackstep() const
+{
+	return actions && !actions->backstepAnimation.empty();
+}
+
+bool EnemyContext::IsDodgeReady() const
+{
+	return enemy->dodgeCooldownLeft <= 0.0f;
+}
+
 float EnemyContext::GetRandomFraction()
 {
 	static std::mt19937 generator(std::random_device{}());
@@ -197,6 +224,21 @@ void EnemyContext::RequestAction(CharacterAction action)
 {
 	if (actions)
 		actions->requestedAction = action;
+}
+
+void EnemyContext::Dodge(const glm::vec3& direction)
+{
+	// The roll goes where the "stick" is held; with nothing held the Character Actions make it a backstep
+	controller->moveDirection = KeepOnlyHorizontalPart(direction);
+	controller->wantsToRun    = false;
+
+	if (actions)
+		actions->requestedAction = CharacterAction::Roll;
+}
+
+void EnemyContext::StartDodgeCooldown(float seconds)
+{
+	enemy->dodgeCooldownLeft = seconds;
 }
 
 void EnemyContext::StartAttackCooldown(float seconds)

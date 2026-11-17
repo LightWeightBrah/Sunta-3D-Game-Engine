@@ -5,6 +5,8 @@
 #include "EnemyContext.h"
 #include "EnemyStateMachine.h"
 #include "EnemySystem.h"
+#include "GameplayMath.h"
+#include "SpellSystem.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 
@@ -36,6 +38,13 @@ constexpr float SeeAgainFactor = 0.8f;
 constexpr float RunMargin  = 1.5f;
 constexpr float StopMargin = 0.6f;
 
+// A spell this close to landing (seconds) is dodged now: the roll is already untouchable when it arrives
+constexpr float DodgeSpellSeconds = 0.3f;
+
+// A spell is dodged with a roll to the side this often (the rest are backsteps), a blow this often
+constexpr float SideRollChanceFromSpell = 0.75f;
+constexpr float SideRollChanceFromBlow  = 0.35f;
+
 // ========== Small helpers ==========
 
 // The states are added only to enemies with the component, but a script can switch any enemy to them
@@ -63,6 +72,37 @@ bool HasLostTarget(const EnemyContext& context)
 	return !context.HasTarget() || context.GetDistanceToTarget() > GetSettings(context).giveUpDistance;
 }
 
+// True when the enemy decides to get out of the way now: of a blow the player just started close by, or of a spell
+// about to land. It makes up its mind once about each of them (see MeleeEnemyComponent::dodgeChance)
+bool WantsToDodge(EnemyContext& context, bool& outIsFromSpell)
+{
+	MeleeEnemyComponent* settings = context.TryGet<MeleeEnemyComponent>();
+	if (!settings || settings->dodgeChance <= 0.0f || !context.HasTarget() || (!context.HasRoll() && !context.HasBackstep()))
+		return false;
+
+	bool isThreatened = false;
+
+	const unsigned int attackNumber = context.GetTargetAttackNumber();
+	if (context.IsTargetAttacking() && attackNumber != settings->judgedTargetAttackNumber
+		&& context.GetDistanceToTarget() <= settings->dodgeDistance)
+	{
+		settings->judgedTargetAttackNumber = attackNumber;
+		outIsFromSpell = false;
+		isThreatened   = true;
+	}
+
+	unsigned int projectileNumber = 0;
+	if (SpellSystem::TryFindIncomingProjectile(context.GetEntityManager(), context.GetEntityID(), DodgeSpellSeconds, projectileNumber)
+		&& projectileNumber != settings->judgedProjectileNumber)
+	{
+		settings->judgedProjectileNumber = projectileNumber;
+		outIsFromSpell = true;
+		isThreatened   = true;
+	}
+
+	return isThreatened && context.IsDodgeReady() && EnemyContext::GetRandomFraction() < settings->dodgeChance;
+}
+
 // ========== The states ==========
 
 class WatchState : public EnemyState
@@ -81,6 +121,51 @@ public:
 	}
 };
 
+// One dodge: a roll to a side (it passes through what was coming) or a backstep, then straight back to the fight
+class EvadeState : public EnemyState
+{
+public:
+	// What the dodge that is about to start gets away from (set by the state that decided to dodge)
+	inline static bool isNextFromSpell = false;
+
+	void Enter(EnemyContext& context) override
+	{
+		const float sideRollChance = isNextFromSpell ? SideRollChanceFromSpell : SideRollChanceFromBlow;
+		const bool  rollsAside     = context.HasRoll() && (!context.HasBackstep() || EnemyContext::GetRandomFraction() < sideRollChance);
+
+		glm::vec3 direction(0.0f);
+		if (rollsAside)
+		{
+			const glm::vec3 toTarget = GameplayMath::GetHorizontalDirectionOrDefault(context.GetTargetPosition() - context.GetPosition());
+			direction = glm::cross(toTarget, GameplayMath::WorldUp) * RandomSide();
+		}
+
+		context.Dodge(direction);
+		hasAsked = false;
+	}
+
+	std::string Update(EnemyContext& context) override
+	{
+		// The frame the dodge was asked for its direction stays "held", then the enemy lets go of it
+		if (!hasAsked)
+		{
+			hasAsked = true;
+			return "";
+		}
+
+		context.Stop();
+
+		if (context.IsBusy() || context.GetSecondsInState() < AttackStartGraceSeconds)
+			return "";
+
+		context.StartDodgeCooldown(GetSettings(context).dodgeCooldownSeconds);
+		return Chase;
+	}
+
+private:
+	bool hasAsked = false;
+};
+
 class ChaseState : public EnemyState
 {
 public:
@@ -94,11 +179,19 @@ public:
 		if (HasLostTarget(context))
 			return ReturnHome;
 
+		if (WantsToDodge(context, EvadeState::isNextFromSpell))
+			return Evade;
+
 		const MeleeEnemyComponent& settings = GetSettings(context);
 		const float distance = context.GetDistanceToTarget();
 
 		if (distance > settings.attackDistance && distance <= settings.leapAttackDistance && context.IsAttackReady())
 			return Leap;
+
+		// A caster keeps a player at a distance under fire instead of only walking up to it
+		if (context.IsAttackReady() && context.CanSeeTarget()
+			&& SpellSystem::HasSpellReady(context.GetEntityManager(), context.GetEntityID(), distance))
+			return Cast;
 
 		const float walkUntil = context.IsMoving() ? settings.attackDistance : settings.attackDistance + StopMargin;
 		if (distance > walkUntil)
@@ -204,6 +297,29 @@ public:
 	}
 };
 
+// One spell at the player (see SpellCasterComponent), then the usual pause after an attack
+class CastState : public EnemyState
+{
+public:
+	void Enter(EnemyContext& context) override
+	{
+		context.Stop();
+		hasCast = SpellSystem::TryCastSpell(context.GetEntityManager(), context.GetEntityID(), context.GetDistanceToTarget());
+	}
+
+	std::string Update(EnemyContext& context) override
+	{
+		if (hasCast && (context.IsBusy() || context.GetSecondsInState() < AttackStartGraceSeconds))
+			return "";
+
+		context.StartAttackCooldown(GetSettings(context).attackCooldownSeconds);
+		return hasCast ? Recover : Chase;
+	}
+
+private:
+	bool hasCast = false;
+};
+
 class RecoverState : public EnemyState
 {
 public:
@@ -216,6 +332,9 @@ public:
 	{
 		if (HasLostTarget(context))
 			return ReturnHome;
+
+		if (WantsToDodge(context, EvadeState::isNextFromSpell))
+			return Evade;
 
 		context.CircleTarget(side);
 
@@ -257,6 +376,8 @@ void MeleeEnemy::AddStates(EnemyStateMachine& stateMachine)
 	stateMachine.SetState(Chase,                 std::make_unique<ChaseState>());
 	stateMachine.SetState(Attack,                std::make_unique<AttackState>());
 	stateMachine.SetState(Leap,                  std::make_unique<LeapState>());
+	stateMachine.SetState(Cast,                  std::make_unique<CastState>());
+	stateMachine.SetState(Evade,                 std::make_unique<EvadeState>());
 	stateMachine.SetState(Recover,               std::make_unique<RecoverState>());
 	stateMachine.SetState(ReturnHome,            std::make_unique<ReturnHomeState>());
 }

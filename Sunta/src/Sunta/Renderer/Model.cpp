@@ -258,6 +258,11 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 	std::vector<StaticVertex> vertices(mesh->mNumVertices);
 	SetVertexData(mesh, vertices);
 
+	const unsigned int firstVertex = (unsigned int)staticVertices.size();
+	staticVertices.insert(staticVertices.end(), vertices.begin(), vertices.end());
+	for (unsigned int index : indices)
+		staticIndices.push_back(firstVertex + index);
+
 	glm::vec3 boundsMin, boundsMax;
 	ComputeVertexBounds(vertices, boundsMin, boundsMax);
 
@@ -461,5 +466,51 @@ void Model::CalculateDefaultBoneTransform(aiNode* node, glm::mat4 parentTransfor
 
 }
 
+
+bool Model::RaycastTriangles(const glm::vec3& origin, const glm::vec3& direction, float& outDistance, bool& outIsEntering) const
+{
+	if (HasBones() || staticIndices.size() < 3)
+		return false;
+
+	// Moller-Trumbore, against every triangle (call it only for a ray that hits the model's box)
+	constexpr float Epsilon = 1e-7f;
+	bool isHit = false;
+	outDistance = std::numeric_limits<float>::max();
+
+	for (size_t i = 0; i + 2 < staticIndices.size(); i += 3)
+	{
+		const glm::vec3& a = staticVertices[staticIndices[i]].Position;
+		const glm::vec3& b = staticVertices[staticIndices[i + 1]].Position;
+		const glm::vec3& c = staticVertices[staticIndices[i + 2]].Position;
+
+		const glm::vec3 edge1 = b - a;
+		const glm::vec3 edge2 = c - a;
+		const glm::vec3 p     = glm::cross(direction, edge2);
+		const float determinant = glm::dot(edge1, p);
+		if (std::abs(determinant) < Epsilon)
+			continue;
+
+		const float inverse = 1.0f / determinant;
+		const glm::vec3 toOrigin = origin - a;
+		const float u = glm::dot(toOrigin, p) * inverse;
+		if (u < 0.0f || u > 1.0f)
+			continue;
+
+		const glm::vec3 q = glm::cross(toOrigin, edge1);
+		const float v = glm::dot(direction, q) * inverse;
+		if (v < 0.0f || u + v > 1.0f)
+			continue;
+
+		const float distance = glm::dot(edge2, q) * inverse;
+		if (distance > 0.0f && distance < outDistance)
+		{
+			outDistance = distance;
+			// Counter-clockwise triangles face out: a positive determinant is a ray against the outer side
+			outIsEntering = determinant > 0.0f;
+			isHit = true;
+		}
+	}
+	return isHit;
+}
 
 }

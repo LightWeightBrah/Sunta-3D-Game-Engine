@@ -218,7 +218,12 @@ void EditorLayer::RegisterComponentsToInspector()
 	PoiseComponent::RegisterToInspector();
 	ParticleEmitterComponent::RegisterToInspector();
 	WeaponTrailComponent::RegisterToInspector();
+	ProjectileComponent::RegisterToInspector();
+	SpellCasterComponent::RegisterToInspector();
 	EnvironmentComponent::RegisterToInspector();
+	GlowSpriteComponent::RegisterToInspector();
+	LiquidOrbComponent::RegisterToInspector();
+	SwarmComponent::RegisterToInspector();
 	CutsceneComponent::RegisterToInspector();
 	AudioSourceComponent::RegisterToInspector();
 	CharacterSoundsComponent::RegisterToInspector();

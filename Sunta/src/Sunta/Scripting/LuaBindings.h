@@ -6,7 +6,7 @@ namespace Sunta
 
 // Exposes engine types and functions to Lua scripts:
 // vec3, Entity (this / other), components (Transform, PhysicsBody, CharacterController, LockOn, LockOnTarget, Health, Enemy, MeleeEnemy),
-// Input and Key
+// Input, Key and Mouse, and the World (finding other entities, messages on the screen, camera shake, bursts of particles)
 class LuaBindings
 {
 public:
@@ -29,6 +29,9 @@ private:
 	static void RegisterProgressComponents(sol::state& lua);
 	static void RegisterEntity(sol::state& lua);
 	static void RegisterInput(sol::state& lua);
+	static void RegisterSpellCasterComponent(sol::state& lua);
+	static void RegisterLightComponent(sol::state& lua);
+	static void RegisterWorld(sol::state& lua);
 };
 
 }

@@ -36,8 +36,10 @@ public:
 	static glm::vec4 GetClearColor() { return clearColor; }
 
 	void DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
-	// 'emissiveStrength' scales the model's own light (its emissive maps, 0 = off)
-	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator, float emissiveStrength = 1.0f) const;
+	// 'emissiveStrength' scales the model's own light (its emissive maps, 0 = off), 'darkness' takes its colors away
+	// (1 = a black silhouette) and 'glowColor' is light added all over it
+	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
+		float emissiveStrength = 1.0f, float darkness = 0.0f, const glm::vec3& glowColor = glm::vec3(0.0f)) const;
 	void DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 
 	static RendererDevice& GetDevice() { return *rendererDevice; }

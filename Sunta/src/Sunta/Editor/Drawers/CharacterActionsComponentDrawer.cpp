@@ -45,6 +45,7 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Attack Step Speed", &actions.attackStepSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Leap Speed",        &actions.leapSpeed,       0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Heavy Damage Multiplier", &actions.heavyDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
+	edited |= ImGui::SliderFloat("Attack Speed", &actions.attackSpeed, CharacterActionsComponent::MinAttackSpeed, CharacterActionsComponent::MaxAttackSpeed);
 	edited |= ImGui::SliderFloat("Riposte Damage Multiplier", &actions.riposteDamageMultiplier, 1.0f, CharacterActionsComponent::MaxDamageMultiplier);
 	edited |= ImGui::SliderFloat("Shockwave Radius",   &actions.shockwaveRadius,   0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Shockwave Damage",   &actions.shockwaveDamage,   0.0f, 500.0f);

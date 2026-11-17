@@ -21,6 +21,10 @@ class EnemyStateMachine;
 //     this.enemy:addState("Idle", { update = function(enemy, deltaTime) ... return "Chase" end })
 // (see the Enemy bindings in LuaBindings.cpp for everything a state can ask and do)
 //
+// With 'startsDormant' the enemy is not there until it is called: hidden, it doesn't think, nothing hurts it and it
+// can't be locked on to. A script wakes it (a boss summoning help): move it where it should appear, then
+// ally.enemy:wake(). Its body still stands where the scene has it, so place it out of the way (outside the arena)
+//
 // Needs a Character Controller that is not player controlled (the enemy walks with it), Character Actions (to attack)
 // and Lock On (to face the player). Add Component > Enemy adds the missing ones
 struct EnemyComponent
@@ -35,9 +39,14 @@ struct EnemyComponent
 	float hearingDistance   = 3.0f;
 	float eyeHeight         = 1.5f;
 
+	bool startsDormant = false;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	std::shared_ptr<EnemyStateMachine> stateMachine;
+
+	// Waiting to be called (see 'startsDormant')
+	bool isDormant = false;
 
 	// Where it stood when the game started (it walks back there when it loses the player)
 	glm::vec3 homePosition = glm::vec3(0.0f);
@@ -46,6 +55,9 @@ struct EnemyComponent
 	// Time left until the next attack is allowed (set by the states of the enemy's kind)
 	float attackCooldownLeft = 0.0f;
 
+	// Time left until it may dodge again (set by the states of the enemy's kind)
+	float dodgeCooldownLeft = 0.0f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<EnemyComponent>("Enemy", EngineAssets::Icons::StateMachine,
@@ -53,7 +65,8 @@ struct EnemyComponent
 				ADD_PROPERTY_RANGED(EnemyComponent, sightDistance,     PropertyDataType::Float, 0.0f, MaxDistance),
 				ADD_PROPERTY_RANGED(EnemyComponent, sightAngleDegrees, PropertyDataType::Float, 0.0f, 180.0f),
 				ADD_PROPERTY_RANGED(EnemyComponent, hearingDistance,   PropertyDataType::Float, 0.0f, MaxDistance),
-				ADD_PROPERTY_RANGED(EnemyComponent, eyeHeight,         PropertyDataType::Float, 0.0f, 5.0f)
+				ADD_PROPERTY_RANGED(EnemyComponent, eyeHeight,         PropertyDataType::Float, 0.0f, 5.0f),
+				ADD_PROPERTY(EnemyComponent, startsDormant, PropertyDataType::Bool)
 			});
 	}
 };

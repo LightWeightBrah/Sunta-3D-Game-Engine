@@ -48,6 +48,8 @@ struct CutsceneComponent
 	bool  hasStartedAnimation = false;
 	bool  isVideo             = false;
 	float seconds             = 0.0f;
+	// How far from what it looks at the camera may be without scenery in between (meters, < 0 = not measured yet)
+	float clearDistance       = -1.0f;
 
 	static void RegisterToInspector()
 	{

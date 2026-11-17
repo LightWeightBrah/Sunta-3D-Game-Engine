@@ -9,6 +9,7 @@
 #include "Component.h"
 #include "Core/EngineAssets.h"
 #include "Scene/EntityHierarchy.h"
+#include "Gameplay/CombatSystem.h"
 
 namespace Sunta
 {
@@ -110,6 +111,32 @@ void Systems::UpdateAnimators(EntityManager& entityManager, float deltaTime)
 		component.animator.UpdateAnimation(deltaTime);
 }
 
+namespace
+{
+
+const char* GetDamageKindName(DamageKind kind)
+{
+	switch (kind)
+	{
+	case DamageKind::Weapon: return "weapon";
+	case DamageKind::Spell:  return "spell";
+	default:                 return "other";
+	}
+}
+
+// Everyone hurt since the scripts ran the last time hears of it now (OnDamaged)
+void TellScriptsAboutDamage(EntityManager& entityManager)
+{
+	for (const DamageEvent& event : CombatSystem::TakeDamageEvents())
+	{
+		ScriptComponent* script = entityManager.GetComponent<ScriptComponent>(event.targetEntityID);
+		if (script)
+			script->InvokeOnDamaged(event.damage, GetDamageKindName(event.kind), Entity(event.attackerEntityID, &entityManager));
+	}
+}
+
+}
+
 void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime, bool isHotReloadEnabled)
 {
 	auto& scriptComponents = entityManager.GetAllComponents<ScriptComponent>();
@@ -154,6 +181,8 @@ void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime, bool 
 				script.CallFunction(script.onUpdateFunc, Scripting::Functions::OnUpdate, deltaTime);
 		}
 	}
+
+	TellScriptsAboutDamage(entityManager);
 }
 
 namespace

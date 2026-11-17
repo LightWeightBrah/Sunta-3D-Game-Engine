@@ -10,6 +10,7 @@
 #include "Core/Log.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "Scene/EntityHierarchy.h"
 
 namespace Sunta
 {
@@ -67,6 +68,9 @@ void SwitchToDeadWhenDying(EnemyContext& context, EnemyStateMachine& stateMachin
 
 void UpdateEnemy(EntityManager& entityManager, EnemyComponent& enemy, float deltaTime)
 {
+	if (enemy.isDormant)
+		return;
+
 	const unsigned int entityID = entityManager.GetEntityIDForComponent(enemy);
 
 	EnemyContext context(entityManager, entityID, deltaTime);
@@ -76,6 +80,7 @@ void UpdateEnemy(EntityManager& entityManager, EnemyComponent& enemy, float delt
 		return;
 
 	enemy.attackCooldownLeft = glm::max(enemy.attackCooldownLeft - deltaTime, 0.0f);
+	enemy.dodgeCooldownLeft  = glm::max(enemy.dodgeCooldownLeft  - deltaTime, 0.0f);
 
 	EnemyStateMachine& stateMachine = *EnemySystem::GetOrCreateStateMachine(entityManager, entityID);
 
@@ -104,7 +109,50 @@ void EnemySystem::PrepareForPlay(EntityManager& entityManager)
 		enemy.homePosition       = transform ? transform->position : glm::vec3(0.0f);
 		enemy.homeYawDegrees     = transform ? transform->rotation.y : 0.0f;
 		enemy.attackCooldownLeft = 0.0f;
+		enemy.dodgeCooldownLeft  = 0.0f;
+		enemy.isDormant          = false;
 		enemy.stateMachine.reset();
+
+		if (enemy.startsDormant)
+			SetDormant(entityManager, entityManager.GetEntityIDForComponent(enemy), true);
+	}
+}
+
+void EnemySystem::SetDormant(EntityManager& entityManager, unsigned int entityID, bool isDormant)
+{
+	EnemyComponent* enemy = entityManager.GetComponent<EnemyComponent>(entityID);
+	if (!enemy)
+		return;
+
+	enemy->isDormant = isDormant;
+
+	// The enemy and what it holds (its weapon is a child with its own Model)
+	for (unsigned int partID : EntityHierarchy::GetWithDescendants(entityManager, entityID))
+	{
+		if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(partID))
+			model->isVisible = !isDormant;
+	}
+
+	if (HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityID))
+		health->isInvulnerable = isDormant;
+
+	if (LockOnTargetComponent* lockOnTarget = entityManager.GetComponent<LockOnTargetComponent>(entityID))
+		lockOnTarget->isLockable = !isDormant;
+
+	if (CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID))
+	{
+		controller->moveDirection = glm::vec3(0.0f);
+		controller->wantsToRun    = false;
+	}
+
+	if (isDormant)
+		return;
+
+	// Called: this is where it lives from now on
+	if (const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityID))
+	{
+		enemy->homePosition   = transform->position;
+		enemy->homeYawDegrees = transform->rotation.y;
 	}
 }
 

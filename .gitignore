@@ -62,3 +62,20 @@ __pycache__/
 
 # Intermediate pictures of Tools/UI (the finished ones are copied into Projects/MyGame/res/UI)
 Tools/UI/Generated/
+
+# Working notes for the AI assistant (local only)
+SUNTA_CONTEXT.md
+
+# The film used as the opening and the soundtrack of the second sample project is somebody else's work: kept local only
+Projects/StrongestInHistoryVsToday/res/Videos/
+Projects/StrongestInHistoryVsToday/res/Sounds/Film/
+Projects/StrongestInHistoryVsToday/res/Sounds/Voice/
+
+# The user's reference pictures and the generated meshes of the second sample project (real people's likenesses: local only)
+Tools/Blender/Concepts/StrongestInHistory/
+Tools/Blender/Generated/StrongestInHistory/
+# ... and the characters made from them (the game's own models of those real people)
+Projects/StrongestInHistoryVsToday/res/Models/Characters/
+
+# Materials for the AI assistant: film frames, screenshots, previews, helper scripts (local only)
+AIContext/

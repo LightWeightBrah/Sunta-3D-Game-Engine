@@ -18,6 +18,7 @@ public:
 	virtual void SetPolygonOffset(bool isEnabled, float factor = 0.0f, float units = 0.0f) override;
 
 	virtual void DrawElements(const VertexArray& vertexArray) override;
+	virtual void DrawElementsInstanced(const VertexArray& vertexArray, unsigned int instanceCount) override;
 	virtual void DrawLines(const VertexArray& vertexArray) override;
 
 	virtual std::shared_ptr<VertexBuffer>  CreateVertexBuffer(const BufferDescriptor& descriptor) override;

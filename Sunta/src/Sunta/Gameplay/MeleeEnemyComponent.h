@@ -37,6 +37,19 @@ struct MeleeEnemyComponent
 	// How long it circles the player after attacking before it comes in again
 	float recoverSeconds = 1.0f;
 
+	// Getting out of the way: with this chance (0..1) it dodges a blow the player starts within 'dodgeDistance'
+	// and a spell about to reach it (a backstep, or a roll to the side when it has that animation), then comes
+	// right back in. No more often than every 'dodgeCooldownSeconds'. 0: it never dodges
+	float dodgeChance          = 0.0f;
+	float dodgeDistance        = 3.5f;
+	float dodgeCooldownSeconds = 2.5f;
+
+	// ========== Filled while the game plays, not saved with the scene ==========
+
+	// The player's attack and the projectile it already made up its mind about (one throw of the dice for each)
+	unsigned int judgedTargetAttackNumber = 0;
+	unsigned int judgedProjectileNumber   = 0;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<MeleeEnemyComponent>("Melee Enemy", EngineAssets::Icons::StateMachine,
@@ -49,7 +62,10 @@ struct MeleeEnemyComponent
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, heavyAttackChance,     PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY(MeleeEnemyComponent, maxLightCombo, PropertyDataType::Int),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, finisherChance,        PropertyDataType::Float, 0.0f, 1.0f),
-				ADD_PROPERTY_RANGED(MeleeEnemyComponent, recoverSeconds,        PropertyDataType::Float, 0.0f, MaxSeconds)
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, recoverSeconds,        PropertyDataType::Float, 0.0f, MaxSeconds),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeChance,           PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeDistance,         PropertyDataType::Float, 0.0f, MaxDistance),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeCooldownSeconds,  PropertyDataType::Float, 0.0f, MaxSeconds)
 			});
 	}
 };

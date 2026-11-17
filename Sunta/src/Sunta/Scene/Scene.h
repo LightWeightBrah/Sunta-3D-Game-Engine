@@ -109,6 +109,9 @@ private:
 	// In the Editor mode the mouse moves a visible cursor over the editor, so the game ignores it
 	bool				isMouseOwnedByGame	= false;
 
+	// Time the scene has been drawn for (the waves of liquid, anything that moves by itself in a shader)
+	float				sceneSeconds		= 0.0f;
+
 	unsigned int		resizeEventID;
 	unsigned int		engineModeEventID   = 0;
 

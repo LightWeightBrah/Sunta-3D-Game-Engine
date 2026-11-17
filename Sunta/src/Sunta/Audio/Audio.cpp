@@ -167,6 +167,17 @@ void FreeVoice(std::unique_ptr<ma_sound>& sound)
 
 }
 
+namespace
+{
+
+bool IsMutedByEnvironment()
+{
+	const char* value = std::getenv("SUNTA_MUTE");
+	return value && value[0] != 0 && value[0] != '0';
+}
+
+}
+
 void Audio::Init()
 {
 	if (isAvailable)
@@ -181,6 +192,14 @@ void Audio::Init()
 
 	ma_engine_listener_set_world_up(&engine, ListenerIndex, 0.0f, 1.0f, 0.0f);
 	isAvailable = true;
+
+	// Automated test runs set SUNTA_MUTE=1: the game plays everything as usual, but nothing is heard
+	// (the person at the computer may be listening to something else)
+	if (IsMutedByEnvironment())
+	{
+		ma_engine_set_volume(&engine, 0.0f);
+		SUNTA_ENGINE_LOG_INFO("Audio: muted (the environment variable SUNTA_MUTE is set)");
+	}
 
 	SUNTA_ENGINE_LOG_INFO("Audio: ready ({0} Hz, {1} channels)", ma_engine_get_sample_rate(&engine), ma_engine_get_channels(&engine));
 }
@@ -285,6 +304,25 @@ void Audio::StopMusic(float fadeSeconds)
 {
 	Stop(musicVoice, fadeSeconds);
 	musicVoice = NoVoice;
+}
+
+float Audio::GetMusicSeconds()
+{
+	ma_sound* sound = FindVoice(musicVoice);
+	if (!sound)
+		return -1.0f;
+
+	float seconds = 0.0f;
+	return ma_sound_get_cursor_in_seconds(sound, &seconds) == MA_SUCCESS ? seconds : -1.0f;
+}
+
+void Audio::SeekMusic(float seconds)
+{
+	ma_sound* sound = FindVoice(musicVoice);
+	if (!sound)
+		return;
+
+	ma_sound_seek_to_second(sound, seconds > 0.0f ? seconds : 0.0f);
 }
 
 void Audio::SetListener(const glm::vec3& position, const glm::vec3& forward, const glm::vec3& up)

@@ -21,6 +21,9 @@
 #include "Effects/ParticleEmitterComponent.h"
 #include "Effects/WeaponTrailComponent.h"
 #include "Effects/EnvironmentComponent.h"
+#include "Effects/GlowSpriteComponent.h"
+#include "Effects/LiquidOrbComponent.h"
+#include "Effects/SwarmComponent.h"
 #include "Gameplay/CutsceneComponent.h"
 #include "Gameplay/FogGateComponent.h"
 #include "Gameplay/CharacterActionsComponent.h"
@@ -43,6 +46,8 @@
 #include "Gameplay/MeleeEnemyComponent.h"
 #include "Gameplay/PlayerHUDComponent.h"
 #include "Gameplay/RespawnComponent.h"
+#include "Gameplay/ProjectileComponent.h"
+#include "Gameplay/SpellCasterComponent.h"
 
 namespace Sunta
 {
@@ -206,6 +211,8 @@ struct ScriptContainer
 	sol::protected_function onCollisionStayFunc;
 	sol::protected_function onCollisionExitFunc;
 
+	sol::protected_function onDamagedFunc;
+
 	// Calls one Lua callback. If the script has an error, we log the script, the function and the Lua message
 	// (it contains the line number), then disable that callback until the script is saved (hot-reloaded) again
 	// Without disabling it, the same error would be logged every frame
@@ -303,6 +310,9 @@ struct ScriptComponent
 		if (scriptEnvironment[Functions::OnCollisionExit].is<sol::function>())
 			container.onCollisionExitFunc = scriptEnvironment[Functions::OnCollisionExit];
 
+		if (scriptEnvironment[Functions::OnDamaged].is<sol::function>())
+			container.onDamagedFunc = scriptEnvironment[Functions::OnDamaged];
+
 		WarnAboutUnknownCallbacks(scriptEnvironment, container.scriptPath);
 	}
 
@@ -314,6 +324,12 @@ struct ScriptComponent
 	void InvokeOnCollisionStay (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onCollisionStayFunc,  Scripting::Functions::OnCollisionStay,  other); }
 	void InvokeOnCollisionExit (const Entity& other)  { InvokeOnAllScripts(&ScriptContainer::onCollisionExitFunc,  Scripting::Functions::OnCollisionExit,  other); }
 
+
+	// The entity lost health ('kind' is "weapon", "spell" or "other", 'attacker' the one who did it)
+	void InvokeOnDamaged(float amount, const std::string& kind, const Entity& attacker)
+	{
+		InvokeOnAllScripts(&ScriptContainer::onDamagedFunc, Scripting::Functions::OnDamaged, amount, kind, attacker);
+	}
 
 	static void RegisterToInspector()
 	{
@@ -352,7 +368,8 @@ private:
 			|| name == std::string_view(Functions::OnTriggerExit)
 			|| name == std::string_view(Functions::OnCollisionEnter)
 			|| name == std::string_view(Functions::OnCollisionStay)
-			|| name == std::string_view(Functions::OnCollisionExit);
+			|| name == std::string_view(Functions::OnCollisionExit)
+			|| name == std::string_view(Functions::OnDamaged);
 	}
 
 	// A misspelled callback (e.g. 'OnUpdte') is valid Lua, so nothing would fail and nothing would happen
@@ -434,6 +451,12 @@ struct ModelComponent
 	// How strongly the model's own light shines (its *_emissive texture: glowing cracks, embers), 0 = off.
 	// A script or the Boss can change it during the game, e.g. this.model.emissiveStrength = 2
 	float emissiveStrength = 1.0f;
+
+	// Set by a script, not saved with the scene: 'darkness' takes the model's colors away (1 = a black silhouette),
+	// 'glowColor' is light it gives off all over (an aura; white and strong = a figure of pure light).
+	// this.model.darkness = 1, this.model.glow = vec3(1.2, 0.6, 0.1)
+	float     darkness  = 0.0f;
+	glm::vec3 glowColor = glm::vec3(0.0f);
 
 	ModelComponent(const std::string& modelName)
 		: modelName(modelName) { }

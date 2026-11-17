@@ -57,6 +57,16 @@ public:
 	// Grows with every attack the enemy starts (see CharacterActionsComponent::attackNumber)
 	unsigned int GetAttackNumber() const;
 
+	// The target is in an attack now, and which one (grows with every attack it starts)
+	bool         IsTargetAttacking()      const;
+	unsigned int GetTargetAttackNumber()  const;
+
+	// The animations the enemy can dodge with (see Dodge)
+	bool HasRoll()     const;
+	bool HasBackstep() const;
+
+	bool IsDodgeReady() const;
+
 	// A number from 0 to 1, different every time (for choosing between attacks)
 	static float GetRandomFraction();
 
@@ -81,6 +91,13 @@ public:
 
 	// No attack is allowed for that long (IsAttackReady is false until then)
 	void StartAttackCooldown(float seconds);
+
+	// A roll in 'direction' (in the world, along the ground), or a backstep away from where it faces when the
+	// direction is zero
+	void Dodge(const glm::vec3& direction);
+
+	// No dodge is allowed for that long (IsDodgeReady is false until then)
+	void StartDodgeCooldown(float seconds);
 
 private:
 	EntityManager& entityManager;

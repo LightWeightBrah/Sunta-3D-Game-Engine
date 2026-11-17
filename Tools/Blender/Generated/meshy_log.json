@@ -1155,5 +1155,491 @@
     },
     "output": "Generated/Motions/knight_parry.fbx",
     "date": "2026-11-01T18:16:49"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e130-82c6-76ca-8e91-35f2cb21e709",
+    "input": "Concepts/StrongestInHistory/boss_reference_user.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/boss.glb",
+    "date": "2026-11-15T22:52:14"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e13c-52af-7059-9fd8-2d33531c5a93",
+    "input": "Concepts/StrongestInHistory/boss_apose.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/boss.glb",
+    "date": "2026-11-15T23:04:57"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e13d-a871-7721-9fde-eda93f47011b",
+    "input": "Concepts/StrongestInHistory/summon_apose.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/summon.glb",
+    "date": "2026-11-15T23:06:46"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e13f-4fb6-7796-9b09-d1b9d680ee39",
+    "input": "Concepts/StrongestInHistory/player_apose.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/player.glb",
+    "date": "2026-11-15T23:08:34"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1e141-7a85-7789-ac19-7394674db98c",
+    "settings": {
+      "input_task_id": "01a1e13c-52af-7059-9fd8-2d33531c5a93",
+      "height_meters": 1.83
+    },
+    "output": "Generated/StrongestInHistory/boss_rigged.glb",
+    "date": "2026-11-15T23:09:34"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1e141-e237-7295-99a4-10a67473c5c3",
+    "settings": {
+      "input_task_id": "01a1e13d-a871-7721-9fde-eda93f47011b",
+      "height_meters": 1.9
+    },
+    "output": "Generated/StrongestInHistory/summon_rigged.glb",
+    "date": "2026-11-15T23:10:01"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1e142-4c36-73de-90eb-c014a18d4ae7",
+    "settings": {
+      "input_task_id": "01a1e13f-4fb6-7796-9b09-d1b9d680ee39",
+      "height_meters": 1.83
+    },
+    "output": "Generated/StrongestInHistory/player_rigged.glb",
+    "date": "2026-11-15T23:10:28"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e146-b250-714e-9f6d-1bf2df8a2900",
+    "input": "Concepts/StrongestInHistory/summon_monster.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 40000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/summon_monster.glb",
+    "date": "2026-11-15T23:17:53"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1e149-7e8f-700b-acca-01e62e17979e",
+    "settings": {
+      "input_task_id": "01a1e146-b250-714e-9f6d-1bf2df8a2900",
+      "height_meters": 3.0
+    },
+    "output": "Generated/StrongestInHistory/summon_monster_rigged.glb",
+    "date": "2026-11-15T23:18:30"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e44a-a833-702f-805e-9d91842871a5",
+    "input": "Concepts/StrongestInHistory/temple_concept.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 60000
+    },
+    "output": "Generated/StrongestInHistory/temple.glb",
+    "date": "2026-11-16T13:20:45"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e44c-e09b-76d1-ac1a-c81ecde288d3",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A clear plastic bottle of baby oil, 200 ml, rounded shoulders and a slight waist, a wide pale pink screw cap, a pink teardrop shaped label on the front with no text and no logo, clear oil inside, photorealistic product photo, studio light, plain white background, single object, the whole object in the frame",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/prop_oil_bottle.png",
+    "date": "2026-11-16T13:20:51"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e44d-3891-770e-95a3-19ca80a072af",
+    "input": "Concepts/StrongestInHistory/prop_oil_bottle.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 6000
+    },
+    "output": "Generated/StrongestInHistory/prop_oil_bottle.glb",
+    "date": "2026-11-16T13:22:08"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e44e-623b-7712-b959-2383d45eb789",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A thick bundle of green banknotes held together by a paper currency strap, generic bills with no readable text, photorealistic product photo, studio light, plain white background, single object, the whole object in the frame",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/prop_money.png",
+    "date": "2026-11-16T13:22:30"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e44e-ba1e-71c5-8ef0-f6c29bacda93",
+    "input": "Concepts/StrongestInHistory/prop_money.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 5000
+    },
+    "output": "Generated/StrongestInHistory/prop_money.glb",
+    "date": "2026-11-16T13:24:19"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e450-625c-7090-a003-0ffd6c24163a",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A small black leather address book, closed, a little worn, gold edged pages, no text on the cover, photorealistic product photo, studio light, plain white background, single object, the whole object in the frame",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/prop_black_book.png",
+    "date": "2026-11-16T13:24:41"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e450-bc0e-74bd-9ac3-f248ad1eef24",
+    "input": "Concepts/StrongestInHistory/prop_black_book.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 5000
+    },
+    "output": "Generated/StrongestInHistory/prop_black_book.glb",
+    "date": "2026-11-16T13:26:19"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e452-39ec-730c-95ff-fc898987e9e9",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A black VHS video cassette with a blank white paper label, seen from above at an angle, photorealistic product photo, studio light, plain white background, single object, the whole object in the frame",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/prop_tape.png",
+    "date": "2026-11-16T13:26:42"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e452-91f6-709b-bcd0-f8b9f001f587",
+    "input": "Concepts/StrongestInHistory/prop_tape.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 5000
+    },
+    "output": "Generated/StrongestInHistory/prop_tape.glb",
+    "date": "2026-11-16T13:28:51"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e454-8968-755c-a21a-2f12754ad032",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A white private business jet with a dark blue stripe along its windows, two engines at the tail, a T tail, wheels up, flying, three quarter view from the front and above, photorealistic product photo, studio light, plain white background, single object, the whole object in the frame",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/prop_jet.png",
+    "date": "2026-11-16T13:29:13"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e454-e238-736d-89a9-8239082ac1e2",
+    "input": "Concepts/StrongestInHistory/prop_jet.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000
+    },
+    "output": "Generated/StrongestInHistory/prop_jet.glb",
+    "date": "2026-11-16T13:30:40"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a1e555-b1aa-731b-a7a5-92f45d150ee3",
+    "input": [
+      "Concepts/StrongestInHistory/player_view_3.png",
+      "Concepts/StrongestInHistory/player_view_4.png",
+      "Concepts/StrongestInHistory/player_view_5.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000
+    },
+    "output": "Generated/StrongestInHistory/player_v2.glb",
+    "date": "2026-11-16T18:11:35"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1e557-60bf-74d7-8fe0-f3e8e1845cca",
+    "settings": {
+      "input_task_id": "01a1e555-b1aa-731b-a7a5-92f45d150ee3",
+      "height_meters": 1.83
+    },
+    "output": "Generated/StrongestInHistory/player_v2_rigged.glb",
+    "date": "2026-11-16T18:12:01"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e770-0240-719d-aa3e-bd6726ff7490",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The ruin of a tall office skyscraper, twenty floors, its top broken off at an angle, bare concrete floors and bent steel beams showing, all windows blown out, standing on a small heap of rubble, photorealistic, a city destroyed by war, grey concrete blackened by fire, plain white background, single object, the whole object in the frame, seen from the front and a little from above",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/StrongestInHistory/city_tower_a.png",
+    "date": "2026-11-17T03:58:05"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e770-5ab1-7351-8edc-da42385298f6",
+    "input": "Concepts/StrongestInHistory/city_tower_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000
+    },
+    "output": "Generated/StrongestInHistory/city_tower_a.glb",
+    "date": "2026-11-17T04:01:07"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e773-21f7-7246-ab5e-d324978aa6c2",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The ruin of a wide apartment tower block, twelve floors, one side collapsed so the rooms are open, hanging slabs of floor and tangled reinforcement bars, scorched walls, photorealistic, a city destroyed by war, grey concrete blackened by fire, plain white background, single object, the whole object in the frame, seen from the front and a little from above",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/StrongestInHistory/city_tower_b.png",
+    "date": "2026-11-17T04:01:30"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e773-7a27-735d-9025-335cc85ee397",
+    "input": "Concepts/StrongestInHistory/city_tower_b.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000
+    },
+    "output": "Generated/StrongestInHistory/city_tower_b.glb",
+    "date": "2026-11-17T04:05:14"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e776-e732-71d9-a757-ffcfebd77c61",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The burnt out steel skeleton of a narrow high-rise building, only its frame of columns and beams and a few slabs left, leaning slightly, a heap of debris at its foot, photorealistic, a city destroyed by war, grey concrete blackened by fire, plain white background, single object, the whole object in the frame, seen from the front and a little from above",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/StrongestInHistory/city_tower_c.png",
+    "date": "2026-11-17T04:05:38"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e777-4236-7472-a3da-f56b34f9e6f5",
+    "input": "Concepts/StrongestInHistory/city_tower_c.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000
+    },
+    "output": "Generated/StrongestInHistory/city_tower_c.glb",
+    "date": "2026-11-17T04:10:15"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1e77b-7be2-7331-bcf3-975a9b849693",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A long low heap of rubble from a collapsed building: broken concrete slabs, bricks, twisted steel beams, a crushed car half buried, dust, about two meters high and ten meters long, photorealistic, a city destroyed by war, grey concrete blackened by fire, plain white background, single object, the whole object in the frame, seen from the front and a little from above",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/StrongestInHistory/city_rubble.png",
+    "date": "2026-11-17T04:10:37"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1e77b-d463-737d-9c8c-db12007ee752",
+    "input": "Concepts/StrongestInHistory/city_rubble.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000
+    },
+    "output": "Generated/StrongestInHistory/city_rubble.glb",
+    "date": "2026-11-17T04:14:01"
   }
 ]

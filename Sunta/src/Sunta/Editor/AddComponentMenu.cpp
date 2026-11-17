@@ -120,6 +120,9 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<EnvironmentComponent>     ("Environment",       Rendering, "The sky and the fog of the whole scene"),
 		Plain<ParticleEmitterComponent> ("Particle Emitter",  Rendering, "Specks of fire, sparks, mist, embers"),
 		Plain<WeaponTrailComponent>     ("Weapon Trail",      Rendering, "A glowing streak behind a swung weapon"),
+		Plain<GlowSpriteComponent>      ("Glow Sprite",       Rendering, "A soft spot of light facing the camera: glowing eyes, a halo"),
+		Plain<LiquidOrbComponent>       ("Liquid Orb",        Rendering, "A ball of clear liquid that bends and mirrors the sky"),
+		Plain<SwarmComponent>           ("Swarm",             Rendering, "Thousands of copies of a model: a sphere, a sky, a rain of missiles"),
 
 		Plain<BoxColliderComponent>     ("Box Collider",      Physics, "A box others collide with (or a trigger)"),
 		Plain<PhysicsBodyComponent>     ("Physics Body",      Physics, "Gravity, speed and being pushed around"),
@@ -144,6 +147,8 @@ const std::vector<MenuEntry>& GetEntries()
 
 		Plain<HitboxComponent>          ("Hitbox",            Combat, "The part of a weapon that hurts"),
 		Plain<ShieldComponent>          ("Shield",            Combat, "Blocks hits from the front"),
+		Plain<SpellCasterComponent>     ("Spell Caster",      Combat, "A spell of a character: an animation and the projectiles it throws"),
+		Plain<ProjectileComponent>      ("Projectile",        Combat, "What a spell throws: a fireball, a bolt, a pillar of fire"),
 
 		WithRequired<EnemyComponent>    ("Enemy",             Enemies, "Senses and a state machine of an enemy",
 			EnemySystem::AddWithRequiredComponents),

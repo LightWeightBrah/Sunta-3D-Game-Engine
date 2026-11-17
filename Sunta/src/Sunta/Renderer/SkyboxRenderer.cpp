@@ -79,6 +79,16 @@ Cubemap* SkyboxRenderer::GetCubemap(const std::string& folder)
 	return (found->second && found->second->IsLoaded()) ? found->second.get() : nullptr;
 }
 
+bool SkyboxRenderer::TryBindSky(const std::string& folder, unsigned int slot)
+{
+	Cubemap* sky = folder.empty() ? nullptr : GetCubemap(folder);
+	if (!sky)
+		return false;
+
+	sky->Bind(slot);
+	return true;
+}
+
 bool SkyboxRenderer::Draw(const std::string& folder, const glm::mat4& view, const glm::mat4& projection, float brightness)
 {
 	if (folder.empty())

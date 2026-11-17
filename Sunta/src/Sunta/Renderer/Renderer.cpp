@@ -61,6 +61,8 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 
 	SetBaseTransform(*shader, modelMatrix, sceneData);
 	SetBaseLighting(*shader, sceneData);
+	shader->TrySetUniform1f("modelDarkness", 0.0f);
+	shader->TrySetUniform3f("modelGlow", glm::vec3(0.0f));
 
 	if (shader->HasFeature(ShaderFeature::Skinning))
 		shader->SetUniform1i("hasAnimations", false);
@@ -70,7 +72,8 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	rendererDevice->DrawElements(mesh.GetVertexArray());
 }
 	
-void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator, float emissiveStrength) const
+void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
+	float emissiveStrength, float darkness, const glm::vec3& glowColor) const
 {
 	for (const auto& subMesh : model.GetSubMeshes())
 	{
@@ -83,6 +86,8 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 		SetBaseTransform(*shader, modelMatrix, sceneData);
 		SetBaseLighting(*shader, sceneData);
 		shader->TrySetUniform1f("emissiveStrength", emissiveStrength);
+		shader->TrySetUniform1f("modelDarkness", darkness);
+		shader->TrySetUniform3f("modelGlow", glowColor);
 			
 		bool supportsSkinning = shader->HasFeature(ShaderFeature::Skinning);
 		bool isSkinnedMesh = supportsSkinning && model.HasBones();

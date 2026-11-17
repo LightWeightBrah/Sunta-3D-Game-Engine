@@ -33,6 +33,11 @@ public:
 	// A big message in the middle of the screen that fades away after a few seconds
 	static void ShowNotification(EntityManager& entityManager, const std::string& text);
 
+	// The whole screen turns to a color and fades back in 'seconds' (a blinding explosion, a blackout).
+	// 'holdSeconds' keeps it full before it starts to fade. Drawn over everything, also over a cutscene
+	static void FlashScreen(const glm::vec3& color, float seconds, float holdSeconds = 0.0f);
+	static void DrawScreenFlash(const glm::vec2& screenSize);
+
 	// Call after the scene is drawn. 'viewProjection' is the camera the scene was drawn with, 'screenSize' the whole window
 	// (the marks over enemies follow them on the whole window), 'area' where the bars and the messages go
 	static void Draw(EntityManager& entityManager, const glm::mat4& viewProjection, const glm::vec2& screenSize, const HUDArea& area);

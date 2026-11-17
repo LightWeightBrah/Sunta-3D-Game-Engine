@@ -9,6 +9,12 @@
 #include "ECS/Component.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CutsceneSystem.h"
+#include "Gameplay/EntityName.h"
+#include "Gameplay/FollowCameraSystem.h"
+#include "Gameplay/HUDSystem.h"
+#include "Gameplay/SpellSystem.h"
+#include "Gameplay/TimeScaleSystem.h"
+#include "Effects/ParticleSystem.h"
 #include "Audio/Audio.h"
 #include "Audio/AudioSystem.h"
 #include "Gameplay/CurrencySystem.h"
@@ -24,6 +30,7 @@
 #include "Core/KeyCodes.h"
 #include "Utilities/MathUtilities.h"
 #include "Physics/PhysicsSystem.h"
+#include "Effects/SwarmSystem.h"
 
 namespace Sunta
 {
@@ -62,6 +69,18 @@ using HealingFlaskHandle  = ComponentHandle<HealingFlaskComponent>;
 using CurrencyHandle      = ComponentHandle<CurrencyComponent>;
 using CurrencyRewardHandle = ComponentHandle<CurrencyRewardComponent>;
 using LevelUpHandle       = ComponentHandle<LevelUpComponent>;
+using SpellCasterHandle   = ComponentHandle<SpellCasterComponent>;
+using GlowSpriteHandle    = ComponentHandle<GlowSpriteComponent>;
+using LiquidOrbHandle     = ComponentHandle<LiquidOrbComponent>;
+using SwarmHandle         = ComponentHandle<SwarmComponent>;
+using DirectionalLightHandle = ComponentHandle<DirectionalLightComponent>;
+using FollowCameraHandle  = ComponentHandle<FollowCameraComponent>;
+
+// The scene the entity lives in, as seen from Lua (this.world): what a script does to the game as a whole
+struct WorldHandle
+{
+	EntityManager* entityManager = nullptr;
+};
 
 // Returns nil in Lua when the entity doesn't have the component
 template<typename TComponent>
@@ -211,6 +230,9 @@ void LuaBindings::Register(sol::state& lua)
 	RegisterLookComponents(lua);
 	RegisterAudio(lua);
 	RegisterProgressComponents(lua);
+	RegisterSpellCasterComponent(lua);
+	RegisterLightComponent(lua);
+	RegisterWorld(lua);
 	RegisterEntity(lua);
 	RegisterInput(lua);
 }
@@ -431,7 +453,19 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 			{
 				const CharacterActionsComponent* actions = handle.TryGetComponent();
 				return actions && actions->IsOpenToRiposte();
-			})
+			}),
+
+		"isAttacking", sol::readonly_property([](const CharacterActionsHandle& handle)
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions && actions->IsAttacking();
+			}),
+
+		// How fast the attacks play (1 = as the animations were made), and how much more a heavy one hurts
+		"attackSpeed",           MemberProperty(&CharacterActionsComponent::attackSpeed,           1.0f),
+		"heavyDamageMultiplier", MemberProperty(&CharacterActionsComponent::heavyDamageMultiplier, 1.0f),
+		// A delayed blow now and then (0..1), see CharacterActionsComponent
+		"attackDelayChance",     MemberProperty(&CharacterActionsComponent::attackDelayChance,     0.0f)
 	);
 }
 
@@ -441,6 +475,30 @@ void LuaBindings::RegisterHealthComponent(sol::state& lua)
 	lua.new_usertype<HealthHandle>("Health", sol::no_constructor,
 
 		"max", MemberProperty(&HealthComponent::maxHealth, 0.0f),
+
+		// For bosses with phases: this.health.minimum = 1 (no hit takes it below: it can't fall yet),
+		// this.health.isInvulnerable = true (nothing hurts it while it changes its phase)
+		"minimum",        MemberProperty(&HealthComponent::minimumHealth,  0.0f),
+		"isInvulnerable", MemberProperty(&HealthComponent::isInvulnerable, false),
+
+		// How much of a weapon's or a spell's damage gets through (1 = all of it): a boss that adapts to what hits it
+		"weaponDamageTaken", MemberProperty(&HealthComponent::weaponDamageTaken, 1.0f),
+		"spellDamageTaken",  MemberProperty(&HealthComponent::spellDamageTaken,  1.0f),
+
+		// 0..1 of the full health
+		"fraction", sol::readonly_property([](const HealthHandle& handle)
+			{
+				const HealthComponent* health = handle.TryGetComponent();
+				return (health && health->maxHealth > 0.0f) ? health->currentHealth / health->maxHealth : 0.0f;
+			}),
+
+		// Gives health back (never above the full health), nothing for the dead
+		"heal", [](const HealthHandle& handle, float amount)
+			{
+				HealthComponent* health = handle.TryGetComponent();
+				if (health && !health->isDead)
+					health->currentHealth = glm::clamp(health->currentHealth + amount, 0.0f, health->maxHealth);
+			},
 
 		"current", sol::readonly_property([](const HealthHandle& handle)
 			{
@@ -482,6 +540,24 @@ void LuaBindings::RegisterEnemyComponent(sol::state& lua)
 		// The senses from the Inspector
 		"sightDistance",   MemberProperty(&EnemyComponent::sightDistance,   0.0f),
 		"hearingDistance", MemberProperty(&EnemyComponent::hearingDistance, 0.0f),
+
+		// An enemy that waits to be called (Enemy 'startsDormant'): move it where it should appear, then ally.enemy:wake().
+		// ally.enemy:sleep() puts it away again
+		"isDormant", sol::readonly_property([](const EnemyHandle& handle)
+			{
+				const EnemyComponent* enemy = handle.TryGetComponent();
+				return enemy && enemy->isDormant;
+			}),
+
+		"wake", [](const EnemyHandle& handle)
+			{
+				EnemySystem::SetDormant(*handle.owner.GetEntityManager(), handle.owner.GetID(), false);
+			},
+
+		"sleep", [](const EnemyHandle& handle)
+			{
+				EnemySystem::SetDormant(*handle.owner.GetEntityManager(), handle.owner.GetID(), true);
+			},
 
 		// ===== The state machine =====
 
@@ -572,6 +648,18 @@ void LuaBindings::RegisterEnemyComponent(sol::state& lua)
 				CommandEnemy(handle, [&](EnemyContext& context) { context.LookAtTarget(shouldLook); });
 			},
 
+		// A roll in a direction of the world (a backstep for vec3(0, 0, 0)), e.g. out of the way of something a script knows of
+		"dodge", [](const EnemyHandle& handle, const glm::vec3& direction)
+			{
+				CommandEnemy(handle, [&](EnemyContext& context) { context.Dodge(direction); });
+			},
+
+		// No attack of its own choosing for that long (a script that wants the enemy to hold back for a moment)
+		"startAttackCooldown", [](const EnemyHandle& handle, float seconds)
+			{
+				CommandEnemy(handle, [&](EnemyContext& context) { context.StartAttackCooldown(seconds); });
+			},
+
 		// "light", "heavy", "leap", "roll", "backstep", "parry" or "block" (a block lasts only while it is asked for, every frame)
 		"attack", [](const EnemyHandle& handle, const std::string& actionName)
 			{
@@ -635,6 +723,10 @@ void LuaBindings::RegisterMeleeEnemyComponent(sol::state& lua)
 		"attackCooldownSeconds", MemberProperty(&MeleeEnemyComponent::attackCooldownSeconds, 0.0f),
 		"heavyAttackChance",     MemberProperty(&MeleeEnemyComponent::heavyAttackChance,     0.0f),
 		"recoverSeconds",        MemberProperty(&MeleeEnemyComponent::recoverSeconds,        0.0f),
+		"maxLightCombo",         MemberProperty(&MeleeEnemyComponent::maxLightCombo,         0),
+		"finisherChance",        MemberProperty(&MeleeEnemyComponent::finisherChance,        0.0f),
+		"dodgeChance",           MemberProperty(&MeleeEnemyComponent::dodgeChance,           0.0f),
+		"dodgeCooldownSeconds",  MemberProperty(&MeleeEnemyComponent::dodgeCooldownSeconds,  0.0f),
 		"leapAttackDistance",    MemberProperty(&MeleeEnemyComponent::leapAttackDistance,    0.0f)
 	);
 }
@@ -678,7 +770,165 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"healingFlask",        ComponentHandleProperty<HealingFlaskComponent>(),
 		"currency",            ComponentHandleProperty<CurrencyComponent>(),
 		"currencyReward",      ComponentHandleProperty<CurrencyRewardComponent>(),
-		"levelUp",             ComponentHandleProperty<LevelUpComponent>()
+		"levelUp",             ComponentHandleProperty<LevelUpComponent>(),
+		"spellCaster",         ComponentHandleProperty<SpellCasterComponent>(),
+		"glowSprite",          ComponentHandleProperty<GlowSpriteComponent>(),
+		"followCamera",        ComponentHandleProperty<FollowCameraComponent>(),
+		"liquidOrb",           ComponentHandleProperty<LiquidOrbComponent>(),
+		"swarm",               ComponentHandleProperty<SwarmComponent>(),
+		"light",               ComponentHandleProperty<DirectionalLightComponent>(),
+
+		// The scene this entity lives in: this.world:find("Boss"), this.world:notify("..."), see RegisterWorld
+		"world", sol::readonly_property([](const Entity& entity) { return WorldHandle{ entity.GetEntityManager() }; })
+	);
+}
+
+void LuaBindings::RegisterSpellCasterComponent(sol::state& lua)
+{
+	// Usage in Lua (on the entity with the Spell Caster, a child of the character):
+	//     local spell = this.world:find("Fire Volley Spell")
+	//     if spell.spellCaster.isReady then spell.spellCaster:cast() end
+	// 'timesReleased' grows each time its projectiles leave: a script notices a finished cast by its change
+	lua.new_usertype<SpellCasterHandle>("SpellCaster", sol::no_constructor,
+		"cooldownSeconds", MemberProperty(&SpellCasterComponent::cooldownSeconds, 0.0f),
+		"cooldownLeft",    MemberProperty(&SpellCasterComponent::cooldownLeft,    0.0f),
+		"projectileCount", MemberProperty(&SpellCasterComponent::projectileCount, 0),
+		"spreadDegrees",   MemberProperty(&SpellCasterComponent::spreadDegrees,   0.0f),
+		"isCastOnRequestOnly", MemberProperty(&SpellCasterComponent::isCastOnRequestOnly, false),
+
+		"isReady", sol::readonly_property([](const SpellCasterHandle& handle)
+			{
+				const SpellCasterComponent* spell = handle.TryGetComponent();
+				return spell && spell->IsReady();
+			}),
+
+		"isCasting", sol::readonly_property([](const SpellCasterHandle& handle)
+			{
+				const SpellCasterComponent* spell = handle.TryGetComponent();
+				return spell && spell->isCasting;
+			}),
+
+		"timesReleased", sol::readonly_property([](const SpellCasterHandle& handle)
+			{
+				const SpellCasterComponent* spell = handle.TryGetComponent();
+				return spell ? spell->timesReleased : 0;
+			}),
+
+		// False when the spell is not ready or its caster is busy (attacking, staggering)
+		"cast", [](const SpellCasterHandle& handle)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && SpellSystem::TryCast(*entityManager, handle.owner.GetID());
+			}
+	);
+}
+
+void LuaBindings::RegisterLightComponent(sol::state& lua)
+{
+	// The sun or the moon of the scene (a Directional Light). Usage in Lua: sun.light.color = vec3(1.0, 0.2, 0.1)
+	// (its light, red as blood), sun.light.ambient = vec3(0.1, 0.0, 0.0) (what the shadows keep)
+	lua.new_usertype<DirectionalLightHandle>("Light", sol::no_constructor,
+		"color", sol::property(
+			[](const DirectionalLightHandle& handle)
+			{
+				const DirectionalLightComponent* light = handle.TryGetComponent();
+				return light ? light->color.diffuseIntensity : glm::vec3(0.0f);
+			},
+			[](const DirectionalLightHandle& handle, const glm::vec3& color)
+			{
+				if (DirectionalLightComponent* light = handle.TryGetComponent())
+					light->color.diffuseIntensity = color;
+			}),
+
+		"ambient", sol::property(
+			[](const DirectionalLightHandle& handle)
+			{
+				const DirectionalLightComponent* light = handle.TryGetComponent();
+				return light ? light->color.ambientIntensity : glm::vec3(0.0f);
+			},
+			[](const DirectionalLightHandle& handle, const glm::vec3& color)
+			{
+				if (DirectionalLightComponent* light = handle.TryGetComponent())
+					light->color.ambientIntensity = color;
+			})
+	);
+}
+
+void LuaBindings::RegisterWorld(sol::state& lua)
+{
+	// What a script does to the game as a whole. Usage in Lua:
+	//     local boss = this.world:find("Boss")                 (nil when there is no entity with that name)
+	//     this.world:notify("DOMAIN EXPANSION")                (a big message in the middle of the screen, fading away)
+	//     this.world:prompt("R: answer with your own domain")  (at the bottom, only in the frames it is asked for)
+	//     this.world:shakeCamera(0.6)                          (0..1)
+	//     this.world:burst("Fireball Burst", position, 80)     (specks of the Particle Emitter with that name)
+	//     this.world:slowMotion(1.5, 0.3)                      (real seconds, the speed of the game meanwhile)
+	//     if this.world.isCutscenePlaying then return end
+	lua.new_usertype<WorldHandle>("World", sol::no_constructor,
+
+		"find", [](const WorldHandle& world, const std::string& name) -> sol::optional<Entity>
+			{
+				unsigned int entityID = 0;
+				if (!world.entityManager || !TryFindEntityByName(*world.entityManager, name, entityID))
+					return sol::nullopt;
+
+				return Entity(entityID, world.entityManager);
+			},
+
+		"notify", [](const WorldHandle& world, const std::string& text)
+			{
+				if (world.entityManager)
+					HUDSystem::ShowNotification(*world.entityManager, text);
+			},
+
+		"prompt", [](const WorldHandle& world, const std::string& text)
+			{
+				if (world.entityManager)
+					HUDSystem::ShowPrompt(*world.entityManager, text);
+			},
+
+		"shakeCamera", [](const WorldHandle& world, float strength)
+			{
+				if (world.entityManager)
+					FollowCameraSystem::Shake(*world.entityManager, strength);
+			},
+
+		"burst", [](const WorldHandle& world, const std::string& emitterName, const glm::vec3& position, int count)
+			{
+				return world.entityManager && ParticleSystem::BurstAt(*world.entityManager, emitterName, position, count);
+			},
+
+		"slowMotion", [](const WorldHandle&, float seconds, float scale)
+			{
+				TimeScaleSystem::SlowMotion(seconds, scale);
+			},
+
+		// The whole screen turns to a color and fades back: this.world:flash(vec3(1, 1, 1), 1.5)
+		// (a third number keeps it full for that long first)
+		"flash", [](const WorldHandle&, const glm::vec3& color, float seconds, sol::optional<float> holdSeconds)
+			{
+				HUDSystem::FlashScreen(color, seconds, holdSeconds.value_or(0.0f));
+			},
+
+		// Throws one projectile without a cast: the Projectile template with that name, on the side of 'caster',
+		// from a point of the world in a direction (a script's own patterns: rings, rains, walls of fire).
+		//     this.world:launch("Boss Orb", this, this.transform.position + vec3(0, 1.4, 0), this.transform.forward)
+		"launch", [](const WorldHandle& world, const std::string& projectileName, const Entity& caster, const glm::vec3& from, const glm::vec3& direction)
+			{
+				return world.entityManager && SpellSystem::Launch(*world.entityManager, projectileName, caster.GetID(), from, direction);
+			},
+
+		// True when a flying spell of the other side reaches the entity within that many seconds
+		"isSpellIncoming", [](const WorldHandle& world, const Entity& entity, float withinSeconds)
+			{
+				unsigned int projectileNumber = 0;
+				return world.entityManager && SpellSystem::TryFindIncomingProjectile(*world.entityManager, entity.GetID(), withinSeconds, projectileNumber);
+			},
+
+		"isCutscenePlaying", sol::readonly_property([](const WorldHandle& world)
+			{
+				return world.entityManager && CutsceneSystem::IsPlaying(*world.entityManager);
+			})
 	);
 }
 
@@ -687,7 +937,62 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 	// Usage in Lua: this.model.isVisible = false, this.model.emissiveStrength = 2 (its glowing parts shine brighter)
 	lua.new_usertype<ModelHandle>("Model", sol::no_constructor,
 		"isVisible",        MemberProperty(&ModelComponent::isVisible,        false),
-		"emissiveStrength", MemberProperty(&ModelComponent::emissiveStrength, 0.0f)
+		"emissiveStrength", MemberProperty(&ModelComponent::emissiveStrength, 0.0f),
+		// this.model.darkness = 1 (a black silhouette), this.model.glow = vec3(1.2, 0.6, 0.1) (an aura of light all over)
+		"darkness",         MemberProperty(&ModelComponent::darkness,         0.0f),
+		"glow",             MemberProperty(&ModelComponent::glowColor,        glm::vec3(0.0f))
+	);
+
+	// Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant)
+	lua.new_usertype<FollowCameraHandle>("FollowCamera", sol::no_constructor,
+		"distance",    MemberProperty(&FollowCameraComponent::distance,    0.0f),
+		"pivotHeight", MemberProperty(&FollowCameraComponent::pivotHeight, 0.0f)
+	);
+
+	// Usage in Lua: eye.glowSprite.isVisible = true, eye.glowSprite.intensity = 8 (glowing eyes turned on by a script)
+	lua.new_usertype<GlowSpriteHandle>("GlowSprite", sol::no_constructor,
+		"isVisible", MemberProperty(&GlowSpriteComponent::isVisible, false),
+		"color",     MemberProperty(&GlowSpriteComponent::color,     glm::vec3(1.0f)),
+		"size",      MemberProperty(&GlowSpriteComponent::size,      0.0f),
+		"intensity", MemberProperty(&GlowSpriteComponent::intensity, 0.0f)
+	);
+
+	// Usage in Lua: orb.liquidOrb.isVisible = true, orb.liquidOrb.brightness = 2
+	lua.new_usertype<LiquidOrbHandle>("LiquidOrb", sol::no_constructor,
+		"isVisible",  MemberProperty(&LiquidOrbComponent::isVisible,  false),
+		"tint",       MemberProperty(&LiquidOrbComponent::tint,       glm::vec3(1.0f)),
+		"brightness", MemberProperty(&LiquidOrbComponent::brightness, 1.0f),
+		"clearness",  MemberProperty(&LiquidOrbComponent::clearness,  0.0f)
+	);
+
+	// Usage in Lua (see SwarmComponent): s = find("Domain Swarm").swarm; s.isVisible = true; s.gathered = 1;
+	// s.radius = 40; s.spread = 1; s:fall(); s:reset(); if s.isFalling then ... end
+	lua.new_usertype<SwarmHandle>("Swarm", sol::no_constructor,
+		"isVisible",            MemberProperty(&SwarmComponent::isVisible,            false),
+		"gathered",             MemberProperty(&SwarmComponent::gathered,             0.0f),
+		"spread",               MemberProperty(&SwarmComponent::spread,               0.0f),
+		"radius",               MemberProperty(&SwarmComponent::radius,               0.0f),
+		"pieceSize",            MemberProperty(&SwarmComponent::pieceSize,            0.0f),
+		"spinDegreesPerSecond", MemberProperty(&SwarmComponent::spinDegreesPerSecond, 0.0f),
+		"skyCenter",            MemberProperty(&SwarmComponent::skyCenter,            glm::vec3(0.0f)),
+		"skyHalfExtents",       MemberProperty(&SwarmComponent::skyHalfExtents,       glm::vec3(0.0f)),
+		"groundHeight",         MemberProperty(&SwarmComponent::groundHeight,         0.0f),
+		"glowColor",            MemberProperty(&SwarmComponent::glowColor,            glm::vec3(0.0f)),
+		"isFalling", sol::readonly_property([](const SwarmHandle& handle)
+			{
+				const SwarmComponent* swarm = handle.TryGetComponent();
+				return swarm && swarm->fallSeconds >= 0.0f;
+			}),
+		"fall", [](const SwarmHandle& handle)
+			{
+				if (SwarmComponent* swarm = handle.TryGetComponent())
+					SwarmSystem::Fall(*swarm);
+			},
+		"reset", [](const SwarmHandle& handle)
+			{
+				if (SwarmComponent* swarm = handle.TryGetComponent())
+					SwarmSystem::Reset(*swarm);
+			}
 	);
 
 	// Usage in Lua (on the cutscene's entity): this.cutscene:play(), if this.cutscene.isPlaying then ... end
@@ -711,6 +1016,9 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"skyBrightness", MemberProperty(&EnvironmentComponent::skyBrightness, 0.0f),
 		"isFogEnabled",  MemberProperty(&EnvironmentComponent::isFogEnabled,  false),
 		"fogDensity",    MemberProperty(&EnvironmentComponent::fogDensity,    0.0f),
+		"fogColor",      MemberProperty(&EnvironmentComponent::fogColor,      glm::vec3(0.0f)),
+		// Another sky (a folder with its six pictures), e.g. when a boss changes the world around the fight
+		"skyboxFolder",  MemberProperty(&EnvironmentComponent::skyboxFolder,  std::string()),
 		"exposure",       MemberProperty(&EnvironmentComponent::exposure,       0.0f),
 		"bloomIntensity", MemberProperty(&EnvironmentComponent::bloomIntensity, 0.0f),
 		"bloomThreshold", MemberProperty(&EnvironmentComponent::bloomThreshold, 0.0f)
@@ -721,6 +1029,9 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"isEmitting",         MemberProperty(&ParticleEmitterComponent::isEmitting,         false),
 		"particlesPerSecond", MemberProperty(&ParticleEmitterComponent::particlesPerSecond, 0.0f),
 		"intensity",          MemberProperty(&ParticleEmitterComponent::intensity,          0.0f),
+		"spawnRadius",        MemberProperty(&ParticleEmitterComponent::spawnRadius,        0.0f),
+		"outwardSpeed",       MemberProperty(&ParticleEmitterComponent::outwardSpeed,       0.0f),
+		"startSize",          MemberProperty(&ParticleEmitterComponent::startSize,          0.0f),
 
 		"burst", [](const ParticleEmitterHandle& handle, int count)
 			{
@@ -784,6 +1095,18 @@ void LuaBindings::RegisterAudio(sol::state& lua)
 		"stopMusic", [](sol::optional<float> fadeSeconds)
 			{
 				Audio::StopMusic(fadeSeconds.value_or(2.0f));
+			},
+
+		// Audio.musicSeconds(): how far the music has played (-1 without music), to keep a staged moment on its beat
+		"musicSeconds", []()
+			{
+				return Audio::GetMusicSeconds();
+			},
+
+		// Audio.seekMusic(38.8): the music jumps there (a moment of the fight meets its place in the soundtrack)
+		"seekMusic", [](float seconds)
+			{
+				Audio::SeekMusic(seconds);
 			}
 	);
 }
@@ -853,10 +1176,19 @@ void LuaBindings::RegisterProgressComponents(sol::state& lua)
 
 void LuaBindings::RegisterInput(sol::state& lua)
 {
-	// Usage in Lua: Input.isKeyPressed(Key.W)  (held)  /  Input.isKeyDown(Key.Space)  (pressed this frame)
+	// Usage in Lua: Input.isKeyPressed(Key.W)  (held)  /  Input.isKeyDown(Key.Space)  (pressed this frame),
+	// Input.isMouseButtonDown(Mouse.Left)
 	lua["Input"] = lua.create_table_with(
 		"isKeyPressed", [](int keyCode) { return InputManager::IsKeyPressed(keyCode); },
-		"isKeyDown",    [](int keyCode) { return InputManager::IsKeyDown(keyCode);    }
+		"isKeyDown",    [](int keyCode) { return InputManager::IsKeyDown(keyCode);    },
+		"isMouseButtonPressed", [](int button) { return InputManager::IsMouseButtonPressed(button); },
+		"isMouseButtonDown",    [](int button) { return InputManager::IsMouseButtonDown(button);    }
+	);
+
+	lua["Mouse"] = lua.create_table_with(
+		"Left",   SUNTA_MOUSE_BUTTON_LEFT,
+		"Right",  SUNTA_MOUSE_BUTTON_RIGHT,
+		"Middle", SUNTA_MOUSE_BUTTON_MIDDLE
 	);
 
 	// Add more keys here the same way, when you need them
@@ -867,8 +1199,18 @@ void LuaBindings::RegisterInput(sol::state& lua)
 		"D",         SUNTA_KEY_D,
 		"Space",     SUNTA_KEY_SPACE,
 		"LeftShift", SUNTA_KEY_LEFT_SHIFT,
-		"LeftAlt",   SUNTA_KEY_LEFT_ALT
+		"LeftAlt",   SUNTA_KEY_LEFT_ALT,
+		"Enter",     SUNTA_KEY_ENTER,
+		"Tab",       SUNTA_KEY_TAB
 	);
+
+	// Every letter (Key.R) and digit (Key.Num1): their codes are the codes of their characters
+	sol::table keys = lua["Key"];
+	for (char letter = 'A'; letter <= 'Z'; ++letter)
+		keys[std::string(1, letter)] = static_cast<int>(letter);
+
+	for (char digit = '0'; digit <= '9'; ++digit)
+		keys[std::string("Num") + digit] = static_cast<int>(digit);
 }
 
 }

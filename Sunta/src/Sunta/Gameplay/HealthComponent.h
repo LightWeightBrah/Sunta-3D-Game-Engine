@@ -8,6 +8,14 @@
 namespace Sunta
 {
 
+// What hurt a character: a weapon (a Hitbox), a spell (a Projectile), or anything else (a shockwave, a script)
+enum class DamageKind
+{
+	Weapon,
+	Spell,
+	Other
+};
+
 // How much damage a character can take before it dies
 //
 // How to use it: Add Component > Health on the player or an enemy. Weapons (Hitbox) hurt it through its Box Collider
@@ -32,8 +40,29 @@ struct HealthComponent
 	float deathSlowMotionSeconds = 0.0f;
 	float deathSlowMotionScale   = 0.3f;
 
+	// How much of a weapon's or a spell's damage gets through (1 = all of it, 0 = none): a ghost that blades barely
+	// touch, a golem that shrugs off magic. A script can change them during the game (a boss that adapts to what
+	// it was hit with: this.health.spellDamageTaken = 0.2)
+	float weaponDamageTaken = 1.0f;
+	float spellDamageTaken  = 1.0f;
+
 	// Set once the health reaches 0. Not saved with the scene
 	bool isDead = false;
+
+	// Set by a script, not saved with the scene: while 'isInvulnerable' nothing hurts the character (a boss changing
+	// its phase), and no hit takes its health below 'minimumHealth' (a boss that can't fall before its last phase)
+	bool  isInvulnerable = false;
+	float minimumHealth  = 0.0f;
+
+	float GetDamageTaken(DamageKind kind) const
+	{
+		switch (kind)
+		{
+		case DamageKind::Weapon: return weaponDamageTaken;
+		case DamageKind::Spell:  return spellDamageTaken;
+		default:                 return 1.0f;
+		}
+	}
 
 	static void RegisterToInspector()
 	{
@@ -43,7 +72,9 @@ struct HealthComponent
 				ADD_PROPERTY_RANGED(HealthComponent, currentHealth, PropertyDataType::Float, 0.0f, MaxHealthLimit),
 				ADD_PROPERTY(HealthComponent, hitEffect, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(HealthComponent, deathSlowMotionSeconds, PropertyDataType::Float, 0.0f, 5.0f),
-				ADD_PROPERTY_RANGED(HealthComponent, deathSlowMotionScale,   PropertyDataType::Float, 0.05f, 1.0f)
+				ADD_PROPERTY_RANGED(HealthComponent, deathSlowMotionScale,   PropertyDataType::Float, 0.05f, 1.0f),
+				ADD_PROPERTY_RANGED(HealthComponent, weaponDamageTaken,      PropertyDataType::Float, 0.0f, 3.0f),
+				ADD_PROPERTY_RANGED(HealthComponent, spellDamageTaken,       PropertyDataType::Float, 0.0f, 3.0f)
 			});
 	}
 };

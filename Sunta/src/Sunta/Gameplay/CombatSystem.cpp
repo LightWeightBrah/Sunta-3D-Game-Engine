@@ -1,6 +1,8 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CombatSystem.h"
 
+#include <unordered_map>
+
 #include <algorithm>
 #include <cmath>
 
@@ -115,13 +117,45 @@ bool WasHitThisSwing(const HitboxComponent& hitbox, unsigned int targetEntityID)
 	return std::find(hits.begin(), hits.end(), targetEntityID) != hits.end();
 }
 
+// A character that strikes with several Hitboxes at once (both fists and a foot, a weapon in each hand) hurts
+// a target once per attack, whichever of them touches it first
+struct AttackHits
+{
+	unsigned int              attackNumber = 0;
+	std::vector<unsigned int> targets;
+};
+
+std::unordered_map<unsigned int, AttackHits>& GetAttackHits()
+{
+	static std::unordered_map<unsigned int, AttackHits> hitsOfOwners;
+	return hitsOfOwners;
+}
+
+// True the first time this attack of the owner reaches the target
+bool TryClaimHit(unsigned int ownerID, unsigned int attackNumber, unsigned int targetID)
+{
+	AttackHits& hits = GetAttackHits()[ownerID];
+	if (hits.attackNumber != attackNumber)
+	{
+		hits.attackNumber = attackNumber;
+		hits.targets.clear();
+	}
+
+	if (std::find(hits.targets.begin(), hits.targets.end(), targetID) != hits.targets.end())
+		return false;
+
+	hits.targets.push_back(targetID);
+	return true;
+}
+
 // The collision rules decide who can hurt whom (PlayerHitbox + Enemy, EnemyHitbox + Player)
 bool CanHurt(const HitboxComponent& hitbox, const BoxColliderComponent& targetBody)
 {
 	return CollisionSettings::GetActive().CanCollide(hitbox.layer, targetBody.layer);
 }
 
-HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID);
+HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID,
+	DamageKind kind = DamageKind::Weapon);
 void      FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComponent& hitbox, const CharacterActionsComponent& owner,
 	unsigned int ownerID, unsigned int targetID, const glm::vec3& contactPoint);
 
@@ -155,6 +189,9 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 
 		hitbox.entitiesHitThisSwing.push_back(targetID);
 
+		if (!TryClaimHit(ownerID, owner.attackNumber, targetID))
+			continue;
+
 		const HitResult result = HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID);
 		if (result == HitResult::Blocked || result == HitResult::Hurt || result == HitResult::Riposte)
 			hitbox.hitFlashSecondsLeft = HitFlashSeconds;
@@ -174,7 +211,7 @@ bool IsInvulnerable(EntityManager& entityManager, unsigned int entityID)
 bool CanBeHurt(EntityManager& entityManager, unsigned int entityID)
 {
 	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityID);
-	return health && !health->isDead && !IsInvulnerable(entityManager, entityID);
+	return health && !health->isDead && !health->isInvulnerable && !IsInvulnerable(entityManager, entityID);
 }
 
 void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& health, unsigned int attackerEntityID)
@@ -193,11 +230,23 @@ void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& h
 	CurrencySystem::OnDeath(entityManager, entityID, attackerEntityID);
 }
 
-// Takes the damage away from the health. True when the character is still alive
-bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damage, unsigned int attackerEntityID)
+std::vector<DamageEvent>& GetDamageEvents()
+{
+	static std::vector<DamageEvent> events;
+	return events;
+}
+
+// Takes the damage away from the health (as much of it as the character lets through from that kind of blow).
+// True when the character is still alive
+bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damage, unsigned int attackerEntityID, DamageKind kind)
 {
 	HealthComponent& health = *entityManager.GetComponent<HealthComponent>(entityID);
-	health.currentHealth = glm::max(health.currentHealth - damage, 0.0f);
+	damage *= glm::max(health.GetDamageTaken(kind), 0.0f);
+	GetDamageEvents().push_back({ entityID, attackerEntityID, damage, kind });
+
+	// A script may keep the character above a floor (a boss that changes its phase there instead of dying)
+	const float floor = glm::clamp(health.minimumHealth, 0.0f, health.currentHealth);
+	health.currentHealth = glm::max(health.currentHealth - damage, floor);
 	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::hurtSound);
 
 	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' hit '{1}' for {2} ({3} health left)", GetEntityName(entityManager, attackerEntityID),
@@ -330,20 +379,22 @@ float GetRiposteMultiplier(EntityManager& entityManager, unsigned int defenderID
 
 // ========== A weapon's hit ==========
 
-// Goes through the target's defences: a parry turns it away, a shield takes it, poise keeps the target on its feet
-HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID)
+// Goes through the target's defences: a parry turns it away (not a spell), a shield takes it, poise keeps the target
+// on its feet
+HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID,
+	DamageKind kind)
 {
 	if (!CanBeHurt(entityManager, targetID))
 		return HitResult::Missed;
 
-	if (TryParry(entityManager, targetID, attackerID))
+	if (kind == DamageKind::Weapon && TryParry(entityManager, targetID, attackerID))
 		return HitResult::Parried;
 
 	const BlockResult block = TryBlock(entityManager, targetID, attackerID, damage);
 
 	if (block == BlockResult::Blocked)
 	{
-		if (damage <= 0.0f || LoseHealth(entityManager, targetID, damage, attackerID))
+		if (damage <= 0.0f || LoseHealth(entityManager, targetID, damage, attackerID, kind))
 			CharacterActionsSystem::PlayBlockImpact(entityManager, targetID);
 		return HitResult::Blocked;
 	}
@@ -353,7 +404,7 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 
 	const bool staggers = block == BlockResult::GuardBroken || BreaksPoise(entityManager, targetID, poiseDamage);
 
-	if (LoseHealth(entityManager, targetID, damage, attackerID) && staggers)
+	if (LoseHealth(entityManager, targetID, damage, attackerID, kind) && staggers)
 		CharacterActionsSystem::PlayHitReaction(entityManager, targetID);
 
 	if (block == BlockResult::GuardBroken)
@@ -428,10 +479,15 @@ void FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComp
 
 void CombatSystem::PrepareForPlay(EntityManager& entityManager)
 {
+	GetAttackHits().clear();
+	GetDamageEvents().clear();
+
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
 	{
-		health.currentHealth = health.maxHealth;
-		health.isDead        = false;
+		health.currentHealth  = health.maxHealth;
+		health.isDead         = false;
+		health.isInvulnerable = false;
+		health.minimumHealth  = 0.0f;
 	}
 
 	for (PoiseComponent& poise : entityManager.GetAllComponents<PoiseComponent>())
@@ -543,9 +599,43 @@ bool CombatSystem::ApplyDamage(EntityManager& entityManager, unsigned int target
 	if (!CanBeHurt(entityManager, targetEntityID))
 		return false;
 
-	if (LoseHealth(entityManager, targetEntityID, damage, attackerEntityID))
+	if (LoseHealth(entityManager, targetEntityID, damage, attackerEntityID, DamageKind::Other))
 		CharacterActionsSystem::PlayHitReaction(entityManager, targetEntityID);
 
+	return true;
+}
+
+std::vector<DamageEvent> CombatSystem::TakeDamageEvents()
+{
+	std::vector<DamageEvent> events;
+	events.swap(GetDamageEvents());
+	return events;
+}
+
+bool CombatSystem::HitWithSpell(EntityManager& entityManager, unsigned int targetEntityID, float damage, float poiseDamage,
+	unsigned int casterEntityID, const glm::vec3& point, float hitStopSeconds, float cameraShake)
+{
+	const HitResult result = HitWithWeapon(entityManager, targetEntityID, damage, poiseDamage, casterEntityID, DamageKind::Spell);
+
+	switch (result)
+	{
+	case HitResult::Missed:
+		return false;
+	case HitResult::Blocked:
+		BurstShieldEffect(entityManager, targetEntityID, point, BlockEffectBurst);
+		hitStopSeconds *= BlockedFeelMultiplier;
+		cameraShake    *= BlockedFeelMultiplier;
+		break;
+	default:
+		BurstBodyEffect(entityManager, targetEntityID, point, HitEffectBurst);
+		break;
+	}
+
+	if (IsPlayerCharacter(entityManager, casterEntityID) || IsPlayerCharacter(entityManager, targetEntityID))
+	{
+		TimeScaleSystem::HitStop(hitStopSeconds);
+		FollowCameraSystem::Shake(entityManager, cameraShake);
+	}
 	return true;
 }
 

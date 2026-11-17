@@ -38,7 +38,10 @@
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
 #include "Effects/ParticleSystem.h"
+#include "Effects/LiquidOrbRenderer.h"
+#include "Effects/SwarmSystem.h"
 #include "Effects/WeaponTrailSystem.h"
+#include "Gameplay/SpellSystem.h"
 #include "Gameplay/TimeScaleSystem.h"
 #include "Audio/AudioSystem.h"
 #include "Gameplay/CharacterSoundsSystem.h"
@@ -355,8 +358,11 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		CombatSystem::Update(entityManager, gameDeltaTime);
+		SpellSystem::Update(entityManager, gameDeltaTime);
 		CharacterSoundsSystem::Update(entityManager, gameDeltaTime);
 		BossSystem::Update(entityManager, gameDeltaTime);
+		// Before the particles: the copies that land ask for their bursts
+		SwarmSystem::Update(entityManager, gameDeltaTime);
 		ParticleSystem::Update(entityManager, gameDeltaTime);
 		WeaponTrailSystem::Update(entityManager, gameDeltaTime);
 		BonfireSystem::Update(entityManager);
@@ -416,6 +422,8 @@ void Scene::Render(Renderer& renderer)
 
 		glm::mat4 matrix;
 		float emissiveStrength;
+		float darkness;
+		glm::vec3 glowColor;
 	};
 
 	struct GizmosDrawItem
@@ -516,7 +524,8 @@ void Scene::Render(Renderer& renderer)
 				auto* animatorComponent = entityManager.GetComponent<AnimatorComponent>(i);
 				const Animator* animator = animatorComponent ? &animatorComponent->animator : nullptr;
 
-				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix, modelComponent->emissiveStrength });
+				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix, modelComponent->emissiveStrength,
+					modelComponent->darkness, modelComponent->glowColor });
 			}
 		}
 
@@ -627,7 +636,15 @@ void Scene::Render(Renderer& renderer)
 		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
 
 	for (const auto& item : modelQueue)
-		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength);
+		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength, item.darkness, item.glowColor);
+
+	// The swarms: thousands of solid copies, then the streaks of light behind the falling ones
+	SwarmSystem::Draw(entityManager, sceneData);
+
+	// The balls of liquid bend the sky of the scene: after the solid things (they are a little see-through)
+	sceneSeconds += EngineTime::deltaTime;
+	LiquidOrbRenderer::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix, sceneData.cameraPosition,
+		environment ? environment->skyboxFolder : std::string(), environment ? environment->skyBrightness : 1.0f, sceneSeconds);
 
 	// After everything solid: the specks are hidden behind walls, but never hide what is behind them
 	ParticleSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix, sceneData.cameraPosition, sceneData.fogDensity);
@@ -654,6 +671,9 @@ void Scene::Render(Renderer& renderer)
 			CutsceneSystem::DrawOverlay(entityManager, screenSize, hudArea.topLeft, hudArea.size);
 		else
 			HUDSystem::Draw(entityManager, sceneData.projectionMatrix * sceneData.viewMatrix, screenSize, hudArea);
+
+		// Over everything, also over a cutscene: a flash of the whole screen asked for by a script
+		HUDSystem::DrawScreenFlash(screenSize);
 	}
 
 }
@@ -770,6 +790,7 @@ void Scene::BeginPlay()
 	CharacterAnimationSystem::ReportProblemsBeforePlay(entityManager);
 	CharacterActionsSystem::ReportProblemsBeforePlay(entityManager);
 	CombatSystem::ReportProblemsBeforePlay(entityManager);
+	SpellSystem::ReportProblemsBeforePlay(entityManager);
 	EnemySystem::ReportProblemsBeforePlay(entityManager);
 
 	// The level points raise the maximum health and stamina before they are filled
@@ -784,7 +805,9 @@ void Scene::BeginPlay()
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);
+	SwarmSystem::Clear(entityManager);
 	WeaponTrailSystem::Clear(entityManager);
+	SpellSystem::Clear(entityManager);
 	TimeScaleSystem::Reset();
 	CutsceneSystem::PrepareForPlay(entityManager);
 	CharacterSoundsSystem::PrepareForPlay(entityManager);

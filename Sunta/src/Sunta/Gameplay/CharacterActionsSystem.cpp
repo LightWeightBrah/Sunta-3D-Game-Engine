@@ -158,6 +158,7 @@ CharacterAction TakeRequest(Character& character, bool canUseMouse)
 			request = playerRequest;
 	}
 
+	character.actions->isBlockHeld = request == CharacterAction::Block;
 	return request;
 }
 
@@ -240,6 +241,7 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::Parried:     return actions.parriedAnimation;
 	case CharacterAction::Special:     return actions.specialAnimation;
 	case CharacterAction::UseItem:     return actions.itemAnimation;
+	case CharacterAction::Cast:        return actions.castAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -315,6 +317,11 @@ void MoveBody(Character& character, float progress)
 	PhysicsSystem::WakeUp(*character.body);
 }
 
+float GetAttackPlaybackSpeed(const CharacterActionsComponent& actions)
+{
+	return glm::clamp(actions.attackSpeed, CharacterActionsComponent::MinAttackSpeed, CharacterActionsComponent::MaxAttackSpeed);
+}
+
 // A delayed blow: the animation creeps on very slowly for a moment in the wind-up (see attackDelayChance)
 void UpdateAttackDelay(Character& character, float progress, float deltaTime)
 {
@@ -325,21 +332,25 @@ void UpdateAttackDelay(Character& character, float progress, float deltaTime)
 	if (!isAtHold)
 	{
 		if (actions.isHoldingAttack)
-			animator.SetPlaybackSpeed(1.0f);
+			animator.SetPlaybackSpeed(GetAttackPlaybackSpeed(actions));
 		actions.isHoldingAttack = false;
 		return;
 	}
 
 	actions.isHoldingAttack  = true;
 	actions.attackDelayLeft -= deltaTime;
-	animator.SetPlaybackSpeed(actions.attackDelayLeft > 0.0f ? HeldAttackPlaybackSpeed : 1.0f);
+	animator.SetPlaybackSpeed(actions.attackDelayLeft > 0.0f ? HeldAttackPlaybackSpeed : GetAttackPlaybackSpeed(actions));
 }
 
 // An attack that keeps turning towards its target until it starts to hit (see attackTurnDegreesPerSecond)
 void TrackTarget(EntityManager& entityManager, Character& character, float progress, float deltaTime)
 {
 	CharacterActionsComponent& actions = *character.actions;
-	if (actions.attackTurnDegreesPerSecond <= 0.0f || !actions.IsAttacking() || progress >= actions.GetHitFrom())
+
+	// A spell turns after its target until it leaves, an attack until it starts to hit
+	const bool  isCasting = actions.currentAction == CharacterAction::Cast;
+	const float commitAt  = isCasting ? actions.castReleaseAt : actions.GetHitFrom();
+	if (actions.attackTurnDegreesPerSecond <= 0.0f || (!actions.IsAttacking() && !isCasting) || progress >= commitAt)
 		return;
 
 	const float currentYaw = GetYawToFace(actions.actionDirection);
@@ -373,6 +384,7 @@ bool CanBeInterrupted(CharacterAction action)
 	case CharacterAction::Parried:
 	case CharacterAction::Special:
 	case CharacterAction::UseItem:
+	case CharacterAction::Cast:
 	case CharacterAction::Death:
 		return false;
 
@@ -518,7 +530,10 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 		CharacterSoundsSystem::Play(entityManager, character.entityID, &CharacterSoundsComponent::rollSound);
 
 	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack || action == CharacterAction::LeapAttack)
+	{
 		actions.attackNumber++;
+		character.animator->animator.SetPlaybackSpeed(GetAttackPlaybackSpeed(actions));
+	}
 
 	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack)
 	{
@@ -771,6 +786,28 @@ bool CharacterActionsSystem::UseItem(EntityManager& entityManager, unsigned int 
 
 	actions->itemAnimation = animationName;
 	StartAction(entityManager, character, CharacterAction::UseItem, animationName);
+	return true;
+}
+
+bool CharacterActionsSystem::Cast(EntityManager& entityManager, unsigned int entityID, const std::string& animationName, float releaseAt)
+{
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+
+	Character character;
+	if (!actions || !TryGetCharacter(entityManager, *actions, character) || !HasAnimation(character, animationName))
+		return false;
+
+	// Only a character free to act
+	if (actions->IsBusy() || !StaminaSystem::TrySpendForAction(entityManager, entityID, CharacterAction::Cast))
+		return false;
+
+	actions->castAnimation = animationName;
+	actions->castReleaseAt = releaseAt;
+	StartAction(entityManager, character, CharacterAction::Cast, animationName);
+
+	// Facing the target from the start, then turning after it (TrackTarget)
+	actions->actionDirection = GetAttackDirection(entityManager, character);
+	FaceDirection(character, actions->actionDirection);
 	return true;
 }
 

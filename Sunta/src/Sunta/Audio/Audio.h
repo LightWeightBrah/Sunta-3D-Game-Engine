@@ -55,6 +55,10 @@ public:
 	// One music track at a time: a new one fades in while the old one fades out. Empty sound = no new track
 	static void PlayMusic(const std::string& sound, float volume = 1.0f, float fadeSeconds = 2.0f);
 	static void StopMusic(float fadeSeconds = 2.0f);
+	// How far the music track has played (seconds), -1 without one: scripts keep staged moments on its beat
+	static float GetMusicSeconds();
+	// Jumps the music to this second of it (a staged moment that must meet its place in a soundtrack)
+	static void SeekMusic(float seconds);
 
 	// Where the ears are: the camera of the game
 	static void SetListener(const glm::vec3& position, const glm::vec3& forward, const glm::vec3& up);

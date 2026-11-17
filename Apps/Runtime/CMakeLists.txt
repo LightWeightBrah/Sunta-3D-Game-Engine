@@ -21,6 +21,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Relea
 if(MSVC)
 	# WIN32_EXECUTABLE makes the linker look for WinMain, this keeps the normal main()
 	target_link_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release>:/ENTRY:mainCRTStartup>)
+
+	# A map of where every function ended up: a crash of a Release game is reported by Windows (Event Viewer >
+	# Application) as an offset into the program, and the map says which function that is
+	target_link_options(${PROJECT_NAME} PRIVATE /MAP)
 endif()
 
 # Only used when started from the IDE, a built game reads its own "res" folder

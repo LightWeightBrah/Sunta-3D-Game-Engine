@@ -16,6 +16,9 @@
 #include "Renderer/VideoPlayer.h"
 #include "Core/VirtualFileSystem.h"
 #include "Scene/EntityHierarchy.h"
+#include "Core/ResourceManager.h"
+#include "Physics/CollisionShapes.h"
+#include "Renderer/Model.h"
 
 namespace Sunta
 {
@@ -37,6 +40,14 @@ const glm::vec4     TitleColor  = glm::vec4(0.92f, 0.78f, 0.52f, 1.0f);
 constexpr float     HintHeight  = 18.0f;
 const glm::vec4     HintColor   = glm::vec4(0.7f, 0.7f, 0.7f, 0.6f);
 const glm::vec3     WorldUp     = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// Scenery between the camera and what it looks at: the camera comes in front of it (this far in front), at once,
+// and goes back out slowly when the way is clear again. Not closer to what it looks at than the nearest distance
+constexpr float SceneryMargin         = 0.6f;
+constexpr float NearestClearDistance  = 1.2f;
+constexpr float ClearingMetersPerSecond = 6.0f;
+// Small things (a weapon, a thrown bottle) don't hide a shot
+constexpr float SmallestHidingSize    = 1.0f;
 
 // One video plays at a time
 VideoPlayer& GetVideo()
@@ -104,7 +115,64 @@ void HoldEveryone(EntityManager& entityManager, bool isHeld)
 	}
 }
 
-void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, const CutsceneComponent& cutscene)
+bool IsProjectileBody(EntityManager& entityManager, unsigned int entityID)
+{
+	unsigned int parentID = 0;
+	return EntityHierarchy::TryGetParent(entityManager, entityID, parentID)
+		&& entityManager.GetComponent<ProjectileComponent>(parentID) != nullptr;
+}
+
+// How far from 'target' towards 'camera' the view is free of scenery: the closest triangle of a visible model without
+// bones (ruins, rubble, walls) on the line between them. A model the target is inside (a temple whose heart the camera
+// looks at: the line leaves it instead of entering it) doesn't count, nor small things and the bodies of projectiles
+float GetClearDistance(EntityManager& entityManager, const glm::vec3& target, const glm::vec3& camera)
+{
+	const glm::vec3 toCamera = camera - target;
+	const float wanted = glm::length(toCamera);
+	if (wanted < 0.001f)
+		return wanted;
+
+	Ray ray;
+	ray.origin    = target;
+	ray.direction = toCamera / wanted;
+
+	float clear = wanted;
+	for (ModelComponent& model : entityManager.GetAllComponents<ModelComponent>())
+	{
+		if (!model.isVisible || !model.modelData || !model.modelData->model || model.modelData->model->HasBones())
+			continue;
+
+		const unsigned int entityID = entityManager.GetEntityIDForComponent(model);
+		const WorldMatrixComponent* world = entityManager.GetComponent<WorldMatrixComponent>(entityID);
+		if (!world)
+			continue;
+
+		const Model& shape = *model.modelData->model;
+		const glm::vec3 boundsMin = shape.GetLocalBoundsMin();
+		const glm::vec3 boundsMax = shape.GetLocalBoundsMax();
+		const OBB box = MakeWorldOBB(world->matrix, (boundsMin + boundsMax) * 0.5f, (boundsMax - boundsMin) * 0.5f);
+
+		if (glm::length(box.halfExtents) * 2.0f < SmallestHidingSize || IsProjectileBody(entityManager, entityID))
+			continue;
+
+		float boxDistance = 0.0f;
+		if (!RayIntersectsOBB(ray, box, boxDistance) || boxDistance >= clear)
+			continue;
+
+		// The triangles, in the model's own space (the direction keeps its length: the distance comes out in world units)
+		const glm::mat4 toLocal = glm::inverse(world->matrix);
+		const glm::vec3 localOrigin = glm::vec3(toLocal * glm::vec4(target, 1.0f));
+		const glm::vec3 localDirection = glm::vec3(toLocal * glm::vec4(ray.direction, 0.0f));
+
+		float hitDistance = 0.0f;
+		bool  isEntering  = false;
+		if (shape.RaycastTriangles(localOrigin, localDirection, hitDistance, isEntering) && isEntering && hitDistance < clear)
+			clear = hitDistance;
+	}
+	return clear;
+}
+
+void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, CutsceneComponent& cutscene, float deltaTime)
 {
 	TransformComponent* camera = FindActiveCamera(entityManager);
 	if (!camera)
@@ -119,12 +187,27 @@ void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, const Cu
 	// Eased: the camera starts and stops gently
 	const float linear = glm::clamp(cutscene.seconds / cutscene.durationSeconds, 0.0f, 1.0f);
 	const float along  = linear * linear * (3.0f - 2.0f * linear);
-	const glm::vec3 position = PointOnPath(points, along);
+	glm::vec3 position = PointOnPath(points, along);
 
 	glm::vec3 lookDirection = PointOnPath(points, glm::min(along + 0.02f, 1.0f)) - position;
 	unsigned int targetID = 0;
 	if (TryFindEntityByName(entityManager, cutscene.lookAtEntity, targetID))
-		lookDirection = GetWorldPosition(entityManager, targetID) + WorldUp * cutscene.lookAtHeight - position;
+	{
+		const glm::vec3 target = GetWorldPosition(entityManager, targetID) + WorldUp * cutscene.lookAtHeight;
+		const float wanted = glm::length(position - target);
+
+		// Scenery in the way: the camera comes in front of it at once, and back out gently
+		const float clear = glm::max(GetClearDistance(entityManager, target, position) - SceneryMargin, NearestClearDistance);
+		if (cutscene.clearDistance < 0.0f || clear < cutscene.clearDistance)
+			cutscene.clearDistance = clear;
+		else
+			cutscene.clearDistance = glm::min(cutscene.clearDistance + ClearingMetersPerSecond * deltaTime, clear);
+
+		if (wanted > cutscene.clearDistance && wanted > 0.001f)
+			position = target + (position - target) * (cutscene.clearDistance / wanted);
+
+		lookDirection = target - position;
+	}
 
 	if (glm::length(lookDirection) < 0.001f || std::abs(glm::normalize(lookDirection).y) > 0.999f)
 		return;
@@ -159,6 +242,7 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 	cutscene->hasPlayed           = true;
 	cutscene->hasStartedAnimation = false;
 	cutscene->seconds             = 0.0f;
+	cutscene->clearDistance       = -1.0f;
 
 	// A video that can't be opened leaves the camera cutscene (the error is in the log)
 	cutscene->isVideo = !cutscene->videoFile.empty() && GetVideo().Open(VirtualFileSystem::Resolve(cutscene->videoFile));
@@ -215,7 +299,7 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 				CharacterActionsSystem::PlaySpecial(entityManager, actorID, cutscene.animationName);
 		}
 
-		PlaceCamera(entityManager, cutsceneID, cutscene);
+		PlaceCamera(entityManager, cutsceneID, cutscene, deltaTime);
 
 		if (isSkipped || cutscene.seconds >= cutscene.durationSeconds)
 			Finish(entityManager, cutscene);

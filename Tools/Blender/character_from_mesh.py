@@ -125,6 +125,52 @@ def load_rigged_character(path, height, bone_names):
     return armature, mesh
 
 
+def weld_seams(mesh, distance=0.0002):
+    """Generated meshes are cut along their texture seams: two vertices in one place, each with its own neighbours.
+    Smoothing anything over such a mesh tears it open along the seams. Welded, the texture stays (it lives on the
+    corners of the faces, not on the vertices) and the surface is one piece"""
+    select_only([mesh])
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.mesh.remove_doubles(threshold=distance, use_unselected=False)
+    bpy.ops.object.mode_set(mode="OBJECT")
+
+
+def smooth_shape_of(mesh, bone_name, iterations=4, factor=0.5, least_weight=0.5):
+    """Evens out the surface the bone carries (a beard and hair generated as a heap of spiky shards): each vertex moves
+    towards its neighbours, the rest of the body stays as it is"""
+    import bmesh
+
+    group = mesh.vertex_groups.get(bone_name)
+    if group is None:
+        return
+    chosen = {vertex.index for vertex in mesh.data.vertices
+              if any(slot.group == group.index and slot.weight >= least_weight for slot in vertex.groups)}
+
+    shape = bmesh.new()
+    shape.from_mesh(mesh.data)
+    shape.verts.ensure_lookup_table()
+    verts = [shape.verts[index] for index in chosen]
+    for _ in range(iterations):
+        bmesh.ops.smooth_vert(shape, verts=verts, factor=factor, use_axis_x=True, use_axis_y=True, use_axis_z=True)
+    shape.to_mesh(mesh.data)
+    shape.free()
+    mesh.data.update()
+
+
+def smooth_skin_weights(mesh, iterations=6, factor=0.5, most_bones=4):
+    """Generated rigs (Meshy's automatic rigging) weight the skin in hard patches: in a pose the cloth tears into
+    stretched spikes where one patch meets the next (a jaw, the collar, the armpits). The weights are blurred over the
+    surface a few times (each vertex towards its neighbours), then each vertex keeps its strongest bones, adding up to 1"""
+    select_only([mesh])
+    bpy.ops.object.mode_set(mode="WEIGHT_PAINT")
+    mesh.data.use_paint_mask_vertex = False
+    bpy.ops.object.vertex_group_smooth(group_select_mode="ALL", factor=factor, repeat=iterations, expand=0.0)
+    bpy.ops.object.vertex_group_limit_total(group_select_mode="ALL", limit=most_bones)
+    bpy.ops.object.vertex_group_normalize_all(group_select_mode="ALL", lock_active=False)
+    bpy.ops.object.mode_set(mode="OBJECT")
+
+
 def point_bones_at_children(armature):
     """glTF keeps only the joints, an importer guesses the bones' tails (and guesses badly): every bone is made to point
     at the joint of the child that goes on in its direction (the spine, not a shoulder), a bone at the end of a chain
@@ -166,6 +212,17 @@ def add_held_item_bones(armature, held_items):
 
 # The palm is this part of the hand's length (from the wrist), the fingers the rest
 PALM_PART_OF_HAND = 0.42
+
+# The hand is measured in a cylinder going on from the forearm: this many lengths of its bone from the wrist, this
+# many lengths of it around the axis. Its fingers go on along the forearm when the mesh says otherwise by more than
+# FINGERS_OFF_BONE_DEGREES (something else weighted to the hand)
+HAND_REACH_IN_BONES = 2.0
+HAND_RADIUS_IN_BONES = 1.2
+FINGERS_OFF_BONE_DEGREES = 35.0
+
+# A vertex is part of a finger to bend when the hand bone moves it at least this much (some models weight their
+# fingers partly to the hand only)
+FINGER_WEIGHT = 0.05
 
 # The fingers wrap around the grip this far (degrees): a little less than a full circle, the fingertips end at the palm
 FINGER_WRAP_DEGREES = 250.0
@@ -210,8 +267,23 @@ def make_fist(armature, mesh, side):
     group = mesh.vertex_groups[hand.name].index
     to_world = mesh.matrix_world
     to_mesh = to_world.inverted()
-    vertices = [vertex for vertex in mesh.data.vertices
-                if any(slot.group == group and slot.weight >= 0.3 for slot in vertex.groups)]
+    # The hand lies in a cylinder going on from the forearm (the end of a hand bone from a glTF file points anywhere):
+    # outside it are a chain or a strap hanging from the wrist, weighted to the hand too (they were taken for fingers)
+    elbow = armature.matrix_world @ armature.data.bones["LowerArm" + side].head_local
+    bone_direction = (wrist - elbow).normalized()
+    bone_length = hand.length * armature.matrix_world.to_scale().x
+    reach, radius_of_hand = bone_length * HAND_REACH_IN_BONES, bone_length * HAND_RADIUS_IN_BONES
+
+    def in_hand(position):
+        offset = position - wrist
+        along_bone = offset.dot(bone_direction)
+        return -radius_of_hand * 0.5 <= along_bone <= reach and (offset - bone_direction * along_bone).length <= radius_of_hand
+
+    skin = {vertex.index for vertex in mesh.data.vertices
+            if any(slot.group == group and slot.weight >= FINGER_WEIGHT for slot in vertex.groups)
+            and in_hand(to_world @ vertex.co)}
+    vertices = [vertex for vertex in mesh.data.vertices if vertex.index in skin
+                and any(slot.group == group and slot.weight >= 0.3 for slot in vertex.groups)]
     points = numpy.array([tuple(to_world @ vertex.co) for vertex in vertices])
 
     # The hand is longest along the fingers (the bone has no finger bones to point at)
@@ -219,6 +291,8 @@ def make_fist(armature, mesh, side):
     fingers = Vector(directions[0]).normalized()
     if fingers.dot(Vector(points.mean(axis=0)) - wrist) < 0.0:
         fingers = -fingers
+    if fingers.angle(bone_direction) > math.radians(FINGERS_OFF_BONE_DEGREES):
+        fingers = bone_direction
 
     # The hand is flat: across the fingers its widest direction is the knuckles' line, its thinnest the palm's side
     along_fingers = (points - numpy.array(wrist)) @ numpy.array(fingers)
@@ -227,8 +301,16 @@ def make_fist(armature, mesh, side):
     _, _, directions = numpy.linalg.svd(across - middle, full_matrices=False)
     along = Vector(directions[0]).normalized()
 
-    # Thumbs point forward (+Y) in an A or T pose; the palm is on the side the fingers bend to
-    if along.y < 0.0:
+    # The thumb's side: the thumb sticks out of the hand near the wrist (between the wrist and the knuckles), further
+    # than the little finger's edge. (Thumbs pointing forward in an A or T pose is not true of every model: some hold
+    # their palms forward, the thumbs up.) The palm is on the side the fingers bend to
+    length = along_fingers.max()
+    near_wrist = (along_fingers > length * 0.1) & (along_fingers < length * 0.45)
+    if near_wrist.sum() >= 4:
+        sideways = (across[near_wrist] - middle) @ numpy.array(along)
+        if -sideways.min() > sideways.max():
+            along = -along
+    elif along.y < 0.0:
         along = -along
     palm = along.cross(fingers) if side == "_R" else fingers.cross(along)
 
@@ -238,7 +320,23 @@ def make_fist(armature, mesh, side):
     knuckles = Vector(middle) + fingers * knuckle_distance
     center = knuckles + palm * radius
 
-    for vertex, distance in zip(vertices, along_fingers):
+    # Bent: every vertex the hand moves at all (the executioner's fingers are weighted only partly
+    # to the hand: with only the strongly weighted vertices they stayed straight under the grip), past the knuckles, within the hand
+    hand_reach = numpy.linalg.norm(across - middle, axis=1).max()
+    bent_vertices, bent_distances = [], []
+    for vertex in mesh.data.vertices:
+        if vertex.index not in skin:
+            continue
+        offset = numpy.array(to_world @ vertex.co) - numpy.array(wrist)
+        distance = float(offset @ numpy.array(fingers))
+        if distance <= knuckle_distance:
+            continue
+        if numpy.linalg.norm((offset - numpy.array(fingers) * distance) - (middle - numpy.array(wrist))) > hand_reach * 1.2:
+            continue
+        bent_vertices.append(vertex)
+        bent_distances.append(distance)
+
+    for vertex, distance in zip(bent_vertices, bent_distances):
         out_of_palm = distance - knuckle_distance
         if out_of_palm <= 0.0:
             continue
@@ -253,8 +351,27 @@ def make_fist(armature, mesh, side):
         vertex.co = to_mesh @ bent
 
     mesh.data.update()
+
+    # The hole the bent fingers really close around: a circle fitted to them (across the hole). A hand modelled
+    # half closed, or with a thick palm, closes its fingers elsewhere than the ideal circle above: the grip went
+    # past the curled fingers, along the base of the thumb
+    curled = [to_world @ vertex.co for vertex, distance in zip(bent_vertices, bent_distances) if distance > knuckle_distance + finger_length * 0.3]
+    if len(curled) >= 8:
+        center = fitted_hole(curled, center, palm, fingers)
+
     back_of_fist = max((to_world @ vertex.co - center).dot(-palm) for vertex in vertices)
     return Grip(center, along, fingers, palm, back_of_fist)
+
+
+def fitted_hole(points, center, palm, fingers):
+    """The middle of the circle the points lie around, seen along the hole (a least squares circle in the plane of the
+    palm and the fingers); its depth along the hole stays the old center's"""
+    xs = numpy.array([(point - center).dot(palm) for point in points])
+    ys = numpy.array([(point - center).dot(fingers) for point in points])
+    # x² + y² = 2ax + 2by + c: linear in a, b, c
+    matrix = numpy.column_stack((2.0 * xs, 2.0 * ys, numpy.ones(len(xs))))
+    (a, b, c), *_ = numpy.linalg.lstsq(matrix, xs * xs + ys * ys, rcond=None)
+    return center + palm * a + fingers * b
 
 
 def skeleton_of(armature):
@@ -361,6 +478,326 @@ def bake_emission(mesh, folder, name, build_color, size=1024):
         mesh.data.materials.append(original)
     scene.render.engine = previous_engine
     return target
+
+
+# ========== A face from a photo ==========
+
+
+@dataclass
+class FacePhoto:
+    """A photo of the face seen from the front, and where in it (pixels) the character's right eye, left eye and the
+    middle of the mouth are. The character's right eye is on the photo's left"""
+    path: str
+    right_eye: tuple
+    left_eye: tuple
+    mouth: tuple
+
+
+def find_eyes(mesh, height):
+    """Where the eyes of a model standing at the origin and looking along +Y are (the world, rest pose): (right, left).
+    Read from the shape of the face: the front of the head a little below the top of the head"""
+    points = [mesh.matrix_world @ vertex.co for vertex in mesh.data.vertices]
+    top = max(point.z for point in points)
+    size = height / 1.83
+    eye_height = top - 0.118 * size
+    eyes = []
+    for side in (1.0, -1.0):
+        across = side * 0.033 * size
+        near = [point for point in points if abs(point.z - eye_height) < 0.012 * size and abs(point.x - across) < 0.012 * size]
+        front = max(point.y for point in near) if near else 0.1
+        eyes.append(Vector((across, front, eye_height)))
+    return eyes[0], eyes[1]
+
+
+def affine_from_points(model_points, photo_points):
+    """u = a x + b z + c, v = d x + e z + f through three pairs: model (x, z) -> photo pixels (u, v)"""
+    matrix = numpy.array([[x, z, 1.0] for x, z in model_points])
+    us = numpy.linalg.solve(matrix, numpy.array([u for u, _ in photo_points]))
+    vs = numpy.linalg.solve(matrix, numpy.array([v for _, v in photo_points]))
+    return us, vs
+
+
+def face_photo_mapping(photo, right_eye, left_eye):
+    """Where the photo lies on the model (seen from the front): the affine map model (x, z) -> photo pixels, the middle
+    of the face, the size of its oval and the mouth"""
+    eye_distance = (right_eye - left_eye).length
+    photo_eye_distance = math.dist(photo.right_eye, photo.left_eye)
+    eyes_middle_photo = ((photo.right_eye[0] + photo.left_eye[0]) * 0.5, (photo.right_eye[1] + photo.left_eye[1]) * 0.5)
+    mouth_below = math.dist(eyes_middle_photo, photo.mouth) / photo_eye_distance * eye_distance
+    eyes_middle = (right_eye + left_eye) * 0.5
+    mouth = eyes_middle - Vector((0.0, 0.0, mouth_below))
+    us, vs = affine_from_points([(right_eye.x, right_eye.z), (left_eye.x, left_eye.z), (mouth.x, mouth.z)],
+                                [photo.right_eye, photo.left_eye, photo.mouth])
+    center = (eyes_middle + mouth) * 0.5 + Vector((0.0, 0.0, mouth_below * 0.15))
+    return us, vs, center, (eye_distance * 1.25, mouth_below * 1.75), mouth
+
+
+def skin_color_builder(base_image, base_uv="", photo=None, mapping=None):
+    """A 'build_color' for bake_emission: the model's own texture (read through the UV map 'base_uv', the active one
+    when empty), with the photo of the face over its front when there is one"""
+
+    def build(tree, _):
+        nodes, links = tree.nodes, tree.links
+
+        uv_map = nodes.new("ShaderNodeUVMap")
+        uv_map.uv_map = base_uv
+        base_node = nodes.new("ShaderNodeTexImage")
+        base_node.image = base_image
+        links.new(uv_map.outputs["UV"], base_node.inputs["Vector"])
+        if photo is None:
+            return base_node.outputs["Color"]
+
+        us, vs, center, (radius_across, radius_up), _ = mapping
+        photo_image = bpy.data.images.load(photo.path, check_existing=True)
+        width, picture_height = photo_image.size
+
+        def math_node(operation, first, second=None, value=None):
+            node = nodes.new("ShaderNodeMath")
+            node.operation = operation
+            links.new(first, node.inputs[0])
+            if second is not None:
+                links.new(second, node.inputs[1])
+            elif value is not None:
+                node.inputs[1].default_value = value
+            return node.outputs[0]
+
+        def linear(x, z, a, b, c):
+            return math_node("ADD", math_node("ADD", math_node("MULTIPLY", x, value=a), math_node("MULTIPLY", z, value=b)), value=c)
+
+        coordinates = nodes.new("ShaderNodeTexCoord")
+        parts = nodes.new("ShaderNodeSeparateXYZ")
+        links.new(coordinates.outputs["Object"], parts.inputs[0])
+        x, z = parts.outputs["X"], parts.outputs["Z"]
+
+        u = linear(x, z, us[0] / width, us[1] / width, us[2] / width)
+        v = linear(x, z, -vs[0] / picture_height, -vs[1] / picture_height, 1.0 - vs[2] / picture_height)
+        photo_uv = nodes.new("ShaderNodeCombineXYZ")
+        links.new(u, photo_uv.inputs[0])
+        links.new(v, photo_uv.inputs[1])
+        photo_node = nodes.new("ShaderNodeTexImage")
+        photo_node.image = photo_image
+        photo_node.extension = "EXTEND"
+        photo_node.interpolation = "Cubic"
+        links.new(photo_uv.outputs[0], photo_node.inputs["Vector"])
+
+        # Facing the camera of the photo: the front of the face, not its sides or the back of the head
+        geometry = nodes.new("ShaderNodeNewGeometry")
+        normal = nodes.new("ShaderNodeSeparateXYZ")
+        links.new(geometry.outputs["Normal"], normal.inputs[0])
+        facing = nodes.new("ShaderNodeMapRange")
+        links.new(normal.outputs["Y"], facing.inputs["Value"])
+        # Only the faces turned away are left out: the generated beard is a heap of shards turned every way, each
+        # must still show the photo (else the old texture shows through in flecks)
+        facing.inputs["From Min"].default_value = -0.35
+        facing.inputs["From Max"].default_value = 0.05
+
+        across = math_node("DIVIDE", math_node("SUBTRACT", x, value=center.x), value=radius_across)
+        up = math_node("DIVIDE", math_node("SUBTRACT", z, value=center.z), value=radius_up)
+        oval = math_node("SQRT", math_node("ADD", math_node("MULTIPLY", across, across), math_node("MULTIPLY", up, up)))
+        inside = nodes.new("ShaderNodeMapRange")
+        links.new(oval, inside.inputs["Value"])
+        inside.inputs["From Min"].default_value = 0.7
+        inside.inputs["From Max"].default_value = 1.0
+        inside.inputs["To Min"].default_value = 1.0
+        inside.inputs["To Max"].default_value = 0.0
+
+        mask = math_node("MULTIPLY", facing.outputs["Result"], inside.outputs["Result"])
+        mix = nodes.new("ShaderNodeMix")
+        mix.data_type = "RGBA"
+        links.new(mask, mix.inputs["Factor"])
+        links.new(base_node.outputs["Color"], mix.inputs[6])
+        links.new(photo_node.outputs["Color"], mix.inputs[7])
+        return mix.outputs[2]
+
+    return build
+
+
+def project_face_photo(mesh, armature, photo, height, folder, name, eye_offset=(0.0, 0.0)):
+    """Paints the photo of the face onto the model's own texture, seen straight from the front, the eyes and the mouth
+    on the model's eyes and mouth; it fades out towards the sides of the head and its edges (the texture made by the
+    generator stays there). A generated face is a guess at the person, the photo is the person.
+    'eye_offset' (meters, across and up) moves where the model's eyes are taken to be, when the shape misleads.
+    On a generated atlas the face is cut into many small islands: separate_head gives the head a texture of its own"""
+    right_eye, left_eye = find_eyes(mesh, height)
+    shift = Vector((eye_offset[0], 0.0, eye_offset[1]))
+    mapping = face_photo_mapping(photo, right_eye + shift, left_eye + shift)
+
+    material = mesh.data.materials[0]
+    base_image = find_texture(material, "Base Color")
+
+    # The pose of the bake is the rest pose (the face where its coordinates say)
+    previous_pose = armature.data.pose_position
+    armature.data.pose_position = "REST"
+    baked = bake_emission(mesh, folder, name + "_face_baked", skin_color_builder(base_image, "", photo, mapping), size=base_image.size[0])
+    armature.data.pose_position = previous_pose
+
+    # The model's texture is now the one with the face
+    for node in material.node_tree.nodes:
+        if node.type == "TEX_IMAGE" and node.image == base_image:
+            node.image = baked
+    return baked
+
+
+def keep_shading_across_cut(mesh):
+    """Fixes the smooth shading of every corner as it is now: when the mesh is later cut in two, the faces along the
+    cut keep the light of the whole surface (no visible line where the pieces meet)"""
+    mesh.data.update()
+    normals = [tuple(normal.vector) for normal in mesh.data.corner_normals]
+    mesh.data.normals_split_custom_set(normals)
+
+
+def bone_weights(mesh, bone_names):
+    """How much the bones (together) carry each vertex"""
+    groups = {mesh.vertex_groups[name].index for name in bone_names if name in mesh.vertex_groups}
+    weight = numpy.zeros(len(mesh.data.vertices))
+    for vertex in mesh.data.vertices:
+        for slot in vertex.groups:
+            if slot.group in groups:
+                weight[vertex.index] += slot.weight
+    return weight
+
+
+def head_faces(mesh, height):
+    """The faces of the head: those the head bone carries, and below them the chin and the jaw down to a little under
+    the mouth (generated rigs give the beard to the neck)"""
+    head = bone_weights(mesh, ["Head"])
+    head_and_neck = bone_weights(mesh, ["Head", "Neck"])
+    right_eye, left_eye = find_eyes(mesh, height)
+    size = height / 1.83
+    eyes_z = (right_eye.z + left_eye.z) * 0.5
+    jaw = eyes_z - 0.115 * size
+    # The goatee hangs lower, in the middle of the face, in front
+    chin = eyes_z - 0.165 * size
+    front = (right_eye.y + left_eye.y) * 0.5 - 0.06 * size
+    chosen = set()
+    for polygon in mesh.data.polygons:
+        indices = list(polygon.vertices)
+        center = polygon.center
+        if numpy.mean(head[indices]) >= 0.5:
+            chosen.add(polygon.index)
+        elif numpy.mean(head_and_neck[indices]) >= 0.5 and center.z >= jaw:
+            chosen.add(polygon.index)
+        elif numpy.mean(head_and_neck[indices]) >= 0.2 and center.z >= chin and abs(center.x) < 0.06 * size and center.y >= front:
+            chosen.add(polygon.index)
+    return chosen
+
+
+def delete_faces(mesh, indices):
+    """Deletes the faces and the vertices left without any face"""
+    import bmesh
+    shape = bmesh.new()
+    shape.from_mesh(mesh.data)
+    shape.faces.ensure_lookup_table()
+    bmesh.ops.delete(shape, geom=[shape.faces[index] for index in indices], context="FACES_ONLY")
+    loose = [vertex for vertex in shape.verts if not vertex.link_faces]
+    bmesh.ops.delete(shape, geom=loose, context="VERTS")
+    shape.to_mesh(mesh.data)
+    shape.free()
+    mesh.data.update()
+
+
+def unwrap_around(mesh, uv_layer):
+    """One unwrap around the vertical axis of the piece (a cylinder seen from inside): the face is a single unbroken
+    region in front, the seam runs down the back of the head. (An automatic unwrap of a generated head breaks the face
+    into dozens of small islands along its shards)"""
+    points = numpy.array([vertex.co[:] for vertex in mesh.data.vertices])
+    middle_x, middle_y = points[:, 0].mean(), points[:, 1].mean()
+    bottom, top = points[:, 2].min(), points[:, 2].max()
+    # The angle from the front (+Y) towards the sides: 0.5 in front, 0 and 1 at the back
+    angle = numpy.arctan2(points[:, 0] - middle_x, points[:, 1] - middle_y) / (2.0 * math.pi) + 0.5
+    up = (points[:, 2] - bottom) / max(top - bottom, 1e-6)
+    margin = 0.01
+    for polygon in mesh.data.polygons:
+        indices = list(polygon.vertices)
+        us = [angle[index] for index in indices]
+        # A face across the seam at the back: all its corners on one side of it
+        if max(us) - min(us) > 0.5:
+            us = [u + 1.0 if u < 0.5 else u for u in us]
+            if min(us) > 1.0:
+                us = [u - 1.0 for u in us]
+        for loop_index, index, u in zip(polygon.loop_indices, indices, us):
+            uv_layer.data[loop_index].uv = (margin + u * (1.0 - 2.0 * margin), margin + up[index] * (1.0 - 2.0 * margin))
+
+
+def separate_head(mesh, armature, folder, name, height, photo=None, eye_offset=(0.0, 0.0), size=2048):
+    """Cuts the head off into a mesh of its own with its own texture (<name>_head_diffuse.png, 'size' pixels square):
+    on a generated atlas the face is spread over many small islands, a few dozen pixels each - blocky up close.
+    The head gets an unwrap of its own, baked from the model's texture (and the photo of the face, when given).
+    Both pieces keep the skin weights and the armature, so they move as one. Returns the head"""
+    mapping = None
+    if photo is not None:
+        right_eye, left_eye = find_eyes(mesh, height)
+        shift = Vector((eye_offset[0], 0.0, eye_offset[1]))
+        mapping = face_photo_mapping(photo, right_eye + shift, left_eye + shift)
+
+    keep_shading_across_cut(mesh)
+    chosen = head_faces(mesh, height)
+
+    head = mesh.copy()
+    head.data = mesh.data.copy()
+    head.name = mesh.name + "_head"
+    for collection in mesh.users_collection:
+        collection.objects.link(head)
+    delete_faces(head, set(range(len(head.data.polygons))) - chosen)
+    delete_faces(mesh, chosen)
+
+    base_uv = head.data.uv_layers.active.name
+    head_uv = head.data.uv_layers.new(name="HeadUV")
+    head.data.uv_layers.active = head_uv
+    head_uv.active_render = True
+    unwrap_around(head, head_uv)
+
+    base_image = find_texture(mesh.data.materials[0], "Base Color")
+    previous_pose = armature.data.pose_position
+    armature.data.pose_position = "REST"
+    baked = bake_emission(head, folder, name + "_head_diffuse", skin_color_builder(base_image, base_uv, photo, mapping), size=size)
+    armature.data.pose_position = previous_pose
+
+    head.data.uv_layers.remove(head.data.uv_layers[base_uv])
+    head.data.uv_layers.active = head.data.uv_layers["HeadUV"]
+    specular = numpy.ones((64, 64, 4), dtype=numpy.float32)
+    specular[..., :3] = 0.1
+    save_image(name + "_head_specular", folder, specular, is_color=False)
+    head.data.materials.clear()
+    head.data.materials.append(make_textured_material(name + "_head", baked))
+    print("HEAD {} faces {} texture {}".format(name, len(head.data.polygons), size))
+    return head
+
+
+def reskin_with_heat(mesh, armature, least_covered=0.97):
+    """Replaces generated skin weights (hard patches that crumple the shoulders when the arms go up) with Blender's
+    automatic weights from bone heat, which spread over a shoulder the way skin stretches. Keeps the old weights
+    when the heat solver leaves part of the surface unweighted. Returns whether the new weights were kept"""
+    names = {group.index: group.name for group in mesh.vertex_groups}
+    old = {name: [] for name in names.values()}
+    for vertex in mesh.data.vertices:
+        for slot in vertex.groups:
+            old[names[slot.group]].append((vertex.index, slot.weight))
+
+    for modifier in [m for m in mesh.modifiers if m.type == "ARMATURE"]:
+        mesh.modifiers.remove(modifier)
+    mesh.vertex_groups.clear()
+    world = mesh.matrix_world.copy()
+    mesh.parent = None
+    mesh.matrix_world = world
+
+    select_only([mesh, armature])
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.parent_set(type="ARMATURE_AUTO")
+
+    covered = sum(1 for vertex in mesh.data.vertices if any(slot.weight > 0.0 for slot in vertex.groups))
+    share = covered / max(len(mesh.data.vertices), 1)
+    print("HEAT weights cover {:.1%} of the vertices".format(share))
+    if share >= least_covered:
+        return True
+
+    mesh.vertex_groups.clear()
+    for group_name, slots in old.items():
+        group = mesh.vertex_groups.new(name=group_name)
+        for index, weight in slots:
+            group.add([index], weight, "REPLACE")
+    print("HEAT failed, the generated weights stay")
+    return False
 
 
 # ========== Finding the joints ==========

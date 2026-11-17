@@ -3,6 +3,7 @@
 
 #include "BossSystem.h"
 #include "CharacterActionsSystem.h"
+#include "EnemySystem.h"
 #include "HealingFlaskSystem.h"
 #include "LockOnSystem.h"
 #include "ECS/Component.h"
@@ -131,6 +132,16 @@ void RespawnSystem::RespawnEnemies(EntityManager& entityManager)
 
 		enemy.stateMachine.reset();
 		enemy.attackCooldownLeft = 0.0f;
+
+		// What a script changed during the fight is forgotten, and an enemy that waits to be called waits again
+		if (HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityManager.GetEntityIDForComponent(enemy)))
+		{
+			health->isInvulnerable = false;
+			health->minimumHealth  = 0.0f;
+		}
+
+		if (enemy.startsDormant)
+			EnemySystem::SetDormant(entityManager, entityManager.GetEntityIDForComponent(enemy), true);
 	}
 }
 

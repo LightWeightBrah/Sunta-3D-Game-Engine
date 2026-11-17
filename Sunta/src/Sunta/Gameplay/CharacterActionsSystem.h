@@ -22,6 +22,10 @@ public:
 	// False when the character is busy (attacking, rolling, staggering) or has no such animation
 	static bool UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);
 
+	// Casting a spell (see SpellCasterComponent): the animation plays once on the whole body, the character turns after
+	// its target until 'releaseAt' of it. False when the character is busy, out of stamina or has no such animation
+	static bool Cast(EntityManager& entityManager, unsigned int entityID, const std::string& animationName, float releaseAt);
+
 	static void PlayDeath(EntityManager& entityManager, unsigned int entityID);
 
 	// Started by a hit: taken on the shield (the character stays behind it), or the attacker's own attack was parried

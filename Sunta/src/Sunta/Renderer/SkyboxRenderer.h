@@ -22,6 +22,10 @@ public:
 	// False when the folder's pictures can't be read (nothing is drawn)
 	static bool Draw(const std::string& folder, const glm::mat4& view, const glm::mat4& projection, float brightness);
 
+	// Puts the sky of that folder on a texture unit, for a shader that mirrors or bends it (a ball of liquid).
+	// False when there is none
+	static bool TryBindSky(const std::string& folder, unsigned int slot);
+
 private:
 	static inline std::shared_ptr<VertexArray> cube;
 	static inline std::shared_ptr<Shader>      shader;

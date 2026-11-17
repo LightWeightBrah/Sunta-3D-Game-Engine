@@ -45,15 +45,6 @@
     "downloaded": "2026-11-01"
   },
   {
-    "id": 60007,
-    "name": "Swipe Whoosh",
-    "author": "qubodup",
-    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
-    "url": "https://freesound.org/people/qubodup/sounds/60007/",
-    "file": "60007.ogg",
-    "downloaded": "2026-11-01"
-  },
-  {
     "id": 547037,
     "name": "Hit Swing Sword",
     "author": "CogFireStudios",
@@ -934,5 +925,167 @@
     "url": "https://freesound.org/people/MusicByMisterbates/sounds/720981/",
     "file": "monster_awakens.ogg",
     "downloaded": "2026-11-01"
+  },
+  {
+    "id": 395347,
+    "name": "Slap 2",
+    "author": "ihitokage",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ihitokage/sounds/395347/",
+    "file": "395347.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 395348,
+    "name": "Slap 3",
+    "author": "ihitokage",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ihitokage/sounds/395348/",
+    "file": "395348.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 395350,
+    "name": "Slap 1",
+    "author": "ihitokage",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/ihitokage/sounds/395350/",
+    "file": "395350.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 60009,
+    "name": "swosh-22.flac",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/60009/",
+    "file": "60009.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 60007,
+    "name": "Swipe Whoosh",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/60007/",
+    "file": "60007.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 60030,
+    "name": "Swosh / Whoosh / Air Cut",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/60030/",
+    "file": "60030.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 321810,
+    "name": "Blocking Arm With Hand",
+    "author": "mmasonghi",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/mmasonghi/sounds/321810/",
+    "file": "321810.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 458867,
+    "name": "Damage sound effect",
+    "author": "Raclure",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Raclure/sounds/458867/",
+    "file": "458867.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 346373,
+    "name": "Throwing / Whip Effect",
+    "author": "denao270",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/denao270/sounds/346373/",
+    "file": "346373.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 233605,
+    "name": "Breaking Glass #3.wav",
+    "author": "abstraktgeneriert",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/abstraktgeneriert/sounds/233605/",
+    "file": "233605.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 539968,
+    "name": "Deep Boom",
+    "author": "Za-Games",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Za-Games/sounds/539968/",
+    "file": "539968.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 512217,
+    "name": "Poof in cloud",
+    "author": "Mateusz_Chenc",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Mateusz_Chenc/sounds/512217/",
+    "file": "512217.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 170229,
+    "name": "Camera Shutter",
+    "author": "roachpowder",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/roachpowder/sounds/170229/",
+    "file": "170229.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 512216,
+    "name": "Coins",
+    "author": "Mateusz_Chenc",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/Mateusz_Chenc/sounds/512216/",
+    "file": "512216.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 789219,
+    "name": "Dusty Cash Register / Cash Machine II",
+    "author": "modusmogulus",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/modusmogulus/sounds/789219/",
+    "file": "789219.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 683101,
+    "name": "quick woosh",
+    "author": "florianreichelt",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/florianreichelt/sounds/683101/",
+    "file": "683101.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 184936,
+    "name": "Cinematic Rumble.flac",
+    "author": "qubodup",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/qubodup/sounds/184936/",
+    "file": "184936.ogg",
+    "downloaded": "2026-11-16"
+  },
+  {
+    "id": 715784,
+    "name": "Magic Whoosh",
+    "author": "DustyWind",
+    "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+    "url": "https://freesound.org/people/DustyWind/sounds/715784/",
+    "file": "715784.ogg",
+    "downloaded": "2026-11-16"
   }
 ]
