@@ -12,18 +12,19 @@ namespace Sunta
 OpenGLElementBuffer::OpenGLElementBuffer(const BufferDescriptor& descriptor)
 	: count(descriptor.size / sizeof(unsigned int))
 {
-	// Make sure you create OpenGLElementBuffer only after binding VAO
-	// VAO stores Element Buffer
-
-#ifdef SUNTA_DEBUG
+	// The element buffer binding is part of the bound vertex array's state: filling the new buffer while some VAO is
+	// bound would silently replace that VAO's triangles (a draw leaves its VAO bound, so a buffer created lazily in the
+	// middle of a frame broke whatever was drawn last). So it is filled with no VAO bound, and the VAO comes back after;
+	// VertexArray::SetElementBuffer attaches it to its own VAO.
 	int boundVertexArray = 0;
-	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &boundVertexArray);
-	SUNTA_ASSERT(boundVertexArray != 0, "You are creating Element Buffer without bound Vertex Array! You must bind VAO before creating Element Buffer, use VertexArray Bind or ScopedVertexArrayBind!");
-#endif
+	GLCall(glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &boundVertexArray));
+	GLCall(glBindVertexArray(0));
 
 	GLCall(glGenBuffers(1, &id));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, descriptor.size, descriptor.data, BufferUsageToOpenGL(descriptor.usage)));
+
+	GLCall(glBindVertexArray((unsigned int)boundVertexArray));
 }
 	
 OpenGLElementBuffer::~OpenGLElementBuffer()

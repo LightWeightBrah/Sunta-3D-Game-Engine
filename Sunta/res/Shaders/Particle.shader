@@ -54,9 +54,11 @@ void main()
 	age   = iRotationSeedStyle.w;
 
 	// The same distance fog as the lit models: far specks fade away (their light is added, so fading = less light)
-	// and specks right at the camera fade out too (a burst around the camera must not cover the screen)
+	// and specks right at the camera fade out too (a burst around the camera must not cover the screen); a big puff
+	// starts fading further away, it would fill the picture long before the camera is inside it
 	float toCamera_ = length(cameraPosition - center);
-	visibility = exp(-pow(fogDensity * toCamera_, 2.0)) * smoothstep(0.6, 2.5, toCamera_);
+	float size_     = iCenterSize.w;
+	visibility = exp(-pow(fogDensity * toCamera_, 2.0)) * smoothstep(0.6 + size_ * 0.35, 2.5 + size_ * 0.6, toCamera_);
 }
 
 #shader fragment
