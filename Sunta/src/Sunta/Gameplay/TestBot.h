@@ -6,13 +6,15 @@ namespace Sunta
 
 	// Commands of an input script (see Core/InputPlayback.h) that need to know the game: a test can then reach and
 	// fight an enemy that moves, instead of pressing keys blindly.
-	//   lockon                  keep the player locked on to the nearest enemy (locks again when the lock is lost)
+	//   lockon                  keep the player locked on to the nearest enemy (locks again when the lock is lost; a
+	//                           target a script protects is left for another one, if there is one)
 	//   unlock                  stop that and drop the lock
 	//   approach DIST SECONDS   walk to the locked enemy until DIST meters from it, for SECONDS
 	//   teleport X Y Z          put the player there (a test of a boss starts at its fog, not at the level's start)
 	//   freeze / unfreeze       enemies stop thinking (a fixed target to compare blows) / think again
 	//   fight SECONDS [DIST] [free]  lock on, stay DIST (default 1.1) meters from the enemy and attack whenever it is
 	//                           in reach ("free": no lock, no walking - only the attacks)
+	//   where                   write the player's place and target to the combat log (each change of target is too)
 	class TestBot
 	{
 	public:

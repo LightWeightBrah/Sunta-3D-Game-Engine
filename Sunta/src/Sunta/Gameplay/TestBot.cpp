@@ -6,6 +6,7 @@
 #include "LockOnSystem.h"
 #include "LockOnTargetComponent.h"
 #include "EnemyComponent.h"
+#include "EntityName.h"
 #include "CharacterControllerComponent.h"
 #include "Core/InputPlayback.h"
 #include "Core/Log.h"
@@ -20,6 +21,7 @@ namespace
 
 constexpr float AttackEverySeconds = 0.35f;
 constexpr float AttackReachExtra   = 0.6f; // attacks start this much farther than the distance it keeps
+constexpr float SwitchTargetWithin = 15.0f; // a protected target is left only for one this near (one in the same fight)
 
 bool  isRegistered	 = false;
 bool  keepsLock		 = false;
@@ -32,6 +34,8 @@ bool  isWalking		 = false;
 bool  unlockRequested = false;
 int   freezeChange	 = 0; // +1 freeze the enemies, -1 let them think again
 bool  hasTeleport	 = false;
+bool  wantsWhere	 = false;
+unsigned int lastTargetID = 0;
 glm::vec3 teleportTo{ 0.0f };
 
 float ToFloat(const std::string& text, float fallback)
@@ -54,6 +58,8 @@ bool Handle(const std::string& command, const std::string& a, const std::string&
 		hasTeleport = true;
 		teleportTo	= { ToFloat(a, 0.0f), ToFloat(b, 0.0f), ToFloat(c, 0.0f) };
 	}
+	else if (command == "where")
+		wantsWhere = true; // the player's place and target, written to the combat log
 	else if (command == "freeze")
 		freezeChange = 1;
 	else if (command == "unfreeze")
@@ -103,19 +109,32 @@ LockOnComponent* FindPlayerLockOn(EntityManager& entityManager, unsigned int& ou
 	return nullptr;
 }
 
+// Worth hitting: alive, awake and not kept from harm by a script (a boss behind his summon: the bot turns to the summon)
+bool IsWorthHitting(EntityManager& entityManager, unsigned int entityID)
+{
+	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityID);
+	const EnemyComponent*  enemy  = entityManager.GetComponent<EnemyComponent>(entityID);
+	return IsAlive(entityManager, entityID) && !(health && health->isInvulnerable) && !(enemy && enemy->isDormant);
+}
+
+// Locked on the nearest enemy worth hitting; on a protected one only while there is no other
 void KeepLocked(EntityManager& entityManager, LockOnComponent& lockOn, unsigned int playerID)
 {
-	if (lockOn.hasTarget && IsAlive(entityManager, lockOn.targetEntityID))
+	const bool hasLivingTarget = lockOn.hasTarget && IsAlive(entityManager, lockOn.targetEntityID);
+	if (hasLivingTarget && IsWorthHitting(entityManager, lockOn.targetEntityID))
 		return;
 
 	const glm::vec3 player = PositionOf(entityManager, playerID);
 	unsigned int	nearest = 0;
-	float			nearestDistance = lockOn.maxDistance * 2.0f;
+	float			nearestDistance = hasLivingTarget ? SwitchTargetWithin : lockOn.maxDistance * 2.0f;
 
 	for (LockOnTargetComponent& target : entityManager.GetAllComponents<LockOnTargetComponent>())
 	{
 		const unsigned int targetID = entityManager.GetEntityIDForComponent(target);
 		if (targetID == playerID || !IsAlive(entityManager, targetID))
+			continue;
+		// While locked on a protected one, only a target worth hitting replaces it
+		if (hasLivingTarget && (targetID == lockOn.targetEntityID || !IsWorthHitting(entityManager, targetID)))
 			continue;
 
 		const float distance = glm::length(PositionOf(entityManager, targetID) - player);
@@ -189,6 +208,18 @@ void TestBot::Update(EntityManager& entityManager, float deltaTime)
 	else if (unlockRequested)
 		LockOnSystem::ClearTarget(*lockOn);
 	unlockRequested = false;
+
+	// Every change of target, and a "where", go to the combat log (a test can tell where the fight went)
+	const unsigned int targetID = lockOn->hasTarget ? lockOn->targetEntityID : 0;
+	if (targetID != lastTargetID || wantsWhere)
+	{
+		const glm::vec3 place = PositionOf(entityManager, playerID);
+		const std::string target = targetID != 0 ? GetEntityName(entityManager, targetID) : std::string("none");
+		CombatLog::Event(std::string(wantsWhere ? "bot,where " : "bot,target ") + target + " at " + std::to_string(place.x)
+			+ " " + std::to_string(place.y) + " " + std::to_string(place.z));
+		lastTargetID = targetID;
+		wantsWhere	 = false;
+	}
 
 	const bool hasEnemy = lockOn->hasTarget && IsAlive(entityManager, lockOn->targetEntityID);
 	float distance = 1e9f;
