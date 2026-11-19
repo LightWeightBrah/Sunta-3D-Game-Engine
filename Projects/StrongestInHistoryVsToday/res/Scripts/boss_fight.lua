@@ -1286,6 +1286,9 @@ function O.startAscension()
     this.enemy:changeState("Channel")
     becomeInvulnerable(8)
     local ground = this.transform.position
+    -- The player's camera turns to him (locked on): the moment the jet strikes is not missed
+    local player = find(PlayerName)
+    if player and player.lockOn then player.lockOn:setTarget(this) end
 
     startShow({
         -- He powers up while the jet dives at him out of the sky
