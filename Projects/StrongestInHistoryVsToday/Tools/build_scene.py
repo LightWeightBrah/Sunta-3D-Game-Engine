@@ -766,10 +766,10 @@ def add_jet_pack(builder, boss):
     # The flames of the engines: always burning once he has it (a steady jet of fire down, and a glow)
     for index, place in enumerate(JET_ENGINES):
         builder.add(named(f"Boss Jet Flame {index + 1}", tuple(place), particle_emitter={
-            "is_emitting": False, "particles_per_second": 120.0, "lifetime_seconds": 0.22,
-            "spawn_half_extents": [0.03, 0.03, 0.03], "velocity": [0.0, -5.0, 0.0], "velocity_randomness": 0.4,
-            "gravity": [0.0, 0.0, 0.0], "start_size": 0.16, "end_size": 0.03,
-            "start_color": [1.0, 0.6, 0.25], "end_color": [0.8, 0.1, 0.02], "intensity": 0.9, "max_particles": 400,
+            "is_emitting": False, "particles_per_second": 90.0, "lifetime_seconds": 0.14,
+            "spawn_half_extents": [0.02, 0.02, 0.02], "velocity": [0.0, -3.0, 0.0], "velocity_randomness": 0.3,
+            "gravity": [0.0, 0.0, 0.0], "start_size": 0.11, "end_size": 0.02,
+            "start_color": [1.0, 0.5, 0.18], "end_color": [0.7, 0.08, 0.02], "intensity": 0.45, "max_particles": 300,
             "style": 1, "size_randomness": 0.3}), parent=boss, bone="Chest")
     # Embers rising off him: the last stand burns
     builder.add(named("Boss Ascension Aura", (0.0, 0.0, 0.0), particle_emitter={

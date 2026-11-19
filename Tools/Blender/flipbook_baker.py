@@ -32,11 +32,12 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 
 # How long the simulation runs; the flipbook takes 'frames' pictures spread over it
-SIM_FRAMES = {"smoke": 90, "fire": 60, "burst": 70}[args.kind]
+SIM_FRAMES = {"smoke": 90, "fire": 42, "burst": 70}[args.kind]
 scene.frame_start, scene.frame_end = 1, SIM_FRAMES
 
 # ----- the source: a small ball that puffs for a moment -----
-bpy.ops.mesh.primitive_uv_sphere_add(radius=0.34 if args.kind != "burst" else 0.42, location=(0, 0, -0.42))
+RADIUS = {"smoke": 0.34, "fire": 0.2, "burst": 0.42}[args.kind]
+bpy.ops.mesh.primitive_uv_sphere_add(radius=RADIUS, location=(0, 0, -0.42 if args.kind != "fire" else -0.62))
 source = bpy.context.active_object
 bpy.ops.object.quick_smoke()
 domain = [o for o in scene.objects if o.name.startswith("Smoke Domain")][0]
@@ -45,7 +46,7 @@ flow = source.modifiers["Fluid"].flow_settings
 flow.flow_type = "SMOKE" if args.kind == "smoke" else "BOTH"
 flow.flow_behavior = "INFLOW"
 flow.use_initial_velocity = True
-flow.velocity_coord = (0.0, 0.0, 1.2 if args.kind == "smoke" else 0.6)
+flow.velocity_coord = (0.0, 0.0, {"smoke": 1.2, "fire": 2.6, "burst": 0.6}[args.kind])
 flow.smoke_color = (1.0, 1.0, 1.0)
 flow.fuel_amount = 1.4 if args.kind == "burst" else 1.0
 flow.temperature = 2.0 if args.kind == "fire" else 1.0
@@ -55,7 +56,7 @@ source.modifiers["Fluid"].flow_settings.use_plane_init = False
 scene.frame_set(1)
 flow.density = 1.0
 flow.keyframe_insert("density", frame=1)
-last_puff = 4 if args.kind == "burst" else 14
+last_puff = {"smoke": 14, "fire": 10, "burst": 4}[args.kind]
 flow.keyframe_insert("density", frame=last_puff)
 flow.density = 0.0
 flow.keyframe_insert("density", frame=last_puff + 2)
@@ -71,7 +72,7 @@ domain.scale = (1.0, 1.0, 1.0)
 settings = domain.modifiers["Fluid"].domain_settings
 settings.resolution_max = args.resolution
 settings.use_adaptive_domain = False
-settings.vorticity = 0.5 if args.kind == "smoke" else 0.45
+settings.vorticity = {"smoke": 0.5, "fire": 0.9, "burst": 0.45}[args.kind]
 settings.use_noise = True              # finer wisps over the coarse simulation
 settings.noise_scale = 2
 settings.noise_strength = 1.2
@@ -79,7 +80,7 @@ settings.alpha = -0.2 if args.kind == "smoke" else 0.4      # smoke barely rises
 settings.beta = 0.6
 settings.dissolve_speed = 60 if args.kind == "smoke" else 26
 settings.use_dissolve_smoke = True
-settings.burning_rate = 0.9
+settings.burning_rate = 0.55 if args.kind == "fire" else 0.9
 settings.flame_vorticity = 0.6
 settings.cache_type = "ALL"
 settings.cache_directory = os.path.join(args.out, "cache")

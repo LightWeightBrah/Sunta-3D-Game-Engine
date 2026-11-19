@@ -75,10 +75,16 @@ def dust(amount, speed, lifetime=0.9, size=0.35, end_size=0.9, color=(0.42, 0.36
                   size_randomness=0.4, spin_degrees_per_second=60.0, **SMOKE_FLIPBOOK)
 
 
+# A ball of fire baked the same way (24 frames: it burns out at the end of the speck's life)
+FIRE_FLIPBOOK = {"flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png", "flipbook_columns": 6,
+                 "flipbook_rows": 4, "flipbook_loops": 1.0, "flipbook_random_start": False}
+
+
 def flames(amount, speed, lifetime=0.55, size=0.7, intensity=1.2):
-    return specks(amount, lifetime, size, size * 1.8, FIRE_CORE, [1.0, 0.4, 0.06], [0.25, 0.04, 0.0], intensity,
+    # (the baked fire has its own colors: the emitter's only warm them a little)
+    return specks(amount, lifetime, size * 1.4, size * 2.4, [1.0, 0.9, 0.8], [1.0, 0.75, 0.55], [0.9, 0.5, 0.3], intensity * 1.3,
                   style=1, spawn_shape=1, spawn_radius=0.3, outward_speed=speed, drag=3.0, gravity=[0.0, 2.5, 0.0],
-                  size_randomness=0.35, spin_degrees_per_second=90.0)
+                  size_randomness=0.35, spin_degrees_per_second=90.0, **FIRE_FLIPBOOK)
 
 
 class Effect:

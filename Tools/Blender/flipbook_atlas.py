@@ -1,5 +1,6 @@
 """Puts the frames of Tools/Blender/flipbook_baker.py into one flipbook picture (left to right, top to bottom):
-    python Tools/Blender/flipbook_atlas.py <frames folder> <out.png> [columns] [rows] [cell size]
+    python Tools/Blender/flipbook_atlas.py <frames folder> <out.png> [columns] [rows] [cell size] [emissive]
+'emissive' (fire): the light itself is the shape - its colors are faded at the edges too and kept as rendered
 The edges of every cell fade to nothing, so a puff never shows the square of its frame"""
 import sys
 from pathlib import Path
@@ -11,6 +12,7 @@ folder, out = Path(sys.argv[1]), sys.argv[2]
 columns = int(sys.argv[3]) if len(sys.argv) > 3 else 8
 rows = int(sys.argv[4]) if len(sys.argv) > 4 else 8
 cell = int(sys.argv[5]) if len(sys.argv) > 5 else 128
+emissive = len(sys.argv) > 6 and sys.argv[6] == "emissive"
 
 frames = sorted(folder.glob("frame_*.png"))[: columns * rows]
 atlas = Image.new("RGBA", (columns * cell, rows * cell), (0, 0, 0, 0))
@@ -24,9 +26,13 @@ pictures = [np.asarray(Image.open(path).convert("RGBA").resize((cell, cell), Ima
 # The brightest smoke becomes white (its shading kept): the emitter's colors then decide how light it is
 solid = np.concatenate([p[..., :3][p[..., 3] > 128] for p in pictures if (p[..., 3] > 128).any()] or [np.ones((1, 3)) * 255])
 brightest = max(np.percentile(solid, 99), 1.0)
+if emissive:
+    brightest = max(np.percentile(np.concatenate([p[..., :3].reshape(-1, 3) for p in pictures]), 99.7), 1.0)
 for index, picture in enumerate(pictures):
     picture[..., :3] = np.clip(picture[..., :3] * (255.0 / brightest), 0, 255)
     picture[..., 3] *= mask
+    if emissive:
+        picture[..., :3] *= mask[..., None]
     atlas.paste(Image.fromarray(picture.astype(np.uint8), "RGBA"), ((index % columns) * cell, (index // columns) * cell))
 
 Path(out).parent.mkdir(parents=True, exist_ok=True)

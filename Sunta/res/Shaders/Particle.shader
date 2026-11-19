@@ -129,10 +129,12 @@ void main()
 		vec4 picture = SampleFlipbook();
 		if (picture.a <= 0.004)
 			discard;
+		// Covering (smoke): its alpha is its shape. Added light (fire): the picture's own light is the shape, its colors
+		// already fade at its edges (an emissive flipbook is stored that way, see Tools/Blender/flipbook_atlas.py)
 		if (isDark)
 			FragColor = vec4(color * picture.rgb, picture.a * opacity * visibility);
 		else
-			FragColor = vec4(color * picture.rgb * picture.a * visibility, picture.a);
+			FragColor = vec4(color * picture.rgb * visibility, 1.0);
 		return;
 	}
 
