@@ -56,6 +56,7 @@ ARENA_CENTER = [0.0, 0.0, -50.0]
 # him for gone - it clears itself, plays the victory and stops the music)
 ARENA_HALF_EXTENTS = [30.0, 60.0, 29.6]
 ARENA_STARTS_AT_Z = -19.5
+FOG_GATE_HALF_WIDTH = 3.2
 
 # Outside the arena, on the street that leads to it: the player walks up to the fog and enters with E
 PLAYER_START = [0.0, 0.0, 62.0]
@@ -1047,6 +1048,12 @@ def add_fight(builder):
         "cutscene": "Film Intro", "battle_music": "", "victory_message": "STRONGEST OF TODAY",
         "victory_sound": "@game/Sounds/Boss/victory.ogg"})
     builder.get(fog)["transform"]["position"] = [0.0, 0.0, -20.6]
+    # The gateway between the unseen borders is 6 m wide (the borders at x = +-5 reach in to +-3): MyGame's fog was
+    # 3.5 m, so the player could walk out of the arena beside it. It fills the gateway now, and so does its mist
+    builder.get(fog)["box_collider"]["half_extents"][0] = FOG_GATE_HALF_WIDTH
+    mist = builder.get(builder.child_named(fog, "Fog Mist"))["particle_emitter"]
+    mist["spawn_half_extents"][0] = FOG_GATE_HALF_WIDTH - 0.2
+    mist["particles_per_second"] = mist["particles_per_second"] * FOG_GATE_HALF_WIDTH / 1.75
 
     builder.add(named("Film Intro", cutscene={
         "duration_seconds": 6.0, "look_at_entity": BOSS_NAME, "look_at_height": 1.6, "animation_entity": "",

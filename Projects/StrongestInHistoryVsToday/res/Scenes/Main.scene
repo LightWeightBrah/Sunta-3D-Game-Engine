@@ -30583,7 +30583,7 @@
   {
    "box_collider": {
     "half_extents": [
-     1.75,
+     3.2,
      2.3,
      0.25
     ],
@@ -30673,10 +30673,10 @@
    },
    "particle_emitter": {
     "is_emitting": true,
-    "particles_per_second": 45.0,
+    "particles_per_second": 82.28571428571429,
     "lifetime_seconds": 3.0,
     "spawn_half_extents": [
-     1.7,
+     3.0,
      2.1,
      0.12
     ],
