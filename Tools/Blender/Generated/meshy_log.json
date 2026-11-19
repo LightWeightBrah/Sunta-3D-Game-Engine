@@ -1674,5 +1674,144 @@
     },
     "output": "Generated/StrongestInHistory/player_v3_rigged.glb",
     "date": "2026-11-18T04:45:40"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1f401-5f16-73df-94df-0eba25783309",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Full body photo of a big muscular bodyguard, a bald man in his forties in a black suit, white shirt, black tie, black sunglasses, an earpiece with a coiled wire, black leather gloves, black shoes, realistic, standing in A-pose, arms away from the body, empty hands, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/StrongestInHistory/enemy_guard.png",
+    "date": "2026-11-19T14:32:25"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1f401-b678-7163-b177-31c83235b19a",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Full body photo of a scruffy paparazzi photographer, a thin man in his fifties with messy grey hair and stubble, a beige photographer's vest with many pockets over a dark t-shirt, jeans, sneakers, a big professional camera on a strap across his chest, realistic, standing in A-pose, arms away from the body, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/StrongestInHistory/enemy_paparazzo.png",
+    "date": "2026-11-19T14:33:08"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1f402-a2f5-76e4-8db0-5ae9ec1ddebf",
+    "input": "Concepts/StrongestInHistory/enemy_guard.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/enemy_guard.glb",
+    "date": "2026-11-19T14:35:22"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1f404-69f1-745c-a7ea-1aa8b3de6454",
+    "settings": {
+      "input_task_id": "01a1f402-a2f5-76e4-8db0-5ae9ec1ddebf",
+      "height_meters": 1.9
+    },
+    "output": "Generated/StrongestInHistory/enemy_guard_rigged.glb",
+    "date": "2026-11-19T14:35:47"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1f404-cdd9-7096-bebb-e595b8361211",
+    "input": "Concepts/StrongestInHistory/enemy_paparazzo.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/enemy_paparazzo.glb",
+    "date": "2026-11-19T14:37:25"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1f406-489c-71e9-b92c-0497e4b23019",
+    "settings": {
+      "input_task_id": "01a1f404-cdd9-7096-bebb-e595b8361211",
+      "height_meters": 1.76
+    },
+    "output": "Generated/StrongestInHistory/enemy_paparazzo_rigged.glb",
+    "date": "2026-11-19T14:37:50"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1f408-96a1-70a8-8ec1-e3a8887f65c2",
+    "settings": {
+      "input_task_id": "01a1f404-cdd9-7096-bebb-e595b8361211",
+      "height_meters": 1.76
+    },
+    "output": "Generated/StrongestInHistory/enemy_paparazzo_rigged.glb",
+    "date": "2026-11-19T14:40:42"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1f409-8984-75b1-8cfd-44cee9ea36dd",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Full body photo of a scruffy paparazzi photographer, a thin man in his fifties with messy grey hair and stubble, a beige photographer's vest with many pockets over a dark t-shirt, jeans, sneakers, a professional camera on a strap over his shoulder hanging at his right hip, at his side (not in front of him), realistic, standing straight in A-pose, arms away from the body, plain background",
+      "remove_background": true,
+      "pose_mode": "a-pose"
+    },
+    "output": "Concepts/StrongestInHistory/enemy_paparazzo.png",
+    "date": "2026-11-19T14:41:20"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1f409-e19a-723c-a313-9cfabd8c096e",
+    "input": "Concepts/StrongestInHistory/enemy_paparazzo.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 20000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/enemy_paparazzo.glb",
+    "date": "2026-11-19T14:43:58"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1f40c-4891-7284-8589-f354ec85f419",
+    "settings": {
+      "input_task_id": "01a1f409-e19a-723c-a313-9cfabd8c096e",
+      "height_meters": 1.76
+    },
+    "output": "Generated/StrongestInHistory/enemy_paparazzo_rigged.glb",
+    "date": "2026-11-19T14:44:38"
   }
 ]

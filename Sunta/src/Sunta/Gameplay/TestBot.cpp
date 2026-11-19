@@ -31,6 +31,8 @@ float nextAttackAt	 = 0.0f;
 bool  isWalking		 = false;
 bool  unlockRequested = false;
 int   freezeChange	 = 0; // +1 freeze the enemies, -1 let them think again
+bool  hasTeleport	 = false;
+glm::vec3 teleportTo{ 0.0f };
 
 float ToFloat(const std::string& text, float fallback)
 {
@@ -46,6 +48,11 @@ bool Handle(const std::string& command, const std::string& a, const std::string&
 	{
 		keepsLock = false;
 		unlockRequested = true;
+	}
+	else if (command == "teleport")
+	{
+		hasTeleport = true;
+		teleportTo	= { ToFloat(a, 0.0f), ToFloat(b, 0.0f), ToFloat(c, 0.0f) };
 	}
 	else if (command == "freeze")
 		freezeChange = 1;
@@ -166,6 +173,16 @@ void TestBot::Update(EntityManager& entityManager, float deltaTime)
 	LockOnComponent* lockOn	  = FindPlayerLockOn(entityManager, playerID);
 	if (!lockOn)
 		return;
+
+	if (hasTeleport)
+	{
+		hasTeleport = false;
+		if (TransformComponent* transform = entityManager.GetComponent<TransformComponent>(playerID))
+		{
+			transform->position = teleportTo;
+			transform->isDirty	= true;
+		}
+	}
 
 	if (keepsLock)
 		KeepLocked(entityManager, *lockOn, playerID);

@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "HUDSystem.h"
+#include "BossComponent.h"
 
 #include "BaseEnemyStates.h"
 #include "CharacterControllerSystem.h"
@@ -497,6 +498,10 @@ void UpdateEnemyBar(EntityManager& entityManager, EnemyHealthBarComponent& bar, 
 	// Engaged while it fights the player or is hurt: an enemy brought back at a bonfire hides its boss bar again
 	const bool isHurt = health->currentHealth < health->maxHealth;
 	bar.isEngaged       = wasHit || HasNoticedPlayer(entityManager, enemyID) || (bar.isEngaged && isHurt);
+	// A boss shows its bar when its fight starts (the fog closed behind the player), not when it sees the player
+	// from across its arena
+	if (const BossComponent* boss = entityManager.GetComponent<BossComponent>(enemyID))
+		bar.isEngaged = bar.isEngaged && boss->isAwake;
 	bar.trailingHealth  = ShrinkTrailTowards(bar.trailingHealth, health->currentHealth, health->maxHealth, deltaTime);
 	bar.healthLastFrame = health->currentHealth;
 }

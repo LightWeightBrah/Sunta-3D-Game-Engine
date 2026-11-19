@@ -210,6 +210,33 @@ BOSS = {
     "Ground_Pound":   library(ADDON, "Attack_Ground_Pound", speed=1.0),
 }
 
+# The ordinary enemies of the street before the arena (Tools/meshy_enemies.py). His bodyguards box: a jab, a cross,
+# an uppercut, a kick as the heavy blow; they stagger and fall like men in a street fight
+GUARD = dict(UNARMED_WALKING, **{
+    "Idle":           MotionClip(BRAWL + "Bouncing Fight Idle.fbx"),
+    "Attack_Light_1": MotionClip(BRAWL + "Boxing Jab.fbx", speed=1.0, **JAB),
+    "Attack_Light_2": MotionClip(BRAWL + "Cross Punch.fbx", speed=1.0, **CROSS),
+    "Attack_Light_3": MotionClip(BRAWL + "Uppercut.fbx", speed=1.0, **UPPERCUT),
+    "Attack_Heavy":   MotionClip(BRAWL + "Mma Kick.fbx", speed=0.95, **KICK),
+    "Backstep":       MotionClip("Mixamo/Standing Dodge Backward.fbx", 4, 40, speed=1.2),
+    "Hit":            MotionClip(AXE + "standing react large gut.fbx", speed=1.2),
+    "Parried":        MotionClip(AXE + "standing react large from left.fbx", speed=0.8),
+    "Death":          MotionClip(MAGIC + "Standing React Death Backward.fbx"),
+})
+# The photographers: they keep their distance and flash their cameras in the player's face (a spell of the scene,
+# thrown with the arm like the boss's), and shove when the player comes close
+PAPARAZZO = dict(UNARMED_WALKING, **{
+    "Idle":           MotionClip(AXE + "unarmed idle.fbx"),
+    "Attack_Light_1": MotionClip(BRAWL + "Cross Punch.fbx", speed=0.9, **CROSS),
+    "Attack_Light_2": MotionClip(BRAWL + "Hook Punch.fbx", speed=0.9, **HOOK),
+    "Attack_Heavy":   library(ADDON, "Throw Object", speed=1.0),
+    "Cast_Spell":     library(ADDON, "Throw Object", speed=1.2),
+    "Backstep":       MotionClip("Mixamo/Standing Dodge Backward.fbx", 4, 40, speed=1.2),
+    "Hit":            MotionClip(AXE + "standing react large gut.fbx", speed=1.2),
+    "Parried":        MotionClip(AXE + "standing react large from left.fbx", speed=0.8),
+    "Death":          MotionClip(MAGIC + "Standing React Death Backward.fbx"),
+})
+
 # The summon: a monster three meters tall. Swipes of its claws, slow wide hooks, both fists into the ground as the
 # heavy blow (a shockwave in the scene), and a roar when it is called
 SUMMON = dict(UNARMED_WALKING, **{
@@ -438,6 +465,9 @@ CHARACTERS = [
     #   FacePhoto(os.path.join(CONCEPTS, "boss_face_film.png"), (549, 353), (671, 319), (649, 462))
     Character("boss_rigged.glb", "Boss", "sih_boss", 1.83, BOSS),
     Character("summon_monster_rigged.glb", "Summon", "sih_summon", 3.0, SUMMON),
+    Character("enemy_guard_rigged.glb", "Guard", "sih_guard", 1.9, GUARD, shine=0.12),
+    Character("enemy_paparazzo_rigged.glb", "Paparazzo", "sih_paparazzo", 1.76, PAPARAZZO, shine=0.4,
+              ),
 ]
 
 # The limbs that can hurt (a Hitbox on each in the scene)

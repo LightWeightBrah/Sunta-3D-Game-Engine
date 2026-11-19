@@ -58,7 +58,7 @@ ARENA_HALF_EXTENTS = [30.0, 60.0, 29.6]
 ARENA_STARTS_AT_Z = -19.5
 
 # Outside the arena, on the street that leads to it: the player walks up to the fog and enters with E
-PLAYER_START = [0.0, 0.0, -3.0]
+PLAYER_START = [0.0, 0.0, 62.0]
 BOSS_START = [0.0, 0.0, -58.0]
 # A dormant enemy still has a body: it waits on its own piece of floor far outside the arena
 SUMMON_WAITING_PLACE = [0.0, 0.0, -160.0]
@@ -94,7 +94,7 @@ def skyline_ruins(placed):
             distance = radius + ((number * 23 + ring * 7) % 13) - 6.0
             x = ARENA_CENTER[0] + math.sin(math.radians(angle + wobble)) * distance
             z = ARENA_CENTER[2] + math.cos(math.radians(angle + wobble)) * distance
-            on_street = abs(x) < 16.0 and z > -30.0
+            on_street = abs(x) < 16.0 and -30.0 < z < STREET_FAR_Z + 12.0
             before_temple = abs(x) < 26.0 and z < -90.0 and ring == 0
             crowded = any((x - other[0]) ** 2 + (z - other[1]) ** 2 < 18.0 ** 2 for other in placed + ruins)
             if not (on_street or before_temple or crowded):
@@ -105,7 +105,7 @@ def skyline_ruins(placed):
 CITY_RUINS = [
     (-52.0, -34.0, 20.0, 1.0, 0), (-60.0, -62.0, 110.0, 1.15, 1), (-48.0, -92.0, 200.0, 0.9, 2), (-78.0, -18.0, 70.0, 1.3, 2),
     (54.0, -30.0, 250.0, 1.1, 1), (62.0, -58.0, 300.0, 0.95, 0), (50.0, -90.0, 150.0, 1.2, 2), (82.0, -84.0, 40.0, 1.35, 0),
-    (-22.0, 4.0, 180.0, 1.05, 2), (26.0, 8.0, 10.0, 1.2, 0), (0.0, 30.0, 90.0, 1.4, 1), (-58.0, 14.0, 130.0, 1.25, 0),
+    (-22.0, 4.0, 180.0, 1.05, 2), (26.0, 8.0, 10.0, 1.2, 0), (0.0, 96.0, 90.0, 1.4, 1), (-58.0, 14.0, 130.0, 1.25, 0),
     (64.0, 10.0, 220.0, 1.1, 2), (-90.0, -70.0, 15.0, 1.5, 1), (96.0, -40.0, 190.0, 1.45, 1), (-36.0, -150.0, 60.0, 1.4, 0),
     (40.0, -155.0, 280.0, 1.5, 2), (-88.0, -125.0, 330.0, 1.6, 2), (92.0, -130.0, 100.0, 1.6, 0),
 ]
@@ -309,6 +309,7 @@ def add_arena(builder):
             copied["model"]["model_name"] = GROUND_MODEL
 
     add_approach(builder)
+    extend_street(builder)
 
     # Rubble along the four sides, each heap turned a little differently and of its own size
     left, right = ARENA_CENTER[0] - ARENA_HALF_EXTENTS[0] - 1.5, ARENA_CENTER[0] + ARENA_HALF_EXTENTS[0] + 1.5
@@ -363,7 +364,7 @@ def add_approach(builder):
     # The end of the street behind the player
     back = builder.get(builder.copy_one(builder.find_source("Ruined Gate Blocker")))
     back["tag"]["name"] = "Street End"
-    back["transform"]["position"] = [0.0, 0.0, 12.0]
+    back["transform"]["position"] = [0.0, 0.0, STREET_FAR_Z]
     back["box_collider"]["half_extents"] = [8.0, 3.0, 0.3]
     back.pop("model", None)
 
@@ -376,7 +377,7 @@ def add_approach(builder):
             size = 0.9 + ((number * 29) % 5) * 0.08
             builder.add(prop("Street Rubble", RUBBLE_MODEL, (side * 9.5, -0.2, z), 90.0 + wobble, size))
             z -= 7.0
-    builder.add(prop("Rubble Heap", RUBBLE_MODEL, (0.0, -0.3, 13.5), 4.0, 1.1))
+    builder.add(prop("Rubble Heap", RUBBLE_MODEL, (0.0, -0.3, STREET_FAR_Z + 1.5), 4.0, 1.1))
     for x, z, turned_by, size, tower in STREET_RUINS + skyline_ruins(CITY_RUINS + STREET_RUINS):
         builder.add(prop("City Ruin", TOWER_MODELS[tower], (x, -1.0, z), turned_by, size))
 
@@ -779,6 +780,115 @@ def add_jet_pack(builder, boss):
         "style": 0, "size_randomness": 0.5}), parent=boss, bone="Hips")
 
 
+# ========== The street before the arena: a walk through the ruined city, his men in the way ==========
+
+# The street runs from behind the player's start to the fog of the arena; its floor, its unseen walls and its rubble
+# go on past the part copied from MyGame's courtyard
+STREET_FAR_Z = 74.0
+STREET_FLOORS_Z = (20.0, 36.0, 52.0, 68.0)
+
+# His men (Tools/meshy_enemies.py, characters_generator.py): bodyguards who box, photographers who flash their cameras
+# in the player's face and shove. Groups along the street, each a little harder than the one before; the last ones
+# stand just before the fog. (name, kind, x, z, turned towards +Z = 180)
+STREET_ENEMIES = [
+    ("Bodyguard 1", "guard", -1.5, 46.0),
+    ("Bodyguard 2", "guard", 2.0, 43.0),
+    ("Paparazzo 1", "paparazzo", 4.5, 30.0),
+    ("Bodyguard 3", "guard", -2.5, 28.0),
+    ("Paparazzo 2", "paparazzo", -5.0, 15.0),
+    ("Paparazzo 3", "paparazzo", 5.0, 14.0),
+    ("Bodyguard 4", "guard", 0.0, 17.0),
+    ("Bodyguard 5", "guard", -2.0, 7.0),
+    ("Bodyguard 6", "guard", 2.5, 4.0),
+]
+GUARD_STRIDE = {"walk_animation_speed": 0.82, "run_animation_speed": 2.07}
+ENEMY_HIT_WINDOWS = {"light_hit_from": 0.28, "light_hit_to": 0.7, "heavy_hit_from": 0.3, "heavy_hit_to": 0.72}
+
+
+def extend_street(builder):
+    floor = builder.find_source("Floor Corridor")
+    for z in STREET_FLOORS_Z:
+        builder.get(builder.copy_one(floor))["transform"]["position"] = [0.0, 0.0, z]
+    slab = builder.find_source("Floor Slab")
+    z = 24.0
+    while z <= STREET_FAR_Z:
+        for x in (-4.0, 4.0):
+            copied = builder.get(builder.copy_one(slab))
+            copied["model"]["model_name"] = GROUND_MODEL
+            copied["transform"]["position"] = [x, 0.0, z]
+        z += 8.0
+    # Unseen walls along the new part (behind the heaps of rubble), and the end of the street behind the start
+    wall = builder.find_source("Ruined Gate Blocker")
+    for side in (-1.0, 1.0):
+        border = builder.get(builder.copy_one(wall))
+        border["tag"]["name"] = "Street Border"
+        border.pop("model", None)
+        border["transform"]["position"] = [side * 8.5, 0.0, 16.0 + (STREET_FAR_Z - 16.0) * 0.5]
+        border["box_collider"]["half_extents"] = [0.5, 3.0, (STREET_FAR_Z - 16.0) * 0.5]
+    # Fires burning in the rubble along the way, each with its light: the street is lit like the arena
+    source_fire, source_light = builder.find_source("Arena Fire"), builder.find_source("Arena Light")
+    for x, z in ((-6.0, 57.0), (6.5, 47.0), (-6.5, 33.0), (6.0, 22.0), (-6.0, 9.0)):
+        fire = builder.get(builder.copy_one(source_fire))
+        fire["tag"]["name"] = "Street Fire Pit"
+        fire["transform"]["position"] = [x, fire["transform"]["position"][1], z]
+        light = builder.get(builder.copy_one(source_light))
+        light["tag"]["name"] = "Street Light"
+        light["transform"]["position"] = [x, 2.4, z]
+    number = 0
+    for side in (-1.0, 1.0):
+        z = STREET_FAR_Z - 2.0
+        while z > 14.0:
+            number += 1
+            wobble = ((number * 37) % 23) - 11.0
+            size = 0.9 + ((number * 31) % 5) * 0.08
+            builder.add(prop("Street Rubble", RUBBLE_MODEL, (side * 9.5, -0.2, z), 90.0 + wobble, size))
+            z -= 7.0
+
+
+def add_street_enemy(builder, name, kind, x, z):
+    enemy = builder.copy_tree(builder.find_source("Hollow Ghoul"), skip=("Cleaver",))
+    entity = builder.get(enemy)
+    entity["tag"]["name"] = name
+    entity["model"]["model_name"] = "sih_guard" if kind == "guard" else "sih_paparazzo"
+    entity["transform"] = transform((x, 0.0, z), (0.0, 180.0, 0.0))
+    entity["character_actions"].update(ENEMY_HIT_WINDOWS)
+    entity["character_actions"].update({"attack_lunge_speed": 4.0, "attack_reach": 1.0, "attack_lunge_max_distance": 1.2,
+                                        "swing_effect": "Boss Swing", "heavy_swing_effect": "Boss Heavy Swing",
+                                        "swing_effect_height": 1.3, "swing_effect_distance": 0.1, "swing_effect_at": 0.3})
+    entity["character_animation"].update(GUARD_STRIDE)
+    entity["character_sounds"].update(BRAWL_SOUNDS)
+    entity["enemy"].update({"sight_distance": 14.0, "hearing_distance": 4.0, "eye_height": 1.7})
+    entity["strike_aim"] = dict(BOSS_STRIKE_AIM)
+    if kind == "guard":
+        entity["health"]["max_health"] = 140.0
+        entity["melee_enemy"].update({"attack_distance": 1.6, "attack_cooldown_seconds": 1.1, "heavy_attack_chance": 0.25,
+                                      "max_light_combo": 3, "give_up_distance": 15.0})
+        entity["currency_reward"] = {"amount": 600}
+        add_fists_and_foot(builder, enemy, 16.0, ENEMY_HITBOX_LAYER, poise_damage=18.0, camera_shake=0.2)
+    else:
+        # Keeps away and flashes the camera (the boss's own "Hidden Cameras" flash, one at a time)
+        entity["health"]["max_health"] = 80.0
+        entity["melee_enemy"].update({"attack_distance": 1.4, "attack_cooldown_seconds": 1.6, "heavy_attack_chance": 0.1,
+                                      "max_light_combo": 2, "give_up_distance": 15.0})
+        entity["currency_reward"] = {"amount": 450}
+        add_fists_and_foot(builder, enemy, 10.0, ENEMY_HITBOX_LAYER, poise_damage=10.0, camera_shake=0.1)
+        hand = builder.add(named(f"{name} Camera Hand"), parent=enemy, bone="Hand_R")
+        builder.add(spell(f"{name} Flash Spell", charge_effect="", spread_degrees=0.0, at_targets_feet=False,
+                          cast_animation="Cast_Spell", projectile="Boss Ring Orb", projectile_count=1, release_at=0.55,
+                          min_distance=3.5, max_distance=16.0, cooldown_seconds=3.5, charge_particles_per_second=0.0,
+                          cast_sound="@game/Sounds/Spells/camera_shutter.ogg"), parent=hand)
+
+
+def add_street_enemies(builder):
+    for name, kind, x, z in STREET_ENEMIES:
+        add_street_enemy(builder, name, kind, x, z)
+    # A fire to rest at halfway (resting brings his men back, as in a souls-like), and one just before the fog
+    for name, place in (("Street Fire", (6.0, 0.0, 36.0)), ("Fog Fire", (5.5, 0.0, -10.0))):
+        fire = builder.get(builder.copy_tree(builder.find_source("Gate Bonfire")))
+        fire["tag"]["name"] = name
+        fire["transform"]["position"] = list(place)
+
+
 def add_boss(builder):
     boss = builder.copy_tree(builder.find_source(SOURCE_BOSS), skip=("Staff", "Staff Fire Burst"))
     entity = builder.get(boss)
@@ -1031,6 +1141,7 @@ def main():
     scene_effects.upgrade_effects(builder)
     add_boss(builder)
     add_summon(builder)
+    add_street_enemies(builder)
     add_fight(builder)
     join_sequence_shots(builder.entities)
     fix_quaternions(builder.entities)
