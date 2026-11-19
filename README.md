@@ -78,6 +78,22 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
   <p><i>The launcher lists your recent projects and the sample project. When the game is ready, one click packages it into a folder for players, no compiler needed.</i></p>
 </div>
 
+<br />
+
+<div align="center">
+  <h3>Sample Game: Strongest in History Vs Today</h3>
+  <img src="docs/media/sih-fight.webp" width="720" alt="A fist fight with a boss: arcs of light on every swing, rings on every hit" />
+  <p><i>A parody boss fight made only from the engine's general components, data of the scene and Lua: a fist fight with
+  combos, blocks, parries and rolls, effects on every swing and hit, and a boss in four phases.</i></p>
+  <img src="docs/media/sih-domain-sign.jpg" width="356" alt="The boss making the sign of his domain" />
+  <img src="docs/media/sih-domain.jpg" width="356" alt="Domain Expansion: the temple rises out of the arena" />
+  <p><i>The boss's domain opens with a staged sequence of cutscenes timed to the soundtrack: the sky turns, a temple rises
+  out of the ground and thousands of stars fly out of its dome.</i></p>
+  <img src="docs/media/sih-ascension.jpg" width="720" alt="The boss with his private jet on his back, its engines burning" />
+  <p><i>In his last phase the boss changes, as souls-like bosses do: his jet comes down on him and he rises wearing it,
+  with new attacks - a nosedive onto the player and a ground pound.</i></p>
+</div>
+
 ---
 
 ## Features
@@ -90,6 +106,27 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 * Project settings: game name, start scene, window size, fullscreen, vsync and game icon.
 * Tracking of unsaved changes with the usual shortcuts (`Ctrl+N`, `Ctrl+O`, `Ctrl+S`, `Ctrl+Shift+S`).
 * **Build Game:** packages a project into a folder for players. The game icon is made from one PNG for the system you build on. The build also works without a window: `SuntaEditor --build-game <project folder>`.
+
+**Souls-like gameplay** (general components, a game's names and numbers are data of its scene)
+* **Character Actions:** light combos, heavy attacks, running, leaping and riposte attacks, each attack with its own hit
+  window, damage and cancel point; rolls and backsteps with invulnerability; blocking, parrying, poise, hyper armor and
+  stamina.
+* **Strike Aim:** while a character attacks, its spine bends and turns towards the enemy's face or chest (an aim
+  offset), so animations made for an opponent of another height still land where they look like they land.
+* **Enemies and bosses:** a state machine of enemies extended from Lua, lock-on with switching, a fog gate into the
+  arena, boss phases with health floors, a summon, spells and projectiles.
+* **Healing flask, currency, bonfires and level up**, all with display names of the game's own choosing.
+* **Effects:** instanced particles (glow, flame, smoke, sparks, rings) with drag and three-colour lifetimes, effect
+  shapes (rings, slash arcs, flashes) composed into named effects, swarms of thousands of meshes, weapon trails, bloom,
+  hit stop, camera shake and an impact frame.
+* **Cutscenes:** sequences of camera shots and character moves, skippable, chained into staged moments.
+
+**Automated testing**
+* `SUNTA_INPUT_SCRIPT=<file>` plays keyboard and mouse input from a text file (taps, holds, mouse looks, saved frames)
+  and a test bot locks on, approaches and fights an enemy, so a test really plays the game.
+* `SUNTA_COMBAT_LOG=1` writes every swing to a CSV: whether it landed and at which height of the target's body;
+  `SUNTA_COMBAT_TRACE=1` adds where each fist, foot or weapon is in every frame of an attack.
+* `SUNTA_FIXED_DT=0.033` advances the game by fixed steps for smooth recordings; `SUNTA_MUTE=1` silences test runs.
 
 **Engine**
 * **Rendering:** wrappers for OpenGL objects (VAO, VBO, EBO, textures, shaders), Phong lighting with directional, point and spot lights, specular maps, materials and a debug renderer for colliders.

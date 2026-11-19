@@ -53,6 +53,7 @@ std::vector<std::string>	shotsToSave;
 float						lastTime = 0.0f;
 InputPlayback::CommandHandler customHandler;
 std::vector<int>			heldKeys;
+std::unordered_set<std::string> sameFrameShots; // names already shot this frame
 
 int ParseKey(std::string name)
 {
@@ -146,6 +147,10 @@ void Run(const TimedCommand& c, float now)
 		// A name used again (a shot repeated with "every") gets a number: s_000, s_001, ...
 		static std::unordered_map<std::string, int> uses;
 		const std::string name = c.argument.empty() ? "shot" : c.argument;
+		// Two shots of one name due in the same frame would be the same picture: only the first is saved
+		if (sameFrameShots.count(name))
+			return;
+		sameFrameShots.insert(name);
 		const int use = uses[name]++;
 		char suffix[16];
 		std::snprintf(suffix, sizeof(suffix), "_%03d", use);
@@ -249,6 +254,7 @@ void InputPlayback::Update(float now)
 			++it;
 	}
 
+	sameFrameShots.clear();
 	while (nextCommand < commands.size() && commands[nextCommand].time <= now)
 		Run(commands[nextCommand++], now);
 
