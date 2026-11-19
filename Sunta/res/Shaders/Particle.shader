@@ -63,6 +63,11 @@ void main()
 
 uniform bool isDark;   // a dark speck covers what is behind it (smoke, ash), a light one is added to it
 
+// A flipbook (see ParticleEmitterComponent): columns, rows, times played over a speck's life, random start (0/1)
+uniform bool      hasFlipbook;
+uniform sampler2D flipbook;
+uniform vec4      flipbookSettings;
+
 in vec2  cornerOffset;
 in vec4  colorOpacity;
 in float seed;
@@ -99,11 +104,37 @@ float Fbm(vec2 p)
 	return sum;
 }
 
+// The speck's frame of the flipbook: its picture at this age, the corner of the square mapped into the frame's cell
+vec4 SampleFlipbook()
+{
+	vec2  grid   = max(flipbookSettings.xy, vec2(1.0));
+	float frames = grid.x * grid.y;
+	float played = age * max(flipbookSettings.z, 0.0) + (flipbookSettings.w > 0.5 ? seed : 0.0);
+	float part   = played < 1.0 ? played : fract(played);   // (played once: the last frame stays at the very end)
+	float frame  = min(floor(part * frames), frames - 1.0);
+	vec2  cell   = vec2(mod(frame, grid.x), floor(frame / grid.x));
+	vec2  inCell = clamp(cornerOffset * vec2(0.5, -0.5) + 0.5, 0.0, 1.0);
+	return texture(flipbook, (cell + inCell) / grid);
+}
+
 void main()
 {
 	float distanceFromMiddle = length(cornerOffset);
 	vec3  color   = colorOpacity.rgb;
 	float opacity = colorOpacity.a;
+
+	// A baked picture: its colors times the speck's, its own alpha as the shape
+	if (hasFlipbook)
+	{
+		vec4 picture = SampleFlipbook();
+		if (picture.a <= 0.004)
+			discard;
+		if (isDark)
+			FragColor = vec4(color * picture.rgb, picture.a * opacity * visibility);
+		else
+			FragColor = vec4(color * picture.rgb * picture.a * visibility, picture.a);
+		return;
+	}
 
 	// A tongue of fire: a ragged blob (its noise drifts as it ages), its core white-hot, its edge dark red
 	if (style > 0.5 && style < 1.5)

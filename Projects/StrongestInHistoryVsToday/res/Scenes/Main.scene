@@ -1605,7 +1605,12 @@
     "max_particles": 4000,
     "style": 2,
     "size_randomness": 0.5,
-    "spin_degrees_per_second": 30.0
+    "spin_degrees_per_second": 30.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
    }
   },
   {
@@ -21635,8 +21640,8 @@
      0.6,
      0.0
     ],
-    "start_size": 0.18,
-    "end_size": 0.5,
+    "start_size": 0.27,
+    "end_size": 0.75,
     "start_color": [
      0.42,
      0.36,
@@ -21662,7 +21667,12 @@
     "outward_speed": 2.5,
     "drag": 3.5,
     "size_randomness": 0.4,
-    "spin_degrees_per_second": 60.0
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
    },
    "parent": {
     "index": 532,
@@ -22867,8 +22877,8 @@
      0.6,
      0.0
     ],
-    "start_size": 0.9,
-    "end_size": 2.6,
+    "start_size": 1.35,
+    "end_size": 3.9000000000000004,
     "start_color": [
      0.42,
      0.36,
@@ -22894,7 +22904,12 @@
     "outward_speed": 7.0,
     "drag": 3.5,
     "size_randomness": 0.4,
-    "spin_degrees_per_second": 60.0
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
    },
    "parent": {
     "index": 551,
@@ -23536,8 +23551,8 @@
      0.6,
      0.0
     ],
-    "start_size": 1.4,
-    "end_size": 3.6,
+    "start_size": 2.0999999999999996,
+    "end_size": 5.4,
     "start_color": [
      0.18,
      0.14,
@@ -23563,7 +23578,12 @@
     "outward_speed": 6.0,
     "drag": 3.5,
     "size_randomness": 0.4,
-    "spin_degrees_per_second": 60.0
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
    },
    "parent": {
     "index": 560,
@@ -24028,8 +24048,8 @@
      0.6,
      0.0
     ],
-    "start_size": 1.0,
-    "end_size": 2.8,
+    "start_size": 1.5,
+    "end_size": 4.199999999999999,
     "start_color": [
      0.42,
      0.36,
@@ -24055,7 +24075,12 @@
     "outward_speed": 6.0,
     "drag": 3.5,
     "size_randomness": 0.4,
-    "spin_degrees_per_second": 60.0
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
    },
    "parent": {
     "index": 570,

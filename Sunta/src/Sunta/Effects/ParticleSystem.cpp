@@ -11,7 +11,9 @@
 #include "EffectSystem.h"
 #include "Gameplay/EntityName.h"
 #include "Core/VirtualFileSystem.h"
+#include "Core/ResourceManager.h"
 #include "Renderer/ElementBuffer.h"
+#include "Renderer/Texture.h"
 #include "Renderer/InstancedDrawer.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/RendererDevice.h"
@@ -295,6 +297,33 @@ void ParticleSystem::EnsureInitialized()
 	shader = rendererDevice.CreateShader(VirtualFileSystem::Resolve(ShaderPath));
 }
 
+// The specks of one emitter for the instanced drawing
+static void AddSpecksOf(const ParticleEmitterComponent& emitter, bool isDarkPass, std::vector<SpeckInstance>& specks)
+{
+	// Fire and smoke swell in and fade; glows, sparks and rings fade in the shader by their age (a flipbook fades as
+	// fire and smoke do: its frames are a whole puff)
+	const bool isGlow = emitter.flipbookTexture.empty() && (emitter.style == (int)ParticleStyle::Glow
+		|| emitter.style == (int)ParticleStyle::Spark || emitter.style == (int)ParticleStyle::Ring);
+
+	for (const Particle& particle : emitter.particles)
+	{
+		const float     lifePart = glm::clamp(particle.age / particle.lifetime, 0.0f, 1.0f);
+		const float     size     = glm::mix(emitter.startSize, emitter.endSize, lifePart) * particle.size;
+		// A dark speck keeps its color and fades by its 'intensity' (how solid it is); a light one shines by it
+		const glm::vec3 color    = ColorAt(emitter, lifePart) * (isDarkPass ? 1.0f : emitter.intensity);
+		float           opacity  = isDarkPass ? glm::clamp(emitter.intensity, 0.0f, 1.0f) * (1.0f - lifePart * lifePart) : 1.0f;
+		// Fire and smoke swell in at their birth and fade at their end, so a dense fire doesn't flicker
+		const float     fade     = isGlow ? 1.0f : glm::smoothstep(0.0f, 0.12f, lifePart) * (1.0f - glm::smoothstep(0.7f, 1.0f, lifePart));
+		if (isDarkPass)
+			opacity *= fade;
+
+		specks.push_back({ glm::vec4(particle.position, size),
+			glm::vec4(isDarkPass ? color : color * fade, opacity),
+			glm::vec4(particle.rotation, particle.seed, (float)emitter.style, lifePart),
+			glm::vec4(particle.velocity, emitter.stretch) });
+	}
+}
+
 void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, const glm::mat4& projection,
 	const glm::vec3& cameraPosition, float fogDensity)
 {
@@ -326,6 +355,8 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 	shader->SetUniform1f("fogDensity", fogDensity);
 
 	std::vector<SpeckInstance>& specks = GetSpecks();
+	shader->SetUniformBool("hasFlipbook", false);
+	shader->TrySetUniform1i("flipbook", 0);
 
 	// The dark specks first (they cover what is behind them), then everything that is light (added on top).
 	// All the specks of a pass are drawn at once
@@ -333,32 +364,21 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 	{
 		specks.clear();
 
+		// Emitters with a flipbook are drawn one by one after the rest of the pass (each binds its own picture)
+		std::vector<const ParticleEmitterComponent*> flipbooks;
+
 		for (const ParticleEmitterComponent& emitter : emitters)
 		{
 			if (IsDrawnDark(emitter) != isDarkPass)
 				continue;
-
-			// Fire and smoke swell in and fade; glows, sparks and rings fade in the shader by their age
-			const bool isGlow = emitter.style == (int)ParticleStyle::Glow || emitter.style == (int)ParticleStyle::Spark
-				|| emitter.style == (int)ParticleStyle::Ring;
-
-			for (const Particle& particle : emitter.particles)
+			if (!emitter.flipbookTexture.empty())
 			{
-				const float     lifePart = glm::clamp(particle.age / particle.lifetime, 0.0f, 1.0f);
-				const float     size     = glm::mix(emitter.startSize, emitter.endSize, lifePart) * particle.size;
-				// A dark speck keeps its color and fades by its 'intensity' (how solid it is); a light one shines by it
-				const glm::vec3 color    = ColorAt(emitter, lifePart) * (isDarkPass ? 1.0f : emitter.intensity);
-				float           opacity  = isDarkPass ? glm::clamp(emitter.intensity, 0.0f, 1.0f) * (1.0f - lifePart * lifePart) : 1.0f;
-				// Fire and smoke swell in at their birth and fade at their end, so a dense fire doesn't flicker
-				const float     fade     = isGlow ? 1.0f : glm::smoothstep(0.0f, 0.12f, lifePart) * (1.0f - glm::smoothstep(0.7f, 1.0f, lifePart));
-				if (isDarkPass)
-					opacity *= fade;
-
-				specks.push_back({ glm::vec4(particle.position, size),
-					glm::vec4(isDarkPass ? color : color * fade, opacity),
-					glm::vec4(particle.rotation, particle.seed, (float)emitter.style, lifePart),
-					glm::vec4(particle.velocity, emitter.stretch) });
+				if (!emitter.particles.empty())
+					flipbooks.push_back(&emitter);
+				continue;
 			}
+
+			AddSpecksOf(emitter, isDarkPass, specks);
 		}
 
 		// The sprites of light (see GlowSpriteComponent): one soft spot each, where their entity is
@@ -375,16 +395,30 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 			}
 		}
 
-		if (specks.empty())
-			continue;
-
 		if (isDarkPass)
 			rendererDevice.SetAlphaBlending(true);
 		else
 			rendererDevice.SetAdditiveBlending(true);
 
 		shader->SetUniformBool("isDark", isDarkPass);
-		GetDrawer()->Draw(specks.data(), (unsigned int)specks.size());
+		if (!specks.empty())
+			GetDrawer()->Draw(specks.data(), (unsigned int)specks.size());
+
+		for (const ParticleEmitterComponent* emitter : flipbooks)
+		{
+			std::shared_ptr<Texture> picture = ResourceManager::LoadOrGetTexture(emitter->flipbookTexture);
+			if (!picture)
+				continue;
+
+			specks.clear();
+			AddSpecksOf(*emitter, isDarkPass, specks);
+			picture->Bind(0);
+			shader->SetUniformBool("hasFlipbook", true);
+			shader->SetUniform4f("flipbookSettings", (float)glm::max(emitter->flipbookColumns, 1), (float)glm::max(emitter->flipbookRows, 1),
+				emitter->flipbookLoops, emitter->flipbookRandomStart ? 1.0f : 0.0f);
+			GetDrawer()->Draw(specks.data(), (unsigned int)specks.size());
+			shader->SetUniformBool("hasFlipbook", false);
+		}
 	}
 
 	rendererDevice.SetDepthWrite(true);

@@ -615,7 +615,7 @@ def add_domain_spectacle(builder):
     builder.add(emitter("Skid Dust", [0.62, 0.56, 0.48], [0.5, 0.46, 0.41], lifetime_seconds=1.5, start_size=0.8,
                         end_size=2.2, velocity=[0.0, 1.0, 0.0], velocity_randomness=2.6, gravity=[0.0, 0.2, 0.0],
                         intensity=0.3, max_particles=4000, style=2, size_randomness=0.5,
-                        spin_degrees_per_second=30.0, spawn_half_extents=[0.8, 0.2, 0.8]))
+                        spin_degrees_per_second=30.0, spawn_half_extents=[0.8, 0.2, 0.8], **scene_effects.SMOKE_FLIPBOOK))
     builder.add(named("Crash Rubble", (0.0, -100.0, 0.0), swarm={
         "is_visible": False, "model_name": "sih_rubble", "count": 400, "seed": 3,
         "piece_size": 0.03, "size_variation": 0.7, "radius": 5.0, "shell_thickness": 0.9,

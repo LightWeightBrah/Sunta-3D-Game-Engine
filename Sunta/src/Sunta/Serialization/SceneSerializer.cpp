@@ -117,6 +117,11 @@ namespace SceneKeys
 	constexpr const char* HasMiddleColor            = "has_middle_color";
 	constexpr const char* MiddleColor               = "middle_color";
 	constexpr const char* BurstAmount               = "burst_amount";
+	constexpr const char* FlipbookTexture           = "flipbook_texture";
+	constexpr const char* FlipbookColumns           = "flipbook_columns";
+	constexpr const char* FlipbookRows              = "flipbook_rows";
+	constexpr const char* FlipbookLoops             = "flipbook_loops";
+	constexpr const char* FlipbookRandomStart       = "flipbook_random_start";
 	constexpr const char* EffectShapeComponent      = "effect_shape";
 	constexpr const char* ShapeKind                 = "kind";
 	constexpr const char* ShapeLifetime             = "lifetime_seconds";
@@ -1111,7 +1116,12 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::ParticleStretch,    emitter->stretch                        },
 				{ SceneKeys::HasMiddleColor,     emitter->hasMiddleColor                 },
 				{ SceneKeys::MiddleColor,        SerializeVec3(emitter->middleColor)     },
-				{ SceneKeys::BurstAmount,        emitter->burstAmount                    }
+				{ SceneKeys::BurstAmount,        emitter->burstAmount                    },
+				{ SceneKeys::FlipbookTexture,    emitter->flipbookTexture                },
+				{ SceneKeys::FlipbookColumns,    emitter->flipbookColumns                },
+				{ SceneKeys::FlipbookRows,       emitter->flipbookRows                   },
+				{ SceneKeys::FlipbookLoops,      emitter->flipbookLoops                  },
+				{ SceneKeys::FlipbookRandomStart, emitter->flipbookRandomStart           }
 			};
 		}
 
@@ -2074,6 +2084,11 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			emitter.stretch        = emitterData.value(SceneKeys::ParticleStretch, emitter.stretch);
 			emitter.hasMiddleColor = emitterData.value(SceneKeys::HasMiddleColor,  emitter.hasMiddleColor);
 			emitter.burstAmount    = emitterData.value(SceneKeys::BurstAmount,     emitter.burstAmount);
+			emitter.flipbookTexture     = emitterData.value(SceneKeys::FlipbookTexture,     emitter.flipbookTexture);
+			emitter.flipbookColumns     = emitterData.value(SceneKeys::FlipbookColumns,     emitter.flipbookColumns);
+			emitter.flipbookRows        = emitterData.value(SceneKeys::FlipbookRows,        emitter.flipbookRows);
+			emitter.flipbookLoops       = emitterData.value(SceneKeys::FlipbookLoops,       emitter.flipbookLoops);
+			emitter.flipbookRandomStart = emitterData.value(SceneKeys::FlipbookRandomStart, emitter.flipbookRandomStart);
 			if (emitterData.contains(SceneKeys::MiddleColor))
 				emitter.middleColor = DeserializeVec3(emitterData[SceneKeys::MiddleColor]);
 

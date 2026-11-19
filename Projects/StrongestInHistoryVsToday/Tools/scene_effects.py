@@ -62,11 +62,17 @@ def flash(size, lifetime, color, intensity):
     return specks(1, lifetime, size, size * 0.3, color, None, [0.0, 0.0, 0.0], intensity)
 
 
+# A puff of smoke baked in Blender (Tools/Blender/flipbook_baker.py): drawn on smoke specks instead of noise
+SMOKE_FLIPBOOK = {"flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png", "flipbook_columns": 8,
+                  "flipbook_rows": 8, "flipbook_loops": 1.0, "flipbook_random_start": False}
+
+
 def dust(amount, speed, lifetime=0.9, size=0.35, end_size=0.9, color=(0.42, 0.36, 0.3)):
     """A puff of dark dust thrown out and hanging in the air (it covers what is behind it)"""
-    return specks(amount, lifetime, size, end_size, list(color), None, [c * 1.3 for c in color], 0.7,
+    # (a baked puff fills only the middle of its square: drawn bigger than the noise puff it replaces)
+    return specks(amount, lifetime, size * 1.5, end_size * 1.5, list(color), None, [c * 1.3 for c in color], 0.7,
                   style=2, spawn_shape=1, spawn_radius=0.15, outward_speed=speed, drag=3.5, gravity=[0.0, 0.6, 0.0],
-                  size_randomness=0.4, spin_degrees_per_second=60.0)
+                  size_randomness=0.4, spin_degrees_per_second=60.0, **SMOKE_FLIPBOOK)
 
 
 def flames(amount, speed, lifetime=0.55, size=0.7, intensity=1.2):

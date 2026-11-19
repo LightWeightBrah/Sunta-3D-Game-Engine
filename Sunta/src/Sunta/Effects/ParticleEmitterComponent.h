@@ -120,6 +120,16 @@ struct ParticleEmitterComponent
 	// the children of the played entity burst too). 0: as many as asked of the whole effect
 	int burstAmount = 0;
 
+	// A flipbook: a picture of 'flipbookColumns' x 'flipbookRows' frames (a baked simulation of smoke, fire or
+	// water, left to right, top to bottom) drawn on every speck instead of the style's own shape, played over its
+	// life 'flipbookLoops' times; each speck starts at its own frame when 'flipbookRandomStart' is on. Its colors
+	// are multiplied by the speck's color (a white flipbook takes the emitter's colors). Empty: the style's shape
+	std::string flipbookTexture;
+	int   flipbookColumns     = 8;
+	int   flipbookRows        = 8;
+	float flipbookLoops       = 1.0f;
+	bool  flipbookRandomStart = false;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	std::vector<Particle> particles;
@@ -172,7 +182,12 @@ struct ParticleEmitterComponent
 				ADD_PROPERTY_RANGED(ParticleEmitterComponent, stretch, PropertyDataType::Float, 0.0f, MaxStretch),
 				ADD_PROPERTY(ParticleEmitterComponent, hasMiddleColor, PropertyDataType::Bool),
 				ADD_PROPERTY(ParticleEmitterComponent, middleColor,    PropertyDataType::Color),
-				ADD_PROPERTY(ParticleEmitterComponent, burstAmount,    PropertyDataType::Int)
+				ADD_PROPERTY(ParticleEmitterComponent, burstAmount,    PropertyDataType::Int),
+				ADD_PROPERTY(ParticleEmitterComponent, flipbookTexture, PropertyDataType::String),
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, flipbookColumns, PropertyDataType::Int, 1, 16),
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, flipbookRows,    PropertyDataType::Int, 1, 16),
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, flipbookLoops,   PropertyDataType::Float, 0.0f, 10.0f),
+				ADD_PROPERTY(ParticleEmitterComponent, flipbookRandomStart, PropertyDataType::Bool)
 			});
 	}
 };
