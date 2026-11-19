@@ -51,6 +51,9 @@ constexpr float HeavyFeelMultiplier = 1.5f;
 
 // A blow on a shield feels a little softer than one on the body
 constexpr float BlockedFeelMultiplier = 0.7f;
+// A blow glancing off a protected body: a short jolt, less than a block
+constexpr float DeflectedFeelMultiplier = 0.4f;
+constexpr int   DeflectEffectBurst      = 10;
 
 // A parry and a riposte are the big moments of a duel: a long freeze and a strong shake
 constexpr float ParryHitStopSeconds   = 0.16f;
@@ -499,7 +502,16 @@ void FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComp
 	switch (result)
 	{
 	case HitResult::Missed:
-		return;
+	{
+		// Only a body a script protects shows the blow glancing off (a roll's invulnerability is a dodge: nothing touched)
+		const HealthComponent* health = entityManager.GetComponent<HealthComponent>(targetID);
+		if (!health || !health->isInvulnerable || health->isDead || health->deflectEffect.empty())
+			return;
+		ParticleSystem::BurstAt(entityManager, health->deflectEffect, contactPoint, DeflectEffectBurst, direction);
+		hitStopSeconds *= DeflectedFeelMultiplier;
+		cameraShake    *= DeflectedFeelMultiplier;
+		break;
+	}
 	case HitResult::Parried:
 		BurstShieldEffect(entityManager, targetID, contactPoint, ParryEffectBurst, direction);
 		hitStopSeconds = ParryHitStopSeconds;

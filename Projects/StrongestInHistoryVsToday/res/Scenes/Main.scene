@@ -24904,7 +24904,8 @@
     "max_health": 1500.0,
     "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 3.0,
-    "death_slow_motion_scale": 0.25
+    "death_slow_motion_scale": 0.25,
+    "deflect_effect": "Guard Impact"
    },
    "lock_on": {
     "eye_height": 1.5,

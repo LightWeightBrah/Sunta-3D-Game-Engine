@@ -915,8 +915,9 @@ def add_boss(builder):
     add_fists_and_foot(builder, boss, 17.0, ENEMY_HITBOX_LAYER, poise_damage=22.0, camera_shake=0.3)
     entity["transform"] = transform(BOSS_START, (0.0, 180.0, 0.0))
     entity["box_collider"]["half_extents"] = [0.38, 0.95, 0.38]
+    # While his summon protects him (or a phase changes) the blows glance off him with guard sparks
     entity["health"].update({"max_health": 1500.0, "death_slow_motion_seconds": 3.0, "death_slow_motion_scale": 0.25,
-                             "hit_effect": "Punch Impact"})
+                             "hit_effect": "Punch Impact", "deflect_effect": "Guard Impact"})
     # Staggered, he can't be staggered again for 2.5 s: a string of punches doesn't pin him (see also boss_fight.lua)
     entity["poise"] = {"max_poise": 70.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 1.6}
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 3.0, "eye_height": 1.7})

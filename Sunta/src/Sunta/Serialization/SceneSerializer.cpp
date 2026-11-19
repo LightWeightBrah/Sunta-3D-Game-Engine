@@ -369,6 +369,7 @@ namespace SceneKeys
 
 	constexpr const char* MaxHealth                 = "max_health";
 	constexpr const char* HitEffect                 = "hit_effect";
+	constexpr const char* DeflectEffect             = "deflect_effect";
 	constexpr const char* DeathSlowMotionSeconds    = "death_slow_motion_seconds";
 	constexpr const char* DeathSlowMotionScale      = "death_slow_motion_scale";
 
@@ -973,6 +974,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 			{
 				{ SceneKeys::MaxHealth,              health->maxHealth              },
 				{ SceneKeys::HitEffect,              health->hitEffect              },
+				{ SceneKeys::DeflectEffect,          health->deflectEffect          },
 				{ SceneKeys::DeathSlowMotionSeconds, health->deathSlowMotionSeconds },
 				{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   },
 				{ SceneKeys::WeaponDamageTaken,      health->weaponDamageTaken      },
@@ -1906,6 +1908,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			auto& health = entityManager.AddComponent<HealthComponent>(entity);
 			health.maxHealth     = healthData.value(SceneKeys::MaxHealth, health.maxHealth);
 			health.hitEffect     = healthData.value(SceneKeys::HitEffect, health.hitEffect);
+			health.deflectEffect = healthData.value(SceneKeys::DeflectEffect, health.deflectEffect);
 			health.deathSlowMotionSeconds = healthData.value(SceneKeys::DeathSlowMotionSeconds, health.deathSlowMotionSeconds);
 			health.deathSlowMotionScale   = healthData.value(SceneKeys::DeathSlowMotionScale,   health.deathSlowMotionScale);
 			health.weaponDamageTaken      = healthData.value(SceneKeys::WeaponDamageTaken,      health.weaponDamageTaken);
