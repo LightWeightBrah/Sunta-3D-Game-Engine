@@ -1225,6 +1225,201 @@ local function updateDomain(deltaTime)
     end
 end
 
+-- ========== His ascension (the start of the last phase) ==========
+
+-- The summon is gone and he is out of treasure: his own private jet comes down on him like a meteor and he rises out
+-- of the fire wearing it on his back, its engines burning, his eyes red. From then on he flies: he rises on the jet,
+-- hangs over the player for a moment and nosedives onto where they stand (roll out of the place the flashes mark),
+-- and up close he pounds the ground with both fists. Everything here is data of the scene (the hidden jet pack, its
+-- flames, the aura) and general engine calls - the same kind of change as a souls-like boss that turns into
+-- something else halfway through
+O.JetPack, O.JetFlames, O.AscensionAura = "Boss Jet Pack", { "Boss Jet Flame 1", "Boss Jet Flame 2" }, "Boss Ascension Aura"
+O.AscensionTechnique = "Private Jet: Ascension"
+O.DiveTechnique, O.PoundTechnique = "Private Jet: Nosedive", "Black Book: Final Chapter"
+O.AscensionScale = 1.12            -- he grows a little with it
+O.DiveEverySeconds, O.DiveHeight = 11, 5.0   -- (higher, the locked-on camera loses him)
+O.DiveRiseSeconds, O.DiveHoverSeconds, O.DiveFallSeconds = 0.9, 1.0, 0.32
+O.SlamRadius, O.SlamDamage = 3.6, 46
+O.PoundEverySeconds, O.PoundDistance, O.PoundRadius, O.PoundDamage, O.PoundStrikesAt = 8, 3.2, 3.0, 34, 1.05
+
+function O.setJetPack(isOn)
+    local pack = find(O.JetPack)
+    if pack and pack.model then pack.model.isVisible = isOn end
+    for _, name in ipairs(O.JetFlames) do
+        local flame = find(name)
+        if flame and flame.particles then flame.particles.isEmitting = isOn end
+    end
+    local aura = find(O.AscensionAura)
+    if aura and aura.particles then aura.particles.isEmitting = isOn end
+end
+
+function O.setRedEyes(intensity)
+    for _, name in ipairs(BossEyes) do
+        local eye = find(name)
+        if eye and eye.glowSprite then eye.glowSprite.color = vec3(1.0, 0.12, 0.05) end
+    end
+    setEyes(intensity)
+end
+
+-- A ring of hurt around a point: the player inside it (and not rolling) takes the blow
+function O.blastAround(center, radius, damage)
+    local player = find(PlayerName)
+    if not player or radius <= 0 then return end
+    local between = player.transform.position - center
+    between.y = 0
+    if between:length() <= radius then player.health:damage(damage) end
+end
+
+function O.groundBlast(place, radius, damage, strength)
+    this.world:effect("Crash Impact", place, this.transform.forward)
+    this.world:burst("Star Impact", place + vec3(0, 0.3, 0), 70)
+    this.world:burst("Skid Dust", place + vec3(0, 0.2, 0), 28)
+    this.world:shakeCamera(strength)
+    this.world:impactFrame(0.6 * strength, 0.25)
+    Audio.playAt(BoomSound, place, 1.0)
+    O.blastAround(place, radius, damage)
+end
+
+function O.startAscension()
+    O.hasAscended = false
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    becomeInvulnerable(8)
+    local ground = this.transform.position
+
+    startShow({
+        -- He powers up while the jet dives at him out of the sky
+        function()
+            this.characterActions:play("Power_Up")
+            this.world:notify("THE TREASURE IS SPENT")
+            this.world:slowMotion(1.6, 0.5)
+            this.world:shakeCamera(0.5)
+            O.setRedEyes(3.0)
+            local from = ground + vec3(-18, 26, 30)
+            this.world:launch(Jet, this, from, (ground + vec3(0, 1, 0)) - from)
+            Audio.playAt(JetSound, ground, 1.5)
+            return 1.3
+        end,
+        -- The jet strikes him: a blast of fire, and out of it he rises wearing it
+        function()
+            this.world:flash(vec3(1.0, 0.55, 0.25), 0.8, 0.08)
+            O.groundBlast(ground, 0, 0, 1.0)
+            this.world:effect("Oil Detonation", ground + vec3(0, 1.4, 0))
+            O.setJetPack(true)
+            this.transform.scale = vec3(O.AscensionScale, O.AscensionScale, O.AscensionScale)
+            this.characterActions:play("Hover")
+            local risen = 0
+            show.during = function(deltaTime)
+                risen = math.min(risen + deltaTime / 1.2, 1)
+                this.transform.position = ground + vec3(0, math.sin(risen * math.pi) * 2.2, 0)
+            end
+            return 1.2
+        end,
+        function()
+            this.transform.position = ground
+            this.characterActions:play("Land_Slam")
+            O.groundBlast(ground, 0, 0, 0.7)
+            showCaption(O.AscensionTechnique, 2.5)
+            this.world:notify("PRIVATE JET: ASCENSION")
+            O.hasAscended = true
+            O.diveIn, O.poundIn = 4.0, 2.5
+            isChanneling = false
+            return 0.8
+        end,
+    })
+end
+
+-- The nosedive: up, a moment over the player (flashes mark the place, following them), then down onto it
+function O.startDive()
+    O.dive = { stage = "rise", t = 0, ground = this.transform.position, from = this.transform.position }
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    this.characterActions:play("Hover")
+    showCaption(O.DiveTechnique, 2.6)
+    Audio.playAt(JetSound, this.transform.position, 1.2)
+end
+
+function O.updateDive(deltaTime)
+    local dive = O.dive
+    if not dive then return end
+    local player = find(PlayerName)
+    dive.t = dive.t + deltaTime
+
+    if dive.stage == "rise" then
+        local k = math.min(dive.t / O.DiveRiseSeconds, 1)
+        local eased = k * k * (3 - 2 * k)
+        this.transform.position = dive.ground + vec3(0, O.DiveHeight * eased, 0)
+        if k >= 1 then dive.stage, dive.t = "hover", 0 end
+    elseif dive.stage == "hover" then
+        this.transform.position = dive.ground + vec3(0, O.DiveHeight + math.sin(dive.t * 6) * 0.15, 0)
+        if player then
+            dive.target = clampToArena(vec3(player.transform.position.x, dive.ground.y, player.transform.position.z))
+            dive.markIn = (dive.markIn or 0) - deltaTime
+            if dive.markIn <= 0 then
+                this.world:burst("Flash Burst", dive.target + vec3(0, 0.15, 0), 14)
+                dive.markIn = 0.12
+            end
+        end
+        if dive.t >= O.DiveHoverSeconds then
+            dive.stage, dive.t = "fall", 0
+            dive.from = this.transform.position
+            this.characterActions:play("Dive")
+        end
+    elseif dive.stage == "fall" then
+        local k = math.min(dive.t / O.DiveFallSeconds, 1)
+        local target = dive.target or dive.ground
+        this.transform.position = dive.from + (target - dive.from) * (k * k)
+        if k >= 1 then
+            this.transform.position = target
+            this.characterActions:play("Land_Slam")
+            O.groundBlast(target, O.SlamRadius, O.SlamDamage, 1.1)
+            dive.stage, dive.t = "land", 0
+        end
+    elseif dive.stage == "land" then
+        if dive.t >= 0.9 then
+            O.dive = nil
+            isChanneling = false
+            O.diveIn = O.DiveEverySeconds
+        end
+    end
+end
+
+-- Both fists into the ground when the player stands close: get out of the ring (or roll through it)
+function O.updatePound(deltaTime)
+    O.poundIn = (O.poundIn or 0) - deltaTime
+    if O.poundIn > 0 or this.enemy.distanceToTarget > O.PoundDistance or not isFreeToAct() then return end
+    if not this.characterActions:play("Ground_Pound") then return end
+
+    O.poundIn = O.PoundEverySeconds
+    showCaption(O.PoundTechnique, 1.6)
+    after(O.PoundStrikesAt, function()
+        if this.health.isDead then return end
+        O.groundBlast(this.transform.position + this.transform.forward * 0.8, O.PoundRadius, O.PoundDamage, 0.8)
+    end)
+end
+
+function O.updateAscension(deltaTime)
+    if phase ~= 4 or not O.hasAscended then return end
+    if O.dive then O.updateDive(deltaTime); return end
+
+    O.diveIn = (O.diveIn or 0) - deltaTime
+    if O.diveIn <= 0 and isFreeToAct() and takePatternTurn() then
+        O.startDive()
+        return
+    end
+    O.updatePound(deltaTime)
+end
+
+function O.resetAscension()
+    O.hasAscended, O.dive, O.diveIn, O.poundIn = false, nil, 0, 0
+    O.setJetPack(false)
+    this.transform.scale = vec3(1, 1, 1)
+    for _, name in ipairs(BossEyes) do
+        local eye = find(name)
+        if eye and eye.glowSprite then eye.glowSprite.color = vec3(1, 1, 1) end
+    end
+end
+
 -- ========== The phases ==========
 
 local function startFight()
@@ -1327,9 +1522,8 @@ local function startLastPhase()
     blinkIn = 2.5
     ringIn = 5
 
-    this.world:notify("THE TREASURE IS SPENT")
-    this.world:shakeCamera(0.6)
     if not domainIsUp then raiseDomain(false) end
+    O.startAscension()
 end
 
 local function hasReached(healthFraction, atSeconds)
@@ -1401,6 +1595,7 @@ local function reset()
     isOnTheDome = false
     silhouetteLeft = 0
     if this.model then this.model.darkness = 0 end
+    O.resetAscension()
     setEyes(0)
     captionLeft = 0
     playerGreatCasts = 0
@@ -1609,6 +1804,7 @@ function OnUpdate(deltaTime)
     updateRain(deltaTime)
     watchJetSpells()
     updateGamble()
+    O.updateAscension(deltaTime)
     updateDomain(deltaTime)
     updateTweens(deltaTime)
     O.updateRise(deltaTime)

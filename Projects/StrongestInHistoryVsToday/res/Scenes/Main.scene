@@ -23347,6 +23347,249 @@
   },
   {
    "tag": {
+    "name": "Boss Jet Pack"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.05,
+     -0.22
+    ],
+    "rotation": [
+     -90.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     -0.7071067811865476,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.12,
+     0.12,
+     0.12
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_jet"
+   },
+   "parent": {
+    "index": 535,
+    "bone_name": "Chest"
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Jet Flame 1"
+   },
+   "transform": {
+    "position": [
+     -0.16,
+     -0.45,
+     -0.28
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 120.0,
+    "lifetime_seconds": 0.22,
+    "spawn_half_extents": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "velocity": [
+     0.0,
+     -5.0,
+     0.0
+    ],
+    "velocity_randomness": 0.4,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.16,
+    "end_size": 0.03,
+    "start_color": [
+     1.0,
+     0.6,
+     0.25
+    ],
+    "end_color": [
+     0.8,
+     0.1,
+     0.02
+    ],
+    "intensity": 0.9,
+    "max_particles": 400,
+    "style": 1,
+    "size_randomness": 0.3
+   },
+   "parent": {
+    "index": 535,
+    "bone_name": "Chest"
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Jet Flame 2"
+   },
+   "transform": {
+    "position": [
+     0.16,
+     -0.45,
+     -0.28
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 120.0,
+    "lifetime_seconds": 0.22,
+    "spawn_half_extents": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "velocity": [
+     0.0,
+     -5.0,
+     0.0
+    ],
+    "velocity_randomness": 0.4,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.16,
+    "end_size": 0.03,
+    "start_color": [
+     1.0,
+     0.6,
+     0.25
+    ],
+    "end_color": [
+     0.8,
+     0.1,
+     0.02
+    ],
+    "intensity": 0.9,
+    "max_particles": 400,
+    "style": 1,
+    "size_randomness": 0.3
+   },
+   "parent": {
+    "index": 535,
+    "bone_name": "Chest"
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Ascension Aura"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 70.0,
+    "lifetime_seconds": 1.4,
+    "spawn_half_extents": [
+     0.35,
+     0.8,
+     0.35
+    ],
+    "velocity": [
+     0.0,
+     1.6,
+     0.0
+    ],
+    "velocity_randomness": 0.8,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 0.09,
+    "end_size": 0.01,
+    "start_color": [
+     1.0,
+     0.45,
+     0.1
+    ],
+    "end_color": [
+     0.6,
+     0.05,
+     0.0
+    ],
+    "intensity": 1.5,
+    "max_particles": 400,
+    "style": 0,
+    "size_randomness": 0.5
+   },
+   "parent": {
+    "index": 535,
+    "bone_name": "Hips"
+   }
+  },
+  {
+   "tag": {
     "name": "Spell Hand"
    },
    "transform": {
@@ -23419,7 +23662,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 542,
+    "index": 546,
     "bone_name": ""
    }
   },
@@ -23465,7 +23708,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 542,
+    "index": 546,
     "bone_name": ""
    }
   },
@@ -23511,7 +23754,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 542,
+    "index": 546,
     "bone_name": ""
    }
   },
@@ -23558,7 +23801,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 542,
+    "index": 546,
     "bone_name": ""
    }
   },
@@ -23605,7 +23848,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 542,
+    "index": 546,
     "bone_name": ""
    }
   },
@@ -23682,7 +23925,7 @@
     ]
    },
    "parent": {
-    "index": 548,
+    "index": 552,
     "bone_name": ""
    }
   },
@@ -23714,7 +23957,7 @@
     ]
    },
    "parent": {
-    "index": 548,
+    "index": 552,
     "bone_name": ""
    }
   },
@@ -23746,7 +23989,7 @@
     ]
    },
    "parent": {
-    "index": 548,
+    "index": 552,
     "bone_name": ""
    }
   },
@@ -23823,7 +24066,7 @@
     ]
    },
    "parent": {
-    "index": 552,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23855,7 +24098,7 @@
     ]
    },
    "parent": {
-    "index": 552,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23887,7 +24130,7 @@
     ]
    },
    "parent": {
-    "index": 552,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23963,7 +24206,7 @@
     ]
    },
    "parent": {
-    "index": 556,
+    "index": 560,
     "bone_name": ""
    }
   },
@@ -23995,7 +24238,7 @@
     ]
    },
    "parent": {
-    "index": 556,
+    "index": 560,
     "bone_name": ""
    }
   },
@@ -24027,7 +24270,7 @@
     ]
    },
    "parent": {
-    "index": 556,
+    "index": 560,
     "bone_name": ""
    }
   },
@@ -24059,7 +24302,7 @@
     ]
    },
    "parent": {
-    "index": 556,
+    "index": 560,
     "bone_name": ""
    }
   },
@@ -24091,7 +24334,7 @@
     ]
    },
    "parent": {
-    "index": 556,
+    "index": 560,
     "bone_name": ""
    }
   },
@@ -24166,7 +24409,7 @@
     ]
    },
    "parent": {
-    "index": 562
+    "index": 566
    }
   },
   {
@@ -24197,7 +24440,7 @@
     ]
    },
    "parent": {
-    "index": 562
+    "index": 566
    }
   },
   {
@@ -24228,7 +24471,7 @@
     ]
    },
    "parent": {
-    "index": 562
+    "index": 566
    }
   },
   {
@@ -24259,7 +24502,7 @@
     ]
    },
    "parent": {
-    "index": 562
+    "index": 566
    }
   },
   {
@@ -24499,7 +24742,7 @@
     ]
    },
    "parent": {
-    "index": 567
+    "index": 571
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -24583,7 +24826,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 567,
+    "index": 571,
     "bone_name": "Hand_R"
    }
   },
@@ -24633,7 +24876,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 567,
+    "index": 571,
     "bone_name": "Hand_L"
    }
   },
@@ -24683,7 +24926,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 567,
+    "index": 571,
     "bone_name": "Foot_R"
    }
   },
@@ -24776,7 +25019,7 @@
     ]
    },
    "parent": {
-    "index": 572
+    "index": 576
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -24956,7 +25199,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 576,
+    "index": 580,
     "bone_name": ""
    }
   },
@@ -25012,7 +25255,7 @@
     }
    },
    "parent": {
-    "index": 576,
+    "index": 580,
     "bone_name": ""
    }
   },
@@ -25044,7 +25287,7 @@
     ]
    },
    "parent": {
-    "index": 576,
+    "index": 580,
     "bone_name": ""
    }
   },
@@ -25197,7 +25440,7 @@
     ]
    },
    "parent": {
-    "index": 580,
+    "index": 584,
     "bone_name": ""
    }
   },
@@ -25229,7 +25472,7 @@
     ]
    },
    "parent": {
-    "index": 580,
+    "index": 584,
     "bone_name": ""
    }
   },
@@ -25261,7 +25504,7 @@
     ]
    },
    "parent": {
-    "index": 580,
+    "index": 584,
     "bone_name": ""
    }
   },
@@ -25293,7 +25536,7 @@
     ]
    },
    "parent": {
-    "index": 580,
+    "index": 584,
     "bone_name": ""
    }
   },

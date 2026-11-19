@@ -200,6 +200,14 @@ BOSS = {
     "Knocked_Down":   MotionClip(KIMODO_KNOCK, 1, 34, speed=0.8, rig=SOMA),
     "Lying":          MotionClip(KIMODO_KNOCK, 60, 63, speed=0.05, rig=SOMA),
     "Get_Up":         MotionClip(KIMODO_GET_UP, 1, 100, speed=1.6, rig=SOMA),
+    # His ascension (the last phase): his own private jet comes down on him and he rises out of the fire wearing it
+    # on his back. Powering up, hovering on its engines, diving at the player and landing on one knee and a fist,
+    # pounding the ground with both fists
+    "Power_Up":       library(ADDON, "Power Up", speed=0.5),
+    "Hover":          library(ADDON, "Levitate Idle"),
+    "Dive":           library(ADDON, "Flying Forward Super"),
+    "Land_Slam":      library(ADDON, "Land_Three_Point", first_frame=14, speed=1.1),
+    "Ground_Pound":   library(ADDON, "Attack_Ground_Pound", speed=1.0),
 }
 
 # The summon: a monster three meters tall. Swipes of its claws, slow wide hooks, both fists into the ground as the

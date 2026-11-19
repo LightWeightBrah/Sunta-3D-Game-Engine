@@ -750,6 +750,35 @@ def add_player(builder):
     return player
 
 
+# His ascension (the last phase, boss_fight.lua): his private jet comes down on him and he rises wearing it on his
+# back, nose up, its two engines burning under his shoulders. Hidden until then
+JET_PACK = {"position": [0.0, 0.05, -0.22], "rotation": [-90.0, 0.0, 0.0], "scale": 0.12}
+JET_ENGINES = [[-0.16, -0.45, -0.28], [0.16, -0.45, -0.28]]
+
+
+def add_jet_pack(builder, boss):
+    pack = named("Boss Jet Pack", tuple(JET_PACK["position"]), model={"is_visible": False, "model_name": "sih_jet"})
+    pack["transform"]["rotation"] = list(JET_PACK["rotation"])
+    pack["transform"]["rotation_quaternion"] = None   # filled by fix_quaternions
+    pack["transform"]["scale"] = [JET_PACK["scale"]] * 3
+    builder.add(pack, parent=boss, bone="Chest")
+    # The flames of the engines: always burning once he has it (a steady jet of fire down, and a glow)
+    for index, place in enumerate(JET_ENGINES):
+        builder.add(named(f"Boss Jet Flame {index + 1}", tuple(place), particle_emitter={
+            "is_emitting": False, "particles_per_second": 120.0, "lifetime_seconds": 0.22,
+            "spawn_half_extents": [0.03, 0.03, 0.03], "velocity": [0.0, -5.0, 0.0], "velocity_randomness": 0.4,
+            "gravity": [0.0, 0.0, 0.0], "start_size": 0.16, "end_size": 0.03,
+            "start_color": [1.0, 0.6, 0.25], "end_color": [0.8, 0.1, 0.02], "intensity": 0.9, "max_particles": 400,
+            "style": 1, "size_randomness": 0.3}), parent=boss, bone="Chest")
+    # Embers rising off him: the last stand burns
+    builder.add(named("Boss Ascension Aura", (0.0, 0.0, 0.0), particle_emitter={
+        "is_emitting": False, "particles_per_second": 70.0, "lifetime_seconds": 1.4,
+        "spawn_half_extents": [0.35, 0.8, 0.35], "velocity": [0.0, 1.6, 0.0], "velocity_randomness": 0.8,
+        "gravity": [0.0, 0.6, 0.0], "start_size": 0.09, "end_size": 0.01,
+        "start_color": [1.0, 0.45, 0.1], "end_color": [0.6, 0.05, 0.0], "intensity": 1.5, "max_particles": 400,
+        "style": 0, "size_randomness": 0.5}), parent=boss, bone="Hips")
+
+
 def add_boss(builder):
     boss = builder.copy_tree(builder.find_source(SOURCE_BOSS), skip=("Staff", "Staff Fire Burst"))
     entity = builder.get(boss)
@@ -794,6 +823,7 @@ def add_boss(builder):
                       "defeat_cutscene": "Boss Defeat", "defeat_cutscene_delay": 3.5}
     entity["script"] = script("boss_fight.lua")
     add_eyes(builder, boss, "Boss", BOSS_EYES, [1.0, 1.0, 1.0], 0.1)
+    add_jet_pack(builder, boss)
 
     # The spells leave from his right hand
     staff = builder.add(named("Spell Hand"), parent=boss, bone="Hand_R")
