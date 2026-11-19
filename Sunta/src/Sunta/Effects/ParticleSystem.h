@@ -10,6 +10,7 @@ namespace Sunta
 class EntityManager;
 class Shader;
 class VertexArray;
+struct ParticleEmitterComponent;
 
 // Moves and draws the specks of every Particle Emitter (see ParticleEmitterComponent)
 //
@@ -28,9 +29,15 @@ public:
 	// When the game starts and stops: no specks left over from the last time
 	static void Clear(EntityManager& entityManager);
 
-	// Throws 'count' specks of the emitter named 'emitterName' around 'position' (in the next Update), e.g. sparks where
-	// a sword hit a shield. One emitter in the scene serves every hit. False when there is no such emitter
-	static bool BurstAt(EntityManager& entityManager, const std::string& emitterName, const glm::vec3& position, int count);
+	// Plays the effect named 'effectName' at 'position' (see EffectSystem::Play): its emitter throws 'count' specks
+	// there in the next Update (e.g. sparks where a sword hit a shield), its children and shapes play with it.
+	// One effect in the scene serves every hit. 'direction' is where it faces (zero: the way its entity faces).
+	// False when there is nothing of that name
+	static bool BurstAt(EntityManager& entityManager, const std::string& effectName, const glm::vec3& position, int count,
+		const glm::vec3& direction = glm::vec3(0.0f));
+
+	// Throws 'count' specks of this emitter around 'position' in the next Update
+	static void BurstEmitter(ParticleEmitterComponent& emitter, const glm::vec3& position, int count);
 
 private:
 	static inline std::shared_ptr<VertexArray> quad;

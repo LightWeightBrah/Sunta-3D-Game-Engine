@@ -16,7 +16,7 @@ local EyesStaySeconds = 0.9
 local EyeIntensity    = 9
 
 -- The ball over his palm grows to this size (meters across) by the time it is thrown
-local HeldOrbSize = 0.34
+local HeldOrbSize = 0.5
 
 -- His domain: the light he gives off at the height of the sign, and the blast when it opens
 local DomainGlow         = vec3(1.6, 0.75, 0.15)
@@ -96,13 +96,34 @@ local function updateHeldOrb(deltaTime)
     end
 
     if isHolding then
-        heldGrowth = math.min(heldGrowth + deltaTime * 4, 1)
+        heldGrowth = math.min(heldGrowth + deltaTime * 2.5, 1)
         held.transform.scale = vec3(1, 1, 1) * (HeldOrbSize * heldGrowth)
     elseif caster and caster.isCasting then
         heldGrowth = -1
     end
 
     held.liquidOrb.isVisible = isHolding and heldGrowth > 0.05
+end
+
+-- His guard is a wall of baby oil: it swells in front of him while he blocks, and flares up (bigger, brighter) for
+-- the moment his parry turns blows away - the player sees when the parry is live
+local OilGuard = "Player Oil Guard"
+local GuardSize = vec3(1.0, 1.15, 0.22)
+local guardAmount, parryFlare = 0, 0
+local function updateOilGuard(deltaTime)
+    local guard = find(OilGuard)
+    local actions = this.characterActions
+    if not guard or not guard.liquidOrb or not actions then return end
+
+    local target = actions.isGuarding and 1 or 0
+    guardAmount = guardAmount + (target - guardAmount) * math.min(deltaTime * 14, 1)
+    if actions.isParrying then parryFlare = 1 else parryFlare = math.max(parryFlare - deltaTime * 4, 0) end
+
+    local amount = math.max(guardAmount, parryFlare)
+    local size = 0.6 + 0.4 * amount + 0.35 * parryFlare
+    guard.transform.scale = vec3(GuardSize.x * size, GuardSize.y * size, GuardSize.z * size)
+    guard.liquidOrb.brightness = 0.5 + 1.3 * parryFlare
+    guard.liquidOrb.isVisible = amount > 0.05
 end
 
 -- His own domain: he lights up as he holds the sign, then everything goes white
@@ -133,6 +154,7 @@ function OnUpdate(deltaTime)
     speakTechniques()
     updateEyes(deltaTime)
     updateHeldOrb(deltaTime)
+    updateOilGuard(deltaTime)
     updateDomain(deltaTime)
 
     -- The bottle of his great technique: the camera looks up at it coming down on the boss (the boss's own script

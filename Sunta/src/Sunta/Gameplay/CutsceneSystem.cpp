@@ -1,6 +1,8 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CutsceneSystem.h"
 
+#include <cctype>
+#include <cmath>
 #include <vector>
 
 #include "CharacterActionsSystem.h"
@@ -34,10 +36,27 @@ constexpr const char* SkipHint         = "[E] skip";
 // The black bars: part of the screen's height each, and how long they take to slide in and out
 constexpr float BarHeight      = 0.12f;
 constexpr float BarFadeSeconds = 0.6f;
+// After a cutscene the bars wait this long before sliding out: the next shot of a sequence keeps them
+constexpr float BarLingerSeconds = 0.9f;
+
+// How far the bars are in (0..1), shared by every cutscene so a sequence of shots shows them once
+struct Letterbox
+{
+	float shown          = 0.0f;
+	float secondsWithout = 0.0f;
+	bool  isHeld         = false;
+};
+
+Letterbox& GetLetterbox()
+{
+	static Letterbox letterbox;
+	return letterbox;
+}
 
 constexpr float     TitleHeight = 64.0f;
 const glm::vec4     TitleColor  = glm::vec4(0.92f, 0.78f, 0.52f, 1.0f);
 constexpr float     HintHeight  = 18.0f;
+constexpr float     PromptHeight = 30.0f;
 const glm::vec4     HintColor   = glm::vec4(0.7f, 0.7f, 0.7f, 0.6f);
 const glm::vec3     WorldUp     = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -212,8 +231,19 @@ void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, Cutscene
 	if (glm::length(lookDirection) < 0.001f || std::abs(glm::normalize(lookDirection).y) > 0.999f)
 		return;
 
+	glm::quat rotation = MakeRotationLookingAlong(glm::normalize(lookDirection));
+
+	// Flying in from where the camera was (eased), instead of a cut
+	if (cutscene.canBlend && cutscene.seconds < cutscene.blendInSeconds)
+	{
+		const float linearBlend = glm::clamp(cutscene.seconds / cutscene.blendInSeconds, 0.0f, 1.0f);
+		const float blend = linearBlend * linearBlend * (3.0f - 2.0f * linearBlend);
+		position = glm::mix(cutscene.blendFromPosition, position, blend);
+		rotation = glm::slerp(cutscene.blendFromRotation, rotation, blend);
+	}
+
 	camera->position           = position;
-	camera->rotationQuaternion = MakeRotationLookingAlong(glm::normalize(lookDirection));
+	camera->rotationQuaternion = rotation;
 	camera->SyncEulerFromQuaternion();
 	camera->isDirty = true;
 }
@@ -243,6 +273,16 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 	cutscene->hasStartedAnimation = false;
 	cutscene->seconds             = 0.0f;
 	cutscene->clearDistance       = -1.0f;
+	cutscene->wasAnswered         = false;
+
+	// Where the camera is now: a cutscene with 'blendInSeconds' flies from here
+	const TransformComponent* camera = FindActiveCamera(entityManager);
+	cutscene->canBlend = camera != nullptr && cutscene->blendInSeconds > 0.0f;
+	if (camera)
+	{
+		cutscene->blendFromPosition = camera->position;
+		cutscene->blendFromRotation = camera->rotationQuaternion;
+	}
 
 	// A video that can't be opened leaves the camera cutscene (the error is in the log)
 	cutscene->isVideo = !cutscene->videoFile.empty() && GetVideo().Open(VirtualFileSystem::Resolve(cutscene->videoFile));
@@ -269,8 +309,26 @@ bool CutsceneSystem::IsPlaying(EntityManager& entityManager)
 	return false;
 }
 
+void CutsceneSystem::HoldLetterbox(bool isHeld)
+{
+	GetLetterbox().isHeld = isHeld;
+}
+
 void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 {
+	// The bars: in while a shot (not a video) plays or a script holds them, out a little after the last shot
+	Letterbox& letterbox = GetLetterbox();
+	bool isShotPlaying = false;
+	for (const CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
+		isShotPlaying = isShotPlaying || (cutscene.isPlaying && !cutscene.isVideo);
+
+	const float step = glm::min(deltaTime, MaxStepSeconds) / BarFadeSeconds;
+	letterbox.secondsWithout = isShotPlaying || letterbox.isHeld ? 0.0f : letterbox.secondsWithout + deltaTime;
+	if (letterbox.secondsWithout <= 0.0f)
+		letterbox.shown = glm::min(letterbox.shown + step, 1.0f);
+	else if (letterbox.secondsWithout > BarLingerSeconds)
+		letterbox.shown = glm::max(letterbox.shown - step, 0.0f);
+
 	for (CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
 	{
 		if (!cutscene.isPlaying)
@@ -279,6 +337,19 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 		const unsigned int cutsceneID = entityManager.GetEntityIDForComponent(cutscene);
 		// A long frame (loading something) must not skip the cutscene
 		cutscene.seconds += glm::min(deltaTime, MaxStepSeconds);
+
+		// A moment the player answers: it holds at its end until the key (letters and digits are their characters)
+		if (!cutscene.isVideo && !cutscene.waitForKey.empty())
+		{
+			const int key = std::toupper(static_cast<unsigned char>(cutscene.waitForKey.front()));
+			if (InputManager::IsKeyDown(key))
+			{
+				cutscene.wasAnswered = true;
+				Finish(entityManager, cutscene);
+				continue;
+			}
+			cutscene.seconds = glm::min(cutscene.seconds, cutscene.durationSeconds - 0.001f);
+		}
 
 		const bool isSkipped = cutscene.canBeSkipped && cutscene.seconds > SkipAfterSeconds && InputManager::IsKeyDown(SkipKey);
 
@@ -308,6 +379,17 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 
 void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& screenSize, const glm::vec2& areaTopLeft, const glm::vec2& areaSize)
 {
+	// The bars (see Letterbox), eased in and out
+	const float shown = GetLetterbox().shown;
+	const float bars  = shown * shown * (3.0f - 2.0f * shown) * BarHeight * areaSize.y;
+	if (bars > 0.0f)
+	{
+		UIRenderer::Begin(screenSize);
+		UIRenderer::DrawRectangle(areaTopLeft, glm::vec2(areaSize.x, bars), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		UIRenderer::DrawRectangle(areaTopLeft + glm::vec2(0.0f, areaSize.y - bars), glm::vec2(areaSize.x, bars), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		UIRenderer::End();
+	}
+
 	for (const CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
 	{
 		if (!cutscene.isPlaying)
@@ -334,15 +416,11 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 			continue;
 		}
 
-		// The bars slide in at the start and out at the end
-		const float in   = glm::clamp(cutscene.seconds / BarFadeSeconds, 0.0f, 1.0f);
+		// The title fades out with the end of its shot
 		const float out  = glm::clamp((cutscene.durationSeconds - cutscene.seconds) / BarFadeSeconds, 0.0f, 1.0f);
-		const float bars = glm::min(in, out) * BarHeight * areaSize.y;
 		const glm::vec2 bottomLeft = areaTopLeft + glm::vec2(0.0f, areaSize.y - bars);
 
 		UIRenderer::Begin(screenSize);
-		UIRenderer::DrawRectangle(areaTopLeft, glm::vec2(areaSize.x, bars), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		UIRenderer::DrawRectangle(bottomLeft, glm::vec2(areaSize.x, bars), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 		const float titleStart = cutscene.durationSeconds - cutscene.titleSeconds;
 		if (!cutscene.title.empty() && cutscene.seconds >= titleStart)
@@ -355,12 +433,24 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 		if (cutscene.canBeSkipped)
 			UIRenderer::DrawTextAt(SkipHint, bottomLeft + glm::vec2(areaSize.x - 110.0f, 8.0f), HintHeight, HintColor);
 
+		// What the player is asked to press, pulsing over the lower bar once the camera has come to rest
+		if (!cutscene.waitForKey.empty() && !cutscene.waitPrompt.empty())
+		{
+			const float shownFor = cutscene.seconds - glm::max(cutscene.durationSeconds - 1.0f, 0.0f);
+			const float pulse    = 0.75f + 0.25f * std::sin(cutscene.seconds * 5.0f);
+			const float fadeIn   = glm::clamp(shownFor / 0.5f, 0.0f, 1.0f);
+			UIRenderer::DrawTextCentered(cutscene.waitPrompt, areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.86f),
+				PromptHeight, glm::vec4(glm::vec3(TitleColor), fadeIn * pulse));
+		}
+
 		UIRenderer::End();
 	}
 }
 
 void CutsceneSystem::PrepareForPlay(EntityManager& entityManager)
 {
+	GetLetterbox() = Letterbox();
+
 	for (CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
 	{
 		cutscene.isPlaying           = false;

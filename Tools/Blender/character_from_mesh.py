@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 import bpy
 import numpy
-from mathutils import Matrix, Quaternion, Vector
+from mathutils import Euler, Matrix, Quaternion, Vector
 
 import knight_generator
 from sunta_blender import make_textured_material, select_only
@@ -86,7 +86,13 @@ def load_rigged_character(path, height, bone_names):
     """A rigged character (.glb: an armature with the mesh bound to it) standing on the ground at the origin, facing +Y,
     'height' tall, its bones renamed with 'bone_names' (theirs -> ours; the weights follow the names). Returns (armature, mesh)"""
     objects_before = set(bpy.data.objects)
-    bpy.ops.import_scene.gltf(filepath=path)
+    if path.lower().endswith(".fbx"):
+        # A character Mixamo rigged (downloaded with its skin): the scene keeps its own frame rate
+        fps, fps_base = bpy.context.scene.render.fps, bpy.context.scene.render.fps_base
+        bpy.ops.import_scene.fbx(filepath=path)
+        bpy.context.scene.render.fps, bpy.context.scene.render.fps_base = fps, fps_base
+    else:
+        bpy.ops.import_scene.gltf(filepath=path)
     imported = [obj for obj in bpy.data.objects if obj not in objects_before]
     armature = next(obj for obj in imported if obj.type == "ARMATURE")
     mesh = next(obj for obj in imported if obj.type == "MESH")
@@ -100,6 +106,14 @@ def load_rigged_character(path, height, bone_names):
             bpy.data.objects.remove(obj)
     for action in list(bpy.data.actions):
         bpy.data.actions.remove(action)
+    # In its rest pose (a file with a clip leaves the bones posed in its first frame)
+    if armature.animation_data:
+        armature.animation_data.action = None
+    for pose_bone in armature.pose.bones:
+        pose_bone.location = Vector()
+        pose_bone.rotation_quaternion = Quaternion()
+        pose_bone.rotation_euler = Euler()
+        pose_bone.scale = Vector((1.0, 1.0, 1.0))
 
     # Stand it up: turned to face +Y, scaled to the height, on the ground. Applied, so the bones' rest pose changes too
     points = [mesh.matrix_world @ vertex.co for vertex in mesh.data.vertices]
@@ -412,9 +426,10 @@ def save_image(name, folder, rgba, is_color, has_alpha=False):
     return image
 
 
-def make_engine_textures(mesh, folder, base_name, brightness=1.0):
+def make_engine_textures(mesh, folder, base_name, brightness=1.0, shine_scale=1.0):
     """The engine reads a diffuse and a specular texture: the color comes from the base color (a little brighter if asked:
-    the engine has no reflections, dark metal would look flat), the shine from the metal and roughness maps"""
+    the engine has no reflections, dark metal would look flat), the shine from the metal and roughness maps
+    ('shine_scale' below 1: cloth that the generator made too glossy looks like cloth, not plastic)"""
     material = mesh.data.materials[0]
     color = image_pixels(find_texture(material, "Base Color"))
     color[..., :3] = numpy.clip(color[..., :3] * brightness, 0.0, 1.0)
@@ -428,6 +443,7 @@ def make_engine_textures(mesh, folder, base_name, brightness=1.0):
     else:
         shine = numpy.full(color.shape[:2], 0.3, dtype=numpy.float32)
 
+    shine = numpy.clip(shine * shine_scale, 0.0, 1.0)
     specular = numpy.ones_like(color)
     specular[..., 0] = specular[..., 1] = specular[..., 2] = shine
     save_image(base_name + "_specular", folder, specular, is_color=False)

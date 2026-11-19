@@ -49,5 +49,8 @@ namespace Sunta
 		static void ResetScroll()				{ scrollOffset = 0.0f;	}
 	
 		static void SetFirstMouse(bool value)	{ firstMouse = value;   }
+
+		// Mouse movement that didn't come from the mouse (input playback in tests)
+		static void AddMouseDelta(const glm::vec2& delta) { mouseDelta += delta; }
 	};
 }

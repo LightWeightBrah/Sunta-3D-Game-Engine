@@ -231,7 +231,8 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager, float deltaT
 
 		const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityID);
 
-		if (state == MoveState::Walk && transform && CharacterControllerSystem::IsFacingLockedTarget(entityManager, entityID))
+		const bool isFacingTarget = transform && CharacterControllerSystem::IsFacingLockedTarget(entityManager, entityID);
+		if (state == MoveState::Walk && isFacingTarget)
 			state = GetStepState(*controller, *transform);
 
 		MatchPlaybackToSpeed(component, animatorComponent->animator, state, speed, deltaTime);
@@ -239,7 +240,14 @@ void CharacterAnimationSystem::Update(EntityManager& entityManager, float deltaT
 		AnimationMap& animations = modelComponent->modelData->animations;
 
 		std::string name;
-		if (!TryFindAnimationName(component, animations, state, name) || name == animatorComponent->currentAnimationName)
+		if (!TryFindAnimationName(component, animations, state, name))
+			continue;
+
+		// Squared up to a locked-on enemy the character stands in its fighting stance
+		if (state == MoveState::Idle && isFacingTarget && animations.count(component.lockedOnIdleAnimation) > 0)
+			name = component.lockedOnIdleAnimation;
+
+		if (name == animatorComponent->currentAnimationName)
 			continue;
 
 		StartAnimation(component, *animatorComponent, animations, name);

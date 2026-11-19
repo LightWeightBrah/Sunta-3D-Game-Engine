@@ -49,7 +49,7 @@ VIDEOS = {
 
 # The voices of the player's techniques (seconds of the film), without the music
 VOICES = {
-    "solid_baby_oil.ogg":         (51.72, 53.2),
+    "solid_baby_oil.ogg":         (51.70, 53.30),  # "Solid baby oil" (without the "unleash" after it)
     "divine_baby_oil_evolve.ogg": (138.85, 142.1),
     "baby_oil_detonation.ogg":    (107.0, 110.7),
 }
@@ -111,7 +111,8 @@ def make_voices(film):
 
     folder = os.path.join(RES, "Sounds", "Voice")
     os.makedirs(folder, exist_ok=True)
-    model = get_model("htdemucs")
+    # The fine-tuned model, run twice (on the voices of the first run): one pass left the music's beat in the voices
+    model = get_model("htdemucs_ft")
     model.eval()
     vocals_index = model.sources.index("vocals")
 
@@ -128,9 +129,12 @@ def make_voices(film):
             audio, rate = soundfile.read(raw, dtype="float32", always_2d=True)
             wave = torch.from_numpy(audio.T)
             mean, std = wave.mean(), wave.std()
-            with torch.no_grad():
-                stems = apply_model(model, ((wave - mean) / std)[None], device="cpu", split=True, overlap=0.25)[0]
-            vocals = (stems[vocals_index] * std + mean).numpy().T
+            for _ in range(2):
+                with torch.no_grad():
+                    stems = apply_model(model, ((wave - mean) / std)[None], device="cpu", split=True, overlap=0.25)[0]
+                wave = stems[vocals_index] * std + mean
+                mean, std = wave.mean(), wave.std()
+            vocals = wave.numpy().T
 
             separated = os.path.join(work, "vocals.wav")
             soundfile.write(separated, vocals, rate)
@@ -143,10 +147,16 @@ def make_voices(film):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--no-voices", action="store_true", help="skip the voices (no Demucs needed)")
+    parser.add_argument("--only-voices", action="store_true", help="only cut the voices again (the film is in the cache)")
     arguments = parser.parse_args()
 
     film = download(FILM_URL, "film", "bv*[height<=720]+ba/b[height<=720]/b")
     song = download(SONG_URL, "song", "ba[ext=m4a]/ba")
+
+    if arguments.only_voices:
+        make_voices(film)
+        print("FILM_ASSETS_DONE")
+        return
 
     make_videos(film)
     make_soundtrack(film, song)

@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "EditorLayer.h"
+#include "Gameplay/DeveloperCheats.h"
 
 #include <imgui/imgui.h>
 
@@ -58,6 +59,9 @@ EditorLayer::EditorLayer(Application& application)
 
 void EditorLayer::OnAttach()
 {
+	// Playing in the editor may use the developer's cheats (F1: god mode)
+	DeveloperCheats::isAllowed = true;
+
 	sceneChangedSubscriptionID = EventBus::Subscribe<SceneChangedEvent>([this](const SceneChangedEvent&)
 	{
 		windowTitleOutdated = true;
@@ -224,6 +228,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	GlowSpriteComponent::RegisterToInspector();
 	LiquidOrbComponent::RegisterToInspector();
 	SwarmComponent::RegisterToInspector();
+	EffectShapeComponent::RegisterToInspector();
 	CutsceneComponent::RegisterToInspector();
 	AudioSourceComponent::RegisterToInspector();
 	CharacterSoundsComponent::RegisterToInspector();
@@ -246,6 +251,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	CameraComponent::RegisterToInspector();
 	FollowCameraComponent::RegisterToInspector();
 	LockOnComponent::RegisterToInspector();
+	StrikeAimComponent::RegisterToInspector();
 	LockOnTargetComponent::RegisterToInspector();
 	DirectionalLightComponent::RegisterToInspector();
 	PointLightComponent::RegisterToInspector();

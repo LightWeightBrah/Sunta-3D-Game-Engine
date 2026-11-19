@@ -123,6 +123,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<GlowSpriteComponent>      ("Glow Sprite",       Rendering, "A soft spot of light facing the camera: glowing eyes, a halo"),
 		Plain<LiquidOrbComponent>       ("Liquid Orb",        Rendering, "A ball of clear liquid that bends and mirrors the sky"),
 		Plain<SwarmComponent>           ("Swarm",             Rendering, "Thousands of copies of a model: a sphere, a sky, a rain of missiles"),
+		Plain<EffectShapeComponent>     ("Effect Shape",      Rendering, "A shape of light played as an effect: a slash, a shockwave ring, a pillar of fire, a blast"),
 
 		Plain<BoxColliderComponent>     ("Box Collider",      Physics, "A box others collide with (or a trigger)"),
 		Plain<PhysicsBodyComponent>     ("Physics Body",      Physics, "Gravity, speed and being pushed around"),
@@ -139,6 +140,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<StaminaComponent>         ("Stamina",           Character, "Spent by rolls, attacks and blocking"),
 		Plain<PoiseComponent>           ("Poise",             Character, "How many hits it takes before staggering"),
 		Plain<LockOnComponent>          ("Lock On",           Character, "Locks the view on an enemy"),
+		Plain<StrikeAimComponent>       ("Strike Aim",        Character, "Bends the spine so attacks meet the enemy's head or chest"),
 		Plain<LockOnTargetComponent>    ("Lock On Target",    Character, "Can be locked on"),
 		WithRequired<FollowCameraComponent>("Follow Camera",  Character, "A camera that follows the player",
 			FollowCameraSystem::AddWithRequiredComponents),

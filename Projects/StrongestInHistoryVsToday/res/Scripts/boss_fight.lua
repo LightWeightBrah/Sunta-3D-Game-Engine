@@ -85,7 +85,7 @@ local ChannelSpellEverySeconds = 7
 local SummonAppearsAhead    = 4.5
 
 -- The guard: how often he answers a punch thrown close to him by raising his forearms, and for how long
-local GuardChance   = 0.3
+local GuardChance   = 0.45
 local GuardDistance = 2.6
 local GuardSeconds  = 0.9
 
@@ -298,11 +298,13 @@ local function updateTemple(deltaTime)
     position.y = mix(templeFromY, templeToY, t * t * (3 - 2 * t))
     temple.transform.position = position
 
-    -- The camera of the reveal watches the top coming out of the ground, not the empty sky where it will end up
+    -- The camera of the reveal follows the boss rising on the dome, aimed between him and the middle of the
+    -- temple (its points are far enough to hold all of it), never at the empty sky where the top will end up
     local focus = find("Domain Reveal Focus")
     if focus then
         local look = focus.transform.position
-        look.y = math.max(3, math.min(13, position.y + 30))
+        local middle = position.y + 12
+        look.y = math.max(3, math.min(17, (middle + this.transform.position.y + 1.5) * 0.5))
         focus.transform.position = look
     end
 
@@ -382,7 +384,6 @@ local function watchPlayerGreatSpell()
         end
         this.world:notify("BABY OIL DETONATION")
         this.world:slowMotion(0.5, 0.45)
-        flash = math.max(flash, 0.35)
     end
     playerGreatCasts = casts
 end
@@ -676,7 +677,7 @@ local O = {
     StarFlight     = "Star Flight",
     StarFlightFocus = "Star Flight Focus",
     -- How big the fire grows (meters) and how many tongues of it a second
-    SunRadius      = 16,
+    SunRadius      = 7,
     SunRate        = 22000,
     -- The player's last blow before the domain (film 1:14.8 = this second of the soundtrack): he is hurled back
     -- this far through the air, skids on, gets up with the sign
@@ -687,10 +688,10 @@ local O = {
     KnockFlySeconds = 1.4,
     KnockSkidSeconds = 1.0,
     KnockLieSeconds = 0.6,
-    KnockGetUpSeconds = 1.9,
+    KnockGetUpSeconds = 2.1,
     -- If the player never hurts him enough, the domain still opens (seconds of the soundtrack)
     DomainLatestAt = 150,
-    DetonationPrompt = "3: Imaginary Technique: Baby Oil Detonation",
+    DetonationPrompt = "2: Imaginary Technique: Baby Oil Detonation",
     DetonationHintSeconds = 10,
     KnockdownDamage = 25,
     -- Where the temple stands as a backdrop once the opening is over (behind the far wall)
@@ -800,17 +801,18 @@ function O.startSun(place)
     O.tween(function(v)
         sun.particles.spawnRadius = v
         sun.particles.particlesPerSecond = O.SunRate * (v / O.SunRadius) ^ 2
-    end, 3, O.SunRadius, 3.4)
+    end, 3, O.SunRadius, 1.3)
     if smoke and smoke.particles then
         smoke.transform.position = vec3(place.x, 2, place.z)
         smoke.particles.isEmitting = true
     end
 
-    after(3.8, function()
-        O.tween(function(v) sun.particles.particlesPerSecond = v end, O.SunRate, 0, 1.6)
+    -- (it burns out early: the temple is what the shot is about)
+    after(1.4, function()
+        O.tween(function(v) sun.particles.particlesPerSecond = v end, O.SunRate, 0, 1.0)
         after(1.7, function() sun.particles.isEmitting = false end)
     end)
-    after(8.5, function() if smoke and smoke.particles then smoke.particles.isEmitting = false end end)
+    after(4.5, function() if smoke and smoke.particles then smoke.particles.isEmitting = false end end)
 end
 
 function O.stopSun()
@@ -873,6 +875,9 @@ function O.startKnockback()
 
     this.characterActions:play("Knocked_Down")
     this.world:flash(vec3(1, 0.95, 0.85), 0.25, 0.05)
+    this.world:effect("Punch Impact", from + vec3(0, 1.3, 0), -away)
+    this.world:effect("Player Heavy Swing", from + vec3(0, 1.3, 0), -away)
+    this.world:impactFrame(1.0, 0.5)
     this.world:shakeCamera(1.0)
     this.world:slowMotion(0.4, 0.3)
     Audio.play(BoomSound, 1.0)
@@ -893,6 +898,8 @@ function O.crash(place)
         after(0.4, function() rubble.swarm:fall() end)
     end
     this.world:burst(O.SkidDust, place, 18)
+    this.world:effect("Crash Impact", place, this.transform.forward)
+    this.world:impactFrame(0.7, 0.35)
     this.world:shakeCamera(0.8)
     Audio.play(BoomSound, 0.8)
 end
@@ -1010,7 +1017,9 @@ function O.domainOpeningSteps()
         { 60.85, function()
             local stars = O.stars()
             if stars then stars:fall() end
-            this.world:flash(vec3(1, 1, 1), 1.4, 0.2)
+            -- a blink of light as they fall, not a white screen
+            this.world:flash(vec3(1, 0.85, 0.6), 0.5, 0.05)
+            this.world:impactFrame(0.8, 0.5)
             Audio.play(BoomSound, 1.0)
             if this.model then this.model.darkness = 1 end
             setEyes(10)
@@ -1029,7 +1038,7 @@ function O.domainOpeningSteps()
         { 63.7, function() O.playPlayer("Lying") end },
         { 65.2, function() this.world:shakeCamera(0.6); Audio.play(BoomSound, 0.8) end },
         { 66.6, function() O.playPlayer("Lying") end },
-        { 67.8, function() O.playPlayer("Get_Up") end },
+        -- (he stays down: the player gets him up with [2], see O.updateRise)
         -- The temple sinks again, he is back on the ground before the player, still black with white eyes
         { 68.4, function()
             isOnTheDome = false
@@ -1050,6 +1059,8 @@ function O.domainOpeningSteps()
         { 70.7, function()
             awaitingDetonation = true
             O.detonationHintLeft = O.DetonationHintSeconds
+            O.lyingUntilPress, O.lyingReplayIn = true, 0
+            playCutscene(O.DownCutscene)
             invulnerableLeft = 0.5
             this.enemy:startAttackCooldown(2.5)
             rainIn = RainEverySeconds
@@ -1067,6 +1078,39 @@ function O.domainOpeningSteps()
             moveTemple(O.TempleBackdropY, 7)
         end },
     }
+end
+
+-- ========== Down on his back until the player answers (film 1:44-1:49) ==========
+
+-- A moment of the cutscene the player answers: the camera over him lying where the stars threw him, the prompt on
+-- the screen ('Down Wait' waits for [2]); the answer: he rises with his hand up ('Technique Rise') and the great
+-- technique leaves his hand as he stands (its voice, eyes and the bottle from the sky: player_techniques.lua)
+O.DownCutscene, O.RiseCutscene, O.RiseSeconds = "Down Wait", "Technique Rise", 1.9
+
+function O.updateRise(deltaTime)
+    if not O.lyingUntilPress then return end
+
+    -- Nobody strikes a man who is down
+    this.enemy:startAttackCooldown(1)
+    rainIn, lineIn = math.max(rainIn, 2), math.max(lineIn, 2)
+
+    O.lyingReplayIn = O.lyingReplayIn - deltaTime
+    if O.lyingReplayIn <= 0 then
+        O.lyingReplayIn = 1.5
+        O.playPlayer("Lying")
+    end
+
+    local down = find(O.DownCutscene)
+    if not down or not down.cutscene or down.cutscene.isPlaying or not down.cutscene.wasAnswered then return end
+
+    O.lyingUntilPress = false
+    O.playPlayer("Get_Up")
+    playCutscene(O.RiseCutscene)
+    this.enemy:startAttackCooldown(O.RiseSeconds + 2)
+    after(O.RiseSeconds, function()
+        local spell = find(PlayerGreatSpell)
+        if spell and spell.spellCaster then spell.spellCaster:cast() end
+    end)
 end
 
 -- The prompt for the player's answer (the great technique's slot of the HUD shows when it is ready)
@@ -1108,7 +1152,8 @@ local function raiseDomain(isFirstTime)
     changeLook(Domain, 2.5)
     setAsh(true)
     Audio.playAt(RoarSound, this.transform.position, 1.2)
-    this.world:shakeCamera(0.8)
+    -- A rumble, not a quake: the fight goes on right away and the player must see it
+    this.world:shakeCamera(0.2)
 
     if isFirstTime then
         O.startOpening(O.domainOpeningSteps())
@@ -1120,13 +1165,16 @@ end
 shatterDomain = function()
     domainIsUp = false
     domainBrokenLeft = DomainBrokenSeconds
-    flash = 1
+    flash = 0.25
 
     changeLook(Shattered, 1.5)
     setAsh(false)
     Audio.play(BoomSound, 1.0)
     this.world:notify("DOMAIN SHATTERED")
     this.world:slowMotion(1.0, 0.3)
+    -- A white sphere and a wave across the whole arena, the picture kicked (scene_effects.py)
+    this.world:effect("Domain Shatter", this.transform.position + vec3(0, 1, 0))
+    this.world:impactFrame(1.0, 0.6)
 end
 
 -- The player's own domain: its spell has just left
@@ -1154,7 +1202,7 @@ local function promptPlayerDomain(deltaTime)
 
     local spell = find(PlayerDomainSpell)
     if domainIsUp and domainHintLeft > 0 and captionLeft <= 0 and spell and spell.spellCaster and spell.spellCaster.isReady then
-        this.world:prompt("2: shatter his domain with your own")
+        this.world:prompt("3: shatter his domain with your own")
     end
 end
 
@@ -1272,10 +1320,10 @@ local function startLastPhase()
     setHealthFloor(0)
 
     -- Everything comes faster now
-    this.meleeEnemy.attackCooldownSeconds = 0.65
-    this.meleeEnemy.heavyAttackChance = 0.4
-    this.meleeEnemy.dodgeChance = 0.45
-    this.characterActions.attackSpeed = 1.2
+    this.meleeEnemy.attackCooldownSeconds = 0.85
+    this.meleeEnemy.heavyAttackChance = 0.35
+    this.meleeEnemy.dodgeChance = 0.4
+    this.characterActions.attackSpeed = 1.25
     blinkIn = 2.5
     ringIn = 5
 
@@ -1329,10 +1377,10 @@ local function reset()
     flash = 0
     playerDomainCasts = 0
 
-    this.meleeEnemy.attackCooldownSeconds = 1.0
+    this.meleeEnemy.attackCooldownSeconds = 1.25
     this.meleeEnemy.heavyAttackChance = 0.25
     this.meleeEnemy.dodgeChance = 0.3
-    this.characterActions.attackSpeed = 1.0
+    this.characterActions.attackSpeed = 1.1
 
     farSeconds = 0
     blinkIn = 6
@@ -1349,6 +1397,7 @@ local function reset()
     if stars then stars:reset(); stars.isVisible = false end
     O.isHoldingSign = false
     awaitingDetonation = false
+    O.lyingUntilPress = false
     isOnTheDome = false
     silhouetteLeft = 0
     if this.model then this.model.darkness = 0 end
@@ -1432,17 +1481,50 @@ local GuardState = {
     end
 }
 
+-- ========== Pressure: a string of punches doesn't pin him down ==========
+
+-- Four blows within 2 s (a whole combo landed): he hops back out of them or answers with a heavy blow through them
+-- (then not again for 3 s). A combo gets through first: the player's reward, his answer the price of greed
+O.PressureHits, O.PressureSeconds, O.PressureCooldown, O.PressureDodgeChance = 4, 2.0, 3.0, 0.5
+
+function O.notePressure()
+    local now = clock()
+    O.hits = O.hits or {}
+    table.insert(O.hits, now)
+    while #O.hits > 0 and now - O.hits[1] > O.PressureSeconds do table.remove(O.hits, 1) end
+    if #O.hits < O.PressureHits or now < (O.pressureFreeAt or 0) or isChanneling or O.opening or O.knock then return end
+
+    O.hits = {}
+    O.pressureFreeAt = now + O.PressureCooldown
+    if math.random() < O.PressureDodgeChance then
+        this.enemy:dodge(vec3(0, 0, 0))
+    else
+        this.enemy:attack("heavy")
+    end
+end
+
+O.CubeBurstsAfter = 0.8
+
 -- ========== Called by the engine ==========
 
 -- A hit as hard as the bottle from the sky ends in a blast of white, as in the film
 function OnDamaged(amount, kind, attacker)
+    if kind == "weapon" then O.notePressure() end
     if phase == 1 and not O.opening and this.health.fraction <= DomainHealthFraction then
         O.wantsKnockback = true
     end
+    -- The bottle from the sky: where it lands it becomes a block of baby oil around him (its hit effect, 'Oil Cube'),
+    -- which bursts a moment later into a ball of oil and fire - no white screen, the blast is seen
     if kind == "spell" and amount >= 100 then
-        this.world:flash(vec3(1, 1, 1), 1.6, 0.3)
         this.world:slowMotion(0.9, 0.3)
-        this.world:shakeCamera(1.0)
+        this.world:shakeCamera(0.4)
+        local at = this.transform.position + vec3(0, 1.4, 0)
+        after(O.CubeBurstsAfter, function()
+            this.world:effect("Oil Detonation", at)
+            this.world:impactFrame(1.0, 0.55)
+            this.world:shakeCamera(0.9)
+            Audio.play(BoomSound, 1.0)
+        end)
     end
 end
 
@@ -1472,6 +1554,7 @@ function OnUpdate(deltaTime)
     if this.world.isCutscenePlaying then
         if phase > 0 then
             updateOpening()
+            O.updateRise(deltaTime)
             O.updateKnock(deltaTime)
             O.updateSign(deltaTime)
             updateTweens(deltaTime)
@@ -1488,6 +1571,7 @@ function OnUpdate(deltaTime)
     -- The O.opening of the domain goes on (between its cutscenes too): the fight waits
     if O.opening then
         updateOpening()
+        O.updateRise(deltaTime)
         O.updateKnock(deltaTime)
         O.updateSign(deltaTime)
         updateTweens(deltaTime)
@@ -1527,7 +1611,8 @@ function OnUpdate(deltaTime)
     updateGamble()
     updateDomain(deltaTime)
     updateTweens(deltaTime)
-    if not promptDetonation(deltaTime) then promptPlayerDomain(deltaTime) end
+    O.updateRise(deltaTime)
+    if not O.lyingUntilPress and not promptDetonation(deltaTime) then promptPlayerDomain(deltaTime) end
     updateLook(deltaTime)
     updateTemple(deltaTime)
 end

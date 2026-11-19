@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "PostProcessing.h"
 
+#include <chrono>
 #include <glm/glm.hpp>
 
 #include "ElementBuffer.h"
@@ -40,6 +41,31 @@ const glm::vec3 QuadCorners[] =
 };
 
 const unsigned int QuadIndices[] = { 0, 1, 2, 2, 3, 0 };
+
+// The impact frame being played (see PostProcessing::Kick), timed by the wall clock: hit-stops freeze the game, not it
+struct ImpactFrame
+{
+	float strength = 0.0f;
+	float seconds  = 0.3f;
+	std::chrono::steady_clock::time_point start;
+};
+
+ImpactFrame& GetImpact()
+{
+	static ImpactFrame impact;
+	return impact;
+}
+
+float CurrentImpact()
+{
+	const ImpactFrame& impact = GetImpact();
+	if (impact.strength <= 0.0f)
+		return 0.0f;
+
+	const float age = std::chrono::duration<float>(std::chrono::steady_clock::now() - impact.start).count();
+	const float left = 1.0f - glm::clamp(age / glm::max(impact.seconds, 0.01f), 0.0f, 1.0f);
+	return impact.strength * left * left;
+}
 
 std::shared_ptr<Framebuffer> CreateTarget(int width, int height, bool hasDepth)
 {
@@ -191,9 +217,28 @@ void PostProcessing::End(const PostProcessSettings& settings)
 	}
 
 	compositeShader->SetUniform1f("exposure", settings.exposure);
+	compositeShader->SetUniform1f("impact", CurrentImpact());
 	DrawScreenQuad();
 
 	rendererDevice.SetDepthTest(true);
+}
+
+void PostProcessing::Kick(float strength, float seconds)
+{
+	strength = glm::clamp(strength, 0.0f, 1.0f);
+	if (strength < CurrentImpact())
+		return;
+
+	ImpactFrame& impact = GetImpact();
+	impact.strength = strength;
+	impact.seconds  = seconds;
+	impact.start    = std::chrono::steady_clock::now();
+}
+
+void PostProcessing::KickFromHit(float cameraShake)
+{
+	if (hitKickPerShake > 0.0f)
+		Kick(cameraShake * hitKickPerShake);
 }
 
 }

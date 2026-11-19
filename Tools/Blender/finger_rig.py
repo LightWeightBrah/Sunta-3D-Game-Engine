@@ -52,6 +52,8 @@ class Hand:
     palm: Vector      # out of the palm (the way the fingers close)
     bones: dict = field(default_factory=dict)   # finger -> (first bone, second bone)
     axes: dict = field(default_factory=dict)    # finger -> the direction its joints turn around (closing it)
+    # bone -> how far it is already bent towards the palm at rest (degrees): a pose's angles are then from straight
+    rest_bend: dict = field(default_factory=dict)
 
 
 def bone_name(finger, joint, side):
@@ -220,6 +222,40 @@ def smooth_step(value):
     return value * value * (3.0 - 2.0 * value)
 
 
+def hands_from_skeleton(armature):
+    """The hands of a skeleton that has its fingers already (Mixamo's auto-rigger: three bones a finger, named by
+    motion_retarget.mixamo_native_names). Returns {"_R": Hand, "_L": Hand} for key_poses and hand_target"""
+    rig = {}
+    for side in ("_R", "_L"):
+        def head(name):
+            return armature.matrix_world @ armature.data.bones[name].head_local
+
+        wrist = head("Hand" + side)
+        fingers = (head(bone_name("Middle", 1, side)) - wrist).normalized()
+        across = head(bone_name("Index", 1, side)) - head(bone_name("Little", 1, side))
+        across = (across - fingers * across.dot(fingers)).normalized()
+        # Out of the palm: the side of the hand's plane where the thumb's root lies
+        palm = fingers.cross(across)
+        if (head(bone_name("Thumb", 2, side)) - wrist).dot(palm) < 0.0:
+            palm = -palm
+        hand = Hand(side, wrist, fingers, across, palm)
+        for finger in FINGERS + ("Thumb",):
+            hand.bones[finger] = tuple(bone_name(finger, joint, side) for joint in (1, 2, 3))
+            hand.axes[finger] = fingers.copy() if finger == "Thumb" else across.copy()
+        # The fingers of the uploaded mesh rest a little curled: measured, so 'open' is straight and 'two' points up
+        for finger in FINGERS:
+            sign = closing_sign(hand, finger)
+            before = fingers
+            for name in hand.bones[finger]:
+                bone = armature.data.bones[name]
+                direction = (armature.matrix_world.to_3x3() @ (bone.tail_local - bone.head_local)).normalized()
+                bend = math.degrees(math.atan2(before.cross(direction).dot(hand.axes[finger]) * sign, before.dot(direction)))
+                hand.rest_bend[name] = bend
+                before = direction
+        rig[side] = hand
+    return rig
+
+
 def add_fingers(armature, mesh):
     """Finger bones for both hands. Returns {"_R": Hand, "_L": Hand}"""
     rig = {side: add_hand_fingers(armature, mesh, side) for side in ("_R", "_L")}
@@ -243,9 +279,16 @@ def pose_rotations(armature, hand, pose):
     """{bone name: its rotation_quaternion} for a pose of POSES (or a dict like its entries)"""
     angles = POSES[pose] if isinstance(pose, str) else pose
     rotations = {}
-    for finger, (first_name, second_name) in hand.bones.items():
+    for finger, names in hand.bones.items():
         sign = closing_sign(hand, finger)
-        for name, degrees in zip((first_name, second_name), angles[finger]):
+        first, second = angles[finger]
+        if len(names) == 3:
+            # Three joints (a skeleton rigged by Mixamo): the last one bends less, the thumb's base turns a little
+            joints = (first * 0.4, first * 0.6, second) if finger == "Thumb" else (first, second, second * 0.75)
+        else:
+            joints = (first, second)
+        for name, degrees in zip(names, joints):
+            degrees -= hand.rest_bend.get(name, 0.0)
             # A turn around a direction of the armature, said in the bone's own space
             rest = (armature.matrix_world @ armature.data.bones[name].matrix_local).to_quaternion()
             turn = Quaternion(hand.axes[finger], math.radians(degrees) * sign)

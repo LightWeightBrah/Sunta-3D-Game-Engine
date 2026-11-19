@@ -43,6 +43,10 @@ struct EnvironmentComponent
 	float bloomIntensity          = 1.2f;
 	int   bloomBlurPasses         = 6;
 
+	// How hard the player's blows (given and taken) kick the picture: an impact frame (see PostProcessing::Kick)
+	// of the blow's camera shake times this. 0: never
+	float hitImpactFrame          = 0.0f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<EnvironmentComponent>("Environment", EngineAssets::Icons::Bonfire,
@@ -57,7 +61,8 @@ struct EnvironmentComponent
 				ADD_PROPERTY(EnvironmentComponent, isBloomEnabled, PropertyDataType::Bool),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, bloomThreshold, PropertyDataType::Float, 0.0f, MaxBloomThreshold),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, bloomIntensity, PropertyDataType::Float, 0.0f, MaxBloomIntensity),
-				ADD_PROPERTY(EnvironmentComponent, bloomBlurPasses, PropertyDataType::Int)
+				ADD_PROPERTY(EnvironmentComponent, bloomBlurPasses, PropertyDataType::Int),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, hitImpactFrame, PropertyDataType::Float, 0.0f, 2.0f)
 			});
 	}
 };

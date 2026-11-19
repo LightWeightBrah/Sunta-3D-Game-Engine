@@ -1,5 +1,7 @@
 #include "SuntaPreCompiled.h"
 #include "Application.h"
+#include "Gameplay/DeveloperCheats.h"
+#include "Gameplay/CombatLog.h"
 
 #include "Scene/Scene.h"
 #include "Renderer/Renderer.h"
@@ -8,6 +10,7 @@
 #include "EngineTime.h"
 #include "FatalError.h"
 #include "InputManager.h"
+#include "InputPlayback.h"
 #include "Log.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
@@ -59,6 +62,7 @@ void Application::Run()
 
 	bool isWindowShown = false;
 	int  framesDrawn   = 0;
+	float playbackSeconds = 0.0f; // time of the test input script (real frame time, starts at the first frame)
 
 	while (isRunning)
 	{
@@ -79,9 +83,20 @@ void Application::Run()
 		if (isMinimized)
 			continue;
 
+		if (InputPlayback::IsActive())
+		{
+			playbackSeconds += EngineTime::deltaTime;
+			InputPlayback::Update(playbackSeconds);
+			if (InputPlayback::WantsQuit())
+				isRunning = false;
+		}
+
 		ProcessInput();
 		Update(EngineTime::deltaTime);
 		Render();
+
+		if (InputPlayback::IsActive())
+			InputPlayback::AfterRender(window->GetWidth(), window->GetHeight());
 
 		InputManager::Clear();
 
@@ -120,6 +135,7 @@ void Application::Init()
 
 	ScriptingEngine::Init();
 	InputManager::Init();
+	InputPlayback::Init();
 
 	RendererAPI::SetAPI(RendererAPI::API::OpenGL);
 
@@ -167,6 +183,7 @@ void Application::ApplyDeveloperMode()
 		return;
 
 	Terminal::OpenConsole();
+	DeveloperCheats::isAllowed = true;
 	SUNTA_ENGINE_LOG_INFO("Application: Development build, the log is shown in the console too");
 }
 
@@ -242,6 +259,8 @@ void Application::Render()
 
 void Application::Shutdown()
 {
+	CombatLog::Flush();
+
 	// Last attached layer is detached first
 	for (auto layerIterator = layers.rbegin(); layerIterator != layers.rend(); ++layerIterator)
 		(*layerIterator)->OnDetach();

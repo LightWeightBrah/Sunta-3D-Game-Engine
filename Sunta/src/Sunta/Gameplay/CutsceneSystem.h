@@ -31,6 +31,10 @@ public:
 
 	// When the game starts: no cutscene played yet
 	static void PrepareForPlay(EntityManager& entityManager);
+
+	// The black bars stay on (a script holds them through a sequence of shots, so they don't slide out and back in
+	// between two cutscenes) until it lets them go. Between cutscenes that follow each other closely the bars stay anyway
+	static void HoldLetterbox(bool isHeld);
 };
 
 }

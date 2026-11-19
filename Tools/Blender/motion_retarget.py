@@ -3,7 +3,7 @@ Moves motion clips onto the skeleton of the engine's characters (the knight's bo
 
 Clips come from Mixamo (downloaded as "FBX Binary, Without Skin": the Mixamo skeleton and its motion), from Meshy's
 animation library (an FBX with the skeleton of a character Meshy rigged, several clips in one file) or from Meshy's
-Text to Motion (an FBX with an SMPL skeleton). Each kind of skeleton is a Rig below: which of its bones drives
+Text to Motion (an FBX with an SMPL skeleton) or from NVIDIA Kimodo (text to motion run locally, a BVH with its SOMA skeleton). Each kind of skeleton is a Rig below: which of its bones drives
 which bone of ours, and which joint each of those bones points at
 
 Every bone of ours copies the world rotation of its bone in the clip. The two skeletons stand differently at rest
@@ -38,6 +38,9 @@ class Rig:
     # hand of ours turns so its fist matches the clip's hand (see match_hands): a hand bone alone lies differently in
     # the two skeletons, and a held weapon stuck out a quarter turn away from where the motion capture held its prop
     hand_markers: dict = field(default_factory=dict)
+    # The clips were made on the character's own skeleton (Mixamo animations downloaded for the uploaded character):
+    # each bone copies the clip bone's turn away from its rest pose, nothing is guessed from bone directions
+    same_skeleton: bool = False
 
 
 def mixamo_hand(side):
@@ -66,6 +69,50 @@ MIXAMO = Rig(hand_markers={"_R": mixamo_hand("_R"), "_L": mixamo_hand("_L")}, bo
     "Shin_L":     "mixamorig:LeftLeg",
     "Foot_L":     "mixamorig:LeftFoot",
 })
+
+
+MIXAMO_FINGERS = {"Thumb": "Thumb", "Index": "Index", "Middle": "Middle", "Ring": "Ring", "Little": "Pinky"}
+
+
+def mixamo_native_names():
+    """A character rigged by Mixamo's auto-rigger: their bone -> ours, every bone (the lower spine, the toes, three
+    joints and an end of every finger: finger_rig.bone_name(finger, joint, side), joint 4 is the fingertip)"""
+    names = {theirs: ours for ours, theirs in MIXAMO.bone_of.items()}
+    names["mixamorig:Spine"] = "Spine_Low"
+    names["mixamorig:HeadTop_End"] = "Head_End"
+    for side, their_side in (("_R", "Right"), ("_L", "Left")):
+        names["mixamorig:{}ToeBase".format(their_side)] = "Toe" + side
+        names["mixamorig:{}Toe_End".format(their_side)] = "Toe_End" + side
+        for ours, theirs in MIXAMO_FINGERS.items():
+            for joint in range(1, 5):
+                names["mixamorig:{}Hand{}{}".format(their_side, theirs, joint)] = "Finger_{}_{}{}".format(ours, joint, side)
+    return names
+
+
+# Clips downloaded for a character that Mixamo rigged itself: the same skeleton, every bone and finger copied
+# (their clip files stand in a T pose at rest, the rigged character in the A pose it was uploaded in: the bones are
+# matched by their directions like any other skeleton's, which is exact here since the joints are the same)
+def mixamo_native_aims():
+    """Their bone -> the child joint it points at: the same joint character_from_mesh.point_bones_at_children points our
+    bone at (the importer's own guess of a tail, e.g. the head's, leans away from it and tilted the head back)"""
+    chain = ["Hips", "Spine", "Spine1", "Spine2", "Neck", "Head", "HeadTop_End"]
+    aims = {"mixamorig:" + bone: "mixamorig:" + child for bone, child in zip(chain, chain[1:])}
+    for side in ("Right", "Left"):
+        arm = [side + "Shoulder", side + "Arm", side + "ForeArm", side + "Hand", side + "HandMiddle1"]
+        leg = [side + "UpLeg", side + "Leg", side + "Foot", side + "ToeBase", side + "Toe_End"]
+        for part in (arm, leg):
+            aims.update({"mixamorig:" + bone: "mixamorig:" + child for bone, child in zip(part, part[1:])})
+        for finger in MIXAMO_FINGERS.values():
+            joints = ["{}Hand{}{}".format(side, finger, joint) for joint in range(1, 5)]
+            aims.update({"mixamorig:" + bone: "mixamorig:" + child for bone, child in zip(joints, joints[1:])})
+    return aims
+
+
+# (the ends of the chains - the top of the head, the toes' and fingers' tips - only follow their parents)
+MIXAMO_NATIVE = Rig(bone_of={ours: theirs for theirs, ours in mixamo_native_names().items()
+                             if not theirs.endswith(("_End", "4"))},
+                    aims_at=mixamo_native_aims(),
+                    hand_markers={"_R": mixamo_hand("_R"), "_L": mixamo_hand("_L")})
 
 
 # Characters rigged by Meshy (its library animations come on them): Mixamo's names without the prefix, a longer spine
@@ -162,6 +209,47 @@ QUATERNIUS = Rig(
 )
 
 
+
+def soma_side(side):
+    name = "Right" if side == "_R" else "Left"
+    return {
+        "Shoulder" + side: name + "Shoulder",
+        "UpperArm" + side: name + "Arm",
+        "LowerArm" + side: name + "ForeArm",
+        "Hand" + side:     name + "Hand",
+        "Thigh" + side:    name + "Leg",
+        "Shin" + side:     name + "Shin",
+        "Foot" + side:     name + "Foot",
+    }
+
+
+def soma_aims(side):
+    name = "Right" if side == "_R" else "Left"
+    return {
+        name + "Shoulder": name + "Arm",
+        name + "Arm":      name + "ForeArm",
+        name + "ForeArm":  name + "Hand",
+        name + "Hand":     name + "HandMiddle1",
+        name + "Leg":      name + "Shin",
+        name + "Shin":     name + "Foot",
+        name + "Foot":     name + "ToeBase",
+    }
+
+
+# NVIDIA Kimodo's text to motion clips (its SOMA body model, saved as BVH: Mixamo-like names without the prefix,
+# but the thigh is "Leg" and the shin "Shin"). The BVH importer points every bone at its first child, which for
+# a hand is the thumb: the aims below say which joint each bone really points at
+SOMA = Rig(
+    hand_markers={side: tuple(("Right" if side == "_R" else "Left") + part
+                              for part in ("HandIndex1", "HandPinky1", "HandMiddle1", "Hand")) for side in ("_L", "_R")},
+    # (no neck and head: their turn around their own length can't be matched from directions alone, and Kimodo's
+    # heads came out twisted to a side; ours stay as at rest on the chest, looking where the body looks)
+    bone_of=dict({"Hips": "Hips", "Spine": "Spine2", "Chest": "Chest"},
+                 **soma_side("_R"), **soma_side("_L")),
+    aims_at=dict({"Hips": "Spine1", "Spine2": "Chest", "Chest": "Neck1"},
+                 **soma_aims("_R"), **soma_aims("_L")),
+)
+
 @dataclass
 class MotionClip:
     """One animation taken from a clip file (a path from Tools/Blender): the whole file or a part of it
@@ -176,6 +264,8 @@ class MotionClip:
     # The character keeps facing where it faced in the first frame (a motion that turns the whole body around,
     # e.g. a parry made by Text to Motion, would otherwise face away from the enemy in the middle of it)
     keeps_facing: bool = False
+    # Degrees the whole clip is turned around the up axis (a take made facing to a side, e.g. by text to motion)
+    turn_degrees: float = 0.0
 
 
 # ========== Rotations and directions of the bones (world space, the armature objects included) ==========
@@ -219,6 +309,9 @@ def make_rest_corrections(source, rig, character):
     the motion capture did (an axe hanging down stuck out sideways)"""
     corrections = {}
     for our_bone, their_bone in rig.bone_of.items():
+        if rig.same_skeleton:
+            corrections[our_bone] = world_rest_rotation(source, their_bone).inverted() @ world_rest_rotation(character, our_bone)
+            continue
         their_direction = world_rest_direction(source, their_bone, rig.aims_at)
         our_direction = world_rest_direction(character, our_bone)
         to_our_direction = rest_frame(our_direction) @ rest_frame(their_direction).inverted()
@@ -245,6 +338,9 @@ def load_source_armature(path, rig, action_name=None):
     if path.lower().endswith((".glb", ".gltf")):
         # glTF keeps time in seconds: the importer keys it at the scene's frame rate
         bpy.ops.import_scene.gltf(filepath=path)
+    elif path.lower().endswith(".bvh"):
+        # BVH (Kimodo): one frame per key, the scene takes the file's frame rate like with FBX
+        bpy.ops.import_anim.bvh(filepath=path, update_scene_fps=True, update_scene_duration=False)
     else:
         bpy.ops.import_scene.fbx(filepath=path)
     source_fps = scene.render.fps / scene.render.fps_base
@@ -466,6 +562,9 @@ def retarget(character, clip, action, hand_frames=None):
     'hand_frames': see match_hands (without it the hands copy the clip's hand bones)"""
     actions_before = set(bpy.data.actions)
     source, source_fps = load_source_armature(os.path.join(BLENDER_FOLDER, clip.file_name), clip.rig, clip.action)
+    if clip.turn_degrees:
+        source.matrix_world = Matrix.Rotation(math.radians(clip.turn_degrees), 4, "Z") @ source.matrix_world
+        bpy.context.view_layer.update()
     corrections = make_rest_corrections(source, clip.rig, character)
 
     scene = bpy.context.scene

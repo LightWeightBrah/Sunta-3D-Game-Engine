@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <glm/glm.hpp>
 
 #include "ECS/ComponentLayout.h"
@@ -32,6 +33,21 @@ enum class CharacterAction
 	             // the character walks slowly meanwhile. A roll or an attack can't cut it short, a hit can
 	Cast         // casting a spell (see SpellCasterComponent): an animation played once by name, turning after the target
 	             // until the spell leaves. A roll or an attack can't cut it short, a hit can (the spell is lost)
+};
+
+// One attack animation with timing of its own: blows of one combo land at different moments (a jab early, a hook late),
+// so each says when it hurts and how hard. An attack whose animation has no move uses the light/heavy windows
+struct AttackMove
+{
+	std::string animation;
+	float hitFrom          = 0.3f;
+	float hitTo            = 0.6f;
+	float damageMultiplier = 1.0f;
+	// After this part the attack may be cut short by the next one (below 0: the character's 'cancelFrom'). A heavy
+	// blow ends later, so two of them pressed fast don't blend into each other
+	float cancelFrom       = -1.0f;
+	// Where this animation strikes by itself (meters above the feet), for the Strike Aim; 0 = the Strike Aim's own height
+	float strikeHeight     = 0.0f;
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -79,6 +95,29 @@ struct CharacterActionsComponent
 	std::string parryAnimation;
 	std::string parriedAnimation;
 
+	// ========== More ways to attack (all optional: an empty name turns that one off) ==========
+
+	// The combo goes on past the third light attack with these, in order, then starts over
+	std::vector<std::string> extraLightAttackAnimations;
+	// A heavy attack pressed again during a heavy one: the follow-up blow (then back to the first)
+	std::string heavyAttack2Animation;
+	// An attack while running: a lunge that carries the character 'runningAttackSpeed' meters per second into it
+	std::string runningAttackAnimation;
+	float       runningAttackSpeed = 7.0f;
+	// An attack pressed during a roll or a backstep: it comes out of the dodge
+	std::string dodgeAttackAnimation;
+	// An attack at an enemy staggering after a parry (within 'riposteReach' meters, in front): the finishing blow
+	// (it hurts 'riposteDamageMultiplier' times more either way)
+	std::string riposteAnimation;
+	float       riposteReach = 2.5f;
+	// Timing and strength of single attack animations (see AttackMove)
+	std::vector<AttackMove> attackMoves;
+
+	// The stagger after a hit, chosen at random among the hit reaction and these; a heavy blow (a heavy attack, a leap)
+	// plays 'heavyHitReactionAnimation' when there is one
+	std::vector<std::string> extraHitReactionAnimations;
+	std::string heavyHitReactionAnimation;
+
 	// A shockwave where a heavy attack or a leap lands (0 radius = none): everyone of the other side within
 	// 'shockwaveRadius' of the point 'shockwaveDistance' in front of the character takes 'shockwaveDamage' (a roll dodges it)
 	// when the attack starts to hit. The Particle Emitter of the child named 'shockwaveEffect' bursts there
@@ -90,6 +129,20 @@ struct CharacterActionsComponent
 	// at three times its radius
 	float       shockwaveCameraShake = 0.6f;
 
+	// Hits don't stagger the character while it attacks (hyper armor, as a souls boss's blows): 0 never, 1 during
+	// heavy attacks and leaps, 2 during every attack. Its health still drops: trading blows with it costs the attacker
+	int hyperArmor = 0;
+
+	// An effect of the scene (see EffectSystem) played the moment each attack starts to hit, in front of the
+	// character at chest height, facing where it strikes: the arc of a slash, the blur of a fist, a gust
+	// 'heavySwingEffect' for heavy attacks and leaps (empty: the same). Empty: none
+	std::string swingEffect;
+	std::string heavySwingEffect;
+	float       swingEffectHeight   = 1.2f;
+	float       swingEffectDistance = 0.6f;
+	// When in the hit window it appears: 0 as the window opens, 1 as it closes (the moment the blow really flies)
+	float       swingEffectAt       = 0.25f;
+
 	// How fast an attack keeps turning towards its target (degrees per second) until it starts to hit: a boss tracks
 	// the player during its wind-up and commits only for the blow itself, so walking around it doesn't dodge it.
 	// 0 = the attack commits to its direction when it starts (the player's attacks)
@@ -100,6 +153,9 @@ struct CharacterActionsComponent
 	// 0 = every attack steps at 'attackStepSpeed'
 	float attackLungeSpeed = 0.0f;
 	float attackReach      = 1.8f;
+	// The farthest a lunge carries the character (meters): a punch thrown from too far stays a short step forward
+	// instead of a slide across the floor
+	float attackLungeMaxDistance = 100.0f;
 
 	// A delayed blow (the cruel timing of the Souls bosses): with this chance (0..1) an attack holds still in its wind-up
 	// for 'attackDelaySeconds', at 'attackDelayAt' of the way to its hit (keeps tracking its target meanwhile),
@@ -150,6 +206,9 @@ struct CharacterActionsComponent
 
 	// After this part an action can be interrupted: by the remembered next action or by walking away
 	float cancelFrom = 0.75f;
+	// A roll or a backstep can't be ended by walking away before this part (a held direction would cut the roll
+	// short and snap the character back to walking); the next action may still come after 'cancelFrom'
+	float dodgeCancelFrom = 0.0f;
 
 	// How long the animation of an action takes to fade in
 	float blendSeconds = 0.08f;
@@ -162,14 +221,26 @@ struct CharacterActionsComponent
 	CharacterAction currentAction = CharacterAction::None;
 	CharacterAction queuedAction  = CharacterAction::None;
 
-	// Which light attack of the combo plays now (0, 1 or 2)
+	// Which light attack of the combo plays now (0, 1, 2, then the extra ones)
 	int lightAttackStep = 0;
+	// Which heavy attack plays now (0 the first, 1 the follow-up)
+	int heavyAttackStep = 0;
+
+	// The animation the current action plays (attacks pick it when they start: the combo's next blow, a riposte, ...)
+	std::string currentAnimation;
+	// The stagger chosen for the next hit reaction (see extraHitReactionAnimations)
+	std::string chosenHitReaction;
+	// The current attack started from a run (it lunges at 'runningAttackSpeed')
+	bool isRunningAttack = false;
 
 	// The direction the current action moves the character in (in the world, horizontal)
 	glm::vec3 actionDirection = glm::vec3(0.0f, 0.0f, -1.0f);
 
 	// How fast the current leap flies (chosen when it starts, from the distance to the target)
 	float currentLeapSpeed = 0.0f;
+
+	// The attack whose swing effect has been played (see swingEffect)
+	unsigned int swingEffectAttackNumber = 0;
 
 	// How fast the current attack steps in (chosen when it starts, see attackLungeSpeed)
 	float currentAttackStepSpeed = 0.0f;
@@ -227,9 +298,22 @@ struct CharacterActionsComponent
 	// Staggering after its attack was parried: the next hit it takes is a riposte
 	bool IsOpenToRiposte() const { return currentAction == CharacterAction::Parried; }
 
+	// The timing of the attack playing now, when its animation has one (see AttackMove)
+	const AttackMove* FindCurrentMove() const
+	{
+		if (!IsAttacking())
+			return nullptr;
+		for (const AttackMove& move : attackMoves)
+			if (move.animation == currentAnimation)
+				return &move;
+		return nullptr;
+	}
+
 	// Where the part of the current attack that hurts starts (0..1 of the attack), below 0 when no attack is going on
 	float GetHitFrom() const
 	{
+		if (const AttackMove* move = FindCurrentMove())
+			return move->hitFrom;
 		switch (currentAction)
 		{
 		case CharacterAction::LightAttack: return lightHitFrom;
@@ -239,9 +323,34 @@ struct CharacterActionsComponent
 		}
 	}
 
+	// Hyper armor now (see hyperArmor)
+	bool HasHyperArmor() const
+	{
+		if (hyperArmor >= 2)
+			return IsAttacking();
+		return hyperArmor == 1 && (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack);
+	}
+
+	// Where it ends (0..1 of the attack), below 0 when no attack is going on
+	float GetHitTo() const
+	{
+		if (const AttackMove* move = FindCurrentMove())
+			return move->hitTo;
+		switch (currentAction)
+		{
+		case CharacterAction::LightAttack: return lightHitTo;
+		case CharacterAction::HeavyAttack: return heavyHitTo;
+		case CharacterAction::LeapAttack:  return leapHitTo;
+		default:                           return -1.0f;
+		}
+	}
+
 	// True during the part of the current attack that hurts
 	bool IsInHitWindow() const
 	{
+		if (const AttackMove* move = FindCurrentMove())
+			return actionProgress >= move->hitFrom && actionProgress <= move->hitTo;
+
 		if (currentAction == CharacterAction::LightAttack)
 			return actionProgress >= lightHitFrom && actionProgress <= lightHitTo;
 
@@ -257,6 +366,8 @@ struct CharacterActionsComponent
 	// A leap ends in a heavy blow
 	float GetDamageMultiplier() const
 	{
+		if (const AttackMove* move = FindCurrentMove())
+			return move->damageMultiplier;
 		return (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack) ? heavyDamageMultiplier : 1.0f;
 	}
 

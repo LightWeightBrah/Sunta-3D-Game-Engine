@@ -15,6 +15,8 @@ import copy
 import json
 from pathlib import Path
 
+import scene_effects
+
 PROJECT = Path(__file__).resolve().parents[1]
 SOURCE_SCENE = PROJECT.parent / "MyGame" / "res" / "Scenes" / "Main.scene"
 TARGET_SCENE = PROJECT / "res" / "Scenes" / "Main.scene"
@@ -55,7 +57,8 @@ ARENA_CENTER = [0.0, 0.0, -50.0]
 ARENA_HALF_EXTENTS = [30.0, 60.0, 29.6]
 ARENA_STARTS_AT_Z = -19.5
 
-PLAYER_START = [0.0, 0.0, -30.0]
+# Outside the arena, on the street that leads to it: the player walks up to the fog and enters with E
+PLAYER_START = [0.0, 0.0, -3.0]
 BOSS_START = [0.0, 0.0, -58.0]
 # A dormant enemy still has a body: it waits on its own piece of floor far outside the arena
 SUMMON_WAITING_PLACE = [0.0, 0.0, -160.0]
@@ -72,6 +75,33 @@ TOWER_MODELS = ("sih_tower_a", "sih_tower_b", "sih_tower_c")
 # Heaps of rubble lie along the border of the arena this far apart (meters), and the ruins of the city stand around it:
 # (x, z, turned by degrees, size, which tower)
 RUBBLE_EVERY = 9.0
+# Over the street to the arena: close on both sides and at its end behind the player
+STREET_RUINS = [(-20.0, 22.0, 160.0, 1.15, 0), (18.0, 26.0, 20.0, 1.1, 1)]
+
+
+def skyline_ruins(placed):
+    """Two rings of burnt out towers around the arena, close enough together that no gap opens onto empty land:
+    the inner one between the arena and the horizon, the outer one taller behind it. Not on the street to the arena,
+    not in front of the temple (it stands behind the far wall), not on a tower already placed"""
+    import math
+    ruins = []
+    for ring, (radius, step, base_size) in enumerate(((78.0, 17.0, 1.15), (135.0, 13.0, 1.6))):
+        angle = 0.0
+        number = 0
+        while angle < 360.0:
+            number += 1
+            wobble = ((number * 37 + ring * 11) % 9) - 4.0
+            distance = radius + ((number * 23 + ring * 7) % 13) - 6.0
+            x = ARENA_CENTER[0] + math.sin(math.radians(angle + wobble)) * distance
+            z = ARENA_CENTER[2] + math.cos(math.radians(angle + wobble)) * distance
+            on_street = abs(x) < 16.0 and z > -30.0
+            before_temple = abs(x) < 26.0 and z < -90.0 and ring == 0
+            crowded = any((x - other[0]) ** 2 + (z - other[1]) ** 2 < 18.0 ** 2 for other in placed + ruins)
+            if not (on_street or before_temple or crowded):
+                size = base_size + ((number * 31) % 6) * 0.07
+                ruins.append((x, z, (number * 67) % 360, size, (number + ring) % 3))
+            angle += step
+    return ruins
 CITY_RUINS = [
     (-52.0, -34.0, 20.0, 1.0, 0), (-60.0, -62.0, 110.0, 1.15, 1), (-48.0, -92.0, 200.0, 0.9, 2), (-78.0, -18.0, 70.0, 1.3, 2),
     (54.0, -30.0, 250.0, 1.1, 1), (62.0, -58.0, 300.0, 0.95, 0), (50.0, -90.0, 150.0, 1.2, 2), (82.0, -84.0, 40.0, 1.35, 0),
@@ -242,7 +272,9 @@ def add_sky_and_camera(builder):
     # The sky of the film: heavy clouds lit from below by a city on fire (Poly Haven 'the_sky_is_on_fire', CC0,
     # made into a skybox by Tools/Skybox/panorama_to_cubemap.py)
     entity["environment"].update({"skybox_folder": "@game/Skyboxes/BurningDusk", "fog_color": [0.2, 0.12, 0.09],
-                                  "fog_density": 0.012, "sky_brightness": 0.85})
+                                  "fog_density": 0.012, "sky_brightness": 0.85,
+                                  # Heavy blows kick the picture for a blink (an impact frame, see PostProcessing::Kick)
+                                  "hit_impact_frame": 0.7})
     entity["transform"] = transform((0.0, 30.0, 0.0), (-38.0, 150.0, 0.0))
     entity["transform"]["rotation_quaternion"] = None  # filled below
 
@@ -276,11 +308,7 @@ def add_arena(builder):
         elif copied.get("model", {}).get("model_name") == "kit_floor":
             copied["model"]["model_name"] = GROUND_MODEL
 
-    # The way in is closed: the fight starts inside
-    blocker = builder.copy_one(builder.find_source("Ruined Gate Blocker"))
-    builder.get(blocker)["tag"]["name"] = "Entrance Blocker"
-    builder.get(blocker)["transform"]["position"][2] = -20.0
-    builder.get(blocker).pop("model", None)
+    add_approach(builder)
 
     # Rubble along the four sides, each heap turned a little differently and of its own size
     left, right = ARENA_CENTER[0] - ARENA_HALF_EXTENTS[0] - 1.5, ARENA_CENTER[0] + ARENA_HALF_EXTENTS[0] + 1.5
@@ -313,6 +341,44 @@ def add_arena(builder):
     floor["tag"]["name"] = "Summon Waiting Floor"
     floor["transform"] = transform(SUMMON_WAITING_PLACE)
     builder.add(floor)
+
+
+def add_approach(builder):
+    """The street to the arena (MyGame's courtyard before its boss): the ground of the ruined city, unseen walls on
+    both sides hidden behind heaps of rubble, burnt out towers over it, and the fog of the arena at its end"""
+    for index, entity in enumerate(builder.source):
+        name = entity["tag"]["name"]
+        z = entity["transform"]["position"][2]
+        if "parent" in entity or not (ARENA_STARTS_AT_Z <= z <= 16.0):
+            continue
+        if name in ("Floor Courtyard", "Floor Corridor"):
+            builder.copy_one(index)
+        elif name == "Floor Slab":
+            copied = builder.get(builder.copy_one(index))
+            copied["model"]["model_name"] = GROUND_MODEL
+        elif name == "Wall" and abs(entity["transform"]["position"][0]) == 8.0:
+            copied = builder.get(builder.copy_one(index))
+            copied.pop("model", None)
+            copied["tag"]["name"] = "Street Border"
+    # The end of the street behind the player
+    back = builder.get(builder.copy_one(builder.find_source("Ruined Gate Blocker")))
+    back["tag"]["name"] = "Street End"
+    back["transform"]["position"] = [0.0, 0.0, 12.0]
+    back["box_collider"]["half_extents"] = [8.0, 3.0, 0.3]
+    back.pop("model", None)
+
+    number = 0
+    for side in (-1.0, 1.0):
+        z = 10.0
+        while z > ARENA_STARTS_AT_Z + 2.0:
+            number += 1
+            wobble = ((number * 41) % 23) - 11.0
+            size = 0.9 + ((number * 29) % 5) * 0.08
+            builder.add(prop("Street Rubble", RUBBLE_MODEL, (side * 9.5, -0.2, z), 90.0 + wobble, size))
+            z -= 7.0
+    builder.add(prop("Rubble Heap", RUBBLE_MODEL, (0.0, -0.3, 13.5), 4.0, 1.1))
+    for x, z, turned_by, size, tower in STREET_RUINS + skyline_ruins(CITY_RUINS + STREET_RUINS):
+        builder.add(prop("City Ruin", TOWER_MODELS[tower], (x, -1.0, z), turned_by, size))
 
 
 def add_effects(builder):
@@ -368,10 +434,10 @@ def add_effects(builder):
                                          "hit_sound": "@game/Sounds/Spells/deep_boom.ogg"})
     # Where the strikes from the sky land: a puff of dark smoke and dust that covers what is behind it, not light
     builder.add(named("Impact Smoke", (0.0, -100.0, 0.0), particle_emitter={
-        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 1.6, "spawn_half_extents": [0.6, 0.2, 0.6],
+        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 1.1, "spawn_half_extents": [0.6, 0.2, 0.6],
         "velocity": [0.0, 2.2, 0.0], "velocity_randomness": 1.6, "gravity": [0.0, 0.3, 0.0], "start_size": 0.7,
-        "end_size": 1.6, "start_color": [0.16, 0.13, 0.11], "end_color": [0.32, 0.28, 0.25], "intensity": 0.75,
-        "max_particles": 900, "is_dark": True}))
+        "end_size": 1.4, "start_color": [0.13, 0.1, 0.08], "end_color": [0.22, 0.18, 0.15], "intensity": 0.55,
+        "max_particles": 350, "is_dark": True}))
 
     # Where a fist lands: a puff of dust and sweat off the clothes, small and short, not embers or blood
     builder.add(emitter("Punch Dust", [0.75, 0.7, 0.62], [0.25, 0.22, 0.2], lifetime_seconds=0.3, start_size=0.07,
@@ -413,7 +479,7 @@ def add_effects(builder):
                            damage=150.0, poise_damage=400.0, radius=3.4,
                            homing_degrees_per_second=0.0, lifetime_seconds=4.0, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
-                           hit_effect="Oil Splash", hit_burst=60, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
+                           hit_effect="Oil Cube", hit_burst=60, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
                            hit_stop_seconds=0.2, camera_shake=1.0)
     # The boss's cleave: a fan of blades of light that fly straight and fast (step between them or roll through)
     add_projectile(builder, "Boss Slash", "sih_black_book", 12, 1.5, spin_degrees_per_second=900.0, speed=27.0, damage=18.0, poise_damage=16.0, radius=0.45,
@@ -431,7 +497,7 @@ def add_effects(builder):
                            homing_degrees_per_second=0.0, lifetime_seconds=3.0, fuse_seconds=1.25,
                            trail_effect="Pillar Warning", trail_particles_per_second=28.0,
                            hit_effect="Impact Smoke", hit_burst=22, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
-                           hit_stop_seconds=0.06, camera_shake=0.3))
+                           hit_stop_seconds=0.06, camera_shake=0.12))
     # The jet that flies over before the fire comes down: it hurts nobody itself (far above everyone's heads)
     add_projectile(builder, "Private Jet", "sih_jet", 3, 1.6, spin_degrees_per_second=0.0, speed=46.0,
                    damage=0.0, poise_damage=0.0, radius=0.1, homing_degrees_per_second=0.0, lifetime_seconds=2.4,
@@ -441,14 +507,14 @@ def add_effects(builder):
     add_projectile(builder, "Domain Rain", "sih_money", 40, 2.0, spin_degrees_per_second=480.0, speed=17.0,
                    launch_delay_seconds=2.4, damage=18.0, poise_damage=14.0, radius=0.5, homing_degrees_per_second=0.0,
                    lifetime_seconds=4.5, fuse_seconds=0.0, trail_effect="Swarm Specks", trail_particles_per_second=26.0,
-                   hit_effect="Money Burst", hit_burst=8, hit_sound="@game/Sounds/Spells/coins.ogg", hit_stop_seconds=0.04, camera_shake=0.2)
+                   hit_effect="Money Burst", hit_burst=8, hit_sound="@game/Sounds/Spells/coins.ogg", hit_stop_seconds=0.04, camera_shake=0.06)
     # The rain of the domain's opening (film 1:31-1:46): formed high in the sky over the whole arena, hanging there,
     # then falling straight down where they were (not at the player), glowing like meteors (the script lights them)
     add_projectile(builder, "Boss Orb", "sih_money", 24, 1.6, spin_degrees_per_second=540.0, speed=13.0, damage=22.0, poise_damage=18.0, radius=0.5,
                            homing_degrees_per_second=34.0, lifetime_seconds=4.0, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="Money Burst", hit_burst=10, hit_sound="@game/Sounds/Spells/coins.ogg",
-                           hit_stop_seconds=0.05, camera_shake=0.3)
+                           hit_stop_seconds=0.05, camera_shake=0.12)
 
 
 # The film's six-pointed stars (the user's Meshy model) that burst out of the temple's dome, turn around it as a
@@ -456,7 +522,40 @@ def add_effects(builder):
 DOMAIN_STARS = 3500
 
 # From the STRIKE and STRIDE lines of Tools/characters_generator.py
+# The quick combo (jab, cross, hook, uppercut) and the first kick: generous windows, as the fight was liked
 PLAYER_HIT_WINDOWS = {"light_hit_from": 0.24, "light_hit_to": 0.72, "heavy_hit_from": 0.3, "heavy_hit_to": 0.74}
+# The other blows each land at their own moment (the STRIKE lines of the fist or foot that hits)
+# 'strike_height': where the blow goes by itself (m above his feet, measured with SUNTA_COMBAT_TRACE) - the Strike
+# Aim raises the jab and the cross from his crouch to the face, but the hook and the uppercut already rise to it
+PLAYER_ATTACK_MOVES = [
+    {"animation": "Attack_Light_1", "hit_from": 0.24, "hit_to": 0.72, "strike_height": 1.3},
+    {"animation": "Attack_Light_2", "hit_from": 0.24, "hit_to": 0.72, "strike_height": 1.25},
+    {"animation": "Attack_Light_3", "hit_from": 0.24, "hit_to": 0.72, "strike_height": 1.5},
+    {"animation": "Attack_Light_4", "hit_from": 0.12, "hit_to": 0.48, "damage_multiplier": 1.3, "strike_height": 1.55},
+    # (the kicks end late: two heavies pressed fast follow each other instead of blending)
+    {"animation": "Attack_Heavy",   "hit_from": 0.30, "hit_to": 0.74, "damage_multiplier": 1.8, "cancel_from": 0.8},
+    {"animation": "Attack_Heavy_2", "hit_from": 0.36, "hit_to": 0.66, "damage_multiplier": 2.2, "cancel_from": 0.85},
+    {"animation": "Attack_Running", "hit_from": 0.26, "hit_to": 0.52, "damage_multiplier": 1.8},
+    {"animation": "Attack_Riposte", "hit_from": 0.18, "hit_to": 0.62, "damage_multiplier": 2.0},
+]
+PLAYER_MORE_ATTACKS = {
+    "extra_light_attack_animations": ["Attack_Light_4"],
+    "heavy_attack_2_animation": "Attack_Heavy_2",
+    "running_attack_animation": "Attack_Running", "running_attack_speed": 6.5,
+    "dodge_attack_animation": "",
+    "riposte_animation": "Attack_Riposte", "riposte_reach": 2.6,
+    "extra_hit_reaction_animations": ["Hit_2"], "heavy_hit_reaction_animation": "Hit_Heavy",
+    "attack_moves": PLAYER_ATTACK_MOVES,
+    # A punch steps in to reach, but never slides more than a step
+    "attack_lunge_max_distance": 0.9,
+    # A roll runs to its end (walking away cut it short and snapped him back to standing)
+    "dodge_cancel_from": 0.85,
+}
+# Aiming the blows at the face / chest of the enemy (the engine's Strike Aim)
+PLAYER_STRIKE_AIM = {"spine_bones": "Spine_Low,Spine,Chest", "clip_strike_height": 1.3, "target_height": 0.86,
+                     "max_pitch_degrees": 20.0, "max_yaw_degrees": 25.0, "fade_seconds": 0.1, "search_distance": 4.0}
+BOSS_STRIKE_AIM = {"spine_bones": "Spine02,Spine,Chest", "clip_strike_height": 1.3, "target_height": 0.8,
+                   "max_pitch_degrees": 16.0, "max_yaw_degrees": 25.0, "fade_seconds": 0.1, "search_distance": 4.0}
 BOSS_HIT_WINDOWS = {"light_hit_from": 0.25, "light_hit_to": 0.72, "heavy_hit_from": 0.28, "heavy_hit_to": 0.75}
 SUMMON_HIT_WINDOWS = {"light_hit_from": 0.15, "light_hit_to": 0.65, "heavy_hit_from": 0.32, "heavy_hit_to": 0.48,
                       "leap_attack_animation": "Attack_Leap", "leap_hit_from": 0.35, "leap_hit_to": 0.55, "leap_speed": 13.0}
@@ -464,7 +563,7 @@ SUMMON_HIT_WINDOWS = {"light_hit_from": 0.15, "light_hit_to": 0.65, "heavy_hit_f
 OIL_ORB = {"tint": [1.0, 0.97, 0.9], "brightness": 1.9, "wobble": 0.06, "wobble_speed": 2.4, "clearness": 0.2}
 
 # Where the eyes are on the head bone (the EYE lines of Tools/characters_generator.py)
-PLAYER_EYES = {"R": (-0.0325, 0.1370, 0.0701), "L": (0.0332, 0.1408, 0.0652)}
+PLAYER_EYES = {"R": (-0.0330, 0.1532, 0.0858), "L": (0.0330, 0.1531, 0.0857)}
 BOSS_EYES = {"R": (-0.0297, 0.1647, 0.0917), "L": (0.0359, 0.1696, 0.0873)}
 
 # When the spells leave the hands, as parts of their casting animations (looked up in the previews of the generator)
@@ -472,7 +571,7 @@ GREAT_ORB_RELEASE_AT = 0.6
 CLEAVE_RELEASE_AT = 0.48
 
 # The speed of the walking clips (meters per second) times the scale of the character
-PLAYER_STRIDE = {"walk_animation_speed": 0.79, "run_animation_speed": 1.94}
+PLAYER_STRIDE = {"walk_animation_speed": 1.62, "run_animation_speed": 2.86}
 BOSS_STRIDE = {"walk_animation_speed": 1.36, "run_animation_speed": 2.57}
 SUMMON_STRIDE = {"walk_animation_speed": 1.92, "run_animation_speed": 2.82}
 
@@ -482,7 +581,7 @@ def add_domain_spectacle(builder):
     and turns into the temple (film 1:22-1:25), its smoke, the stars, the dust and the rubble of the boss's flight"""
     builder.add(named("Domain Star Swarm", (0.0, -100.0, 0.0), swarm={
         "is_visible": False, "model_name": "sih_hex_bullet", "count": DOMAIN_STARS, "seed": 7,
-        "piece_size": 2.8, "size_variation": 0.6, "radius": 2.0, "shell_thickness": 0.55,
+        "piece_size": 2.2, "size_variation": 0.5, "radius": 2.0, "shell_thickness": 0.55,
         "spin_degrees_per_second": 26.0, "tumble_degrees_per_second": 70.0,
         "sky_center": [0.0, 36.0, -20.0], "sky_half_extents": [60.0, 12.0, 60.0],
         "fall_speed": 34.0, "fall_spread_seconds": 6.5, "ground_height": 0.0, "stuck_seconds": 6.0,
@@ -496,18 +595,19 @@ def add_domain_spectacle(builder):
         "start_color": [1.0, 0.24, 0.02], "end_color": [0.4, 0.02, 0.0], "intensity": 0.07, "max_particles": 30000,
         "style": 1, "spawn_shape": 2, "spawn_radius": 3.0, "outward_speed": 2.0, "size_randomness": 0.5,
         "spin_degrees_per_second": 50.0}))
+    # The smoke rolls out around the foot of the temple, thin: the temple must be seen rising through it
     builder.add(named("Domain Sun Smoke", (0.0, -100.0, 0.0), particle_emitter={
-        "is_emitting": False, "particles_per_second": 260.0, "lifetime_seconds": 4.5,
-        "spawn_half_extents": [0.1, 0.1, 0.1], "velocity": [0.0, 6.0, 0.0], "velocity_randomness": 2.0,
-        "gravity": [0.0, 0.5, 0.0], "start_size": 7.0, "end_size": 16.0,
-        "start_color": [0.09, 0.07, 0.06], "end_color": [0.16, 0.14, 0.13], "intensity": 0.75, "max_particles": 1500,
-        "style": 2, "spawn_shape": 2, "spawn_radius": 6.0, "outward_speed": 1.0, "size_randomness": 0.4,
+        "is_emitting": False, "particles_per_second": 80.0, "lifetime_seconds": 3.5,
+        "spawn_half_extents": [0.1, 0.1, 0.1], "velocity": [0.0, 2.5, 0.0], "velocity_randomness": 1.5,
+        "gravity": [0.0, 0.3, 0.0], "start_size": 4.0, "end_size": 9.0,
+        "start_color": [0.09, 0.07, 0.06], "end_color": [0.16, 0.14, 0.13], "intensity": 0.4, "max_particles": 800,
+        "style": 2, "spawn_shape": 2, "spawn_radius": 17.0, "outward_speed": 3.0, "size_randomness": 0.4,
         "spin_degrees_per_second": 20.0}))
 
     # Where a star strikes the ground: a short burst of fire
     builder.add(emitter("Star Impact", [1.0, 0.5, 0.1], [0.4, 0.05, 0.0], lifetime_seconds=0.7, start_size=2.2,
                         end_size=0.8, velocity=[0.0, 3.0, 0.0], velocity_randomness=3.0, gravity=[0.0, 1.0, 0.0],
-                        intensity=2.0, max_particles=6000, style=1, size_randomness=0.5,
+                        intensity=0.9, max_particles=6000, style=1, size_randomness=0.5,
                         spin_degrees_per_second=90.0))
 
     # The boss's flight: dust where he skids along the ground (light smoke) and the rubble of what he smashes through
@@ -562,49 +662,91 @@ def add_player(builder):
     entity["model"]["model_name"] = PLAYER_MODEL
     entity["healing_flask"]["hidden_while_drinking"] = ""
     entity["character_actions"].update(PLAYER_HIT_WINDOWS)
+    entity["character_actions"].update(PLAYER_MORE_ATTACKS)
     # Quick hands: the next punch may be asked for early and cuts the end of the one before, and the parry turns
     # blows away for its first third of a second
-    entity["character_actions"].update({"input_buffer_from": 0.1, "cancel_from": 0.66, "parry_from": 0.0, "parry_to": 0.55,
-                                        "riposte_damage_multiplier": 2.5, "attack_step_speed": 2.2})
-    entity["stamina"].update({"light_attack_cost": 8.0, "heavy_attack_cost": 20.0, "roll_cost": 14.0, "backstep_cost": 10.0})
+    entity["character_actions"].update({"input_buffer_from": 0.1, "cancel_from": 0.55, "parry_from": 0.0, "parry_to": 0.5,
+                                        "riposte_damage_multiplier": 2.5, "attack_step_speed": 1.4})
+    # A boxer who closes in: locked on, each punch steps in to reach (a lunge), and the hands are quicker than a
+    # knight's. Every swing cuts an arc of light (see scene_effects.py)
+    # The boxing clips are slow motion capture: played faster, so the fist flies as fast as its arc of light
+    # (reach 0.85: the step in ends where the fist really touches him - from 1.2 the blows stopped short of his face)
+    entity["character_actions"].update({"attack_lunge_speed": 4.5, "attack_reach": 0.85, "attack_speed": 1.45,
+                                        "swing_effect": "Player Swing", "heavy_swing_effect": "Player Heavy Swing",
+                                        "swing_effect_height": 1.25, "swing_effect_distance": 0.1, "swing_effect_at": 0.3})
+    # A souls-like stamina: five or six punches, then the player has to back off, guard or roll and breathe
+    # (cheaper since the playtest: a whole combo and a roll fit in one bar, and it comes back quickly)
+    entity["stamina"].update({"light_attack_cost": 11.0, "heavy_attack_cost": 22.0, "roll_cost": 12.0, "backstep_cost": 9.0,
+                              "regeneration_per_second": 50.0, "regeneration_delay_seconds": 0.5})
     entity["character_animation"].update(PLAYER_STRIDE)
+    entity["character_animation"]["locked_on_idle_animation"] = "Idle_Fight"
+    # His boxing clips punch from a deep crouch, at the chest of a man of his size: while he attacks the spine
+    # straightens and turns a little towards the boss, so jabs and crosses meet the face (measured with
+    # SUNTA_COMBAT_TRACE: the fists strike 1.2-1.35 m above his feet, the boss's face is ~1.65 m)
+    entity["strike_aim"] = PLAYER_STRIKE_AIM
     entity["character_sounds"].update(BRAWL_SOUNDS)
     entity["script"] = script("player_techniques.lua")
-    add_eyes(builder, player, "Player", PLAYER_EYES, [1.0, 0.75, 0.1], 0.085)
+    add_eyes(builder, player, "Player", PLAYER_EYES, [1.0, 0.75, 0.1], 0.045)
     add_domain_moments(builder, player)
+    # Down on his back after the stars of the boss's domain: the camera comes over him and waits for the player's
+    # answer, [3] (a moment of the cutscene the player plays; boss_fight.lua goes on with 'Technique Rise')
+    down = builder.add(named("Down Wait", cutscene={
+        "duration_seconds": 3.5, "look_at_entity": PLAYER_NAME, "look_at_height": 0.3, "animation_entity": "",
+        "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+        "can_be_skipped": False, "video_file": "", "wait_for_key": "2",
+        "wait_prompt": "[2]   Imaginary Technique: Baby Oil Detonation"}), parent=player)
+    for index, point in enumerate(((3.2, 3.4, 2.4), (2.4, 2.6, 0.2), (1.6, 2.1, -1.6))):
+        builder.add(named(f"Camera Point {index + 1}", point), parent=down)
+    # Rising from the ground with his hand up for his great technique (started by boss_fight.lua when the player
+    # presses [3] lying down): the camera low in front of him, coming up with him (his front is his own -Z)
+    rise = builder.add(named("Technique Rise", cutscene={
+        "duration_seconds": 2.6, "look_at_entity": PLAYER_NAME, "look_at_height": 1.1, "animation_entity": "",
+        "animation_name": "", "animation_at_seconds": 0.0, "title": "Imaginary Technique: Baby Oil Detonation",
+        "title_seconds": 1.6, "can_be_skipped": False, "video_file": ""}), parent=player)
+    for index, point in enumerate(((2.4, 0.5, -2.6), (1.6, 1.0, -2.6), (0.7, 1.5, -2.3))):
+        builder.add(named(f"Camera Point {index + 1}", point), parent=rise)
     add_domain_spectacle(builder)
     # The ball of oil he holds over his palm while he calls it (shown by his script)
     held = named("Player Held Orb", (0.0, 0.2, 0.0), liquid_orb=dict(OIL_ORB, is_visible=False))
     held["transform"]["scale"] = [0.34] * 3
     builder.add(held, parent=player, bone="Hand_R")
-    add_fists_and_foot(builder, player, 26.0, PLAYER_HITBOX_LAYER)
+    # His guard: a wall of baby oil before his chest while he blocks, flaring up in the live part of a parry
+    # (shown by his script; his front is his own -Z)
+    # (mostly see-through: the player watches the boss through it; it brightens only for the parry)
+    guard = named("Player Oil Guard", (0.0, 1.3, -0.55), liquid_orb=dict(OIL_ORB, is_visible=False, clearness=0.85,
+                                                                          brightness=0.5, wobble=0.1))
+    guard["transform"]["scale"] = [1.0, 1.15, 0.22]
+    builder.add(guard, parent=player)
+    # (a little bigger than a fist: a blow that looks like it lands, lands)
+    add_fists_and_foot(builder, player, 26.0, PLAYER_HITBOX_LAYER, size=0.2)
     # The guard of bare forearms: an unseen shield on the left hand (blocking and parrying need one)
-    builder.add(named("Guard", shield={"damage_through": 0.15, "guard_angle_degrees": 140.0, "stamina_per_damage": 1.2,
-                                       "block_effect": "Hit Sparks"}), parent=player, bone="Hand_L")
+    # Bare forearms are no shield: some of every blow comes through, and three or four of his punches break the guard
+    builder.add(named("Guard", shield={"damage_through": 0.3, "guard_angle_degrees": 110.0, "stamina_per_damage": 2.4,
+                                       "block_effect": "Guard Impact"}), parent=player, bone="Hand_L")
     entity["transform"] = transform(PLAYER_START)
     # Bodies wide enough that two boxers don't stand inside each other
     entity["box_collider"]["half_extents"] = [0.36, 0.9, 0.36]
     entity["health"]["max_health"] = 200.0
-    entity["health"]["hit_effect"] = "Punch Dust"
+    entity["health"]["hit_effect"] = "Punch Impact"
     # A boxer keeps his feet under a jab: only a heavy blow or a few quick ones stagger him
-    entity["poise"] = {"max_poise": 30.0, "recover_after_seconds": 3.0}
+    entity["poise"] = {"max_poise": 30.0, "recover_after_seconds": 3.0, "stagger_immunity_seconds": 1.2}
     entity["healing_flask"].update({"display_name": "Champagne", "max_charges": 4, "heal_amount": 80.0})
     entity["currency"]["display_name"] = "Clout"
     entity["lock_on"]["max_distance"] = 40.0
 
     builder.add(spell("Player Orb Spell", cast_animation="Cast_Orb", projectile="Player Orb", projectile_count=1,
-                      spread_degrees=0.0, release_at=0.35, at_targets_feet=False, min_distance=0.0, max_distance=60.0,
+                      spread_degrees=0.0, release_at=0.66, at_targets_feet=False, min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=2.5, charge_effect="", charge_particles_per_second=0.0,
                       cast_sound="@game/Sounds/Spells/throw.ogg", cast_key="1", display_name="Solid Baby Oil"), parent=player, bone="Hand_R")
     builder.add(spell("Player Great Orb Spell", cast_animation="Cast_Great_Orb", projectile="Player Great Orb", projectile_count=1,
                       spread_degrees=0.0, release_at=GREAT_ORB_RELEASE_AT, at_targets_feet=False, drop_height=13.0,
                       min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=16.0, charge_effect="", charge_particles_per_second=0.0,
-                      cast_sound="@game/Sounds/Spells/magic_whoosh.ogg", cast_key="3", display_name="Baby Oil Detonation"), parent=player, bone="Hand_R")
+                      cast_sound="@game/Sounds/Spells/magic_whoosh.ogg", cast_key="2", display_name="Imaginary Technique: Baby Oil Detonation"), parent=player, bone="Hand_R")
     builder.add(spell("Player Domain Spell", cast_animation="Cast_Domain", projectile="Player Domain Blast", projectile_count=1,
                       spread_degrees=0.0, release_at=0.6, at_targets_feet=True, min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=45.0, charge_effect="", charge_particles_per_second=0.0,
-                      cast_sound="@game/Sounds/Boss/roar.ogg", cast_key="2", display_name="Domain Expansion"), parent=player)
+                      cast_sound="@game/Sounds/Boss/roar.ogg", cast_key="3", display_name="Domain Expansion"), parent=player)
     return player
 
 
@@ -622,20 +764,27 @@ def add_boss(builder):
                                         "backstep_animation": "Backstep", "roll_animation": "Roll", "backstep_speed": 5.0,
                                         "roll_speed": 6.5, "block_animation": "Block", "block_impact_animation": "Block_Impact"})
     builder.add(named("Guard", shield={"damage_through": 0.2, "guard_angle_degrees": 150.0, "stamina_per_damage": 0.0,
-                                       "block_effect": "Hit Sparks"}), parent=boss, bone="Hand_L")
+                                       "block_effect": "Guard Impact"}), parent=boss, bone="Hand_L")
+    # His blows go through the player's: a punch doesn't stop his swing (he takes it and hits back)
+    # (armoured through his heavy blows only: a combo of the player's breaks his light ones)
+    entity["character_actions"].update({"hyper_armor": 1, "swing_effect": "Boss Swing", "heavy_swing_effect": "Boss Heavy Swing",
+                                        "swing_effect_height": 1.3, "swing_effect_distance": 0.1, "swing_effect_at": 0.3})
     entity["character_animation"].update(BOSS_STRIDE)
     entity["character_sounds"].update(BRAWL_SOUNDS)
     entity["melee_enemy"]["attack_distance"] = 1.7
+    entity["strike_aim"] = BOSS_STRIKE_AIM
     add_fists_and_foot(builder, boss, 17.0, ENEMY_HITBOX_LAYER, poise_damage=22.0, camera_shake=0.3)
     entity["transform"] = transform(BOSS_START, (0.0, 180.0, 0.0))
     entity["box_collider"]["half_extents"] = [0.38, 0.95, 0.38]
     entity["health"].update({"max_health": 1500.0, "death_slow_motion_seconds": 3.0, "death_slow_motion_scale": 0.25,
-                             "hit_effect": "Punch Dust"})
-    entity["poise"] = {"max_poise": 70.0, "recover_after_seconds": 4.0}
+                             "hit_effect": "Punch Impact"})
+    # Staggered, he can't be staggered again for 2.5 s: a string of punches doesn't pin him (see also boss_fight.lua)
+    entity["poise"] = {"max_poise": 70.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 1.6}
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 3.0, "eye_height": 1.7})
     entity["enemy_health_bar"].update({"is_boss": True, "display_name": BOSS_DISPLAY_NAME})
-    entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 7.0, "attack_cooldown_seconds": 1.0,
-                                  "heavy_attack_chance": 0.25, "max_light_combo": 3, "finisher_chance": 0.4,
+    # Pressure: short breaths between his combos, longer combos (boss_fight.lua speeds him up in later phases)
+    entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 7.0, "attack_cooldown_seconds": 1.25,
+                                  "heavy_attack_chance": 0.25, "max_light_combo": 3, "finisher_chance": 0.35,
                                   "recover_seconds": 0.7, "dodge_chance": 0.3, "dodge_distance": 3.0,
                                   "dodge_cooldown_seconds": 3.0})
     entity["character_controller"].update({"walk_speed": 2.2, "run_speed": 5.6})
@@ -717,7 +866,9 @@ def add_summon(builder):
     # Both fists into the ground: a shockwave around where they land
     entity["character_actions"].update({"shockwave_radius": 4.5, "shockwave_damage": 42.0, "shockwave_distance": 1.8,
                                         "shockwave_effect": "Cleaver Slam Burst", "shockwave_camera_shake": 0.9,
-                                        "attack_reach": 2.8, "attack_turn_degrees_per_second": 120.0})
+                                        "attack_reach": 2.8, "attack_turn_degrees_per_second": 120.0,
+                                        "hyper_armor": 2, "heavy_swing_effect": "Ground Slam", "swing_effect": "Boss Heavy Swing",
+                                        "swing_effect_height": 0.15, "swing_effect_distance": 1.8})
     entity["character_animation"].update(SUMMON_STRIDE)
     entity["character_sounds"].update(BRAWL_SOUNDS)
     entity["character_sounds"]["shockwave_sound"] = "@game/Sounds/Combat/Shockwave"
@@ -732,8 +883,9 @@ def add_summon(builder):
     entity["lock_on_target"].update({"aim_height": 1.9})
     entity["enemy_health_bar"]["height_above_feet"] = 3.3
     entity["character_sounds"].update({"footstep_meters": 2.4, "footstep_camera_shake": 0.16, "footstep_shake_radius": 12.0, "volume": 1.5})
-    entity["health"].update({"max_health": 900.0, "death_slow_motion_seconds": 1.5, "death_slow_motion_scale": 0.35})
-    entity["poise"] = {"max_poise": 140.0, "recover_after_seconds": 4.0}
+    entity["health"].update({"max_health": 900.0, "death_slow_motion_seconds": 1.5, "death_slow_motion_scale": 0.35,
+                             "hit_effect": "Punch Impact"})
+    entity["poise"] = {"max_poise": 140.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 3.0}
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 80.0, "starts_dormant": True})
     entity["enemy_health_bar"].update({"is_boss": True, "display_name": SUMMON_DISPLAY_NAME})
     entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 5.0, "attack_cooldown_seconds": 1.3,
@@ -746,10 +898,11 @@ def add_summon(builder):
 
 
 def add_fight(builder):
-    # No fog to cross: the fight starts the moment the game does, with the film as its opening
-    fog = builder.copy_one(builder.find_source("Arena Fog"))
+    # The fog in the gateway, as in a soulslike: the player walks up the street, presses E and steps through; the
+    # film's opening plays as it closes behind him
+    fog = builder.copy_tree(builder.find_source("Arena Fog"))
     builder.get(fog)["fog_gate"].update({
-        "arena_center": ARENA_CENTER, "arena_half_extents": ARENA_HALF_EXTENTS, "is_crossed_with_key": False,
+        "arena_center": ARENA_CENTER, "arena_half_extents": ARENA_HALF_EXTENTS, "is_crossed_with_key": True,
         "cutscene": "Film Intro", "battle_music": "", "victory_message": "STRONGEST OF TODAY",
         "victory_sound": "@game/Sounds/Boss/victory.ogg"})
     builder.get(fog)["transform"]["position"] = [0.0, 0.0, -20.6]
@@ -761,7 +914,7 @@ def add_fight(builder):
 
     # The sound of the film's opening: stopped by its script when the video ends or is skipped
     builder.add(named("Film Intro Sound", script=script("film_intro_sound.lua"), audio_source={
-        "sound": "@game/Sounds/Film/intro.ogg", "volume": 1.0, "is_looping": False, "play_on_start": True,
+        "sound": "@game/Sounds/Film/intro.ogg", "volume": 1.0, "is_looping": False, "play_on_start": False,
         "is_spatial": False, "min_distance": 2.0, "max_distance": 30.0}))
 
     # The temple of the boss's domain: under the ground behind the far wall until the script raises it
@@ -792,11 +945,35 @@ def add_fight(builder):
         "duration_seconds": 3.7, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
         "video_file": "@game/Videos/summon_wheel.mpg"}))
-    for index, point in enumerate(((10.0, 1.6, 34.0), (6.0, 4.0, 30.0), (0.0, 7.0, 27.0), (-6.0, 10.0, 25.0))):
+    # Far and high enough to hold the whole temple (24 m tall) and the boss on its dome in one shot, sweeping slowly
+    # around it as it rises (the script aims it between the boss and the middle of the temple)
+    for index, point in enumerate(((17.0, 7.0, 41.0), (8.0, 10.0, 40.0), (-1.0, 13.0, 38.0), (-10.0, 16.0, 35.0))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=reveal)
     # What it looks at: where the dome stands once risen (not a part of the temple, which starts deep underground,
     # nor a child of the cutscene, whose children are all points of the camera's path): placed by the script
     builder.add(named("Domain Reveal Focus", (0.0, 13.0, TEMPLE_Z)))
+
+
+# The shots of the domain's opening and of the player's answer flow into each other as one sequence (film 1:15-1:49):
+# each flies in from the shot before ('blend_in_seconds') and lasts until the next one starts (no game camera between)
+SEQUENCE_SHOTS = {
+    "Knockback Flight": {"duration_seconds": 6.1},
+    "Domain Sign":      {"blend_in_seconds": 0.9},
+    "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
+    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
+    "Meteor Fall":      {"duration_seconds": 10.0},
+    "Down Wait":        {"blend_in_seconds": 1.8},
+    # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)
+    "Technique Rise":   {"blend_in_seconds": 1.0, "duration_seconds": 4.6},
+    "Bottle Fall":      {"blend_in_seconds": 0.6},
+}
+
+
+def join_sequence_shots(entities):
+    for entity in entities:
+        settings = SEQUENCE_SHOTS.get(entity["tag"]["name"])
+        if settings and "cutscene" in entity:
+            entity["cutscene"].update(settings)
 
 
 def fix_quaternions(entities):
@@ -820,9 +997,12 @@ def main():
     add_player(builder)
     add_arena(builder)
     add_effects(builder)
+    scene_effects.add_effect_library(builder)
+    scene_effects.upgrade_effects(builder)
     add_boss(builder)
     add_summon(builder)
     add_fight(builder)
+    join_sequence_shots(builder.entities)
     fix_quaternions(builder.entities)
 
     TARGET_SCENE.parent.mkdir(parents=True, exist_ok=True)

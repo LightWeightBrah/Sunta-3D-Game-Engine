@@ -63,6 +63,7 @@ list(APPEND ENGINE_SOURCES
 "${CMAKE_SOURCE_DIR}/Dependencies/imguizmo_wrapper/imguizmo/ImGuizmo.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_truetype.cpp"
+"${CMAKE_SOURCE_DIR}/Dependencies/stb_wrapper/stb/stb_image_write.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/pl_mpeg_wrapper/pl_mpeg/pl_mpeg.cpp"
 "${CMAKE_SOURCE_DIR}/Dependencies/miniaudio_wrapper/miniaudio/miniaudio.c"
 )

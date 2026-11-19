@@ -44,6 +44,12 @@ constexpr float ItemWalkSpeedFactor = 0.5f;
 
 constexpr int LightAttackCount = 3;
 
+// A riposte is aimed at an enemy within this angle of where the attack goes (cosine of 60 degrees)
+constexpr float RiposteFacingCosine = 0.5f;
+
+// Faster than this part of the walking speed counts as running (a running attack)
+constexpr float RunningSpeedFactor = 1.3f;
+
 // A push on the stick (or keys) shorter than this doesn't choose a direction
 constexpr float SmallestHeldDirection = 0.1f;
 
@@ -214,10 +220,25 @@ std::string& GetLightAttackAnimation(CharacterActionsComponent& actions, int ste
 {
 	switch (step)
 	{
+	case 0:  return actions.lightAttack1Animation;
 	case 1:  return actions.lightAttack2Animation;
 	case 2:  return actions.lightAttack3Animation;
-	default: return actions.lightAttack1Animation;
+	default:
+		if (step - LightAttackCount < static_cast<int>(actions.extraLightAttackAnimations.size()))
+			return actions.extraLightAttackAnimations[step - LightAttackCount];
+		return actions.lightAttack1Animation;
 	}
+}
+
+// The three light attacks and the extra ones after them
+int GetLightAttackCount(const CharacterActionsComponent& actions)
+{
+	return LightAttackCount + static_cast<int>(actions.extraLightAttackAnimations.size());
+}
+
+const std::string& GetHeavyAttackAnimation(const CharacterActionsComponent& actions, int step)
+{
+	return (step == 1 && !actions.heavyAttack2Animation.empty()) ? actions.heavyAttack2Animation : actions.heavyAttackAnimation;
 }
 
 const std::string& GetAnimationName(CharacterActionsComponent& actions, CharacterAction action)
@@ -229,9 +250,9 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::Roll:        return actions.rollAnimation;
 	case CharacterAction::Backstep:    return actions.backstepAnimation;
 	case CharacterAction::LightAttack: return GetLightAttackAnimation(actions, actions.lightAttackStep);
-	case CharacterAction::HeavyAttack: return actions.heavyAttackAnimation;
+	case CharacterAction::HeavyAttack: return GetHeavyAttackAnimation(actions, actions.heavyAttackStep);
 	case CharacterAction::LeapAttack:  return actions.leapAttackAnimation;
-	case CharacterAction::HitReaction: return actions.hitReactionAnimation;
+	case CharacterAction::HitReaction: return actions.chosenHitReaction.empty() ? actions.hitReactionAnimation : actions.chosenHitReaction;
 	case CharacterAction::Death:       return actions.deathAnimation;
 	case CharacterAction::Rest:        return actions.restAnimation;
 	case CharacterAction::StandUp:     return actions.standUpAnimation;
@@ -260,8 +281,17 @@ int GetNextLightAttackStep(const Character& character)
 	if (actions.currentAction != CharacterAction::LightAttack)
 		return 0;
 
-	const int nextStep = (actions.lightAttackStep + 1) % LightAttackCount;
+	const int nextStep = (actions.lightAttackStep + 1) % GetLightAttackCount(actions);
 	return HasAnimation(character, GetLightAttackAnimation(actions, nextStep)) ? nextStep : 0;
+}
+
+// A heavy attack right after a heavy one is the follow-up (when there is one), otherwise the first
+int GetNextHeavyAttackStep(const Character& character)
+{
+	const CharacterActionsComponent& actions = *character.actions;
+	if (actions.currentAction != CharacterAction::HeavyAttack || actions.heavyAttackStep != 0)
+		return 0;
+	return HasAnimation(character, actions.heavyAttack2Animation) ? 1 : 0;
 }
 
 // Character Animation sees that its walking animation no longer plays, so it fades back in when the action ends
@@ -483,7 +513,7 @@ float ChooseAttackStepSpeed(EntityManager& entityManager, const Character& chara
 		return actions.attackStepSpeed;
 
 	const float distance = glm::length(KeepOnlyHorizontalPart(targetPoint - character.transform->position));
-	const float travel   = glm::max(distance - actions.attackReach, 0.0f);
+	const float travel   = glm::clamp(distance - actions.attackReach, 0.0f, actions.attackLungeMaxDistance);
 	const float seconds  = GetMoveSeconds(character.animations->at(animationName), AttackStepMove);
 
 	return glm::clamp(travel / glm::max(seconds, 0.01f), actions.attackStepSpeed, glm::max(actions.attackLungeSpeed, actions.attackStepSpeed));
@@ -538,8 +568,11 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack)
 	{
 		actions.currentAttackStepSpeed = ChooseAttackStepSpeed(entityManager, character, animationName);
+		if (actions.isRunningAttack)
+			actions.currentAttackStepSpeed = glm::max(actions.currentAttackStepSpeed, actions.runningAttackSpeed);
 		actions.attackDelayLeft        = ChooseAttackDelay(actions);
 	}
+	actions.currentAnimation = animationName;
 	actions.isHoldingAttack = false;
 
 	actions.currentAction                  = action;
@@ -549,6 +582,68 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	character.controller->isDrivenByAction = !isUpperBody;
 }
 
+struct SpecialAttack
+{
+	std::string     animation;
+	CharacterAction action    = CharacterAction::None;
+	bool            isRunning = false;
+};
+
+// An enemy in front, near enough, staggering after a parry: open to a riposte
+bool HasRiposteTarget(EntityManager& entityManager, const Character& character)
+{
+	const CharacterActionsComponent& actions = *character.actions;
+	const glm::vec3 position = character.transform->position;
+	const glm::vec3 facing   = GetAttackDirection(entityManager, character);
+
+	for (CharacterActionsComponent& other : entityManager.GetAllComponents<CharacterActionsComponent>())
+	{
+		if (&other == &actions || !other.IsOpenToRiposte())
+			continue;
+		const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityManager.GetEntityIDForComponent(other));
+		if (!transform)
+			continue;
+		const glm::vec3 toOther  = KeepOnlyHorizontalPart(transform->position - position);
+		const float     distance = glm::length(toOther);
+		if (distance <= actions.riposteReach && (distance < 0.01f || glm::dot(toOther / distance, facing) > RiposteFacingCosine))
+			return true;
+	}
+	return false;
+}
+
+// Running: the run key held, a direction held and the body already moving faster than a walk
+bool IsRunning(const Character& character)
+{
+	const glm::vec3& velocity = character.body->velocity;
+	const float speed = glm::length(glm::vec2(velocity.x, velocity.z));
+	return character.controller->wantsToRun && HoldsDirection(*character.controller) && speed > character.controller->walkSpeed * RunningSpeedFactor;
+}
+
+// Which special attack an attack request becomes now, if any: a riposte first, then one out of a dodge, then from a run
+SpecialAttack ChooseSpecialAttack(EntityManager& entityManager, const Character& character)
+{
+	const CharacterActionsComponent& actions = *character.actions;
+	SpecialAttack special;
+
+	if (HasAnimation(character, actions.riposteAnimation) && HasRiposteTarget(entityManager, character))
+	{
+		special.animation = actions.riposteAnimation;
+		special.action    = CharacterAction::HeavyAttack;
+	}
+	else if (HasAnimation(character, actions.dodgeAttackAnimation) && IsDodge(actions.currentAction))
+	{
+		special.animation = actions.dodgeAttackAnimation;
+		special.action    = CharacterAction::LightAttack;
+	}
+	else if (HasAnimation(character, actions.runningAttackAnimation) && !actions.IsBusy() && IsRunning(character))
+	{
+		special.animation = actions.runningAttackAnimation;
+		special.action    = CharacterAction::HeavyAttack;
+		special.isRunning = true;
+	}
+	return special;
+}
+
 // An action asked for by a button or a script: it needs its animation and some stamina
 bool TryStartAction(EntityManager& entityManager, Character& character, CharacterAction requestedAction)
 {
@@ -556,18 +651,38 @@ bool TryStartAction(EntityManager& entityManager, Character& character, Characte
 	const CharacterAction action = ResolveAction(character, requestedAction);
 
 	const int previousLightAttackStep = actions.lightAttackStep;
+	const int previousHeavyAttackStep = actions.heavyAttackStep;
 	if (action == CharacterAction::LightAttack)
 		actions.lightAttackStep = GetNextLightAttackStep(character);
+	if (action == CharacterAction::HeavyAttack)
+		actions.heavyAttackStep = GetNextHeavyAttackStep(character);
 
-	const std::string& animationName = GetAnimationName(actions, action);
+	// A special attack instead of the usual blow (a riposte, out of a dodge, from a run), when the character has it
+	CharacterAction startedAction = action;
+	std::string animationName = GetAnimationName(actions, action);
+	bool isRunningAttack = false;
+	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack)
+	{
+		const SpecialAttack special = ChooseSpecialAttack(entityManager, character);
+		if (!special.animation.empty())
+		{
+			animationName   = special.animation;
+			startedAction   = special.action;
+			isRunningAttack = special.isRunning;
+			actions.lightAttackStep = 0;
+			actions.heavyAttackStep = 0;
+		}
+	}
 
-	if (!HasAnimation(character, animationName) || !StaminaSystem::TrySpendForAction(entityManager, character.entityID, action))
+	if (!HasAnimation(character, animationName) || !StaminaSystem::TrySpendForAction(entityManager, character.entityID, startedAction))
 	{
 		actions.lightAttackStep = previousLightAttackStep;
+		actions.heavyAttackStep = previousHeavyAttackStep;
 		return false;
 	}
 
-	StartAction(entityManager, character, action, animationName);
+	actions.isRunningAttack = isRunningAttack;
+	StartAction(entityManager, character, startedAction, animationName);
 	return true;
 }
 
@@ -598,6 +713,7 @@ void FinishAction(Character& character)
 	actions.currentAction                  = CharacterAction::None;
 	actions.queuedAction                   = CharacterAction::None;
 	actions.isInvulnerable                 = false;
+	actions.isRunningAttack                = false;
 	character.controller->isDrivenByAction = false;
 }
 
@@ -609,7 +725,9 @@ void EndOrChainAction(EntityManager& entityManager, Character& character, float 
 	if (actions.currentAction == CharacterAction::Death)
 		return;
 
-	const bool canBeInterrupted = CanBeInterrupted(actions.currentAction) && progress >= actions.cancelFrom;
+	const AttackMove* move      = actions.FindCurrentMove();
+	const float cancelFrom      = (move && move->cancelFrom >= 0.0f) ? move->cancelFrom : actions.cancelFrom;
+	const bool canBeInterrupted = CanBeInterrupted(actions.currentAction) && progress >= cancelFrom;
 
 	if (canBeInterrupted && actions.queuedAction != CharacterAction::None)
 	{
@@ -620,7 +738,8 @@ void EndOrChainAction(EntityManager& entityManager, Character& character, float 
 			return;
 	}
 
-	const bool walksAway       = canBeInterrupted && HoldsDirection(*character.controller);
+	const bool dodgeIsDone     = !IsDodge(actions.currentAction) || progress >= actions.dodgeCancelFrom;
+	const bool walksAway       = canBeInterrupted && dodgeIsDone && HoldsDirection(*character.controller);
 	const bool animationIsOver = character.animator->animator.IsFinished() && EndsWithItsAnimation(actions.currentAction);
 
 	if (animationIsOver || walksAway)
@@ -752,14 +871,32 @@ void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMou
 	}
 }
 
-void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsigned int entityID)
+void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsigned int entityID, bool isHeavyBlow)
 {
 	// A special animation (a boss roaring into its second phase) goes on, the hit only hurts
-	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
 	if (actions && actions->currentAction == CharacterAction::Special)
 		return;
 
-	ForceAction(entityManager, entityID, CharacterAction::HitReaction);
+	if (actions)
+	{
+		// A heavy blow throws the character harder; otherwise one of its staggers at random
+		if (isHeavyBlow && !actions->heavyHitReactionAnimation.empty())
+			actions->chosenHitReaction = actions->heavyHitReactionAnimation;
+		else
+		{
+			const int count = 1 + static_cast<int>(actions->extraHitReactionAnimations.size());
+			const int pick  = std::uniform_int_distribution<int>(0, count - 1)(GetActionsRandom());
+			actions->chosenHitReaction = pick == 0 ? actions->hitReactionAnimation : actions->extraHitReactionAnimations[pick - 1];
+		}
+	}
+
+	if (!ForceAction(entityManager, entityID, CharacterAction::HitReaction) && actions && !actions->chosenHitReaction.empty())
+	{
+		// The chosen one is missing from the Model: the usual stagger
+		actions->chosenHitReaction.clear();
+		ForceAction(entityManager, entityID, CharacterAction::HitReaction);
+	}
 }
 
 bool CharacterActionsSystem::PlaySpecial(EntityManager& entityManager, unsigned int entityID, const std::string& animationName)

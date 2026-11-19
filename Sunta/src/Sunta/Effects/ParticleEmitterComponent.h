@@ -23,12 +23,16 @@ struct Particle
 };
 
 // How a speck looks: a soft spot of light; a tongue of fire (ragged, a hot white-yellow core, its own shape for each);
-// a puff of smoke (ragged, it covers what is behind it)
+// a puff of smoke (ragged, it covers what is behind it); a spark (a streak of light stretched along its flight, longer
+// the faster it flies: the sparks of a sword on armor, of an explosion); a ring (a thin circle of light swelling out,
+// facing the camera: the shock of a blow)
 enum class ParticleStyle : int
 {
 	Glow  = 0,
 	Flame = 1,
-	Smoke = 2
+	Smoke = 2,
+	Spark = 3,
+	Ring  = 4
 };
 
 // Where the specks are born around the emitter: in a box; in a ball; on a dome (the upper half of a sphere's shell,
@@ -50,6 +54,8 @@ enum class ParticleSpawnShape : int
 // and 'startSize' to 'endColor' and 'endSize' (a black end color fades it out)
 // 'style' gives them the look of fire or smoke instead of a spot of light; 'spawnShape' a ball or a dome of 'spawnRadius'
 // instead of the box, from which they fly out at 'outwardSpeed'. Tens of thousands at once are fine (drawn together)
+// 'drag' makes a fast burst hang in the air; 'hasMiddleColor' a three-color fade (hot, burning, ash); 'style' Spark
+// streaks along the flight ('stretch'), Ring a swelling circle of shock
 // 'isEmitting' off stops new specks (the ones in the air live on). A script: this.particles.isEmitting = true,
 // this.particles:burst(50) throws 50 at once (a hit, an explosion)
 struct ParticleEmitterComponent
@@ -63,6 +69,8 @@ struct ParticleEmitterComponent
 	static constexpr int   MaxCount     = 80000;
 	static constexpr float MaxRadius    = 200.0f;
 	static constexpr float MaxSpin      = 720.0f;
+	static constexpr float MaxDrag      = 20.0f;
+	static constexpr float MaxStretch   = 1.0f;
 
 	bool  isEmitting        = true;
 	float particlesPerSecond = 30.0f;
@@ -96,6 +104,21 @@ struct ParticleEmitterComponent
 	// Some bigger, some smaller (a part of the size), and turning in the picture (degrees per second, each its own way)
 	float sizeRandomness       = 0.0f;
 	float spinDegreesPerSecond = 0.0f;
+
+	// How quickly the air slows the specks (a part of their speed lost each second): a burst that shoots out fast
+	// and hangs in the air instead of flying on evenly (what makes an explosion look like one)
+	float drag = 0.0f;
+
+	// A spark is this many seconds of its flight long (its streak), at least its size
+	float stretch = 0.04f;
+
+	// A third color in the middle of a speck's life: white-hot -> orange -> dark red, instead of only two
+	bool      hasMiddleColor = false;
+	glm::vec3 middleColor    = glm::vec3(1.0f, 0.3f, 0.05f);
+
+	// How many specks it throws when it is a part of a bigger effect that is played (see ParticleSystem::BurstAt:
+	// the children of the played entity burst too). 0: as many as asked of the whole effect
+	int burstAmount = 0;
 
 	// ========== Filled while the game plays, not saved with the scene ==========
 
@@ -139,12 +162,17 @@ struct ParticleEmitterComponent
 				ADD_PROPERTY_RANGED(ParticleEmitterComponent, intensity, PropertyDataType::Float, 0.0f, MaxIntensity),
 				ADD_PROPERTY(ParticleEmitterComponent, maxParticles, PropertyDataType::Int),
 				ADD_PROPERTY(ParticleEmitterComponent, isDark, PropertyDataType::Bool),
-				ADD_PROPERTY_RANGED(ParticleEmitterComponent, style,      PropertyDataType::Int, 0, 2),
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, style,      PropertyDataType::Int, 0, 4),
 				ADD_PROPERTY_RANGED(ParticleEmitterComponent, spawnShape, PropertyDataType::Int, 0, 2),
 				ADD_PROPERTY_RANGED(ParticleEmitterComponent, spawnRadius,  PropertyDataType::Float, 0.0f, MaxRadius),
 				ADD_PROPERTY_RANGED(ParticleEmitterComponent, outwardSpeed, PropertyDataType::Float, -MaxSpeed, MaxSpeed),
 				ADD_PROPERTY_RANGED(ParticleEmitterComponent, sizeRandomness,       PropertyDataType::Float, 0.0f, 1.0f),
-				ADD_PROPERTY_RANGED(ParticleEmitterComponent, spinDegreesPerSecond, PropertyDataType::Float, 0.0f, MaxSpin)
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, spinDegreesPerSecond, PropertyDataType::Float, 0.0f, MaxSpin),
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, drag,    PropertyDataType::Float, 0.0f, MaxDrag),
+				ADD_PROPERTY_RANGED(ParticleEmitterComponent, stretch, PropertyDataType::Float, 0.0f, MaxStretch),
+				ADD_PROPERTY(ParticleEmitterComponent, hasMiddleColor, PropertyDataType::Bool),
+				ADD_PROPERTY(ParticleEmitterComponent, middleColor,    PropertyDataType::Color),
+				ADD_PROPERTY(ParticleEmitterComponent, burstAmount,    PropertyDataType::Int)
 			});
 	}
 };

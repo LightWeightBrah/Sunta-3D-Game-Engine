@@ -17,7 +17,8 @@ public:
 	static void Update(EntityManager& entityManager, bool canUseMouse, float deltaTime);
 
 	// Started by the Health: the character staggers (interrupting what it does), or dies and never acts again
-	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID);
+	// 'isHeavyBlow': the hit came from a heavy attack or a leap (the heavy hit reaction plays, when there is one)
+	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID, bool isHeavyBlow = false);
 	// Drinking from a flask or using any item: the animation plays once on the upper body, the character walks slowly.
 	// False when the character is busy (attacking, rolling, staggering) or has no such animation
 	static bool UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);

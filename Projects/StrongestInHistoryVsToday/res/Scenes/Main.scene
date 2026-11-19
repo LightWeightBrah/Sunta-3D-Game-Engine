@@ -67,7 +67,8 @@
      0.12,
      0.09
     ],
-    "fog_density": 0.012
+    "fog_density": 0.012,
+    "hit_impact_frame": 0.7
    }
   },
   {
@@ -98,7 +99,7 @@
     "position": [
      0.0,
      2.2,
-     -25.5
+     1.5
     ],
     "rotation": [
      -20,
@@ -138,13 +139,13 @@
     "show_gizmos": false
    },
    "character_actions": {
-    "attack_step_speed": 2.2,
+    "attack_step_speed": 1.4,
     "backstep_animation": "Backstep",
     "backstep_speed": 4.0,
     "blend_seconds": 0.08,
     "block_animation": "Block",
     "block_impact_animation": "Block_Impact",
-    "cancel_from": 0.66,
+    "cancel_from": 0.55,
     "death_animation": "Death",
     "heavy_attack_animation": "Attack_Heavy",
     "heavy_damage_multiplier": 1.8,
@@ -166,9 +167,85 @@
     "roll_speed": 5.5,
     "stand_up_animation": "Stand_Up",
     "parry_from": 0.0,
-    "parry_to": 0.55,
+    "parry_to": 0.5,
     "attack_turn_degrees_per_second": 0.0,
-    "riposte_damage_multiplier": 2.5
+    "extra_light_attack_animations": [
+     "Attack_Light_4"
+    ],
+    "heavy_attack_2_animation": "Attack_Heavy_2",
+    "running_attack_animation": "Attack_Running",
+    "running_attack_speed": 6.5,
+    "dodge_attack_animation": "",
+    "riposte_animation": "Attack_Riposte",
+    "riposte_reach": 2.6,
+    "extra_hit_reaction_animations": [
+     "Hit_2"
+    ],
+    "heavy_hit_reaction_animation": "Hit_Heavy",
+    "attack_moves": [
+     {
+      "animation": "Attack_Light_1",
+      "hit_from": 0.24,
+      "hit_to": 0.72,
+      "strike_height": 1.3
+     },
+     {
+      "animation": "Attack_Light_2",
+      "hit_from": 0.24,
+      "hit_to": 0.72,
+      "strike_height": 1.25
+     },
+     {
+      "animation": "Attack_Light_3",
+      "hit_from": 0.24,
+      "hit_to": 0.72,
+      "strike_height": 1.5
+     },
+     {
+      "animation": "Attack_Light_4",
+      "hit_from": 0.12,
+      "hit_to": 0.48,
+      "damage_multiplier": 1.3,
+      "strike_height": 1.55
+     },
+     {
+      "animation": "Attack_Heavy",
+      "hit_from": 0.3,
+      "hit_to": 0.74,
+      "damage_multiplier": 1.8,
+      "cancel_from": 0.8
+     },
+     {
+      "animation": "Attack_Heavy_2",
+      "hit_from": 0.36,
+      "hit_to": 0.66,
+      "damage_multiplier": 2.2,
+      "cancel_from": 0.85
+     },
+     {
+      "animation": "Attack_Running",
+      "hit_from": 0.26,
+      "hit_to": 0.52,
+      "damage_multiplier": 1.8
+     },
+     {
+      "animation": "Attack_Riposte",
+      "hit_from": 0.18,
+      "hit_to": 0.62,
+      "damage_multiplier": 2.0
+     }
+    ],
+    "attack_lunge_max_distance": 0.9,
+    "dodge_cancel_from": 0.85,
+    "riposte_damage_multiplier": 2.5,
+    "attack_lunge_speed": 4.5,
+    "attack_reach": 0.85,
+    "attack_speed": 1.45,
+    "swing_effect": "Player Swing",
+    "heavy_swing_effect": "Player Heavy Swing",
+    "swing_effect_height": 1.25,
+    "swing_effect_distance": 0.1,
+    "swing_effect_at": 0.3
    },
    "character_animation": {
     "blend_seconds": 0.2,
@@ -178,8 +255,9 @@
     "strafe_right_animation": "Strafe_Right",
     "walk_animation": "Walk",
     "walk_back_animation": "Walk_Back",
-    "walk_animation_speed": 0.79,
-    "run_animation_speed": 1.94
+    "walk_animation_speed": 1.62,
+    "run_animation_speed": 2.86,
+    "locked_on_idle_animation": "Idle_Fight"
    },
    "character_controller": {
     "acceleration": 55.0,
@@ -244,7 +322,7 @@
    },
    "health": {
     "max_health": 200.0,
-    "hit_effect": "Punch Dust",
+    "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 1.5,
     "death_slow_motion_scale": 0.35
    },
@@ -295,19 +373,20 @@
    },
    "poise": {
     "max_poise": 30.0,
-    "recover_after_seconds": 3.0
+    "recover_after_seconds": 3.0,
+    "stagger_immunity_seconds": 1.2
    },
    "respawn": {
     "respawn_delay_seconds": 4.5
    },
    "stamina": {
-    "backstep_cost": 10.0,
-    "heavy_attack_cost": 20.0,
-    "light_attack_cost": 8.0,
+    "backstep_cost": 9.0,
+    "heavy_attack_cost": 22.0,
+    "light_attack_cost": 11.0,
     "max_stamina": 100.0,
-    "regeneration_delay_seconds": 0.6,
-    "regeneration_per_second": 45.0,
-    "roll_cost": 14.0,
+    "regeneration_delay_seconds": 0.5,
+    "regeneration_per_second": 50.0,
+    "roll_cost": 12.0,
     "run_cost_per_second": 12.0
    },
    "tag": {
@@ -317,7 +396,7 @@
     "position": [
      0.0,
      0.0,
-     -30.0
+     -3.0
     ],
     "rotation": [
      0.0,
@@ -335,6 +414,15 @@
      1.0,
      1.0
     ]
+   },
+   "strike_aim": {
+    "spine_bones": "Spine_Low,Spine,Chest",
+    "clip_strike_height": 1.3,
+    "target_height": 0.86,
+    "max_pitch_degrees": 20.0,
+    "max_yaw_degrees": 25.0,
+    "fade_seconds": 0.1,
+    "search_distance": 4.0
    },
    "script": [
     {
@@ -482,9 +570,9 @@
    },
    "transform": {
     "position": [
-     -0.0325,
-     0.137,
-     0.0701
+     -0.033,
+     0.1532,
+     0.0858
     ],
     "rotation": [
      0.0,
@@ -510,7 +598,7 @@
      0.75,
      0.1
     ],
-    "size": 0.085,
+    "size": 0.045,
     "intensity": 9.0
    },
    "parent": {
@@ -524,9 +612,9 @@
    },
    "transform": {
     "position": [
-     0.0332,
-     0.1408,
-     0.0652
+     0.033,
+     0.1531,
+     0.0857
     ],
     "rotation": [
      0.0,
@@ -552,7 +640,7 @@
      0.75,
      0.1
     ],
-    "size": 0.085,
+    "size": 0.045,
     "intensity": 9.0
    },
    "parent": {
@@ -760,7 +848,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 9.6,
+    "duration_seconds": 10.0,
     "look_at_entity": "Player",
     "look_at_height": 1.6,
     "animation_entity": "",
@@ -906,6 +994,290 @@
   },
   {
    "tag": {
+    "name": "Down Wait"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 3.5,
+    "look_at_entity": "Player",
+    "look_at_height": 0.3,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "wait_for_key": "2",
+    "wait_prompt": "[2]   Imaginary Technique: Baby Oil Detonation",
+    "blend_in_seconds": 1.8
+   },
+   "parent": {
+    "index": 2,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     3.2,
+     3.4,
+     2.4
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 17,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     2.4,
+     2.6,
+     0.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 17,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     1.6,
+     2.1,
+     -1.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 17,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Technique Rise"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 4.6,
+    "look_at_entity": "Player",
+    "look_at_height": 1.1,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "Imaginary Technique: Baby Oil Detonation",
+    "title_seconds": 1.6,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 1.0
+   },
+   "parent": {
+    "index": 2,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     2.4,
+     0.5,
+     -2.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 21,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     1.6,
+     1.0,
+     -2.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 21,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     0.7,
+     1.5,
+     -2.3
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 21,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Domain Star Swarm"
    },
    "transform": {
@@ -936,8 +1308,8 @@
     "model_name": "sih_hex_bullet",
     "count": 3500,
     "seed": 7,
-    "piece_size": 2.8,
-    "size_variation": 0.6,
+    "piece_size": 2.2,
+    "size_variation": 0.5,
     "radius": 2.0,
     "shell_thickness": 0.55,
     "spin_degrees_per_second": 26.0,
@@ -1064,8 +1436,8 @@
    },
    "particle_emitter": {
     "is_emitting": false,
-    "particles_per_second": 260.0,
-    "lifetime_seconds": 4.5,
+    "particles_per_second": 80.0,
+    "lifetime_seconds": 3.5,
     "spawn_half_extents": [
      0.1,
      0.1,
@@ -1073,17 +1445,17 @@
     ],
     "velocity": [
      0.0,
-     6.0,
+     2.5,
      0.0
     ],
-    "velocity_randomness": 2.0,
+    "velocity_randomness": 1.5,
     "gravity": [
      0.0,
-     0.5,
+     0.3,
      0.0
     ],
-    "start_size": 7.0,
-    "end_size": 16.0,
+    "start_size": 4.0,
+    "end_size": 9.0,
     "start_color": [
      0.09,
      0.07,
@@ -1094,12 +1466,12 @@
      0.14,
      0.13
     ],
-    "intensity": 0.75,
-    "max_particles": 1500,
+    "intensity": 0.4,
+    "max_particles": 800,
     "style": 2,
     "spawn_shape": 2,
-    "spawn_radius": 6.0,
-    "outward_speed": 1.0,
+    "spawn_radius": 17.0,
+    "outward_speed": 3.0,
     "size_randomness": 0.4,
     "spin_degrees_per_second": 20.0
    }
@@ -1163,7 +1535,7 @@
      0.05,
      0.0
     ],
-    "intensity": 2.0,
+    "intensity": 0.9,
     "max_particles": 6000,
     "style": 1,
     "size_randomness": 0.5,
@@ -1326,7 +1698,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 3.6,
+    "duration_seconds": 4.2,
     "look_at_entity": "Star Flight Focus",
     "look_at_height": 0.0,
     "animation_entity": "",
@@ -1335,7 +1707,8 @@
     "title": "",
     "title_seconds": 0.0,
     "can_be_skipped": false,
-    "video_file": ""
+    "video_file": "",
+    "blend_in_seconds": 1.2
    }
   },
   {
@@ -1366,7 +1739,7 @@
     ]
    },
    "parent": {
-    "index": 23,
+    "index": 31,
     "bone_name": ""
    }
   },
@@ -1398,7 +1771,7 @@
     ]
    },
    "parent": {
-    "index": 23,
+    "index": 31,
     "bone_name": ""
    }
   },
@@ -1430,7 +1803,7 @@
     ]
    },
    "parent": {
-    "index": 23,
+    "index": 31,
     "bone_name": ""
    }
   },
@@ -1462,7 +1835,7 @@
     ]
    },
    "parent": {
-    "index": 23,
+    "index": 31,
     "bone_name": ""
    }
   },
@@ -1494,7 +1867,7 @@
     ]
    },
    "parent": {
-    "index": 23,
+    "index": 31,
     "bone_name": ""
    }
   },
@@ -1572,6 +1945,50 @@
   },
   {
    "tag": {
+    "name": "Player Oil Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     1.3,
+     -0.55
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.15,
+     0.22
+    ]
+   },
+   "liquid_orb": {
+    "tint": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "brightness": 0.5,
+    "wobble": 0.1,
+    "wobble_speed": 2.4,
+    "clearness": 0.85,
+    "is_visible": false
+   },
+   "parent": {
+    "index": 2,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Right Fist"
    },
    "transform": {
@@ -1600,9 +2017,9 @@
    "hitbox": {
     "damage": 26.0,
     "half_extents": [
-     0.14,
-     0.14,
-     0.14
+     0.2,
+     0.2,
+     0.2
     ],
     "layer": 8,
     "local_offset": [
@@ -1650,9 +2067,9 @@
    "hitbox": {
     "damage": 26.0,
     "half_extents": [
-     0.14,
-     0.14,
-     0.14
+     0.2,
+     0.2,
+     0.2
     ],
     "layer": 8,
     "local_offset": [
@@ -1700,9 +2117,9 @@
    "hitbox": {
     "damage": 26.0,
     "half_extents": [
-     0.14,
-     0.14,
-     0.14
+     0.2,
+     0.2,
+     0.2
     ],
     "layer": 8,
     "local_offset": [
@@ -1748,10 +2165,10 @@
     ]
    },
    "shield": {
-    "damage_through": 0.15,
-    "guard_angle_degrees": 140.0,
-    "stamina_per_damage": 1.2,
-    "block_effect": "Hit Sparks"
+    "damage_through": 0.3,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 2.4,
+    "block_effect": "Guard Impact"
    },
    "parent": {
     "index": 2,
@@ -1790,7 +2207,7 @@
     "projectile": "Player Orb",
     "projectile_count": 1,
     "spread_degrees": 0.0,
-    "release_at": 0.35,
+    "release_at": 0.66,
     "at_targets_feet": false,
     "min_distance": 0.0,
     "max_distance": 60.0,
@@ -1847,8 +2264,8 @@
     "charge_effect": "",
     "charge_particles_per_second": 0.0,
     "cast_sound": "@game/Sounds/Spells/magic_whoosh.ogg",
-    "cast_key": "3",
-    "display_name": "Baby Oil Detonation"
+    "cast_key": "2",
+    "display_name": "Imaginary Technique: Baby Oil Detonation"
    },
    "parent": {
     "index": 2,
@@ -1895,7 +2312,7 @@
     "charge_effect": "",
     "charge_particles_per_second": 0.0,
     "cast_sound": "@game/Sounds/Boss/roar.ogg",
-    "cast_key": "2",
+    "cast_key": "3",
     "display_name": "Domain Expansion"
    },
    "parent": {
@@ -7459,7 +7876,1187 @@
   {
    "box_collider": {
     "half_extents": [
-     1.7,
+     8,
+     0.15,
+     8
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0,
+     -0.15,
+     0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Floor Corridor"
+   },
+   "transform": {
+    "position": [
+     0,
+     0,
+     4
+    ],
+    "rotation": [
+     0,
+     0.0,
+     0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     8,
+     0.15,
+     8
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0,
+     -0.15,
+     0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Floor Courtyard"
+   },
+   "transform": {
+    "position": [
+     0,
+     0,
+     -12
+    ],
+    "rotation": [
+     0,
+     0.0,
+     0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     14
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     14
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     -2
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     -2
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     2
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     2
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     6
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     6
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     10
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     10
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     -18
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     -18
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     -14
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     -14
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     -10
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     -10
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     1.3,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     -8,
+     0,
+     -6
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     3.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "tag": {
+    "name": "Street Border"
+   },
+   "transform": {
+    "position": [
+     8,
+     0,
+     -6
+    ],
+    "rotation": [
+     0,
+     90.0,
+     0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     16.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.0,
+     16.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     8.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.0,
+     8.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     -16.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     -8.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.0,
+     -16.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor Slab"
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_ground"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.0,
+     -8.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "box_collider": {
+    "half_extents": [
+     8.0,
      3.0,
      0.3
     ],
@@ -7473,13 +9070,13 @@
     "show_gizmos": false
    },
    "tag": {
-    "name": "Entrance Blocker"
+    "name": "Street End"
    },
    "transform": {
     "position": [
      0.0,
      0.0,
-     -20.0
+     12.0
     ],
     "rotation": [
      0,
@@ -7497,6 +9094,1286 @@
      1,
      1
     ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     -9.5,
+     -0.2,
+     10.0
+    ],
+    "rotation": [
+     0.0,
+     97.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6626200482157375,
+     0.0,
+     0.7489557207890021,
+     0.0
+    ],
+    "scale": [
+     1.22,
+     1.22,
+     1.22
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     -9.5,
+     -0.2,
+     3.0
+    ],
+    "rotation": [
+     0.0,
+     92.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6946583704589973,
+     0.0,
+     0.7193398003386512,
+     0.0
+    ],
+    "scale": [
+     1.1400000000000001,
+     1.1400000000000001,
+     1.1400000000000001
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     -9.5,
+     -0.2,
+     -4.0
+    ],
+    "rotation": [
+     0.0,
+     87.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7253743710122877,
+     0.0,
+     0.6883545756937539,
+     0.0
+    ],
+    "scale": [
+     1.06,
+     1.06,
+     1.06
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     -9.5,
+     -0.2,
+     -11.0
+    ],
+    "rotation": [
+     0.0,
+     82.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.754709580222772,
+     0.0,
+     0.6560590289905073,
+     0.0
+    ],
+    "scale": [
+     0.98,
+     0.98,
+     0.98
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     9.5,
+     -0.2,
+     10.0
+    ],
+    "rotation": [
+     0.0,
+     100.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6427876096865394,
+     0.0,
+     0.766044443118978,
+     0.0
+    ],
+    "scale": [
+     0.9,
+     0.9,
+     0.9
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     9.5,
+     -0.2,
+     3.0
+    ],
+    "rotation": [
+     0.0,
+     95.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6755902076156602,
+     0.0,
+     0.7372773368101241,
+     0.0
+    ],
+    "scale": [
+     1.22,
+     1.22,
+     1.22
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     9.5,
+     -0.2,
+     -4.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.1400000000000001,
+     1.1400000000000001,
+     1.1400000000000001
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Street Rubble"
+   },
+   "transform": {
+    "position": [
+     9.5,
+     -0.2,
+     -11.0
+    ],
+    "rotation": [
+     0.0,
+     85.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7372773368101241,
+     0.0,
+     0.6755902076156602,
+     0.0
+    ],
+    "scale": [
+     1.06,
+     1.06,
+     1.06
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rubble Heap"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -0.3,
+     13.5
+    ],
+    "rotation": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9993908270190958,
+     0.0,
+     0.03489949670250097,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_rubble"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -20.0,
+     -1.0,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     160.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.17364817766693041,
+     0.0,
+     0.984807753012208,
+     0.0
+    ],
+    "scale": [
+     1.15,
+     1.15,
+     1.15
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     18.0,
+     -1.0,
+     26.0
+    ],
+    "rotation": [
+     0.0,
+     20.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.984807753012208,
+     0.0,
+     0.17364817766693033,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     77.48717539926774,
+     -1.0,
+     -20.25546018774007
+    ],
+    "rotation": [
+     0.0,
+     335,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9762960071199334,
+     0.0,
+     0.21643961393810274,
+     0.0
+    ],
+    "scale": [
+     1.5,
+     1.5,
+     1.5
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     62.42416534010112,
+     -1.0,
+     -106.2069709341441
+    ],
+    "rotation": [
+     0.0,
+     243,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5224985647159488,
+     0.0,
+     0.8526401643540923,
+     0.0
+    ],
+    "scale": [
+     1.3599999999999999,
+     1.3599999999999999,
+     1.3599999999999999
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     40.49999999999999,
+     -1.0,
+     -120.14805770653953
+    ],
+    "rotation": [
+     0.0,
+     310,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9063077870366499,
+     0.0,
+     0.4226182617406995,
+     0.0
+    ],
+    "scale": [
+     1.43,
+     1.43,
+     1.43
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -29.285038301457615,
+     -1.0,
+     -115.77527295026727
+    ],
+    "rotation": [
+     0.0,
+     151,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.2503800040544415,
+     0.0,
+     0.9681476403781077,
+     0.0
+    ],
+    "scale": [
+     1.22,
+     1.22,
+     1.22
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -54.86870972142638,
+     -1.0,
+     -110.93787568914632
+    ],
+    "rotation": [
+     0.0,
+     218,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.32556815445715664,
+     0.0,
+     0.9455185755993168,
+     0.0
+    ],
+    "scale": [
+     1.29,
+     1.29,
+     1.29
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -68.41600689897064,
+     -1.0,
+     -89.50000000000003
+    ],
+    "rotation": [
+     0.0,
+     285,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.793353340291235,
+     0.0,
+     0.6087614290087209,
+     0.0
+    ],
+    "scale": [
+     1.3599999999999999,
+     1.3599999999999999,
+     1.3599999999999999
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -72.60009836188395,
+     -1.0,
+     -42.36942218146133
+    ],
+    "rotation": [
+     0.0,
+     59,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8703556959398997,
+     0.0,
+     0.49242356010346716,
+     0.0
+    ],
+    "scale": [
+     1.5,
+     1.5,
+     1.5
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     29.24363706470245,
+     -1.0,
+     76.66810842208058
+    ],
+    "rotation": [
+     0.0,
+     134,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.3907311284892737,
+     0.0,
+     0.9205048534524404,
+     0.0
+    ],
+    "scale": [
+     1.7400000000000002,
+     1.7400000000000002,
+     1.7400000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     63.558669963536545,
+     -1.0,
+     74.7409133863715
+    ],
+    "rotation": [
+     0.0,
+     201,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.18223552549214753,
+     0.0,
+     0.9832549075639546,
+     0.0
+    ],
+    "scale": [
+     1.81,
+     1.81,
+     1.81
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     89.8800869716995,
+     -1.0,
+     53.39521249051977
+    ],
+    "rotation": [
+     0.0,
+     268,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.6946583704589974,
+     0.0,
+     0.7193398003386511,
+     0.0
+    ],
+    "scale": [
+     1.8800000000000001,
+     1.8800000000000001,
+     1.8800000000000001
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     109.7663739347249,
+     -1.0,
+     26.859242471040176
+    ],
+    "rotation": [
+     0.0,
+     335,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9762960071199334,
+     0.0,
+     0.21643961393810274,
+     0.0
+    ],
+    "scale": [
+     1.9500000000000002,
+     1.9500000000000002,
+     1.9500000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     122.29903587113343,
+     -1.0,
+     -3.0537986095656535
+    ],
+    "rotation": [
+     0.0,
+     42,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9335804264972017,
+     0.0,
+     0.35836794954530027,
+     0.0
+    ],
+    "scale": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     137.91593412863523,
+     -1.0,
+     -45.183869455054854
+    ],
+    "rotation": [
+     0.0,
+     176,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.03489949670250108,
+     0.0,
+     0.9993908270190958,
+     0.0
+    ],
+    "scale": [
+     1.7400000000000002,
+     1.7400000000000002,
+     1.7400000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     132.04992609906378,
+     -1.0,
+     -78.06807826039751
+    ],
+    "rotation": [
+     0.0,
+     243,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5224985647159488,
+     0.0,
+     0.8526401643540923,
+     0.0
+    ],
+    "scale": [
+     1.81,
+     1.81,
+     1.81
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     118.64081411149003,
+     -1.0,
+     -107.86499137615823
+    ],
+    "rotation": [
+     0.0,
+     310,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9063077870366499,
+     0.0,
+     0.4226182617406995,
+     0.0
+    ],
+    "scale": [
+     1.8800000000000001,
+     1.8800000000000001,
+     1.8800000000000001
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     81.70215006865378,
+     -1.0,
+     -162.45336221811766
+    ],
+    "rotation": [
+     0.0,
+     84,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7431448254773942,
+     0.0,
+     0.6691306063588582,
+     0.0
+    ],
+    "scale": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     50.94649670456406,
+     -1.0,
+     -176.09700422108307
+    ],
+    "rotation": [
+     0.0,
+     151,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.2503800040544415,
+     0.0,
+     0.9681476403781077,
+     0.0
+    ],
+    "scale": [
+     1.6700000000000002,
+     1.6700000000000002,
+     1.6700000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     18.51002242768869,
+     -1.0,
+     -181.70565314262885
+    ],
+    "rotation": [
+     0.0,
+     218,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.32556815445715664,
+     0.0,
+     0.9455185755993168,
+     0.0
+    ],
+    "scale": [
+     1.7400000000000002,
+     1.7400000000000002,
+     1.7400000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -13.588700224794955,
+     -1.0,
+     -179.28784639787554
+    ],
+    "rotation": [
+     0.0,
+     285,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.793353340291235,
+     0.0,
+     0.6087614290087209,
+     0.0
+    ],
+    "scale": [
+     1.81,
+     1.81,
+     1.81
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -57.8987018584758,
+     -1.0,
+     -174.16416682402104
+    ],
+    "rotation": [
+     0.0,
+     59,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8703556959398997,
+     0.0,
+     0.49242356010346716,
+     0.0
+    ],
+    "scale": [
+     1.9500000000000002,
+     1.9500000000000002,
+     1.9500000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -84.32893240067824,
+     -1.0,
+     -154.13755883523407
+    ],
+    "rotation": [
+     0.0,
+     126,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.4539904997395468,
+     0.0,
+     0.8910065241883678,
+     0.0
+    ],
+    "scale": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -129.7911843367941,
+     -1.0,
+     -105.09308911698761
+    ],
+    "rotation": [
+     0.0,
+     260,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.6427876096865394,
+     0.0,
+     0.766044443118978,
+     0.0
+    ],
+    "scale": [
+     1.7400000000000002,
+     1.7400000000000002,
+     1.7400000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -136.300991002129,
+     -1.0,
+     -71.58795617555188
+    ],
+    "rotation": [
+     0.0,
+     327,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.958819734868193,
+     0.0,
+     0.2840153447039226,
+     0.0
+    ],
+    "scale": [
+     1.81,
+     1.81,
+     1.81
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -134.48628424238564,
+     -1.0,
+     -38.23397472906618
+    ],
+    "rotation": [
+     0.0,
+     34,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9563047559630354,
+     0.0,
+     0.29237170472273677,
+     0.0
+    ],
+    "scale": [
+     1.8800000000000001,
+     1.8800000000000001,
+     1.8800000000000001
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -124.80845197910983,
+     -1.0,
+     -7.0250036116553645
+    ],
+    "rotation": [
+     0.0,
+     101,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.636078220277764,
+     0.0,
+     0.77162458338772,
+     0.0
+    ],
+    "scale": [
+     1.9500000000000002,
+     1.9500000000000002,
+     1.9500000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -108.18850326495973,
+     -1.0,
+     20.258435516938434
+    ],
+    "rotation": [
+     0.0,
+     168,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.10452846326765346,
+     0.0,
+     0.9945218953682733,
+     0.0
+    ],
+    "scale": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -83.72996064428952,
+     -1.0,
+     57.16946249051419
+    ],
+    "rotation": [
+     0.0,
+     302,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8746197071393957,
+     0.0,
+     0.48480962024633717,
+     0.0
+    ],
+    "scale": [
+     1.7400000000000002,
+     1.7400000000000002,
+     1.7400000000000002
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -54.09597352908142,
+     -1.0,
+     71.50154586646593
+    ],
+    "rotation": [
+     0.0,
+     9,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.996917333733128,
+     0.0,
+     0.07845909572784494,
+     0.0
+    ],
+    "scale": [
+     1.81,
+     1.81,
+     1.81
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_b"
+   }
+  },
+  {
+   "tag": {
+    "name": "City Ruin"
+   },
+   "transform": {
+    "position": [
+     -22.57426309670095,
+     -1.0,
+     78.02500789158705
+    ],
+    "rotation": [
+     0.0,
+     76,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7880107536067219,
+     0.0,
+     0.6156614753256583,
+     0.0
+    ],
+    "scale": [
+     1.8800000000000001,
+     1.8800000000000001,
+     1.8800000000000001
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "sih_tower_c"
    }
   },
   {
@@ -10992,7 +13869,7 @@
    "particle_emitter": {
     "is_emitting": false,
     "particles_per_second": 0.0,
-    "lifetime_seconds": 1.6,
+    "lifetime_seconds": 1.1,
     "spawn_half_extents": [
      0.6,
      0.2,
@@ -11010,19 +13887,19 @@
      0.0
     ],
     "start_size": 0.7,
-    "end_size": 1.6,
+    "end_size": 1.4,
     "start_color": [
-     0.16,
      0.13,
-     0.11
+     0.1,
+     0.08
     ],
     "end_color": [
-     0.32,
-     0.28,
-     0.25
+     0.22,
+     0.18,
+     0.15
     ],
-    "intensity": 0.75,
-    "max_particles": 900,
+    "intensity": 0.55,
+    "max_particles": 350,
     "is_dark": true
    }
   },
@@ -11364,7 +14241,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 264,
+    "index": 343,
     "bone_name": ""
    }
   },
@@ -11408,7 +14285,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 264,
+    "index": 343,
     "bone_name": ""
    }
   },
@@ -11452,7 +14329,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 264,
+    "index": 343,
     "bone_name": ""
    }
   },
@@ -11496,7 +14373,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 264,
+    "index": 343,
     "bone_name": ""
    }
   },
@@ -11584,7 +14461,7 @@
     "fuse_seconds": 0.0,
     "trail_effect": "",
     "trail_particles_per_second": 0.0,
-    "hit_effect": "Oil Splash",
+    "hit_effect": "Oil Cube",
     "hit_burst": 60,
     "hit_sound": "@game/Sounds/Spells/deep_boom.ogg",
     "hit_stop_seconds": 0.2,
@@ -11623,7 +14500,7 @@
     "model_name": "sih_oil_bottle"
    },
    "parent": {
-    "index": 270,
+    "index": 349,
     "bone_name": ""
    }
   },
@@ -11704,7 +14581,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11740,7 +14617,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11776,7 +14653,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11812,7 +14689,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11848,7 +14725,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11884,7 +14761,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11920,7 +14797,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11956,7 +14833,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -11992,7 +14869,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -12028,7 +14905,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -12064,7 +14941,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -12100,7 +14977,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 272,
+    "index": 351,
     "bone_name": ""
    }
   },
@@ -12181,7 +15058,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12217,7 +15094,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12253,7 +15130,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12289,7 +15166,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12325,7 +15202,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12361,7 +15238,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12397,7 +15274,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12433,7 +15310,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12469,7 +15346,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12505,7 +15382,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12541,7 +15418,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12577,7 +15454,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12613,7 +15490,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12649,7 +15526,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12685,7 +15562,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12721,7 +15598,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12757,7 +15634,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12793,7 +15670,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12829,7 +15706,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12865,7 +15742,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12901,7 +15778,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12937,7 +15814,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -12973,7 +15850,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13009,7 +15886,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13045,7 +15922,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13081,7 +15958,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13117,7 +15994,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13153,7 +16030,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13189,7 +16066,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13225,7 +16102,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13261,7 +16138,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13297,7 +16174,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13333,7 +16210,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13369,7 +16246,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13405,7 +16282,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13441,7 +16318,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13477,7 +16354,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13513,7 +16390,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13549,7 +16426,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13585,7 +16462,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13621,7 +16498,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13657,7 +16534,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13693,7 +16570,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13729,7 +16606,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13765,7 +16642,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13801,7 +16678,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13837,7 +16714,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13873,7 +16750,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 285,
+    "index": 364,
     "bone_name": ""
    }
   },
@@ -13918,7 +16795,7 @@
     "hit_burst": 22,
     "hit_sound": "@game/Sounds/Spells/deep_boom.ogg",
     "hit_stop_seconds": 0.06,
-    "camera_shake": 0.3
+    "camera_shake": 0.12
    }
   },
   {
@@ -13998,7 +16875,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 335,
+    "index": 414,
     "bone_name": ""
    }
   },
@@ -14034,7 +16911,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 335,
+    "index": 414,
     "bone_name": ""
    }
   },
@@ -14070,7 +16947,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 335,
+    "index": 414,
     "bone_name": ""
    }
   },
@@ -14117,7 +16994,7 @@
     "hit_burst": 8,
     "hit_sound": "@game/Sounds/Spells/coins.ogg",
     "hit_stop_seconds": 0.04,
-    "camera_shake": 0.2
+    "camera_shake": 0.06
    }
   },
   {
@@ -14152,7 +17029,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14188,7 +17065,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14224,7 +17101,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14260,7 +17137,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14296,7 +17173,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14332,7 +17209,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14368,7 +17245,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14404,7 +17281,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14440,7 +17317,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14476,7 +17353,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14512,7 +17389,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14548,7 +17425,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14584,7 +17461,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14620,7 +17497,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14656,7 +17533,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14692,7 +17569,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14728,7 +17605,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14764,7 +17641,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14800,7 +17677,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14836,7 +17713,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14872,7 +17749,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14908,7 +17785,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14944,7 +17821,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -14980,7 +17857,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15016,7 +17893,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15052,7 +17929,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15088,7 +17965,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15124,7 +18001,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15160,7 +18037,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15196,7 +18073,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15232,7 +18109,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15268,7 +18145,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15304,7 +18181,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15340,7 +18217,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15376,7 +18253,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15412,7 +18289,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15448,7 +18325,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15484,7 +18361,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15520,7 +18397,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15556,7 +18433,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 339,
+    "index": 418,
     "bone_name": ""
    }
   },
@@ -15602,7 +18479,7 @@
     "hit_burst": 10,
     "hit_sound": "@game/Sounds/Spells/coins.ogg",
     "hit_stop_seconds": 0.05,
-    "camera_shake": 0.3
+    "camera_shake": 0.12
    }
   },
   {
@@ -15637,7 +18514,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15673,7 +18550,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15709,7 +18586,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15745,7 +18622,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15781,7 +18658,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15817,7 +18694,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15853,7 +18730,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15889,7 +18766,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15925,7 +18802,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15961,7 +18838,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -15997,7 +18874,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16033,7 +18910,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16069,7 +18946,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16105,7 +18982,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16141,7 +19018,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16177,7 +19054,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16213,7 +19090,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16249,7 +19126,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16285,7 +19162,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16321,7 +19198,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16357,7 +19234,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16393,7 +19270,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16429,7 +19306,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
     "bone_name": ""
    }
   },
@@ -16465,7 +19342,3507 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 380,
+    "index": 459,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Punch Impact"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.22,
+    "start_radius": 0.1,
+    "end_radius": 0.8,
+    "core_color": [
+     1.0,
+     0.95,
+     0.8
+    ],
+    "edge_color": [
+     1.0,
+     0.55,
+     0.12
+    ],
+    "intensity": 2.0,
+    "thickness": 0.3,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "rotation_randomness": [
+     0.0,
+     0.0,
+     180.0
+    ],
+    "noise_scale": 5.0,
+    "scroll_speed": 2.0,
+    "dissolve": 0.8,
+    "light_intensity": 2.0,
+    "light_radius": 4.0,
+    "light_color": [
+     1.0,
+     0.6,
+     0.3
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Punch Impact Core"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.12,
+    "start_radius": 0.03,
+    "end_radius": 0.35,
+    "core_color": [
+     1.0,
+     0.95,
+     0.8
+    ],
+    "edge_color": [
+     1.0,
+     0.55,
+     0.12
+    ],
+    "intensity": 2.5,
+    "thickness": 0.7,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "noise_scale": 4.0,
+    "dissolve": 0.6
+   },
+   "parent": {
+    "index": 484,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Punch Impact Echo"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.3,
+    "start_radius": 0.25,
+    "end_radius": 1.4,
+    "core_color": [
+     1.0,
+     0.95,
+     0.8
+    ],
+    "edge_color": [
+     1.0,
+     0.35,
+     0.05
+    ],
+    "intensity": 1.0,
+    "thickness": 0.1,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "offset": [
+     0.0,
+     0.0,
+     0.35
+    ],
+    "noise_scale": 6.0,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 484,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Punch Impact Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.35,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -7.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.6,
+     0.15
+    ],
+    "end_color": [
+     0.6,
+     0.08,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 22,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 9.0,
+    "size_randomness": 0.4,
+    "drag": 4.5,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 484,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Punch Impact Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.08,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.8,
+    "end_size": 0.24,
+    "start_color": [
+     1.0,
+     0.75,
+     0.45
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.45
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.5,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 484,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Punch Impact Dust"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.6,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 0.18,
+    "end_size": 0.5,
+    "start_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "end_color": [
+     0.546,
+     0.46799999999999997,
+     0.39
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 6,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 2.5,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0
+   },
+   "parent": {
+    "index": 484,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Guard Impact"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.18,
+    "start_radius": 0.1,
+    "end_radius": 0.7,
+    "core_color": [
+     1.0,
+     0.95,
+     0.85
+    ],
+    "edge_color": [
+     0.95,
+     0.7,
+     0.35
+    ],
+    "intensity": 2.4,
+    "thickness": 0.22,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "noise_scale": 5.0,
+    "dissolve": 0.7,
+    "light_intensity": 2.0,
+    "light_radius": 4.0,
+    "light_color": [
+     1.0,
+     0.85,
+     0.6
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Guard Impact Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.45,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -11.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.85,
+     0.4
+    ],
+    "end_color": [
+     0.8,
+     0.25,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 34,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 11.0,
+    "size_randomness": 0.4,
+    "drag": 3.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 490,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Guard Impact Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.07,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.7,
+    "end_size": 0.21,
+    "start_color": [
+     1.0,
+     0.9,
+     0.7
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.9,
+     0.7
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.5,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 490,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Player Swing"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.2,
+    "start_radius": 0.75,
+    "end_radius": 1.05,
+    "core_color": [
+     1.0,
+     0.95,
+     0.8
+    ],
+    "edge_color": [
+     1.0,
+     0.55,
+     0.12
+    ],
+    "intensity": 2.2,
+    "thickness": 0.32,
+    "arc_degrees": 120.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_randomness": [
+     8.0,
+     10.0,
+     40.0
+    ],
+    "noise_scale": 5.0,
+    "scroll_speed": 4.0,
+    "dissolve": 0.5
+   }
+  },
+  {
+   "tag": {
+    "name": "Player Swing Streaks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.2,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.03,
+    "end_size": 0.012,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.3
+    ],
+    "end_color": [
+     0.5,
+     0.15,
+     0.0
+    ],
+    "intensity": 3.0,
+    "max_particles": 3000,
+    "burst_amount": 6,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 4.0,
+    "size_randomness": 0.4,
+    "drag": 6.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 493,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Player Heavy Swing"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.3,
+    "start_radius": 0.9,
+    "end_radius": 1.6,
+    "core_color": [
+     1.0,
+     1.0,
+     0.9
+    ],
+    "edge_color": [
+     1.0,
+     0.55,
+     0.12
+    ],
+    "intensity": 3.0,
+    "thickness": 0.42,
+    "arc_degrees": 210.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     -25.0
+    ],
+    "rotation_randomness": [
+     0.0,
+     10.0,
+     25.0
+    ],
+    "noise_scale": 5.0,
+    "scroll_speed": 5.0,
+    "dissolve": 0.6,
+    "light_intensity": 2.0,
+    "light_radius": 5.0,
+    "light_color": [
+     1.0,
+     0.65,
+     0.3
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Player Heavy Swing Wind"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.36,
+    "start_radius": 1.1,
+    "end_radius": 2.3,
+    "core_color": [
+     1.0,
+     0.95,
+     0.8
+    ],
+    "edge_color": [
+     1.0,
+     0.4,
+     0.05
+    ],
+    "intensity": 1.1,
+    "thickness": 0.15,
+    "arc_degrees": 230.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     -25.0
+    ],
+    "noise_scale": 6.0,
+    "scroll_speed": 6.0,
+    "dissolve": 0.85
+   },
+   "parent": {
+    "index": 495,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Player Heavy Swing Streaks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.3,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.04,
+    "end_size": 0.016,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.3
+    ],
+    "end_color": [
+     0.5,
+     0.15,
+     0.0
+    ],
+    "intensity": 3.5,
+    "max_particles": 3000,
+    "burst_amount": 16,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 6.0,
+    "size_randomness": 0.4,
+    "drag": 5.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 495,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Swing"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.22,
+    "start_radius": 0.75,
+    "end_radius": 1.1,
+    "core_color": [
+     1.0,
+     0.9,
+     0.85
+    ],
+    "edge_color": [
+     0.95,
+     0.12,
+     0.05
+    ],
+    "intensity": 2.4,
+    "thickness": 0.3,
+    "arc_degrees": 130.0,
+    "rotation_randomness": [
+     8.0,
+     10.0,
+     45.0
+    ],
+    "noise_scale": 5.0,
+    "scroll_speed": 4.0,
+    "dissolve": 0.55
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Swing Streaks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.22,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.03,
+    "end_size": 0.012,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.3,
+     0.15
+    ],
+    "end_color": [
+     0.4,
+     0.0,
+     0.0
+    ],
+    "intensity": 3.0,
+    "max_particles": 3000,
+    "burst_amount": 6,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 4.0,
+    "size_randomness": 0.4,
+    "drag": 6.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 498,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Heavy Swing"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.32,
+    "start_radius": 0.9,
+    "end_radius": 1.7,
+    "core_color": [
+     1.0,
+     0.9,
+     0.85
+    ],
+    "edge_color": [
+     0.95,
+     0.12,
+     0.05
+    ],
+    "intensity": 3.2,
+    "thickness": 0.42,
+    "arc_degrees": 220.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     25.0
+    ],
+    "rotation_randomness": [
+     0.0,
+     10.0,
+     25.0
+    ],
+    "noise_scale": 5.0,
+    "scroll_speed": 5.0,
+    "dissolve": 0.6,
+    "light_intensity": 2.5,
+    "light_radius": 5.0,
+    "light_color": [
+     1.0,
+     0.25,
+     0.1
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Heavy Swing Wind"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.38,
+    "start_radius": 1.1,
+    "end_radius": 2.4,
+    "core_color": [
+     1.0,
+     0.9,
+     0.85
+    ],
+    "edge_color": [
+     0.6,
+     0.02,
+     0.0
+    ],
+    "intensity": 1.2,
+    "thickness": 0.15,
+    "arc_degrees": 240.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     25.0
+    ],
+    "noise_scale": 6.0,
+    "scroll_speed": 6.0,
+    "dissolve": 0.85
+   },
+   "parent": {
+    "index": 500,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Heavy Swing Streaks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.3,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.04,
+    "end_size": 0.016,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.3,
+     0.15
+    ],
+    "end_color": [
+     0.4,
+     0.0,
+     0.0
+    ],
+    "intensity": 3.5,
+    "max_particles": 3000,
+    "burst_amount": 16,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 6.0,
+    "size_randomness": 0.4,
+    "drag": 5.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 500,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Ground Slam"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.6,
+    "start_radius": 0.6,
+    "end_radius": 7.0,
+    "core_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "edge_color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "intensity": 3.5,
+    "thickness": 0.22,
+    "noise_scale": 3.0,
+    "scroll_speed": 1.5,
+    "dissolve": 0.85,
+    "light_intensity": 6.0,
+    "light_radius": 10.0,
+    "light_color": [
+     1.0,
+     0.5,
+     0.2
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Ground Slam Crack"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.9,
+    "start_radius": 0.3,
+    "end_radius": 3.0,
+    "core_color": [
+     1.0,
+     0.7,
+     0.4
+    ],
+    "edge_color": [
+     0.7,
+     0.12,
+     0.0
+    ],
+    "intensity": 2.0,
+    "thickness": 0.9,
+    "noise_scale": 6.0,
+    "scroll_speed": 0.3,
+    "dissolve": 1.0
+   },
+   "parent": {
+    "index": 503,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Ground Slam Column"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 2,
+    "lifetime_seconds": 0.5,
+    "start_radius": 0.8,
+    "end_radius": 1.8,
+    "core_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "edge_color": [
+     0.8,
+     0.2,
+     0.0
+    ],
+    "intensity": 0.8,
+    "height": 4.0,
+    "twist_degrees": 200.0,
+    "spin_degrees_per_second": 200.0,
+    "noise_scale": 5.0,
+    "scroll_speed": 3.0,
+    "dissolve": 0.85
+   },
+   "parent": {
+    "index": 503,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Ground Slam Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.7,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -14.0,
+     0.0
+    ],
+    "start_size": 0.07,
+    "end_size": 0.028000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.6,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.06,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 60,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 12.0,
+    "size_randomness": 0.4,
+    "drag": 2.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 503,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Ground Slam Dust"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.6,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 0.9,
+    "end_size": 2.6,
+    "start_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "end_color": [
+     0.546,
+     0.46799999999999997,
+     0.39
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 30,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 7.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0
+   },
+   "parent": {
+    "index": 503,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Ground Slam Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.1,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 3.0,
+    "end_size": 0.8999999999999999,
+    "start_color": [
+     1.0,
+     0.8,
+     0.5
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.8,
+     0.5
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.4,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 503,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Cube"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 4,
+    "lifetime_seconds": 0.95,
+    "start_radius": 0.4,
+    "end_radius": 2.3,
+    "core_color": [
+     1.0,
+     0.97,
+     0.85
+    ],
+    "edge_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "intensity": 2.4,
+    "spin_degrees_per_second": 60.0,
+    "noise_scale": 4.0,
+    "scroll_speed": 0.8,
+    "dissolve": 0.25,
+    "light_intensity": 4.0,
+    "light_radius": 9.0,
+    "light_color": [
+     1.0,
+     0.75,
+     0.35
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Cube Inner"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 4,
+    "lifetime_seconds": 0.95,
+    "start_radius": 0.2,
+    "end_radius": 1.6,
+    "core_color": [
+     1.0,
+     0.95,
+     0.75
+    ],
+    "edge_color": [
+     0.9,
+     0.5,
+     0.1
+    ],
+    "intensity": 0.9,
+    "spin_degrees_per_second": -90.0,
+    "noise_scale": 5.0,
+    "scroll_speed": 1.4,
+    "dissolve": 0.3
+   },
+   "parent": {
+    "index": 509,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Cube Drops"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.8,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -10.0,
+     0.0
+    ],
+    "start_size": 0.07,
+    "end_size": 0.028000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "end_color": [
+     0.6,
+     0.2,
+     0.0
+    ],
+    "intensity": 3.0,
+    "max_particles": 3000,
+    "burst_amount": 50,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 7.0,
+    "size_randomness": 0.4,
+    "drag": 2.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 509,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 0.75,
+    "start_radius": 0.6,
+    "end_radius": 4.2,
+    "core_color": [
+     1.0,
+     1.0,
+     0.9
+    ],
+    "edge_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "intensity": 1.3,
+    "noise_scale": 4.0,
+    "scroll_speed": 1.2,
+    "dissolve": 0.9,
+    "light_intensity": 6.0,
+    "light_radius": 18.0,
+    "light_color": [
+     1.0,
+     0.7,
+     0.35
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation Wave"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.9,
+    "start_radius": 1.0,
+    "end_radius": 12.0,
+    "core_color": [
+     1.0,
+     0.97,
+     0.85
+    ],
+    "edge_color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "intensity": 2.2,
+    "thickness": 0.18,
+    "noise_scale": 3.0,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 512,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation Column"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 2,
+    "lifetime_seconds": 0.9,
+    "start_radius": 1.2,
+    "end_radius": 2.4,
+    "core_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "edge_color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "intensity": 0.8,
+    "height": 10.0,
+    "twist_degrees": 260.0,
+    "spin_degrees_per_second": 160.0,
+    "noise_scale": 5.0,
+    "scroll_speed": 2.5,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 512,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation Flames"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.9,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     2.5,
+     0.0
+    ],
+    "start_size": 1.2,
+    "end_size": 2.16,
+    "start_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.4,
+     0.06
+    ],
+    "end_color": [
+     0.25,
+     0.04,
+     0.0
+    ],
+    "intensity": 1.3,
+    "max_particles": 3000,
+    "burst_amount": 160,
+    "style": 1,
+    "spawn_shape": 1,
+    "spawn_radius": 0.3,
+    "outward_speed": 9.0,
+    "drag": 3.0,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 90.0
+   },
+   "parent": {
+    "index": 512,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation Drops"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.1,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -12.0,
+     0.0
+    ],
+    "start_size": 0.09,
+    "end_size": 0.036,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "end_color": [
+     0.6,
+     0.15,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 140,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 16.0,
+    "size_randomness": 0.4,
+    "drag": 1.6,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 512,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation Smoke"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 2.4,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 1.4,
+    "end_size": 3.6,
+    "start_color": [
+     0.18,
+     0.14,
+     0.12
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.18,
+     0.14,
+     0.12
+    ],
+    "end_color": [
+     0.23399999999999999,
+     0.18200000000000002,
+     0.156
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 40,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 6.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0
+   },
+   "parent": {
+    "index": 512,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Detonation Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.12,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 4.0,
+    "end_size": 1.2,
+    "start_color": [
+     1.0,
+     0.85,
+     0.6
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.85,
+     0.6
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.2,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 512,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Domain Shatter"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.15,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 3.0,
+    "end_size": 0.8999999999999999,
+    "start_color": [
+     1.0,
+     0.8,
+     0.5
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.8,
+     0.5
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.2,
+    "max_particles": 3000,
+    "burst_amount": 1
+   }
+  },
+  {
+   "tag": {
+    "name": "Domain Shatter Wave"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 1.4,
+    "start_radius": 2.0,
+    "end_radius": 40.0,
+    "core_color": [
+     1.0,
+     0.97,
+     0.85
+    ],
+    "edge_color": [
+     1.0,
+     0.5,
+     0.15
+    ],
+    "intensity": 1.8,
+    "thickness": 0.1,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 519,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Domain Shatter Shards"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.4,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -6.0,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.048,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.85,
+     0.6
+    ],
+    "end_color": [
+     0.6,
+     0.15,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 220,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 22.0,
+    "size_randomness": 0.4,
+    "drag": 1.2,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 519,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Crash Impact"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.45,
+    "start_radius": 0.5,
+    "end_radius": 4.0,
+    "core_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "edge_color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "intensity": 2.5,
+    "thickness": 0.25,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "dissolve": 0.9,
+    "light_intensity": 6.0,
+    "light_radius": 12.0
+   }
+  },
+  {
+   "tag": {
+    "name": "Crash Impact Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.8,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -12.0,
+     0.0
+    ],
+    "start_size": 0.07,
+    "end_size": 0.028000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.6,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.06,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 70,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 13.0,
+    "size_randomness": 0.4,
+    "drag": 2.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 522,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Crash Impact Dust"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.8,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 1.0,
+    "end_size": 2.8,
+    "start_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "end_color": [
+     0.546,
+     0.46799999999999997,
+     0.39
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 24,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 6.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0
+   },
+   "parent": {
+    "index": 522,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Splash Ring"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.26,
+    "start_radius": 0.15,
+    "end_radius": 1.3,
+    "core_color": [
+     1.0,
+     0.97,
+     0.85
+    ],
+    "edge_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "intensity": 2.0,
+    "thickness": 0.25,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "rotation_randomness": [
+     0.0,
+     0.0,
+     180.0
+    ],
+    "noise_scale": 5.0,
+    "dissolve": 0.85,
+    "light_intensity": 2.0,
+    "light_radius": 6.0,
+    "light_color": [
+     1.0,
+     0.75,
+     0.4
+    ]
+   },
+   "parent": {
+    "index": 321,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Splash Burst"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 0.2,
+    "start_radius": 0.1,
+    "end_radius": 0.9,
+    "core_color": [
+     1.0,
+     1.0,
+     0.95
+    ],
+    "edge_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "intensity": 1.2,
+    "noise_scale": 5.0,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 321,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Oil Splash Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.35,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -7.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.15,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 26,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 10.0,
+    "size_randomness": 0.4,
+    "drag": 4.5,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 321,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Impact Smoke Wave"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.55,
+    "start_radius": 0.4,
+    "end_radius": 4.5,
+    "core_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "edge_color": [
+     1.0,
+     0.32,
+     0.04
+    ],
+    "intensity": 1.4,
+    "thickness": 0.22,
+    "noise_scale": 4.0,
+    "dissolve": 0.85,
+    "light_intensity": 1.5,
+    "light_radius": 7.0,
+    "light_color": [
+     1.0,
+     0.5,
+     0.2
+    ]
+   },
+   "parent": {
+    "index": 338,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Impact Smoke Flames"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.55,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     2.5,
+     0.0
+    ],
+    "start_size": 0.7,
+    "end_size": 1.26,
+    "start_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.4,
+     0.06
+    ],
+    "end_color": [
+     0.25,
+     0.04,
+     0.0
+    ],
+    "intensity": 0.8,
+    "max_particles": 3000,
+    "burst_amount": 24,
+    "style": 1,
+    "spawn_shape": 1,
+    "spawn_radius": 0.3,
+    "outward_speed": 5.0,
+    "drag": 3.0,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 90.0
+   },
+   "parent": {
+    "index": 338,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Impact Smoke Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.6,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -12.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.6,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.06,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 30,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 11.0,
+    "size_randomness": 0.4,
+    "drag": 2.2,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 338,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Page Burst Ring"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.18,
+    "start_radius": 0.1,
+    "end_radius": 0.9,
+    "core_color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "edge_color": [
+     0.9,
+     0.85,
+     0.7
+    ],
+    "intensity": 3.0,
+    "thickness": 0.25,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "dissolve": 0.8,
+    "light_intensity": 2.0,
+    "light_radius": 5.0,
+    "light_color": [
+     1.0,
+     0.95,
+     0.85
+    ]
+   },
+   "parent": {
+    "index": 327,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Flash Burst Ring"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 0.16,
+    "start_radius": 0.1,
+    "end_radius": 1.3,
+    "core_color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "edge_color": [
+     0.6,
+     0.75,
+     1.0
+    ],
+    "intensity": 2.5,
+    "dissolve": 0.9,
+    "light_intensity": 3.0,
+    "light_radius": 6.0,
+    "light_color": [
+     0.85,
+     0.9,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 336,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Money Burst Ring"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.2,
+    "start_radius": 0.1,
+    "end_radius": 1.0,
+    "core_color": [
+     0.9,
+     1.0,
+     0.8
+    ],
+    "edge_color": [
+     0.3,
+     0.9,
+     0.25
+    ],
+    "intensity": 2.5,
+    "thickness": 0.25,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "dissolve": 0.8,
+    "light_intensity": 2.0,
+    "light_radius": 5.0,
+    "light_color": [
+     0.6,
+     1.0,
+     0.5
+    ]
+   },
+   "parent": {
+    "index": 333,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Money Burst Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.35,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -7.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     0.6,
+     1.0,
+     0.4
+    ],
+    "end_color": [
+     0.1,
+     0.3,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 12,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 7.0,
+    "size_randomness": 0.4,
+    "drag": 4.5,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 333,
     "bone_name": ""
    }
   },
@@ -16530,7 +22907,13 @@
     "attack_reach": 1.3,
     "attack_delay_chance": 0.15,
     "attack_delay_seconds": 0.35,
-    "attack_delay_at": 0.7
+    "attack_delay_at": 0.7,
+    "hyper_armor": 1,
+    "swing_effect": "Boss Swing",
+    "heavy_swing_effect": "Boss Heavy Swing",
+    "swing_effect_height": 1.3,
+    "swing_effect_distance": 0.1,
+    "swing_effect_at": 0.3
    },
    "character_animation": {
     "blend_seconds": 0.2,
@@ -16582,7 +22965,7 @@
    },
    "health": {
     "max_health": 1500.0,
-    "hit_effect": "Punch Dust",
+    "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 3.0,
     "death_slow_motion_scale": 0.25
    },
@@ -16599,14 +22982,14 @@
     "is_lockable": true
    },
    "melee_enemy": {
-    "attack_cooldown_seconds": 1.0,
+    "attack_cooldown_seconds": 1.25,
     "attack_distance": 1.7,
     "give_up_distance": 120.0,
     "heavy_attack_chance": 0.25,
     "max_light_combo": 3,
     "recover_seconds": 0.7,
     "run_distance": 7.0,
-    "finisher_chance": 0.4,
+    "finisher_chance": 0.35,
     "dodge_chance": 0.3,
     "dodge_distance": 3.0,
     "dodge_cooldown_seconds": 3.0
@@ -16639,7 +23022,8 @@
    },
    "poise": {
     "max_poise": 70.0,
-    "recover_after_seconds": 4.0
+    "recover_after_seconds": 4.0,
+    "stagger_immunity_seconds": 1.6
    },
    "tag": {
     "name": "Boss"
@@ -16666,6 +23050,15 @@
      1.0,
      1.0
     ]
+   },
+   "strike_aim": {
+    "spine_bones": "Spine02,Spine,Chest",
+    "clip_strike_height": 1.3,
+    "target_height": 0.8,
+    "max_pitch_degrees": 16.0,
+    "max_yaw_degrees": 25.0,
+    "fade_seconds": 0.1,
+    "search_distance": 4.0
    },
    "boss": {
     "phase_two_health_fraction": 0.0,
@@ -16711,10 +23104,10 @@
     "damage_through": 0.2,
     "guard_angle_degrees": 150.0,
     "stamina_per_damage": 0.0,
-    "block_effect": "Hit Sparks"
+    "block_effect": "Guard Impact"
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Hand_L"
    }
   },
@@ -16764,7 +23157,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Hand_R"
    }
   },
@@ -16814,7 +23207,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Hand_L"
    }
   },
@@ -16864,7 +23257,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Foot_R"
    }
   },
@@ -16906,7 +23299,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Head"
    }
   },
@@ -16948,7 +23341,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Head"
    }
   },
@@ -16980,7 +23373,7 @@
     ]
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": "Hand_R"
    }
   },
@@ -17026,7 +23419,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 412,
+    "index": 542,
     "bone_name": ""
    }
   },
@@ -17072,7 +23465,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 412,
+    "index": 542,
     "bone_name": ""
    }
   },
@@ -17118,7 +23511,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 412,
+    "index": 542,
     "bone_name": ""
    }
   },
@@ -17165,7 +23558,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 412,
+    "index": 542,
     "bone_name": ""
    }
   },
@@ -17212,7 +23605,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 412,
+    "index": 542,
     "bone_name": ""
    }
   },
@@ -17253,10 +23646,11 @@
     "title": "",
     "title_seconds": 0.0,
     "can_be_skipped": false,
-    "video_file": ""
+    "video_file": "",
+    "blend_in_seconds": 0.9
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": ""
    }
   },
@@ -17288,7 +23682,7 @@
     ]
    },
    "parent": {
-    "index": 418,
+    "index": 548,
     "bone_name": ""
    }
   },
@@ -17320,7 +23714,7 @@
     ]
    },
    "parent": {
-    "index": 418,
+    "index": 548,
     "bone_name": ""
    }
   },
@@ -17352,7 +23746,7 @@
     ]
    },
    "parent": {
-    "index": 418,
+    "index": 548,
     "bone_name": ""
    }
   },
@@ -17393,10 +23787,11 @@
     "title": "",
     "title_seconds": 0.0,
     "can_be_skipped": false,
-    "video_file": ""
+    "video_file": "",
+    "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": ""
    }
   },
@@ -17428,7 +23823,7 @@
     ]
    },
    "parent": {
-    "index": 422,
+    "index": 552,
     "bone_name": ""
    }
   },
@@ -17460,7 +23855,7 @@
     ]
    },
    "parent": {
-    "index": 422,
+    "index": 552,
     "bone_name": ""
    }
   },
@@ -17492,7 +23887,7 @@
     ]
    },
    "parent": {
-    "index": 422,
+    "index": 552,
     "bone_name": ""
    }
   },
@@ -17524,7 +23919,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 5.4,
+    "duration_seconds": 6.1,
     "look_at_entity": "Boss",
     "look_at_height": 1.0,
     "animation_entity": "",
@@ -17536,7 +23931,7 @@
     "video_file": ""
    },
    "parent": {
-    "index": 405,
+    "index": 535,
     "bone_name": ""
    }
   },
@@ -17568,7 +23963,7 @@
     ]
    },
    "parent": {
-    "index": 426,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -17600,7 +23995,7 @@
     ]
    },
    "parent": {
-    "index": 426,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -17632,7 +24027,7 @@
     ]
    },
    "parent": {
-    "index": 426,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -17664,7 +24059,7 @@
     ]
    },
    "parent": {
-    "index": 426,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -17696,7 +24091,7 @@
     ]
    },
    "parent": {
-    "index": 426,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -17728,7 +24123,7 @@
     ]
    },
    "parent": {
-    "index": 405
+    "index": 535
    },
    "cutscene": {
     "duration_seconds": 6.0,
@@ -17771,7 +24166,7 @@
     ]
    },
    "parent": {
-    "index": 432
+    "index": 562
    }
   },
   {
@@ -17802,7 +24197,7 @@
     ]
    },
    "parent": {
-    "index": 432
+    "index": 562
    }
   },
   {
@@ -17833,7 +24228,7 @@
     ]
    },
    "parent": {
-    "index": 432
+    "index": 562
    }
   },
   {
@@ -17864,7 +24259,7 @@
     ]
    },
    "parent": {
-    "index": 432
+    "index": 562
    }
   },
   {
@@ -17928,7 +24323,12 @@
     "attack_reach": 2.8,
     "attack_delay_chance": 0.0,
     "attack_delay_seconds": 0.45,
-    "attack_delay_at": 0.7
+    "attack_delay_at": 0.7,
+    "hyper_armor": 2,
+    "heavy_swing_effect": "Ground Slam",
+    "swing_effect": "Boss Heavy Swing",
+    "swing_effect_height": 0.15,
+    "swing_effect_distance": 1.8
    },
    "character_animation": {
     "blend_seconds": 0.3,
@@ -17981,7 +24381,7 @@
    },
    "health": {
     "max_health": 900.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 1.5,
     "death_slow_motion_scale": 0.35
    },
@@ -18036,7 +24436,8 @@
    },
    "poise": {
     "max_poise": 140.0,
-    "recover_after_seconds": 4.0
+    "recover_after_seconds": 4.0,
+    "stagger_immunity_seconds": 3.0
    },
    "tag": {
     "name": "Summon"
@@ -18098,7 +24499,7 @@
     ]
    },
    "parent": {
-    "index": 437
+    "index": 567
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -18182,7 +24583,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 437,
+    "index": 567,
     "bone_name": "Hand_R"
    }
   },
@@ -18232,7 +24633,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 437,
+    "index": 567,
     "bone_name": "Hand_L"
    }
   },
@@ -18282,7 +24683,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 437,
+    "index": 567,
     "bone_name": "Foot_R"
    }
   },
@@ -18313,7 +24714,7 @@
      60.0,
      29.6
     ],
-    "is_crossed_with_key": false,
+    "is_crossed_with_key": true,
     "cutscene": "Film Intro",
     "battle_music": "",
     "battle_music_volume": 0.6,
@@ -18345,6 +24746,72 @@
      1.0,
      1.0
     ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Fog Mist"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     2.2,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 572
+   },
+   "particle_emitter": {
+    "is_emitting": true,
+    "particles_per_second": 45.0,
+    "lifetime_seconds": 3.0,
+    "spawn_half_extents": [
+     1.7,
+     2.1,
+     0.12
+    ],
+    "velocity": [
+     0.0,
+     0.12,
+     0.0
+    ],
+    "velocity_randomness": 0.18,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 1.0,
+    "end_size": 1.6,
+    "start_color": [
+     0.55,
+     0.56,
+     0.62
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 0.35,
+    "max_particles": 220
    }
   },
   {
@@ -18423,7 +24890,7 @@
     "sound": "@game/Sounds/Film/intro.ogg",
     "volume": 1.0,
     "is_looping": false,
-    "play_on_start": true,
+    "play_on_start": false,
     "is_spatial": false,
     "min_distance": 2.0,
     "max_distance": 30.0
@@ -18489,7 +24956,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 445,
+    "index": 576,
     "bone_name": ""
    }
   },
@@ -18545,7 +25012,7 @@
     }
    },
    "parent": {
-    "index": 445,
+    "index": 576,
     "bone_name": ""
    }
   },
@@ -18577,7 +25044,7 @@
     ]
    },
    "parent": {
-    "index": 445,
+    "index": 576,
     "bone_name": ""
    }
   },
@@ -18609,7 +25076,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 6.2,
+    "duration_seconds": 6.5,
     "look_at_entity": "Domain Reveal Focus",
     "look_at_height": 0.0,
     "animation_entity": "Boss",
@@ -18618,7 +25085,8 @@
     "title": "Domain Expansion: Epstein Island Temple",
     "title_seconds": 3.5,
     "can_be_skipped": false,
-    "video_file": ""
+    "video_file": "",
+    "blend_in_seconds": 1.4
    }
   },
   {
@@ -18707,9 +25175,9 @@
    },
    "transform": {
     "position": [
-     10.0,
-     1.6,
-     34.0
+     17.0,
+     7.0,
+     41.0
     ],
     "rotation": [
      0.0,
@@ -18729,7 +25197,7 @@
     ]
    },
    "parent": {
-    "index": 449,
+    "index": 580,
     "bone_name": ""
    }
   },
@@ -18739,9 +25207,9 @@
    },
    "transform": {
     "position": [
-     6.0,
-     4.0,
-     30.0
+     8.0,
+     10.0,
+     40.0
     ],
     "rotation": [
      0.0,
@@ -18761,7 +25229,7 @@
     ]
    },
    "parent": {
-    "index": 449,
+    "index": 580,
     "bone_name": ""
    }
   },
@@ -18771,9 +25239,9 @@
    },
    "transform": {
     "position": [
-     0.0,
-     7.0,
-     27.0
+     -1.0,
+     13.0,
+     38.0
     ],
     "rotation": [
      0.0,
@@ -18793,7 +25261,7 @@
     ]
    },
    "parent": {
-    "index": 449,
+    "index": 580,
     "bone_name": ""
    }
   },
@@ -18803,9 +25271,9 @@
    },
    "transform": {
     "position": [
-     -6.0,
-     10.0,
-     25.0
+     -10.0,
+     16.0,
+     35.0
     ],
     "rotation": [
      0.0,
@@ -18825,7 +25293,7 @@
     ]
    },
    "parent": {
-    "index": 449,
+    "index": 580,
     "bone_name": ""
    }
   },

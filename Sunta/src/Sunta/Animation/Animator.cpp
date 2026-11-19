@@ -263,6 +263,21 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 
 	glm::mat4 globalTransform = parentTransform * nodeTransform;
 
+	if (!extraRotations.empty())
+	{
+		auto extra = extraRotations.find(nodeName);
+		if (extra != extraRotations.end())
+		{
+			// The turn is given in the space of the model; the tree is in the space of the file's root (an FBX may be Z-up)
+			const glm::mat4 toModel   = currentModel->GetGlobalInverseTransform();
+			const glm::mat4 rotation  = glm::inverse(toModel) * glm::mat4_cast(extra->second) * toModel;
+			const glm::vec3 pivot     = glm::vec3(globalTransform[3]);
+			glm::mat4 turn = rotation;
+			turn[3] = glm::vec4(pivot - glm::mat3(rotation) * pivot, 1.0f);
+			globalTransform = turn * globalTransform;
+		}
+	}
+
 	if (nodeWalkIndex < nodeModelTransforms.size())
 		nodeModelTransforms[nodeWalkIndex] = currentModel->GetGlobalInverseTransform() * globalTransform;
 	nodeWalkIndex++;
@@ -276,6 +291,11 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	
 	for (const auto& child : node->children)
 	    CalculateBoneTransform(&child, globalTransform, isInLayer, layerGlobal);
+}
+
+void Animator::SetExtraRotation(const std::string& nodeName, const glm::quat& modelSpaceRotation)
+{
+	extraRotations[nodeName] = modelSpaceRotation;
 }
 
 void Animator::SampleAtTime(float time)

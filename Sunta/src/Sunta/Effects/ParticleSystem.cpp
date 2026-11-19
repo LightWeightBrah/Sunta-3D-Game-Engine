@@ -8,6 +8,7 @@
 
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "EffectSystem.h"
 #include "Gameplay/EntityName.h"
 #include "Core/VirtualFileSystem.h"
 #include "Renderer/ElementBuffer.h"
@@ -131,8 +132,12 @@ void SpawnParticle(ParticleEmitterComponent& emitter, const glm::mat4& emitterMa
 
 void MoveParticles(ParticleEmitterComponent& emitter, float deltaTime)
 {
+	// The air takes the same part of the speed every second, however long the frame
+	const float keptSpeed = emitter.drag > 0.0f ? std::exp(-emitter.drag * deltaTime) : 1.0f;
+
 	for (Particle& particle : emitter.particles)
 	{
+		particle.velocity *= keptSpeed;
 		particle.velocity += emitter.gravity * deltaTime;
 		particle.position += particle.velocity * deltaTime;
 		particle.rotation += particle.spin * deltaTime;
@@ -160,6 +165,7 @@ struct SpeckInstance
 	glm::vec4 centerAndSize;
 	glm::vec4 colorAndOpacity;
 	glm::vec4 rotationSeedStyle;   // rotation (radians), seed (0..1), style, part of its life
+	glm::vec4 velocityStretch;     // where it flies (a spark is stretched along it) and the seconds of flight it is long
 };
 
 BufferLayout GetSpeckLayout()
@@ -168,7 +174,8 @@ BufferLayout GetSpeckLayout()
 	{
 		{ ShaderDataType::Float4, "iCenterSize",        false, true },
 		{ ShaderDataType::Float4, "iColorOpacity",      false, true },
-		{ ShaderDataType::Float4, "iRotationSeedStyle", false, true }
+		{ ShaderDataType::Float4, "iRotationSeedStyle", false, true },
+		{ ShaderDataType::Float4, "iVelocityStretch",   false, true }
 	};
 }
 
@@ -182,6 +189,16 @@ std::vector<SpeckInstance>& GetSpecks()
 {
 	static std::vector<SpeckInstance> specks;
 	return specks;
+}
+
+// Its color at this part of its life: start -> end, or start -> middle -> end
+glm::vec3 ColorAt(const ParticleEmitterComponent& emitter, float lifePart)
+{
+	if (!emitter.hasMiddleColor)
+		return glm::mix(emitter.startColor, emitter.endColor, lifePart);
+
+	return lifePart < 0.5f ? glm::mix(emitter.startColor, emitter.middleColor, lifePart * 2.0f)
+		: glm::mix(emitter.middleColor, emitter.endColor, (lifePart - 0.5f) * 2.0f);
 }
 
 bool IsDrawnDark(const ParticleEmitterComponent& emitter)
@@ -224,18 +241,16 @@ void ParticleSystem::Update(EntityManager& entityManager, float deltaTime)
 	}
 }
 
-bool ParticleSystem::BurstAt(EntityManager& entityManager, const std::string& emitterName, const glm::vec3& position, int count)
+bool ParticleSystem::BurstAt(EntityManager& entityManager, const std::string& effectName, const glm::vec3& position, int count,
+	const glm::vec3& direction)
 {
-	unsigned int emitterID = 0;
-	if (!TryFindEntityByName(entityManager, emitterName, emitterID))
-		return false;
+	return EffectSystem::Play(entityManager, effectName, position, direction, count);
+}
 
-	ParticleEmitterComponent* emitter = entityManager.GetComponent<ParticleEmitterComponent>(emitterID);
-	if (!emitter)
-		return false;
-
-	emitter->pointBursts.push_back({ position, count });
-	return true;
+void ParticleSystem::BurstEmitter(ParticleEmitterComponent& emitter, const glm::vec3& position, int count)
+{
+	if (count > 0)
+		emitter.pointBursts.push_back({ position, count });
 }
 
 void ParticleSystem::Clear(EntityManager& entityManager)
@@ -323,14 +338,16 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 			if (IsDrawnDark(emitter) != isDarkPass)
 				continue;
 
-			const bool isGlow = emitter.style == (int)ParticleStyle::Glow;
+			// Fire and smoke swell in and fade; glows, sparks and rings fade in the shader by their age
+			const bool isGlow = emitter.style == (int)ParticleStyle::Glow || emitter.style == (int)ParticleStyle::Spark
+				|| emitter.style == (int)ParticleStyle::Ring;
 
 			for (const Particle& particle : emitter.particles)
 			{
 				const float     lifePart = glm::clamp(particle.age / particle.lifetime, 0.0f, 1.0f);
 				const float     size     = glm::mix(emitter.startSize, emitter.endSize, lifePart) * particle.size;
 				// A dark speck keeps its color and fades by its 'intensity' (how solid it is); a light one shines by it
-				const glm::vec3 color    = glm::mix(emitter.startColor, emitter.endColor, lifePart) * (isDarkPass ? 1.0f : emitter.intensity);
+				const glm::vec3 color    = ColorAt(emitter, lifePart) * (isDarkPass ? 1.0f : emitter.intensity);
 				float           opacity  = isDarkPass ? glm::clamp(emitter.intensity, 0.0f, 1.0f) * (1.0f - lifePart * lifePart) : 1.0f;
 				// Fire and smoke swell in at their birth and fade at their end, so a dense fire doesn't flicker
 				const float     fade     = isGlow ? 1.0f : glm::smoothstep(0.0f, 0.12f, lifePart) * (1.0f - glm::smoothstep(0.7f, 1.0f, lifePart));
@@ -339,7 +356,8 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 
 				specks.push_back({ glm::vec4(particle.position, size),
 					glm::vec4(isDarkPass ? color : color * fade, opacity),
-					glm::vec4(particle.rotation, particle.seed, (float)emitter.style, lifePart) });
+					glm::vec4(particle.rotation, particle.seed, (float)emitter.style, lifePart),
+					glm::vec4(particle.velocity, emitter.stretch) });
 			}
 		}
 
@@ -353,7 +371,7 @@ void ParticleSystem::Draw(EntityManager& entityManager, const glm::mat4& view, c
 					continue;
 
 				specks.push_back({ glm::vec4(glm::vec3(worldMatrix->matrix[3]), sprite.size),
-					glm::vec4(sprite.color * sprite.intensity, 1.0f), glm::vec4(0.0f) });
+					glm::vec4(sprite.color * sprite.intensity, 1.0f), glm::vec4(0.0f), glm::vec4(0.0f) });
 			}
 		}
 

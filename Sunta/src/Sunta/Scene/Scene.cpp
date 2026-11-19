@@ -33,6 +33,8 @@
 #include "Gameplay/BonfireSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
+#include "Gameplay/TestBot.h"
+#include "Gameplay/StrikeAimSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/HUDSystem.h"
 #include "Gameplay/RespawnSystem.h"
@@ -40,6 +42,8 @@
 #include "Effects/ParticleSystem.h"
 #include "Effects/LiquidOrbRenderer.h"
 #include "Effects/SwarmSystem.h"
+#include "Effects/EffectSystem.h"
+#include "Gameplay/DeveloperCheats.h"
 #include "Effects/WeaponTrailSystem.h"
 #include "Gameplay/SpellSystem.h"
 #include "Gameplay/TimeScaleSystem.h"
@@ -330,6 +334,7 @@ void Scene::Update()
 	if (isPlaying)
 	{
 		Systems::UpdateScripts(entityManager, gameDeltaTime, isScriptHotReloadEnabled);
+		TestBot::Update(entityManager, gameDeltaTime);
 		LockOnSystem::SetRecordingSightRays(DebugRenderer::GetShowLockOnSightRays());
 		LockOnSystem::Update(entityManager, gameDeltaTime, cameraForward, lookDelta);
 		if (!isCutscene)
@@ -348,6 +353,7 @@ void Scene::Update()
 	{
 		// After physics (needs the speed of the character), before the animators play the chosen animation
 		CharacterAnimationSystem::Update(entityManager, gameDeltaTime);
+		StrikeAimSystem::Update(entityManager, gameDeltaTime);
 		Systems::UpdateAnimators(entityManager, gameDeltaTime);
 	}
 
@@ -364,12 +370,14 @@ void Scene::Update()
 		// Before the particles: the copies that land ask for their bursts
 		SwarmSystem::Update(entityManager, gameDeltaTime);
 		ParticleSystem::Update(entityManager, gameDeltaTime);
+		EffectSystem::Update(entityManager, gameDeltaTime);
 		WeaponTrailSystem::Update(entityManager, gameDeltaTime);
 		BonfireSystem::Update(entityManager);
 		LevelUpSystem::Update(entityManager, EngineTime::deltaTime);
 		CurrencySystem::Update(entityManager, gameDeltaTime);
 		RespawnSystem::Update(entityManager, gameDeltaTime);
 		HUDSystem::Update(entityManager, EngineTime::deltaTime);
+		DeveloperCheats::Update(entityManager);
 	}
 
 	// After the transforms, so the camera sees where the player and the walls really are
@@ -597,6 +605,12 @@ void Scene::Render(Renderer& renderer)
 	const EnvironmentComponent* environment = environments.empty() ? nullptr : &environments.front();
 
 	// HDR: the scene is drawn into floating point colors and put on the screen at the end, with bloom (PostProcessing)
+	// The flashes of light of the effects in the air, as many as the shaders take
+	constexpr size_t MaxPointLights = 32;
+	if (sceneData.pointLights.size() > MaxPointLights)
+		sceneData.pointLights.resize(MaxPointLights);
+	EffectSystem::AddLights(entityManager, sceneData.pointLights, MaxPointLights);
+
 	PostProcessSettings postProcessSettings;
 	bool isPostProcessingWanted = true;
 
@@ -608,6 +622,7 @@ void Scene::Render(Renderer& renderer)
 		postProcessSettings.bloomThreshold  = environment->bloomThreshold;
 		postProcessSettings.bloomIntensity  = environment->bloomIntensity;
 		postProcessSettings.bloomBlurPasses = environment->bloomBlurPasses;
+		PostProcessing::hitKickPerShake     = environment->hitImpactFrame;
 	}
 
 	const glm::vec4 background = Renderer::GetClearColor();
@@ -648,6 +663,7 @@ void Scene::Render(Renderer& renderer)
 
 	// After everything solid: the specks are hidden behind walls, but never hide what is behind them
 	ParticleSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix, sceneData.cameraPosition, sceneData.fogDensity);
+	EffectSystem::Draw(entityManager, sceneData, sceneSeconds);
 	WeaponTrailSystem::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix);
 
 	for (const auto& item : gizmosQueue)
@@ -806,6 +822,7 @@ void Scene::BeginPlay()
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);
 	SwarmSystem::Clear(entityManager);
+	EffectSystem::Clear(entityManager);
 	WeaponTrailSystem::Clear(entityManager);
 	SpellSystem::Clear(entityManager);
 	TimeScaleSystem::Reset();

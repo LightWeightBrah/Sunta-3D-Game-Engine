@@ -79,6 +79,15 @@ void UpdateEnemy(EntityManager& entityManager, EnemyComponent& enemy, float delt
 	if (!context.IsValid())
 		return;
 
+	// A boss rests in its arena until the fog closes behind the player (see BossComponent): it doesn't come out
+	// after someone it sees through the fog or across the arena
+	const BossComponent* boss = entityManager.GetComponent<BossComponent>(entityID);
+	if (boss && !boss->isAwake && !boss->isDefeated)
+	{
+		context.Stop();
+		return;
+	}
+
 	enemy.attackCooldownLeft = glm::max(enemy.attackCooldownLeft - deltaTime, 0.0f);
 	enemy.dodgeCooldownLeft  = glm::max(enemy.dodgeCooldownLeft  - deltaTime, 0.0f);
 

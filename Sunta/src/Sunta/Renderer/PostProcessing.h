@@ -40,6 +40,15 @@ public:
 	// Puts the finished picture on the screen (the framebuffer used before Begin)
 	static void End(const PostProcessSettings& settings);
 
+	// An impact frame: for a blink the picture is blurred out from its middle, its colors split at the edges and its
+	// contrast punched up (the way fighting games and action films sell a heavy blow). 'strength' 0..1, fading
+	// over 'seconds' of real time; a stronger kick replaces a weaker one still fading
+	static void Kick(float strength, float seconds = 0.3f);
+
+	// A blow in the game kicks the picture by its camera shake times this (the scene's Environment sets it; 0: never)
+	static void KickFromHit(float cameraShake);
+	static inline float hitKickPerShake = 0.0f;
+
 private:
 	static inline std::shared_ptr<Framebuffer> sceneTarget;
 	static inline std::shared_ptr<Framebuffer> bloomTargets[2];

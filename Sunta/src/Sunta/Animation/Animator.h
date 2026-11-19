@@ -1,4 +1,6 @@
 #pragma once
+#include <unordered_map>
+#include <glm/gtc/quaternion.hpp>
 #include <assimp/anim.h>
 #include "Renderer/Model.h"
 #include "Bone.h"
@@ -43,6 +45,10 @@ namespace Sunta
 	    unsigned int           nodeWalkIndex = 0;
 	
 		std::vector<glm::mat4> finalBoneMatrices = std::vector<glm::mat4>(200, glm::mat4(1.0f));
+
+	    // Extra turns of bones on top of the animation (aiming the spine at an enemy), in the space of the model,
+	    // around the bone's own position; the bones below follow
+	    std::unordered_map<std::string, glm::quat> extraRotations;
 	
 	public:
 	    Animator() = default;
@@ -78,6 +84,10 @@ namespace Sunta
 
 	    const std::vector<glm::mat4>& GetFinalBoneMatrices() const { return finalBoneMatrices; }
 	    inline const Animation*       GetCurrentAnimation () const { return currentAnimation;  }
+
+	    // A turn of one bone in the space of the model added after the animation (identity removes it)
+	    void SetExtraRotation(const std::string& nodeName, const glm::quat& modelSpaceRotation);
+	    void ClearExtraRotations() { extraRotations.clear(); }
 
 	    // How far the current animation is: 0 at the start, 1 at the end
 	    float GetProgress() const;

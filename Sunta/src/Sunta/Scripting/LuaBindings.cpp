@@ -31,6 +31,8 @@
 #include "Utilities/MathUtilities.h"
 #include "Physics/PhysicsSystem.h"
 #include "Effects/SwarmSystem.h"
+#include "Effects/EffectSystem.h"
+#include "Renderer/PostProcessing.h"
 
 namespace Sunta
 {
@@ -447,6 +449,13 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 			{
 				const CharacterActionsComponent* actions = handle.TryGetComponent();
 				return actions && actions->IsGuarding();
+			}),
+
+		// True during the part of a parry that turns blows away (a script can show it: a flash, a shield of light)
+		"isParrying", sol::readonly_property([](const CharacterActionsHandle& handle)
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions && actions->IsParrying();
 			}),
 
 		"isOpenToRiposte", sol::readonly_property([](const CharacterActionsHandle& handle)
@@ -898,6 +907,29 @@ void LuaBindings::RegisterWorld(sol::state& lua)
 				return world.entityManager && ParticleSystem::BurstAt(*world.entityManager, emitterName, position, count);
 			},
 
+		// Plays an effect of the scene (an entity with Effect Shapes and Particle Emitters, its children too) at a
+		// point, facing a direction along the ground (optional), its emitters throwing 'count' specks (optional):
+		//     this.world:effect("Heavy Impact", target.transform.position, this.transform.forward)
+		"effect", [](const WorldHandle& world, const std::string& effectName, const glm::vec3& position,
+			sol::optional<glm::vec3> direction, sol::optional<int> count)
+			{
+				return world.entityManager && EffectSystem::Play(*world.entityManager, effectName, position,
+					direction.value_or(glm::vec3(0.0f)), count.value_or(20));
+			},
+
+		// An impact frame: the picture blurred out from its middle, colors split, contrast punched for a blink
+		//     this.world:impactFrame(0.8)   (strength 0..1, optional seconds of real time, 0.3 by default)
+		"impactFrame", [](const WorldHandle&, float strength, sol::optional<float> seconds)
+			{
+				PostProcessing::Kick(strength, seconds.value_or(0.3f));
+			},
+
+		// Keeps the black bars of the cutscenes on through a sequence of shots (true), lets them go (false)
+		"holdLetterbox", [](const WorldHandle&, bool isHeld)
+			{
+				CutsceneSystem::HoldLetterbox(isHeld);
+			},
+
 		"slowMotion", [](const WorldHandle&, float seconds, float scale)
 			{
 				TimeScaleSystem::SlowMotion(seconds, scale);
@@ -1002,6 +1034,13 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 				if (EntityManager* entityManager = handle.owner.GetEntityManager())
 					CutsceneSystem::Play(*entityManager, handle.owner.GetID());
 			},
+
+		// The player pressed its 'waitForKey' (a moment the player answers)
+		"wasAnswered", sol::readonly_property([](const CutsceneHandle& handle)
+			{
+				const CutsceneComponent* cutscene = handle.TryGetComponent();
+				return cutscene && cutscene->wasAnswered;
+			}),
 
 		"isPlaying", sol::readonly_property([](const CutsceneHandle& handle)
 			{

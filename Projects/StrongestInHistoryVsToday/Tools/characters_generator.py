@@ -34,12 +34,13 @@ import held_item_check  # noqa: E402
 import knight_generator  # noqa: E402
 import motion_retarget  # noqa: E402
 import strike_windows  # noqa: E402
-from motion_retarget import MotionClip, QUATERNIUS  # noqa: E402
+from motion_retarget import MIXAMO_NATIVE, MotionClip, QUATERNIUS, SOMA  # noqa: E402
 from sunta_blender import aim_camera_at, clear_scene, export_gltf, place_preview_camera, setup_preview_render, show_only  # noqa: E402
 
 SOURCE_FOLDER = os.path.join(BLENDER_FOLDER, "Generated", "StrongestInHistory")
 CONCEPTS = os.path.join(BLENDER_FOLDER, "Concepts", "StrongestInHistory")
-OUT_FOLDER = os.path.join(PROJECT, "res", "Models", "Characters")
+# (SUNTA_CHARACTERS_OUT: somewhere else, to try clips without touching the game's models)
+OUT_FOLDER = os.environ.get("SUNTA_CHARACTERS_OUT") or os.path.join(PROJECT, "res", "Models", "Characters")
 
 MAGIC = "Mixamo/ProMagic/"
 AXE = "Mixamo/ProMeleeAxe/"
@@ -49,6 +50,15 @@ GREAT_SWORD = "Mixamo/GreatSword/great sword "
 BRAWL = "Mixamo/Brawl/"
 BASE = "Mesh2Motion/human-base-animations.glb"
 ADDON = "Mesh2Motion/human-addon-animations.glb"
+# Motions made from text by NVIDIA Kimodo (run locally, see SUNTA_CONTEXT tools table), kept in Tools/Blender/Kimodo
+KIMODO_KNOCK = "Kimodo/knocked_down_get_up.bvh"
+KIMODO_GET_UP = "Kimodo/get_up_raise_hand.bvh"
+KIMODO_ORB = "Kimodo/orb_hold_push.bvh"
+
+
+def diddy(name, first_frame=None, last_frame=None, **settings):
+    """A clip Mixamo made for the player's own rig (Tools/Blender/Mixamo/Diddy, downloaded by mixamo_fetch_named.py)"""
+    return MotionClip("Mixamo/Diddy/{}.fbx".format(name), first_frame, last_frame, rig=MIXAMO_NATIVE, **settings)
 
 
 def library(file_name, action, **settings):
@@ -75,38 +85,74 @@ UPPERCUT = dict(first_frame=3,  last_frame=28)
 KICK     = dict(first_frame=5,  last_frame=40)
 SWIPE    = dict(first_frame=20, last_frame=56)
 
-# The player: a boxer's stance, a jab, a cross and a hook as the combo, a kick as the heavy blow, a guard with the
-# forearms, and two spells: an orb thrown with one hand and the great one called with both
-PLAYER = dict(UNARMED_WALKING, **{
-    "Idle":           MotionClip(BRAWL + "Bouncing Fight Idle.fbx"),
-    "Roll":           MotionClip("Mixamo/Sprinting Forward Roll.fbx", 4, 36, speed=1.1),
-    "Backstep":       MotionClip("Mixamo/Standing Dodge Backward.fbx", 4, 40, speed=1.2),
+# The player: a man in a dinner jacket who can fight. Every clip is Mixamo's motion capture made for his own rig
+# (Tools/Blender/Mixamo/Diddy): he stands at ease and walks with a swagger, and boxes only when he attacks. Each blow
+# is cut to its wind-up, the strike and the way back to the guard (the clips' first and last frames stand around)
+PLAYER = {
+    "Idle":           diddy("Idle_Standing"),
+    "Walk":           diddy("Walk_Swagger"),
+    "Run":            diddy("Run_Intention"),
+    # (Mixamo's own walk back for this rig keeps looking over its shoulder: wrong while facing a locked-on enemy)
+    "Walk_Back":      MotionClip(AXE + "unarmed walk back.fbx"),
+    "Strafe_Left":    diddy("Strafe_Left_Walk"),
+    "Strafe_Right":   diddy("Strafe_Right_Walk"),
+    # Locked on, he stands in a boxer's stance bouncing on his feet (the punches flow out of it)
+    "Idle_Fight":     diddy("Fight_Idle_Bounce"),
+    # A quick sprinting roll (the dive roll was slow and long)
+    "Roll":           MotionClip("Mixamo/Sprinting Forward Roll.fbx", 4, 36, speed=1.3),
+    "Backstep":       diddy("Backstep_Jump", 6, 56, speed=1.3),
+    # The combo: the quick jab, cross and hook of the fight before (short cuts of boxing motion capture, played fast),
+    # ended by an uppercut
     "Attack_Light_1": MotionClip(BRAWL + "Boxing Jab.fbx", speed=1.35, **JAB),
     "Attack_Light_2": MotionClip(BRAWL + "Cross Punch.fbx", speed=1.35, **CROSS),
     "Attack_Light_3": MotionClip(BRAWL + "Hook Punch.fbx", speed=1.3, **HOOK),
+    "Attack_Light_4": diddy("Uppercut_Back", 8, 42, speed=1.3),
+    # Heavy: a kick, then (pressed again) a spinning back kick with his whole weight behind it
     "Attack_Heavy":   MotionClip(BRAWL + "Mma Kick.fbx", speed=1.2, **KICK),
-    # A man in a street fight, not the mage's pack (the cultist of the first game moves with it)
-    "Hit":            library(BASE, "Hit_Chest", speed=1.2),
-    "Parried":        MotionClip(AXE + "standing react large from left.fbx", speed=0.8),
-    "Death":          library(ADDON, "Death_A"),
-    "Block":          MotionClip(AXE + "standing block idle.fbx"),
-    "Block_Impact":   MotionClip(AXE + "standing block react large.fbx", speed=1.2),
-    # Slow enough to be a move one can time: about half a second, the first half of it turns blows away
-    "Parry":          MotionClip(AXE + "standing block react large.fbx", 0, 18, speed=0.9),
-    # Thrown to the ground (a rain of the boss's domain) and getting up again
-    "Knocked_Down":   MotionClip(MAGIC + "Standing React Death Backward.fbx", speed=1.1),
-    "Get_Up":         library(BASE, "LayToIdle", speed=1.0),
-    # Lying on his back where he fell, still (the first frames of getting up, played very slowly)
-    "Lying":          library(BASE, "LayToIdle", first_frame=0, last_frame=2, speed=0.03),
+    "Attack_Heavy_2": diddy("Kick_SpinBack", 4, 56, speed=1.1),
+    # From a run: chasing the enemy down into an uppercut; out of a dodge: a rear hook; at a parried enemy: an elbow,
+    # then an uppercut
+    "Attack_Running": diddy("Run_Uppercut", 14, 70, speed=1.15),
+    "Attack_Riposte": diddy("Combo_ElbowUppercut", 8, 64),
+    # Staggers: a straight to the head, one to the stomach (at random), a big one to the head after a heavy blow
+    "Hit":            diddy("Hit_HeadMedium"),
+    "Hit_2":          diddy("Hit_Stomach"),
+    "Hit_Heavy":      diddy("Hit_HeadBig"),
+    "Parried":        diddy("Parried_Rocked", 1, 60),
+    "Death":          diddy("Knocked_Back"),
+    # The guard: both forearms up before the face; a blow on it rocks him back; the parry swats it aside inward
+    # Held still (one frame of the guard: a looping take kept restarting); the oil guard of his script shows it
+    "Block":          diddy("Block_BodyArms", 41, 42, speed=0.05),
+    "Block_Impact":   diddy("Block_HighCenter", 1, 40, speed=1.3),
+    # From the guard, the lead forearm sweeps the blow aside (the arm is posed by GESTURES), 0.6 s
+    "Parry":          diddy("Block_BodyArms", 41, 42, speed=0.055),
+    # Thrown onto his back by the stars of the boss's domain, lying there until the player answers, getting up
+    "Knocked_Down":   diddy("Knocked_Back", 20, 75),
+    "Lying":          diddy("Knocked_Back", 140, 146, speed=0.05),
+    "Get_Up":         diddy("GetUp_Back", speed=1.2),
     "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
     "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
     "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
-    "Cast_Orb":       library(BASE, "OverhandThrow", speed=1.3),
+    # Solid Baby Oil: the ball over his open palm at his side (GESTURES), then thrown overhand at the enemy
+    "Cast_Orb":       diddy("Idle_Standing", 1, 66),
     # His two great techniques are signs of the hands held still (posed below, see GESTURES): both hands pressed
     # together with two fingers up, and a triangle of both hands before the chest
-    "Cast_Great_Orb": MotionClip(AXE + "unarmed idle.fbx", speed=0.9),
-    "Cast_Domain":    MotionClip(AXE + "unarmed idle.fbx", speed=0.9),
-})
+    "Cast_Great_Orb": diddy("Idle_Standing", speed=0.9),
+    "Cast_Domain":    diddy("Idle_Standing", speed=0.9),
+}
+
+# Every downloaded clip whole, to compare them and read their strikes (--candidates)
+PLAYER_CANDIDATES = {name: diddy(name) for name in (
+    "Diddy_Skin_WeightShiftIdle", "Idle_Neutral", "Idle_Standing", "Idle_Male01", "Walk_Swagger", "Walk_Standard",
+    "Run_Intention", "Run_Standard", "Walk_Back", "Strafe_Left_Male", "Strafe_Right_Male", "Strafe_Left_Walk",
+    "Strafe_Right_Walk", "Roll_Dive", "Roll_Quick", "Backstep_Boxing", "Backstep_Jump", "Jab_Lead", "Cross_Back",
+    "Hook_Lead", "Hook_Back", "Uppercut_Back", "Uppercut_Lead", "Elbow_Cross", "Elbow_Step", "Kick_Roundhouse",
+    "Kick_Thrust", "Run_Uppercut", "Combo_ElbowUppercut", "Combo_JabElbow", "Block_Guard", "Block_Reaction",
+    "Parry_Outward", "Hit_HeadMedium", "Hit_Stomach", "Hit_HeadBig", "Parried_Rocked", "Knocked_Back", "Cast_Throw", "Throw_Standard", "Block_HighCenter", "Block_BodyArms", "Block_Inward", "Dodge_KneePunch", "Fight_Idle_Bounce",
+    "GetUp_Back", "Death_FallBack")}
+# (and the boxing clips of the other rig the combo uses, to compare their stance)
+PLAYER_CANDIDATES.update({"Brawl_Jab": MotionClip(BRAWL + "Boxing Jab.fbx"), "Brawl_Cross": MotionClip(BRAWL + "Cross Punch.fbx"),
+                          "Brawl_Hook": MotionClip(BRAWL + "Hook Punch.fbx")})
 
 # The boss: a mage who also brawls. Punches up close, a kick as the heavy blow, spells with one hand, the great
 # spells (his domain, the summoning) with both
@@ -146,10 +192,14 @@ BOSS = {
     "Parried":        MotionClip(AXE + "standing react large from left.fbx", speed=0.8),
     "Death":          MotionClip(MAGIC + "Standing React Death Backward.fbx"),
     # Hurled back by the player's last blow before his domain (film 1:15-1:21): falling, skidding on his back,
-    # getting up (the script carries him through the air and along the ground)
-    "Knocked_Down":   MotionClip(MAGIC + "Standing React Death Backward.fbx", speed=1.1),
-    "Lying":          library(BASE, "LayToIdle", first_frame=0, last_frame=2, speed=0.03),
-    "Get_Up":         library(BASE, "LayToIdle", speed=1.25),
+    # getting up with his hand already raised for the sign (the script carries him through the air and along the
+    # ground). Two takes made by NVIDIA Kimodo from text (Tools/Blender/Kimodo, 30 frames a second): thrown onto
+    # his back and lying there (the first take, frames 1-34 and 35-101), then sitting up, rising to his full height
+    # (the second take; the first one's rising ended in a crouch). Cut before the second take's own raising of the hand
+    # (it came out as a hand pressed to the chest): the sign is made by GESTURES ('Sign_Hold') right after
+    "Knocked_Down":   MotionClip(KIMODO_KNOCK, 1, 34, speed=0.8, rig=SOMA),
+    "Lying":          MotionClip(KIMODO_KNOCK, 60, 63, speed=0.05, rig=SOMA),
+    "Get_Up":         MotionClip(KIMODO_GET_UP, 1, 100, speed=1.6, rig=SOMA),
 }
 
 # The summon: a monster three meters tall. Swipes of its claws, slow wide hooks, both fists into the ground as the
@@ -178,14 +228,15 @@ SUMMON = dict(UNARMED_WALKING, **{
 FINGER_POSES = (
     ("Attack_Heavy", ("fist", "fist")),      # a kick: the guard stays closed
     ("Attack", ("fist", "fist")),
+    ("Idle_Fight", ("fist", "fist")),
     ("Idle", ("relaxed", "relaxed")),
     ("Block", ("fist", "fist")),
-    ("Parry", ("fist", "fist")),
+    ("Parry", ("fist", "open")),
     ("Sign_Domain", ("two", "relaxed")),
     ("Sign_Hold", ("two", "relaxed")),
     ("Cast_Great_Orb", ("two", "two")),
     ("Cast_Domain", ("open", "open")),
-    ("Cast_Orb", ("cupped", "relaxed")),
+    ("Cast_Orb", ("open", "relaxed")),
     ("Cast_Pillars", ("two", "relaxed")),
     ("Summon", ("two", "relaxed")),
     ("Cast_Spell", ("open", "fist")),
@@ -214,6 +265,10 @@ class Gesture:
     palm: tuple
     reached_at: float = 0.2   # the part of the action by which the hand is in place
     left_from: float = 1.0    # the part after which it goes back to the clip's pose
+    # The part before which the clip's hand is left alone, and by which the hand is back in the clip's pose: two
+    # gestures one after another (hold, then push) make one move
+    start_at: float = 0.0
+    end_at: float = 1.0
 
 
 GESTURES = {
@@ -227,6 +282,16 @@ GESTURES = {
         "Summon":       [Gesture("_R", (0.26, 0.38, 0.30), (0.0, 0.2, 1.0), (-0.3, 0.95, 0.0), reached_at=0.3, left_from=0.9)],
     },
     "sih_player": {
+        # As in the film (1:16): standing calm, the open palm turned up at his side, a little forward, the ball of oil
+        # floating over it; then the palm pushes it straight at the enemy (the spell leaves at 0.66) and comes back
+        "Cast_Orb":       [Gesture("_R", (0.30, 0.25, -0.30), (0.25, 1.0, 0.0), (0.0, 0.0, 1.0),
+                                   reached_at=0.16, left_from=0.52, end_at=0.64),
+                           Gesture("_R", (0.10, 0.62, -0.02), (0.0, 0.25, 1.0), (0.0, 1.0, 0.0),
+                                   start_at=0.52, reached_at=0.64, left_from=0.80, end_at=0.98)],
+        # The parry: the lead (left) forearm leaves the guard and sweeps out and forward, the open palm turning the
+        # blow away, then comes back to the guard
+        "Parry":          [Gesture("_L", (0.42, 0.40, 0.12), (0.15, 0.35, 1.0), (0.75, 0.65, 0.0),
+                                   reached_at=0.16, left_from=0.5, end_at=0.9)],
         # Both hands pressed together before the chest, the fingers up and a little forward
         "Cast_Great_Orb": [Gesture("_R", (0.03, 0.30, 0.10), (0.0, 0.35, 1.0), (-1.0, 0.0, 0.0), reached_at=0.3, left_from=0.9),
                            Gesture("_L", (0.03, 0.30, 0.10), (0.0, 0.35, 1.0), (-1.0, 0.0, 0.0), reached_at=0.3, left_from=0.9)],
@@ -251,7 +316,33 @@ def gesture_pin(armature, rig, gesture, size):
         wrist = chest_at_rest + mirrored(gesture.wrist) * size + (chest - chest_at_rest)
         return finger_rig.hand_target(armature, rig, gesture.side, wrist, mirrored(gesture.fingers), mirrored(gesture.palm))
 
-    return hand_pinning.HandPin(gesture.side, target, hand_pinning.fade(gesture.reached_at, gesture.left_from))
+    def weight(progress):
+        if progress <= gesture.start_at or progress >= gesture.end_at:
+            return 0.0
+        if progress < gesture.reached_at:
+            return hand_pinning.smooth((progress - gesture.start_at) / max(gesture.reached_at - gesture.start_at, 1e-4))
+        if progress > gesture.left_from:
+            return hand_pinning.smooth((gesture.end_at - progress) / max(gesture.end_at - gesture.left_from, 1e-4))
+        return 1.0
+
+    return hand_pinning.HandPin(gesture.side, target, weight)
+
+
+# Actions of a character with motion-captured fingers whose fingers are still posed (the signs of the techniques)
+GESTURE_FINGERS_ONLY = ("Cast_", "Sign_", "Summon")
+
+
+def take_materials(body, model_path):
+    """The materials of another model of the same mesh (the same texture coordinates) put on 'body'"""
+    objects_before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=model_path)
+    imported = [obj for obj in bpy.data.objects if obj not in objects_before]
+    donor = next(obj for obj in imported if obj.type == "MESH")
+    body.data.materials.clear()
+    for material in donor.data.materials:
+        body.data.materials.append(material)
+    for obj in imported:
+        bpy.data.objects.remove(obj)
 
 
 def pose_hands(character, armature, rig, actions):
@@ -264,6 +355,15 @@ def pose_hands(character, armature, rig, actions):
 
         if character.name == "sih_summon":
             poses = {"_R": MONSTER_POSE, "_L": MONSTER_POSE}
+        elif character.mixamo_rigged:
+            # Motion capture made for this rig moves the fingers itself: posed only for the signs of the hands
+            # (clips of other characters have no fingers for this rig: posed as everywhere else)
+            clip = character.animations.get(action.name)
+            own_fingers = clip is not None and clip.rig is MIXAMO_NATIVE
+            if own_fingers and action.name not in gestures and not action.name.startswith(GESTURE_FINGERS_ONLY):
+                continue
+            right, left = finger_poses_of(action.name)
+            poses = {"_R": right, "_L": left}
         else:
             right, left = finger_poses_of(action.name)
             poses = {"_R": right, "_L": left}
@@ -297,6 +397,8 @@ class Character:
     height: float      # meters, to the top of the head
     animations: dict
     brightness: float = 1.15
+    # How glossy (times the generated shine): below 1 for clothes that came out like plastic
+    shine: float = 1.0
     # How far past the bone's head a fist or a foot reaches (meters)
     limb_reach: float = 0.12
     # How many times the skin weights are blurred (0 = as generated), see character_from_mesh.smooth_skin_weights
@@ -310,14 +412,19 @@ class Character:
     # eyes are from where the shape of the head suggests (meters: across, up)
     face_photo: object = None
     eye_offset: tuple = (0.0, 0.0)
+    # Rigged by Mixamo's auto-rigger (the source is its FBX with the skin, in Tools/Blender): its weights and its
+    # fingers are kept, the clips are Mixamo's own for this rig, and 'textures' (a model in SOURCE_FOLDER) lends the
+    # materials (the upload carried only the colour)
+    mixamo_rigged: bool = False
+    textures: str = ""
 
 
 CHARACTERS = [
-    # From three views of the user's sheet (front, side, back): closer to the man than the first, front-only model
-    Character("player_v2_rigged.glb", "Player", "sih_player", 1.83, PLAYER,
-              smooth_head=2,
-              face_photo=character_from_mesh.FacePhoto(os.path.join(CONCEPTS, "player_reference_user_2.webp"),
-                                                       (525, 451), (729, 451), (627, 666))),
+    # From the user's second A-pose sheet (front, side, back): its face is good enough as generated, so no photo is
+    # painted over it (the photo on v2 left white patches at the mouth and beard)
+    Character("Mixamo/Diddy/Diddy_Skin_WeightShiftIdle.fbx", "Player", "sih_player", 1.83, PLAYER,
+              smooth_head=1, shine=0.25, mixamo_rigged=True, textures="player_v3.glb",
+              heat_weights=False, smooth_weights=0),
         # His generated face already looks like him; the film's still (1:03.5, smiling, tilted, other light) painted over
     # it looked worse - tried and left out:
     #   FacePhoto(os.path.join(CONCEPTS, "boss_face_film.png"), (549, 353), (671, 319), (649, 462))
@@ -343,6 +450,7 @@ def parse_arguments():
     parser.add_argument("--smooth", type=int, default=-1, help="times the skin weights are blurred (-1: the character's own)")
     parser.add_argument("--hands", action="store_true", help="close-ups of the upper body instead of the whole figure")
     parser.add_argument("--preview-steps", type=int, default=3)
+    parser.add_argument("--candidates", action="store_true", help="the player with every downloaded clip whole")
     return parser.parse_args(argv)
 
 
@@ -351,10 +459,15 @@ def make_character(character, arguments):
     out_folder = os.path.join(OUT_FOLDER, character.folder)
     os.makedirs(out_folder, exist_ok=True)
 
-    our_names = {theirs: ours for ours, theirs in motion_retarget.MESHY.bone_of.items()}
-    armature, body = character_from_mesh.load_rigged_character(os.path.join(SOURCE_FOLDER, character.source), character.height, our_names)
+    if character.mixamo_rigged:
+        armature, body = character_from_mesh.load_rigged_character(
+            os.path.join(BLENDER_FOLDER, character.source), character.height, motion_retarget.mixamo_native_names())
+        take_materials(body, os.path.join(SOURCE_FOLDER, character.textures))
+    else:
+        our_names = {theirs: ours for ours, theirs in motion_retarget.MESHY.bone_of.items()}
+        armature, body = character_from_mesh.load_rigged_character(os.path.join(SOURCE_FOLDER, character.source), character.height, our_names)
     body.name = character.name
-    character_from_mesh.make_engine_textures(body, out_folder, character.name, character.brightness)
+    character_from_mesh.make_engine_textures(body, out_folder, character.name, character.brightness, character.shine)
 
     # One piece instead of patches cut along the texture seams (smoothing would tear the seams open), and an even
     # surface on the head (the generated beard and hair are heaps of shards)
@@ -370,7 +483,7 @@ def make_character(character, arguments):
         character_from_mesh.smooth_skin_weights(body, smoothing)
 
     # Fingers before the animations: every clip then keys what the hands do
-    rig = finger_rig.add_fingers(armature, body)
+    rig = finger_rig.hands_from_skeleton(armature) if character.mixamo_rigged else finger_rig.add_fingers(armature, body)
     print_eyes(character, armature, body)
 
     # The head with a texture of its own (on the generated atlas the face is many small islands: blocky up close),
@@ -382,8 +495,10 @@ def make_character(character, arguments):
     pose_hands(character, armature, rig, actions)
 
     # The twists of the hands spread up the arms, and no arm bone jumps further than a fast punch turns it in one frame
-    hand_pinning.spread_twist(armature, actions)
-    hand_pinning.smooth_jerks(armature, actions, MOST_ARM_TURN_PER_FRAME)
+    # (motion capture made for this very rig is kept as it is)
+    if not character.mixamo_rigged:
+        hand_pinning.spread_twist(armature, actions)
+        hand_pinning.smooth_jerks(armature, actions, MOST_ARM_TURN_PER_FRAME)
     held_item_check.check_arms(armature, actions)
 
     for limb in STRIKING_LIMBS:
@@ -446,6 +561,8 @@ def main():
     arguments = parse_arguments()
     for character in CHARACTERS:
         if not arguments.only or arguments.only == character.name:
+            if arguments.candidates and character.name == "sih_player":
+                character.animations = PLAYER_CANDIDATES
             make_character(character, arguments)
     print("CHARACTERS_GENERATOR_DONE")
 

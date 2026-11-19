@@ -5,7 +5,8 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec4 iCenterSize;          // xyz where it is, w its size
 layout (location = 2) in vec4 iColorOpacity;        // its color (light, or the color of smoke) and how solid it is
-layout (location = 3) in vec4 iRotationSeedStyle;   // rotation (radians), seed 0..1, style (0 glow, 1 flame, 2 smoke), age 0..1
+layout (location = 3) in vec4 iRotationSeedStyle;   // rotation (radians), seed 0..1, style (0 glow, 1 flame, 2 smoke, 3 spark, 4 ring), age 0..1
+layout (location = 4) in vec4 iVelocityStretch;     // where it flies, and how many seconds of its flight a spark is long
 
 uniform mat4  viewProjection;
 uniform vec3  cameraRight;
@@ -30,6 +31,21 @@ void main()
 
 	vec3 center = iCenterSize.xyz;
 	vec3 worldPosition = center + (cameraRight * corner.x + cameraUp * corner.y) * iCenterSize.w;
+
+	// A spark: a thin streak from where it is back along where it came from, turned to face the camera around
+	// its own length (as long as its flight of 'stretch' seconds, never shorter than it is wide)
+	float styleValue = iRotationSeedStyle.z;
+	if (styleValue > 2.5 && styleValue < 3.5)
+	{
+		vec3  flight   = iVelocityStretch.xyz * iVelocityStretch.w;
+		float length_  = max(length(flight), iCenterSize.w);
+		vec3  along    = length(flight) > 0.0001 ? normalize(flight) : cameraUp;
+		vec3  toCamera = normalize(cameraPosition - center);
+		vec3  across   = cross(along, toCamera);
+		across = length(across) > 0.0001 ? normalize(across) : cameraRight;
+		worldPosition = center - along * (aPos.y + 0.5) * length_ + across * aPos.x * iCenterSize.w * 0.35;
+	}
+
 	gl_Position = viewProjection * vec4(worldPosition, 1.0);
 
 	colorOpacity = iColorOpacity;
@@ -38,7 +54,9 @@ void main()
 	age   = iRotationSeedStyle.w;
 
 	// The same distance fog as the lit models: far specks fade away (their light is added, so fading = less light)
-	visibility = exp(-pow(fogDensity * length(cameraPosition - center), 2.0));
+	// and specks right at the camera fade out too (a burst around the camera must not cover the screen)
+	float toCamera_ = length(cameraPosition - center);
+	visibility = exp(-pow(fogDensity * toCamera_, 2.0)) * smoothstep(0.6, 2.5, toCamera_);
 }
 
 #shader fragment
@@ -99,6 +117,34 @@ void main()
 		float core = pow(shape, 2.2);
 		vec3  fire = color * shape + vec3(1.0, 0.85, 0.55) * core * length(color) * 0.6;
 		FragColor  = vec4(fire * visibility, shape);
+		return;
+	}
+
+	// A spark: hot along its middle line, its head (y = -1 is the front) brighter than its tail; fading with age
+	if (style > 2.5 && style < 3.5)
+	{
+		float acrossFade = 1.0 - smoothstep(0.0, 1.0, abs(cornerOffset.x));
+		float alongFade  = mix(1.0, 0.25, (cornerOffset.y + 1.0) * 0.5);
+		float fade       = 1.0 - age * age;
+		float spark      = acrossFade * acrossFade * alongFade * fade;
+		if (spark <= 0.0)
+			discard;
+		vec3 hot = color + vec3(1.0, 0.95, 0.85) * length(color) * 0.5 * acrossFade * acrossFade * acrossFade;
+		FragColor = vec4(hot * spark * visibility, 1.0);
+		return;
+	}
+
+	// A ring of shock: a thin ragged circle at the edge of the square, thinner and fainter as it swells
+	if (style > 3.5)
+	{
+		float width  = mix(0.22, 0.05, age);
+		float n      = Noise(vec2(atan(cornerOffset.y, cornerOffset.x) * 6.0 + seed * 40.0, age * 3.0));
+		float ring   = 1.0 - smoothstep(0.0, width, abs(distanceFromMiddle - 0.85 + (n - 0.5) * 0.08));
+		float fade   = (1.0 - age) * (1.0 - age);
+		ring *= fade * (0.6 + 0.6 * n);
+		if (ring <= 0.0)
+			discard;
+		FragColor = vec4(color * ring * visibility, 1.0);
 		return;
 	}
 

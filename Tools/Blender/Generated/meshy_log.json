@@ -1641,5 +1641,38 @@
     },
     "output": "Generated/StrongestInHistory/city_rubble.glb",
     "date": "2026-11-17T04:14:01"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a1ecbf-9ccd-7185-a18c-2691109560d1",
+    "input": [
+      "Concepts/StrongestInHistory/player_v3_front.png",
+      "Concepts/StrongestInHistory/player_v3_side.png",
+      "Concepts/StrongestInHistory/player_v3_back.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000
+    },
+    "output": "Generated/StrongestInHistory/player_v3.glb",
+    "date": "2026-11-18T04:45:16"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1ecc1-dff7-7769-b492-58b09f90eca2",
+    "settings": {
+      "input_task_id": "01a1ecbf-9ccd-7185-a18c-2691109560d1",
+      "height_meters": 1.83
+    },
+    "output": "Generated/StrongestInHistory/player_v3_rigged.glb",
+    "date": "2026-11-18T04:45:40"
   }
 ]

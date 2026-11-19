@@ -35,6 +35,8 @@ struct CharacterAnimationComponent
 	std::string walkBackAnimation;
 	std::string strafeLeftAnimation;
 	std::string strafeRightAnimation;
+	// Standing while locked on (a fighter's stance: a boxer bouncing on his feet). Empty: the idle animation
+	std::string lockedOnIdleAnimation;
 
 	// How long one animation takes to change into the next one. 0 is a hard cut
 	float blendSeconds = 0.2f;

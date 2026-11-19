@@ -39,6 +39,7 @@ bool CharacterAnimationComponentDrawer::Draw(void* componentData, unsigned int e
 	edited |= DrawAnimationCombo("Walk Back",    component->walkBackAnimation,    animations);
 	edited |= DrawAnimationCombo("Strafe Left",  component->strafeLeftAnimation,  animations);
 	edited |= DrawAnimationCombo("Strafe Right", component->strafeRightAnimation, animations);
+	edited |= DrawAnimationCombo("Locked-On Idle", component->lockedOnIdleAnimation, animations);
 
 	edited |= ImGui::SliderFloat("Blend Seconds", &component->blendSeconds, 0.0f, CharacterAnimationComponent::MaxBlendSeconds);
 	edited |= ImGui::SliderFloat("Walk Animation Speed", &component->walkAnimationSpeed, 0.0f, 10.0f);

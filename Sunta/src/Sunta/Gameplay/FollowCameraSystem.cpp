@@ -125,9 +125,13 @@ float GetFreeDistance(const FrameInfo& frame, const FollowCameraComponent& follo
 	ray.origin    = follow.pivot;
 	ray.direction = cameraOffset / wantedLength;
 
-	// The player is ignored: the pivot is inside its collider
+	// The player is ignored: the pivot is inside its collider. So is the fog of a boss arena: it is a wall for the
+	// player, not for the camera (fighting just inside the gate, the camera would come up behind the player's head)
 	RaycastHit hit;
 	if (!Physics::Raycast(frame.entityManager, ray, wantedLength + WallMargin, SightBlockingLayers, frame.playerEntityID, hit))
+		return follow.distance;
+	if (frame.entityManager.GetComponent<FogGateComponent>(hit.entityID)
+		&& !Physics::Raycast(frame.entityManager, ray, wantedLength + WallMargin, SightBlockingLayers, { frame.playerEntityID, hit.entityID }, hit))
 		return follow.distance;
 
 	const float freeLength = glm::clamp(hit.distance - WallMargin, MinDistanceFromPivot, wantedLength);

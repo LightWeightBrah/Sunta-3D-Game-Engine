@@ -23,18 +23,26 @@ struct PoiseComponent
 
 	float recoverAfterSeconds = 4.0f;
 
+	// After a stagger the character can't be staggered again for this long (its blows still hurt it): time to answer
+	// back, so a quick string of blows can't keep a big enemy reeling forever. 0: no such time
+	float staggerImmunitySeconds = 0.0f;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	float currentPoise = 30.0f;
 
 	float secondsSinceHit = 0.0f;
 
+	// Since the last stagger (large at the start: no immunity)
+	float secondsSinceStagger = 1000.0f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PoiseComponent>("Poise", EngineAssets::Icons::Bonfire,
 			{
 				ADD_PROPERTY_RANGED(PoiseComponent, maxPoise,            PropertyDataType::Float, 0.0f, MaxPoiseLimit),
-				ADD_PROPERTY_RANGED(PoiseComponent, recoverAfterSeconds, PropertyDataType::Float, 0.0f, MaxRecoverDelay)
+				ADD_PROPERTY_RANGED(PoiseComponent, recoverAfterSeconds, PropertyDataType::Float, 0.0f, MaxRecoverDelay),
+				ADD_PROPERTY_RANGED(PoiseComponent, staggerImmunitySeconds, PropertyDataType::Float, 0.0f, MaxRecoverDelay)
 			});
 	}
 };

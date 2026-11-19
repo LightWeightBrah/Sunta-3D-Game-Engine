@@ -58,6 +58,7 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 		ImGui::SetTooltip("Degrees per second an attack keeps turning towards its target until it starts to hit (0 = commits at once)");
 	edited |= ImGui::SliderFloat("Attack Lunge Speed", &actions.attackLungeSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
 	edited |= ImGui::SliderFloat("Attack Reach",       &actions.attackReach,      0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Attack Lunge Max Distance", &actions.attackLungeMaxDistance, 0.0f, 100.0f);
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("An attack steps in (up to the lunge speed) to end this far from its target (0 lunge speed = a fixed step)");
 	edited |= ImGui::SliderFloat("Delayed Blow Chance",  &actions.attackDelayChance,  0.0f, 1.0f);
@@ -65,6 +66,80 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Delayed Blow At",      &actions.attackDelayAt,      0.0f, 1.0f);
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("An attack sometimes holds still in its wind-up (at this part of the way to its hit), then strikes");
+
+	return edited;
+}
+
+// A list of animation names that grows and shrinks (the combo's extra blows, the extra staggers)
+bool DrawAnimationList(const char* label, std::vector<std::string>& names, const std::map<std::string, Animation>& animations)
+{
+	bool edited = false;
+	ImGui::PushID(label);
+	ImGui::TextUnformatted(label);
+	for (size_t i = 0; i < names.size(); i++)
+	{
+		ImGui::PushID(static_cast<int>(i));
+		edited |= DrawAnimationCombo("##name", names[i], animations);
+		ImGui::SameLine();
+		if (ImGui::SmallButton("x"))
+		{
+			names.erase(names.begin() + i);
+			edited = true;
+			ImGui::PopID();
+			break;
+		}
+		ImGui::PopID();
+	}
+	if (ImGui::SmallButton("Add"))
+	{
+		names.emplace_back();
+		edited = true;
+	}
+	ImGui::PopID();
+	return edited;
+}
+
+// More ways to attack: the longer combo, the follow-up heavy blow, from a run, out of a dodge, the riposte, the staggers
+bool DrawMoreAttacks(CharacterActionsComponent& actions, const std::map<std::string, Animation>& animations)
+{
+	bool edited = false;
+
+	edited |= DrawAnimationList("Extra Light Attacks", actions.extraLightAttackAnimations, animations);
+	edited |= DrawAnimationCombo("Heavy Attack 2",  actions.heavyAttack2Animation,  animations);
+	edited |= DrawAnimationCombo("Running Attack",  actions.runningAttackAnimation, animations);
+	edited |= ImGui::SliderFloat("Running Attack Speed", &actions.runningAttackSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= DrawAnimationCombo("Dodge Attack",    actions.dodgeAttackAnimation,   animations);
+	edited |= DrawAnimationCombo("Riposte",         actions.riposteAnimation,       animations);
+	edited |= ImGui::SliderFloat("Riposte Reach", &actions.riposteReach, 0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= DrawAnimationList("Extra Hit Reactions", actions.extraHitReactionAnimations, animations);
+	edited |= DrawAnimationCombo("Heavy Hit Reaction", actions.heavyHitReactionAnimation, animations);
+
+	// Timing of single attack animations (each blow of a combo lands at its own moment)
+	ImGui::TextUnformatted("Attack Moves");
+	for (size_t i = 0; i < actions.attackMoves.size(); i++)
+	{
+		AttackMove& move = actions.attackMoves[i];
+		ImGui::PushID(static_cast<int>(i));
+		edited |= DrawAnimationCombo("Move", move.animation, animations);
+		edited |= ImGui::SliderFloat("Hit From", &move.hitFrom, 0.0f, 1.0f);
+		edited |= ImGui::SliderFloat("Hit To",   &move.hitTo,   0.0f, 1.0f);
+		edited |= ImGui::SliderFloat("Damage",   &move.damageMultiplier, 0.0f, CharacterActionsComponent::MaxDamageMultiplier);
+		edited |= ImGui::SliderFloat("Cancel From", &move.cancelFrom, -1.0f, 1.0f);
+		edited |= ImGui::SliderFloat("Strike Height", &move.strikeHeight, 0.0f, 3.0f);
+		if (ImGui::SmallButton("Remove Move"))
+		{
+			actions.attackMoves.erase(actions.attackMoves.begin() + i);
+			edited = true;
+			ImGui::PopID();
+			break;
+		}
+		ImGui::PopID();
+	}
+	if (ImGui::SmallButton("Add Move"))
+	{
+		actions.attackMoves.emplace_back();
+		edited = true;
+	}
 
 	return edited;
 }
@@ -86,6 +161,7 @@ bool DrawTiming(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Invulnerable To",   &actions.invulnerableTo,   0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Input Buffer From", &actions.inputBufferFrom,  0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Cancel From",       &actions.cancelFrom,       0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Dodge Cancel From", &actions.dodgeCancelFrom,  0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Blend Seconds",     &actions.blendSeconds,     0.0f, CharacterActionsComponent::MaxBlendSeconds);
 
 	if (ImGui::IsItemHovered())
@@ -108,6 +184,9 @@ bool CharacterActionsComponentDrawer::Draw(void* componentData, unsigned int ent
 	}
 
 	bool edited = DrawAnimations(*actions, modelComponent->modelData->animations);
+
+	ImGui::Separator();
+	edited |= DrawMoreAttacks(*actions, modelComponent->modelData->animations);
 
 	ImGui::Separator();
 	edited |= DrawSpeeds(*actions);
