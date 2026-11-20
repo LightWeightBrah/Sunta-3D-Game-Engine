@@ -338,6 +338,7 @@ namespace SceneKeys
 	constexpr const char* WeaponDamageTaken         = "weapon_damage_taken";
 	constexpr const char* SpellDamageTaken          = "spell_damage_taken";
 	constexpr const char* SpellImmunitySeconds      = "spell_immunity_seconds";
+	constexpr const char* HitboxIsEnabled           = "is_enabled";
 	constexpr const char* HitReactionDodgeFrom      = "hit_reaction_dodge_from";
 	constexpr const char* FootstepCameraShake       = "footstep_camera_shake";
 	constexpr const char* FootstepShakeRadius       = "footstep_shake_radius";
@@ -1035,7 +1036,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
 				{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
 				{ SceneKeys::Layer, static_cast<unsigned int>(hitbox->layer)  },
-				{ SceneKeys::ShowGizmos,                 hitbox->showGizmos   }
+				{ SceneKeys::ShowGizmos,                 hitbox->showGizmos   },
+				{ SceneKeys::HitboxIsEnabled,            hitbox->isEnabled    }
 			};
 		}
 
@@ -1983,6 +1985,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			hitbox.hitStopSeconds = hitboxData.value(SceneKeys::HitStopSeconds, hitbox.hitStopSeconds);
 			hitbox.cameraShake    = hitboxData.value(SceneKeys::CameraShake,    hitbox.cameraShake);
 			hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
+			hitbox.isEnabled  = hitboxData.value(SceneKeys::HitboxIsEnabled, hitbox.isEnabled);
 			hitbox.layer      = static_cast<CollisionLayer>(hitboxData.value(SceneKeys::Layer, static_cast<unsigned int>(hitbox.layer)));
 
 			if (hitboxData.contains(SceneKeys::LocalOffset))

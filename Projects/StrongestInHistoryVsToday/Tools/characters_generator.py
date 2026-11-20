@@ -218,6 +218,40 @@ BOSS = {
     "Ground_Pound":   library(ADDON, "Attack_Ground_Pound", speed=1.0),
 }
 
+# The boss in his armor (the last two phases, after the transformation of boss_fight.lua): the same names as BOSS -
+# the engine swaps his model and the clips go on by name - but he fights with a great sword in both hands now
+# (Mixamo's Great Sword pack). Everything the fight's staging plays (his falls, signs, the summoning) stays as BOSS
+GREAT_SWORD_PACK = "Mixamo/GreatSword/"
+BOSS_ARMORED = dict(BOSS, **{
+    "Idle":           MotionClip(GREAT_SWORD + "idle.fbx"),
+    "Walk":           MotionClip(GREAT_SWORD + "walk.fbx"),
+    "Run":            MotionClip(GREAT_SWORD + "run (2).fbx"),
+    "Strafe_Left":    MotionClip(GREAT_SWORD + "strafe.fbx"),
+    "Strafe_Right":   MotionClip(GREAT_SWORD + "strafe (2).fbx"),
+    "Attack_Light_1": MotionClip(GREAT_SWORD + "slash.fbx", speed=1.15),
+    "Attack_Light_2": MotionClip(GREAT_SWORD + "slash (2).fbx", speed=1.15),
+    "Attack_Light_3": MotionClip(GREAT_SWORD + "slash (3).fbx", speed=1.1),
+    "Attack_Heavy":   MotionClip(GREAT_SWORD + "high spin attack.fbx", speed=1.05),
+    "Attack_Leap":    MotionClip(GREAT_SWORD + "jump attack.fbx", speed=1.1),
+    "Block":          MotionClip(GREAT_SWORD + "blocking.fbx"),
+    "Block_Impact":   MotionClip(GREAT_SWORD + "impact (2).fbx", speed=1.3),
+    "Hit":            MotionClip(GREAT_SWORD + "impact.fbx", speed=1.2),
+    "Parried":        MotionClip(GREAT_SWORD + "impact (3).fbx", speed=0.8),
+    "Death":          MotionClip(GREAT_SWORD_PACK + "two handed sword death.fbx"),
+    # His own great moves (played by boss_fight.lua): the leap that splits the ground, the slide, the kick, the
+    # spinning slash, the war cry, drawing the sword out of the ground
+    "Sword_Slam":     MotionClip(GREAT_SWORD + "jump attack.fbx", speed=0.95),
+    "Sword_Slide":    MotionClip(GREAT_SWORD + "slide attack.fbx", speed=1.1),
+    "Sword_Kick":     MotionClip(GREAT_SWORD + "kick.fbx", speed=1.1),
+    "Sword_Spin":     MotionClip(GREAT_SWORD + "high spin attack.fbx", speed=1.25),
+    "Sword_Power_Up": MotionClip(GREAT_SWORD + "power up.fbx"),
+    "Sword_Draw":     MotionClip(GREAT_SWORD_PACK + "draw a great sword 1.fbx"),
+    "Sword_Cast":     MotionClip(GREAT_SWORD + "casting.fbx"),
+})
+ARMORED_CANDIDATES = {name[:-4].replace(" ", "_").replace("(", "").replace(")", ""): MotionClip(GREAT_SWORD_PACK + name)
+                      for name in sorted(os.listdir(os.path.join(BLENDER_FOLDER, "Mixamo", "GreatSword")))
+                      if name.endswith(".fbx") and name != "X Bot.fbx"}
+
 # The ordinary enemies of the street before the arena (Tools/meshy_enemies.py). His bodyguards box: a jab, a cross,
 # an uppercut, a kick as the heavy blow; they stagger and fall like men in a street fight
 GUARD = dict(UNARMED_WALKING, **{
@@ -346,6 +380,10 @@ GESTURES = {
 }
 
 
+# (in his armor he makes the same signs)
+GESTURES["sih_boss_armored"] = GESTURES["sih_boss"]
+
+
 def gesture_pin(armature, rig, gesture, size):
     """A HandPin that holds the hand where the gesture says, following the chest as the clip sways"""
     chest_at_rest = (armature.matrix_world @ armature.data.bones["Chest"].matrix_local).translation.copy()
@@ -410,6 +448,8 @@ def pose_hands(character, armature, rig, actions):
             poses = {"_R": right, "_L": left}
         else:
             right, left = finger_poses_of(action.name)
+            if character.fists_always and not action.name.startswith(GESTURE_FINGERS_ONLY):
+                right, left = "fist", "fist"
             poses = {"_R": right, "_L": left}
         finger_rig.key_poses(armature, rig, action, {side: pose for side, pose in poses.items() if rig[side].bones})
 
@@ -461,6 +501,12 @@ class Character:
     # materials (the upload carried only the colour)
     mixamo_rigged: bool = False
     textures: str = ""
+    # The plates of an armored character also cut out as props of their own (export_armor_pieces)
+    armor_pieces: bool = False
+    # Both hands closed in every clip (they hold a great sword)
+    fists_always: bool = False
+    # A held model (a prop's gltf in res/Models/Props) on a bone of its own in the right fist: 'Weapon_R'
+    weapon: str = ""
 
 
 CHARACTERS = [
@@ -473,6 +519,11 @@ CHARACTERS = [
     # it looked worse - tried and left out:
     #   FacePhoto(os.path.join(CONCEPTS, "boss_face_film.png"), (549, 353), (671, 319), (649, 462))
     Character("boss_rigged.glb", "Boss", "sih_boss", 1.83, BOSS),
+    # In his armor (Concepts/boss_armor_apose.png, from the user's sheet): the same skeleton; his pieces (the plates
+    # of the torso with the pauldrons, both bracers, both greaves) are also cut out as props that fly onto him in
+    # the transformation's cutscene
+    Character("boss_armored_rigged.glb", "BossArmored", "sih_boss_armored", 1.95, BOSS_ARMORED, armor_pieces=True,
+              fists_always=True, weapon="BossSword/sih_boss_sword.gltf"),
     Character("summon_monster_rigged.glb", "Summon", "sih_summon", 3.0, SUMMON),
     Character("enemy_guard_rigged.glb", "Guard", "sih_guard", 1.9, GUARD, shine=0.12),
     Character("enemy_paparazzo_rigged.glb", "Paparazzo", "sih_paparazzo", 1.76, PAPARAZZO, shine=0.4,
@@ -529,6 +580,9 @@ def make_character(character, arguments):
     if smoothing:
         character_from_mesh.smooth_skin_weights(body, smoothing)
 
+    if character.armor_pieces:
+        export_armor_pieces(character, body)
+
     # Fingers before the animations: every clip then keys what the hands do
     rig = finger_rig.hands_from_skeleton(armature) if character.mixamo_rigged else finger_rig.add_fingers(armature, body)
     print_eyes(character, armature, body)
@@ -537,6 +591,8 @@ def make_character(character, arguments):
     # with the photo of the person's face painted over its front (a generated face is only a guess at it)
     photo = character.face_photo if not arguments.no_face else None
     head = character_from_mesh.separate_head(body, armature, out_folder, character.name, character.height, photo, character.eye_offset)
+
+    weapon = add_weapon_bone(character, armature, rig) if character.weapon else None
 
     actions = knight_generator.create_animations(armature, character.animations)
     pose_hands(character, armature, rig, actions)
@@ -559,8 +615,96 @@ def make_character(character, arguments):
     export_gltf(os.path.join(out_folder, character.name + ".gltf"), [armature, body, head], with_animations=True)
 
     if arguments.preview:
-        render_previews(os.path.abspath(arguments.preview), armature, [body, head], character,
+        if weapon:
+            held = load_prop(character.weapon)
+            knight_generator.hang_on_bone(held, armature, WEAPON_BONE, weapon)
+            head = [head, held]
+        else:
+            head = [head]
+        render_previews(os.path.abspath(arguments.preview), armature, [body] + head, character,
                         arguments.preview_actions.split(","), arguments.preview_steps, arguments.hands)
+
+
+WEAPON_BONE = knight_generator.WEAPON_BONE
+
+
+def add_weapon_bone(character, armature, rig):
+    """The bone that carries the held model (its grip at the origin, its blade along +Z): in the middle of the right
+    fist, the blade coming out on the side of the thumb, its edges along the fingers. Returns its rest matrix"""
+    hand = rig["_R"]
+    blade = hand.across.normalized()
+    edges = (hand.fingers - blade * hand.fingers.dot(blade)).normalized()
+    flat = blade.cross(edges)
+    center = hand.wrist + hand.fingers * 0.45 + hand.palm.normalized() * 0.03 * character.height / 1.83
+    matrix = Matrix.Translation(center) @ Matrix((edges, flat, blade)).transposed().to_4x4()
+    character_from_mesh.add_held_item_bones(armature, [(WEAPON_BONE, "Hand_R", matrix)])
+    return matrix
+
+
+def load_prop(path):
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=os.path.join(PROJECT, "res", "Models", "Props", path))
+    return next(obj for obj in bpy.data.objects if obj not in before and obj.type == "MESH")
+
+
+# Which piece of the armor a bone's skin belongs to (None: not armor - the head)
+def armor_piece_of(bone):
+    for side in ("L", "R"):
+        if bone.endswith("_" + side):
+            if bone.startswith(("LowerArm", "Hand", "Index", "Middle", "Ring", "Little", "Thumb", "Finger")):
+                return "bracer_" + side.lower()
+            if bone.startswith(("Thigh", "Shin", "Foot", "Toe")):
+                return "greave_" + side.lower()
+    if bone.startswith("Head"):
+        return None
+    return "torso"
+
+
+ARMOR_PIECES_FOLDER = os.path.join(PROJECT, "res", "Models", "Props", "BossArmor")
+
+
+def export_armor_pieces(character, body):
+    """The plates of the armor as props: the body's faces split by the bone that moves them most, each piece with its
+    middle at its own origin. Prints PIECE lines: where each piece sits on the character (meters in the engine's space,
+    from his feet, his front towards -Z), for the cutscene that puts them on"""
+    import bmesh
+    os.makedirs(ARMOR_PIECES_FOLDER, exist_ok=True)
+    groups = {group.index: group.name for group in body.vertex_groups}
+    owner = []
+    for vertex in body.data.vertices:
+        best = max(vertex.groups, key=lambda g: g.weight, default=None)
+        owner.append(armor_piece_of(groups[best.group]) if best else None)
+
+    for piece in ("torso", "bracer_l", "bracer_r", "greave_l", "greave_r"):
+        copy = body.copy()
+        copy.data = body.data.copy()
+        bpy.context.scene.collection.objects.link(copy)
+        world = body.matrix_world.copy()
+        copy.parent = None
+        copy.modifiers.clear()
+        copy.matrix_world = world
+        mesh = bmesh.new()
+        mesh.from_mesh(copy.data)
+        mesh.verts.ensure_lookup_table()
+        doomed = [face for face in mesh.faces
+                  if sum(owner[vertex.index] == piece for vertex in face.verts) * 2 < len(face.verts)]
+        bmesh.ops.delete(mesh, geom=doomed, context="FACES")
+        loose = [vertex for vertex in mesh.verts if not vertex.link_faces]
+        bmesh.ops.delete(mesh, geom=loose, context="VERTS")
+        mesh.to_mesh(copy.data)
+        mesh.free()
+        copy.vertex_groups.clear()
+        # (into world space, then its middle to the origin)
+        copy.data.transform(world)
+        copy.matrix_world = Matrix.Identity(4)
+        points = [vertex.co for vertex in copy.data.vertices]
+        middle = sum(points, Vector()) / max(len(points), 1)
+        copy.data.transform(Matrix.Translation(-middle))
+        copy.name = "{}_{}".format(character.name, piece)
+        export_gltf(os.path.join(ARMOR_PIECES_FOLDER, copy.name + ".gltf"), [copy], with_animations=False)
+        # Blender's +Y (the character's front) is the engine's -Z
+        print("PIECE {} {:.3f} {:.3f} {:.3f} faces {}".format(piece, middle.x, middle.z, -middle.y, len(copy.data.polygons)))
+        bpy.data.objects.remove(copy)
 
 
 def render_previews(folder, armature, meshes, character, actions, steps, arguments_hands=False):
@@ -610,6 +754,9 @@ def main():
         if not arguments.only or arguments.only == character.name:
             if arguments.candidates and character.name == "sih_player":
                 character.animations = PLAYER_CANDIDATES
+            if arguments.candidates and character.name == "sih_boss_armored":
+                character.animations = dict(ARMORED_CANDIDATES)
+                character.armor_pieces = False
             make_character(character, arguments)
     print("CHARACTERS_GENERATOR_DONE")
 

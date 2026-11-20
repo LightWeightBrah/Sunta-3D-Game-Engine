@@ -823,32 +823,123 @@ def add_player(builder):
     return player
 
 
-# His ascension (the last phase, boss_fight.lua): his private jet comes down on him and he rises wearing it on his
-# back, nose up, its two engines burning under his shoulders. Hidden until then
-JET_PACK = {"position": [0.0, 0.05, -0.22], "rotation": [-90.0, 0.0, 0.0], "scale": 0.12}
-JET_ENGINES = [[-0.16, -0.45, -0.28], [0.16, -0.45, -0.28]]
+# The seal behind his back (from the summoning on, boss_fight.lua): how high its middle is above his feet, how far behind
+SEAL_HEIGHT, SEAL_BEHIND = 1.6, 0.45
 
 
-def add_jet_pack(builder, boss):
-    pack = named("Boss Jet Pack", tuple(JET_PACK["position"]), model={"is_visible": False, "model_name": "sih_jet"})
-    pack["transform"]["rotation"] = list(JET_PACK["rotation"])
-    pack["transform"]["rotation_quaternion"] = None   # filled by fix_quaternions
-    pack["transform"]["scale"] = [JET_PACK["scale"]] * 3
-    builder.add(pack, parent=boss, bone="Chest")
-    # The flames of the engines: always burning once he has it (a steady jet of fire down, and a glow)
-    for index, place in enumerate(JET_ENGINES):
-        builder.add(named(f"Boss Jet Flame {index + 1}", tuple(place), particle_emitter={
-            "is_emitting": False, "particles_per_second": 90.0, "lifetime_seconds": 0.14,
-            "spawn_half_extents": [0.02, 0.02, 0.02], "velocity": [0.0, -3.0, 0.0], "velocity_randomness": 0.3,
-            "gravity": [0.0, 0.0, 0.0], "start_size": 0.11, "end_size": 0.02,
-            "start_color": [1.0, 0.5, 0.18], "end_color": [0.7, 0.08, 0.02], "intensity": 0.45, "max_particles": 300,
-            "style": 1, "size_randomness": 0.3}), parent=boss, bone="Chest")
+# His armor and his sword (the transformation at 0 health of his last stand, boss_fight.lua): the pieces cut out of
+# the armored model (PIECE lines of Tools/characters_generator.py: where each sits on him, meters from his feet, his
+# front -Z), the sword in his fist on its own bone, and the one that falls out of the rift and stands in the ground
+ARMOR_PIECES = {
+    "torso":    (-0.001, 1.426, 0.005),
+    "bracer_l": (-0.551, 1.211, -0.027),
+    "bracer_r": (0.554, 1.208, -0.028),
+    "greave_l": (-0.202, 0.588, 0.017),
+    "greave_r": (0.189, 0.584, 0.025),
+}
+BOSS_ARMORED_MODEL = "sih_boss_armored"
+# The sword's blade over its grip (SWORD_HITBOX of Tools/boss_items_generator.py), a little wider than the steel
+SWORD_HITBOX = {"local_offset": [0.0, 0.823, 0.0], "half_extents": [0.18, 0.62, 0.12]}
+
+
+def add_armor_transformation(builder, boss):
+    sword = named("Boss Sword", (0.0, 0.0, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
+                                                         "emissive_strength": 1.5})
+    sword["hitbox"] = dict(SWORD_HITBOX, damage=30.0, poise_damage=45.0, layer=ENEMY_HITBOX_LAYER, show_gizmos=False,
+                           hit_stop_seconds=0.1, camera_shake=0.45, is_enabled=False)
+    # (a trail of crimson fire behind the blade while it strikes, as the swords of the souls bosses that burn)
+    sword["weapon_trail"] = {"base_offset": [0.0, 0.25, 0.0], "tip_offset": [0.0, 1.42, 0.0], "color": [1.0, 0.18, 0.06],
+                             "intensity": 2.2, "lifetime_seconds": 0.22, "only_while_striking": True}
+    held = builder.add(sword, parent=boss, bone="Weapon_R")
+    # Fire along the blade (his last phase lights it)
+    builder.add(named("Boss Sword Flames", (0.0, 0.85, 0.0), particle_emitter={
+        "is_emitting": False, "particles_per_second": 90.0, "lifetime_seconds": 0.45,
+        "spawn_half_extents": [0.05, 0.58, 0.03], "velocity": [0.0, 0.6, 0.0], "velocity_randomness": 0.4,
+        "gravity": [0.0, 1.5, 0.0], "start_size": 0.14, "end_size": 0.26, "start_color": [1.0, 0.3, 0.15],
+        "end_color": [0.5, 0.02, 0.02], "intensity": 1.1, "max_particles": 150, "style": 1, "size_randomness": 0.35,
+        "spin_degrees_per_second": 80.0, "flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png",
+        "flipbook_columns": 6, "flipbook_rows": 4, "flipbook_loops": 1.0, "flipbook_random_start": False}), parent=held)
+
+    # What the rift drops: the sword that stands in the ground, the pieces that fly onto him (moved by the script)
+    builder.add(named("Armor Drop Sword", (0.0, -100.0, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
+                                                                     "emissive_strength": 1.0}))
+    for piece in ARMOR_PIECES:
+        builder.add(named("Armor Piece " + piece, (0.0, -100.0, 0.0),
+                          model={"is_visible": False, "model_name": BOSS_ARMORED_MODEL + "_" + piece}))
+
+    # The shots of the transformation (his front is his own -Z): pushed in on his face as he stays on his feet and
+    # smiles, low under the rift as the pieces fall, his body as they snap on, beside him as he draws the sword, his
+    # eyes lighting up and back to the fight
+    shots = (
+        ("Armor Fakeout", 2.2, 1.6, 0.6, ((0.7, 1.5, -4.2), (0.45, 1.6, -2.6), (0.28, 1.68, -1.55))),
+        ("Armor Rift Shot", 2.1, 3.2, 0.5, ((3.2, 0.35, -5.0), (3.0, 0.4, -4.6), (2.8, 0.45, -4.2))),
+        ("Armor Snap", 2.3, 1.2, 0.5, ((1.0, 1.3, -5.8), (0.7, 1.35, -5.1), (0.45, 1.4, -4.5))),
+        ("Armor Draw", 2.0, 0.9, 0.5, ((2.8, 1.0, -2.2), (2.5, 1.1, -1.7), (2.3, 1.2, -1.3))),
+        ("Armor Ignite", 2.2, 1.65, 0.4, ((0.25, 1.72, -1.3), (0.5, 1.8, -2.4), (0.9, 2.0, -4.6))),
+    )
+    for name, seconds, height, blend, points in shots:
+        shot = builder.add(named(name, cutscene={
+            "duration_seconds": seconds, "look_at_entity": BOSS_NAME, "look_at_height": height, "animation_entity": "",
+            "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+            "can_be_skipped": False, "video_file": "", "blend_in_seconds": blend}), parent=boss)
+        for number, point in enumerate(points):
+            builder.add(named(f"Camera Point {number + 1}", point), parent=shot)
+
+    # A wave of the sword along the ground (his slam and the seal's barrage): a crimson streak flying low and fast
+    builder.add(projectile("Boss Sword Wave", speed=17.0, damage=26.0, poise_damage=30.0, radius=1.1,
+                           homing_degrees_per_second=0.0, lifetime_seconds=1.6, fuse_seconds=0.0,
+                           trail_effect="Sword Wave Trail", trail_particles_per_second=260.0,
+                           hit_effect="Sword Hit Burst", hit_burst=30, hit_sound="@game/Sounds/Combat/Hit",
+                           hit_stop_seconds=0.08, camera_shake=0.35))
+    builder.add(named("Sword Wave Trail", (0.0, -100.0, 0.0), particle_emitter={
+        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.35,
+        "spawn_half_extents": [1.3, 0.25, 0.08], "velocity": [0.0, 0.6, 0.0], "velocity_randomness": 0.3,
+        "gravity": [0.0, 0.0, 0.0], "start_size": 0.32, "end_size": 0.08, "start_color": [1.0, 0.35, 0.2],
+        "end_color": [0.6, 0.02, 0.02], "intensity": 2.4, "max_particles": 1500}))
+    builder.add(named("Sword Hit Burst", (0.0, -100.0, 0.0), particle_emitter={
+        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.5,
+        "spawn_half_extents": [0.2, 0.2, 0.2], "velocity": [0.0, 2.0, 0.0], "velocity_randomness": 4.0,
+        "gravity": [0.0, -6.0, 0.0], "start_size": 0.12, "end_size": 0.02, "start_color": [1.0, 0.4, 0.2],
+        "end_color": [0.5, 0.02, 0.0], "intensity": 3.0, "max_particles": 300}))
+
+
+def add_seal(builder, boss):
+    """The hexagonal seal that burns behind his back from the summoning on (boss_fight.lua shows it and turns it), the
+    way the wheel of the film's summoned monster turns behind it; a red aura of fire and smoke around him with it"""
+    # (his back is his own +Z; the seal stands upright there, facing the camera behind him, above his shoulders)
+    seal = named("Boss Seal", (0.0, SEAL_HEIGHT, SEAL_BEHIND), model={"is_visible": False, "model_name": "sih_hex_seal",
+                                                                    "emissive_strength": 1.2})
+    seal["transform"]["scale"] = [0.01] * 3
+    builder.add(seal, parent=boss)
+    # Dark red smoke curling off it, and embers
+    builder.add(named("Boss Seal Smoke", (0.0, SEAL_HEIGHT, SEAL_BEHIND), particle_emitter={
+        "is_emitting": False, "particles_per_second": 26.0, "lifetime_seconds": 1.8,
+        "spawn_half_extents": [0.9, 0.9, 0.15], "velocity": [0.0, 0.9, 0.3], "velocity_randomness": 0.5,
+        "gravity": [0.0, 0.3, 0.0], "start_size": 0.7, "end_size": 1.6, "start_color": [0.35, 0.03, 0.02],
+        "end_color": [0.08, 0.01, 0.01], "intensity": 0.8, "max_particles": 120, "is_dark": True, "style": 2,
+        "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png", "flipbook_columns": 8, "flipbook_rows": 8,
+        "flipbook_loops": 1.0, "flipbook_random_start": True}), parent=boss)
+    builder.add(named("Boss Seal Embers", (0.0, SEAL_HEIGHT, SEAL_BEHIND), particle_emitter={
+        "is_emitting": False, "particles_per_second": 40.0, "lifetime_seconds": 1.2,
+        "spawn_half_extents": [1.0, 1.0, 0.1], "velocity": [0.0, 1.2, 0.0], "velocity_randomness": 0.9,
+        "gravity": [0.0, 0.5, 0.0], "start_size": 0.06, "end_size": 0.01, "start_color": [1.0, 0.25, 0.08],
+        "end_color": [0.6, 0.02, 0.0], "intensity": 2.5, "max_particles": 200, "style": 0, "size_randomness": 0.5}),
+                parent=boss)
+    # The aura: wisps of dark red smoke rising all around his body, lit from inside (the concept's red glow)
+    builder.add(named("Boss Red Aura", (0.0, 0.0, 0.0), particle_emitter={
+        "is_emitting": False, "particles_per_second": 30.0, "lifetime_seconds": 1.0,
+        "spawn_half_extents": [0.38, 0.9, 0.38], "velocity": [0.0, 1.1, 0.0], "velocity_randomness": 0.35,
+        "gravity": [0.0, 0.6, 0.0], "start_size": 0.35, "end_size": 0.75, "start_color": [0.55, 0.06, 0.04],
+        "end_color": [0.12, 0.01, 0.01], "intensity": 0.7, "max_particles": 120, "style": 2, "size_randomness": 0.35,
+        "spin_degrees_per_second": 40.0, "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+        "flipbook_columns": 8, "flipbook_rows": 8, "flipbook_loops": 1.0, "flipbook_random_start": True}),
+                parent=boss, bone="Hips")
     # Embers rising off him: the last stand burns
     builder.add(named("Boss Ascension Aura", (0.0, 0.0, 0.0), particle_emitter={
         "is_emitting": False, "particles_per_second": 70.0, "lifetime_seconds": 1.4,
         "spawn_half_extents": [0.35, 0.8, 0.35], "velocity": [0.0, 1.6, 0.0], "velocity_randomness": 0.8,
         "gravity": [0.0, 0.6, 0.0], "start_size": 0.09, "end_size": 0.01,
-        "start_color": [1.0, 0.45, 0.1], "end_color": [0.6, 0.05, 0.0], "intensity": 1.5, "max_particles": 400,
+        "start_color": [1.0, 0.25, 0.1], "end_color": [0.6, 0.02, 0.0], "intensity": 1.5, "max_particles": 400,
         "style": 0, "size_randomness": 0.5}), parent=boss, bone="Hips")
 
 
@@ -1006,7 +1097,8 @@ def add_boss(builder):
                       "defeat_cutscene": "Boss Defeat", "defeat_cutscene_delay": 3.5}
     entity["script"] = script("boss_fight.lua")
     add_eyes(builder, boss, "Boss", BOSS_EYES, [1.0, 1.0, 1.0], 0.1)
-    add_jet_pack(builder, boss)
+    add_seal(builder, boss)
+    add_armor_transformation(builder, boss)
 
     # The spells leave from his right hand
     staff = builder.add(named("Spell Hand"), parent=boss, bone="Hand_R")

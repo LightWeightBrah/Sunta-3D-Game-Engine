@@ -1813,5 +1813,69 @@
     },
     "output": "Generated/StrongestInHistory/enemy_paparazzo_rigged.glb",
     "date": "2026-11-19T14:44:38"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a1f751-2e6a-7746-be4c-71a1e55accf2",
+    "input": "Concepts/StrongestInHistory/boss_armor_front.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Show exactly this same armored man in an A-pose for a 3D model: standing straight, both arms held straight out and down at 45 degrees away from the body, hands open and empty, feet a little apart, the whole figure seen from the front, the same face, same black spiky armor, same tattered coat, plain light grey background, nothing else in the picture"
+    },
+    "output": "Concepts/StrongestInHistory/boss_armor_apose.png",
+    "date": "2026-11-20T05:58:27"
+  },
+  {
+    "task": "multi-image-to-3d",
+    "task_id": "01a1f751-2ee1-7429-9390-ab36d97d93ed",
+    "input": [
+      "Concepts/StrongestInHistory/boss_sword_front.png",
+      "Concepts/StrongestInHistory/boss_sword_side.png"
+    ],
+    "settings": {
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 12000
+    },
+    "output": "Generated/StrongestInHistory/boss_sword.glb",
+    "date": "2026-11-20T06:00:00"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1f754-27bb-7357-9d30-1e3495d22bcf",
+    "input": "Concepts/StrongestInHistory/boss_armor_apose.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 40000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/StrongestInHistory/boss_armored.glb",
+    "date": "2026-11-20T06:03:35"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a1f756-4056-70c5-9d60-958fb222c106",
+    "settings": {
+      "input_task_id": "01a1f754-27bb-7357-9d30-1e3495d22bcf",
+      "height_meters": 1.95
+    },
+    "output": "Generated/StrongestInHistory/boss_armored_rigged.glb",
+    "date": "2026-11-20T06:04:14"
   }
 ]

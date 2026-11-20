@@ -394,7 +394,7 @@ end
 local function takePatternTurn()
     if patternLeft > 0 or phase == 3 then return false end
 
-    patternLeft = (phase == 4) and LastStandGapSeconds or PatternGapSeconds
+    patternLeft = (phase >= 4) and LastStandGapSeconds or PatternGapSeconds
     return true
 end
 
@@ -440,6 +440,7 @@ local function updateBlink(deltaTime)
 
     -- In his last stand he doesn't wait for the player to run: he keeps appearing behind them
     local wantsTo = farSeconds >= BlinkAfterSeconds or (phase == 4 and this.enemy.distanceToTarget > 4)
+        or (phase == 6 and this.enemy.distanceToTarget > 9)
     if wantsTo and blinkIn <= 0 and isFreeToAct() then blinkBehindPlayer() end
 end
 
@@ -1227,32 +1228,64 @@ local function updateDomain(deltaTime)
     end
 end
 
--- ========== His ascension (the start of the last phase) ==========
+-- ========== The seal behind his back, and his ascension (the start of the last phase) ==========
 
--- The summon is gone and he is out of treasure: his own private jet comes down on him like a meteor and he rises out
--- of the fire wearing it on his back, its engines burning, his eyes red. From then on he flies: he rises on the jet,
--- hangs over the player for a moment and nosedives onto where they stand (roll out of the place the flashes mark),
--- and up close he pounds the ground with both fists. Everything here is data of the scene (the hidden jet pack, its
--- flames, the aura) and general engine calls - the same kind of change as a souls-like boss that turns into
--- something else halfway through
-O.JetPack, O.JetFlames, O.AscensionAura = "Boss Jet Pack", { "Boss Jet Flame 1", "Boss Jet Flame 2" }, "Boss Ascension Aura"
-O.AscensionTechnique = "Private Jet: Ascension"
-O.DiveTechnique, O.PoundTechnique = "Private Jet: Nosedive", "Black Book: Final Chapter"
+-- From the summoning on a hexagonal seal burns behind his back (the way the wheel of the film's summoned monster turns
+-- behind it): it comes out of a red flash, turns slowly, smokes, and a red aura burns around him. In his last stand it
+-- flares up: he rises on its power, hangs over the player and drops onto them (roll out of the place the flashes
+-- mark), and up close he pounds the ground with both fists. Everything here is data of the scene (the hidden seal, its
+-- smoke, the aura) and general engine calls
+O.Seal, O.SealParts, O.AscensionAura = "Boss Seal", { "Boss Seal Smoke", "Boss Seal Embers", "Boss Red Aura" }, "Boss Ascension Aura"
+O.AscensionTechnique = "Island Seal: Ascension"
+O.DiveTechnique, O.PoundTechnique = "Island Seal: Descent", "Black Book: Final Chapter"
 O.AscensionScale = 1.12            -- he grows a little with it
 O.DiveEverySeconds, O.DiveHeight = 11, 5.0   -- (higher, the locked-on camera loses him)
 O.DiveRiseSeconds, O.DiveHoverSeconds, O.DiveFallSeconds = 0.9, 1.0, 0.32
 O.SlamRadius, O.SlamDamage = 3.6, 46
 O.PoundEverySeconds, O.PoundDistance, O.PoundRadius, O.PoundDamage, O.PoundStrikesAt = 8, 3.2, 3.0, 34, 1.05
+-- The seal: its size now and the size it grows to, how fast it turns (degrees a second) and how fast that settles
+O.sealSize, O.sealTarget, O.sealSpin, O.sealSpinSettled, O.sealTurn = 0, 0, 0, 35, 0
+O.SealScale = 0.62   -- (the model is 2.8 m across with its spikes: a wheel a little wider than his shoulders)
 
-function O.setJetPack(isOn)
-    local pack = find(O.JetPack)
-    if pack and pack.model then pack.model.isVisible = isOn end
-    for _, name in ipairs(O.JetFlames) do
-        local flame = find(name)
-        if flame and flame.particles then flame.particles.isEmitting = isOn end
+function O.setSealParts(isOn)
+    for _, name in ipairs(O.SealParts) do
+        local part = find(name)
+        if part and part.particles then part.particles.isEmitting = isOn end
     end
-    local aura = find(O.AscensionAura)
-    if aura and aura.particles then aura.particles.isEmitting = isOn end
+end
+
+-- It comes out of a red flash behind him, spinning fast, and settles to a slow turn
+function O.showSeal(size)
+    local seal = find(O.Seal)
+    if not seal or not seal.model then return end
+    seal.model.isVisible = true
+    O.sealTarget, O.sealSpin = size or 1, 900
+    O.setSealParts(true)
+    local behind = seal.transform.position
+    this.world:flash(vec3(1.0, 0.5, 0.4), 0.15, 0.04)
+    this.world:burst("Blink Burst", this.transform.position + vec3(0, 1.7, 0), 140)
+    this.world:shakeCamera(0.5)
+    Audio.playAt(RumbleSound, this.transform.position, 1.0)
+end
+
+function O.hideSeal()
+    local seal = find(O.Seal)
+    if seal and seal.model then seal.model.isVisible = false; seal.transform.scale = vec3(0.01, 0.01, 0.01) end
+    O.sealSize, O.sealTarget, O.sealSpin = 0, 0, 0
+    O.setSealParts(false)
+end
+
+function O.updateSeal(deltaTime)
+    local seal = find(O.Seal)
+    if not seal or not seal.model or not seal.model.isVisible then return end
+    O.sealSize = O.sealSize + (O.sealTarget - O.sealSize) * math.min(deltaTime * 3.0, 1)
+    O.sealSpin = O.sealSpinSettled + (O.sealSpin - O.sealSpinSettled) * math.max(1 - deltaTime * 1.5, 0)
+    O.sealTurn = (O.sealTurn + O.sealSpin * deltaTime) % 360
+    local s = math.max(O.sealSize * O.SealScale, 0.01)
+    seal.transform.scale = vec3(s, s, s)
+    seal.transform.rotation = vec3(0, 0, O.sealTurn)
+    -- (it breathes: its cracks burn brighter and dimmer)
+    seal.model.emissiveStrength = 1.1 + math.sin(seconds * 2.3) * 0.35 + (O.sealSpin - O.sealSpinSettled) / 900
 end
 
 function O.setRedEyes(intensity)
@@ -1293,24 +1326,23 @@ function O.startAscension()
     if player and player.lockOn then player.lockOn:setTarget(this) end
 
     startShow({
-        -- He powers up while the jet dives at him out of the sky
+        -- He powers up, the seal behind him flares and spins
         function()
             this.characterActions:play("Power_Up")
             this.world:notify("THE TREASURE IS SPENT")
             this.world:slowMotion(1.6, 0.5)
             this.world:shakeCamera(0.5)
             O.setRedEyes(3.0)
-            local from = ground + vec3(-18, 26, 30)
-            this.world:launch(Jet, this, from, (ground + vec3(0, 1, 0)) - from)
-            Audio.playAt(JetSound, ground, 1.5)
+            O.showSeal(1.35)
+            Audio.playAt(RoarSound, ground, 1.3)
             return 1.3
         end,
-        -- The jet strikes him: a blast of fire, and out of it he rises wearing it
+        -- A blast of red fire out of him, and he rises on the seal's power
         function()
-            this.world:flash(vec3(1.0, 0.55, 0.25), 0.8, 0.08)
+            this.world:flash(vec3(1.0, 0.2, 0.1), 0.8, 0.08)
             O.groundBlast(ground, 0, 0, 1.0)
-            this.world:effect("Oil Detonation", ground + vec3(0, 1.4, 0))
-            O.setJetPack(true)
+            local aura = find(O.AscensionAura)
+            if aura and aura.particles then aura.particles.isEmitting = true end
             this.transform.scale = vec3(O.AscensionScale, O.AscensionScale, O.AscensionScale)
             this.characterActions:play("Hover")
             local risen = 0
@@ -1341,7 +1373,8 @@ function O.startDive()
     this.enemy:changeState("Channel")
     this.characterActions:play("Hover")
     showCaption(O.DiveTechnique, 2.6)
-    Audio.playAt(JetSound, this.transform.position, 1.2)
+    O.sealSpin = 700
+    Audio.playAt(RumbleSound, this.transform.position, 1.2)
 end
 
 function O.updateDive(deltaTime)
@@ -1417,11 +1450,566 @@ end
 
 function O.resetAscension()
     O.hasAscended, O.dive, O.diveIn, O.poundIn = false, nil, 0, 0
-    O.setJetPack(false)
+    O.hideSeal()
+    local aura = find(O.AscensionAura)
+    if aura and aura.particles then aura.particles.isEmitting = false end
     this.transform.scale = vec3(1, 1, 1)
     for _, name in ipairs(BossEyes) do
         local eye = find(name)
         if eye and eye.glowSprite then eye.glowSprite.color = vec3(1, 1, 1) end
+    end
+end
+
+-- ========== His armor: the transformation at 0 health of his last stand, and the two phases with the sword ==========
+--
+-- The user's script (10.5 s): the last blow throws him back, he stays on his feet, a beat of silence, a smile, his
+-- health fills up with a boom; a rift opens over the arena and drops the plates of his armor around him and his sword
+-- point-first into the stone; the plates snap onto him in two beats (the model of his armored self is put on in the
+-- second), he rips the sword out of the ground, his eyes burn red, a stamp - and he fights with the sword: phase 5,
+-- and at half his health phase 6 (the blade catches fire, everything comes faster, the seal behind him joins in)
+O.ArmoredModel, O.PlainModel = "sih_boss_armored", "sih_boss"
+O.Pieces = { "torso", "greave_l", "greave_r", "bracer_l", "bracer_r" }
+-- Where each piece sits on him (PIECE lines of Tools/characters_generator.py, meters from his feet, his front -Z)
+O.PieceOffsets = {
+    torso = vec3(-0.001, 1.426, 0.005), bracer_l = vec3(-0.551, 1.211, -0.027), bracer_r = vec3(0.554, 1.208, -0.028),
+    greave_l = vec3(-0.202, 0.588, 0.017), greave_r = vec3(0.189, 0.584, 0.025),
+}
+-- Where each lands on the floor (angle from his front, meters from him) and when it falls (seconds of the scene)
+O.PieceFloor = { torso = { 0, 2.6 }, greave_l = { -55, 2.3 }, greave_r = { 55, 2.3 }, bracer_l = { -95, 2.0 }, bracer_r = { 95, 2.0 } }
+O.PieceFallAt = { torso = 2.45, greave_l = 2.65, greave_r = 2.8, bracer_l = 2.95, bracer_r = 3.1 }
+O.FallSeconds, O.FallFrom = 0.45, 13
+O.SwordFallAt, O.SwordInGround = 3.5, 1.45
+-- The two beats of the snap: the torso and the greaves, then the bracers (and his armored model put on)
+O.FirstSnapAt, O.SecondSnapAt = 4.8, 5.7
+O.LiftFrom, O.BracersLiftFrom = 4.2, 5.0
+O.DrawAt, O.IgniteAt, O.TransformEnds = 7.4, 8.5, 10.5
+O.Shots = { { 0.0, "Armor Fakeout" }, { 2.2, "Armor Rift Shot" }, { 4.2, "Armor Snap" }, { 6.4, "Armor Draw" }, { 8.4, "Armor Ignite" } }
+O.ArmorTitle = "Jeffrey Epstein, Armored in Sin"
+O.Blood = {
+    light = vec3(1.0, 0.58, 0.5), ambient = vec3(0.22, 0.12, 0.12), fog = vec3(0.17, 0.05, 0.05),
+    fogDensity = 0.011, sky = 0.9, exposure = 0.9, bloom = 0.9
+}
+O.MetalSound = "@game/Sounds/Combat/Block"
+O.SlashSound = "@game/Sounds/Combat/Swing"
+
+-- His sword techniques: how often, from how far, how hard
+O.SlamTechnique, O.DashTechnique = "Black Blade: Earthsplitter", "Island Seal: Phantom Rush"
+O.WhirlTechnique, O.BarrageTechnique = "Black Blade: Crimson Whirl", "Island Seal: Thousand Blades"
+O.ExecutionTechnique = "Final Chapter: Execution"
+O.SlamEvery, O.SlamRadius, O.SlamDamage, O.SlamWaves = 9, 3.8, 40, 3
+O.DashEvery, O.DashDamage, O.DashMeters, O.DashSeconds = 8, 30, 3.5, 0.22
+O.WhirlEvery, O.WhirlRadius, O.WhirlDamage = 7, 3.6, 32
+O.BarrageEvery, O.BarrageWaves = 10, 5
+O.SwordWave = "Boss Sword Wave"
+
+function O.child(name)
+    local entity = this:findChild(name)
+    return entity
+end
+
+function O.setFists(isOn)
+    for _, name in ipairs({ "Right Fist", "Left Fist", "Right Foot" }) do
+        local limb = O.child(name)
+        if limb and limb.hitbox then limb.hitbox.isEnabled = isOn end
+    end
+end
+
+function O.setHeldSword(isOn)
+    local sword = O.child("Boss Sword")
+    if sword then
+        if sword.model then sword.model.isVisible = isOn end
+        if sword.hitbox then sword.hitbox.isEnabled = isOn end
+    end
+end
+
+function O.setSwordFire(rate)
+    local flames = O.child("Boss Sword Flames")
+    if flames and flames.particles then
+        flames.particles.isEmitting = rate > 0
+        if rate > 0 then flames.particles.particlesPerSecond = rate end
+    end
+end
+
+function O.pieceEntity(piece) return find("Armor Piece " .. piece) end
+
+-- A point around him: 'local' in his own space (front -Z), turned with him
+function O.onHim(offset)
+    return this.transform.position + O.turned(offset, this.transform.rotation.y)
+end
+
+function O.floorSpot(piece)
+    local spot = O.PieceFloor[piece]
+    local angle = math.rad(spot[1])
+    return O.onHim(vec3(math.sin(angle) * spot[2], 0.25, -math.cos(angle) * spot[2]))
+end
+
+function O.hideArmorProps()
+    for _, piece in ipairs(O.Pieces) do
+        local entity = O.pieceEntity(piece)
+        if entity and entity.model then entity.model.isVisible = false end
+    end
+    local dropped = find("Armor Drop Sword")
+    if dropped and dropped.model then dropped.model.isVisible = false end
+end
+
+-- Back to the man of the first phases (the player died: the fight starts over)
+function O.resetArmor()
+    O.transform = nil
+    O.hideArmorProps()
+    if this.model then this.model.modelName = O.PlainModel end
+    O.setHeldSword(false)
+    O.setSwordFire(0)
+    O.setFists(true)
+    local actions = this.characterActions
+    actions.swingEffect, actions.heavySwingEffect, actions.swingEffectHeight = "Boss Swing", "Boss Heavy Swing", 1.3
+    actions.hyperArmor, actions.attackReach = 1, 1.3
+    for _, name in ipairs({ "Attack_Light_1", "Attack_Light_2", "Attack_Light_3" }) do actions:setMove(name, 0.25, 0.72, 1.0) end
+    actions:setMove("Attack_Heavy", 0.28, 0.75, 1.8)
+    O.armored = nil
+end
+
+function O.startTransformation()
+    O.transform = { t = 0, shot = 1, fallen = {}, landed = {}, snapped = {} }
+    O.hasAscended, O.dive = false, nil
+    becomeInvulnerable(30)
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    timers = {}
+    domainIsUp = false
+    setAsh(false)
+    local aura = find(O.AscensionAura)
+    if aura and aura.particles then aura.particles.isEmitting = false end
+
+    -- Thrown back along the floor by the last blow, away from the player
+    local player = find(PlayerName)
+    local away = player and (this.transform.position - player.transform.position) or vec3(0, 0, -1)
+    away.y = 0
+    away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
+    this.transform.rotation = vec3(0, O.yawToward(this.transform.position, this.transform.position - away), 0)
+    O.transform.slideFrom = this.transform.position
+    O.transform.slideTo = clampToArena(this.transform.position + away * 3.5)
+    -- (the player is thrown back too, out of the shots: the camera is on him alone now)
+    if player then
+        local back = clampToArena(this.transform.position - away * 6.0)
+        player.transform.position = vec3(back.x, player.transform.position.y, back.z)
+    end
+    this.characterActions:play("Hit")
+    this.world:impactFrame(1.0, 0.45)
+    this.world:slowMotion(0.5, 0.25)
+    this.world:shakeCamera(0.9)
+    Audio.play(BoomSound, 1.0)
+    this.world:effect("Punch Impact", this.transform.position + vec3(0, 1.3, 0), away)
+end
+
+function O.updatePieces(tr)
+    for _, piece in ipairs(O.Pieces) do
+        local entity = O.pieceEntity(piece)
+        if entity and entity.model then
+            local spot = O.floorSpot(piece)
+            local yaw = this.transform.rotation.y
+            local fallAt = O.PieceFallAt[piece]
+            local isBracer = piece == "bracer_l" or piece == "bracer_r"
+            local liftFrom = isBracer and O.BracersLiftFrom or O.LiftFrom
+            local snapAt = isBracer and O.SecondSnapAt or O.FirstSnapAt
+            local onBody = O.onHim(O.PieceOffsets[piece])
+
+            if tr.t >= fallAt and tr.t < liftFrom then
+                entity.model.isVisible = true
+                -- out of the rift, tumbling, then lying where it fell
+                local k = math.min((tr.t - fallAt) / O.FallSeconds, 1)
+                local place = spot + vec3(0, O.FallFrom * (1 - k * k), 0)
+                entity.transform.position = place
+                entity.transform.rotation = vec3(80 * (1 - k) + 12, yaw + 140 * (1 - k) + O.PieceFloor[piece][1], 25 * (1 - k))
+                if k >= 1 and not tr.landed[piece] then
+                    tr.landed[piece] = true
+                    this.world:effect("Armor Land", spot, this.transform.forward)
+                    this.world:shakeCamera(0.35)
+                    Audio.playAt(O.MetalSound, spot, 1.2)
+                end
+            elseif tr.t >= liftFrom and tr.t < snapAt then
+                -- torn out of the floor, flying onto him on a short sharp curve
+                local k = (tr.t - liftFrom) / (snapAt - liftFrom)
+                local e = k * k * k
+                local place = spot + (onBody - spot) * e + vec3(0, math.sin(k * math.pi) * 0.9, 0)
+                entity.transform.position = place
+                entity.transform.rotation = vec3(12 * (1 - e), yaw + O.PieceFloor[piece][1] * (1 - e), 0)
+            elseif tr.t >= snapAt then
+                entity.transform.position = onBody
+                entity.transform.rotation = vec3(0, yaw, 0)
+                if not tr.snapped[piece] then
+                    tr.snapped[piece] = true
+                    this.world:effect("Armor Clank", onBody, this.transform.forward)
+                end
+            end
+        end
+    end
+end
+
+function O.updateTransform(deltaTime)
+    local tr = O.transform
+    if not tr then return end
+    local before = tr.t
+    tr.t = tr.t + deltaTime
+    local function at(second) return before < second and tr.t >= second end
+
+    -- the shots of the cutscene, one after another
+    local shot = O.Shots[tr.shot]
+    if shot and tr.t >= shot[1] and not this.world.isCutscenePlaying then
+        playCutscene(shot[2])
+        tr.shot = tr.shot + 1
+    end
+
+    -- 0-2.2: thrown back, skidding on his boots; a beat of silence; the smile; his health fills with a boom
+    if tr.t < 0.9 then
+        local k = tr.t / 0.9
+        this.transform.position = mix(tr.slideFrom, tr.slideTo, 1 - (1 - k) * (1 - k))
+        tr.dustIn = (tr.dustIn or 0) - deltaTime
+        if tr.dustIn <= 0 then
+            tr.dustIn = 0.08
+            this.world:burst(O.SkidDust, this.transform.position, 3)
+        end
+    end
+    if at(0.9) then this.characterActions:play("Idle") end
+    if at(1.45) then
+        this.world:flash(vec3(1.0, 0.45, 0.35), 0.18, 0.04)
+        this.world:shakeCamera(0.6)
+        Audio.play(BoomSound, 1.1)
+        this.world:notify(string.upper(O.ArmorTitle))
+        O.tween(function(v)
+            local wanted = this.health.max * v
+            if this.health.current < wanted then this.health:heal(wanted - this.health.current) end
+        end, 0.05, 1, 0.9)
+    end
+
+    -- 2.2-4.2: the rift over the arena, the pieces and the sword falling out of it
+    if at(2.2) then
+        this.characterActions:play("Cast_Pillars")
+        this.world:effect("Armor Rift", this.transform.position + vec3(0, 11, 0), this.transform.forward)
+        Audio.play(RumbleSound, 1.2)
+        Audio.playAt(RoarSound, this.transform.position, 1.0)
+        changeLook(O.Blood, 2.0)
+    end
+    O.updatePieces(tr)
+
+    local dropped = find("Armor Drop Sword")
+    if dropped and dropped.model then
+        local ground = O.onHim(vec3(0, 0, -O.SwordInGround))
+        local stuck = vec3(ground.x, 1.13, ground.z)
+        if tr.t >= O.SwordFallAt and tr.t < O.DrawAt then
+            dropped.model.isVisible = true
+            local k = math.min((tr.t - O.SwordFallAt) / 0.35, 1)
+            dropped.transform.position = stuck + vec3(0, 14 * (1 - k * k), 0)
+            dropped.transform.rotation = vec3(180, this.transform.rotation.y + 90, 0)
+        end
+        if at(O.SwordFallAt + 0.35) then
+            this.world:effect("Armor Land", vec3(ground.x, 0.1, ground.z), this.transform.forward)
+            this.world:burst(O.SkidDust, vec3(ground.x, 0.2, ground.z), 20)
+            this.world:shakeCamera(0.7)
+            Audio.play(BoomSound, 0.9)
+        end
+    end
+
+    -- 4.2-6.5: arms spread, the plates snap onto him in two beats
+    if at(O.LiftFrom) then this.characterActions:play("Power_Up") end
+    if at(O.FirstSnapAt) then
+        this.world:flash(vec3(1.0, 0.55, 0.45), 0.12, 0.03)
+        this.world:shakeCamera(0.55)
+        this.world:impactFrame(0.6, 0.3)
+        Audio.playAt(O.MetalSound, this.transform.position, 1.4)
+    end
+    if at(O.SecondSnapAt) then
+        -- the bracers click onto his forearms: he is in his armor now
+        if this.model then this.model.modelName = O.ArmoredModel end
+        O.hideArmorProps()
+        if dropped and dropped.model then dropped.model.isVisible = true end
+        this.characterActions:play("Power_Up")
+        this.world:flash(vec3(1.0, 0.5, 0.4), 0.15, 0.04)
+        this.world:shakeCamera(0.7)
+        this.world:impactFrame(0.8, 0.35)
+        this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_l), this.transform.forward)
+        this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_r), this.transform.forward)
+        Audio.playAt(O.MetalSound, this.transform.position, 1.5)
+    end
+
+    -- 6.5-8.5: a heavy step to the sword, it is ripped out of the stone
+    if at(6.5) then this.characterActions:play("Walk") end
+    if tr.t >= 6.5 and tr.t < 7.1 then
+        this.transform.position = this.transform.position + this.transform.forward * (deltaTime * 0.9)
+    end
+    if at(7.1) then this.characterActions:play("Attack_Light_3") end
+    if at(O.DrawAt) then
+        if dropped and dropped.model then dropped.model.isVisible = false end
+        O.setHeldSword(true)
+        if O.child("Boss Sword") and O.child("Boss Sword").hitbox then O.child("Boss Sword").hitbox.isEnabled = false end
+        local ground = O.onHim(vec3(0, 0.2, -O.SwordInGround * 0.6))
+        this.world:burst(O.SkidDust, ground, 24)
+        this.world:effect("Boss Sword Swing", this.transform.position + vec3(0, 1.2, 0), this.transform.forward)
+        this.world:slowMotion(0.25, 0.08)
+        this.world:shakeCamera(0.8)
+        Audio.play(O.SlashSound, 1.2)
+    end
+
+    -- 8.5-10.5: his eyes burn red, a stamp, a wave of dust - and he fights
+    if at(O.IgniteAt) then
+        O.setRedEyes(8.0)
+        O.sealSpin = 900
+        O.sealTarget = 1.2
+        O.setSwordFire(28)
+        this.world:effect("Armor Stomp", this.transform.position + vec3(0, 0.1, 0), this.transform.forward)
+        this.world:flash(vec3(1.0, 0.45, 0.35), 0.15, 0.04)
+        this.world:shakeCamera(0.8)
+        Audio.play(BoomSound, 1.2)
+        Audio.playAt(RoarSound, this.transform.position, 1.3)
+    end
+    if tr.t >= O.TransformEnds then
+        O.transform = nil
+        O.startArmoredPhase()
+    end
+end
+
+function O.startArmoredPhase()
+    phase = 5
+    isChanneling = false
+    invulnerableLeft = 0.5
+    setHealthFloor(0.5 - FloorMargin)
+    O.setFists(false)
+    O.setHeldSword(true)
+    changeLook(O.Blood, 1.5)
+
+    local actions = this.characterActions
+    actions.swingEffect, actions.heavySwingEffect, actions.swingEffectHeight = "Boss Sword Swing", "Boss Sword Heavy Swing", 1.1
+    actions.hyperArmor, actions.attackReach = 1, 1.9
+    actions.attackSpeed = 1.1
+    actions.attackDelayChance = 0.2
+    actions:setMove("Attack_Light_1", 0.25, 0.62, 1.0)
+    actions:setMove("Attack_Light_2", 0.2, 0.6, 1.0)
+    actions:setMove("Attack_Light_3", 0.35, 0.64, 1.1)
+    actions:setMove("Attack_Heavy", 0.42, 0.72, 1.6)
+    this.meleeEnemy.attackDistance = 2.6
+    this.meleeEnemy.attackCooldownSeconds = 1.0
+    this.meleeEnemy.heavyAttackChance = 0.35
+    this.meleeEnemy.dodgeChance = 0.15
+    O.armored = { slamIn = 3, dashIn = 6, whirlIn = 4, barrageIn = 99, hasExecuted = false }
+    showCaption(O.ArmorTitle, 3)
+end
+
+function O.startPhaseSix()
+    phase = 6
+    setHealthFloor(0)
+    becomeInvulnerable(2.2)
+    this.characterActions:play("Sword_Power_Up")
+    this.world:notify("THE BLADE OF THE ISLAND BURNS")
+    this.world:slowMotion(0.8, 0.4)
+    this.world:shakeCamera(0.9)
+    this.world:flash(vec3(1.0, 0.45, 0.35), 0.2, 0.05)
+    Audio.playAt(RoarSound, this.transform.position, 1.5)
+    O.setSwordFire(60)
+    O.sealSpin, O.sealTarget = 1200, 1.45
+    local aura = find(O.AscensionAura)
+    if aura and aura.particles then aura.particles.isEmitting = true end
+    this.characterActions.attackSpeed = 1.3
+    this.characterActions.attackDelayChance = 0.35
+    this.meleeEnemy.attackCooldownSeconds = 0.7
+    this.meleeEnemy.heavyAttackChance = 0.45
+    O.armored.barrageIn = 4
+    O.armored.slamIn = math.min(O.armored.slamIn, 3)
+end
+
+-- A wave of the sword thrown along the floor from 'from' in 'direction' (level)
+function O.throwWave(from, direction)
+    direction.y = 0
+    if direction:length() < 0.01 then return end
+    this.world:launch(O.SwordWave, this, vec3(from.x, 0.5, from.z), direction:normalized())
+end
+
+function O.wavesAtPlayer(from, count, spreadDegrees)
+    local player = find(PlayerName)
+    if not player then return end
+    local aim = player.transform.position - from
+    aim.y = 0
+    local yaw = math.deg(math.atan(aim.x, aim.z))
+    for i = 1, count do
+        local angle = math.rad(yaw + (i - (count + 1) * 0.5) * spreadDegrees)
+        O.throwWave(from, vec3(math.sin(angle), 0, math.cos(angle)))
+    end
+end
+
+-- Black Blade: Earthsplitter - a leap onto the player and the sword into the floor: the floor caves in, waves run out
+function O.startSlam()
+    local player = find(PlayerName)
+    if not player then return end
+    O.slam = { t = 0, from = this.transform.position, hasHit = false }
+    local toPlayer = player.transform.position - this.transform.position
+    toPlayer.y = 0
+    O.slam.to = clampToArena(player.transform.position - toPlayer:normalized() * 1.6)
+    this.transform.rotation = vec3(0, O.yawToward(this.transform.position, player.transform.position) + 180, 0)
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    this.characterActions:play("Sword_Slam")
+    showCaption(O.SlamTechnique, 2.2)
+    Audio.playAt(O.SlashSound, this.transform.position, 1.2)
+end
+
+function O.updateSlam(deltaTime)
+    local s = O.slam
+    if not s then return false end
+    s.t = s.t + deltaTime
+    local leap = 0.55
+    if s.t < leap then
+        local k = s.t / leap
+        local place = mix(s.from, s.to, k * k * (3 - 2 * k))
+        place.y = math.sin(k * math.pi) * 2.2
+        this.transform.position = place
+        s.markIn = (s.markIn or 0) - deltaTime
+        if s.markIn <= 0 then
+            s.markIn = 0.1
+            this.world:burst("Flash Burst", s.to + vec3(0, 0.15, 0), 10)
+        end
+    elseif not s.hasHit then
+        s.hasHit = true
+        this.transform.position = s.to
+        local point = this.transform.position + this.transform.forward * 1.4
+        this.world:effect("Sword Ground Burst", vec3(point.x, 0.1, point.z), this.transform.forward)
+        this.world:impactFrame(1.0, 0.4)
+        this.world:shakeCamera(1.0)
+        Audio.playAt(BoomSound, point, 1.3)
+        O.blastAround(point, O.SlamRadius, O.SlamDamage)
+        O.wavesAtPlayer(point, (phase == 6) and O.SlamWaves + 2 or O.SlamWaves, 22)
+    elseif s.t >= leap + 0.9 then
+        O.slam = nil
+        isChanneling = false
+        return false
+    end
+    return true
+end
+
+-- Island Seal: Phantom Rush - a moment's wind-up, then gone through the player in a streak of red, cutting
+function O.startDash()
+    local player = find(PlayerName)
+    if not player then return end
+    local toPlayer = player.transform.position - this.transform.position
+    toPlayer.y = 0
+    local direction = toPlayer:normalized()
+    O.dash = { t = 0, from = this.transform.position, to = clampToArena(player.transform.position + direction * O.DashMeters),
+               direction = direction, hasHit = false }
+    this.transform.rotation = vec3(0, O.yawToward(this.transform.position, player.transform.position) + 180, 0)
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    this.characterActions:play("Sword_Slide")
+    showCaption(O.DashTechnique, 1.8)
+    O.sealSpin = 1000
+    this.world:burst("Blink Burst", this.transform.position + vec3(0, 1.0, 0), 60)
+end
+
+function O.updateDash(deltaTime)
+    local d = O.dash
+    if not d then return false end
+    d.t = d.t + deltaTime
+    local windup = 0.4
+    if d.t >= windup and d.t < windup + O.DashSeconds then
+        local k = (d.t - windup) / O.DashSeconds
+        this.transform.position = mix(d.from, d.to, k)
+        d.streakIn = (d.streakIn or 0) - deltaTime
+        if d.streakIn <= 0 then
+            d.streakIn = 0.03
+            this.world:effect("Dash Streak", this.transform.position + vec3(0, 0.1, 0), d.direction)
+        end
+        local player = find(PlayerName)
+        if player and not d.hasHit then
+            local between = player.transform.position - this.transform.position
+            between.y = 0
+            if between:length() < 1.4 then
+                d.hasHit = true
+                player.health:damage(O.DashDamage)
+                this.world:effect("Boss Sword Heavy Swing", this.transform.position + vec3(0, 1.1, 0), d.direction)
+                this.world:impactFrame(0.7, 0.25)
+            end
+        end
+    elseif d.t >= windup + O.DashSeconds and not d.hasEnded then
+        d.hasEnded = true
+        this.transform.position = d.to
+        this.world:effect("Boss Sword Heavy Swing", this.transform.position + vec3(0, 1.1, 0), -d.direction)
+        this.world:shakeCamera(0.5)
+        Audio.play(O.SlashSound, 1.1)
+        if phase == 6 then O.wavesAtPlayer(this.transform.position, 1, 0) end
+    elseif d.t >= windup + O.DashSeconds + 0.6 then
+        O.dash = nil
+        isChanneling = false
+        return false
+    end
+    return true
+end
+
+-- Black Blade: Crimson Whirl - the sword all around him, twice in phase 6
+function O.startWhirl()
+    this.characterActions:play("Sword_Spin")
+    showCaption(O.WhirlTechnique, 1.6)
+    local count = (phase == 6) and 2 or 1
+    for i = 1, count do
+        after(0.42 + (i - 1) * 0.5, function()
+            if this.health.isDead then return end
+            this.world:effect("Sword Whirl", this.transform.position + vec3(0, 1.0, 0), this.transform.forward)
+            this.world:shakeCamera(0.5)
+            Audio.playAt(O.SlashSound, this.transform.position, 1.2)
+            O.blastAround(this.transform.position, O.WhirlRadius, O.WhirlDamage)
+        end)
+    end
+end
+
+-- Island Seal: Thousand Blades - the seal behind him flares and throws a fan of waves at the player
+function O.startBarrage()
+    showCaption(O.BarrageTechnique, 2.0)
+    O.sealSpin = 1400
+    local seal = find(O.Seal)
+    for volley = 0, 1 do
+        after(0.6 + volley * 0.7, function()
+            if this.health.isDead then return end
+            local from = seal and seal.transform.position or this.transform.position
+            O.wavesAtPlayer(from, O.BarrageWaves, 14)
+            this.world:burst("Blink Burst", from, 40)
+            Audio.playAt(O.SlashSound, from, 1.0)
+        end)
+    end
+end
+
+-- Final Chapter: Execution - once, low on health: the middle of the arena, three leaps and the seal's blades
+function O.startExecution()
+    O.armored.hasExecuted = true
+    blinkTo(ArenaCenter)
+    becomeInvulnerable(1.5)
+    this.characterActions:play("Sword_Power_Up")
+    this.world:notify(string.upper(O.ExecutionTechnique))
+    this.world:slowMotion(0.8, 0.4)
+    Audio.playAt(RoarSound, this.transform.position, 1.5)
+    after(1.6, function() O.startBarrage() end)
+    after(3.2, function() if not this.health.isDead and not O.slam then O.startSlam() end end)
+end
+
+function O.updateArmored(deltaTime)
+    local a = O.armored
+    if not a or phase < 5 then return end
+    if O.updateSlam(deltaTime) or O.updateDash(deltaTime) then return end
+
+    for key, value in pairs(a) do
+        if type(value) == "number" then a[key] = value - deltaTime end
+    end
+    if not isFreeToAct() then return end
+
+    local distance = this.enemy.distanceToTarget
+    if phase == 6 and not a.hasExecuted and this.health.fraction < 0.2 then
+        O.startExecution()
+    elseif a.slamIn <= 0 and distance > 3.5 and distance < 13 and takePatternTurn() then
+        a.slamIn = (phase == 6) and O.SlamEvery * 0.7 or O.SlamEvery
+        O.startSlam()
+    elseif a.dashIn <= 0 and distance > 5 and distance < 15 and takePatternTurn() then
+        a.dashIn = (phase == 6) and O.DashEvery * 0.6 or O.DashEvery
+        O.startDash()
+    elseif a.whirlIn <= 0 and distance < 3.2 and takePatternTurn() then
+        a.whirlIn = (phase == 6) and O.WhirlEvery * 0.7 or O.WhirlEvery
+        O.startWhirl()
+    elseif phase == 6 and a.barrageIn <= 0 and takePatternTurn() then
+        a.barrageIn = O.BarrageEvery
+        O.startBarrage()
     end
 end
 
@@ -1523,13 +2111,16 @@ callTheSummon = function()
     flash = 0.6
 
     this.world:notify("WITH THIS TREASURE, I SUMMON...")
+    -- The seal burns behind his back from now on
+    O.showSeal(1)
 end
 
 local function startLastPhase()
     phase = 4
     isChanneling = false
     this.health.isInvulnerable = false
-    setHealthFloor(0)
+    -- (he doesn't fall at the end of it: at the last point of health his armor comes, see O.startTransformation)
+    this.health.minimum = 1
 
     -- Everything comes faster now
     this.meleeEnemy.attackCooldownSeconds = 0.85
@@ -1566,6 +2157,10 @@ local function updatePhases()
     elseif phase == 3 then
         local summon = find(SummonName)
         if not summon or summon.health.isDead then startLastPhase() end
+    elseif phase == 4 and this.health.current <= this.health.minimum + 0.5 and not O.dive and isFreeToAct() then
+        O.startTransformation()
+    elseif phase == 5 and this.health.fraction <= 0.5 + 0.01 and invulnerableLeft <= 0 and isFreeToAct() then
+        O.startPhaseSix()
     end
 end
 
@@ -1613,6 +2208,8 @@ local function reset()
     silhouetteLeft = 0
     if this.model then this.model.darkness = 0 end
     O.resetAscension()
+    O.resetArmor()
+    O.slam, O.dash = nil, nil
     setEyes(0)
     captionLeft = 0
     playerGreatCasts = 0
@@ -1650,6 +2247,10 @@ local function onDefeat()
 
     local summon = find(SummonName)
     if summon and not summon.health.isDead and not summon.enemy.isDormant then summon.health:damage(100000) end
+    O.setSwordFire(0)
+    O.hideSeal()
+    local aura = find(O.AscensionAura)
+    if aura and aura.particles then aura.particles.isEmitting = false end
 end
 
 -- ========== The boss's own state for the summon phase ==========
@@ -1668,6 +2269,7 @@ local ChannelState = {
         channelSpellIn = channelSpellIn - deltaTime
         if channelSpellIn > 0 then return end
 
+        if phase ~= 3 then return end
         local summon, player = find(SummonName), find(PlayerName)
         local isNearSummon = false
         if summon and player and summon.health and not summon.health.isDead then
@@ -1771,6 +2373,14 @@ end
 
 function OnUpdate(deltaTime)
     local boss = this.boss
+    O.updateSeal(deltaTime)
+    -- His transformation runs through its own cutscenes and the moments between them: nothing else meanwhile
+    if O.transform then
+        O.updateTransform(deltaTime)
+        updateTweens(deltaTime)
+        updateLook(deltaTime)
+        return
+    end
 
     if boss.isDefeated or this.health.isDead then
         if not hasSeenDefeat then onDefeat() end
@@ -1847,6 +2457,7 @@ function OnUpdate(deltaTime)
     watchJetSpells()
     updateGamble()
     O.updateAscension(deltaTime)
+    O.updateArmored(deltaTime)
     updateDomain(deltaTime)
     updateTweens(deltaTime)
     O.updateRise(deltaTime)

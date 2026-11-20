@@ -26227,6 +26227,2276 @@
   },
   {
    "tag": {
+    "name": "Armor Rift"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 2.0,
+    "start_radius": 1.0,
+    "end_radius": 7.0,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 2.2,
+    "thickness": 0.35,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "noise_scale": 3.0,
+    "scroll_speed": 2.0,
+    "dissolve": 0.6,
+    "light_intensity": 8.0,
+    "light_radius": 30.0,
+    "light_color": [
+     1.0,
+     0.15,
+     0.08
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Rift Core"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 1.8,
+    "start_radius": 0.5,
+    "end_radius": 4.5,
+    "core_color": [
+     0.4,
+     0.02,
+     0.02
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 0.9,
+    "noise_scale": 3.0,
+    "dissolve": 0.7
+   },
+   "parent": {
+    "index": 615,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Rift Lightning"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.5,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.06,
+    "end_size": 0.024,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.3,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.0,
+     0.0
+    ],
+    "intensity": 6.0,
+    "max_particles": 3000,
+    "burst_amount": 80,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 18.0,
+    "size_randomness": 0.4,
+    "drag": 1.0,
+    "stretch": 0.12
+   },
+   "parent": {
+    "index": 615,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Rift Smoke"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 2.5,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 3.0,
+    "end_size": 7.5,
+    "start_color": [
+     0.2,
+     0.03,
+     0.03
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.2,
+     0.03,
+     0.03
+    ],
+    "end_color": [
+     0.26,
+     0.039,
+     0.039
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 30,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 4.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 615,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Land"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.5,
+    "start_radius": 0.3,
+    "end_radius": 2.5,
+    "core_color": [
+     1.0,
+     0.85,
+     0.55
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 2.0,
+    "thickness": 0.25,
+    "dissolve": 0.85,
+    "light_intensity": 3.0,
+    "light_radius": 6.0,
+    "light_color": [
+     1.0,
+     0.3,
+     0.15
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Land Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.6,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -12.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.6,
+     0.3
+    ],
+    "end_color": [
+     0.5,
+     0.05,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 40,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 9.0,
+    "size_randomness": 0.4,
+    "drag": 2.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 619,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Land Dust"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.2,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 0.8999999999999999,
+    "end_size": 2.4000000000000004,
+    "start_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "end_color": [
+     0.546,
+     0.46799999999999997,
+     0.39
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 14,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 4.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 619,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Clank"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 0.25,
+    "start_radius": 0.2,
+    "end_radius": 1.4,
+    "core_color": [
+     1.0,
+     0.9,
+     0.85
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 2.4,
+    "dissolve": 0.9,
+    "light_intensity": 5.0,
+    "light_radius": 6.0,
+    "light_color": [
+     1.0,
+     0.25,
+     0.1
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Clank Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.45,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -9.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.7,
+     0.4
+    ],
+    "end_color": [
+     0.6,
+     0.05,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 60,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 11.0,
+    "size_randomness": 0.4,
+    "drag": 3.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 622,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Clank Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.08,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 1.6,
+    "end_size": 0.48,
+    "start_color": [
+     1.0,
+     0.5,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.5,
+     0.3
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.6,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 622,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Swing"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.26,
+    "start_radius": 1.2,
+    "end_radius": 2.0,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 2.6,
+    "thickness": 0.4,
+    "arc_degrees": 150.0,
+    "rotation_randomness": [
+     8.0,
+     10.0,
+     40.0
+    ],
+    "noise_scale": 4.0,
+    "scroll_speed": 5.0,
+    "dissolve": 0.55,
+    "light_intensity": 2.5,
+    "light_radius": 6.0,
+    "light_color": [
+     1.0,
+     0.2,
+     0.08
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Swing Flames"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.4,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     2.5,
+     0.0
+    ],
+    "start_size": 0.48999999999999994,
+    "end_size": 0.84,
+    "start_color": [
+     1.0,
+     0.9,
+     0.8
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.55
+    ],
+    "end_color": [
+     0.9,
+     0.5,
+     0.3
+    ],
+    "intensity": 1.3,
+    "max_particles": 3000,
+    "burst_amount": 14,
+    "style": 1,
+    "spawn_shape": 1,
+    "spawn_radius": 0.3,
+    "outward_speed": 4.0,
+    "drag": 3.0,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 90.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png",
+    "flipbook_columns": 6,
+    "flipbook_rows": 4,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 625,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Swing Embers"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.4,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -2.0,
+     0.0
+    ],
+    "start_size": 0.04,
+    "end_size": 0.016,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.4,
+     0.15
+    ],
+    "end_color": [
+     0.4,
+     0.0,
+     0.0
+    ],
+    "intensity": 3.0,
+    "max_particles": 3000,
+    "burst_amount": 12,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 6.0,
+    "size_randomness": 0.4,
+    "drag": 4.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 625,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Heavy Swing"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.36,
+    "start_radius": 1.4,
+    "end_radius": 2.8,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 3.2,
+    "thickness": 0.5,
+    "arc_degrees": 240.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     20.0
+    ],
+    "rotation_randomness": [
+     0.0,
+     10.0,
+     20.0
+    ],
+    "noise_scale": 4.0,
+    "scroll_speed": 6.0,
+    "dissolve": 0.6,
+    "light_intensity": 4.0,
+    "light_radius": 9.0,
+    "light_color": [
+     1.0,
+     0.2,
+     0.08
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Heavy Swing Wind"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.42,
+    "start_radius": 1.8,
+    "end_radius": 3.6,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.5,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.2,
+    "thickness": 0.18,
+    "arc_degrees": 260.0,
+    "rotation_degrees": [
+     0.0,
+     0.0,
+     20.0
+    ],
+    "noise_scale": 6.0,
+    "scroll_speed": 6.0,
+    "dissolve": 0.85
+   },
+   "parent": {
+    "index": 628,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Heavy Swing Flames"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.5,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     2.5,
+     0.0
+    ],
+    "start_size": 0.7,
+    "end_size": 1.2,
+    "start_color": [
+     1.0,
+     0.9,
+     0.8
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.55
+    ],
+    "end_color": [
+     0.9,
+     0.5,
+     0.3
+    ],
+    "intensity": 1.4300000000000002,
+    "max_particles": 3000,
+    "burst_amount": 30,
+    "style": 1,
+    "spawn_shape": 1,
+    "spawn_radius": 0.3,
+    "outward_speed": 6.0,
+    "drag": 3.0,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 90.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png",
+    "flipbook_columns": 6,
+    "flipbook_rows": 4,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 628,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Heavy Swing Embers"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.5,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -2.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.4,
+     0.15
+    ],
+    "end_color": [
+     0.4,
+     0.0,
+     0.0
+    ],
+    "intensity": 3.5,
+    "max_particles": 3000,
+    "burst_amount": 24,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 8.0,
+    "size_randomness": 0.4,
+    "drag": 3.5,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 628,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.7,
+    "start_radius": 0.8,
+    "end_radius": 9.0,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 3.0,
+    "thickness": 0.22,
+    "noise_scale": 3.0,
+    "scroll_speed": 1.5,
+    "dissolve": 0.85,
+    "light_intensity": 8.0,
+    "light_radius": 14.0,
+    "light_color": [
+     1.0,
+     0.2,
+     0.08
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Crater"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 3.5,
+    "start_radius": 0.4,
+    "end_radius": 3.2,
+    "core_color": [
+     0.25,
+     0.04,
+     0.03
+    ],
+    "edge_color": [
+     0.06,
+     0.01,
+     0.01
+    ],
+    "intensity": 1.2,
+    "thickness": 1.0,
+    "noise_scale": 7.0,
+    "scroll_speed": 0.05,
+    "dissolve": 1.0
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Cracks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 3.0,
+    "start_radius": 0.5,
+    "end_radius": 4.5,
+    "core_color": [
+     1.0,
+     0.35,
+     0.15
+    ],
+    "edge_color": [
+     0.5,
+     0.02,
+     0.0
+    ],
+    "intensity": 1.4,
+    "thickness": 0.06,
+    "noise_scale": 9.0,
+    "scroll_speed": 0.1,
+    "dissolve": 1.0
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Column"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 2,
+    "lifetime_seconds": 0.6,
+    "start_radius": 0.8,
+    "end_radius": 2.2,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 1.0,
+    "height": 6.0,
+    "twist_degrees": 220.0,
+    "spin_degrees_per_second": 260.0,
+    "noise_scale": 5.0,
+    "scroll_speed": 3.0,
+    "dissolve": 0.85
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Rocks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.0,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -16.0,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.048,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     0.6,
+     0.45,
+     0.35
+    ],
+    "end_color": [
+     0.25,
+     0.18,
+     0.12
+    ],
+    "intensity": 0.8,
+    "max_particles": 3000,
+    "burst_amount": 70,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 12.0,
+    "size_randomness": 0.4,
+    "drag": 1.2,
+    "stretch": 0.0
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.8,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -12.0,
+     0.0
+    ],
+    "start_size": 0.07,
+    "end_size": 0.028000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.45,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.02,
+     0.0
+    ],
+    "intensity": 5.0,
+    "max_particles": 3000,
+    "burst_amount": 80,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 14.0,
+    "size_randomness": 0.4,
+    "drag": 2.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Dust"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 2.0,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 1.6500000000000001,
+    "end_size": 4.5,
+    "start_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "end_color": [
+     0.546,
+     0.46799999999999997,
+     0.39
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 36,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 7.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Ground Burst Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.1,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 3.5,
+    "end_size": 1.05,
+    "start_color": [
+     1.0,
+     0.4,
+     0.25
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.4,
+     0.25
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.4,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 632,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Whirl"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 1,
+    "lifetime_seconds": 0.4,
+    "start_radius": 2.0,
+    "end_radius": 3.8,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 2.8,
+    "thickness": 0.45,
+    "arc_degrees": 360.0,
+    "spin_degrees_per_second": 900.0,
+    "noise_scale": 4.0,
+    "scroll_speed": 6.0,
+    "dissolve": 0.6,
+    "light_intensity": 4.0,
+    "light_radius": 9.0,
+    "light_color": [
+     1.0,
+     0.2,
+     0.08
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Whirl Flames"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.5,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     2.5,
+     0.0
+    ],
+    "start_size": 0.7,
+    "end_size": 1.2,
+    "start_color": [
+     1.0,
+     0.9,
+     0.8
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.55
+    ],
+    "end_color": [
+     0.9,
+     0.5,
+     0.3
+    ],
+    "intensity": 1.3,
+    "max_particles": 3000,
+    "burst_amount": 36,
+    "style": 1,
+    "spawn_shape": 1,
+    "spawn_radius": 0.3,
+    "outward_speed": 7.0,
+    "drag": 3.0,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 90.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png",
+    "flipbook_columns": 6,
+    "flipbook_rows": 4,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 640,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Dash Streak"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 2,
+    "lifetime_seconds": 0.35,
+    "start_radius": 0.4,
+    "end_radius": 0.9,
+    "core_color": [
+     1.0,
+     0.75,
+     0.6
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 1.6,
+    "height": 2.2,
+    "twist_degrees": 90.0,
+    "noise_scale": 5.0,
+    "scroll_speed": 4.0,
+    "dissolve": 0.7
+   }
+  },
+  {
+   "tag": {
+    "name": "Dash Streak Smoke"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.8,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 1.0499999999999998,
+    "end_size": 2.0999999999999996,
+    "start_color": [
+     0.25,
+     0.03,
+     0.03
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.25,
+     0.03,
+     0.03
+    ],
+    "end_color": [
+     0.325,
+     0.039,
+     0.039
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 10,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 1.5,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 642,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Dash Streak Embers"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.5,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "start_size": 0.05,
+    "end_size": 0.020000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.4,
+     0.15
+    ],
+    "end_color": [
+     0.4,
+     0.0,
+     0.0
+    ],
+    "intensity": 3.0,
+    "max_particles": 3000,
+    "burst_amount": 16,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 5.0,
+    "size_randomness": 0.4,
+    "drag": 3.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 642,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Stomp"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.9,
+    "start_radius": 0.5,
+    "end_radius": 8.0,
+    "core_color": [
+     1.0,
+     0.8,
+     0.7
+    ],
+    "edge_color": [
+     0.85,
+     0.04,
+     0.02
+    ],
+    "intensity": 1.6,
+    "thickness": 0.2,
+    "dissolve": 0.9,
+    "light_intensity": 3.0,
+    "light_radius": 8.0,
+    "light_color": [
+     1.0,
+     0.25,
+     0.1
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Stomp Dust"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.6,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 1.35,
+    "end_size": 3.9000000000000004,
+    "start_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     0.42,
+     0.36,
+     0.3
+    ],
+    "end_color": [
+     0.546,
+     0.46799999999999997,
+     0.39
+    ],
+    "intensity": 0.7,
+    "max_particles": 3000,
+    "burst_amount": 40,
+    "style": 2,
+    "spawn_shape": 1,
+    "spawn_radius": 0.15,
+    "outward_speed": 8.0,
+    "drag": 3.5,
+    "size_randomness": 0.4,
+    "spin_degrees_per_second": 60.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 645,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Oil Splash Ring"
    },
    "transform": {
@@ -27178,7 +29448,7 @@
     "block_effect": "Guard Impact"
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Hand_L"
    }
   },
@@ -27228,7 +29498,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Hand_R"
    }
   },
@@ -27278,7 +29548,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Hand_L"
    }
   },
@@ -27328,7 +29598,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Foot_R"
    }
   },
@@ -27370,7 +29640,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Head"
    }
   },
@@ -27412,55 +29682,56 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Head"
    }
   },
   {
    "tag": {
-    "name": "Boss Jet Pack"
+    "name": "Boss Seal"
    },
    "transform": {
     "position": [
      0.0,
-     0.05,
-     -0.22
+     1.6,
+     0.45
     ],
     "rotation": [
-     -90.0,
+     0.0,
      0.0,
      0.0
     ],
     "rotation_quaternion": [
-     0.7071067811865476,
-     -0.7071067811865476,
+     1.0,
+     0.0,
      0.0,
      0.0
     ],
     "scale": [
-     0.12,
-     0.12,
-     0.12
+     0.01,
+     0.01,
+     0.01
     ]
    },
    "model": {
     "is_visible": false,
-    "model_name": "sih_jet"
+    "model_name": "sih_hex_seal",
+    "emissive_strength": 1.2
    },
    "parent": {
-    "index": 625,
-    "bone_name": "Chest"
+    "index": 657,
+    "bone_name": ""
    }
   },
   {
    "tag": {
-    "name": "Boss Jet Flame 1"
+    "name": "Boss Seal Smoke"
    },
    "transform": {
     "position": [
-     -0.16,
-     -0.45,
-     -0.28
+     0.0,
+     1.6,
+     0.45
     ],
     "rotation": [
      0.0,
@@ -27481,55 +29752,60 @@
    },
    "particle_emitter": {
     "is_emitting": false,
-    "particles_per_second": 90.0,
-    "lifetime_seconds": 0.14,
+    "particles_per_second": 26.0,
+    "lifetime_seconds": 1.8,
     "spawn_half_extents": [
-     0.02,
-     0.02,
-     0.02
+     0.9,
+     0.9,
+     0.15
     ],
     "velocity": [
      0.0,
-     -3.0,
-     0.0
+     0.9,
+     0.3
     ],
-    "velocity_randomness": 0.3,
+    "velocity_randomness": 0.5,
     "gravity": [
      0.0,
-     0.0,
+     0.3,
      0.0
     ],
-    "start_size": 0.11,
-    "end_size": 0.02,
+    "start_size": 0.7,
+    "end_size": 1.6,
     "start_color": [
-     1.0,
-     0.5,
-     0.18
-    ],
-    "end_color": [
-     0.7,
-     0.08,
+     0.35,
+     0.03,
      0.02
     ],
-    "intensity": 0.45,
-    "max_particles": 300,
-    "style": 1,
-    "size_randomness": 0.3
+    "end_color": [
+     0.08,
+     0.01,
+     0.01
+    ],
+    "intensity": 0.8,
+    "max_particles": 120,
+    "is_dark": true,
+    "style": 2,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": true
    },
    "parent": {
-    "index": 625,
-    "bone_name": "Chest"
+    "index": 657,
+    "bone_name": ""
    }
   },
   {
    "tag": {
-    "name": "Boss Jet Flame 2"
+    "name": "Boss Seal Embers"
    },
    "transform": {
     "position": [
-     0.16,
-     -0.45,
-     -0.28
+     0.0,
+     1.6,
+     0.45
     ],
     "rotation": [
      0.0,
@@ -27550,44 +29826,119 @@
    },
    "particle_emitter": {
     "is_emitting": false,
-    "particles_per_second": 90.0,
-    "lifetime_seconds": 0.14,
+    "particles_per_second": 40.0,
+    "lifetime_seconds": 1.2,
     "spawn_half_extents": [
-     0.02,
-     0.02,
-     0.02
+     1.0,
+     1.0,
+     0.1
     ],
     "velocity": [
      0.0,
-     -3.0,
+     1.2,
      0.0
     ],
-    "velocity_randomness": 0.3,
+    "velocity_randomness": 0.9,
     "gravity": [
      0.0,
+     0.5,
+     0.0
+    ],
+    "start_size": 0.06,
+    "end_size": 0.01,
+    "start_color": [
+     1.0,
+     0.25,
+     0.08
+    ],
+    "end_color": [
+     0.6,
+     0.02,
+     0.0
+    ],
+    "intensity": 2.5,
+    "max_particles": 200,
+    "style": 0,
+    "size_randomness": 0.5
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Red Aura"
+   },
+   "transform": {
+    "position": [
+     0.0,
      0.0,
      0.0
     ],
-    "start_size": 0.11,
-    "end_size": 0.02,
-    "start_color": [
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
      1.0,
-     0.5,
-     0.18
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 30.0,
+    "lifetime_seconds": 1.0,
+    "spawn_half_extents": [
+     0.38,
+     0.9,
+     0.38
+    ],
+    "velocity": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "velocity_randomness": 0.35,
+    "gravity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "start_size": 0.35,
+    "end_size": 0.75,
+    "start_color": [
+     0.55,
+     0.06,
+     0.04
     ],
     "end_color": [
-     0.7,
-     0.08,
-     0.02
+     0.12,
+     0.01,
+     0.01
     ],
-    "intensity": 0.45,
-    "max_particles": 300,
-    "style": 1,
-    "size_randomness": 0.3
+    "intensity": 0.7,
+    "max_particles": 120,
+    "style": 2,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 40.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
+    "flipbook_columns": 8,
+    "flipbook_rows": 8,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": true
    },
    "parent": {
-    "index": 625,
-    "bone_name": "Chest"
+    "index": 657,
+    "bone_name": "Hips"
    }
   },
   {
@@ -27641,12 +29992,12 @@
     "end_size": 0.01,
     "start_color": [
      1.0,
-     0.45,
+     0.25,
      0.1
     ],
     "end_color": [
      0.6,
-     0.05,
+     0.02,
      0.0
     ],
     "intensity": 1.5,
@@ -27655,8 +30006,1227 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Hips"
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_sword",
+    "emissive_strength": 1.5
+   },
+   "hitbox": {
+    "local_offset": [
+     0.0,
+     0.823,
+     0.0
+    ],
+    "half_extents": [
+     0.18,
+     0.62,
+     0.12
+    ],
+    "damage": 30.0,
+    "poise_damage": 45.0,
+    "layer": 16,
+    "show_gizmos": false,
+    "hit_stop_seconds": 0.1,
+    "camera_shake": 0.45,
+    "is_enabled": false
+   },
+   "weapon_trail": {
+    "base_offset": [
+     0.0,
+     0.25,
+     0.0
+    ],
+    "tip_offset": [
+     0.0,
+     1.42,
+     0.0
+    ],
+    "color": [
+     1.0,
+     0.18,
+     0.06
+    ],
+    "intensity": 2.2,
+    "lifetime_seconds": 0.22,
+    "only_while_striking": true
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Flames"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.85,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 90.0,
+    "lifetime_seconds": 0.45,
+    "spawn_half_extents": [
+     0.05,
+     0.58,
+     0.03
+    ],
+    "velocity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "velocity_randomness": 0.4,
+    "gravity": [
+     0.0,
+     1.5,
+     0.0
+    ],
+    "start_size": 0.14,
+    "end_size": 0.26,
+    "start_color": [
+     1.0,
+     0.3,
+     0.15
+    ],
+    "end_color": [
+     0.5,
+     0.02,
+     0.02
+    ],
+    "intensity": 1.1,
+    "max_particles": 150,
+    "style": 1,
+    "size_randomness": 0.35,
+    "spin_degrees_per_second": 80.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png",
+    "flipbook_columns": 6,
+    "flipbook_rows": 4,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": false
+   },
+   "parent": {
+    "index": 669,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Drop Sword"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_sword",
+    "emissive_strength": 1.0
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Piece torso"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_armored_torso"
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Piece bracer_l"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_armored_bracer_l"
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Piece bracer_r"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_armored_bracer_r"
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Piece greave_l"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_armored_greave_l"
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Piece greave_r"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_armored_greave_r"
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Fakeout"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.2,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.6,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.6
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.7,
+     1.5,
+     -4.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 677,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.45,
+     1.6,
+     -2.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 677,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     0.28,
+     1.68,
+     -1.55
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 677,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Rift Shot"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.1,
+    "look_at_entity": "Boss",
+    "look_at_height": 3.2,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.5
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     3.2,
+     0.35,
+     -5.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 681,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     3.0,
+     0.4,
+     -4.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 681,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     2.8,
+     0.45,
+     -4.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 681,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Snap"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.3,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.2,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.5
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     1.0,
+     1.3,
+     -5.8
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 685,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.7,
+     1.35,
+     -5.1
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 685,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     0.45,
+     1.4,
+     -4.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 685,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Draw"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.0,
+    "look_at_entity": "Boss",
+    "look_at_height": 0.9,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.5
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     2.8,
+     1.0,
+     -2.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 689,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     2.5,
+     1.1,
+     -1.7
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 689,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     2.3,
+     1.2,
+     -1.3
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 689,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Armor Ignite"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.2,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.65,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.4
+   },
+   "parent": {
+    "index": 657,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.25,
+     1.72,
+     -1.3
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 693,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.5,
+     1.8,
+     -2.4
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 693,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     0.9,
+     2.0,
+     -4.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 693,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Sword Wave"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "projectile": {
+    "speed": 17.0,
+    "damage": 26.0,
+    "poise_damage": 30.0,
+    "radius": 1.1,
+    "homing_degrees_per_second": 0.0,
+    "lifetime_seconds": 1.6,
+    "fuse_seconds": 0.0,
+    "trail_effect": "Sword Wave Trail",
+    "trail_particles_per_second": 260.0,
+    "hit_effect": "Sword Hit Burst",
+    "hit_burst": 30,
+    "hit_sound": "@game/Sounds/Combat/Hit",
+    "hit_stop_seconds": 0.08,
+    "camera_shake": 0.35
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Wave Trail"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.35,
+    "spawn_half_extents": [
+     1.3,
+     0.25,
+     0.08
+    ],
+    "velocity": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "velocity_randomness": 0.3,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 0.32,
+    "end_size": 0.08,
+    "start_color": [
+     1.0,
+     0.35,
+     0.2
+    ],
+    "end_color": [
+     0.6,
+     0.02,
+     0.02
+    ],
+    "intensity": 2.4,
+    "max_particles": 1500
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Hit Burst"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.5,
+    "spawn_half_extents": [
+     0.2,
+     0.2,
+     0.2
+    ],
+    "velocity": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "velocity_randomness": 4.0,
+    "gravity": [
+     0.0,
+     -6.0,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.02,
+    "start_color": [
+     1.0,
+     0.4,
+     0.2
+    ],
+    "end_color": [
+     0.5,
+     0.02,
+     0.0
+    ],
+    "intensity": 3.0,
+    "max_particles": 300
    }
   },
   {
@@ -27687,7 +31257,7 @@
     ]
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": "Hand_R"
    }
   },
@@ -27733,7 +31303,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 636,
+    "index": 700,
     "bone_name": ""
    }
   },
@@ -27779,7 +31349,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 636,
+    "index": 700,
     "bone_name": ""
    }
   },
@@ -27825,7 +31395,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 636,
+    "index": 700,
     "bone_name": ""
    }
   },
@@ -27872,7 +31442,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 636,
+    "index": 700,
     "bone_name": ""
    }
   },
@@ -27919,7 +31489,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 636,
+    "index": 700,
     "bone_name": ""
    }
   },
@@ -27964,7 +31534,7 @@
     "blend_in_seconds": 0.9
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": ""
    }
   },
@@ -27996,7 +31566,7 @@
     ]
    },
    "parent": {
-    "index": 642,
+    "index": 706,
     "bone_name": ""
    }
   },
@@ -28028,7 +31598,7 @@
     ]
    },
    "parent": {
-    "index": 642,
+    "index": 706,
     "bone_name": ""
    }
   },
@@ -28060,7 +31630,7 @@
     ]
    },
    "parent": {
-    "index": 642,
+    "index": 706,
     "bone_name": ""
    }
   },
@@ -28105,7 +31675,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": ""
    }
   },
@@ -28137,7 +31707,7 @@
     ]
    },
    "parent": {
-    "index": 646,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -28169,7 +31739,7 @@
     ]
    },
    "parent": {
-    "index": 646,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -28201,7 +31771,7 @@
     ]
    },
    "parent": {
-    "index": 646,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -28245,7 +31815,7 @@
     "video_file": ""
    },
    "parent": {
-    "index": 625,
+    "index": 657,
     "bone_name": ""
    }
   },
@@ -28277,7 +31847,7 @@
     ]
    },
    "parent": {
-    "index": 650,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -28309,7 +31879,7 @@
     ]
    },
    "parent": {
-    "index": 650,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -28341,7 +31911,7 @@
     ]
    },
    "parent": {
-    "index": 650,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -28373,7 +31943,7 @@
     ]
    },
    "parent": {
-    "index": 650,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -28405,7 +31975,7 @@
     ]
    },
    "parent": {
-    "index": 650,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -28437,7 +32007,7 @@
     ]
    },
    "parent": {
-    "index": 625
+    "index": 657
    },
    "cutscene": {
     "duration_seconds": 6.0,
@@ -28480,7 +32050,7 @@
     ]
    },
    "parent": {
-    "index": 656
+    "index": 720
    }
   },
   {
@@ -28511,7 +32081,7 @@
     ]
    },
    "parent": {
-    "index": 656
+    "index": 720
    }
   },
   {
@@ -28542,7 +32112,7 @@
     ]
    },
    "parent": {
-    "index": 656
+    "index": 720
    }
   },
   {
@@ -28573,7 +32143,7 @@
     ]
    },
    "parent": {
-    "index": 656
+    "index": 720
    }
   },
   {
@@ -28813,7 +32383,7 @@
     ]
    },
    "parent": {
-    "index": 661
+    "index": 725
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -28897,7 +32467,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 661,
+    "index": 725,
     "bone_name": "Hand_R"
    }
   },
@@ -28947,7 +32517,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 661,
+    "index": 725,
     "bone_name": "Hand_L"
    }
   },
@@ -28997,7 +32567,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 661,
+    "index": 725,
     "bone_name": "Foot_R"
    }
   },
@@ -29249,7 +32819,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 666,
+    "index": 730,
     "bone_name": "Hand_R"
    }
   },
@@ -29299,7 +32869,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 666,
+    "index": 730,
     "bone_name": "Hand_L"
    }
   },
@@ -29349,7 +32919,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 666,
+    "index": 730,
     "bone_name": "Foot_R"
    }
   },
@@ -29601,7 +33171,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 670,
+    "index": 734,
     "bone_name": "Hand_R"
    }
   },
@@ -29651,7 +33221,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 670,
+    "index": 734,
     "bone_name": "Hand_L"
    }
   },
@@ -29701,7 +33271,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 670,
+    "index": 734,
     "bone_name": "Foot_R"
    }
   },
@@ -29953,7 +33523,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 674,
+    "index": 738,
     "bone_name": "Hand_R"
    }
   },
@@ -30003,7 +33573,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 674,
+    "index": 738,
     "bone_name": "Hand_L"
    }
   },
@@ -30053,7 +33623,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 674,
+    "index": 738,
     "bone_name": "Foot_R"
    }
   },
@@ -30085,7 +33655,7 @@
     ]
    },
    "parent": {
-    "index": 674,
+    "index": 738,
     "bone_name": "Hand_R"
    }
   },
@@ -30131,7 +33701,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
    },
    "parent": {
-    "index": 678,
+    "index": 742,
     "bone_name": ""
    }
   },
@@ -30383,7 +33953,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 680,
+    "index": 744,
     "bone_name": "Hand_R"
    }
   },
@@ -30433,7 +34003,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 680,
+    "index": 744,
     "bone_name": "Hand_L"
    }
   },
@@ -30483,7 +34053,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 680,
+    "index": 744,
     "bone_name": "Foot_R"
    }
   },
@@ -30735,7 +34305,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 684,
+    "index": 748,
     "bone_name": "Hand_R"
    }
   },
@@ -30785,7 +34355,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 684,
+    "index": 748,
     "bone_name": "Hand_L"
    }
   },
@@ -30835,7 +34405,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 684,
+    "index": 748,
     "bone_name": "Foot_R"
    }
   },
@@ -30867,7 +34437,7 @@
     ]
    },
    "parent": {
-    "index": 684,
+    "index": 748,
     "bone_name": "Hand_R"
    }
   },
@@ -30913,7 +34483,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
    },
    "parent": {
-    "index": 688,
+    "index": 752,
     "bone_name": ""
    }
   },
@@ -31165,7 +34735,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 690,
+    "index": 754,
     "bone_name": "Hand_R"
    }
   },
@@ -31215,7 +34785,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 690,
+    "index": 754,
     "bone_name": "Hand_L"
    }
   },
@@ -31265,7 +34835,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 690,
+    "index": 754,
     "bone_name": "Foot_R"
    }
   },
@@ -31297,7 +34867,7 @@
     ]
    },
    "parent": {
-    "index": 690,
+    "index": 754,
     "bone_name": "Hand_R"
    }
   },
@@ -31343,7 +34913,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
    },
    "parent": {
-    "index": 694,
+    "index": 758,
     "bone_name": ""
    }
   },
@@ -31595,7 +35165,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 696,
+    "index": 760,
     "bone_name": "Hand_R"
    }
   },
@@ -31645,7 +35215,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 696,
+    "index": 760,
     "bone_name": "Hand_L"
    }
   },
@@ -31695,7 +35265,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 696,
+    "index": 760,
     "bone_name": "Foot_R"
    }
   },
@@ -31947,7 +35517,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 700,
+    "index": 764,
     "bone_name": "Hand_R"
    }
   },
@@ -31997,7 +35567,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 700,
+    "index": 764,
     "bone_name": "Hand_L"
    }
   },
@@ -32047,7 +35617,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 700,
+    "index": 764,
     "bone_name": "Foot_R"
    }
   },
@@ -32299,7 +35869,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 704,
+    "index": 768,
     "bone_name": "Hand_R"
    }
   },
@@ -32349,7 +35919,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 704,
+    "index": 768,
     "bone_name": "Hand_L"
    }
   },
@@ -32399,7 +35969,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 704,
+    "index": 768,
     "bone_name": "Foot_R"
    }
   },
@@ -32505,7 +36075,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 708
+    "index": 772
    },
    "point_light": {
     "attenuation": {
@@ -32660,7 +36230,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 710
+    "index": 774
    },
    "point_light": {
     "attenuation": {
@@ -32802,7 +36372,7 @@
     ]
    },
    "parent": {
-    "index": 712
+    "index": 776
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -32982,7 +36552,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 716,
+    "index": 780,
     "bone_name": ""
    }
   },
@@ -33038,7 +36608,7 @@
     }
    },
    "parent": {
-    "index": 716,
+    "index": 780,
     "bone_name": ""
    }
   },
@@ -33070,7 +36640,7 @@
     ]
    },
    "parent": {
-    "index": 716,
+    "index": 780,
     "bone_name": ""
    }
   },
@@ -33223,7 +36793,7 @@
     ]
    },
    "parent": {
-    "index": 720,
+    "index": 784,
     "bone_name": ""
    }
   },
@@ -33255,7 +36825,7 @@
     ]
    },
    "parent": {
-    "index": 720,
+    "index": 784,
     "bone_name": ""
    }
   },
@@ -33287,7 +36857,7 @@
     ]
    },
    "parent": {
-    "index": 720,
+    "index": 784,
     "bone_name": ""
    }
   },
@@ -33319,7 +36889,7 @@
     ]
    },
    "parent": {
-    "index": 720,
+    "index": 784,
     "bone_name": ""
    }
   },

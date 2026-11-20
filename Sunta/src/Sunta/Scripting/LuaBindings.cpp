@@ -10,6 +10,7 @@
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CutsceneSystem.h"
 #include "Gameplay/EntityName.h"
+#include "Scene/EntityHierarchy.h"
 #include "Gameplay/FollowCameraSystem.h"
 #include "Gameplay/HUDSystem.h"
 #include "Gameplay/SpellSystem.h"
@@ -63,6 +64,7 @@ using MeleeEnemyHandle    = ComponentHandle<MeleeEnemyComponent>;
 using BossHandle          = ComponentHandle<BossComponent>;
 using FogGateHandle       = ComponentHandle<FogGateComponent>;
 using ModelHandle         = ComponentHandle<ModelComponent>;
+using HitboxHandle        = ComponentHandle<HitboxComponent>;
 using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
 using EnvironmentHandle   = ComponentHandle<EnvironmentComponent>;
 using CutsceneHandle      = ComponentHandle<CutsceneComponent>;
@@ -504,11 +506,42 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 				return actions ? actions->currentAnimation : std::string();
 			}),
 
+		// The timing of one attack animation (see AttackMove): this.characterActions:setMove("Attack_Light_1", 0.3, 0.5, 1.2)
+		// - a boss who took up a sword strikes at other moments of the same names' new clips
+		"setMove", [](const CharacterActionsHandle& handle, const std::string& animation, float hitFrom, float hitTo,
+		              sol::optional<float> damageMultiplier)
+			{
+				CharacterActionsComponent* actions = handle.TryGetComponent();
+				if (!actions)
+					return;
+				for (AttackMove& move : actions->attackMoves)
+					if (move.animation == animation)
+					{
+						move.hitFrom = hitFrom;
+						move.hitTo   = hitTo;
+						move.damageMultiplier = damageMultiplier.value_or(move.damageMultiplier);
+						return;
+					}
+				AttackMove move;
+				move.animation = animation;
+				move.hitFrom   = hitFrom;
+				move.hitTo     = hitTo;
+				move.damageMultiplier = damageMultiplier.value_or(1.0f);
+				actions->attackMoves.push_back(move);
+			},
+
 		// How fast the attacks play (1 = as the animations were made), and how much more a heavy one hurts
 		"attackSpeed",           MemberProperty(&CharacterActionsComponent::attackSpeed,           1.0f),
 		"heavyDamageMultiplier", MemberProperty(&CharacterActionsComponent::heavyDamageMultiplier, 1.0f),
 		// A delayed blow now and then (0..1), see CharacterActionsComponent
-		"attackDelayChance",     MemberProperty(&CharacterActionsComponent::attackDelayChance,     0.0f)
+		"attackDelayChance",     MemberProperty(&CharacterActionsComponent::attackDelayChance,     0.0f),
+		// What a fighter who takes up another weapon changes: the effects of its swings, its hyper armor (0 none,
+		// 1 heavy blows, 2 every blow), how close its lunge ends
+		"swingEffect",           MemberProperty(&CharacterActionsComponent::swingEffect,           std::string()),
+		"heavySwingEffect",      MemberProperty(&CharacterActionsComponent::heavySwingEffect,      std::string()),
+		"swingEffectHeight",     MemberProperty(&CharacterActionsComponent::swingEffectHeight,     0.0f),
+		"hyperArmor",            MemberProperty(&CharacterActionsComponent::hyperArmor,            0),
+		"attackReach",           MemberProperty(&CharacterActionsComponent::attackReach,           0.0f)
 	);
 }
 
@@ -781,6 +814,25 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"id",      sol::readonly_property(&Entity::GetID),
 		"isValid", sol::readonly_property(&Entity::IsValid), // false after the entity was destroyed
 
+		// A child (or a child's child...) with this name: this:findChild("Right Fist") - not another character's
+		"findChild", [](const Entity& entity, const std::string& name) -> sol::optional<Entity>
+			{
+				EntityManager* entityManager = entity.GetEntityManager();
+				if (!entityManager)
+					return sol::nullopt;
+				std::vector<unsigned int> open = EntityHierarchy::GetChildren(*entityManager, entity.GetID());
+				while (!open.empty())
+				{
+					const unsigned int id = open.back();
+					open.pop_back();
+					if (GetEntityName(*entityManager, id) == name)
+						return Entity(id, entityManager);
+					for (unsigned int child : EntityHierarchy::GetChildren(*entityManager, id))
+						open.push_back(child);
+				}
+				return sol::nullopt;
+			},
+
 		"name", sol::property(
 			[](const Entity& entity)
 			{
@@ -806,6 +858,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"boss",                ComponentHandleProperty<BossComponent>(),
 		"fogGate",             ComponentHandleProperty<FogGateComponent>(),
 		"model",               ComponentHandleProperty<ModelComponent>(),
+		"hitbox",              ComponentHandleProperty<HitboxComponent>(),
 		"particles",           ComponentHandleProperty<ParticleEmitterComponent>(),
 		"environment",         ComponentHandleProperty<EnvironmentComponent>(),
 		"cutscene",            ComponentHandleProperty<CutsceneComponent>(),
@@ -1006,7 +1059,18 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"emissiveStrength", MemberProperty(&ModelComponent::emissiveStrength, 0.0f),
 		// this.model.darkness = 1 (a black silhouette), this.model.glow = vec3(1.2, 0.6, 0.1) (an aura of light all over)
 		"darkness",         MemberProperty(&ModelComponent::darkness,         0.0f),
-		"glow",             MemberProperty(&ModelComponent::glowColor,        glm::vec3(0.0f))
+		"glow",             MemberProperty(&ModelComponent::glowColor,        glm::vec3(0.0f)),
+		// this.model.modelName = "sih_boss_armored": another model put on in its place (a boss changing its body).
+		// Its animations go on by name, so the two models should share their skeleton and the names of their clips
+		"modelName",        MemberProperty(&ModelComponent::modelName,        std::string(),
+			[](ModelComponent& model) { model.isDirty = true; })
+	);
+
+	// Usage in Lua: sword.hitbox.isEnabled = true (a weapon taken up), boss's fist: fist.hitbox.isEnabled = false;
+	// sword.hitbox.damage = 40
+	lua.new_usertype<HitboxHandle>("Hitbox", sol::no_constructor,
+		"isEnabled", MemberProperty(&HitboxComponent::isEnabled, false),
+		"damage",    MemberProperty(&HitboxComponent::damage,    0.0f)
 	);
 
 	// Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant)

@@ -266,6 +266,90 @@ def add_technique_effects(builder):
      .specks("Dust", dust(24, 6.0, lifetime=1.8, size=1.0, end_size=2.8)))
 
 
+# ========== The boss in his armor ==========
+
+BLOOD_CORE, BLOOD_EDGE = [1.0, 0.75, 0.6], [0.85, 0.04, 0.02]
+
+
+def add_armor_effects(builder):
+    # The rift that opens over the arena: a ring of dark red fire standing in the sky, lightning out of it
+    (Effect(builder, "Armor Rift", root_shape=shape(
+        RING, 2.0, 1.0, 7.0, BLOOD_CORE, BLOOD_EDGE, 2.2, thickness=0.35, rotation_degrees=[90.0, 0.0, 0.0],
+        noise_scale=3.0, scroll_speed=2.0, dissolve=0.6, light_intensity=8.0, light_radius=30.0,
+        light_color=[1.0, 0.15, 0.08]))
+     .shape("Core", shape(SPHERE, 1.8, 0.5, 4.5, [0.4, 0.02, 0.02], BLOOD_EDGE, 0.9, noise_scale=3.0, dissolve=0.7))
+     .specks("Lightning", sparks(80, 18.0, [1.0, 0.3, 0.2], [0.5, 0.0, 0.0], lifetime=0.5, size=0.06, gravity=0.0,
+                                drag=1.0, stretch=0.12, intensity=6.0))
+     .specks("Smoke", dust(30, 4.0, lifetime=2.5, size=2.0, end_size=5.0, color=(0.2, 0.03, 0.03))))
+
+    # A piece landing on the floor out of the rift, and one snapping onto him: hard metal sparks, a ring, a flash
+    (Effect(builder, "Armor Land", root_shape=shape(
+        RING, 0.5, 0.3, 2.5, FIRE_CORE, BLOOD_EDGE, 2.0, thickness=0.25, dissolve=0.85, light_intensity=3.0,
+        light_radius=6.0, light_color=[1.0, 0.3, 0.15]))
+     .specks("Sparks", sparks(40, 9.0, [1.0, 0.6, 0.3], [0.5, 0.05, 0.0], lifetime=0.6, gravity=-12.0, drag=2.0))
+     .specks("Dust", dust(14, 4.0, lifetime=1.2, size=0.6, end_size=1.6)))
+    (Effect(builder, "Armor Clank", root_shape=shape(
+        SPHERE, 0.25, 0.2, 1.4, [1.0, 0.9, 0.85], BLOOD_EDGE, 2.4, dissolve=0.9, light_intensity=5.0,
+        light_radius=6.0, light_color=[1.0, 0.25, 0.1]))
+     .specks("Sparks", sparks(60, 11.0, [1.0, 0.7, 0.4], [0.6, 0.05, 0.0], lifetime=0.45, gravity=-9.0, drag=3.0))
+     .specks("Flash", flash(1.6, 0.08, [1.0, 0.5, 0.3], 1.6)))
+
+    # His great sword cutting: crimson arcs with fire running along them (the burning blades of the souls bosses)
+    (Effect(builder, "Boss Sword Swing", root_shape=shape(
+        ARC, 0.26, 1.2, 2.0, BLOOD_CORE, BLOOD_EDGE, 2.6, thickness=0.4, arc_degrees=150.0,
+        rotation_randomness=[8.0, 10.0, 40.0], noise_scale=4.0, scroll_speed=5.0, dissolve=0.55,
+        light_intensity=2.5, light_radius=6.0, light_color=[1.0, 0.2, 0.08]))
+     .specks("Flames", flames(14, 4.0, lifetime=0.4, size=0.35, intensity=1.0))
+     .specks("Embers", sparks(12, 6.0, [1.0, 0.4, 0.15], [0.4, 0.0, 0.0], lifetime=0.4, size=0.04, gravity=-2.0,
+                             drag=4.0, intensity=3.0)))
+    (Effect(builder, "Boss Sword Heavy Swing", root_shape=shape(
+        ARC, 0.36, 1.4, 2.8, BLOOD_CORE, BLOOD_EDGE, 3.2, thickness=0.5, arc_degrees=240.0, rotation_degrees=[0.0, 0.0, 20.0],
+        rotation_randomness=[0.0, 10.0, 20.0], noise_scale=4.0, scroll_speed=6.0, dissolve=0.6,
+        light_intensity=4.0, light_radius=9.0, light_color=[1.0, 0.2, 0.08]))
+     .shape("Wind", shape(ARC, 0.42, 1.8, 3.6, BLOOD_CORE, [0.5, 0.0, 0.0], 1.2, thickness=0.18, arc_degrees=260.0,
+                          rotation_degrees=[0.0, 0.0, 20.0], noise_scale=6.0, scroll_speed=6.0, dissolve=0.85))
+     .specks("Flames", flames(30, 6.0, lifetime=0.5, size=0.5, intensity=1.1))
+     .specks("Embers", sparks(24, 8.0, [1.0, 0.4, 0.15], [0.4, 0.0, 0.0], lifetime=0.5, size=0.05, gravity=-2.0,
+                             drag=3.5, intensity=3.5)))
+
+    # The sword driven into the ground: the floor caves in (a dark ring of cracks that stays a while), a wave of
+    # fire along the floor, rock and sparks thrown up, a column of red fire
+    (Effect(builder, "Sword Ground Burst", root_shape=shape(
+        RING, 0.7, 0.8, 9.0, BLOOD_CORE, BLOOD_EDGE, 3.0, thickness=0.22, noise_scale=3.0, scroll_speed=1.5,
+        dissolve=0.85, light_intensity=8.0, light_radius=14.0, light_color=[1.0, 0.2, 0.08]))
+     .shape("Crater", shape(RING, 3.5, 0.4, 3.2, [0.25, 0.04, 0.03], [0.06, 0.01, 0.01], 1.2, thickness=1.0,
+                            noise_scale=7.0, scroll_speed=0.05, dissolve=1.0))
+     .shape("Cracks", shape(RING, 3.0, 0.5, 4.5, [1.0, 0.35, 0.15], [0.5, 0.02, 0.0], 1.4, thickness=0.06,
+                            noise_scale=9.0, scroll_speed=0.1, dissolve=1.0))
+     .shape("Column", shape(PILLAR, 0.6, 0.8, 2.2, BLOOD_CORE, BLOOD_EDGE, 1.0, height=6.0, twist_degrees=220.0,
+                            spin_degrees_per_second=260.0, noise_scale=5.0, scroll_speed=3.0, dissolve=0.85))
+     .specks("Rocks", sparks(70, 12.0, [0.6, 0.45, 0.35], [0.25, 0.18, 0.12], lifetime=1.0, size=0.12, gravity=-16.0,
+                            drag=1.2, stretch=0.0, intensity=0.8))
+     .specks("Sparks", sparks(80, 14.0, [1.0, 0.45, 0.2], [0.5, 0.02, 0.0], lifetime=0.8, size=0.07, gravity=-12.0, drag=2.0))
+     .specks("Dust", dust(36, 7.0, lifetime=2.0, size=1.1, end_size=3.0))
+     .specks("Flash", flash(3.5, 0.1, [1.0, 0.4, 0.25], 1.4)))
+
+    # His whirl: a full ring of crimson cutting around him, twice
+    (Effect(builder, "Sword Whirl", root_shape=shape(
+        ARC, 0.4, 2.0, 3.8, BLOOD_CORE, BLOOD_EDGE, 2.8, thickness=0.45, arc_degrees=360.0, spin_degrees_per_second=900.0,
+        noise_scale=4.0, scroll_speed=6.0, dissolve=0.6, light_intensity=4.0, light_radius=9.0, light_color=[1.0, 0.2, 0.08]))
+     .specks("Flames", flames(36, 7.0, lifetime=0.5, size=0.5, intensity=1.0)))
+
+    # A dash through the player: a streak of red light along the way, an afterimage of smoke
+    (Effect(builder, "Dash Streak", root_shape=shape(
+        PILLAR, 0.35, 0.4, 0.9, BLOOD_CORE, BLOOD_EDGE, 1.6, height=2.2, twist_degrees=90.0, noise_scale=5.0,
+        scroll_speed=4.0, dissolve=0.7))
+     .specks("Smoke", dust(10, 1.5, lifetime=0.8, size=0.7, end_size=1.4, color=(0.25, 0.03, 0.03)))
+     .specks("Embers", sparks(16, 5.0, [1.0, 0.4, 0.15], [0.4, 0.0, 0.0], lifetime=0.5, size=0.05, gravity=1.0,
+                             drag=3.0, intensity=3.0)))
+
+    # Where he stamps as his eyes light up: a ring of dust over the floor
+    (Effect(builder, "Armor Stomp", root_shape=shape(
+        RING, 0.9, 0.5, 8.0, [1.0, 0.8, 0.7], BLOOD_EDGE, 1.6, thickness=0.2, dissolve=0.9, light_intensity=3.0,
+        light_radius=8.0, light_color=[1.0, 0.25, 0.1]))
+     .specks("Dust", dust(40, 8.0, lifetime=1.6, size=0.9, end_size=2.6)))
+
+
 def upgrade_effects(builder):
     """The scene's older effects (one emitter each) get shapes, sparks and light as children"""
     # The player's bottle hitting: a splash ring of amber, sparks of oil, a flash
@@ -304,3 +388,4 @@ def upgrade_effects(builder):
 def add_effect_library(builder):
     add_fist_effects(builder)
     add_technique_effects(builder)
+    add_armor_effects(builder)

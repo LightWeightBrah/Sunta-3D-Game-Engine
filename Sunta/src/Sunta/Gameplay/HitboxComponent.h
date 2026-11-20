@@ -41,6 +41,10 @@ struct HitboxComponent
 	// Draws this box even when View > Show Weapon Hitboxes is off
 	bool showGizmos = false;
 
+	// Off: the weapon never hurts (a sword still sheathed, fists of a boss who took up a blade). A script can switch it:
+	// sword.hitbox.isEnabled = true
+	bool isEnabled = true;
+
 	// Who was already hit during the current swing (and which swing that is). Not saved with the scene
 	std::vector<unsigned int> entitiesHitThisSwing;
 	unsigned int swingNumber = 0;

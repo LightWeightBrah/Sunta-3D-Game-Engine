@@ -708,7 +708,7 @@ void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 		}
 
 		const CharacterActionsComponent* owner = GetStrikingOwner(entityManager, weaponEntityID, ownerID);
-		if (!owner)
+		if (!owner || !hitbox.isEnabled)
 			continue;
 
 		StartNewSwingIfNeeded(hitbox, *owner);
