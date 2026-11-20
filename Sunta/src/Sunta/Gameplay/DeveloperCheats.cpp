@@ -26,7 +26,7 @@ void DeveloperCheats::Update(EntityManager& entityManager)
 	if (InputManager::IsKeyDown(ImmortalKey))
 	{
 		isPlayerImmortal = !isPlayerImmortal;
-		HUDSystem::ShowNotification(entityManager, isPlayerImmortal ? "GOD MODE ON (F1)" : "GOD MODE OFF (F1)");
+		HUDSystem::ShowNotification(entityManager, isPlayerImmortal ? "IMMORTAL MODE ON (F1)" : "IMMORTAL MODE OFF (F1)");
 	}
 
 	if (!isPlayerImmortal)
