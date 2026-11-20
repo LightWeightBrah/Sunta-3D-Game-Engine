@@ -19,6 +19,7 @@
 #include "Platform.h"
 #include "Scripting/ScriptingEngine.h"
 #include "Audio/Audio.h"
+#include "BackgroundRun.h"
 
 namespace Sunta
 {
@@ -71,7 +72,9 @@ void Application::Run()
 		// Shown here, not in Init(), and only after a few frames, so the window doesn't appear empty while layers are still loading
 		if (!isWindowShown && framesDrawn >= HiddenWarmUpFrames)
 		{
-			window->Show();
+			// A background test run keeps drawing into the hidden window (see BackgroundRun.h)
+			if (!IsBackgroundRun())
+				window->Show();
 			isWindowShown = true;
 		}
 
@@ -182,7 +185,8 @@ void Application::ApplyDeveloperMode()
 	if (!gameConfig.developerMode)
 		return;
 
-	Terminal::OpenConsole();
+	if (!IsBackgroundRun())
+		Terminal::OpenConsole();
 	DeveloperCheats::isAllowed = true;
 	SUNTA_ENGINE_LOG_INFO("Application: Development build, the log is shown in the console too");
 }
@@ -203,6 +207,14 @@ void Application::ApplyWindowSettings()
 {
 	window->SetVSync(specification.vsync);
 	window->CenterOnScreen();
+
+	// The window of a background run is never shown, so it also must not take over the screen
+	if (IsBackgroundRun())
+	{
+		SUNTA_ENGINE_LOG_INFO("Application: background run (SUNTA_BACKGROUND), the window stays hidden");
+		return;
+	}
+
 	if (specification.maximized)
 		window->Maximize();
 	window->SetFullscreen(specification.fullscreen);
