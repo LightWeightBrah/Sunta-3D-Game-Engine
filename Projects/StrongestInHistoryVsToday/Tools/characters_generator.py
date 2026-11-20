@@ -139,6 +139,11 @@ PLAYER = {
     # together with two fingers up, and a triangle of both hands before the chest
     "Cast_Great_Orb": diddy("Idle_Standing", speed=0.9),
     "Cast_Domain":    diddy("Idle_Standing", speed=0.9),
+    # The jump (Space): the flight is the engine's physics, so the take's own rise is taken out of the hips (the tuck
+    # of the legs stays); from it a flying side kick, or (heavy) both fists raised and driven down into the ground
+    "Jump":           diddy("Jump_InPlace", 20, 50, hips_rise_limit=0.02),
+    "Jump_Attack":    diddy("Jump_FlyingKick", 4, 34, speed=1.15, hips_rise_limit=0.02, turn_degrees=90.0),
+    "Jump_Plunge":    diddy("Jump_GiantDown", 30, 72, hips_rise_limit=0.02),
 }
 
 # Every downloaded clip whole, to compare them and read their strikes (--candidates)
@@ -149,7 +154,8 @@ PLAYER_CANDIDATES = {name: diddy(name) for name in (
     "Hook_Lead", "Hook_Back", "Uppercut_Back", "Uppercut_Lead", "Elbow_Cross", "Elbow_Step", "Kick_Roundhouse",
     "Kick_Thrust", "Run_Uppercut", "Combo_ElbowUppercut", "Combo_JabElbow", "Block_Guard", "Block_Reaction",
     "Parry_Outward", "Hit_HeadMedium", "Hit_Stomach", "Hit_HeadBig", "Parried_Rocked", "Knocked_Back", "Cast_Throw", "Throw_Standard", "Block_HighCenter", "Block_BodyArms", "Block_Inward", "Dodge_KneePunch", "Fight_Idle_Bounce",
-    "GetUp_Back", "Death_FallBack")}
+    "GetUp_Back", "Death_FallBack", "Jump_InPlace", "Jump_Landing", "Jump_Up", "Jump_FlyingKick", "Jump_BicycleKick",
+    "Jump_MutantSmash", "Jump_GiantDown")}
 # (and the boxing clips of the other rig the combo uses, to compare their stance)
 PLAYER_CANDIDATES.update({"Brawl_Jab": MotionClip(BRAWL + "Boxing Jab.fbx"), "Brawl_Cross": MotionClip(BRAWL + "Cross Punch.fbx"),
                           "Brawl_Hook": MotionClip(BRAWL + "Hook Punch.fbx")})

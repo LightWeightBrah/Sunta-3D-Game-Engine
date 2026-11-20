@@ -424,6 +424,15 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	if (kind == DamageKind::Weapon && TryParry(entityManager, targetID, attackerID))
 		return HitResult::Parried;
 
+	// One projectile of a volley has just hurt it: the rest of the volley passes
+	HealthComponent* targetHealth = entityManager.GetComponent<HealthComponent>(targetID);
+	if (kind == DamageKind::Spell && targetHealth)
+	{
+		if (targetHealth->secondsSinceSpellHit < targetHealth->spellImmunitySeconds)
+			return HitResult::Missed;
+		targetHealth->secondsSinceSpellHit = 0.0f;
+	}
+
 	const BlockResult block = TryBlock(entityManager, targetID, attackerID, damage);
 
 	if (block == BlockResult::Blocked)
@@ -598,13 +607,18 @@ void BurstEffect(EntityManager& entityManager, unsigned int ownerID, const std::
 // The moment a heavy attack or a leap starts to hit, once per attack
 void UpdateShockwave(EntityManager& entityManager, unsigned int ownerID, CharacterActionsComponent& actions)
 {
-	if (actions.shockwaveRadius <= 0.0f || actions.shockwaveAttackNumber == actions.attackNumber)
+	if ((actions.shockwaveRadius <= 0.0f && actions.jumpPlungeShockwaveRadius <= 0.0f) || actions.shockwaveAttackNumber == actions.attackNumber)
 		return;
 
 	const bool isHeavy = actions.currentAction == CharacterAction::HeavyAttack && actions.actionProgress >= actions.heavyHitFrom;
 	const bool isLeap  = actions.currentAction == CharacterAction::LeapAttack  && actions.actionProgress >= actions.leapHitFrom;
-	if (!isHeavy && !isLeap)
+	// The plunge from a jump goes off where it lands, under the character
+	const bool isPlunge = actions.currentAction == CharacterAction::JumpAttack && actions.isPlunging && actions.hasPlungeLanded;
+	if ((!isHeavy && !isLeap && !isPlunge) || (!isPlunge && actions.shockwaveRadius <= 0.0f)
+	    || (isPlunge && actions.jumpPlungeShockwaveRadius <= 0.0f))
 		return;
+	const float radius = isPlunge ? actions.jumpPlungeShockwaveRadius : actions.shockwaveRadius;
+	const float damage = isPlunge ? actions.jumpPlungeShockwaveDamage : actions.shockwaveDamage;
 
 	actions.shockwaveAttackNumber = actions.attackNumber;
 
@@ -614,12 +628,14 @@ void UpdateShockwave(EntityManager& entityManager, unsigned int ownerID, Charact
 		return;
 
 	const glm::vec3 forward = GameplayMath::GetDirectionFromYawAndPitch(transform->rotation.y - controller->facingOffsetDegrees, 0.0f);
-	const glm::vec3 center  = transform->position + forward * actions.shockwaveDistance;
+	const glm::vec3 center  = transform->position + forward * (isPlunge ? actions.shockwaveDistance * 0.3f : actions.shockwaveDistance);
 	const bool      isPlayerSide = IsOnPlayersSide(entityManager, ownerID);
 
 	BurstEffect(entityManager, ownerID, actions.shockwaveEffect);
+	if (isPlunge && !actions.jumpPlungeEffect.empty())
+		EffectSystem::Play(entityManager, actions.jumpPlungeEffect, center, forward);
 	CharacterSoundsSystem::Play(entityManager, ownerID, &CharacterSoundsComponent::shockwaveSound);
-	FollowCameraSystem::ShakeFrom(entityManager, actions.shockwaveCameraShake, center, actions.shockwaveRadius * ShockwaveShakeReach);
+	FollowCameraSystem::ShakeFrom(entityManager, actions.shockwaveCameraShake, center, radius * ShockwaveShakeReach);
 
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
 	{
@@ -629,8 +645,8 @@ void UpdateShockwave(EntityManager& entityManager, unsigned int ownerID, Charact
 			continue;
 
 		const glm::vec3 offset = target->position - center;
-		if (glm::length(glm::vec2(offset.x, offset.z)) <= actions.shockwaveRadius && std::abs(offset.y) <= ShockwaveHeight)
-			CombatSystem::ApplyDamage(entityManager, targetID, actions.shockwaveDamage, ownerID);
+		if (glm::length(glm::vec2(offset.x, offset.z)) <= radius && std::abs(offset.y) <= ShockwaveHeight)
+			CombatSystem::ApplyDamage(entityManager, targetID, damage, ownerID);
 	}
 }
 
@@ -644,7 +660,8 @@ void UpdateSwingEffect(EntityManager& entityManager, unsigned int ownerID, Chara
 
 	actions.swingEffectAttackNumber = actions.attackNumber;
 
-	const bool isHeavy = actions.currentAction == CharacterAction::HeavyAttack || actions.currentAction == CharacterAction::LeapAttack;
+	const bool isHeavy = actions.currentAction == CharacterAction::HeavyAttack || actions.currentAction == CharacterAction::LeapAttack
+	                     || (actions.currentAction == CharacterAction::JumpAttack && actions.isPlunging);
 	const std::string& effect = isHeavy && !actions.heavySwingEffect.empty() ? actions.heavySwingEffect : actions.swingEffect;
 
 	const TransformComponent*           transform  = entityManager.GetComponent<TransformComponent>(ownerID);
@@ -671,6 +688,9 @@ void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 
 	for (PoiseComponent& poise : entityManager.GetAllComponents<PoiseComponent>())
 		RecoverPoise(poise, deltaTime);
+
+	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
+		health.secondsSinceSpellHit += deltaTime;
 
 	for (HitboxComponent& hitbox : entityManager.GetAllComponents<HitboxComponent>())
 	{

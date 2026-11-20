@@ -33,6 +33,7 @@ constexpr int AttackButton      = SUNTA_MOUSE_BUTTON_LEFT;
 constexpr int HeavyAttackKey    = SUNTA_KEY_LEFT_CONTROL; // held with the attack button
 constexpr int BlockButton       = SUNTA_MOUSE_BUTTON_RIGHT;
 constexpr int ParryKey          = SUNTA_KEY_F;
+constexpr int JumpKey           = SUNTA_KEY_SPACE;
 
 // The upper body fades into the block (and out of it) in this time
 constexpr float BlockFadeSeconds = 0.15f;
@@ -75,6 +76,16 @@ constexpr float LeapTurnDegreesPerSecond = 360.0f;
 
 // A held (delayed) blow goes on slowly at this part of its speed: a long, tense wind-up instead of a freeze
 constexpr float HeldAttackPlaybackSpeed = 0.25f;
+
+// A jump is over when its fall is stopped (the vertical speed rises by more than this in one frame: only the ground
+// does that, gravity only takes speed away), never before 'MinAirSeconds', and at the latest after 'MaxAirSeconds'
+constexpr float LandingSpeedJump = 1.5f;
+constexpr float MinAirSeconds    = 0.12f;
+constexpr float MaxAirSeconds    = 4.0f;
+// A blow from the air reaches a locked-on enemy in about this long
+constexpr float JumpAttackReachSeconds = 0.35f;
+// ... and ends this close to it (meters between the two): a kick from the air is thrown from closer than a punch
+constexpr float JumpAttackStopDistance = 0.45f;
 
 std::mt19937& GetActionsRandom()
 {
@@ -144,6 +155,9 @@ CharacterAction ReadPlayerRequest(const CharacterControllerComponent& controller
 	if (InputManager::IsKeyDown(ParryKey))
 		return CharacterAction::Parry;
 
+	if (InputManager::IsKeyDown(JumpKey))
+		return CharacterAction::Jump;
+
 	// Held, not tapped: the block lasts as long as it is asked for every frame
 	if (canUseMouse && InputManager::IsMouseButtonPressed(BlockButton))
 		return CharacterAction::Block;
@@ -200,6 +214,9 @@ glm::vec3 ChooseActionDirection(EntityManager& entityManager, const Character& c
 	{
 	case CharacterAction::Roll:     return GetHorizontalDirectionOrDefault(character.controller->moveDirection);
 	case CharacterAction::Backstep: return -GetFacingDirection(character);
+	case CharacterAction::Jump:
+		return HoldsDirection(*character.controller) ? GetHorizontalDirectionOrDefault(character.controller->moveDirection)
+		                                             : GetFacingDirection(character);
 	default:                        return GetAttackDirection(entityManager, character);
 	}
 }
@@ -263,6 +280,8 @@ const std::string& GetAnimationName(CharacterActionsComponent& actions, Characte
 	case CharacterAction::Special:     return actions.specialAnimation;
 	case CharacterAction::UseItem:     return actions.itemAnimation;
 	case CharacterAction::Cast:        return actions.castAnimation;
+	case CharacterAction::Jump:        return actions.jumpAnimation;
+	case CharacterAction::JumpAttack:  return actions.isPlunging ? actions.jumpHeavyAttackAnimation : actions.jumpAttackAnimation;
 	default:                           return noAnimation;
 	}
 }
@@ -328,6 +347,12 @@ float GetActionSpeed(const CharacterActionsComponent& actions, CharacterAction a
 
 	case CharacterAction::LeapAttack:
 		return actions.currentLeapSpeed * GetMoveFactor(LeapMove, progress);
+
+	// In the air the jump keeps carrying the character (the plunge goes straight down; on the ground it stands)
+	case CharacterAction::Jump:
+		return actions.currentJumpMoveSpeed;
+	case CharacterAction::JumpAttack:
+		return (actions.isAirborne && !actions.isPlunging) ? actions.currentJumpMoveSpeed : 0.0f;
 
 	// A hit character and a dead one stand where they are
 	default:
@@ -399,6 +424,11 @@ bool IsRemembered(CharacterAction request)
 bool IsDodge(CharacterAction action)
 {
 	return action == CharacterAction::Roll || action == CharacterAction::Backstep;
+}
+
+bool IsAirAction(CharacterAction action)
+{
+	return action == CharacterAction::Jump || action == CharacterAction::JumpAttack;
 }
 
 // Staggering after a hit can't be cut short, a rest lasts until the character stands up (and getting up until it stands),
@@ -556,10 +586,29 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	if (action == CharacterAction::LeapAttack)
 		actions.currentLeapSpeed = ChooseLeapSpeed(entityManager, character, animationName);
 
+	// Off the ground: up, and along the held direction (standing still it goes straight up)
+	if (action == CharacterAction::Jump)
+	{
+		character.body->velocity.y   = actions.jumpSpeed;
+		actions.currentJumpMoveSpeed = HoldsDirection(*character.controller) ? actions.jumpMoveSpeed : 0.0f;
+		actions.isAirborne           = true;
+		actions.airSeconds           = 0.0f;
+		actions.lastVerticalSpeed    = actions.jumpSpeed;
+		actions.isPlunging           = false;
+		actions.hasPlungeLanded      = false;
+		CharacterSoundsSystem::Play(entityManager, character.entityID, &CharacterSoundsComponent::rollSound);
+	}
+	else if (action != CharacterAction::JumpAttack)
+	{
+		actions.isAirborne = false;
+		actions.isPlunging = false;
+	}
+
 	if (IsDodge(action))
 		CharacterSoundsSystem::Play(entityManager, character.entityID, &CharacterSoundsComponent::rollSound);
 
-	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack || action == CharacterAction::LeapAttack)
+	if (action == CharacterAction::LightAttack || action == CharacterAction::HeavyAttack || action == CharacterAction::LeapAttack
+	    || action == CharacterAction::JumpAttack)
 	{
 		actions.attackNumber++;
 		character.animator->animator.SetPlaybackSpeed(GetAttackPlaybackSpeed(actions));
@@ -714,6 +763,8 @@ void FinishAction(Character& character)
 	actions.queuedAction                   = CharacterAction::None;
 	actions.isInvulnerable                 = false;
 	actions.isRunningAttack                = false;
+	actions.isAirborne                     = false;
+	actions.isPlunging                     = false;
 	character.controller->isDrivenByAction = false;
 }
 
@@ -722,7 +773,7 @@ void EndOrChainAction(EntityManager& entityManager, Character& character, float 
 {
 	CharacterActionsComponent& actions = *character.actions;
 
-	if (actions.currentAction == CharacterAction::Death)
+	if (actions.currentAction == CharacterAction::Death || (IsAirAction(actions.currentAction) && actions.isAirborne))
 		return;
 
 	const AttackMove* move      = actions.FindCurrentMove();
@@ -781,6 +832,80 @@ void UpdateItemUse(Character& character)
 		FinishAction(character);
 }
 
+// True in the frame the fall is stopped: only the ground makes the vertical speed rise (gravity only takes it away)
+bool HasLanded(CharacterActionsComponent& actions, const PhysicsBodyComponent& body, float deltaTime)
+{
+	actions.airSeconds += deltaTime;
+	if (actions.airSeconds >= MaxAirSeconds)
+		return true;
+	if (actions.airSeconds < MinAirSeconds)
+		return false;
+
+	const float speed = body.velocity.y;
+	const bool  wasFalling = actions.lastVerticalSpeed < -LandingSpeedJump * 0.5f;
+	return (wasFalling && speed > actions.lastVerticalSpeed + LandingSpeedJump * 0.5f)
+	    || (actions.lastVerticalSpeed <= 0.0f && std::abs(speed) < 0.02f);
+}
+
+// A jump and the attacks from it: an attack pressed in the air starts at once, the plunge hangs for its wind-up and
+// then drives down, and the landing ends the jump (a jump attack plays out on the ground, see EndOrChainAction)
+void UpdateAir(EntityManager& entityManager, Character& character, CharacterAction request, float progress, float deltaTime)
+{
+	CharacterActionsComponent& actions = *character.actions;
+	PhysicsBodyComponent&      body    = *character.body;
+
+	if (actions.currentAction == CharacterAction::Jump
+	    && (request == CharacterAction::LightAttack || request == CharacterAction::HeavyAttack))
+	{
+		const bool isHeavy = request == CharacterAction::HeavyAttack;
+		const std::string& name = isHeavy ? actions.jumpHeavyAttackAnimation : actions.jumpAttackAnimation;
+		if (HasAnimation(character, name) && StaminaSystem::TrySpendForAction(entityManager, character.entityID, CharacterAction::JumpAttack))
+		{
+			actions.isPlunging      = isHeavy;
+			actions.hasPlungeLanded = false;
+			StartAction(entityManager, character, CharacterAction::JumpAttack, name);
+			actions.lastVerticalSpeed = body.velocity.y;
+
+			// At a locked-on enemy the blow from the air carries the character to it (as an attack's lunge)
+			glm::vec3 targetPoint;
+			if (character.lockOn && LockOnSystem::TryGetTargetAimPoint(entityManager, *character.lockOn, targetPoint))
+			{
+				const float distance = glm::length(KeepOnlyHorizontalPart(targetPoint - character.transform->position));
+				const float travel   = glm::max(distance - JumpAttackStopDistance, 0.0f);
+				actions.currentJumpMoveSpeed = glm::min(travel / JumpAttackReachSeconds, actions.jumpMoveSpeed * 1.5f);
+			}
+			return;
+		}
+	}
+
+	actions.actionProgress = progress;
+
+	// (what the last frame's physics did to the fall, before this frame steers it)
+	const bool hasLanded = HasLanded(actions, body, deltaTime);
+
+	// The plunge: a moment held in the air, then straight down
+	if (!hasLanded && actions.isPlunging && actions.currentAction == CharacterAction::JumpAttack)
+		body.velocity.y = progress >= actions.jumpPlungeFrom ? -actions.jumpPlungeSpeed : 0.4f;
+	actions.lastVerticalSpeed = body.velocity.y;
+	MoveBody(character, progress);
+
+	if (!hasLanded)
+		return;
+
+	actions.isAirborne = false;
+	SUNTA_ENGINE_LOG_INFO("Actions: '{0}' landed after {1} s (vertical speed {2})", GetEntityName(entityManager, character.entityID),
+		actions.airSeconds, body.velocity.y);
+	CharacterSoundsSystem::Play(entityManager, character.entityID, &CharacterSoundsComponent::footstepSound);
+	if (actions.currentAction == CharacterAction::Jump)
+	{
+		FinishAction(character);
+		return;
+	}
+	if (actions.isPlunging)
+		actions.hasPlungeLanded = true;
+	MoveBody(character, progress);
+}
+
 void UpdateCurrentAction(EntityManager& entityManager, Character& character, CharacterAction request, float deltaTime)
 {
 	CharacterActionsComponent& actions = *character.actions;
@@ -800,6 +925,12 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 		return;
 	}
 
+	if (IsAirAction(actions.currentAction) && actions.isAirborne)
+	{
+		UpdateAir(entityManager, character, request, progress, deltaTime);
+		return;
+	}
+
 	actions.actionProgress = progress;
 	actions.isInvulnerable = IsDodge(actions.currentAction)
 		&& progress >= actions.invulnerableFrom && progress <= actions.invulnerableTo;
@@ -808,6 +939,12 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 	// it starts by itself once the action is over and the key is still held)
 	if (IsRemembered(request) && progress >= actions.inputBufferFrom && CanBeInterrupted(actions.currentAction))
 		actions.queuedAction = request;
+
+	// Rolling out of a stagger once its worst is over
+	if (actions.currentAction == CharacterAction::HitReaction && progress >= actions.hitReactionDodgeFrom
+	    && (request == CharacterAction::Roll || request == CharacterAction::Backstep)
+	    && TryStartAction(entityManager, character, request))
+		return;
 
 	TrackTarget(entityManager, character, progress, deltaTime);
 	SteerLeap(entityManager, character, progress, deltaTime);

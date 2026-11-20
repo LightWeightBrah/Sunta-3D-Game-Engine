@@ -302,6 +302,17 @@ namespace SceneKeys
 	constexpr const char* BlockImpactAnimation      = "block_impact_animation";
 	constexpr const char* ParryAnimation            = "parry_animation";
 	constexpr const char* ParriedAnimation          = "parried_animation";
+	constexpr const char* JumpAnimation             = "jump_animation";
+	constexpr const char* JumpAttackAnimation       = "jump_attack_animation";
+	constexpr const char* JumpHeavyAttackAnimation  = "jump_heavy_attack_animation";
+	constexpr const char* JumpSpeed                 = "jump_speed";
+	constexpr const char* JumpMoveSpeed             = "jump_move_speed";
+	constexpr const char* JumpPlungeSpeed           = "jump_plunge_speed";
+	constexpr const char* JumpPlungeFrom            = "jump_plunge_from";
+	constexpr const char* JumpAttackDamageMultiplier = "jump_attack_damage_multiplier";
+	constexpr const char* JumpPlungeShockwaveRadius = "jump_plunge_shockwave_radius";
+	constexpr const char* JumpPlungeShockwaveDamage = "jump_plunge_shockwave_damage";
+	constexpr const char* JumpPlungeEffect          = "jump_plunge_effect";
 	constexpr const char* UpperBodyBone             = "upper_body_bone";
 	constexpr const char* ShockwaveRadius           = "shockwave_radius";
 	constexpr const char* ShockwaveDamage           = "shockwave_damage";
@@ -326,6 +337,8 @@ namespace SceneKeys
 	constexpr const char* DodgeCooldownSeconds      = "dodge_cooldown_seconds";
 	constexpr const char* WeaponDamageTaken         = "weapon_damage_taken";
 	constexpr const char* SpellDamageTaken          = "spell_damage_taken";
+	constexpr const char* SpellImmunitySeconds      = "spell_immunity_seconds";
+	constexpr const char* HitReactionDodgeFrom      = "hit_reaction_dodge_from";
 	constexpr const char* FootstepCameraShake       = "footstep_camera_shake";
 	constexpr const char* FootstepShakeRadius       = "footstep_shake_radius";
 	constexpr const char* PhaseTwoLight1Animation   = "phase_two_light_attack_1_animation";
@@ -913,6 +926,17 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::BlockImpactAnimation,  actions->blockImpactAnimation  },
 				{ SceneKeys::ParryAnimation,        actions->parryAnimation        },
 				{ SceneKeys::ParriedAnimation,      actions->parriedAnimation      },
+				{ SceneKeys::JumpAnimation,         actions->jumpAnimation         },
+				{ SceneKeys::JumpAttackAnimation,   actions->jumpAttackAnimation   },
+				{ SceneKeys::JumpHeavyAttackAnimation, actions->jumpHeavyAttackAnimation },
+				{ SceneKeys::JumpSpeed,             actions->jumpSpeed             },
+				{ SceneKeys::JumpMoveSpeed,         actions->jumpMoveSpeed         },
+				{ SceneKeys::JumpPlungeSpeed,       actions->jumpPlungeSpeed       },
+				{ SceneKeys::JumpPlungeFrom,        actions->jumpPlungeFrom        },
+				{ SceneKeys::JumpAttackDamageMultiplier, actions->jumpAttackDamageMultiplier },
+				{ SceneKeys::JumpPlungeShockwaveRadius, actions->jumpPlungeShockwaveRadius },
+				{ SceneKeys::JumpPlungeShockwaveDamage, actions->jumpPlungeShockwaveDamage },
+				{ SceneKeys::JumpPlungeEffect,      actions->jumpPlungeEffect      },
 				{ SceneKeys::UpperBodyBone,         actions->upperBodyBone         },
 				{ SceneKeys::ShockwaveRadius,       actions->shockwaveRadius       },
 				{ SceneKeys::ShockwaveDamage,       actions->shockwaveDamage       },
@@ -949,6 +973,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::RiposteReach,           actions->riposteReach           },
 				{ SceneKeys::AttackLungeMaxDistance, actions->attackLungeMaxDistance },
 				{ SceneKeys::DodgeCancelFrom,        actions->dodgeCancelFrom        },
+				{ SceneKeys::HitReactionDodgeFrom,   actions->hitReactionDodgeFrom   },
 				{ SceneKeys::ExtraHitReactionAnimations, actions->extraHitReactionAnimations },
 				{ SceneKeys::HeavyHitReactionAnimation, actions->heavyHitReactionAnimation }
 			};
@@ -978,7 +1003,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::DeathSlowMotionSeconds, health->deathSlowMotionSeconds },
 				{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   },
 				{ SceneKeys::WeaponDamageTaken,      health->weaponDamageTaken      },
-				{ SceneKeys::SpellDamageTaken,       health->spellDamageTaken       }
+				{ SceneKeys::SpellDamageTaken,       health->spellDamageTaken       },
+				{ SceneKeys::SpellImmunitySeconds,   health->spellImmunitySeconds   }
 			};
 		}
 
@@ -1847,6 +1873,17 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.blockImpactAnimation  = actionsData.value(SceneKeys::BlockImpactAnimation,  actions.blockImpactAnimation);
 			actions.parryAnimation        = actionsData.value(SceneKeys::ParryAnimation,        actions.parryAnimation);
 			actions.parriedAnimation      = actionsData.value(SceneKeys::ParriedAnimation,      actions.parriedAnimation);
+			actions.jumpAnimation         = actionsData.value(SceneKeys::JumpAnimation,         actions.jumpAnimation);
+			actions.jumpAttackAnimation   = actionsData.value(SceneKeys::JumpAttackAnimation,   actions.jumpAttackAnimation);
+			actions.jumpHeavyAttackAnimation = actionsData.value(SceneKeys::JumpHeavyAttackAnimation, actions.jumpHeavyAttackAnimation);
+			actions.jumpSpeed             = actionsData.value(SceneKeys::JumpSpeed,             actions.jumpSpeed);
+			actions.jumpMoveSpeed         = actionsData.value(SceneKeys::JumpMoveSpeed,         actions.jumpMoveSpeed);
+			actions.jumpPlungeSpeed       = actionsData.value(SceneKeys::JumpPlungeSpeed,       actions.jumpPlungeSpeed);
+			actions.jumpPlungeFrom        = actionsData.value(SceneKeys::JumpPlungeFrom,        actions.jumpPlungeFrom);
+			actions.jumpAttackDamageMultiplier = actionsData.value(SceneKeys::JumpAttackDamageMultiplier, actions.jumpAttackDamageMultiplier);
+			actions.jumpPlungeShockwaveRadius = actionsData.value(SceneKeys::JumpPlungeShockwaveRadius, actions.jumpPlungeShockwaveRadius);
+			actions.jumpPlungeShockwaveDamage = actionsData.value(SceneKeys::JumpPlungeShockwaveDamage, actions.jumpPlungeShockwaveDamage);
+			actions.jumpPlungeEffect      = actionsData.value(SceneKeys::JumpPlungeEffect,      actions.jumpPlungeEffect);
 			actions.upperBodyBone         = actionsData.value(SceneKeys::UpperBodyBone,         actions.upperBodyBone);
 			actions.shockwaveRadius       = actionsData.value(SceneKeys::ShockwaveRadius,       actions.shockwaveRadius);
 			actions.shockwaveDamage       = actionsData.value(SceneKeys::ShockwaveDamage,       actions.shockwaveDamage);
@@ -1883,6 +1920,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.riposteReach           = actionsData.value(SceneKeys::RiposteReach,           actions.riposteReach);
 			actions.attackLungeMaxDistance = actionsData.value(SceneKeys::AttackLungeMaxDistance, actions.attackLungeMaxDistance);
 			actions.dodgeCancelFrom        = actionsData.value(SceneKeys::DodgeCancelFrom,        actions.dodgeCancelFrom);
+			actions.hitReactionDodgeFrom   = actionsData.value(SceneKeys::HitReactionDodgeFrom,   actions.hitReactionDodgeFrom);
 			actions.extraHitReactionAnimations = actionsData.value(SceneKeys::ExtraHitReactionAnimations, actions.extraHitReactionAnimations);
 			actions.heavyHitReactionAnimation = actionsData.value(SceneKeys::HeavyHitReactionAnimation, actions.heavyHitReactionAnimation);
 
@@ -1913,6 +1951,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			health.deathSlowMotionScale   = healthData.value(SceneKeys::DeathSlowMotionScale,   health.deathSlowMotionScale);
 			health.weaponDamageTaken      = healthData.value(SceneKeys::WeaponDamageTaken,      health.weaponDamageTaken);
 			health.spellDamageTaken       = healthData.value(SceneKeys::SpellDamageTaken,       health.spellDamageTaken);
+			health.spellImmunitySeconds   = healthData.value(SceneKeys::SpellImmunitySeconds,   health.spellImmunitySeconds);
 			health.currentHealth = health.maxHealth;
 		}
 

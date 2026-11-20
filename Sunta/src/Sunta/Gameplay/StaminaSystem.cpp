@@ -25,6 +25,8 @@ float GetActionCost(const StaminaComponent& stamina, CharacterAction action)
 	case CharacterAction::LightAttack: return stamina.lightAttackCost;
 	case CharacterAction::HeavyAttack: return stamina.heavyAttackCost;
 	case CharacterAction::LeapAttack:  return stamina.heavyAttackCost;
+	case CharacterAction::Jump:        return stamina.rollCost;
+	case CharacterAction::JumpAttack:  return stamina.lightAttackCost;
 	case CharacterAction::Parry:       return stamina.parryCost;
 	default:                           return 0.0f;
 	}

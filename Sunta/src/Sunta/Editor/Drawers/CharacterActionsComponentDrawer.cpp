@@ -32,6 +32,9 @@ bool DrawAnimations(CharacterActionsComponent& actions, const std::map<std::stri
 	edited |= DrawAnimationCombo("Block Impact",   actions.blockImpactAnimation,  animations);
 	edited |= DrawAnimationCombo("Parry",          actions.parryAnimation,        animations);
 	edited |= DrawAnimationCombo("Parried",        actions.parriedAnimation,      animations);
+	edited |= DrawAnimationCombo("Jump",           actions.jumpAnimation,         animations);
+	edited |= DrawAnimationCombo("Jump Attack",    actions.jumpAttackAnimation,   animations);
+	edited |= DrawAnimationCombo("Jump Heavy Attack", actions.jumpHeavyAttackAnimation, animations);
 
 	return edited;
 }
@@ -162,6 +165,14 @@ bool DrawTiming(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Input Buffer From", &actions.inputBufferFrom,  0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Cancel From",       &actions.cancelFrom,       0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Dodge Cancel From", &actions.dodgeCancelFrom,  0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Hit Reaction Dodge From", &actions.hitReactionDodgeFrom, 0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Jump Speed",        &actions.jumpSpeed,        0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Jump Move Speed",   &actions.jumpMoveSpeed,    0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Jump Plunge Speed", &actions.jumpPlungeSpeed,  0.0f, 40.0f);
+	edited |= ImGui::SliderFloat("Jump Plunge From",  &actions.jumpPlungeFrom,   0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Jump Attack Damage Multiplier", &actions.jumpAttackDamageMultiplier, 0.0f, CharacterActionsComponent::MaxDamageMultiplier);
+	edited |= ImGui::SliderFloat("Jump Plunge Shockwave Radius", &actions.jumpPlungeShockwaveRadius, 0.0f, CharacterActionsComponent::MaxSpeed);
+	edited |= ImGui::SliderFloat("Jump Plunge Shockwave Damage", &actions.jumpPlungeShockwaveDamage, 0.0f, 200.0f);
 	edited |= ImGui::SliderFloat("Blend Seconds",     &actions.blendSeconds,     0.0f, CharacterActionsComponent::MaxBlendSeconds);
 
 	if (ImGui::IsItemHovered())

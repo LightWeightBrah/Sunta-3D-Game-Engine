@@ -51,6 +51,13 @@ struct HealthComponent
 	float weaponDamageTaken = 1.0f;
 	float spellDamageTaken  = 1.0f;
 
+	// After a spell (a projectile, a blast) hurt the character, no other spell can hurt it for this long: a volley of
+	// many small projectiles costs one hit, not all of them at once (0 = every projectile hurts)
+	float spellImmunitySeconds = 0.0f;
+
+	// Since a spell last hurt the character. Not saved with the scene
+	float secondsSinceSpellHit = 1000.0f;
+
 	// Set once the health reaches 0. Not saved with the scene
 	bool isDead = false;
 
@@ -80,7 +87,8 @@ struct HealthComponent
 				ADD_PROPERTY_RANGED(HealthComponent, deathSlowMotionSeconds, PropertyDataType::Float, 0.0f, 5.0f),
 				ADD_PROPERTY_RANGED(HealthComponent, deathSlowMotionScale,   PropertyDataType::Float, 0.05f, 1.0f),
 				ADD_PROPERTY_RANGED(HealthComponent, weaponDamageTaken,      PropertyDataType::Float, 0.0f, 3.0f),
-				ADD_PROPERTY_RANGED(HealthComponent, spellDamageTaken,       PropertyDataType::Float, 0.0f, 3.0f)
+				ADD_PROPERTY_RANGED(HealthComponent, spellDamageTaken,       PropertyDataType::Float, 0.0f, 3.0f),
+				ADD_PROPERTY_RANGED(HealthComponent, spellImmunitySeconds,   PropertyDataType::Float, 0.0f, 5.0f)
 			});
 	}
 };

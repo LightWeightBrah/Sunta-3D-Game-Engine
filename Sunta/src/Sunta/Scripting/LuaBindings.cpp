@@ -182,6 +182,7 @@ CharacterAction ParseActionName(const std::string& name)
 	if (name == "parry")    return CharacterAction::Parry;
 	if (name == "leap")     return CharacterAction::LeapAttack;
 	if (name == "block")    return CharacterAction::Block;
+	if (name == "jump")     return CharacterAction::Jump;
 
 	return CharacterAction::LightAttack;
 }
@@ -468,6 +469,39 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 			{
 				const CharacterActionsComponent* actions = handle.TryGetComponent();
 				return actions && actions->IsAttacking();
+			}),
+
+		// What the character does now: "light", "heavy", "leap", "roll", "hit", "cast", ... ("" = nothing), and the
+		// animation it plays for it (a summon that adapts to each kind of blow tells a jab from a kick)
+		"action", sol::readonly_property([](const CharacterActionsHandle& handle) -> std::string
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				if (!actions)
+					return "";
+				switch (actions->currentAction)
+				{
+				case CharacterAction::LightAttack: return "light";
+				case CharacterAction::HeavyAttack: return "heavy";
+				case CharacterAction::LeapAttack:  return "leap";
+				case CharacterAction::Roll:        return "roll";
+				case CharacterAction::Backstep:    return "backstep";
+				case CharacterAction::HitReaction: return "hit";
+				case CharacterAction::Block:       return "block";
+				case CharacterAction::Parry:       return "parry";
+				case CharacterAction::Special:     return "special";
+				case CharacterAction::Cast:        return "cast";
+				case CharacterAction::UseItem:     return "item";
+				case CharacterAction::Jump:        return "jump";
+				case CharacterAction::JumpAttack:  return "jump_attack";
+				case CharacterAction::Death:       return "death";
+				case CharacterAction::None:        return "";
+				default:                           return "other";
+				}
+			}),
+		"animation", sol::readonly_property([](const CharacterActionsHandle& handle) -> std::string
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions ? actions->currentAnimation : std::string();
 			}),
 
 		// How fast the attacks play (1 = as the animations were made), and how much more a heavy one hurts

@@ -81,7 +81,7 @@ local PhaseChangeInvulnerableSeconds = 3.0
 local DomainHealPerSecond   = 6
 local DomainSpellEverySeconds = 6.5
 local DomainBrokenSeconds   = 18
-local ChannelSpellEverySeconds = 7
+local ChannelSpellEverySeconds = 10
 local SummonAppearsAhead    = 4.5
 
 -- The guard: how often he answers a punch thrown close to him by raising his forearms, and for how long
@@ -1652,7 +1652,18 @@ local ChannelState = {
 
         entity.enemy:stop()
         channelSpellIn = channelSpellIn - deltaTime
-        if channelSpellIn <= 0 and castSpell(OrbStorm) then
+        if channelSpellIn > 0 then return end
+
+        local summon, player = find(SummonName), find(PlayerName)
+        local isNearSummon = false
+        if summon and player and summon.health and not summon.health.isDead then
+            local between = player.transform.position - summon.transform.position
+            between.y = 0
+            isNearSummon = between:length() < O.ChannelHoldsWithinMeters
+        end
+        if isNearSummon then
+            channelSpellIn = 1.0
+        elseif castSpell(OrbStorm) then
             channelSpellIn = ChannelSpellEverySeconds
         end
     end
@@ -1702,6 +1713,10 @@ function O.notePressure()
 end
 
 O.CubeBurstsAfter = 0.8
+
+-- While the player fights his summon up close he only watches: his storms of money are for a player who runs from it
+-- (further than this from the summon), so the summon is never fought with a rain of money in the back
+O.ChannelHoldsWithinMeters = 7
 
 -- ========== Called by the engine ==========
 

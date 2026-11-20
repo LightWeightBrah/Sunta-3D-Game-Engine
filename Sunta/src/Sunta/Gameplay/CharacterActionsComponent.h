@@ -31,8 +31,11 @@ enum class CharacterAction
 	             // hits still hurt but don't stagger the character (it can't be interrupted)
 	UseItem,     // drinking from a flask or using any item: an animation played once on the upper body (as the block),
 	             // the character walks slowly meanwhile. A roll or an attack can't cut it short, a hit can
-	Cast         // casting a spell (see SpellCasterComponent): an animation played once by name, turning after the target
+	Cast,        // casting a spell (see SpellCasterComponent): an animation played once by name, turning after the target
 	             // until the spell leaves. A roll or an attack can't cut it short, a hit can (the spell is lost)
+	Jump,        // off the ground (Space): up, carried along the held direction, over when the feet touch the ground again
+	JumpAttack   // an attack pressed in the air: a blow on the way down, or (heavy) a plunge into the ground that ends in
+	             // the shockwave of the character, when it has one
 };
 
 // One attack animation with timing of its own: blows of one combo land at different moments (a jab early, a hook late),
@@ -94,6 +97,27 @@ struct CharacterActionsComponent
 	std::string blockImpactAnimation;
 	std::string parryAnimation;
 	std::string parriedAnimation;
+
+	// ========== Jumping (all optional: without 'jumpAnimation' the character doesn't jump) ==========
+
+	std::string jumpAnimation;
+	// An attack pressed in the air (light), and the heavy one: a plunge straight down onto the ground
+	std::string jumpAttackAnimation;
+	std::string jumpHeavyAttackAnimation;
+	// How fast the jump leaves the ground (meters per second up: 5 is about a meter and a quarter high), how fast it
+	// carries the character along the held direction, and how fast the heavy jump attack drives it down
+	float jumpSpeed      = 5.0f;
+	float jumpMoveSpeed  = 4.0f;
+	float jumpPlungeSpeed = 14.0f;
+	// When the plunge of the heavy jump attack starts going down (0..1 of its animation; before it the character
+	// hangs in the air for its wind-up)
+	float jumpPlungeFrom = 0.25f;
+	// How much more the attacks from a jump hurt than a light attack (the heavy one: also the heavy multiplier)
+	float jumpAttackDamageMultiplier = 1.3f;
+	// Where the plunge lands: a shockwave of its own (0 radius = none) and an effect of the scene (see EffectSystem)
+	float       jumpPlungeShockwaveRadius = 0.0f;
+	float       jumpPlungeShockwaveDamage = 30.0f;
+	std::string jumpPlungeEffect;
 
 	// ========== More ways to attack (all optional: an empty name turns that one off) ==========
 
@@ -209,6 +233,9 @@ struct CharacterActionsComponent
 	// A roll or a backstep can't be ended by walking away before this part (a held direction would cut the roll
 	// short and snap the character back to walking); the next action may still come after 'cancelFrom'
 	float dodgeCancelFrom = 0.0f;
+	// After this part of a stagger (a hit reaction) a roll or a backstep asked for cuts it short: the player is not
+	// pinned by every blow until its whole animation is over (1 = a stagger always plays to its end)
+	float hitReactionDodgeFrom = 1.0f;
 
 	// How long the animation of an action takes to fade in
 	float blendSeconds = 0.08f;
@@ -252,6 +279,17 @@ struct CharacterActionsComponent
 	// The animation of the current Special action
 	std::string specialAnimation;
 
+	// In the air (a jump or an attack from it), for how long, and the vertical speed of the last frame (a landing
+	// is the fall stopped by the ground). The current jump attack is the heavy plunge
+	bool  isAirborne = false;
+	float airSeconds = 0.0f;
+	float lastVerticalSpeed = 0.0f;
+	bool  isPlunging = false;
+	// The plunge reached the ground in this attack (its shockwave goes off once)
+	bool  hasPlungeLanded = false;
+	// How fast the current jump moves along the ground (chosen when it starts: 0 when no direction was held)
+	float currentJumpMoveSpeed = 0.0f;
+
 	// The animation of the current UseItem action
 	std::string itemAnimation;
 
@@ -282,7 +320,8 @@ struct CharacterActionsComponent
 
 	bool IsAttacking() const
 	{
-		return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack;
+		return currentAction == CharacterAction::LightAttack || currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack
+		    || currentAction == CharacterAction::JumpAttack;
 	}
 
 	// The shield is up: blocking, or taking a hit on it while the block is still asked for (a character that let go of
@@ -319,6 +358,7 @@ struct CharacterActionsComponent
 		case CharacterAction::LightAttack: return lightHitFrom;
 		case CharacterAction::HeavyAttack: return heavyHitFrom;
 		case CharacterAction::LeapAttack:  return leapHitFrom;
+		case CharacterAction::JumpAttack:  return leapHitFrom;
 		default:                           return -1.0f;
 		}
 	}
@@ -328,7 +368,8 @@ struct CharacterActionsComponent
 	{
 		if (hyperArmor >= 2)
 			return IsAttacking();
-		return hyperArmor == 1 && (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack);
+		return hyperArmor == 1 && (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack
+		                           || (currentAction == CharacterAction::JumpAttack && isPlunging));
 	}
 
 	// Where it ends (0..1 of the attack), below 0 when no attack is going on
@@ -341,6 +382,7 @@ struct CharacterActionsComponent
 		case CharacterAction::LightAttack: return lightHitTo;
 		case CharacterAction::HeavyAttack: return heavyHitTo;
 		case CharacterAction::LeapAttack:  return leapHitTo;
+		case CharacterAction::JumpAttack:  return leapHitTo;
 		default:                           return -1.0f;
 		}
 	}
@@ -357,7 +399,7 @@ struct CharacterActionsComponent
 		if (currentAction == CharacterAction::HeavyAttack)
 			return actionProgress >= heavyHitFrom && actionProgress <= heavyHitTo;
 
-		if (currentAction == CharacterAction::LeapAttack)
+		if (currentAction == CharacterAction::LeapAttack || currentAction == CharacterAction::JumpAttack)
 			return actionProgress >= leapHitFrom && actionProgress <= leapHitTo;
 
 		return false;
@@ -368,6 +410,8 @@ struct CharacterActionsComponent
 	{
 		if (const AttackMove* move = FindCurrentMove())
 			return move->damageMultiplier;
+		if (currentAction == CharacterAction::JumpAttack)
+			return jumpAttackDamageMultiplier * (isPlunging ? heavyDamageMultiplier : 1.0f);
 		return (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack) ? heavyDamageMultiplier : 1.0f;
 	}
 

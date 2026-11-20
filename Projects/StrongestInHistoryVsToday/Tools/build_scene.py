@@ -484,13 +484,13 @@ def add_effects(builder):
                            hit_effect="Oil Cube", hit_burst=60, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
                            hit_stop_seconds=0.2, camera_shake=1.0)
     # The boss's cleave: a fan of blades of light that fly straight and fast (step between them or roll through)
-    add_projectile(builder, "Boss Slash", "sih_black_book", 12, 1.5, spin_degrees_per_second=900.0, speed=27.0, damage=18.0, poise_damage=16.0, radius=0.45,
+    add_projectile(builder, "Boss Slash", "sih_black_book", 12, 1.5, spin_degrees_per_second=900.0, speed=27.0, damage=15.0, poise_damage=12.0, radius=0.45,
                            homing_degrees_per_second=0.0, lifetime_seconds=1.6, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="Page Burst", hit_burst=50, hit_sound="@game/Sounds/Brawl/Punch",
                            hit_stop_seconds=0.05, camera_shake=0.25)
     # What the script throws itself: slow orbs in rings around the boss, and lines of fire across the domain
-    add_projectile(builder, "Boss Ring Orb", "sih_tape", 48, 1.7, spin_degrees_per_second=500.0, speed=8.5, damage=20.0, poise_damage=18.0, radius=0.45,
+    add_projectile(builder, "Boss Ring Orb", "sih_tape", 48, 1.7, spin_degrees_per_second=500.0, speed=8.5, damage=15.0, poise_damage=10.0, radius=0.45,
                            homing_degrees_per_second=0.0, lifetime_seconds=3.6, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="Flash Burst", hit_burst=60, hit_sound="@game/Sounds/Brawl/Punch",
@@ -507,12 +507,12 @@ def add_effects(builder):
                    hit_effect="", hit_burst=0, hit_sound="", hit_stop_seconds=0.0, camera_shake=0.0)
     # What rains from the temple when the domain opens: bundles of money, faster than the tapes
     add_projectile(builder, "Domain Rain", "sih_money", 40, 2.0, spin_degrees_per_second=480.0, speed=17.0,
-                   launch_delay_seconds=2.4, damage=18.0, poise_damage=14.0, radius=0.5, homing_degrees_per_second=0.0,
+                   launch_delay_seconds=2.4, damage=12.0, poise_damage=6.0, radius=0.5, homing_degrees_per_second=0.0,
                    lifetime_seconds=4.5, fuse_seconds=0.0, trail_effect="Swarm Specks", trail_particles_per_second=26.0,
                    hit_effect="Money Burst", hit_burst=8, hit_sound="@game/Sounds/Spells/coins.ogg", hit_stop_seconds=0.04, camera_shake=0.06)
     # The rain of the domain's opening (film 1:31-1:46): formed high in the sky over the whole arena, hanging there,
     # then falling straight down where they were (not at the player), glowing like meteors (the script lights them)
-    add_projectile(builder, "Boss Orb", "sih_money", 24, 1.6, spin_degrees_per_second=540.0, speed=13.0, damage=22.0, poise_damage=18.0, radius=0.5,
+    add_projectile(builder, "Boss Orb", "sih_money", 24, 1.6, spin_degrees_per_second=540.0, speed=13.0, damage=16.0, poise_damage=10.0, radius=0.5,
                            homing_degrees_per_second=34.0, lifetime_seconds=4.0, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="Money Burst", hit_burst=10, hit_sound="@game/Sounds/Spells/coins.ogg",
@@ -539,6 +539,9 @@ PLAYER_ATTACK_MOVES = [
     {"animation": "Attack_Heavy_2", "hit_from": 0.36, "hit_to": 0.66, "damage_multiplier": 2.2, "cancel_from": 0.85},
     {"animation": "Attack_Running", "hit_from": 0.26, "hit_to": 0.52, "damage_multiplier": 1.8},
     {"animation": "Attack_Riposte", "hit_from": 0.18, "hit_to": 0.62, "damage_multiplier": 2.0},
+    # From a jump: the side kick, and the plunge's fists as they come down (its shockwave hurts on its own)
+    {"animation": "Jump_Attack",    "hit_from": 0.2, "hit_to": 0.6, "damage_multiplier": 1.5, "strike_height": 1.2},
+    {"animation": "Jump_Plunge",    "hit_from": 0.4, "hit_to": 0.75, "damage_multiplier": 2.0},
 ]
 PLAYER_MORE_ATTACKS = {
     "extra_light_attack_animations": ["Attack_Light_4"],
@@ -552,6 +555,14 @@ PLAYER_MORE_ATTACKS = {
     "attack_lunge_max_distance": 0.9,
     # A roll runs to its end (walking away cut it short and snapped him back to standing)
     "dodge_cancel_from": 0.85,
+    # A stagger can be rolled out of after its first third: a blow doesn't pin him for its whole animation
+    "hit_reaction_dodge_from": 0.3,
+    # Space jumps; the attack button in the air: a flying kick, Ctrl + it: both fists down into the ground with a
+    # shockwave around where he lands (the plunge hangs a moment with the fists up, then drops)
+    "jump_animation": "Jump", "jump_attack_animation": "Jump_Attack", "jump_heavy_attack_animation": "Jump_Plunge",
+    "jump_speed": 5.2, "jump_move_speed": 4.2, "jump_plunge_speed": 9.0, "jump_plunge_from": 0.42,
+    "jump_attack_damage_multiplier": 1.4, "jump_plunge_shockwave_radius": 2.8, "jump_plunge_shockwave_damage": 40.0,
+    "jump_plunge_effect": "Crash Impact",
 }
 # Aiming the blows at the face / chest of the enemy (the engine's Strike Aim)
 PLAYER_STRIKE_AIM = {"spine_bones": "Spine_Low,Spine,Chest", "clip_strike_height": 1.3, "target_height": 0.86,
@@ -731,7 +742,9 @@ def add_player(builder):
     entity["health"]["max_health"] = 200.0
     entity["health"]["hit_effect"] = "Punch Impact"
     # A boxer keeps his feet under a jab: only a heavy blow or a few quick ones stagger him
-    entity["poise"] = {"max_poise": 30.0, "recover_after_seconds": 3.0, "stagger_immunity_seconds": 1.2}
+    entity["poise"] = {"max_poise": 40.0, "recover_after_seconds": 3.0, "stagger_immunity_seconds": 1.6}
+    # A volley of money or tapes costs one hit, not all of them at once
+    entity["health"]["spell_immunity_seconds"] = 0.8
     entity["healing_flask"].update({"display_name": "Champagne", "max_charges": 4, "heal_amount": 80.0})
     entity["currency"]["display_name"] = "Clout"
     entity["lock_on"]["max_distance"] = 40.0

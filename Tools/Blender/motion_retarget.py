@@ -266,6 +266,9 @@ class MotionClip:
     keeps_facing: bool = False
     # Degrees the whole clip is turned around the up axis (a take made facing to a side, e.g. by text to motion)
     turn_degrees: float = 0.0
+    # The hips never rise more than this above their rest height (meters of our character): a jump whose height the
+    # engine's physics gives keeps the crouch and the tuck of the legs but not the take's own flight. None: as taken
+    hips_rise_limit: float = None
 
 
 # ========== Rotations and directions of the bones (world space, the armature objects included) ==========
@@ -594,7 +597,10 @@ def retarget(character, clip, action, hand_frames=None):
             now = heading(source, clip.rig)
             first_heading = now if first_heading is None else first_heading
             rotations = turned_back(rotations, first_heading - now)
-        key_frame(character, rotations, hips_offset(source, clip.rig, character), frame, previous_rotations)
+        offset = hips_offset(source, clip.rig, character)
+        if clip.hips_rise_limit is not None:
+            offset.z = min(offset.z, clip.hips_rise_limit)
+        key_frame(character, rotations, offset, frame, previous_rotations)
 
     remove_source_armature(source, actions_before | {action})
     put_on_ground(character, action, frames)

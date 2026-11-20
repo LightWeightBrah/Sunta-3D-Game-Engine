@@ -63,7 +63,7 @@ bool IsSwinging(const CharacterActionsComponent* owner)
 	const float from = owner->GetHitFrom() - StartBeforeHit;
 	float to = owner->lightHitTo;
 	if (owner->currentAction == CharacterAction::HeavyAttack) to = owner->heavyHitTo;
-	if (owner->currentAction == CharacterAction::LeapAttack)  to = owner->leapHitTo;
+	if (owner->currentAction == CharacterAction::LeapAttack || owner->currentAction == CharacterAction::JumpAttack)  to = owner->leapHitTo;
 
 	return owner->actionProgress >= from && owner->actionProgress <= to + EndAfterHit;
 }
