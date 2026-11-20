@@ -289,7 +289,7 @@ def add_armor_effects(builder):
      .specks("Sparks", sparks(40, 9.0, [1.0, 0.6, 0.3], [0.5, 0.05, 0.0], lifetime=0.6, gravity=-12.0, drag=2.0))
      .specks("Dust", dust(14, 4.0, lifetime=1.2, size=0.6, end_size=1.6)))
     (Effect(builder, "Armor Clank", root_shape=shape(
-        SPHERE, 0.25, 0.2, 1.4, [1.0, 0.9, 0.85], BLOOD_EDGE, 2.4, dissolve=0.9, light_intensity=5.0,
+        SPHERE, 0.2, 0.1, 0.55, [1.0, 0.9, 0.85], BLOOD_EDGE, 1.2, dissolve=0.9, light_intensity=5.0,
         light_radius=6.0, light_color=[1.0, 0.25, 0.1]))
      .specks("Sparks", sparks(60, 11.0, [1.0, 0.7, 0.4], [0.6, 0.05, 0.0], lifetime=0.45, gravity=-9.0, drag=3.0))
      .specks("Flash", flash(1.6, 0.08, [1.0, 0.5, 0.3], 1.6)))

@@ -882,10 +882,10 @@ def add_armor_transformation(builder, boss):
     # smiles, low under the rift as the pieces fall, his body as they snap on, beside him as he draws the sword, his
     # eyes lighting up and back to the fight
     shots = (
-        ("Armor Fakeout", 2.2, 1.6, 0.6, ((0.7, 1.5, -4.2), (0.45, 1.6, -2.6), (0.28, 1.68, -1.55))),
+        ("Armor Fakeout", 2.2, 1.6, 0.6, ((1.0, 1.55, -5.0), (0.7, 1.62, -3.8), (0.45, 1.68, -2.8))),
         ("Armor Rift Shot", 2.1, 3.2, 0.5, ((3.2, 0.35, -5.0), (3.0, 0.4, -4.6), (2.8, 0.45, -4.2))),
         ("Armor Snap", 2.3, 1.2, 0.5, ((1.0, 1.3, -5.8), (0.7, 1.35, -5.1), (0.45, 1.4, -4.5))),
-        ("Armor Draw", 2.0, 0.9, 0.5, ((2.8, 1.0, -2.2), (2.5, 1.1, -1.7), (2.3, 1.2, -1.3))),
+        ("Armor Draw", 2.0, 1.3, 0.5, ((3.2, 1.4, -2.8), (2.9, 1.5, -2.3), (2.6, 1.6, -1.9))),
         ("Armor Ignite", 2.2, 1.65, 0.4, ((0.25, 1.72, -1.3), (0.5, 1.8, -2.4), (0.9, 2.0, -4.6))),
     )
     for name, seconds, height, blend, points in shots:

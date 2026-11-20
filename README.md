@@ -89,9 +89,17 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
   <img src="docs/media/sih-domain.jpg" width="356" alt="Domain Expansion: the temple rises out of the arena" />
   <p><i>The boss's domain opens with a staged sequence of cutscenes timed to the soundtrack: the sky turns, a temple rises
   out of the ground and thousands of stars fly out of its dome.</i></p>
-  <img src="docs/media/sih-ascension.jpg" width="720" alt="The boss with his private jet on his back, its engines burning" />
-  <p><i>In his last phase the boss changes, as souls-like bosses do: his jet comes down on him and he rises wearing it,
-  with new attacks - a nosedive onto the player and a ground pound.</i></p>
+  <img src="docs/media/sih-diddy-domain.webp" width="720" alt="The player's domain: a whirl of baby oil, oil over the arena and two waves crashing on the boss" />
+  <p><i>The player's own domain, staged like the film: a close-up of the hand sign, a whirl of liquid made of
+  effect shapes, the floor of the arena covered with oil and two waves running in from both sides of the boss.</i></p>
+  <img src="docs/media/sih-armor.webp" width="720" alt="The boss's transformation: his armor falls out of a rift and snaps onto him" />
+  <p><i>At zero health of his last stand the boss doesn't fall: a rift drops his armor and his sword, the pieces fly
+  onto him in two beats and the engine puts his armored model on in their place (a model swapped at runtime, the
+  same skeleton and clip names), then he fights with a great sword in two more phases.</i></p>
+  <img src="docs/media/sih-armored.jpg" width="356" alt="The armored boss with his burning sword and the seal behind his back" />
+  <img src="docs/media/sih-jump-plunge.webp" width="356" alt="A jump and a plunge into the ground with a shockwave" />
+  <p><i>A hexagonal seal burns behind the boss from the summoning on. The player can jump, kick from the air or plunge
+  both fists into the ground with a shockwave (general Jump and Jump Attack actions of the engine).</i></p>
 </div>
 
 ---
@@ -109,8 +117,9 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 
 **Souls-like gameplay** (general components, a game's names and numbers are data of its scene)
 * **Character Actions:** light combos, heavy attacks, running, leaping and riposte attacks, each attack with its own hit
-  window, damage and cancel point; rolls and backsteps with invulnerability; blocking, parrying, poise, hyper armor and
-  stamina.
+  window, damage and cancel point; rolls and backsteps with invulnerability; jumps with attacks from the air and a
+  plunge with its own shockwave; blocking, parrying, poise, hyper armor and stamina; staggers that can be rolled out of
+  and a short immunity to a volley of projectiles.
 * **Strike Aim:** while a character attacks, its spine bends and turns towards the enemy's face or chest (an aim
   offset), so animations made for an opponent of another height still land where they look like they land.
 * **Enemies and bosses:** a state machine of enemies extended from Lua, lock-on with switching, a fog gate into the
@@ -120,6 +129,11 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
   shapes (rings, slash arcs, flashes) composed into named effects, swarms of thousands of meshes, weapon trails, bloom,
   hit stop, camera shake and an impact frame.
 * **Cutscenes:** sequences of camera shots and character moves, skippable, chained into staged moments.
+* **Transformations at runtime:** a script can put another model on a character (same skeleton, same clip names), switch
+  its weapons' hitboxes, change the timing of its attacks and the effects of its swings - a boss that takes up armor and
+  a sword in the middle of the fight.
+* **Follow camera** that rises over low obstacles behind the player instead of coming up to their head, and goes
+  through unseen walls.
 
 **Automated testing**
 * `SUNTA_INPUT_SCRIPT=<file>` plays keyboard and mouse input from a text file (taps, holds, mouse looks, saved frames)

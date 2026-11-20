@@ -20,7 +20,7 @@ local HeldOrbSize = 0.5
 
 -- His domain: the light he gives off at the height of the sign, and the blast when it opens
 -- (a warm sheen on him, not a figure of light: his eyes are what burns)
-local DomainGlow         = vec3(0.12, 0.07, 0.02)
+local DomainGlow         = vec3(0.0, 0.0, 0.0)
 local DomainFlashSeconds = 1.3
 
 -- He calls each technique by its name, in his own voice (cut from the film's soundtrack: the voices alone, the music
@@ -288,7 +288,6 @@ local function updateDomain(deltaTime)
     if this.model then this.model.glow = DomainGlow * (domainGlow * domainGlow) end
 
     if hasJustReleased(DomainSpell) then
-        this.world:flash(vec3(1, 1, 1), 0.35, 0.08)
         startDomainShow()
     end
     updateDomainShow(deltaTime)

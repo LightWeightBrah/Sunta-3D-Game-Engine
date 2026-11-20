@@ -1262,7 +1262,7 @@ function O.showSeal(size)
     O.sealTarget, O.sealSpin = size or 1, 900
     O.setSealParts(true)
     local behind = seal.transform.position
-    this.world:flash(vec3(1.0, 0.5, 0.4), 0.15, 0.04)
+    this.world:flash(vec3(0.7, 0.3, 0.25), 0.12, 0.03)
     this.world:burst("Blink Burst", this.transform.position + vec3(0, 1.7, 0), 140)
     this.world:shakeCamera(0.5)
     Audio.playAt(RumbleSound, this.transform.position, 1.0)
@@ -1585,7 +1585,8 @@ function O.startTransformation()
     local away = player and (this.transform.position - player.transform.position) or vec3(0, 0, -1)
     away.y = 0
     away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
-    this.transform.rotation = vec3(0, O.yawToward(this.transform.position, this.transform.position - away), 0)
+    -- (facing the player: his front is his own -Z)
+    this.transform.rotation = vec3(0, O.yawToward(this.transform.position, this.transform.position - away) + 180, 0)
     O.transform.slideFrom = this.transform.position
     O.transform.slideTo = clampToArena(this.transform.position + away * 3.5)
     -- (the player is thrown back too, out of the shots: the camera is on him alone now)
@@ -1671,7 +1672,7 @@ function O.updateTransform(deltaTime)
     end
     if at(0.9) then this.characterActions:play("Idle") end
     if at(1.45) then
-        this.world:flash(vec3(1.0, 0.45, 0.35), 0.18, 0.04)
+        this.world:flash(vec3(0.55, 0.12, 0.08), 0.12, 0.02)
         this.world:shakeCamera(0.6)
         Audio.play(BoomSound, 1.1)
         this.world:notify(string.upper(O.ArmorTitle))
@@ -1712,9 +1713,7 @@ function O.updateTransform(deltaTime)
     -- 4.2-6.5: arms spread, the plates snap onto him in two beats
     if at(O.LiftFrom) then this.characterActions:play("Power_Up") end
     if at(O.FirstSnapAt) then
-        this.world:flash(vec3(1.0, 0.55, 0.45), 0.12, 0.03)
         this.world:shakeCamera(0.55)
-        this.world:impactFrame(0.6, 0.3)
         Audio.playAt(O.MetalSound, this.transform.position, 1.4)
     end
     if at(O.SecondSnapAt) then
@@ -1723,9 +1722,7 @@ function O.updateTransform(deltaTime)
         O.hideArmorProps()
         if dropped and dropped.model then dropped.model.isVisible = true end
         this.characterActions:play("Power_Up")
-        this.world:flash(vec3(1.0, 0.5, 0.4), 0.15, 0.04)
         this.world:shakeCamera(0.7)
-        this.world:impactFrame(0.8, 0.35)
         this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_l), this.transform.forward)
         this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_r), this.transform.forward)
         Audio.playAt(O.MetalSound, this.transform.position, 1.5)
@@ -1756,7 +1753,6 @@ function O.updateTransform(deltaTime)
         O.sealTarget = 1.2
         O.setSwordFire(28)
         this.world:effect("Armor Stomp", this.transform.position + vec3(0, 0.1, 0), this.transform.forward)
-        this.world:flash(vec3(1.0, 0.45, 0.35), 0.15, 0.04)
         this.world:shakeCamera(0.8)
         Audio.play(BoomSound, 1.2)
         Audio.playAt(RoarSound, this.transform.position, 1.3)
