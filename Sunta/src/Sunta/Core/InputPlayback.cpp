@@ -55,6 +55,18 @@ InputPlayback::CommandHandler customHandler;
 std::vector<int>			heldKeys;
 std::unordered_set<std::string> sameFrameShots; // names already shot this frame
 
+// The pointer of the script ("cursor X Y [SECONDS]": window pixels from the top left), for the editor's GUI to read
+struct PendingCursor
+{
+	float	  from = 0.0f;
+	float	  to   = 0.0f;
+	glm::vec2 start{ 0.0f };
+	glm::vec2 end  { 0.0f };
+};
+bool						  hasCursor = false;
+glm::vec2					  cursor{ 0.0f };
+std::vector<PendingCursor>	  cursorMoves;
+
 int ParseKey(std::string name)
 {
 	std::string lower = name;
@@ -155,6 +167,16 @@ void Run(const TimedCommand& c, float now)
 		char suffix[16];
 		std::snprintf(suffix, sizeof(suffix), "_%03d", use);
 		shotsToSave.push_back(use == 0 && !IsRepeated(name) ? name : name + suffix);
+	}
+	else if (c.command == "cursor")
+	{
+		const glm::vec2 target{ ToFloat(c.argument, 0.0f), ToFloat(c.argument2, 0.0f) };
+		const float seconds = ToFloat(c.argument3, 0.0f);
+		if (!hasCursor || seconds <= 0.0f)
+			cursor = target;
+		else
+			cursorMoves.push_back({ now, now + seconds, cursor, target });
+		hasCursor = true;
 	}
 	else if (c.command == "log")
 		SUNTA_ENGINE_LOG_INFO("InputPlayback [{0:.2f}s]: {1} {2} {3}", now, c.argument, c.argument2, c.argument3);
@@ -272,7 +294,27 @@ void InputPlayback::Update(float now)
 			++it;
 	}
 
+	for (auto it = cursorMoves.begin(); it != cursorMoves.end();)
+	{
+		const float span = it->to - it->from;
+		float k = span <= 0.0f ? 1.0f : std::clamp((now - it->from) / span, 0.0f, 1.0f);
+		k = k * k * (3.0f - 2.0f * k);
+		cursor = it->start + (it->end - it->start) * k;
+		if (k >= 1.0f)
+			it = cursorMoves.erase(it);
+		else
+			++it;
+	}
+
 	lastTime = now;
+}
+
+bool InputPlayback::TryGetCursor(glm::vec2& outPosition)
+{
+	if (!isActive || !hasCursor)
+		return false;
+	outPosition = cursor;
+	return true;
 }
 
 void InputPlayback::AfterRender(unsigned int width, unsigned int height)

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <glm/glm.hpp>
 #include <functional>
 #include <string>
 
@@ -39,6 +41,10 @@ namespace Sunta
 		static void PressKey(const std::string& name);
 		static void ReleaseKey(const std::string& name);
 		static bool IsKeyHeldByScript(const std::string& name);
+
+		// The script's pointer ("cursor X Y [SECONDS]", window pixels), false while the script never set it: the
+		// editor's GUI takes it and the script's mouse buttons, so a test can click through the editor
+		static bool TryGetCursor(glm::vec2& outPosition);
 
 		// Folder for test output (frames, combat log)
 		static const std::string& GetOutputFolder();

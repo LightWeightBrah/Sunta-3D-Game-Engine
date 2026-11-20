@@ -5,6 +5,8 @@
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "Renderer/RendererAPI.h"
+#include "Core/InputPlayback.h"
+#include <GLFW/glfw3.h>
 
 namespace Sunta
 {
@@ -50,6 +52,21 @@ void GLFWOpenGLEditorGUIBackend::NewFrame(void* window)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
+
+	// A test script drives the pointer: its position and its buttons, as if the mouse did it (with viewports the
+	// GUI works in the coordinates of the desktop)
+	glm::vec2 cursor;
+	if (InputPlayback::TryGetCursor(cursor))
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		int windowX = 0, windowY = 0;
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			glfwGetWindowPos((GLFWwindow*)window, &windowX, &windowY);
+		io.AddMousePosEvent(windowX + cursor.x, windowY + cursor.y);
+		io.AddMouseButtonEvent(0, InputPlayback::IsKeyHeldByScript("Mouse1"));
+		io.AddMouseButtonEvent(1, InputPlayback::IsKeyHeldByScript("Mouse2"));
+		io.AddMouseButtonEvent(2, InputPlayback::IsKeyHeldByScript("Mouse3"));
+	}
 	ImGui::NewFrame();
 }
 

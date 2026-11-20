@@ -26,7 +26,7 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 
 <div align="center">
   <h3>Editor</h3>
-  <img src="docs/media/editor.gif" width="800" alt="The Sunta editor: hierarchy, inspector, gizmos and docking windows" />
+  <img src="docs/media/editor.webp" width="800" alt="The Sunta editor: hierarchy, inspector, gizmos and docking windows" />
   <p><i>A dockable workspace made with ImGui: a hierarchy of entities, an inspector generated from the C++ components, a file browser and transform gizmos for moving, rotating and scaling objects.</i></p>
 </div>
 
@@ -34,7 +34,7 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 
 <div align="center">
   <h3>Play Mode and Lua Scripting</h3>
-  <img src="docs/media/play-mode.gif" width="800" alt="Play mode with a Lua script that reloads after a change" />
+  <img src="docs/media/play-mode.webp" width="800" alt="Play mode with a Lua script that reloads after a change" />
   <p><i>Press play to run the scene in the editor. Gameplay is written in Lua, and a script reloads as soon as you save it, so you can change the game while it runs.</i></p>
 </div>
 
@@ -42,7 +42,7 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 
 <div align="center">
   <h3>Lighting and Materials</h3>
-  <img src="docs/media/lighting.gif" width="800" alt="Directional, point and spot lights and a specular map" />
+  <img src="docs/media/lighting.webp" width="800" alt="Directional, point and spot lights and a specular map" />
   <p><i>Phong lighting with directional, point and spot lights. Specular maps decide how shiny each pixel of a surface is, so metal and matte parts can share one material.</i></p>
 </div>
 
@@ -66,7 +66,7 @@ Do you want to compile the engine yourself? See [Building the Engine](#building-
 
 <div align="center">
   <h3>Game Camera</h3>
-  <img src="docs/media/camera.gif" width="800" alt="Creating a game camera from the editor view" />
+  <img src="docs/media/camera.webp" width="800" alt="Creating a game camera from the editor view" />
   <p><i>Place a camera in the scene or create one from the current editor view. The editor shows what it sees, and Play mode uses it.</i></p>
 </div>
 
