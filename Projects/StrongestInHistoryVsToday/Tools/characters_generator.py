@@ -129,7 +129,8 @@ PLAYER = {
     # Thrown onto his back by the stars of the boss's domain, lying there until the player answers, getting up
     "Knocked_Down":   diddy("Knocked_Back", 20, 75),
     "Lying":          diddy("Knocked_Back", 140, 146, speed=0.05),
-    "Get_Up":         diddy("GetUp_Back", speed=1.2),
+    # (quick: in the film he is up and making the sign of his technique in a second and a half)
+    "Get_Up":         diddy("GetUp_Back", speed=1.7),
     "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
     "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
     "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
@@ -138,7 +139,8 @@ PLAYER = {
     # His two great techniques are signs of the hands held still (posed below, see GESTURES): both hands pressed
     # together with two fingers up, and a triangle of both hands before the chest
     "Cast_Great_Orb": diddy("Idle_Standing", speed=0.9),
-    "Cast_Domain":    diddy("Idle_Standing", speed=0.9),
+    # (short: the sign is made and held for the close-up of his hands, then the domain opens - release_at 0.9)
+    "Cast_Domain":    diddy("Idle_Standing", 1, 66, speed=1.1),
     # The jump (Space): the flight is the engine's physics, so the take's own rise is taken out of the hips (the tuck
     # of the legs stays); from it a flying side kick, or (heavy) both fists raised and driven down into the ground
     "Jump":           diddy("Jump_InPlace", 20, 50, hips_rise_limit=0.02),
@@ -275,8 +277,8 @@ FINGER_POSES = (
     ("Parry", ("fist", "open")),
     ("Sign_Domain", ("two", "relaxed")),
     ("Sign_Hold", ("two", "relaxed")),
-    ("Cast_Great_Orb", ("two", "two")),
-    ("Cast_Domain", ("open", "open")),
+    ("Cast_Great_Orb", ("open", "open")),
+    ("Cast_Domain", ("steeple", "steeple")),
     ("Cast_Orb", ("open", "relaxed")),
     ("Cast_Pillars", ("two", "relaxed")),
     ("Summon", ("two", "relaxed")),
@@ -333,12 +335,13 @@ GESTURES = {
         # blow away, then comes back to the guard
         "Parry":          [Gesture("_L", (0.42, 0.40, 0.12), (0.15, 0.35, 1.0), (0.75, 0.65, 0.0),
                                    reached_at=0.16, left_from=0.5, end_at=0.9)],
-        # Both hands pressed together before the chest, the fingers up and a little forward
-        "Cast_Great_Orb": [Gesture("_R", (0.03, 0.30, 0.10), (0.0, 0.35, 1.0), (-1.0, 0.0, 0.0), reached_at=0.3, left_from=0.9),
-                           Gesture("_L", (0.03, 0.30, 0.10), (0.0, 0.35, 1.0), (-1.0, 0.0, 0.0), reached_at=0.3, left_from=0.9)],
-        # A triangle: the fingertips of both hands meet above, the palms look forward
-        "Cast_Domain":    [Gesture("_R", (0.12, 0.33, -0.06), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9),
+        # As in the film (1:47): a diamond of both hands before the chest, the fingertips meeting above and the
+        # thumbs below, the palms looking forward
+        "Cast_Great_Orb": [Gesture("_R", (0.12, 0.33, -0.06), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9),
                            Gesture("_L", (0.12, 0.33, -0.06), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9)],
+        # As in the film (2:19): both hands clasped before the chin, the index fingers straight up together
+        "Cast_Domain":    [Gesture("_R", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=0.92),
+                           Gesture("_L", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=0.92)],
     },
 }
 

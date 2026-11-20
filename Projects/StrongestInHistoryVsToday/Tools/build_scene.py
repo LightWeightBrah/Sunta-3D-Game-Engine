@@ -470,9 +470,10 @@ def add_effects(builder):
                        hit_effect="Oil Splash", hit_burst=26, hit_sound="@game/Sounds/Spells/glass_break.ogg",
                        hit_stop_seconds=0.08, camera_shake=0.35)
     # The player's domain: one blast under the target that reaches the whole arena
+    # (it lands when the two waves of oil meet on the enemy: player_techniques.lua plays them)
     builder.add(projectile("Player Domain Blast", speed=0.0, damage=130.0, poise_damage=500.0, radius=10.0,
-                           homing_degrees_per_second=0.0, lifetime_seconds=2.0, fuse_seconds=0.15,
-                           trail_effect="Oil Trail", trail_particles_per_second=300.0,
+                           homing_degrees_per_second=0.0, lifetime_seconds=6.0, fuse_seconds=PLAYER_DOMAIN_CRASH_AT,
+                           trail_effect="Oil Trail", trail_particles_per_second=60.0,
                            hit_effect="", hit_burst=0, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
                            hit_stop_seconds=0.15, camera_shake=1.0))
     # The player's great spell: slow, wide, and it hits like a truck
@@ -573,6 +574,8 @@ BOSS_HIT_WINDOWS = {"light_hit_from": 0.25, "light_hit_to": 0.72, "heavy_hit_fro
 SUMMON_HIT_WINDOWS = {"light_hit_from": 0.15, "light_hit_to": 0.65, "heavy_hit_from": 0.32, "heavy_hit_to": 0.48,
                       "leap_attack_animation": "Attack_Leap", "leap_hit_from": 0.35, "leap_hit_to": 0.55, "leap_speed": 13.0}
 # Baby oil: almost clear, a little warm, bright enough to read against a burning sky
+# Seconds from his domain's release to the waves of oil meeting on the enemy (player_techniques.lua: WaveCrashAt)
+PLAYER_DOMAIN_CRASH_AT = 4.0
 OIL_ORB = {"tint": [1.0, 0.97, 0.9], "brightness": 1.9, "wobble": 0.06, "wobble_speed": 2.4, "clearness": 0.2}
 
 # Where the eyes are on the head bone (the EYE lines of Tools/characters_generator.py)
@@ -668,6 +671,59 @@ def add_domain_moments(builder, player):
         builder.add(named(f"Camera Point {index + 1}", point), parent=fall)
 
 
+# The player's domain, Divine Baby Oil Evolve (film 2:19-2:26, played by player_techniques.lua): baby oil over the
+# whole floor of the arena (pools of clear liquid, flat, growing out of nothing: x, z, size in meters across), and
+# two long waves of it that rise on both sides of the enemy and crash together on him
+OIL_POOLS = [(0.0, -50.0, 34.0), (-17.0, -36.0, 18.0), (16.0, -37.0, 20.0), (-18.0, -63.0, 19.0), (17.0, -64.0, 18.0),
+             (0.0, -31.0, 16.0), (0.0, -70.0, 18.0), (-23.0, -50.0, 14.0), (23.0, -50.0, 14.0)]
+# (clear and glossy, as oil spilt on stone: mostly the floor is seen through it, the sky shines on it)
+OIL_DOMAIN_ORB = dict(OIL_ORB, tint=[1.0, 0.95, 0.85], brightness=0.75, clearness=0.86, is_visible=False)
+# (flat on the floor it mirrors the sky at every low angle: a dim, warm mirror reads as oil, a bright one as snow)
+OIL_POOL_ORB = dict(OIL_DOMAIN_ORB, tint=[1.0, 0.86, 0.66], brightness=0.42, clearness=0.92, wobble=0.02, wobble_speed=0.8)
+
+
+def add_oil_domain(builder, player):
+    for index, (x, z, _) in enumerate(OIL_POOLS):
+        pool = named(f"Oil Pool {index + 1}", (x, -0.02, z), liquid_orb=OIL_POOL_ORB)
+        pool["transform"]["rotation"] = [0.0, index * 37.0, 0.0]
+        pool["transform"]["scale"] = [0.01, 0.01, 0.01]
+        builder.add(pool)
+    for side in ("L", "R"):
+        # (a wall of oil: thin across, tall, long; the script moves it and grows it)
+        wave = named(f"Oil Wave {side}", (0.0, -50.0, 0.0), liquid_orb=dict(OIL_DOMAIN_ORB, wobble=0.18, wobble_speed=3.5,
+                                                                         clearness=0.6, brightness=1.1))
+        wave["transform"]["scale"] = [0.01, 0.01, 0.01]
+        index = builder.add(wave)
+        # A wall of white foam (puffs of baked smoke, white) and drops flung up out of it
+        builder.add(named(f"Oil Wave {side} Spray", (0.0, 0.0, 0.0), particle_emitter={
+            "is_emitting": False, "particles_per_second": 700.0, "lifetime_seconds": 1.0,
+            "spawn_half_extents": [0.6, 1.4, 6.0], "velocity": [0.0, 5.5, 0.0], "velocity_randomness": 3.0,
+            "gravity": [0.0, -9.0, 0.0], "start_size": 0.22, "end_size": 0.05, "start_color": [0.95, 0.97, 1.0],
+            "end_color": [0.6, 0.7, 0.85], "intensity": 1.4, "max_particles": 2500}), parent=index)
+        builder.add(named(f"Oil Wave {side} Foam", (0.0, 0.0, 0.0), particle_emitter={
+            "is_emitting": False, "particles_per_second": 260.0, "lifetime_seconds": 0.7,
+            "spawn_half_extents": [0.7, 1.8, 6.5], "velocity": [0.0, 1.5, 0.0], "velocity_randomness": 1.2,
+            "gravity": [0.0, 0.0, 0.0], "start_size": 1.6, "end_size": 2.8, "start_color": [0.92, 0.94, 0.97],
+            "end_color": [0.75, 0.8, 0.88], "intensity": 0.75, "max_particles": 600, "style": 2,
+            "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png", "flipbook_columns": 8,
+            "flipbook_rows": 8, "flipbook_loops": 1.0, "flipbook_random_start": True}), parent=index)
+
+    # The shots (his front is his own -Z): his hands and glowing eyes from close and low, then the whirl of oil
+    # around him from afar, then from behind him the waves meeting on the enemy
+    shots = (
+        ("Domain Gesture", 2.0, PLAYER_NAME, 1.5, 0.4, ((0.6, 0.95, -1.4), (0.45, 1.0, -1.15), (0.32, 1.05, -0.98))),
+        ("Domain Vortex", 2.6, PLAYER_NAME, 4.0, 0.5, ((9.0, 1.2, -12.0), (10.5, 2.4, -14.0), (12.0, 3.6, -16.0))),
+        ("Domain Waves", 2.8, BOSS_NAME, 1.4, 0.6, ((1.0, 7.5, 12.0), (0.6, 8.5, 14.0), (0.3, 9.5, 16.0))),
+    )
+    for name, seconds, target, height, blend, points in shots:
+        shot = builder.add(named(name, cutscene={
+            "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
+            "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+            "can_be_skipped": False, "video_file": "", "blend_in_seconds": blend}), parent=player)
+        for number, point in enumerate(points):
+            builder.add(named(f"Camera Point {number + 1}", point), parent=shot)
+
+
 def add_player(builder):
     player = builder.copy_tree(builder.find_source(SOURCE_PLAYER), skip=("Sword", "Shield"))
     entity = builder.get(player)
@@ -701,6 +757,7 @@ def add_player(builder):
     entity["script"] = script("player_techniques.lua")
     add_eyes(builder, player, "Player", PLAYER_EYES, [1.0, 0.75, 0.1], 0.045)
     add_domain_moments(builder, player)
+    add_oil_domain(builder, player)
     # Down on his back after the stars of the boss's domain: the camera comes over him and waits for the player's
     # answer, [3] (a moment of the cutscene the player plays; boss_fight.lua goes on with 'Technique Rise')
     down = builder.add(named("Down Wait", cutscene={
@@ -712,11 +769,12 @@ def add_player(builder):
         builder.add(named(f"Camera Point {index + 1}", point), parent=down)
     # Rising from the ground with his hand up for his great technique (started by boss_fight.lua when the player
     # presses [3] lying down): the camera low in front of him, coming up with him (his front is his own -Z)
+    # It ends close on his hands making the sign before his chest and his glowing eyes (film 1:47.5)
     rise = builder.add(named("Technique Rise", cutscene={
-        "duration_seconds": 2.6, "look_at_entity": PLAYER_NAME, "look_at_height": 1.1, "animation_entity": "",
+        "duration_seconds": 2.6, "look_at_entity": PLAYER_NAME, "look_at_height": 1.3, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "Imaginary Technique: Baby Oil Detonation",
         "title_seconds": 1.6, "can_be_skipped": False, "video_file": ""}), parent=player)
-    for index, point in enumerate(((2.4, 0.5, -2.6), (1.6, 1.0, -2.6), (0.7, 1.5, -2.3))):
+    for index, point in enumerate(((2.2, 0.5, -2.5), (1.3, 0.9, -2.2), (0.55, 1.2, -1.45), (0.3, 1.3, -1.05))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=rise)
     add_domain_spectacle(builder)
     # The ball of oil he holds over his palm while he calls it (shown by his script)
@@ -759,7 +817,7 @@ def add_player(builder):
                       cooldown_seconds=16.0, charge_effect="", charge_particles_per_second=0.0,
                       cast_sound="@game/Sounds/Spells/magic_whoosh.ogg", cast_key="2", display_name="Imaginary Technique: Baby Oil Detonation"), parent=player, bone="Hand_R")
     builder.add(spell("Player Domain Spell", cast_animation="Cast_Domain", projectile="Player Domain Blast", projectile_count=1,
-                      spread_degrees=0.0, release_at=0.6, at_targets_feet=True, min_distance=0.0, max_distance=60.0,
+                      spread_degrees=0.0, release_at=0.9, at_targets_feet=True, min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=45.0, charge_effect="", charge_particles_per_second=0.0,
                       cast_sound="@game/Sounds/Boss/roar.ogg", cast_key="3", display_name="Domain Expansion"), parent=player)
     return player

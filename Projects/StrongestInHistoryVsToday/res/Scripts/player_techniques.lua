@@ -19,7 +19,8 @@ local EyeIntensity    = 9
 local HeldOrbSize = 0.5
 
 -- His domain: the light he gives off at the height of the sign, and the blast when it opens
-local DomainGlow         = vec3(1.6, 0.75, 0.15)
+-- (a warm sheen on him, not a figure of light: his eyes are what burns)
+local DomainGlow         = vec3(0.12, 0.07, 0.02)
 local DomainFlashSeconds = 1.3
 
 -- He calls each technique by its name, in his own voice (cut from the film's soundtrack: the voices alone, the music
@@ -69,8 +70,10 @@ local function setEyes(intensity)
     end
 end
 
+-- (the steps of his domain while it plays, see updateDomain below: his eyes keep burning until the waves meet)
+local domainShow = nil
 local function updateEyes(deltaTime)
-    if isCasting(OrbSpell) or isCasting(GreatSpell) or isCasting(DomainSpell) then
+    if isCasting(OrbSpell) or isCasting(GreatSpell) or isCasting(DomainSpell) or (domainShow and not domainShow.crashed) then
         eyesLeft = EyesStaySeconds
     else
         eyesLeft = math.max(eyesLeft - deltaTime, 0)
@@ -126,19 +129,169 @@ local function updateOilGuard(deltaTime)
     guard.liquidOrb.isVisible = amount > 0.05
 end
 
--- His own domain: he lights up as he holds the sign, then everything goes white
+-- His own domain, Divine Baby Oil Evolve, as in the film (2:19-2:26): close on his clasped hands and his glowing
+-- eyes; a huge whirl of baby oil around him that grows; oil all over the floor of the arena; then two long waves of
+-- it rise on both sides of the enemy and crash together on him (the blast of the spell lands then: its fuse)
+local Domain = {
+    GestureShot = "Domain Gesture", VortexShot = "Domain Vortex", WavesShot = "Domain Waves",
+    Vortex = "Oil Vortex", Crash = "Oil Wave Crash",
+    Pools = 9, PoolPrefix = "Oil Pool ",
+    -- How big each pool grows (meters across; the same list as OIL_POOLS of Tools/build_scene.py) and how deep
+    PoolSizes = { 34, 18, 20, 19, 18, 16, 18, 14, 14 }, PoolDepth = 0.05,
+    PoolGrowSeconds = 2.4, PoolStaySeconds = 14, PoolSinkSeconds = 2.5,
+    -- The waves: when they rise (seconds after the spell left), when they meet (PLAYER_DOMAIN_CRASH_AT of the
+    -- scene: the blast's fuse), how far to each side of the enemy they start, how big they are
+    WavesAt = 2.5, WaveCrashAt = 4.0, WaveFrom = 12, WaveLength = 12, WaveHeight = 3.4, WaveThickness = 1.6,
+    -- The crests curling over along each wave, how often
+    Crest = "Oil Wave Crest", CrestEverySeconds = 0.12,
+    BoomSound = "@game/Sounds/Spells/deep_boom.ogg", SplashSound = "@game/Sounds/Spells/glass_break.ogg",
+}
+
+local function playShot(name)
+    local shot = find(name)
+    if shot and shot.cutscene then shot.cutscene:play() end
+end
+
+local function setPools(grown)
+    for i = 1, Domain.Pools do
+        local pool = find(Domain.PoolPrefix .. i)
+        if pool and pool.liquidOrb then
+            local size = Domain.PoolSizes[i] * math.max(grown, 0.001)
+            pool.transform.scale = vec3(size, Domain.PoolDepth * math.max(grown, 0.05), size * 0.82)
+            pool.liquidOrb.isVisible = grown > 0.01
+        end
+    end
+end
+
+local function setWave(side, place, yaw, grown)
+    local wave = find("Oil Wave " .. side)
+    if not wave or not wave.liquidOrb then return end
+    wave.transform.position = place
+    wave.transform.rotation = vec3(0, yaw, 0)
+    local k = math.max(grown, 0.001)
+    wave.transform.scale = vec3(Domain.WaveThickness * k, Domain.WaveHeight * k, Domain.WaveLength * k)
+    wave.liquidOrb.isVisible = grown > 0.01
+    for _, part in ipairs({ " Spray", " Foam" }) do
+        local emitter = find("Oil Wave " .. side .. part)
+        if emitter and emitter.particles then emitter.particles.isEmitting = grown > 0.2 end
+    end
+end
+
+-- The enemy the waves are for: the boss (or the summon fighting for him, when it is closer)
+local function domainTarget()
+    local best, bestDistance = nil, 1e9
+    for _, name in ipairs({ "Boss", "Summon" }) do
+        local enemy = find(name)
+        if enemy and enemy.health and not enemy.health.isDead and not (enemy.enemy and enemy.enemy.isDormant) then
+            local d = (enemy.transform.position - this.transform.position):length()
+            if d < bestDistance then best, bestDistance = enemy, d end
+        end
+    end
+    return best
+end
+
+local function startDomainShow()
+    local target = domainTarget()
+    local center = target and target.transform.position or (this.transform.position + this.transform.forward * 8)
+    local along = center - this.transform.position
+    along.y = 0
+    if along:length() < 0.1 then along = this.transform.forward end
+    along = along:normalized()
+    domainShow = { t = 0, center = center, side = vec3(along.z, 0, -along.x), yaw = math.deg(math.atan(along.x, along.z)),
+                   wavesStarted = false, crashed = false, poolsLeft = nil }
+
+    this.world:effect(Domain.Vortex, this.transform.position, this.transform.forward)
+    this.world:shakeCamera(0.6)
+    Audio.play(Domain.BoomSound, 0.9)
+    playShot(Domain.VortexShot)
+end
+
+local function updateDomainShow(deltaTime)
+    local show = domainShow
+    if not show then return end
+    show.t = show.t + deltaTime
+
+    -- The oil spreads over the floor while the whirl grows
+    if show.t <= Domain.PoolGrowSeconds then
+        local k = show.t / Domain.PoolGrowSeconds
+        setPools(k * k * (3 - 2 * k))
+    elseif not show.poolsLeft then
+        setPools(1)
+    end
+
+    -- The waves rise on both sides of the enemy and run at him
+    if show.t >= Domain.WavesAt and show.t < Domain.WaveCrashAt then
+        if not show.wavesStarted then
+            show.wavesStarted = true
+            playShot(Domain.WavesShot)
+            Audio.play(Domain.BoomSound, 0.7)
+        end
+        local k = (show.t - Domain.WavesAt) / (Domain.WaveCrashAt - Domain.WavesAt)
+        local rise = math.min(k * 3, 1)
+        local distance = Domain.WaveFrom * (1 - k * k) + 1.2
+        show.crestIn = (show.crestIn or 0) - deltaTime
+        local along = vec3(-show.side.z, 0, show.side.x)
+        for _, entry in ipairs({ { "L", -1 }, { "R", 1 } }) do
+            local place = show.center + show.side * (entry[2] * distance)
+            place.y = -Domain.WaveHeight * 0.25 * (1 - rise)
+            setWave(entry[1], place, show.yaw, rise)
+            -- its crest curls over towards the enemy, all along it
+            if show.crestIn <= 0 and rise > 0.5 then
+                for _, offset in ipairs({ -4.5, -1.5, 1.5, 4.5 }) do
+                    local crest = place + along * offset + vec3(0, Domain.WaveHeight * 0.55, 0)
+                    this.world:effect(Domain.Crest, crest, show.side * (-entry[2]))
+                end
+            end
+        end
+        if show.crestIn <= 0 then show.crestIn = Domain.CrestEverySeconds end
+        this.world:shakeCamera(0.08)
+    end
+
+    -- They meet on him: a burst of oil, and they are gone
+    if show.t >= Domain.WaveCrashAt and not show.crashed then
+        show.crashed = true
+        setWave("L", show.center, show.yaw, 0)
+        setWave("R", show.center, show.yaw, 0)
+        this.world:effect(Domain.Crash, show.center + vec3(0, 1.2, 0), this.transform.forward)
+        this.world:impactFrame(0.8, 0.4)
+        this.world:shakeCamera(1.0)
+        this.world:slowMotion(0.6, 0.35)
+        Audio.play(Domain.SplashSound, 1.2)
+        Audio.play(Domain.BoomSound, 1.1)
+        show.poolsLeft = Domain.PoolStaySeconds
+    end
+
+    -- The oil lies on the floor for a while, then sinks away
+    if show.poolsLeft then
+        show.poolsLeft = show.poolsLeft - deltaTime
+        if show.poolsLeft <= 0 then
+            local k = math.min(-show.poolsLeft / Domain.PoolSinkSeconds, 1)
+            setPools(1 - k)
+            if k >= 1 then domainShow = nil end
+        end
+    end
+end
+
+-- He lights up as he holds the sign (the camera close on his hands and eyes), then his domain opens
+local wasDomainCasting = false
 local function updateDomain(deltaTime)
-    if isCasting(DomainSpell) then
+    local casting = isCasting(DomainSpell)
+    if casting and not wasDomainCasting then playShot(Domain.GestureShot) end
+    wasDomainCasting = casting
+
+    if casting then
         domainGlow = math.min(domainGlow + deltaTime * 1.4, 1)
     else
-        domainGlow = math.max(domainGlow - deltaTime * 2.5, 0)
+        domainGlow = math.max(domainGlow - deltaTime * 0.6, 0)
     end
 
     if this.model then this.model.glow = DomainGlow * (domainGlow * domainGlow) end
 
     if hasJustReleased(DomainSpell) then
-        this.world:flash(vec3(1, 1, 1), DomainFlashSeconds, 0.15)
+        this.world:flash(vec3(1, 1, 1), 0.35, 0.08)
+        startDomainShow()
     end
+    updateDomainShow(deltaTime)
 end
 
 -- The name of the technique, the moment he starts calling it

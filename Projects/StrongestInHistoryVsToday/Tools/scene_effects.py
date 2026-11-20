@@ -22,6 +22,8 @@ GOLD_CORE, GOLD_EDGE = [1.0, 0.95, 0.8], [1.0, 0.55, 0.12]
 CRIMSON_CORE, CRIMSON_EDGE = [1.0, 0.9, 0.85], [0.95, 0.12, 0.05]
 FIRE_CORE, FIRE_EDGE = [1.0, 0.85, 0.55], [1.0, 0.32, 0.04]
 OIL_CORE, OIL_EDGE = [1.0, 0.97, 0.85], [1.0, 0.68, 0.2]
+# The player's domain: baby oil as the film shows it there, milk-white water with a cold sheen
+MILK_CORE, MILK_EDGE = [1.0, 0.99, 0.96], [0.72, 0.82, 1.0]
 
 
 def entity(name, **components):
@@ -218,6 +220,43 @@ def add_technique_effects(builder):
     (Effect(builder, "Domain Shatter", root_specks=flash(3.0, 0.15, [1.0, 0.8, 0.5], 1.2))
      .shape("Wave", shape(RING, 1.4, 2.0, 40.0, OIL_CORE, [1.0, 0.5, 0.15], 1.8, thickness=0.1, dissolve=0.9))
      .specks("Shards", sparks(220, 22.0, [1.0, 0.85, 0.6], [0.6, 0.15, 0.0], lifetime=1.4, size=0.12, gravity=-6.0, drag=1.2)))
+
+    # The player's domain (film 2:20): a huge whirl of baby oil around him, growing; milky white with a cold sheen
+    # (the film's oil is white water, not fire), sprays of drops flung out of it, a wave of oil over the ground
+    (Effect(builder, "Oil Vortex", root_shape=shape(
+        PILLAR, 3.0, 0.8, 4.2, MILK_CORE, MILK_EDGE, 0.75, height=11.0, twist_degrees=720.0,
+        spin_degrees_per_second=420.0, noise_scale=3.5, scroll_speed=2.5, dissolve=0.75,
+        light_intensity=3.0, light_radius=14.0, light_color=[0.9, 0.95, 1.0]))
+     .shape("Inner", shape(PILLAR, 2.8, 0.5, 2.6, [1.0, 1.0, 1.0], MILK_EDGE, 0.6, height=9.0, twist_degrees=-540.0,
+                           spin_degrees_per_second=-520.0, noise_scale=4.5, scroll_speed=3.0, dissolve=0.8))
+     .shape("Outer", shape(PILLAR, 3.2, 1.2, 6.5, MILK_CORE, [0.65, 0.78, 1.0], 0.35, height=14.0, twist_degrees=900.0,
+                           spin_degrees_per_second=300.0, noise_scale=3.0, scroll_speed=2.0, dissolve=0.85))
+     .shape("Ground", shape(RING, 2.6, 1.5, 26.0, MILK_CORE, MILK_EDGE, 1.0, thickness=0.2, noise_scale=2.5,
+                            scroll_speed=1.0, dissolve=0.85))
+     .specks("Spray", sparks(220, 12.0, [0.95, 0.97, 1.0], [0.6, 0.7, 0.85], lifetime=1.8, size=0.1, gravity=-7.0,
+                            drag=1.2, intensity=1.6))
+     .specks("Mist", dust(30, 7.0, lifetime=2.6, size=1.4, end_size=4.0, color=(0.7, 0.72, 0.76))))
+
+    # The crest of a wave of oil curling over (played again and again along each wave as it runs: a vertical arc of
+    # white sweeping down, spray thrown off it)
+    (Effect(builder, "Oil Wave Crest", root_shape=shape(
+        ARC, 0.45, 1.6, 2.6, [1.0, 1.0, 1.0], MILK_EDGE, 0.9, thickness=0.55, arc_degrees=160.0,
+        rotation_degrees=[0.0, 0.0, 90.0], rotation_randomness=[0.0, 8.0, 10.0], noise_scale=4.0, scroll_speed=4.0,
+        dissolve=0.7))
+     .specks("Spray", sparks(14, 6.0, [0.95, 0.97, 1.0], [0.6, 0.7, 0.85], lifetime=0.8, size=0.09, gravity=-9.0,
+                            drag=1.5, intensity=1.4)))
+
+    # The two waves of oil meeting on the enemy: a burst of white, a wave over the ground, drops flung high
+    (Effect(builder, "Oil Wave Crash", root_shape=shape(
+        SPHERE, 0.7, 1.0, 5.0, [1.0, 1.0, 1.0], MILK_EDGE, 1.4, noise_scale=3.5, scroll_speed=1.5, dissolve=0.85,
+        light_intensity=6.0, light_radius=16.0, light_color=[0.9, 0.95, 1.0]))
+     .shape("Wave", shape(RING, 1.0, 1.5, 14.0, MILK_CORE, MILK_EDGE, 1.8, thickness=0.2, noise_scale=3.0, dissolve=0.9))
+     .shape("Column", shape(PILLAR, 0.9, 1.5, 3.5, [1.0, 1.0, 1.0], MILK_EDGE, 0.9, height=9.0, twist_degrees=200.0,
+                            spin_degrees_per_second=200.0, noise_scale=4.0, scroll_speed=3.0, dissolve=0.85))
+     .specks("Drops", sparks(220, 17.0, [0.95, 0.97, 1.0], [0.55, 0.65, 0.8], lifetime=1.5, size=0.11, gravity=-12.0,
+                            drag=1.4, intensity=2.2))
+     .specks("Mist", dust(36, 7.0, lifetime=2.2, size=1.4, end_size=4.0, color=(0.8, 0.82, 0.86)))
+     .specks("Flash", flash(4.5, 0.14, [0.95, 0.97, 1.0], 1.2)))
 
     # The boss's knockback through the ruins: a burst of rock and fire where he smashes through
     (Effect(builder, "Crash Impact", root_shape=shape(

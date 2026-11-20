@@ -36,7 +36,7 @@ local TechniqueNames = {
     ["Boss Orb Storm Spell"]      = "Hush Money: Bailout",
     ["Player Orb Spell"]          = "Solid Baby Oil",
     ["Player Great Orb Spell"]    = "Imaginary Technique: Baby Oil Detonation",
-    ["Player Domain Spell"]       = "Domain Expansion: Thousand Bottles",
+    ["Player Domain Spell"]       = "Domain Expansion: Divine Baby Oil Evolve",
 }
 local RingTechnique = "Hidden Cameras: Flash"
 local LineTechnique = "Private Jet: Strafing Run"
@@ -1058,8 +1058,8 @@ function O.domainOpeningSteps()
             silhouetteLeft = SilhouetteSeconds
             moveTemple(TempleSunkenY, 4.5)
         end },
-        -- The player's turn
-        { 70.7, function()
+        -- The player's turn (film 1:45.6: up in time for the sign at 1:47.5 when [2] comes at once)
+        { 69.4, function()
             awaitingDetonation = true
             O.detonationHintLeft = O.DetonationHintSeconds
             O.lyingUntilPress, O.lyingReplayIn = true, 0
@@ -1088,7 +1088,7 @@ end
 -- A moment of the cutscene the player answers: the camera over him lying where the stars threw him, the prompt on
 -- the screen ('Down Wait' waits for [2]); the answer: he rises with his hand up ('Technique Rise') and the great
 -- technique leaves his hand as he stands (its voice, eyes and the bottle from the sky: player_techniques.lua)
-O.DownCutscene, O.RiseCutscene, O.RiseSeconds = "Down Wait", "Technique Rise", 1.9
+O.DownCutscene, O.RiseCutscene, O.RiseSeconds = "Down Wait", "Technique Rise", 1.35
 
 function O.updateRise(deltaTime)
     if not O.lyingUntilPress then return end
@@ -1191,12 +1191,11 @@ local function watchPlayerDomain()
 
     if not hasJustCast then return end
 
+    -- (his domain breaks when the player's waves of oil meet: player_techniques.lua, PLAYER_DOMAIN_CRASH_AT)
     if domainIsUp then
-        shatterDomain()
-    else
-        flash = 0.8
-        this.world:notify("DOMAIN EXPANSION: THOUSAND BOTTLES")
+        after(O.PlayerDomainCrashAt, function() if domainIsUp then shatterDomain() end end)
     end
+    this.world:notify("DOMAIN EXPANSION: DIVINE BABY OIL EVOLVE")
 end
 
 -- A reminder for a while after his domain opened (the spell's own slot of the HUD shows when it is ready)
@@ -1728,6 +1727,7 @@ function O.notePressure()
 end
 
 O.CubeBurstsAfter = 0.8
+O.PlayerDomainCrashAt = 4.0
 
 -- His lines from the film (the music no longer carries them)
 O.VoiceDomain    = "@game/Sounds/Voice/epstein_domain_expansion.ogg"

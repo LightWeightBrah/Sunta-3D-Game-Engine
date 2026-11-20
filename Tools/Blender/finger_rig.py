@@ -37,6 +37,9 @@ POSES = {
     "fist":    {"Index": (82, 98), "Middle": (84, 100), "Ring": (86, 100), "Little": (88, 100), "Thumb": (48, 55)},
     # Index and middle finger straight up together, the others closed under the thumb: the sign of a technique
     "two":     {"Index": (0, 2), "Middle": (0, 2), "Ring": (88, 100), "Little": (90, 100), "Thumb": (58, 50)},
+    # Both hands clasped, the index fingers straight up against each other, the thumbs up beside them (the sign of
+    # a domain: the film's 2:19)
+    "steeple": {"Index": (0, 2), "Middle": (70, 95), "Ring": (78, 100), "Little": (82, 100), "Thumb": (4, 6)},
     # A hand held out to carry something on its palm
     "cupped":  {"Index": (8, 22), "Middle": (10, 24), "Ring": (12, 26), "Little": (14, 28), "Thumb": (0, 8)},
 }
