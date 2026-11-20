@@ -57,6 +57,7 @@ class Hand:
     axes: dict = field(default_factory=dict)    # finger -> the direction its joints turn around (closing it)
     # bone -> how far it is already bent towards the palm at rest (degrees): a pose's angles are then from straight
     rest_bend: dict = field(default_factory=dict)
+    length: float = 0.0   # from the wrist to the fingertips (meters)
 
 
 def bone_name(finger, joint, side):
@@ -113,7 +114,7 @@ def read_hand(armature, mesh, side):
     palm = across.cross(fingers) if side == "_R" else fingers.cross(across)
     palm.normalize()
 
-    hand = Hand(side, wrist, fingers, across, palm)
+    hand = Hand(side, wrist, fingers, across, palm, length=float(length))
 
     # Past the knuckles the skin falls into four groups across the hand
     knuckles = length * character_from_mesh.PALM_PART_OF_HAND
@@ -241,7 +242,8 @@ def hands_from_skeleton(armature):
         palm = fingers.cross(across)
         if (head(bone_name("Thumb", 2, side)) - wrist).dot(palm) < 0.0:
             palm = -palm
-        hand = Hand(side, wrist, fingers, across, palm)
+        tip = armature.matrix_world @ armature.data.bones[bone_name("Middle", 3, side)].tail_local
+        hand = Hand(side, wrist, fingers, across, palm, length=(tip - wrist).length)
         for finger in FINGERS + ("Thumb",):
             hand.bones[finger] = tuple(bone_name(finger, joint, side) for joint in (1, 2, 3))
             hand.axes[finger] = fingers.copy() if finger == "Thumb" else across.copy()

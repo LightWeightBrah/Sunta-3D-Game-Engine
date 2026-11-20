@@ -635,7 +635,8 @@ def add_weapon_bone(character, armature, rig):
     blade = hand.across.normalized()
     edges = (hand.fingers - blade * hand.fingers.dot(blade)).normalized()
     flat = blade.cross(edges)
-    center = hand.wrist + hand.fingers * 0.45 + hand.palm.normalized() * 0.03 * character.height / 1.83
+    # (hand.fingers is only a direction: the middle of the fist is a part of the hand's length from the wrist)
+    center = hand.wrist + hand.fingers * (hand.length * 0.45) + hand.palm.normalized() * 0.03 * character.height / 1.83
     matrix = Matrix.Translation(center) @ Matrix((edges, flat, blade)).transposed().to_4x4()
     character_from_mesh.add_held_item_bones(armature, [(WEAPON_BONE, "Hand_R", matrix)])
     return matrix
