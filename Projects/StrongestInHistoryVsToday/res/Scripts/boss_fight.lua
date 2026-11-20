@@ -50,9 +50,10 @@ local RingOrb           = "Boss Ring Orb"
 local LineFire          = "Domain Line Fire"
 local BlinkEffect       = "Blink Burst"
 
--- The film's own sound from the moment the fight starts, running without a seam into the rest of the song the film
--- cuts off (its music is that song from 34.3 seconds on: put together by ffmpeg with a one second crossfade)
-local FightMusic  = "@game/Sounds/Film/fight.ogg"
+-- The film's music alone (its song, Lady Gaga's Judas, from the second the fight starts: the film's music is that
+-- song 34.28 s ahead), so the soundtrack's clock stays the film's; what the characters say in the film is played
+-- by itself at the moment it belongs to (O.Voice*, cut from the film without its song: AIContext/scripts)
+local FightMusic  = "@game/Sounds/Film/fight_music.ogg"
 local SummonMusic = "@game/Sounds/Music/boss_phase_two.ogg"
 local RoarSound   = "@game/Sounds/Boss/roar.ogg"
 local BlinkSound  = "@game/Sounds/Spells/blink.ogg"
@@ -995,6 +996,8 @@ function O.domainOpeningSteps()
             O.isHoldingSign = false
             playCutscene(SignCutscene)
         end },
+        -- "Domain expansion: Epstein Island Temple."
+        { 45.05, function() Audio.play(O.VoiceDomain, O.VoiceVolume) end },
         { 46.3, function()
             changeLook(Domain, 1.8)
             setAsh(true)
@@ -1461,7 +1464,17 @@ local function startSummonPhase()
     local floated = 0
 
     startShow({
+        -- (film 2:31) "He is doing better than I expected."
         function()
+            Audio.play(O.VoiceBetter, O.VoiceVolume)
+            this.enemy:lookAtTarget(true)
+            showCaption("He is doing better than I expected.", 2.6)
+            return 2.9
+        end,
+        -- (film 2:34) "Well, with this treasure I summon..." - and he rises on his back
+        function()
+            Audio.play(O.VoiceTreasure, O.VoiceVolume)
+            showCaption("Well, with this treasure I summon...", 2.5)
             this.characterActions:play("Death")
             this.world:slowMotion(FloatSeconds, 0.6)
             show.during = function(deltaTime)
@@ -1474,6 +1487,8 @@ local function startSummonPhase()
         function()
             this.world:flash(vec3(1, 1, 1), 0.4, 0.1)
             playCutscene(WheelCutscene)
+            -- (film 2:37) "47th President of the United States, Donald J. Trump." over the turning wheel
+            after(0.5, function() Audio.play(O.VoicePresident, O.VoiceVolume) end)
         end,
         function()
             this.transform.position = ground
@@ -1714,6 +1729,13 @@ end
 
 O.CubeBurstsAfter = 0.8
 
+-- His lines from the film (the music no longer carries them)
+O.VoiceDomain    = "@game/Sounds/Voice/epstein_domain_expansion.ogg"
+O.VoiceBetter    = "@game/Sounds/Voice/epstein_better_than_expected.ogg"
+O.VoiceTreasure  = "@game/Sounds/Voice/epstein_treasure_summon.ogg"
+O.VoicePresident = "@game/Sounds/Voice/epstein_president_trump.ogg"
+O.VoiceVolume    = 1.5
+
 -- While the player fights his summon up close he only watches: his storms of money are for a player who runs from it
 -- (further than this from the summon), so the summon is never fought with a rain of money in the back
 O.ChannelHoldsWithinMeters = 7
@@ -1798,6 +1820,8 @@ function OnUpdate(deltaTime)
     -- A staged moment goes on: its next step now, the fight waits
     if show then
         updateShow(deltaTime)
+        updateTimers(deltaTime)
+        announceTechniques(deltaTime)
         updateLook(deltaTime)
         updateTemple(deltaTime)
         return

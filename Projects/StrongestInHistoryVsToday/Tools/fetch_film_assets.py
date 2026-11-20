@@ -10,8 +10,8 @@ Run once after cloning (from the repository root):
 
 Writes (all of them in .gitignore):
     res/Videos/intro.mpg, domain_smile.mpg, summon_wheel.mpg
-    res/Sounds/Film/intro.ogg, fight.ogg
-    res/Sounds/Voice/solid_baby_oil.ogg, divine_baby_oil_evolve.ogg, baby_oil_detonation.ogg
+    res/Sounds/Film/intro.ogg, fight.ogg, fight_music.ogg (the song alone, from the second the fight starts)
+    res/Sounds/Voice/solid_baby_oil.ogg, divine_baby_oil_evolve.ogg, baby_oil_detonation.ogg, epstein_*.ogg
 The downloads are kept in Tools/.film_cache (also ignored), so running it again only cuts.
 
 Sources: the film "Epstein vs Diddy" (Artificial Productions, youtube FvMWj1UzyhA) and "Lady Gaga - Judas (Official
@@ -39,6 +39,9 @@ FIGHT_FROM, FIGHT_TO = 36.2, 155.0
 # frame): kept, so the game's timings measured on them stay right
 SEEK_LEAD = 0.036
 SONG_FROM = 188.30
+# The fight's music alone: the song from the second of it the fight starts on (film 36.2 s + 34.28 s), so the
+# soundtrack's clock is the film's and the characters' lines are played by themselves (VOICES)
+FIGHT_MUSIC_FROM = 70.482
 
 # The moments of the film shown in the game (seconds of the film)
 VIDEOS = {
@@ -52,6 +55,11 @@ VOICES = {
     "solid_baby_oil.ogg":         (51.70, 53.30),  # "Solid baby oil" (without the "unleash" after it)
     "divine_baby_oil_evolve.ogg": (138.85, 142.1),
     "baby_oil_detonation.ogg":    (107.0, 110.7),
+    # The boss's lines (played by boss_fight.lua at the film's moments)
+    "epstein_domain_expansion.ogg":     (81.25, 84.7),
+    "epstein_better_than_expected.ogg": (150.85, 153.4),
+    "epstein_treasure_summon.ogg":      (153.9, 156.6),
+    "epstein_president_trump.ogg":      (157.1, 160.85),
 }
 # Seconds of sound around each voice given to the separation (it hears the music better with some context)
 VOICE_MARGIN = 3.0
@@ -101,6 +109,9 @@ def make_soundtrack(film, song):
          + "[1:a]atrim=start={},asetpts=PTS-STARTPTS,aresample=44100[b];".format(SONG_FROM)
          + "[a][b]acrossfade=d=1.0:c1=tri:c2=tri[out]",
          "-map", "[out]", "-vn", "-c:a", "libvorbis", "-q:a", 5, os.path.join(folder, "fight.ogg")])
+    run([ffmpeg(), "-y", "-loglevel", "error", "-i", song, "-af",
+         "atrim=start={},asetpts=PTS-STARTPTS,afade=t=in:d=0.3,aresample=44100".format(FIGHT_MUSIC_FROM),
+         "-vn", "-c:a", "libvorbis", "-q:a", 6, os.path.join(folder, "fight_music.ogg")])
 
 
 def make_voices(film):
