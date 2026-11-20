@@ -891,6 +891,7 @@ void LuaBindings::RegisterSpellCasterComponent(sol::state& lua)
 		"projectileCount", MemberProperty(&SpellCasterComponent::projectileCount, 0),
 		"spreadDegrees",   MemberProperty(&SpellCasterComponent::spreadDegrees,   0.0f),
 		"isCastOnRequestOnly", MemberProperty(&SpellCasterComponent::isCastOnRequestOnly, false),
+		"isUninterruptible",   MemberProperty(&SpellCasterComponent::isUninterruptible,   false),
 
 		"isReady", sol::readonly_property([](const SpellCasterHandle& handle)
 			{

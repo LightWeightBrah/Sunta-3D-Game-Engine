@@ -296,6 +296,8 @@ struct CharacterActionsComponent
 	// The animation of the current Cast action, and when its spell leaves (0..1): the caster turns after its target until then
 	std::string castAnimation;
 	float       castReleaseAt = 0.5f;
+	// The current cast's spell is uninterruptible (SpellCasterComponent::isUninterruptible): hits don't stop it
+	bool        isCastUninterruptible = false;
 
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;
@@ -366,6 +368,8 @@ struct CharacterActionsComponent
 	// Hyper armor now (see hyperArmor)
 	bool HasHyperArmor() const
 	{
+		if (currentAction == CharacterAction::Cast && isCastUninterruptible)
+			return true;
 		if (hyperArmor >= 2)
 			return IsAttacking();
 		return hyperArmor == 1 && (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack

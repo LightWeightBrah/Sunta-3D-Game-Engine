@@ -3422,6 +3422,7 @@
     "charge_particles_per_second": 0.0,
     "cast_sound": "@game/Sounds/Spells/throw.ogg",
     "cast_key": "1",
+    "is_uninterruptible": true,
     "display_name": "Solid Baby Oil"
    },
    "parent": {
@@ -3471,6 +3472,7 @@
     "charge_particles_per_second": 0.0,
     "cast_sound": "@game/Sounds/Spells/magic_whoosh.ogg",
     "cast_key": "2",
+    "is_uninterruptible": true,
     "display_name": "Imaginary Technique: Baby Oil Detonation"
    },
    "parent": {
@@ -3519,6 +3521,7 @@
     "charge_particles_per_second": 0.0,
     "cast_sound": "@game/Sounds/Boss/roar.ogg",
     "cast_key": "3",
+    "is_uninterruptible": true,
     "display_name": "Domain Expansion"
    },
    "parent": {

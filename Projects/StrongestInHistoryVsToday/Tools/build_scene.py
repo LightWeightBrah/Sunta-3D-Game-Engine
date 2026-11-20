@@ -215,6 +215,7 @@ def add_projectile(builder, name, body_model=None, bodies=0, body_scale=1.0, bod
 
 
 def spell(name, **settings):
+    # (the player's techniques are uninterruptible: a blow during the wind-up hurts, but the technique goes on)
     entity = named(name, (0.0, 0.1, 0.0), spell_caster=settings)
     return entity
 
@@ -821,16 +822,16 @@ def add_player(builder):
     builder.add(spell("Player Orb Spell", cast_animation="Cast_Orb", projectile="Player Orb", projectile_count=1,
                       spread_degrees=0.0, release_at=0.66, at_targets_feet=False, min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=2.5, charge_effect="", charge_particles_per_second=0.0,
-                      cast_sound="@game/Sounds/Spells/throw.ogg", cast_key="1", display_name="Solid Baby Oil"), parent=player, bone="Hand_R")
+                      cast_sound="@game/Sounds/Spells/throw.ogg", cast_key="1", is_uninterruptible=True, display_name="Solid Baby Oil"), parent=player, bone="Hand_R")
     builder.add(spell("Player Great Orb Spell", cast_animation="Cast_Great_Orb", projectile="Player Great Orb", projectile_count=1,
                       spread_degrees=0.0, release_at=GREAT_ORB_RELEASE_AT, at_targets_feet=False, drop_height=13.0,
                       min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=16.0, charge_effect="", charge_particles_per_second=0.0,
-                      cast_sound="@game/Sounds/Spells/magic_whoosh.ogg", cast_key="2", display_name="Imaginary Technique: Baby Oil Detonation"), parent=player, bone="Hand_R")
+                      cast_sound="@game/Sounds/Spells/magic_whoosh.ogg", cast_key="2", is_uninterruptible=True, display_name="Imaginary Technique: Baby Oil Detonation"), parent=player, bone="Hand_R")
     builder.add(spell("Player Domain Spell", cast_animation="Cast_Domain", projectile="Player Domain Blast", projectile_count=1,
                       spread_degrees=0.0, release_at=0.9, at_targets_feet=True, min_distance=0.0, max_distance=60.0,
                       cooldown_seconds=45.0, charge_effect="", charge_particles_per_second=0.0,
-                      cast_sound="@game/Sounds/Boss/roar.ogg", cast_key="3", display_name="Domain Expansion"), parent=player)
+                      cast_sound="@game/Sounds/Boss/roar.ogg", cast_key="3", is_uninterruptible=True, display_name="Domain Expansion"), parent=player)
     return player
 
 

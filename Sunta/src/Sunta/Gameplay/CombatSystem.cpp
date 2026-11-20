@@ -721,7 +721,10 @@ bool CombatSystem::ApplyDamage(EntityManager& entityManager, unsigned int target
 	if (!CanBeHurt(entityManager, targetEntityID))
 		return false;
 
-	if (LoseHealth(entityManager, targetEntityID, damage, attackerEntityID, DamageKind::Other))
+	const CharacterActionsComponent* targetActions = entityManager.GetComponent<CharacterActionsComponent>(targetEntityID);
+	const bool hasHyperArmor = targetActions && targetActions->HasHyperArmor();
+
+	if (LoseHealth(entityManager, targetEntityID, damage, attackerEntityID, DamageKind::Other) && !hasHyperArmor)
 		CharacterActionsSystem::PlayHitReaction(entityManager, targetEntityID);
 
 	return true;

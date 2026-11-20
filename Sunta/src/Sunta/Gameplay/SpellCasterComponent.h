@@ -70,6 +70,10 @@ struct SpellCasterComponent
 	// Never chosen by the enemy's own thinking, only cast by a script
 	bool isCastOnRequestOnly = false;
 
+	// Hits don't stop its cast (hyper armor for the cast): the caster still loses health, but the spell goes on.
+	// For the player's great techniques, which shouldn't be lost to any blow that lands during their wind-up
+	bool isUninterruptible = false;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	// Seconds until it can be cast again
@@ -106,7 +110,8 @@ struct SpellCasterComponent
 				ADD_PROPERTY(SpellCasterComponent, castSound,       PropertyDataType::String),
 				ADD_PROPERTY(SpellCasterComponent, castKey,         PropertyDataType::String),
 				ADD_PROPERTY(SpellCasterComponent, displayName,     PropertyDataType::String),
-				ADD_PROPERTY(SpellCasterComponent, isCastOnRequestOnly, PropertyDataType::Bool)
+				ADD_PROPERTY(SpellCasterComponent, isCastOnRequestOnly, PropertyDataType::Bool),
+				ADD_PROPERTY(SpellCasterComponent, isUninterruptible, PropertyDataType::Bool)
 			});
 	}
 };

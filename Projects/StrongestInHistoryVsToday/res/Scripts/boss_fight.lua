@@ -458,7 +458,8 @@ end
 
 local function updateRing(deltaTime)
     ringIn = ringIn - deltaTime
-    if ringIn > 0 or phase < 2 or not isFreeToAct() or this.enemy.distanceToTarget > 9 or not takePatternTurn() then return end
+    -- (not in his armor: the white flashes of the orbs blinded more than they threatened next to his sword)
+    if ringIn > 0 or phase < 2 or phase >= 5 or not isFreeToAct() or this.enemy.distanceToTarget > 9 or not takePatternTurn() then return end
 
     ringIn = (phase == 4) and RingEverySeconds * 0.65 or RingEverySeconds
     if this.characterActions:play("Cast_Pillars") then
@@ -1859,7 +1860,7 @@ function O.updateSlam(deltaTime)
         s.markIn = (s.markIn or 0) - deltaTime
         if s.markIn <= 0 then
             s.markIn = 0.1
-            this.world:burst("Flash Burst", s.to + vec3(0, 0.15, 0), 10)
+            this.world:burst("Sword Hit Burst", s.to + vec3(0, 0.15, 0), 8)
         end
     elseif not s.hasHit then
         s.hasHit = true

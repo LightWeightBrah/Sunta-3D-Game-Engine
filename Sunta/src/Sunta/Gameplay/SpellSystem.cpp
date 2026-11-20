@@ -459,6 +459,9 @@ bool StartCast(EntityManager& entityManager, unsigned int casterID, SpellCasterC
 	if (!CharacterActionsSystem::Cast(entityManager, casterID, spell.castAnimation, spell.releaseAt))
 		return false;
 
+	if (CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(casterID))
+		actions->isCastUninterruptible = spell.isUninterruptible;
+
 	spell.isCasting             = true;
 	spell.hasReleased           = false;
 	spell.unbornChargeParticles = 0.0f;

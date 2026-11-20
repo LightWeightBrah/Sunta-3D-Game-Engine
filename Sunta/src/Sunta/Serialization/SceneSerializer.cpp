@@ -168,6 +168,7 @@ namespace SceneKeys
 	constexpr const char* CastSound                 = "cast_sound";
 	constexpr const char* CastKey                   = "cast_key";
 	constexpr const char* IsCastOnRequestOnly       = "cast_on_request_only";
+	constexpr const char* IsUninterruptible         = "is_uninterruptible";
 	constexpr const char* StartsDormant             = "starts_dormant";
 	constexpr const char* ProjectileSpeed           = "speed";
 	constexpr const char* ProjectileRadius          = "radius";
@@ -1461,7 +1462,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::CastSound,                spell->castSound                },
 				{ SceneKeys::CastKey,                  spell->castKey                  },
 				{ SceneKeys::DisplayName,              spell->displayName              },
-				{ SceneKeys::IsCastOnRequestOnly,      spell->isCastOnRequestOnly      }
+				{ SceneKeys::IsCastOnRequestOnly,      spell->isCastOnRequestOnly      },
+				{ SceneKeys::IsUninterruptible,        spell->isUninterruptible        }
 			};
 		}
 
@@ -2465,6 +2467,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			spell.castKey                  = spellData.value(SceneKeys::CastKey,                  spell.castKey);
 			spell.displayName              = spellData.value(SceneKeys::DisplayName,              spell.displayName);
 			spell.isCastOnRequestOnly      = spellData.value(SceneKeys::IsCastOnRequestOnly,      spell.isCastOnRequestOnly);
+			spell.isUninterruptible        = spellData.value(SceneKeys::IsUninterruptible,        spell.isUninterruptible);
 		}
 
 		if (entityJson.contains(SceneKeys::ProjectileComponent))
