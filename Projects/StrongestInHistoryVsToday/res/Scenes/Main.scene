@@ -3583,7 +3583,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3626,7 +3627,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3669,7 +3671,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3712,7 +3715,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3755,7 +3759,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3798,7 +3803,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3841,7 +3847,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3884,7 +3891,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3927,7 +3935,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -3970,7 +3979,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4013,7 +4023,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4056,7 +4067,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4099,7 +4111,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4142,7 +4155,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4185,7 +4199,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4228,7 +4243,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4271,7 +4287,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4314,7 +4331,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4357,7 +4375,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4400,7 +4419,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4443,7 +4463,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4486,7 +4507,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4529,7 +4551,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4572,7 +4595,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4615,7 +4639,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4658,7 +4683,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4701,7 +4727,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4744,7 +4771,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4787,7 +4815,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4830,7 +4859,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4873,7 +4903,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4916,7 +4947,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -4959,7 +4991,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5002,7 +5035,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5045,7 +5079,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5088,7 +5123,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5131,7 +5167,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5174,7 +5211,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5217,7 +5255,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5260,7 +5299,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5626,7 +5666,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5669,7 +5710,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5712,7 +5754,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5755,7 +5798,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5798,7 +5842,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5841,7 +5886,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5884,7 +5930,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5927,7 +5974,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -5970,7 +6018,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6013,7 +6062,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6056,7 +6106,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6099,7 +6150,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6142,7 +6194,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6185,7 +6238,8 @@
      1.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6228,7 +6282,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6271,7 +6326,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6314,7 +6370,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -6357,7 +6414,8 @@
      3.0,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Arena Border"
@@ -10332,6 +10390,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10364,6 +10438,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10396,6 +10486,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10428,6 +10534,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10460,6 +10582,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10492,6 +10630,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10524,6 +10678,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -10556,6 +10726,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -12216,7 +12402,8 @@
      3.0,
      0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Street Border"
@@ -12259,7 +12446,8 @@
      3.0,
      0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "tag": {
     "name": "Street Border"
@@ -12938,6 +13126,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -12970,6 +13174,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13002,6 +13222,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13034,6 +13270,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13066,6 +13318,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13098,6 +13366,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13130,6 +13414,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13162,6 +13462,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13194,6 +13510,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13226,6 +13558,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13258,6 +13606,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13290,6 +13654,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13322,6 +13702,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13354,6 +13750,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13386,6 +13798,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13418,6 +13846,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13450,6 +13894,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13482,6 +13942,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13514,6 +13990,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13546,6 +14038,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13578,6 +14086,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13610,6 +14134,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13642,6 +14182,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13674,6 +14230,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13706,6 +14278,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13738,6 +14326,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13770,6 +14374,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13802,6 +14422,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13834,6 +14470,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13866,6 +14518,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13898,6 +14566,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13930,6 +14614,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13962,6 +14662,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -13994,6 +14710,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14026,6 +14758,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14058,6 +14806,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14090,6 +14854,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14122,6 +14902,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14154,6 +14950,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14186,6 +14998,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14218,6 +15046,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14250,6 +15094,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14282,6 +15142,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14314,6 +15190,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14346,6 +15238,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14378,6 +15286,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14410,6 +15334,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {
@@ -14442,6 +15382,22 @@
    "model": {
     "is_visible": true,
     "model_name": "sih_rubble"
+   },
+   "box_collider": {
+    "local_offset": [
+     0.0,
+     0.7,
+     0.0
+    ],
+    "half_extents": [
+     5.2,
+     0.75,
+     2.3
+    ],
+    "is_trigger": true,
+    "layer": 1,
+    "show_gizmos": false,
+    "blocks_camera": true
    }
   },
   {

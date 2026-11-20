@@ -292,6 +292,15 @@ def prop(name, model, position, turned_by=0.0, size=1.0):
     return entity
 
 
+def rubble_heap(position, turned_by, size, name="Rubble Heap"):
+    """A heap of rubble with a box the camera can't go through (a trigger: nobody walks into it), so the follow camera
+    rises over it instead of coming up to the player's head (the model is 11 x 1.6 x 5.1 m at size 1)"""
+    entity = prop(name, RUBBLE_MODEL, position, turned_by, size)
+    entity["box_collider"] = {"local_offset": [0.0, 0.7, 0.0], "half_extents": [5.2, 0.75, 2.3], "is_trigger": True,
+                              "layer": 1, "show_gizmos": False, "blocks_camera": True}
+    return entity
+
+
 def add_arena(builder):
     """A street of a city in ruins, as in the film: broken ground, heaps of rubble around the place of the fight
     (the unseen walls of MyGame's arena behind them keep everyone inside), burnt out towers all around"""
@@ -306,6 +315,8 @@ def add_arena(builder):
             # Only its collider is kept: an unseen border
             copied.pop("model", None)
             copied["tag"]["name"] = "Arena Border"
+            # (the camera goes through it into the rubble behind, and rises over the rubble)
+            copied["box_collider"]["blocks_camera"] = False
         elif copied.get("model", {}).get("model_name") == "kit_floor":
             copied["model"]["model_name"] = GROUND_MODEL
 
@@ -322,7 +333,7 @@ def add_arena(builder):
         number += 1
         wobble = ((number * 37) % 21) - 10.0
         size = 1.0 + ((number * 53) % 7) * 0.06
-        builder.add(prop("Rubble Heap", RUBBLE_MODEL, (x, -0.2, z), (0.0 if along_x else 90.0) + wobble, size))
+        builder.add(rubble_heap((x, -0.2, z), (0.0 if along_x else 90.0) + wobble, size))
 
     x = left
     while x <= right:
@@ -376,7 +387,7 @@ def add_approach(builder):
             number += 1
             wobble = ((number * 41) % 23) - 11.0
             size = 0.9 + ((number * 29) % 5) * 0.08
-            builder.add(prop("Street Rubble", RUBBLE_MODEL, (side * 9.5, -0.2, z), 90.0 + wobble, size))
+            builder.add(rubble_heap((side * 9.5, -0.2, z), 90.0 + wobble, size, "Street Rubble"))
             z -= 7.0
     builder.add(prop("Rubble Heap", RUBBLE_MODEL, (0.0, -0.3, STREET_FAR_Z + 1.5), 4.0, 1.1))
     for x, z, turned_by, size, tower in STREET_RUINS + skyline_ruins(CITY_RUINS + STREET_RUINS):
@@ -988,6 +999,7 @@ def extend_street(builder):
         border.pop("model", None)
         border["transform"]["position"] = [side * 8.5, 0.0, 16.0 + (STREET_FAR_Z - 16.0) * 0.5]
         border["box_collider"]["half_extents"] = [0.5, 3.0, (STREET_FAR_Z - 16.0) * 0.5]
+        border["box_collider"]["blocks_camera"] = False
     # Fires burning in the rubble along the way, each with its light: the street is lit like the arena
     source_fire, source_light = builder.find_source("Arena Fire"), builder.find_source("Arena Light")
     for x, z in ((-6.0, 57.0), (6.5, 47.0), (-6.5, 33.0), (6.0, 22.0), (-6.0, 9.0)):
@@ -1004,7 +1016,7 @@ def extend_street(builder):
             number += 1
             wobble = ((number * 37) % 23) - 11.0
             size = 0.9 + ((number * 31) % 5) * 0.08
-            builder.add(prop("Street Rubble", RUBBLE_MODEL, (side * 9.5, -0.2, z), 90.0 + wobble, size))
+            builder.add(rubble_heap((side * 9.5, -0.2, z), 90.0 + wobble, size, "Street Rubble"))
             z -= 7.0
 
 

@@ -201,6 +201,7 @@ namespace SceneKeys
 	constexpr const char* LocalOffset               = "local_offset";
 	constexpr const char* HalfExtents               = "half_extents";
 	constexpr const char* IsTrigger                 = "is_trigger";
+	constexpr const char* BlocksCamera              = "blocks_camera";
 	constexpr const char* Layer                     = "layer";
 
 	constexpr const char* IsKinematic               = "is_kinematic";
@@ -738,6 +739,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::LocalOffset,       SerializeVec3(boxCollider->localOffset) },
 				{ SceneKeys::HalfExtents,       SerializeVec3(boxCollider->halfExtents) },
 				{ SceneKeys::IsTrigger,                       boxCollider->isTrigger    },
+				{ SceneKeys::BlocksCamera,                    boxCollider->blocksCamera },
 				{ SceneKeys::Layer, static_cast<unsigned int>(boxCollider->layer)       }
 			};
 		}
@@ -1665,6 +1667,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 
 			boxColliderComponent.showGizmos   = boxColliderData.value(SceneKeys::ShowGizmos, false);
 			boxColliderComponent.isTrigger    = boxColliderData.value(SceneKeys::IsTrigger, false);
+			boxColliderComponent.blocksCamera = boxColliderData.value(SceneKeys::BlocksCamera, true);
 			boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(DefaultCollisionLayer)));
 		}
 

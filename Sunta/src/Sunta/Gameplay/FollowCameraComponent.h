@@ -77,6 +77,7 @@ struct FollowCameraComponent
 	float     yawDegrees      = 0.0f;
 	float     pitchDegrees    = 0.0f;
 	float     currentDistance = 0.0f; // 'distance', or less while a wall pushes the camera
+	float     currentRise     = 0.0f; // meters the camera rose over something low behind the player (a heap of rubble)
 	glm::vec3 pivot           = glm::vec3(0.0f);
 	float     shakeTrauma     = 0.0f; // 0..1, the shake is its square (small shakes stay subtle, big ones are wild)
 	float     shakeSeconds    = 0.0f; // runs on while shaking, the noise of the shake follows it

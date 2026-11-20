@@ -501,6 +501,10 @@ struct BoxColliderComponent
 
 	bool isTrigger = false;
 
+	// Off: the follow camera goes through it (an unseen wall at the edge of an arena: it keeps the fighters in, but
+	// the camera pushed by it would come up to the player's head)
+	bool blocksCamera = true;
+
 	// Which layers this one collides with is decided by the project's collision rules (editor: Project > Collision Layers & Matrix...)
 	CollisionLayer layer = DefaultCollisionLayer;
 
@@ -514,6 +518,7 @@ struct BoxColliderComponent
 				ADD_PROPERTY(BoxColliderComponent, localOffset,	 PropertyDataType::Float3),
 				ADD_PROPERTY(BoxColliderComponent, halfExtents,	 PropertyDataType::Float3),
 				ADD_PROPERTY(BoxColliderComponent, isTrigger,	 PropertyDataType::Bool),
+				ADD_PROPERTY(BoxColliderComponent, blocksCamera, PropertyDataType::Bool),
 				ADD_PROPERTY(BoxColliderComponent, layer,		 PropertyDataType::CollisionLayer)
 			});
 	}

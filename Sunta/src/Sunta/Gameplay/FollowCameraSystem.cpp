@@ -36,6 +36,15 @@ constexpr float MinDistanceFromPivot = 0.4f;
 // How quickly the camera moves back out after a wall stopped pushing it
 constexpr float DistanceReturnSharpness = 6.0f;
 
+// Something low behind the player (a heap of rubble, a low wall) would push the camera into the player's head: it rises
+// over it instead, looking down at the player, when rising one of these heights clears most of the view. It goes up
+// quickly and comes down slowly
+constexpr float RiseSteps[]          = { 0.6f, 1.2f, 1.8f, 2.4f };
+constexpr float RiseIsWorthFrom      = 0.75f; // pushed in to less than this part of the distance: try rising
+constexpr float RiseClearsFrom       = 0.9f;  // rising helps when the view is then this free
+constexpr float RiseUpSharpness      = 7.0f;
+constexpr float RiseDownSharpness    = 2.5f;
+
 // The view never looks straight up or down, there the "up" of the camera has no meaning
 constexpr float MaxViewPitchDegrees = 89.0f;
 
@@ -126,17 +135,64 @@ float GetFreeDistance(const FrameInfo& frame, const FollowCameraComponent& follo
 	ray.direction = cameraOffset / wantedLength;
 
 	// The player is ignored: the pivot is inside its collider. So is the fog of a boss arena: it is a wall for the
-	// player, not for the camera (fighting just inside the gate, the camera would come up behind the player's head)
+	// player, not for the camera (fighting just inside the gate, the camera would come up behind the player's head),
+	// and so are colliders that don't block the camera (unseen walls at the edge of an arena): up to two of them
+	auto isSeeThrough = [&frame](unsigned int entityID)
+	{
+		const BoxColliderComponent* collider = frame.entityManager.GetComponent<BoxColliderComponent>(entityID);
+		return frame.entityManager.GetComponent<FogGateComponent>(entityID) || (collider && !collider->blocksCamera);
+	};
+	const float reach = wantedLength + WallMargin;
 	RaycastHit hit;
-	if (!Physics::Raycast(frame.entityManager, ray, wantedLength + WallMargin, SightBlockingLayers, frame.playerEntityID, hit))
+	if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, frame.playerEntityID, hit))
 		return follow.distance;
-	if (frame.entityManager.GetComponent<FogGateComponent>(hit.entityID)
-		&& !Physics::Raycast(frame.entityManager, ray, wantedLength + WallMargin, SightBlockingLayers, { frame.playerEntityID, hit.entityID }, hit))
-		return follow.distance;
+	if (isSeeThrough(hit.entityID))
+	{
+		const unsigned int first = hit.entityID;
+		if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, { frame.playerEntityID, first }, hit))
+			return follow.distance;
+		if (isSeeThrough(hit.entityID)
+		    && !Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, { frame.playerEntityID, first, hit.entityID }, hit))
+			return follow.distance;
+	}
 
 	const float freeLength = glm::clamp(hit.distance - WallMargin, MinDistanceFromPivot, wantedLength);
 
 	return follow.distance * freeLength / wantedLength;
+}
+
+// How high the camera should rise over something low behind the player (0: not at all), and how far it may be then
+float ChooseRise(const FrameInfo& frame, const FollowCameraComponent& follow, const glm::vec3& cameraOffset, float freeDistance,
+	float& outFreeDistance)
+{
+	outFreeDistance = freeDistance;
+	if (follow.distance < SmallestUsableLength || freeDistance >= follow.distance * RiseIsWorthFrom)
+		return 0.0f;
+
+	for (float rise : RiseSteps)
+	{
+		// (nothing above the player's head either: a ceiling or an arch)
+		Ray up;
+		up.origin    = follow.pivot;
+		up.direction = WorldUp;
+		RaycastHit hit;
+		if (Physics::Raycast(frame.entityManager, up, rise + WallMargin, SightBlockingLayers, frame.playerEntityID, hit))
+			return 0.0f;
+
+		const float raisedFree = GetFreeDistance(frame, follow, cameraOffset + WorldUp * rise);
+		if (raisedFree >= follow.distance * RiseClearsFrom)
+		{
+			outFreeDistance = raisedFree;
+			return rise;
+		}
+	}
+	return 0.0f;
+}
+
+void UpdateRise(FollowCameraComponent& follow, float wantedRise, float deltaTime)
+{
+	const float sharpness = wantedRise > follow.currentRise ? RiseUpSharpness : RiseDownSharpness;
+	follow.currentRise = SmoothValue(follow.currentRise, wantedRise, sharpness, deltaTime);
 }
 
 // A wall pushes the camera in at once (the player must never be hidden), the camera moves back out smoothly
@@ -200,9 +256,11 @@ void PlaceCamera(TransformComponent& cameraTransform, const FollowCameraComponen
 	// 'currentDistance' is shorter than 'distance' while a wall pushes the camera, the whole offset shrinks with it
 	const float shrink = follow.distance > SmallestUsableLength ? follow.currentDistance / follow.distance : 1.0f;
 
-	const glm::vec3 viewDirection = GetViewDirection(follow, glm::vec2(shakeDegrees));
+	// (risen over something, it looks down at the pivot as much more as it rose)
+	const float riseDegrees = glm::degrees(std::atan2(follow.currentRise, glm::max(follow.currentDistance, SmallestUsableLength)));
+	const glm::vec3 viewDirection = GetViewDirection(follow, glm::vec2(shakeDegrees.x, shakeDegrees.y + riseDegrees));
 
-	cameraTransform.position           = follow.pivot + cameraOffset * shrink;
+	cameraTransform.position           = follow.pivot + cameraOffset * shrink + WorldUp * follow.currentRise;
 	cameraTransform.rotationQuaternion = glm::angleAxis(glm::radians(shakeDegrees.z), viewDirection) * MakeRotationLookingAlong(viewDirection);
 
 	// The Inspector shows the angles, so they follow the quaternion
@@ -228,7 +286,14 @@ void UpdateCamera(const FrameInfo& frame, FollowCameraComponent& follow, Transfo
 	const glm::vec3 orbitDirection = GetDirectionFromYawAndPitch(follow.yawDegrees, follow.pitchDegrees);
 	const glm::vec3 cameraOffset   = GetCameraOffset(follow, orbitDirection);
 
-	UpdateDistance(follow, GetFreeDistance(frame, follow, cameraOffset), frame.deltaTime);
+	float freeDistance = GetFreeDistance(frame, follow, cameraOffset);
+	const float rise = ChooseRise(frame, follow, cameraOffset, freeDistance, freeDistance);
+	UpdateRise(follow, rise, frame.deltaTime);
+	// (while it rises the old pushed-in distance holds, so it doesn't swing out before it is up)
+	if (follow.currentRise > rise * 0.6f || rise <= 0.0f)
+		UpdateDistance(follow, freeDistance, frame.deltaTime);
+	else
+		UpdateDistance(follow, glm::min(freeDistance, GetFreeDistance(frame, follow, cameraOffset + WorldUp * follow.currentRise)), frame.deltaTime);
 	PlaceCamera(cameraTransform, follow, cameraOffset, UpdateShake(follow, frame.deltaTime));
 }
 
