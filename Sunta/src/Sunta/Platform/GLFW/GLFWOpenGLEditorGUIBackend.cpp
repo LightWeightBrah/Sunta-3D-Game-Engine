@@ -62,10 +62,15 @@ void GLFWOpenGLEditorGUIBackend::NewFrame(void* window)
 		int windowX = 0, windowY = 0;
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 			glfwGetWindowPos((GLFWwindow*)window, &windowX, &windowY);
+		// (a hidden window of a background test run never gets the system's focus: the script's clicks count anyway)
+		io.AddFocusEvent(true);
 		io.AddMousePosEvent(windowX + cursor.x, windowY + cursor.y);
-		io.AddMouseButtonEvent(0, InputPlayback::IsKeyHeldByScript("Mouse1"));
-		io.AddMouseButtonEvent(1, InputPlayback::IsKeyHeldByScript("Mouse2"));
-		io.AddMouseButtonEvent(2, InputPlayback::IsKeyHeldByScript("Mouse3"));
+		// (each press and release on its own: ImGui trickles them over the next frames, so a double click is seen)
+		for (const auto& [button, isDown] : InputPlayback::TakeMouseButtonChanges())
+		{
+			if (button >= 0 && button < 3)
+				io.AddMouseButtonEvent(button, isDown);
+		}
 	}
 	ImGui::NewFrame();
 }

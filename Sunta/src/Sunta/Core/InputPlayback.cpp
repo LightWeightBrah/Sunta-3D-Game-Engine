@@ -100,13 +100,19 @@ int ParseKey(std::string name)
 	return -1;
 }
 
+// Every change of a mouse button the script made, in order, for the editor's GUI (see TakeMouseButtonChanges)
+std::vector<std::pair<int, bool>> mouseButtonChanges;
+
 void Press(int code)
 {
 	if (code < 0) return;
 	if (std::find(heldKeys.begin(), heldKeys.end(), code) == heldKeys.end())
 		heldKeys.push_back(code);
 	if (code >= MouseCodeOffset)
+	{
 		EventBus::Publish(MouseButtonPressedEvent{ code - MouseCodeOffset });
+		mouseButtonChanges.push_back({ code - MouseCodeOffset, true });
+	}
 	else
 		EventBus::Publish(KeyPressedEvent{ code });
 }
@@ -116,7 +122,10 @@ void Release(int code)
 	if (code < 0) return;
 	heldKeys.erase(std::remove(heldKeys.begin(), heldKeys.end(), code), heldKeys.end());
 	if (code >= MouseCodeOffset)
+	{
 		EventBus::Publish(MouseButtonReleasedEvent{ code - MouseCodeOffset });
+		mouseButtonChanges.push_back({ code - MouseCodeOffset, false });
+	}
 	else
 		EventBus::Publish(KeyReleasedEvent{ code });
 }
@@ -315,6 +324,13 @@ bool InputPlayback::TryGetCursor(glm::vec2& outPosition)
 		return false;
 	outPosition = cursor;
 	return true;
+}
+
+std::vector<std::pair<int, bool>> InputPlayback::TakeMouseButtonChanges()
+{
+	std::vector<std::pair<int, bool>> changes;
+	changes.swap(mouseButtonChanges);
+	return changes;
 }
 
 void InputPlayback::RequestShot(const std::string& name)

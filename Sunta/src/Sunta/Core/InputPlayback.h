@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <functional>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace Sunta
 {
@@ -45,6 +47,10 @@ namespace Sunta
 		static void PressKey(const std::string& name);
 		static void ReleaseKey(const std::string& name);
 		static bool IsKeyHeldByScript(const std::string& name);
+
+		// The presses and releases of mouse buttons (0 left, 1 right, 2 middle) the script made since the last call, in
+		// order: a slow frame may hold several (the second click of a double click), each must reach the GUI
+		static std::vector<std::pair<int, bool>> TakeMouseButtonChanges();
 
 		// The script's pointer ("cursor X Y [SECONDS]", window pixels), false while the script never set it: the
 		// editor's GUI takes it and the script's mouse buttons, so a test can click through the editor
