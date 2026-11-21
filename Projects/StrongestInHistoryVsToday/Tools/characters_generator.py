@@ -435,7 +435,12 @@ GESTURES = {
 # (in his armor he makes the same signs)
 GESTURES["sih_boss_armored"] = GESTURES["sih_boss"]
 # (with his sword the player makes the signs of his techniques the same way; he parries with the blade, not the arm)
-GESTURES["sih_player_sword"] = {name: gestures for name, gestures in GESTURES["sih_player"].items() if name != "Parry"}
+# (with his sword in the right fist only the left hand makes the sign: the right one keeps the blade where the clip
+# holds it, instead of bringing it up under his chin)
+GESTURES["sih_player_sword"] = {name: [g for g in gestures if g.side == "_L"] for name, gestures in GESTURES["sih_player"].items()
+                                if name != "Parry"}
+# (and in his armor of baby oil: the same signs - without this his techniques were made with the clip's idle hands)
+GESTURES["sih_player_armored"] = GESTURES["sih_player_sword"]
 
 
 def gesture_pin(armature, rig, gesture, size):
