@@ -65,6 +65,7 @@ using BossHandle          = ComponentHandle<BossComponent>;
 using FogGateHandle       = ComponentHandle<FogGateComponent>;
 using ModelHandle         = ComponentHandle<ModelComponent>;
 using HitboxHandle        = ComponentHandle<HitboxComponent>;
+using EnemyHealthBarHandle = ComponentHandle<EnemyHealthBarComponent>;
 using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
 using EnvironmentHandle   = ComponentHandle<EnvironmentComponent>;
 using CutsceneHandle      = ComponentHandle<CutsceneComponent>;
@@ -859,6 +860,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"fogGate",             ComponentHandleProperty<FogGateComponent>(),
 		"model",               ComponentHandleProperty<ModelComponent>(),
 		"hitbox",              ComponentHandleProperty<HitboxComponent>(),
+		"enemyHealthBar",      ComponentHandleProperty<EnemyHealthBarComponent>(),
 		"particles",           ComponentHandleProperty<ParticleEmitterComponent>(),
 		"environment",         ComponentHandleProperty<EnvironmentComponent>(),
 		"cutscene",            ComponentHandleProperty<CutsceneComponent>(),
@@ -1073,6 +1075,11 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 
 	// Usage in Lua: sword.hitbox.isEnabled = true (a weapon taken up), boss's fist: fist.hitbox.isEnabled = false;
 	// sword.hitbox.damage = 40
+	// Usage in Lua: this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss renamed by its phase)
+	lua.new_usertype<EnemyHealthBarHandle>("EnemyHealthBar", sol::no_constructor,
+		"displayName", MemberProperty(&EnemyHealthBarComponent::displayName, std::string())
+	);
+
 	lua.new_usertype<HitboxHandle>("Hitbox", sol::no_constructor,
 		"isEnabled", MemberProperty(&HitboxComponent::isEnabled, false),
 		"damage",    MemberProperty(&HitboxComponent::damage,    0.0f)

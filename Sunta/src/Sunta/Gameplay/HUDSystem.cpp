@@ -502,6 +502,9 @@ void UpdateEnemyBar(EntityManager& entityManager, EnemyHealthBarComponent& bar, 
 	// from across its arena
 	if (const BossComponent* boss = entityManager.GetComponent<BossComponent>(enemyID))
 		bar.isEngaged = bar.isEngaged && boss->isAwake;
+	// An enemy asleep (a summon not called yet) is not in the fight
+	if (const EnemyComponent* enemy = entityManager.GetComponent<EnemyComponent>(enemyID); enemy && enemy->isDormant)
+		bar.isEngaged = false;
 	bar.trailingHealth  = ShrinkTrailTowards(bar.trailingHealth, health->currentHealth, health->maxHealth, deltaTime);
 	bar.healthLastFrame = health->currentHealth;
 }
@@ -537,7 +540,9 @@ bool DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 	if (!bar.isEngaged)
 		return false;
 
-	const glm::vec2 rise = glm::vec2(0.0f, -BossBarRowSpacing * row);
+	// (the rows as far apart as the bars are tall: a thin styled bar doesn't leave a gap the size of a thick one)
+	const float rowSpacing = (style && style->boss.IsUsable()) ? style->boss.height * 0.7f + BossNameHeight + BossNameGap : BossBarRowSpacing;
+	const glm::vec2 rise = glm::vec2(0.0f, -rowSpacing * row);
 
 	const std::string name = bar.displayName.empty() ? GetEntityName(entityManager, enemyID) : bar.displayName;
 

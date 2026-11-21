@@ -43,6 +43,8 @@ constexpr float BarFadeSeconds = 0.6f;
 constexpr float SoundFadeOutSeconds = 0.4f;
 // After a cutscene the bars wait this long before sliding out: the next shot of a sequence keeps them
 constexpr float BarLingerSeconds = 0.9f;
+// How long after a shot the HUD still stays away (the next shot of a scene may start a frame or two later)
+constexpr float BetweenShotsSeconds = 0.25f;
 
 // How far the bars are in (0..1), shared by every cutscene so a sequence of shots shows them once
 struct Letterbox
@@ -326,6 +328,12 @@ bool CutsceneSystem::PlayByName(EntityManager& entityManager, const std::string&
 
 	Play(entityManager, entityID);
 	return true;
+}
+
+bool CutsceneSystem::IsBetweenShots()
+{
+	const Letterbox& letterbox = GetLetterbox();
+	return letterbox.shown > 0.0f && letterbox.secondsWithout < BetweenShotsSeconds;
 }
 
 bool CutsceneSystem::IsPlaying(EntityManager& entityManager)

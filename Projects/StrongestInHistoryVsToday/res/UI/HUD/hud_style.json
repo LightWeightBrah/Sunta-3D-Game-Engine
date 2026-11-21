@@ -9,10 +9,10 @@
             86,
             56
         ],
-        "height": 72,
+        "height": 58,
         "offset": [
-            22,
-            12
+            18,
+            10
         ]
     },
     "stamina": {
@@ -25,10 +25,10 @@
             86,
             56
         ],
-        "height": 54,
+        "height": 44,
         "offset": [
-            46,
-            64
+            40,
+            52
         ]
     },
     "boss": {
@@ -41,10 +41,10 @@
             116,
             56
         ],
-        "height": 66,
+        "height": 48,
         "offset": [
             0,
-            0
+            34
         ],
         "ornament": "@game/UI/HUD/boss_crest.png"
     },

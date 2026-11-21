@@ -1762,6 +1762,11 @@ function O.updateTransform(deltaTime)
         this.world:shakeCamera(0.6)
         Audio.play(BoomSound, 1.1)
         this.world:notify(string.upper(O.ArmorTitle))
+        -- (his bar carries his new name)
+        if this.enemyHealthBar then
+            O.BaseTitle = O.BaseTitle or this.enemyHealthBar.displayName
+            this.enemyHealthBar.displayName = O.ArmorTitle
+        end
         O.tween(function(v)
             local wanted = this.health.max * v
             if this.health.current < wanted then this.health:heal(wanted - this.health.current) end
@@ -1858,7 +1863,8 @@ end
 
 -- As the boss takes up his sword, the player takes up his: his model with the sword in its fist (the same man, the
 -- same clips by name), the sword drawn out of a burst of oil, his fists no longer the weapon
-O.PlayerPlainModel, O.PlayerSwordModel = "sih_player", "sih_player_sword"
+-- (his sword comes with his armor of baby oil: crystal plates on his chest, shoulders, forearms and shins)
+O.PlayerPlainModel, O.PlayerSwordModel = "sih_player", "sih_player_armored"
 O.PlayerSwordTitle = "Divine Baby Oil: Crystal Vessel"
 
 function O.setPlayerSword(isOn)
@@ -1889,8 +1895,8 @@ end
 -- shoulder at him; close on his hands making the sign of his great technique, rays of light out of him; beside him as
 -- the sword of oil comes out of a burst of oil in slow motion; wide on both of them with the name of it. The boss waits
 -- Each shot starts the moment the one before it ends (the shots keep real time, the game's time is slowed meanwhile)
-O.Vessel = { { "Vessel Answer", "answer" }, { "Vessel Gesture", "gesture" }, { "Vessel Draw", "draw" },
-             { "Vessel Face-off", "faceoff" } }
+O.Vessel = { { "Vessel Answer", "answer" }, { "Vessel Gesture", "gesture" }, { "Vessel Armor", "armor" },
+             { "Vessel Draw", "draw" }, { "Vessel Face-off", "faceoff" } }
 
 function O.startVessel()
     O.vessel = { step = 0, shot = nil }
@@ -1907,6 +1913,23 @@ function O.vesselBeat(beat)
             after(i * 0.08, function() this.world:effect("Technique Ray", center, player.transform.forward) end)
         end
         Audio.play("@game/Sounds/Spells/magic_whoosh.ogg", 1.0)
+    elseif beat == "armor" and player then
+        -- The oil turns to crystal on him in two beats (the user's scenario): the chest and the shoulders, then the
+        -- forearms and the shins - the crystal plates are on him from the first beat on
+        local body = player.transform.position
+        this.world:effect("Solid Oil Burst", body + vec3(0, 0.6, 0), player.transform.forward)
+        Audio.play("@game/Sounds/Spells/magic_whoosh.ogg", 0.9)
+        after(0.5, function()
+            if player.model then player.model.modelName = O.PlayerSwordModel end
+            this.world:effect("Solid Oil Burst", body + vec3(0, 1.35, 0), player.transform.forward)
+            this.world:shakeCamera(0.3)
+            Audio.play("@game/Sounds/Spells/glass_break.ogg", 0.9)
+        end)
+        after(1.1, function()
+            this.world:effect("Solid Oil Burst", body + vec3(0.35, 1.1, 0), player.transform.forward)
+            this.world:effect("Solid Oil Burst", body + vec3(-0.35, 0.4, 0), player.transform.forward)
+            Audio.play("@game/Sounds/Spells/glass_break.ogg", 0.7)
+        end)
     elseif beat == "draw" and player then
         O.setPlayerSword(true)
         if player.characterActions then player.characterActions:play("Draw_Sword") end
@@ -2377,6 +2400,7 @@ local function reset()
     invulnerableLeft = 0
     domainIsUp = false
     if this.model then this.model.expression = 0 end
+    if O.BaseTitle and this.enemyHealthBar then this.enemyHealthBar.displayName = O.BaseTitle end
     domainBrokenLeft = 0
     isChanneling = false
     hasAnnouncedSummon = false

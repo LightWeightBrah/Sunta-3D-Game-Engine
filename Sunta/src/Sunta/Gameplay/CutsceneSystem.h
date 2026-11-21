@@ -22,6 +22,10 @@ public:
 	// True while some cutscene plays: enemies don't think and the player's keys do nothing
 	static bool IsPlaying(EntityManager& entityManager);
 
+	// True for a moment after a shot ended: a script that starts the next shot of a scene a frame later doesn't flash
+	// the HUD between the two
+	static bool IsBetweenShots();
+
 	// Call once per frame AFTER the follow camera: the cutscene's camera wins
 	static void Update(EntityManager& entityManager, float deltaTime);
 

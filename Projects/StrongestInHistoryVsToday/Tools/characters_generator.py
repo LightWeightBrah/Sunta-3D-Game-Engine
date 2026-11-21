@@ -771,7 +771,7 @@ def add_smirk(character, head, preview_folder=""):
 # it, how much bigger than the body it is, its kind: None the torso, "limb" along its bones, "shoulder" over the top
 # of the arm; and how far around the bones the body is measured, meters)
 CRYSTAL_ARMOR = {
-    "chest":      ("diddy_armor_chest.glb", ("Spine", "Chest"), "Chest", 1.1, None, 0.26),
+    "chest":      ("diddy_armor_chest.glb", ("Spine", "Chest"), "Chest", 1.2, None, 0.26),
     "pauldron_r": ("diddy_armor_pauldron.glb", ("UpperArm_R",), "UpperArm_R", 1.3, "shoulder", 0.11),
     "bracer_r":   ("diddy_armor_bracer.glb", ("LowerArm_R",), "LowerArm_R", 1.15, "limb", 0.09),
     "greave_r":   ("diddy_armor_greave.glb", ("Shin_R",), "Shin_R", 1.12, "limb", 0.11),
@@ -840,6 +840,24 @@ def fit_piece(piece, points, rotation, margin):
     piece.data.transform(Matrix.Translation(rotation @ centre) @ rotation.to_4x4() @ scale @ Matrix.Translation(-p_centre))
 
 
+ARMOR_TEXTURE_SIZE = 1024
+
+
+def shrink_textures(piece, folder, base_name, size):
+    """A piece's textures scaled down to 'size' pixels (if bigger): the image of its material (written again by the
+    export) and its specular texture on the disk (found by the engine by its name)"""
+    for node in piece.data.materials[0].node_tree.nodes:
+        if node.type == "TEX_IMAGE" and node.image and node.image.size[0] > size:
+            node.image.scale(size, size)
+    path = os.path.join(folder, base_name + "_specular.png")
+    if os.path.exists(path):
+        image = bpy.data.images.load(path)
+        if image.size[0] > size:
+            image.scale(size, size)
+            image.save()
+        bpy.data.images.remove(image)
+
+
 def add_crystal_armor(character, armature, body, out_folder):
     """The pieces of CRYSTAL_ARMOR fitted around the body at rest, each moved by one bone (rigid, weight 1), with
     textures of their own. Returns the meshes (exported with the character)"""
@@ -862,6 +880,10 @@ def add_crystal_armor(character, armature, body, out_folder):
         piece = import_piece(file_name)
         fit_piece(piece, points, frame_along(axis, front), margin)
         piece.name = f"{character.name}_{name}"
+        # (its textures, a fourth of the generated size: a piece is small on the screen)
+        character_from_mesh.make_engine_textures(piece, out_folder, piece.name, 1.05, 1.6)
+        piece.data.materials[0].name = piece.name + "_crystal"
+        shrink_textures(piece, out_folder, piece.name, ARMOR_TEXTURE_SIZE)
         pieces.append((piece, bone))
         if name in MIRRORED:
             copy = piece.copy()
@@ -870,13 +892,11 @@ def add_crystal_armor(character, armature, body, out_folder):
             copy.data.transform(Matrix.Scale(-1.0, 4, Vector((1.0, 0.0, 0.0))))
             copy.data.flip_normals()
             copy.name = f"{character.name}_{MIRRORED[name]}"
+            # (the mirrored piece wears the same material: one set of textures for both sides)
             pieces.append((copy, bone.replace("_R", "_L")))
 
     out = []
     for piece, bone in pieces:
-        character_from_mesh.make_engine_textures(piece, out_folder, piece.name, 1.05, 1.6)
-        # (clear crystal in the engine: the name says so, see Material::Data::crystal)
-        piece.data.materials[0].name = piece.name + "_crystal"
         piece.vertex_groups.clear()
         group = piece.vertex_groups.new(name=bone)
         group.add(range(len(piece.data.vertices)), 1.0, "REPLACE")

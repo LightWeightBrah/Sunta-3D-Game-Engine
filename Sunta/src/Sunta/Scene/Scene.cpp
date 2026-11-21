@@ -699,10 +699,11 @@ void Scene::Render(Renderer& renderer)
 	{
 		// Last: the HUD is drawn over the whole scene
 		const HUDArea hudArea = hasHUDArea ? HUDArea{ hudAreaTopLeft, hudAreaSize } : HUDArea{ glm::vec2(0.0f), screenSize };
-		if (CutsceneSystem::IsPlaying(entityManager))
-			CutsceneSystem::DrawOverlay(entityManager, screenSize, hudArea.topLeft, hudArea.size);
-		else
+		// (the bars of a cutscene are drawn as long as they are shown: they ease out over the game, which comes back
+		// with its HUD only once no next shot followed)
+		if (!CutsceneSystem::IsPlaying(entityManager) && !CutsceneSystem::IsBetweenShots())
 			HUDSystem::Draw(entityManager, sceneData.projectionMatrix * sceneData.viewMatrix, screenSize, hudArea);
+		CutsceneSystem::DrawOverlay(entityManager, screenSize, hudArea.topLeft, hudArea.size);
 
 		// Over everything, also over a cutscene: a flash of the whole screen asked for by a script
 		HUDSystem::DrawScreenFlash(screenSize);

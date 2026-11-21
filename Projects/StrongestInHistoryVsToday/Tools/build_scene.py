@@ -768,6 +768,8 @@ def add_oil_domain(builder, player):
         # His answer to the boss's armor (Divine Baby Oil: Crystal Vessel, boss_fight.lua O.startVessel): his hands close
         # and low, beside him as he draws the sword of oil, wide from aside on both of them (the boss before him)
         ("Vessel Gesture", 1.8, PLAYER_NAME, 1.3, 0.4, ((0.35, 1.0, -1.6), (0.3, 1.1, -1.25))),
+        # (the oil crystallizes on him: the camera goes round him by about forty degrees)
+        ("Vessel Armor", 2.0, PLAYER_NAME, 1.15, 0.3, ((1.7, 1.2, -2.3), (0.4, 1.3, -2.7))),
         ("Vessel Draw", 1.8, PLAYER_NAME, 1.2, 0.4, ((1.9, 1.25, -1.7), (1.65, 1.35, -1.35))),
         ("Vessel Face-off", 2.2, PLAYER_NAME, 1.3, 0.6, ((6.5, 2.1, -2.4), (7.0, 2.3, -3.0))),
     )
