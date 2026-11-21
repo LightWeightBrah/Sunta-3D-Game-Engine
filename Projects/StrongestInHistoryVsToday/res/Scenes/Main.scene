@@ -19799,11 +19799,11 @@
     "fuse_seconds": 0.0,
     "trail_effect": "",
     "trail_particles_per_second": 0.0,
-    "hit_effect": "Oil Splash",
+    "hit_effect": "Solid Oil Burst",
     "hit_burst": 26,
     "hit_sound": "@game/Sounds/Spells/glass_break.ogg",
-    "hit_stop_seconds": 0.08,
-    "camera_shake": 0.35
+    "hit_stop_seconds": 0.1,
+    "camera_shake": 0.45
    }
   },
   {
@@ -22361,6 +22361,1161 @@
   },
   {
    "tag": {
+    "name": "Boss Star Bolt"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "projectile": {
+    "spin_degrees_per_second": 620.0,
+    "speed": 15.0,
+    "damage": 13.0,
+    "poise_damage": 14.0,
+    "radius": 0.5,
+    "homing_degrees_per_second": 0.0,
+    "lifetime_seconds": 3.2,
+    "fuse_seconds": 0.0,
+    "trail_effect": "Fireball Trail",
+    "trail_particles_per_second": 70.0,
+    "hit_effect": "Star Impact",
+    "hit_burst": 2,
+    "hit_sound": "@game/Sounds/Brawl/Punch",
+    "hit_stop_seconds": 0.04,
+    "camera_shake": 0.2
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 1"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 2"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 3"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 4"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 5"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 6"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 7"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 8"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 9"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 10"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 11"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 12"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 13"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 14"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 15"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 16"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 17"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 18"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 19"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 20"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 21"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 22"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 23"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 24"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 25"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 26"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 27"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 28"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 29"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Boss Star Bolt Body 30"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_hex_bullet",
+    "emissive_strength": 2.5
+   },
+   "parent": {
+    "index": 537,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Domain Line Fire"
    },
    "transform": {
@@ -22480,7 +23635,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 538,
+    "index": 569,
     "bone_name": ""
    }
   },
@@ -22516,7 +23671,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 538,
+    "index": 569,
     "bone_name": ""
    }
   },
@@ -22552,7 +23707,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 538,
+    "index": 569,
     "bone_name": ""
    }
   },
@@ -22634,7 +23789,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22670,7 +23825,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22706,7 +23861,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22742,7 +23897,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22778,7 +23933,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22814,7 +23969,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22850,7 +24005,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22886,7 +24041,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22922,7 +24077,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22958,7 +24113,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -22994,7 +24149,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23030,7 +24185,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23066,7 +24221,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23102,7 +24257,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23138,7 +24293,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23174,7 +24329,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23210,7 +24365,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23246,7 +24401,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23282,7 +24437,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23318,7 +24473,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23354,7 +24509,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23390,7 +24545,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23426,7 +24581,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23462,7 +24617,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23498,7 +24653,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23534,7 +24689,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23570,7 +24725,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23606,7 +24761,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23642,7 +24797,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23678,7 +24833,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23714,7 +24869,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23750,7 +24905,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23786,7 +24941,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23822,7 +24977,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23858,7 +25013,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23894,7 +25049,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23930,7 +25085,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -23966,7 +25121,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -24002,7 +25157,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -24038,7 +25193,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 542,
+    "index": 573,
     "bone_name": ""
    }
   },
@@ -24119,7 +25274,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24155,7 +25310,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24191,7 +25346,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24227,7 +25382,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24263,7 +25418,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24299,7 +25454,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24335,7 +25490,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24371,7 +25526,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24407,7 +25562,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24443,7 +25598,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24479,7 +25634,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24515,7 +25670,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24551,7 +25706,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24587,7 +25742,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24623,7 +25778,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24659,7 +25814,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24695,7 +25850,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24731,7 +25886,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24767,7 +25922,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24803,7 +25958,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24839,7 +25994,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24875,7 +26030,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24911,7 +26066,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -24947,7 +26102,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 583,
+    "index": 614,
     "bone_name": ""
    }
   },
@@ -25070,7 +26225,7 @@
     "dissolve": 0.6
    },
    "parent": {
-    "index": 608,
+    "index": 639,
     "bone_name": ""
    }
   },
@@ -25132,7 +26287,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 608,
+    "index": 639,
     "bone_name": ""
    }
   },
@@ -25213,7 +26368,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 608,
+    "index": 639,
     "bone_name": ""
    }
   },
@@ -25287,7 +26442,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 608,
+    "index": 639,
     "bone_name": ""
    }
   },
@@ -25373,7 +26528,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 608,
+    "index": 639,
     "bone_name": ""
    }
   },
@@ -25514,7 +26669,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 614,
+    "index": 645,
     "bone_name": ""
    }
   },
@@ -25588,7 +26743,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 614,
+    "index": 645,
     "bone_name": ""
    }
   },
@@ -25729,7 +26884,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 617,
+    "index": 648,
     "bone_name": ""
    }
   },
@@ -25855,7 +27010,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 619,
+    "index": 650,
     "bone_name": ""
    }
   },
@@ -25936,7 +27091,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 619,
+    "index": 650,
     "bone_name": ""
    }
   },
@@ -26072,7 +27227,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 622,
+    "index": 653,
     "bone_name": ""
    }
   },
@@ -26198,7 +27353,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 624,
+    "index": 655,
     "bone_name": ""
    }
   },
@@ -26279,7 +27434,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 624,
+    "index": 655,
     "bone_name": ""
    }
   },
@@ -26388,7 +27543,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 627,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -26443,7 +27598,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 627,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -26524,7 +27679,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 627,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -26610,7 +27765,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 627,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -26684,7 +27839,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 627,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -26793,7 +27948,7 @@
     "dissolve": 0.3
    },
    "parent": {
-    "index": 633,
+    "index": 664,
     "bone_name": ""
    }
   },
@@ -26874,7 +28029,403 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 633,
+    "index": 664,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Solid Oil Burst"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 4,
+    "lifetime_seconds": 0.35,
+    "start_radius": 0.2,
+    "end_radius": 0.65,
+    "core_color": [
+     1.0,
+     1.0,
+     0.97
+    ],
+    "edge_color": [
+     0.72,
+     0.82,
+     1.0
+    ],
+    "intensity": 1.5,
+    "spin_degrees_per_second": 240.0,
+    "noise_scale": 4.5,
+    "scroll_speed": 2.0,
+    "dissolve": 0.6,
+    "light_intensity": 2.5,
+    "light_radius": 6.0,
+    "light_color": [
+     1.0,
+     0.92,
+     0.8
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Solid Oil Burst Blast"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 0.35,
+    "start_radius": 0.3,
+    "end_radius": 1.3,
+    "core_color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "edge_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "intensity": 0.8,
+    "noise_scale": 4.0,
+    "scroll_speed": 1.5,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 667,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Solid Oil Burst Wave"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.45,
+    "start_radius": 0.3,
+    "end_radius": 2.6,
+    "core_color": [
+     1.0,
+     0.99,
+     0.96
+    ],
+    "edge_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "intensity": 1.4,
+    "thickness": 0.2,
+    "noise_scale": 3.5,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 667,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Solid Oil Burst Shards"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.7,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -9.0,
+     0.0
+    ],
+    "start_size": 0.08,
+    "end_size": 0.032,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.98,
+     0.9
+    ],
+    "end_color": [
+     0.75,
+     0.8,
+     0.9
+    ],
+    "intensity": 3.0,
+    "max_particles": 3000,
+    "burst_amount": 60,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 13.0,
+    "size_randomness": 0.4,
+    "drag": 2.2,
+    "stretch": 0.02
+   },
+   "parent": {
+    "index": 667,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Solid Oil Burst Drops"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 1.0,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -12.0,
+     0.0
+    ],
+    "start_size": 0.06,
+    "end_size": 0.024,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.68,
+     0.2
+    ],
+    "end_color": [
+     0.6,
+     0.35,
+     0.1
+    ],
+    "intensity": 2.2,
+    "max_particles": 3000,
+    "burst_amount": 80,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 9.0,
+    "size_randomness": 0.4,
+    "drag": 1.8,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 667,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Solid Oil Burst Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.1,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 1.6,
+    "end_size": 0.48,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 0.8,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 667,
     "bone_name": ""
    }
   },
@@ -27040,7 +28591,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 637,
+    "index": 674,
     "bone_name": ""
    }
   },
@@ -27121,7 +28672,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 637,
+    "index": 674,
     "bone_name": ""
    }
   },
@@ -27195,7 +28746,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 637,
+    "index": 674,
     "bone_name": ""
    }
   },
@@ -27302,7 +28853,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 641,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -27357,7 +28908,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 641,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -27443,7 +28994,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 641,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -27524,7 +29075,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 641,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -27610,7 +29161,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 641,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -27684,7 +29235,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 641,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -27805,7 +29356,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 648,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -27886,7 +29437,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 648,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -27999,7 +29550,7 @@
     "dissolve": 0.8
    },
    "parent": {
-    "index": 651,
+    "index": 688,
     "bone_name": ""
    }
   },
@@ -28054,7 +29605,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 651,
+    "index": 688,
     "bone_name": ""
    }
   },
@@ -28107,7 +29658,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 651,
+    "index": 688,
     "bone_name": ""
    }
   },
@@ -28188,7 +29739,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 651,
+    "index": 688,
     "bone_name": ""
    }
   },
@@ -28274,7 +29825,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 651,
+    "index": 688,
     "bone_name": ""
    }
   },
@@ -28415,7 +29966,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 657,
+    "index": 694,
     "bone_name": ""
    }
   },
@@ -28522,7 +30073,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 659,
+    "index": 696,
     "bone_name": ""
    }
   },
@@ -28577,7 +30128,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 659,
+    "index": 696,
     "bone_name": ""
    }
   },
@@ -28658,7 +30209,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 659,
+    "index": 696,
     "bone_name": ""
    }
   },
@@ -28744,7 +30295,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 659,
+    "index": 696,
     "bone_name": ""
    }
   },
@@ -28818,7 +30369,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 659,
+    "index": 696,
     "bone_name": ""
    }
   },
@@ -28953,7 +30504,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 665,
+    "index": 702,
     "bone_name": ""
    }
   },
@@ -29039,7 +30590,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 665,
+    "index": 702,
     "bone_name": ""
    }
   },
@@ -29151,7 +30702,7 @@
     "dissolve": 0.7
    },
    "parent": {
-    "index": 668,
+    "index": 705,
     "bone_name": ""
    }
   },
@@ -29232,7 +30783,7 @@
     "stretch": 0.12
    },
    "parent": {
-    "index": 668,
+    "index": 705,
     "bone_name": ""
    }
   },
@@ -29318,7 +30869,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 668,
+    "index": 705,
     "bone_name": ""
    }
   },
@@ -29453,7 +31004,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 672,
+    "index": 709,
     "bone_name": ""
    }
   },
@@ -29539,7 +31090,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 672,
+    "index": 709,
     "bone_name": ""
    }
   },
@@ -29673,7 +31224,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 675,
+    "index": 712,
     "bone_name": ""
    }
   },
@@ -29747,7 +31298,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 675,
+    "index": 712,
     "bone_name": ""
    }
   },
@@ -29895,7 +31446,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 678,
+    "index": 715,
     "bone_name": ""
    }
   },
@@ -29976,7 +31527,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 678,
+    "index": 715,
     "bone_name": ""
    }
   },
@@ -30102,7 +31653,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 681,
+    "index": 718,
     "bone_name": ""
    }
   },
@@ -30188,7 +31739,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 681,
+    "index": 718,
     "bone_name": ""
    }
   },
@@ -30269,7 +31820,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 681,
+    "index": 718,
     "bone_name": ""
    }
   },
@@ -30378,7 +31929,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30431,7 +31982,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30486,7 +32037,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30567,7 +32118,7 @@
     "stretch": 0.0
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30648,7 +32199,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30734,7 +32285,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30808,7 +32359,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 685,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -30952,7 +32503,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 693,
+    "index": 730,
     "bone_name": ""
    }
   },
@@ -31088,7 +32639,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 695,
+    "index": 732,
     "bone_name": ""
    }
   },
@@ -31169,7 +32720,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 695,
+    "index": 732,
     "bone_name": ""
    }
   },
@@ -31309,7 +32860,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 698,
+    "index": 735,
     "bone_name": ""
    }
   },
@@ -32266,7 +33817,7 @@
     "block_effect": "Guard Impact"
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Hand_L"
    }
   },
@@ -32316,7 +33867,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Hand_R"
    }
   },
@@ -32366,7 +33917,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Hand_L"
    }
   },
@@ -32416,7 +33967,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Foot_R"
    }
   },
@@ -32458,7 +34009,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Head"
    }
   },
@@ -32500,7 +34051,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Head"
    }
   },
@@ -32537,7 +34088,7 @@
     "emissive_strength": 1.2
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -32611,7 +34162,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -32680,7 +34231,7 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -32755,7 +34306,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Hips"
    }
   },
@@ -32824,7 +34375,7 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Hips"
    }
   },
@@ -32900,7 +34451,7 @@
     "only_while_striking": true
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Weapon_R"
    }
   },
@@ -32975,7 +34526,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 722,
+    "index": 759,
     "bone_name": ""
    }
   },
@@ -33213,7 +34764,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33245,7 +34796,7 @@
     ]
    },
    "parent": {
-    "index": 730,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -33277,7 +34828,7 @@
     ]
    },
    "parent": {
-    "index": 730,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -33309,7 +34860,7 @@
     ]
    },
    "parent": {
-    "index": 730,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -33354,7 +34905,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33386,7 +34937,7 @@
     ]
    },
    "parent": {
-    "index": 734,
+    "index": 771,
     "bone_name": ""
    }
   },
@@ -33418,7 +34969,7 @@
     ]
    },
    "parent": {
-    "index": 734,
+    "index": 771,
     "bone_name": ""
    }
   },
@@ -33450,7 +35001,7 @@
     ]
    },
    "parent": {
-    "index": 734,
+    "index": 771,
     "bone_name": ""
    }
   },
@@ -33495,7 +35046,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33527,7 +35078,7 @@
     ]
    },
    "parent": {
-    "index": 738,
+    "index": 775,
     "bone_name": ""
    }
   },
@@ -33559,7 +35110,7 @@
     ]
    },
    "parent": {
-    "index": 738,
+    "index": 775,
     "bone_name": ""
    }
   },
@@ -33591,7 +35142,7 @@
     ]
    },
    "parent": {
-    "index": 738,
+    "index": 775,
     "bone_name": ""
    }
   },
@@ -33636,7 +35187,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33668,7 +35219,7 @@
     ]
    },
    "parent": {
-    "index": 742,
+    "index": 779,
     "bone_name": ""
    }
   },
@@ -33700,7 +35251,7 @@
     ]
    },
    "parent": {
-    "index": 742,
+    "index": 779,
     "bone_name": ""
    }
   },
@@ -33732,7 +35283,7 @@
     ]
    },
    "parent": {
-    "index": 742,
+    "index": 779,
     "bone_name": ""
    }
   },
@@ -33777,7 +35328,7 @@
     "blend_in_seconds": 0.4
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33809,7 +35360,7 @@
     ]
    },
    "parent": {
-    "index": 746,
+    "index": 783,
     "bone_name": ""
    }
   },
@@ -33841,7 +35392,7 @@
     ]
    },
    "parent": {
-    "index": 746,
+    "index": 783,
     "bone_name": ""
    }
   },
@@ -33873,7 +35424,7 @@
     ]
    },
    "parent": {
-    "index": 746,
+    "index": 783,
     "bone_name": ""
    }
   },
@@ -34075,7 +35626,7 @@
     ]
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": "Hand_R"
    }
   },
@@ -34121,7 +35672,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 753,
+    "index": 790,
     "bone_name": ""
    }
   },
@@ -34167,7 +35718,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 753,
+    "index": 790,
     "bone_name": ""
    }
   },
@@ -34213,7 +35764,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 753,
+    "index": 790,
     "bone_name": ""
    }
   },
@@ -34260,7 +35811,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 753,
+    "index": 790,
     "bone_name": ""
    }
   },
@@ -34307,7 +35858,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 753,
+    "index": 790,
     "bone_name": ""
    }
   },
@@ -34352,7 +35903,7 @@
     "blend_in_seconds": 0.9
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -34384,7 +35935,7 @@
     ]
    },
    "parent": {
-    "index": 759,
+    "index": 796,
     "bone_name": ""
    }
   },
@@ -34416,7 +35967,7 @@
     ]
    },
    "parent": {
-    "index": 759,
+    "index": 796,
     "bone_name": ""
    }
   },
@@ -34448,7 +35999,7 @@
     ]
    },
    "parent": {
-    "index": 759,
+    "index": 796,
     "bone_name": ""
    }
   },
@@ -34493,7 +36044,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -34525,7 +36076,7 @@
     ]
    },
    "parent": {
-    "index": 763,
+    "index": 800,
     "bone_name": ""
    }
   },
@@ -34557,7 +36108,7 @@
     ]
    },
    "parent": {
-    "index": 763,
+    "index": 800,
     "bone_name": ""
    }
   },
@@ -34589,7 +36140,7 @@
     ]
    },
    "parent": {
-    "index": 763,
+    "index": 800,
     "bone_name": ""
    }
   },
@@ -34633,7 +36184,7 @@
     "video_file": ""
    },
    "parent": {
-    "index": 710,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -34665,7 +36216,7 @@
     ]
    },
    "parent": {
-    "index": 767,
+    "index": 804,
     "bone_name": ""
    }
   },
@@ -34697,7 +36248,7 @@
     ]
    },
    "parent": {
-    "index": 767,
+    "index": 804,
     "bone_name": ""
    }
   },
@@ -34729,7 +36280,7 @@
     ]
    },
    "parent": {
-    "index": 767,
+    "index": 804,
     "bone_name": ""
    }
   },
@@ -34761,7 +36312,7 @@
     ]
    },
    "parent": {
-    "index": 767,
+    "index": 804,
     "bone_name": ""
    }
   },
@@ -34793,7 +36344,7 @@
     ]
    },
    "parent": {
-    "index": 767,
+    "index": 804,
     "bone_name": ""
    }
   },
@@ -34825,7 +36376,7 @@
     ]
    },
    "parent": {
-    "index": 710
+    "index": 747
    },
    "cutscene": {
     "duration_seconds": 6.0,
@@ -34868,7 +36419,7 @@
     ]
    },
    "parent": {
-    "index": 773
+    "index": 810
    }
   },
   {
@@ -34899,7 +36450,7 @@
     ]
    },
    "parent": {
-    "index": 773
+    "index": 810
    }
   },
   {
@@ -34930,7 +36481,7 @@
     ]
    },
    "parent": {
-    "index": 773
+    "index": 810
    }
   },
   {
@@ -34961,7 +36512,7 @@
     ]
    },
    "parent": {
-    "index": 773
+    "index": 810
    }
   },
   {
@@ -35201,7 +36752,7 @@
     ]
    },
    "parent": {
-    "index": 778
+    "index": 815
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -35285,7 +36836,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 778,
+    "index": 815,
     "bone_name": "Hand_R"
    }
   },
@@ -35335,7 +36886,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 778,
+    "index": 815,
     "bone_name": "Hand_L"
    }
   },
@@ -35385,7 +36936,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 778,
+    "index": 815,
     "bone_name": "Foot_R"
    }
   },
@@ -35643,7 +37194,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 783,
+    "index": 820,
     "bone_name": "Hand_R"
    }
   },
@@ -35693,7 +37244,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 783,
+    "index": 820,
     "bone_name": "Hand_L"
    }
   },
@@ -35743,7 +37294,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 783,
+    "index": 820,
     "bone_name": "Foot_R"
    }
   },
@@ -36001,7 +37552,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 787,
+    "index": 824,
     "bone_name": "Hand_R"
    }
   },
@@ -36051,7 +37602,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 787,
+    "index": 824,
     "bone_name": "Hand_L"
    }
   },
@@ -36101,7 +37652,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 787,
+    "index": 824,
     "bone_name": "Foot_R"
    }
   },
@@ -36359,7 +37910,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 791,
+    "index": 828,
     "bone_name": "Hand_R"
    }
   },
@@ -36409,7 +37960,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 791,
+    "index": 828,
     "bone_name": "Hand_L"
    }
   },
@@ -36459,7 +38010,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 791,
+    "index": 828,
     "bone_name": "Foot_R"
    }
   },
@@ -36491,7 +38042,7 @@
     ]
    },
    "parent": {
-    "index": 791,
+    "index": 828,
     "bone_name": "Hand_R"
    }
   },
@@ -36537,7 +38088,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 795,
+    "index": 832,
     "bone_name": ""
    }
   },
@@ -36795,7 +38346,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 797,
+    "index": 834,
     "bone_name": "Hand_R"
    }
   },
@@ -36845,7 +38396,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 797,
+    "index": 834,
     "bone_name": "Hand_L"
    }
   },
@@ -36895,7 +38446,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 797,
+    "index": 834,
     "bone_name": "Foot_R"
    }
   },
@@ -37153,7 +38704,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 801,
+    "index": 838,
     "bone_name": "Hand_R"
    }
   },
@@ -37203,7 +38754,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 801,
+    "index": 838,
     "bone_name": "Hand_L"
    }
   },
@@ -37253,7 +38804,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 801,
+    "index": 838,
     "bone_name": "Foot_R"
    }
   },
@@ -37285,7 +38836,7 @@
     ]
    },
    "parent": {
-    "index": 801,
+    "index": 838,
     "bone_name": "Hand_R"
    }
   },
@@ -37331,7 +38882,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 805,
+    "index": 842,
     "bone_name": ""
    }
   },
@@ -37589,7 +39140,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 807,
+    "index": 844,
     "bone_name": "Hand_R"
    }
   },
@@ -37639,7 +39190,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 807,
+    "index": 844,
     "bone_name": "Hand_L"
    }
   },
@@ -37689,7 +39240,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 807,
+    "index": 844,
     "bone_name": "Foot_R"
    }
   },
@@ -37721,7 +39272,7 @@
     ]
    },
    "parent": {
-    "index": 807,
+    "index": 844,
     "bone_name": "Hand_R"
    }
   },
@@ -37767,7 +39318,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 811,
+    "index": 848,
     "bone_name": ""
    }
   },
@@ -38025,7 +39576,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 813,
+    "index": 850,
     "bone_name": "Hand_R"
    }
   },
@@ -38075,7 +39626,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 813,
+    "index": 850,
     "bone_name": "Hand_L"
    }
   },
@@ -38125,7 +39676,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 813,
+    "index": 850,
     "bone_name": "Foot_R"
    }
   },
@@ -38383,7 +39934,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 817,
+    "index": 854,
     "bone_name": "Hand_R"
    }
   },
@@ -38433,7 +39984,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 817,
+    "index": 854,
     "bone_name": "Hand_L"
    }
   },
@@ -38483,7 +40034,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 817,
+    "index": 854,
     "bone_name": "Foot_R"
    }
   },
@@ -38741,7 +40292,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 821,
+    "index": 858,
     "bone_name": "Hand_R"
    }
   },
@@ -38791,7 +40342,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 821,
+    "index": 858,
     "bone_name": "Hand_L"
    }
   },
@@ -38841,7 +40392,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 821,
+    "index": 858,
     "bone_name": "Foot_R"
    }
   },
@@ -38947,7 +40498,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 825
+    "index": 862
    },
    "point_light": {
     "attenuation": {
@@ -39102,7 +40653,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 827
+    "index": 864
    },
    "point_light": {
     "attenuation": {
@@ -39244,7 +40795,7 @@
     ]
    },
    "parent": {
-    "index": 829
+    "index": 866
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -39384,7 +40935,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 832,
+    "index": 869,
     "bone_name": ""
    }
   },
@@ -39440,7 +40991,7 @@
     }
    },
    "parent": {
-    "index": 832,
+    "index": 869,
     "bone_name": ""
    }
   },
@@ -39472,7 +41023,7 @@
     ]
    },
    "parent": {
-    "index": 832,
+    "index": 869,
     "bone_name": ""
    }
   },
@@ -39625,7 +41176,7 @@
     ]
    },
    "parent": {
-    "index": 836,
+    "index": 873,
     "bone_name": ""
    }
   },
@@ -39657,7 +41208,7 @@
     ]
    },
    "parent": {
-    "index": 836,
+    "index": 873,
     "bone_name": ""
    }
   },
@@ -39689,7 +41240,7 @@
     ]
    },
    "parent": {
-    "index": 836,
+    "index": 873,
     "bone_name": ""
    }
   },
@@ -39721,7 +41272,7 @@
     ]
    },
    "parent": {
-    "index": 836,
+    "index": 873,
     "bone_name": ""
    }
   },

@@ -202,6 +202,20 @@ def add_technique_effects(builder):
                             intensity=3.0)))
 
 
+    # Solid Baby Oil landing (film 0:43-0:47): the ball of oil turned solid bursts on the enemy - a crystal block of oil
+    # flashing out and shattering, a blast of milk-white light, a ring over the ground, drops and shards flying
+    (Effect(builder, "Solid Oil Burst", root_shape=shape(
+        BOX, 0.35, 0.2, 0.65, [1.0, 1.0, 0.97], MILK_EDGE, 1.5, spin_degrees_per_second=240.0, noise_scale=4.5,
+        scroll_speed=2.0, dissolve=0.6, light_intensity=2.5, light_radius=6.0, light_color=[1.0, 0.92, 0.8]))
+     .shape("Blast", shape(SPHERE, 0.35, 0.3, 1.3, [1.0, 1.0, 1.0], OIL_EDGE, 0.8, noise_scale=4.0, scroll_speed=1.5,
+                           dissolve=0.9))
+     .shape("Wave", shape(RING, 0.45, 0.3, 2.6, MILK_CORE, OIL_EDGE, 1.4, thickness=0.2, noise_scale=3.5, dissolve=0.9))
+     .specks("Shards", sparks(60, 13.0, [1.0, 0.98, 0.9], [0.75, 0.8, 0.9], lifetime=0.7, size=0.08, gravity=-9.0,
+                             drag=2.2, stretch=0.02, intensity=3.0))
+     .specks("Drops", sparks(80, 9.0, OIL_EDGE, [0.6, 0.35, 0.1], lifetime=1.0, size=0.06, gravity=-12.0, drag=1.8,
+                            intensity=2.2))
+     .specks("Flash", flash(1.6, 0.1, [1.0, 0.97, 0.9], 0.8)))
+
     # Imaginary Technique called up (film 1:49): he shines, then a ray of light shoots out of him (the script plays
     # it many times: each play a lying beam in another direction) and he bursts with light
     (Effect(builder, "Technique Ray", root_shape=shape(

@@ -507,8 +507,8 @@ def add_effects(builder):
     add_orb_projectile(builder, "Player Orb", 4, 0.8, speed=24.0, damage=38.0, poise_damage=35.0, radius=0.55,
                        homing_degrees_per_second=70.0, lifetime_seconds=3.0, fuse_seconds=0.0,
                        trail_effect="", trail_particles_per_second=0.0,
-                       hit_effect="Oil Splash", hit_burst=26, hit_sound="@game/Sounds/Spells/glass_break.ogg",
-                       hit_stop_seconds=0.08, camera_shake=0.35)
+                       hit_effect="Solid Oil Burst", hit_burst=26, hit_sound="@game/Sounds/Spells/glass_break.ogg",
+                       hit_stop_seconds=0.1, camera_shake=0.45)
     # The player's domain: one blast under the target that reaches the whole arena
     # (it lands when the two waves of oil meet on the enemy: player_techniques.lua plays them)
     builder.add(projectile("Player Domain Blast", speed=0.0, damage=130.0, poise_damage=500.0, radius=10.0,
@@ -536,6 +536,16 @@ def add_effects(builder):
                            trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="Flash Burst", hit_burst=60, hit_sound="@game/Sounds/Brawl/Punch",
                            hit_stop_seconds=0.05, camera_shake=0.25)
+    # The stars of his domain shot straight at the player (film 0:42-0:46): a sign of two fingers, both hands
+    # pointing, and a fan of them flies low across the arena, burning (boss_fight.lua O.startStarVolley)
+    stars = add_projectile(builder, "Boss Star Bolt", "sih_hex_bullet", 30, 2.0, spin_degrees_per_second=620.0,
+                           speed=15.0, damage=13.0, poise_damage=14.0, radius=0.5, homing_degrees_per_second=0.0,
+                           lifetime_seconds=3.2, fuse_seconds=0.0, trail_effect="Fireball Trail",
+                           trail_particles_per_second=70.0, hit_effect="Star Impact", hit_burst=2,
+                           hit_sound="@game/Sounds/Brawl/Punch", hit_stop_seconds=0.04, camera_shake=0.2)
+    for entity in builder.entities:
+        if entity["tag"]["name"].startswith("Boss Star Bolt Body"):
+            entity["model"]["emissive_strength"] = 2.5
     builder.add(projectile("Domain Line Fire", speed=0.0, damage=30.0, poise_damage=30.0, radius=1.15,
                            homing_degrees_per_second=0.0, lifetime_seconds=3.0, fuse_seconds=1.25,
                            trail_effect="Pillar Warning", trail_particles_per_second=28.0,

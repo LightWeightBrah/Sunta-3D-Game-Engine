@@ -1141,6 +1141,42 @@ function O.holdForTechnique()
     end
 end
 
+-- ========== Stars from his fingers (film 0:42-0:46) ==========
+
+-- Two fingers raised before his face, then both hands point at the player and a fan of the stars of his domain flies
+-- low across the arena at them (in the phases without his sword)
+O.Stars = { EverySeconds = 12, FirstAfter = 9, Count = 5, SpreadDegrees = 15, ReleaseAfter = 1.5, Height = 1.4,
+            Bolt = "Boss Star Bolt", Caption = "Island Stars: Constellation", MinDistance = 4, MaxDistance = 18 }
+O.starsIn = O.Stars.FirstAfter
+
+function O.updateStarVolley(deltaTime)
+    O.starsIn = O.starsIn - deltaTime
+    if O.starsIn > 0 or phase < 1 or phase >= 5 or phase == 3 or not isFreeToAct() then return end
+    local distance = this.enemy.distanceToTarget
+    if distance < O.Stars.MinDistance or distance > O.Stars.MaxDistance or not takePatternTurn() then return end
+
+    O.starsIn = O.Stars.EverySeconds
+    if not this.characterActions:play("Cast_Stars") then return end
+    this.enemy:lookAtTarget(true)
+    showCaption(O.Stars.Caption, 2.0)
+    after(O.Stars.ReleaseAfter, function()
+        local player = find(PlayerName)
+        if not player then return end
+        local from = this.transform.position + vec3(0, O.Stars.Height, 0) + this.transform.forward * 0.6
+        local toPlayer = player.transform.position + vec3(0, 1.0, 0) - from
+        toPlayer.y = 0
+        local ahead = toPlayer:normalized()
+        local yaw = math.atan(ahead.x, ahead.z)
+        for i = 1, O.Stars.Count do
+            local turn = math.rad((i - (O.Stars.Count + 1) / 2) * O.Stars.SpreadDegrees)
+            local direction = vec3(math.sin(yaw + turn), 0, math.cos(yaw + turn))
+            this.world:launch(O.Stars.Bolt, this, from + direction * 0.3, direction)
+        end
+        this.world:shakeCamera(0.3)
+        Audio.playAt(BoomSound, from, 0.7)
+    end)
+end
+
 function O.endTechniqueHold()
     O.holdingForTechnique = false
     if O.starsWaitForTechnique then
@@ -2238,6 +2274,7 @@ local function reset()
     awaitingDetonation = false
     O.lyingUntilPress = false
     O.holdingForTechnique, O.starsWaitForTechnique = false, false
+    O.starsIn = O.Stars and O.Stars.FirstAfter or 9
     isOnTheDome = false
     silhouetteLeft = 0
     if this.model then this.model.darkness = 0 end
@@ -2488,6 +2525,7 @@ function OnUpdate(deltaTime)
     updateGuard()
     updateBlink(deltaTime)
     updateRing(deltaTime)
+    O.updateStarVolley(deltaTime)
     updateLines(deltaTime)
     updateRain(deltaTime)
     watchJetSpells()

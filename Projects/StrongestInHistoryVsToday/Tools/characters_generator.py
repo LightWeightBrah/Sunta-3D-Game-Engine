@@ -196,6 +196,9 @@ BOSS = {
     "Cast_Pillars":   MotionClip(AXE + "unarmed idle.fbx", speed=0.9),
     "Cast_Domain":    MotionClip(AXE + "unarmed idle.fbx", speed=0.5),
     "Summon":         MotionClip(AXE + "unarmed idle.fbx", speed=0.6),
+    # The stars he shoots in the air fight (film 0:42-0:46): two fingers raised before his face, then both hands
+    # pointing at the player as the stars fly (GESTURES)
+    "Cast_Stars":     MotionClip(AXE + "unarmed idle.fbx", speed=0.75),
     # Hit like a man in a street fight: taken in the gut, thrown back by the blow
     "Hit":            MotionClip(AXE + "standing react large gut.fbx", speed=1.2),
     "Parried":        MotionClip(AXE + "standing react large from left.fbx", speed=0.8),
@@ -317,6 +320,7 @@ FINGER_POSES = (
     ("Cast_Orb", ("open", "relaxed")),
     ("Cast_Pillars", ("two", "relaxed")),
     ("Summon", ("two", "relaxed")),
+    ("Cast_Stars", ("two", "two")),
     ("Cast_Spell", ("open", "fist")),
     ("Cast_Cleave", ("open", "fist")),
 )
@@ -358,6 +362,14 @@ GESTURES = {
         "Cast_Domain":  [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.25)],
         "Sign_Hold":    [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.0)],
         "Summon":       [Gesture("_R", (0.26, 0.38, 0.30), (0.0, 0.2, 1.0), (-0.3, 0.95, 0.0), reached_at=0.3, left_from=0.9)],
+        # Film 0:42: two fingers up before his face, the palm towards the player; 0:46: both arms out, the fingers
+        # pointing at the player (the stars leave at 0.68 of it, see boss_fight.lua)
+        "Cast_Stars":   [Gesture("_R", (0.10, 0.34, 0.20), (0.0, 0.15, 1.0), (-0.2, 1.0, 0.0),
+                                 reached_at=0.15, left_from=0.42, end_at=0.55),
+                         Gesture("_R", (0.16, 0.56, 0.10), (0.0, 1.0, 0.08), (-0.25, 0.0, -1.0),
+                                 start_at=0.42, reached_at=0.58, left_from=0.9),
+                         Gesture("_L", (0.16, 0.56, 0.10), (0.0, 1.0, 0.08), (-0.25, 0.0, -1.0),
+                                 start_at=0.42, reached_at=0.58, left_from=0.9)],
     },
     "sih_player": {
         # As in the film (1:16): standing calm, the open palm turned up at his side, a little forward, the ball of oil
