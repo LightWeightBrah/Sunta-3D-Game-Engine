@@ -42,6 +42,7 @@ constexpr float DistanceReturnSharpness = 6.0f;
 constexpr float RiseSteps[]          = { 0.6f, 1.2f, 1.8f, 2.4f };
 constexpr float RiseIsWorthFrom      = 0.75f; // pushed in to less than this part of the distance: try rising
 constexpr float RiseClearsFrom       = 0.9f;  // rising helps when the view is then this free
+constexpr float RiseBetterBy         = 1.5f;  // ...or, when nothing clears it, when it frees this much more of it
 constexpr float RiseUpSharpness      = 7.0f;
 constexpr float RiseDownSharpness    = 2.5f;
 
@@ -169,6 +170,10 @@ float ChooseRise(const FrameInfo& frame, const FollowCameraComponent& follow, co
 	if (follow.distance < SmallestUsableLength || freeDistance >= follow.distance * RiseIsWorthFrom)
 		return 0.0f;
 
+	// (when no height clears the view, the one that frees it most - backed into a corner between heaps of rubble the
+	// camera stayed at the player's neck)
+	float bestRise = 0.0f;
+	float bestFree = freeDistance;
 	for (float rise : RiseSteps)
 	{
 		// (nothing above the player's head either: a ceiling or an arch)
@@ -177,7 +182,7 @@ float ChooseRise(const FrameInfo& frame, const FollowCameraComponent& follow, co
 		up.direction = WorldUp;
 		RaycastHit hit;
 		if (Physics::Raycast(frame.entityManager, up, rise + WallMargin, SightBlockingLayers, frame.playerEntityID, hit))
-			return 0.0f;
+			break;
 
 		const float raisedFree = GetFreeDistance(frame, follow, cameraOffset + WorldUp * rise);
 		if (raisedFree >= follow.distance * RiseClearsFrom)
@@ -185,8 +190,14 @@ float ChooseRise(const FrameInfo& frame, const FollowCameraComponent& follow, co
 			outFreeDistance = raisedFree;
 			return rise;
 		}
+		if (raisedFree > bestFree * RiseBetterBy)
+		{
+			bestFree = raisedFree;
+			bestRise = rise;
+		}
 	}
-	return 0.0f;
+	outFreeDistance = bestFree;
+	return bestRise;
 }
 
 void UpdateRise(FollowCameraComponent& follow, float wantedRise, float deltaTime)
