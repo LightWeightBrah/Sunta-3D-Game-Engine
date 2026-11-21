@@ -96,6 +96,24 @@ A Cutscene entity is played with `this.world:find("Intro").cutscene:play()`. Wit
 player presses a key (*Wait Presses* above 1: pressed that many times, quickly - getting up off the ground) and
 the script reads `cutscene.wasAnswered`.
 
+A scene of many shots is a list of cutscene entities played one after another from a script: a shot started while
+another plays cuts in on it, and the HUD stays away between shots. While they play, the script moves the actors,
+starts effects and changes the characters:
+
+```lua
+-- The face of the boss in a close shot: his smile (the first morph target of the model) comes on over a second
+this.model.expression = 1
+-- Outlined in gold light while he calls a technique (light along the outline only, he stays himself inside it)
+this.model.rimGlow = vec3(1.1, 0.66, 0.16)
+-- Light all over him (white = a figure of light), or his colours taken away (1 = a black silhouette)
+this.model.glow = vec3(0.5, 0.5, 0.5)
+this.model.darkness = 1
+-- Another model on the same skeleton (armor put on): the animations go on by their names
+this.model.modelName = "sih_boss_armored"
+-- His boss bar shows his new name
+this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin"
+```
+
 ## Everything else
 
 The [Scripting reference](scripting-reference.md) lists every field and function a script can reach, generated
