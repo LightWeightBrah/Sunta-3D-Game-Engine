@@ -1972,7 +1972,7 @@ function O.armPlayer()
     this.world:notify(O.PlayerSwordTitle)
 end
 
-function O.startArmoredPhase()
+function O.startArmoredPhase(isResumed)
     phase = 5
     O.refillFlasks()
     isChanneling = false
@@ -1997,8 +1997,9 @@ function O.startArmoredPhase()
     this.meleeEnemy.dodgeChance = 0.15
     O.armored = { slamIn = 3, dashIn = 6, whirlIn = 4, barrageIn = 99, hasExecuted = false }
     showCaption(O.ArmorTitle, 3)
-    -- (right away: the player's answer, his own sword of oil, as a short sequence of shots)
-    O.startVessel()
+    -- (right away: the player's answer, his own sword of oil, as a short sequence of shots - seen once: a try that
+    -- resumes here gives him his armor and sword at once)
+    if isResumed then O.armPlayer() else O.startVessel() end
 end
 
 function O.startPhaseSix()
@@ -2230,6 +2231,26 @@ local function startFight()
     setHealthFloor(DomainHealthFraction - FloorMargin)
     Audio.playMusic(FightMusic, 0.9, 0.2)
 
+    -- A try after dying in his armor starts in his armor (a checkpoint): no opening, no phases before it again
+    if O.resumeArmored then
+        this.health.isInvulnerable = true
+        after(1.0, function()
+            if phase ~= 1 then return end
+            if this.model then this.model.modelName = O.ArmoredModel end
+            O.hideArmorProps()
+            O.setRedEyes(8.0)
+            O.showSeal(1.2)
+            O.startArmoredPhase(true)
+            this.health.isInvulnerable = false
+            this.world:notify("THE FIGHT RESUMES: " .. string.upper(O.ArmorTitle))
+            if this.enemyHealthBar then
+                O.BaseTitle = O.BaseTitle or this.enemyHealthBar.displayName
+                this.enemyHealthBar.displayName = O.ArmorTitle
+            end
+        end)
+        return
+    end
+
     -- The film's O.opening ends with the player's orb in the boss's face
     this.world:burst("Oil Splash", this.transform.position + vec3(0, 1.4, 0), 160)
     this.world:shakeCamera(0.7)
@@ -2395,6 +2416,8 @@ end
 
 -- Everything back to how the scene starts (the player died, the boss rests again)
 local function reset()
+    -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
+    if phase >= 5 then O.resumeArmored = true end
     phase = 0
     seconds = 0
     invulnerableLeft = 0
