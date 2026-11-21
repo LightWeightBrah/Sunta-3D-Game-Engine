@@ -1908,5 +1908,133 @@
     },
     "output": "Generated/StrongestInHistory/diddy_sword.glb",
     "date": "2026-11-21T05:48:04"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1fc7c-658c-721e-be4a-8c3391f9cde0",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A fantasy breastplate, front view, covering the chest and the belly, sculpted plates, a large glossy pink teardrop shaped gem in the middle of the chest, made of clear transparent crystal glass like solidified baby oil with soft milky swirls and tiny bubbles inside, polished pale pink metal trim along every edge, elegant fantasy armor, no text, no logo. Photorealistic product photo, the single object alone, the whole object in the frame, plain white background, studio light",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/diddy_armor_chest.png",
+    "date": "2026-11-21T06:03:50"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1fc7c-c776-73f6-9fa4-0d338f617cd2",
+    "input": "Concepts/StrongestInHistory/diddy_armor_chest.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 8000
+    },
+    "output": "Generated/StrongestInHistory/diddy_armor_chest.glb",
+    "date": "2026-11-21T06:05:46"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1fc7e-8dfb-76ab-994b-71ca7454a79f",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A single fantasy shoulder pauldron, three layered curved plates, seen from the side, made of clear transparent crystal glass like solidified baby oil with soft milky swirls and tiny bubbles inside, polished pale pink metal trim along every edge, elegant fantasy armor, no text, no logo. Photorealistic product photo, the single object alone, the whole object in the frame, plain white background, studio light",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/diddy_armor_pauldron.png",
+    "date": "2026-11-21T06:06:08"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1fc7e-e350-7615-b9af-65cd70504b98",
+    "input": "Concepts/StrongestInHistory/diddy_armor_pauldron.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 5000
+    },
+    "output": "Generated/StrongestInHistory/diddy_armor_pauldron.glb",
+    "date": "2026-11-21T06:08:35"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1fc81-2210-7584-9139-fb4e73f7d6ca",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A single fantasy forearm bracer, a tube that covers the forearm from wrist to elbow, two pink rings around it, standing upright, made of clear transparent crystal glass like solidified baby oil with soft milky swirls and tiny bubbles inside, polished pale pink metal trim along every edge, elegant fantasy armor, no text, no logo. Photorealistic product photo, the single object alone, the whole object in the frame, plain white background, studio light",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/diddy_armor_bracer.png",
+    "date": "2026-11-21T06:08:57"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1fc81-7763-73c2-aa77-46c61d230a14",
+    "input": "Concepts/StrongestInHistory/diddy_armor_bracer.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 4000
+    },
+    "output": "Generated/StrongestInHistory/diddy_armor_bracer.glb",
+    "date": "2026-11-21T06:10:32"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a1fc82-eac7-73a8-a22f-f5e715a107fd",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A single fantasy shin greave with a knee cap, covering the shin from ankle to knee, standing upright, front view, made of clear transparent crystal glass like solidified baby oil with soft milky swirls and tiny bubbles inside, polished pale pink metal trim along every edge, elegant fantasy armor, no text, no logo. Photorealistic product photo, the single object alone, the whole object in the frame, plain white background, studio light",
+      "remove_background": true,
+      "aspect_ratio": "1:1"
+    },
+    "output": "Concepts/StrongestInHistory/diddy_armor_greave.png",
+    "date": "2026-11-21T06:10:54"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1fc83-4017-7737-bf22-a4868a87e8f1",
+    "input": "Concepts/StrongestInHistory/diddy_armor_greave.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 5000
+    },
+    "output": "Generated/StrongestInHistory/diddy_armor_greave.glb",
+    "date": "2026-11-21T06:12:19"
   }
 ]
