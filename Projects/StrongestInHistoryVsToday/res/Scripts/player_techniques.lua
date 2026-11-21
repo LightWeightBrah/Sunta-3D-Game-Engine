@@ -33,6 +33,8 @@ local Voices = {
 local VoiceVolume = 1.3
 
 local eyesLeft = 0
+-- The light he gives off while calling Imaginary Technique (see updateGreatShow)
+local techniqueGlow = vec3(0, 0, 0)
 local wasCasting = {}
 local releasedBefore = {}
 local domainGlow = 0
@@ -274,6 +276,72 @@ local function updateDomainShow(deltaTime)
 end
 
 -- He lights up as he holds the sign (the camera close on his hands and eyes), then his domain opens
+-- Imaginary Technique: Baby Oil Detonation, as in the film (1:47-1:50): while he calls it he lights up from inside -
+-- white first, then the light turns pink and gold - and as it leaves his hands rays of light shoot out of him in every
+-- direction and he bursts with light; then the light dies away
+local Great = {
+    WhiteSeconds = 0.45, PinkSeconds = 0.5, FadeSeconds = 0.9,
+    -- (a sheen over him, not a figure of light: stronger, he became a flat silhouette)
+    White = vec3(0.25, 0.24, 0.22), Pink = vec3(0.42, 0.14, 0.3),
+    Rays = 16, RaySpreadSeconds = 0.3, RayEffect = "Technique Ray", BurstEffect = "Technique Burst",
+}
+local greatShow = nil
+local greatReleases = 0
+
+local function updateGreatShow(deltaTime)
+    local caster = casterOf(GreatSpell)
+    if not caster then return end
+
+    if caster.isCasting and not greatShow then
+        greatShow = { t = 0, raysLeft = 0, rayIn = 0, fade = nil }
+        greatReleases = caster.timesReleased
+    end
+    if not greatShow then
+        techniqueGlow = vec3(0, 0, 0)
+        return
+    end
+
+    local show = greatShow
+    show.t = show.t + deltaTime
+    local center = this.transform.position + vec3(0, 1.1, 0)
+
+    -- It left his hands: the rays and the burst, then the light fades
+    if caster.timesReleased > greatReleases then
+        greatReleases = caster.timesReleased
+        show.raysLeft, show.rayIn = Great.Rays, 0
+        show.fade = 0
+        -- (the burst lights the world around him: no flash of the whole screen)
+        this.world:effect(Great.BurstEffect, center, this.transform.forward)
+        this.world:shakeCamera(0.5)
+    elseif not caster.isCasting and not show.fade then
+        show.fade = 0   -- cut short (a hit, the end of the fight): the light only dies away
+    end
+
+    if show.raysLeft > 0 then
+        show.rayIn = show.rayIn - deltaTime
+        while show.rayIn <= 0 and show.raysLeft > 0 do
+            show.raysLeft = show.raysLeft - 1
+            show.rayIn = show.rayIn + Great.RaySpreadSeconds / Great.Rays
+            this.world:effect(Great.RayEffect, center, this.transform.forward)
+        end
+    end
+
+    local glow
+    if show.fade then
+        show.fade = show.fade + deltaTime
+        local left = math.max(1 - show.fade / Great.FadeSeconds, 0)
+        glow = Great.Pink * (left * left)
+        if left <= 0 and show.raysLeft <= 0 then greatShow = nil end
+    elseif show.t < Great.WhiteSeconds then
+        local k = show.t / Great.WhiteSeconds
+        glow = Great.White * (k * k)
+    else
+        local k = math.min((show.t - Great.WhiteSeconds) / Great.PinkSeconds, 1)
+        glow = Great.White + (Great.Pink - Great.White) * (k * k * (3 - 2 * k))
+    end
+    techniqueGlow = glow
+end
+
 local wasDomainCasting = false
 local function updateDomain(deltaTime)
     local casting = isCasting(DomainSpell)
@@ -286,7 +354,7 @@ local function updateDomain(deltaTime)
         domainGlow = math.max(domainGlow - deltaTime * 0.6, 0)
     end
 
-    if this.model then this.model.glow = DomainGlow * (domainGlow * domainGlow) end
+    if this.model then this.model.glow = DomainGlow * (domainGlow * domainGlow) + techniqueGlow end
 
     if hasJustReleased(DomainSpell) then
         startDomainShow()
@@ -308,6 +376,7 @@ function OnUpdate(deltaTime)
     updateEyes(deltaTime)
     updateHeldOrb(deltaTime)
     updateOilGuard(deltaTime)
+    updateGreatShow(deltaTime)
     updateDomain(deltaTime)
 
     -- The bottle of his great technique: the camera looks up at it coming down on the boss (the boss's own script

@@ -911,11 +911,12 @@ void LuaBindings::RegisterSpellCasterComponent(sol::state& lua)
 				return spell ? spell->timesReleased : 0;
 			}),
 
-		// False when the spell is not ready or its caster is busy (attacking, staggering)
-		"cast", [](const SpellCasterHandle& handle)
+		// False when the spell is not ready or its caster is busy (attacking, staggering).
+		// spell.spellCaster:cast(true): forced (a staged moment): cooling down or busy, it is cast anyway
+		"cast", [](const SpellCasterHandle& handle, sol::optional<bool> isForced)
 			{
 				EntityManager* entityManager = handle.owner.GetEntityManager();
-				return entityManager && SpellSystem::TryCast(*entityManager, handle.owner.GetID());
+				return entityManager && SpellSystem::TryCast(*entityManager, handle.owner.GetID(), isForced.value_or(false));
 			}
 	);
 }

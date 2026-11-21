@@ -517,6 +517,8 @@ namespace SceneKeys
 	constexpr const char* VideoFile                 = "video_file";
 	constexpr const char* WaitForKey                = "wait_for_key";
 	constexpr const char* WaitPrompt                = "wait_prompt";
+	constexpr const char* WaitPresses               = "wait_presses";
+	constexpr const char* PressWindowSeconds        = "press_window_seconds";
 	constexpr const char* BlendInSeconds            = "blend_in_seconds";
 	constexpr const char* FadeSeconds               = "fade_seconds";
 	constexpr const char* CutsceneSound             = "cutscene_sound";
@@ -1100,6 +1102,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::VideoFile,             cutscene->videoFile          },
 				{ SceneKeys::WaitForKey,            cutscene->waitForKey         },
 				{ SceneKeys::WaitPrompt,            cutscene->waitPrompt         },
+				{ SceneKeys::WaitPresses,           cutscene->waitPresses        },
+				{ SceneKeys::PressWindowSeconds,    cutscene->pressWindowSeconds },
 				{ SceneKeys::BlendInSeconds,        cutscene->blendInSeconds     },
 				{ SceneKeys::FadeSeconds,           cutscene->fadeSeconds        },
 				{ SceneKeys::CutsceneSound,         cutscene->sound              }
@@ -2059,6 +2063,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			cutscene.videoFile          = cutsceneData.value(SceneKeys::VideoFile,             cutscene.videoFile);
 			cutscene.waitForKey         = cutsceneData.value(SceneKeys::WaitForKey,            cutscene.waitForKey);
 			cutscene.waitPrompt         = cutsceneData.value(SceneKeys::WaitPrompt,            cutscene.waitPrompt);
+			cutscene.waitPresses        = cutsceneData.value(SceneKeys::WaitPresses,           cutscene.waitPresses);
+			cutscene.pressWindowSeconds = cutsceneData.value(SceneKeys::PressWindowSeconds,    cutscene.pressWindowSeconds);
 			cutscene.blendInSeconds     = cutsceneData.value(SceneKeys::BlendInSeconds,        cutscene.blendInSeconds);
 			cutscene.fadeSeconds        = cutsceneData.value(SceneKeys::FadeSeconds,           cutscene.fadeSeconds);
 			cutscene.sound              = cutsceneData.value(SceneKeys::CutsceneSound,         cutscene.sound);

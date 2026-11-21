@@ -24,8 +24,10 @@ public:
 	static bool UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);
 
 	// Casting a spell (see SpellCasterComponent): the animation plays once on the whole body, the character turns after
-	// its target until 'releaseAt' of it. False when the character is busy, out of stamina or has no such animation
-	static bool Cast(EntityManager& entityManager, unsigned int entityID, const std::string& animationName, float releaseAt);
+	// its target until 'releaseAt' of it. False when the character is busy, out of stamina or has no such animation.
+	// 'isForced': whatever the character does now is cut short and no stamina is needed (a staged moment of a script)
+	static bool Cast(EntityManager& entityManager, unsigned int entityID, const std::string& animationName, float releaseAt,
+		bool isForced = false);
 
 	static void PlayDeath(EntityManager& entityManager, unsigned int entityID);
 

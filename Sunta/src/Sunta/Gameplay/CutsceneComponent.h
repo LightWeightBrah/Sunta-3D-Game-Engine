@@ -26,7 +26,9 @@ namespace Sunta
 // video's own sound track as a separate file, e.g. @game/Sounds/Film/intro.ogg) starts with it and fades out when it ends
 // With 'waitForKey' (a letter or a digit, e.g. "3") it is a moment the player answers: the camera reaches the end of
 // its path and stays there, 'waitPrompt' is shown, and the cutscene ends only when that key is pressed (a script then
-// goes on: this.cutscene.wasAnswered)
+// goes on: this.cutscene.wasAnswered). With 'waitPresses' above 1 the key must be pressed that many times, quickly
+// enough: what was pressed drains away at one press per 'pressWindowSeconds' (a slower tempo never gets there), and a
+// bar under the prompt shows how far the player got (getting up off the ground, breaking free)
 // 'blendInSeconds' above 0: the camera doesn't cut to the first point, it flies there from wherever it was (the shot
 // before it, or the game's camera) over that long - shots of one sequence flow into each other
 // 'fadeSeconds' above 0: no sudden cut - the game fades to black, the cutscene comes out of the black, and when it
@@ -54,6 +56,8 @@ struct CutsceneComponent
 
 	std::string waitForKey;
 	std::string waitPrompt;
+	int         waitPresses        = 1;
+	float       pressWindowSeconds = 0.6f;
 
 	float       blendInSeconds = 0.0f;
 
@@ -70,6 +74,8 @@ struct CutsceneComponent
 	bool  hasStartedAnimation = false;
 	bool  isVideo             = false;
 	float seconds             = 0.0f;
+	// How far the presses got (see waitPresses), draining while the player doesn't press
+	float pressProgress       = 0.0f;
 	// The player pressed 'waitForKey' (the last time it played)
 	bool  wasAnswered         = false;
 	// Where the camera was when it started (see blendInSeconds)
@@ -96,6 +102,8 @@ struct CutsceneComponent
 				ADD_PROPERTY(CutsceneComponent, sound, PropertyDataType::String),
 				ADD_PROPERTY(CutsceneComponent, waitForKey, PropertyDataType::String),
 				ADD_PROPERTY(CutsceneComponent, waitPrompt, PropertyDataType::String),
+				ADD_PROPERTY_RANGED(CutsceneComponent, waitPresses, PropertyDataType::Int, 1, 30),
+				ADD_PROPERTY_RANGED(CutsceneComponent, pressWindowSeconds, PropertyDataType::Float, 0.1f, 3.0f),
 				ADD_PROPERTY_RANGED(CutsceneComponent, blendInSeconds, PropertyDataType::Float, 0.0f, 10.0f),
 				ADD_PROPERTY_RANGED(CutsceneComponent, fadeSeconds, PropertyDataType::Float, 0.0f, 5.0f)
 			});

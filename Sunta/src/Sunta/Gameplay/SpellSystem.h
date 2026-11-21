@@ -25,8 +25,9 @@ public:
 	static bool TryCastSpell(EntityManager& entityManager, unsigned int casterEntityID, float distanceToTarget);
 
 	// Starts this very spell (the entity with the Spell Caster), whatever the distance to the target: for scripts and
-	// for the player's key. False when it is not ready, or its caster can't act now
-	static bool TryCast(EntityManager& entityManager, unsigned int spellEntityID);
+	// for the player's key. False when it is not ready, or its caster can't act now.
+	// 'isForced' (a staged moment of a script): cast even if it is cooling down or its caster is busy (that is cut short)
+	static bool TryCast(EntityManager& entityManager, unsigned int spellEntityID, bool isForced = false);
 
 	// Throws one projectile without any cast (a script's own patterns: a ring of fire around a boss, a rain over the
 	// arena): the Projectile template named 'projectileName' leaves 'from' towards 'direction' on the side of

@@ -804,7 +804,9 @@ def add_player(builder):
         "duration_seconds": 3.5, "look_at_entity": PLAYER_NAME, "look_at_height": 0.3, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
         "can_be_skipped": False, "video_file": "", "wait_for_key": "2",
-        "wait_prompt": "[2]   Imaginary Technique: Baby Oil Detonation"}), parent=player)
+        # (a moment the player fights through: [2] again and again, quickly, until he is up)
+        "wait_presses": 6, "press_window_seconds": 0.45,
+        "wait_prompt": "Press [2] quickly to rise   -   Imaginary Technique: Baby Oil Detonation"}), parent=player)
     for index, point in enumerate(((3.2, 3.4, 2.4), (2.4, 2.6, 0.2), (1.6, 2.1, -1.6))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=down)
     # Rising from the ground with his hand up for his great technique (started by boss_fight.lua when the player

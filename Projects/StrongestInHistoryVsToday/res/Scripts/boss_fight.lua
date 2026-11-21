@@ -1065,6 +1065,7 @@ function O.domainOpeningSteps()
             awaitingDetonation = true
             O.detonationHintLeft = O.DetonationHintSeconds
             O.lyingUntilPress, O.lyingReplayIn = true, 0
+            O.starsWaitForTechnique = true
             playCutscene(O.DownCutscene)
             invulnerableLeft = 0.5
             this.enemy:startAttackCooldown(2.5)
@@ -1072,8 +1073,9 @@ function O.domainOpeningSteps()
         end },
         -- Sunk out of sight: the temple goes back behind the far wall and stands there for the rest of the domain
         { 74.0, function()
+            -- (the stars that threw him down stay until his answer has landed: O.endTechniqueHold)
             local stars = O.stars()
-            if stars then stars:reset(); stars.isVisible = false end
+            if stars and not O.starsWaitForTechnique then stars:reset(); stars.isVisible = false end
             local temple = find(TempleName)
             if temple then
                 temple.transform.position = vec3(O.TempleHome.x, TempleSunkenY, O.TempleHome.z)
@@ -1111,11 +1113,41 @@ function O.updateRise(deltaTime)
     O.lyingUntilPress = false
     O.playPlayer("Get_Up")
     playCutscene(O.RiseCutscene)
-    this.enemy:startAttackCooldown(O.RiseSeconds + 2)
+    -- He doesn't strike until the player's technique has landed (O.holdingForTechnique ends with its blast)
+    O.holdingForTechnique = true
+    O.techniqueEndsIn = nil
+    local great = find(PlayerGreatSpell)
+    O.techniqueReleasesBefore = great and great.spellCaster and great.spellCaster.timesReleased or 0
     after(O.RiseSeconds, function()
+        -- (forced: still getting up he is busy, and a refused cast left him silent and without his technique)
         local spell = find(PlayerGreatSpell)
-        if spell and spell.spellCaster then spell.spellCaster:cast() end
+        if spell and spell.spellCaster then spell.spellCaster:cast(true) end
     end)
+end
+
+-- After the domain's blow the boss waits, and the stars that threw the player down stay where they fell, until
+-- the player's answer has landed: then the stars are gone with the blast (O.endTechniqueHold)
+function O.holdForTechnique()
+    if not O.holdingForTechnique then return end
+    this.enemy:startAttackCooldown(1)
+    rainIn, lineIn = math.max(rainIn, 2), math.max(lineIn, 2)
+
+    -- The technique left his hands: the hold ends when its bottle has burst (see OnDamaged)
+    local spell = find(PlayerGreatSpell)
+    local released = spell and spell.spellCaster and spell.spellCaster.timesReleased or 0
+    if not O.techniqueEndsIn and released > (O.techniqueReleasesBefore or 0) then
+        O.techniqueEndsIn = true
+        after(2.4 + O.CubeBurstsAfter, O.endTechniqueHold)
+    end
+end
+
+function O.endTechniqueHold()
+    O.holdingForTechnique = false
+    if O.starsWaitForTechnique then
+        O.starsWaitForTechnique = false
+        local stars = O.stars()
+        if stars then stars:reset(); stars.isVisible = false end
+    end
 end
 
 -- The prompt for the player's answer (the great technique's slot of the HUD shows when it is ready)
@@ -2205,6 +2237,7 @@ local function reset()
     O.isHoldingSign = false
     awaitingDetonation = false
     O.lyingUntilPress = false
+    O.holdingForTechnique, O.starsWaitForTechnique = false, false
     isOnTheDome = false
     silhouetteLeft = 0
     if this.model then this.model.darkness = 0 end
@@ -2401,6 +2434,7 @@ function OnUpdate(deltaTime)
         if phase > 0 then
             updateOpening()
             O.updateRise(deltaTime)
+            O.holdForTechnique()
             O.updateKnock(deltaTime)
             O.updateSign(deltaTime)
             updateTweens(deltaTime)
@@ -2418,6 +2452,7 @@ function OnUpdate(deltaTime)
     if O.opening then
         updateOpening()
         O.updateRise(deltaTime)
+        O.holdForTechnique()
         O.updateKnock(deltaTime)
         O.updateSign(deltaTime)
         updateTweens(deltaTime)
@@ -2462,6 +2497,7 @@ function OnUpdate(deltaTime)
     updateDomain(deltaTime)
     updateTweens(deltaTime)
     O.updateRise(deltaTime)
+    O.holdForTechnique()
     if not O.lyingUntilPress and not promptDetonation(deltaTime) then promptPlayerDomain(deltaTime) end
     updateLook(deltaTime)
     updateTemple(deltaTime)

@@ -289,6 +289,7 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 	cutscene->wasAnswered         = false;
 	cutscene->fadeToBlackLeft     = cutscene->fadeSeconds;
 	cutscene->hasStartedSound     = false;
+	cutscene->pressProgress       = 0.0f;
 
 	// Where the camera is now: a cutscene with 'blendInSeconds' flies from here
 	const TransformComponent* camera = FindActiveCamera(entityManager);
@@ -375,7 +376,20 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 		if (!cutscene.isVideo && !cutscene.waitForKey.empty())
 		{
 			const int key = std::toupper(static_cast<unsigned char>(cutscene.waitForKey.front()));
-			if (InputManager::IsKeyDown(key))
+			const bool isPressed = InputManager::IsKeyDown(key);
+
+			// Many presses: each one adds, the tempo of 'pressWindowSeconds' is what keeps the progress from draining
+			if (cutscene.waitPresses > 1)
+			{
+				const float window = glm::max(cutscene.pressWindowSeconds, 0.05f);
+				cutscene.pressProgress = glm::max(cutscene.pressProgress - glm::min(deltaTime, MaxStepSeconds) / window, 0.0f);
+				if (isPressed)
+					cutscene.pressProgress += 1.0f;
+			}
+			else if (isPressed)
+				cutscene.pressProgress = 1.0f;
+
+			if (cutscene.pressProgress >= static_cast<float>(cutscene.waitPresses))
 			{
 				cutscene.wasAnswered = true;
 				Finish(entityManager, cutscene);
@@ -474,6 +488,16 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 			const float fadeIn   = glm::clamp(shownFor / 0.5f, 0.0f, 1.0f);
 			UIRenderer::DrawTextCentered(cutscene.waitPrompt, areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.86f),
 				PromptHeight, glm::vec4(glm::vec3(TitleColor), fadeIn * pulse));
+
+			// How far the presses got: a bar under the prompt
+			if (cutscene.waitPresses > 1)
+			{
+				const float part = glm::clamp(cutscene.pressProgress / static_cast<float>(cutscene.waitPresses), 0.0f, 1.0f);
+				const glm::vec2 barSize = glm::vec2(areaSize.y * 0.36f, glm::max(areaSize.y * 0.012f, 5.0f));
+				const glm::vec2 barTopLeft = areaTopLeft + glm::vec2((areaSize.x - barSize.x) * 0.5f, areaSize.y * 0.905f);
+				UIRenderer::DrawRectangle(barTopLeft - glm::vec2(2.0f), barSize + glm::vec2(4.0f), glm::vec4(0.0f, 0.0f, 0.0f, 0.7f * fadeIn));
+				UIRenderer::DrawRectangle(barTopLeft, glm::vec2(barSize.x * part, barSize.y), glm::vec4(glm::vec3(TitleColor), fadeIn));
+			}
 		}
 
 		UIRenderer::End();

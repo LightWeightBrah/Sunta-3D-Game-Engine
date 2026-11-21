@@ -454,9 +454,9 @@ void UpdateSpell(EntityManager& entityManager, unsigned int spellID, SpellCaster
 }
 
 // The cast starts as an action of the caster; the spell rests for its cooldown whether it leaves or is lost to a hit
-bool StartCast(EntityManager& entityManager, unsigned int casterID, SpellCasterComponent& spell)
+bool StartCast(EntityManager& entityManager, unsigned int casterID, SpellCasterComponent& spell, bool isForced = false)
 {
-	if (!CharacterActionsSystem::Cast(entityManager, casterID, spell.castAnimation, spell.releaseAt))
+	if (!CharacterActionsSystem::Cast(entityManager, casterID, spell.castAnimation, spell.releaseAt, isForced))
 		return false;
 
 	if (CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(casterID))
@@ -741,15 +741,15 @@ bool SpellSystem::TryCastSpell(EntityManager& entityManager, unsigned int caster
 	return StartCast(entityManager, casterEntityID, *entityManager.GetComponent<SpellCasterComponent>(spellID));
 }
 
-bool SpellSystem::TryCast(EntityManager& entityManager, unsigned int spellEntityID)
+bool SpellSystem::TryCast(EntityManager& entityManager, unsigned int spellEntityID, bool isForced)
 {
 	SpellCasterComponent* spell = entityManager.GetComponent<SpellCasterComponent>(spellEntityID);
 	unsigned int casterID = 0;
 
-	if (!spell || !spell->IsReady() || !TryFindCaster(entityManager, spellEntityID, casterID))
+	if (!spell || (!isForced && !spell->IsReady()) || !TryFindCaster(entityManager, spellEntityID, casterID))
 		return false;
 
-	return StartCast(entityManager, casterID, *spell);
+	return StartCast(entityManager, casterID, *spell, isForced);
 }
 
 bool SpellSystem::Launch(EntityManager& entityManager, const std::string& projectileName, unsigned int casterEntityID,

@@ -2200,7 +2200,9 @@
     "can_be_skipped": false,
     "video_file": "",
     "wait_for_key": "2",
-    "wait_prompt": "[2]   Imaginary Technique: Baby Oil Detonation",
+    "wait_presses": 6,
+    "press_window_seconds": 0.45,
+    "wait_prompt": "Press [2] quickly to rise   -   Imaginary Technique: Baby Oil Detonation",
     "blend_in_seconds": 1.8
    },
    "parent": {
@@ -26878,6 +26880,327 @@
   },
   {
    "tag": {
+    "name": "Technique Ray"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 2,
+    "lifetime_seconds": 0.7,
+    "start_radius": 0.05,
+    "end_radius": 0.16,
+    "core_color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "edge_color": [
+     1.0,
+     0.55,
+     0.85
+    ],
+    "intensity": 6.0,
+    "height": 9.0,
+    "rotation_degrees": [
+     90.0,
+     0.0,
+     0.0
+    ],
+    "rotation_randomness": [
+     35.0,
+     360.0,
+     0.0
+    ],
+    "noise_scale": 3.0,
+    "scroll_speed": 6.0,
+    "dissolve": 0.7
+   }
+  },
+  {
+   "tag": {
+    "name": "Technique Burst"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 3,
+    "lifetime_seconds": 0.6,
+    "start_radius": 0.3,
+    "end_radius": 3.0,
+    "core_color": [
+     1.0,
+     1.0,
+     1.0
+    ],
+    "edge_color": [
+     1.0,
+     0.5,
+     0.8
+    ],
+    "intensity": 2.0,
+    "noise_scale": 3.5,
+    "scroll_speed": 2.0,
+    "dissolve": 0.85,
+    "light_intensity": 8.0,
+    "light_radius": 14.0,
+    "light_color": [
+     1.0,
+     0.75,
+     0.9
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Technique Burst Wave"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "effect_shape": {
+    "kind": 0,
+    "lifetime_seconds": 0.7,
+    "start_radius": 0.5,
+    "end_radius": 8.0,
+    "core_color": [
+     1.0,
+     0.95,
+     1.0
+    ],
+    "edge_color": [
+     1.0,
+     0.45,
+     0.8
+    ],
+    "intensity": 2.2,
+    "thickness": 0.15,
+    "noise_scale": 3.0,
+    "dissolve": 0.9
+   },
+   "parent": {
+    "index": 637,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Technique Burst Sparks"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.9,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     -3.0,
+     0.0
+    ],
+    "start_size": 0.07,
+    "end_size": 0.028000000000000004,
+    "start_color": [
+     1.0,
+     0.97,
+     0.9
+    ],
+    "has_middle_color": true,
+    "middle_color": [
+     1.0,
+     0.75,
+     0.95
+    ],
+    "end_color": [
+     0.8,
+     0.25,
+     0.6
+    ],
+    "intensity": 4.0,
+    "max_particles": 3000,
+    "burst_amount": 120,
+    "style": 3,
+    "spawn_shape": 1,
+    "spawn_radius": 0.08,
+    "outward_speed": 14.0,
+    "size_randomness": 0.4,
+    "drag": 2.0,
+    "stretch": 0.045
+   },
+   "parent": {
+    "index": 637,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Technique Burst Flash"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.18,
+    "spawn_half_extents": [
+     0.05,
+     0.05,
+     0.05
+    ],
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "velocity_randomness": 0.0,
+    "gravity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "start_size": 5.0,
+    "end_size": 1.5,
+    "start_color": [
+     1.0,
+     0.9,
+     1.0
+    ],
+    "has_middle_color": false,
+    "middle_color": [
+     1.0,
+     0.9,
+     1.0
+    ],
+    "end_color": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "intensity": 1.4,
+    "max_particles": 3000,
+    "burst_amount": 1
+   },
+   "parent": {
+    "index": 637,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Oil Detonation"
    },
    "transform": {
@@ -26979,7 +27302,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 636,
+    "index": 641,
     "bone_name": ""
    }
   },
@@ -27034,7 +27357,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 636,
+    "index": 641,
     "bone_name": ""
    }
   },
@@ -27120,7 +27443,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 636,
+    "index": 641,
     "bone_name": ""
    }
   },
@@ -27201,7 +27524,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 636,
+    "index": 641,
     "bone_name": ""
    }
   },
@@ -27287,7 +27610,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 636,
+    "index": 641,
     "bone_name": ""
    }
   },
@@ -27361,7 +27684,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 636,
+    "index": 641,
     "bone_name": ""
    }
   },
@@ -27482,7 +27805,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 643,
+    "index": 648,
     "bone_name": ""
    }
   },
@@ -27563,7 +27886,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 643,
+    "index": 648,
     "bone_name": ""
    }
   },
@@ -27676,7 +27999,7 @@
     "dissolve": 0.8
    },
    "parent": {
-    "index": 646,
+    "index": 651,
     "bone_name": ""
    }
   },
@@ -27731,7 +28054,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 646,
+    "index": 651,
     "bone_name": ""
    }
   },
@@ -27784,7 +28107,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 646,
+    "index": 651,
     "bone_name": ""
    }
   },
@@ -27865,7 +28188,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 646,
+    "index": 651,
     "bone_name": ""
    }
   },
@@ -27951,7 +28274,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 646,
+    "index": 651,
     "bone_name": ""
    }
   },
@@ -28092,7 +28415,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 652,
+    "index": 657,
     "bone_name": ""
    }
   },
@@ -28199,7 +28522,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 654,
+    "index": 659,
     "bone_name": ""
    }
   },
@@ -28254,7 +28577,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 654,
+    "index": 659,
     "bone_name": ""
    }
   },
@@ -28335,7 +28658,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 654,
+    "index": 659,
     "bone_name": ""
    }
   },
@@ -28421,7 +28744,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 654,
+    "index": 659,
     "bone_name": ""
    }
   },
@@ -28495,7 +28818,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 654,
+    "index": 659,
     "bone_name": ""
    }
   },
@@ -28630,7 +28953,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 660,
+    "index": 665,
     "bone_name": ""
    }
   },
@@ -28716,7 +29039,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 660,
+    "index": 665,
     "bone_name": ""
    }
   },
@@ -28828,7 +29151,7 @@
     "dissolve": 0.7
    },
    "parent": {
-    "index": 663,
+    "index": 668,
     "bone_name": ""
    }
   },
@@ -28909,7 +29232,7 @@
     "stretch": 0.12
    },
    "parent": {
-    "index": 663,
+    "index": 668,
     "bone_name": ""
    }
   },
@@ -28995,7 +29318,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 663,
+    "index": 668,
     "bone_name": ""
    }
   },
@@ -29130,7 +29453,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 667,
+    "index": 672,
     "bone_name": ""
    }
   },
@@ -29216,7 +29539,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 667,
+    "index": 672,
     "bone_name": ""
    }
   },
@@ -29350,7 +29673,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 670,
+    "index": 675,
     "bone_name": ""
    }
   },
@@ -29424,7 +29747,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 670,
+    "index": 675,
     "bone_name": ""
    }
   },
@@ -29572,7 +29895,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 673,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -29653,7 +29976,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 673,
+    "index": 678,
     "bone_name": ""
    }
   },
@@ -29779,7 +30102,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 676,
+    "index": 681,
     "bone_name": ""
    }
   },
@@ -29865,7 +30188,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 676,
+    "index": 681,
     "bone_name": ""
    }
   },
@@ -29946,7 +30269,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 676,
+    "index": 681,
     "bone_name": ""
    }
   },
@@ -30055,7 +30378,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30108,7 +30431,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30163,7 +30486,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30244,7 +30567,7 @@
     "stretch": 0.0
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30325,7 +30648,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30411,7 +30734,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30485,7 +30808,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 680,
+    "index": 685,
     "bone_name": ""
    }
   },
@@ -30629,7 +30952,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 688,
+    "index": 693,
     "bone_name": ""
    }
   },
@@ -30765,7 +31088,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 690,
+    "index": 695,
     "bone_name": ""
    }
   },
@@ -30846,7 +31169,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 690,
+    "index": 695,
     "bone_name": ""
    }
   },
@@ -30986,7 +31309,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 693,
+    "index": 698,
     "bone_name": ""
    }
   },
@@ -31943,7 +32266,7 @@
     "block_effect": "Guard Impact"
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Hand_L"
    }
   },
@@ -31993,7 +32316,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Hand_R"
    }
   },
@@ -32043,7 +32366,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Hand_L"
    }
   },
@@ -32093,7 +32416,7 @@
     "camera_shake": 0.3
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Foot_R"
    }
   },
@@ -32135,7 +32458,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Head"
    }
   },
@@ -32177,7 +32500,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Head"
    }
   },
@@ -32214,7 +32537,7 @@
     "emissive_strength": 1.2
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -32288,7 +32611,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -32357,7 +32680,7 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -32432,7 +32755,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Hips"
    }
   },
@@ -32501,7 +32824,7 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Hips"
    }
   },
@@ -32577,7 +32900,7 @@
     "only_while_striking": true
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Weapon_R"
    }
   },
@@ -32652,7 +32975,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 717,
+    "index": 722,
     "bone_name": ""
    }
   },
@@ -32890,7 +33213,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -32922,7 +33245,7 @@
     ]
    },
    "parent": {
-    "index": 725,
+    "index": 730,
     "bone_name": ""
    }
   },
@@ -32954,7 +33277,7 @@
     ]
    },
    "parent": {
-    "index": 725,
+    "index": 730,
     "bone_name": ""
    }
   },
@@ -32986,7 +33309,7 @@
     ]
    },
    "parent": {
-    "index": 725,
+    "index": 730,
     "bone_name": ""
    }
   },
@@ -33031,7 +33354,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -33063,7 +33386,7 @@
     ]
    },
    "parent": {
-    "index": 729,
+    "index": 734,
     "bone_name": ""
    }
   },
@@ -33095,7 +33418,7 @@
     ]
    },
    "parent": {
-    "index": 729,
+    "index": 734,
     "bone_name": ""
    }
   },
@@ -33127,7 +33450,7 @@
     ]
    },
    "parent": {
-    "index": 729,
+    "index": 734,
     "bone_name": ""
    }
   },
@@ -33172,7 +33495,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -33204,7 +33527,7 @@
     ]
    },
    "parent": {
-    "index": 733,
+    "index": 738,
     "bone_name": ""
    }
   },
@@ -33236,7 +33559,7 @@
     ]
    },
    "parent": {
-    "index": 733,
+    "index": 738,
     "bone_name": ""
    }
   },
@@ -33268,7 +33591,7 @@
     ]
    },
    "parent": {
-    "index": 733,
+    "index": 738,
     "bone_name": ""
    }
   },
@@ -33313,7 +33636,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -33345,7 +33668,7 @@
     ]
    },
    "parent": {
-    "index": 737,
+    "index": 742,
     "bone_name": ""
    }
   },
@@ -33377,7 +33700,7 @@
     ]
    },
    "parent": {
-    "index": 737,
+    "index": 742,
     "bone_name": ""
    }
   },
@@ -33409,7 +33732,7 @@
     ]
    },
    "parent": {
-    "index": 737,
+    "index": 742,
     "bone_name": ""
    }
   },
@@ -33454,7 +33777,7 @@
     "blend_in_seconds": 0.4
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -33486,7 +33809,7 @@
     ]
    },
    "parent": {
-    "index": 741,
+    "index": 746,
     "bone_name": ""
    }
   },
@@ -33518,7 +33841,7 @@
     ]
    },
    "parent": {
-    "index": 741,
+    "index": 746,
     "bone_name": ""
    }
   },
@@ -33550,7 +33873,7 @@
     ]
    },
    "parent": {
-    "index": 741,
+    "index": 746,
     "bone_name": ""
    }
   },
@@ -33752,7 +34075,7 @@
     ]
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": "Hand_R"
    }
   },
@@ -33798,7 +34121,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 748,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33844,7 +34167,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 748,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33890,7 +34213,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 748,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33937,7 +34260,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 748,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33984,7 +34307,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 748,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -34029,7 +34352,7 @@
     "blend_in_seconds": 0.9
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -34061,7 +34384,7 @@
     ]
    },
    "parent": {
-    "index": 754,
+    "index": 759,
     "bone_name": ""
    }
   },
@@ -34093,7 +34416,7 @@
     ]
    },
    "parent": {
-    "index": 754,
+    "index": 759,
     "bone_name": ""
    }
   },
@@ -34125,7 +34448,7 @@
     ]
    },
    "parent": {
-    "index": 754,
+    "index": 759,
     "bone_name": ""
    }
   },
@@ -34170,7 +34493,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -34202,7 +34525,7 @@
     ]
    },
    "parent": {
-    "index": 758,
+    "index": 763,
     "bone_name": ""
    }
   },
@@ -34234,7 +34557,7 @@
     ]
    },
    "parent": {
-    "index": 758,
+    "index": 763,
     "bone_name": ""
    }
   },
@@ -34266,7 +34589,7 @@
     ]
    },
    "parent": {
-    "index": 758,
+    "index": 763,
     "bone_name": ""
    }
   },
@@ -34310,7 +34633,7 @@
     "video_file": ""
    },
    "parent": {
-    "index": 705,
+    "index": 710,
     "bone_name": ""
    }
   },
@@ -34342,7 +34665,7 @@
     ]
    },
    "parent": {
-    "index": 762,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34374,7 +34697,7 @@
     ]
    },
    "parent": {
-    "index": 762,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34406,7 +34729,7 @@
     ]
    },
    "parent": {
-    "index": 762,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34438,7 +34761,7 @@
     ]
    },
    "parent": {
-    "index": 762,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34470,7 +34793,7 @@
     ]
    },
    "parent": {
-    "index": 762,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34502,7 +34825,7 @@
     ]
    },
    "parent": {
-    "index": 705
+    "index": 710
    },
    "cutscene": {
     "duration_seconds": 6.0,
@@ -34545,7 +34868,7 @@
     ]
    },
    "parent": {
-    "index": 768
+    "index": 773
    }
   },
   {
@@ -34576,7 +34899,7 @@
     ]
    },
    "parent": {
-    "index": 768
+    "index": 773
    }
   },
   {
@@ -34607,7 +34930,7 @@
     ]
    },
    "parent": {
-    "index": 768
+    "index": 773
    }
   },
   {
@@ -34638,7 +34961,7 @@
     ]
    },
    "parent": {
-    "index": 768
+    "index": 773
    }
   },
   {
@@ -34878,7 +35201,7 @@
     ]
    },
    "parent": {
-    "index": 773
+    "index": 778
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -34962,7 +35285,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 773,
+    "index": 778,
     "bone_name": "Hand_R"
    }
   },
@@ -35012,7 +35335,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 773,
+    "index": 778,
     "bone_name": "Hand_L"
    }
   },
@@ -35062,7 +35385,7 @@
     "camera_shake": 0.5
    },
    "parent": {
-    "index": 773,
+    "index": 778,
     "bone_name": "Foot_R"
    }
   },
@@ -35314,7 +35637,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 778,
+    "index": 783,
     "bone_name": "Hand_R"
    }
   },
@@ -35364,7 +35687,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 778,
+    "index": 783,
     "bone_name": "Hand_L"
    }
   },
@@ -35414,7 +35737,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 778,
+    "index": 783,
     "bone_name": "Foot_R"
    }
   },
@@ -35666,7 +35989,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 782,
+    "index": 787,
     "bone_name": "Hand_R"
    }
   },
@@ -35716,7 +36039,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 782,
+    "index": 787,
     "bone_name": "Hand_L"
    }
   },
@@ -35766,7 +36089,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 782,
+    "index": 787,
     "bone_name": "Foot_R"
    }
   },
@@ -36018,7 +36341,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 786,
+    "index": 791,
     "bone_name": "Hand_R"
    }
   },
@@ -36068,7 +36391,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 786,
+    "index": 791,
     "bone_name": "Hand_L"
    }
   },
@@ -36118,7 +36441,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 786,
+    "index": 791,
     "bone_name": "Foot_R"
    }
   },
@@ -36150,7 +36473,7 @@
     ]
    },
    "parent": {
-    "index": 786,
+    "index": 791,
     "bone_name": "Hand_R"
    }
   },
@@ -36196,7 +36519,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
    },
    "parent": {
-    "index": 790,
+    "index": 795,
     "bone_name": ""
    }
   },
@@ -36448,7 +36771,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 792,
+    "index": 797,
     "bone_name": "Hand_R"
    }
   },
@@ -36498,7 +36821,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 792,
+    "index": 797,
     "bone_name": "Hand_L"
    }
   },
@@ -36548,7 +36871,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 792,
+    "index": 797,
     "bone_name": "Foot_R"
    }
   },
@@ -36800,7 +37123,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 796,
+    "index": 801,
     "bone_name": "Hand_R"
    }
   },
@@ -36850,7 +37173,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 796,
+    "index": 801,
     "bone_name": "Hand_L"
    }
   },
@@ -36900,7 +37223,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 796,
+    "index": 801,
     "bone_name": "Foot_R"
    }
   },
@@ -36932,7 +37255,7 @@
     ]
    },
    "parent": {
-    "index": 796,
+    "index": 801,
     "bone_name": "Hand_R"
    }
   },
@@ -36978,7 +37301,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
    },
    "parent": {
-    "index": 800,
+    "index": 805,
     "bone_name": ""
    }
   },
@@ -37230,7 +37553,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 802,
+    "index": 807,
     "bone_name": "Hand_R"
    }
   },
@@ -37280,7 +37603,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 802,
+    "index": 807,
     "bone_name": "Hand_L"
    }
   },
@@ -37330,7 +37653,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 802,
+    "index": 807,
     "bone_name": "Foot_R"
    }
   },
@@ -37362,7 +37685,7 @@
     ]
    },
    "parent": {
-    "index": 802,
+    "index": 807,
     "bone_name": "Hand_R"
    }
   },
@@ -37408,7 +37731,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
    },
    "parent": {
-    "index": 806,
+    "index": 811,
     "bone_name": ""
    }
   },
@@ -37660,7 +37983,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 808,
+    "index": 813,
     "bone_name": "Hand_R"
    }
   },
@@ -37710,7 +38033,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 808,
+    "index": 813,
     "bone_name": "Hand_L"
    }
   },
@@ -37760,7 +38083,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 808,
+    "index": 813,
     "bone_name": "Foot_R"
    }
   },
@@ -38012,7 +38335,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 812,
+    "index": 817,
     "bone_name": "Hand_R"
    }
   },
@@ -38062,7 +38385,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 812,
+    "index": 817,
     "bone_name": "Hand_L"
    }
   },
@@ -38112,7 +38435,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 812,
+    "index": 817,
     "bone_name": "Foot_R"
    }
   },
@@ -38364,7 +38687,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 816,
+    "index": 821,
     "bone_name": "Hand_R"
    }
   },
@@ -38414,7 +38737,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 816,
+    "index": 821,
     "bone_name": "Hand_L"
    }
   },
@@ -38464,7 +38787,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 816,
+    "index": 821,
     "bone_name": "Foot_R"
    }
   },
@@ -38570,7 +38893,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 820
+    "index": 825
    },
    "point_light": {
     "attenuation": {
@@ -38725,7 +39048,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 822
+    "index": 827
    },
    "point_light": {
     "attenuation": {
@@ -38867,7 +39190,7 @@
     ]
    },
    "parent": {
-    "index": 824
+    "index": 829
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -39007,7 +39330,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 827,
+    "index": 832,
     "bone_name": ""
    }
   },
@@ -39063,7 +39386,7 @@
     }
    },
    "parent": {
-    "index": 827,
+    "index": 832,
     "bone_name": ""
    }
   },
@@ -39095,7 +39418,7 @@
     ]
    },
    "parent": {
-    "index": 827,
+    "index": 832,
     "bone_name": ""
    }
   },
@@ -39248,7 +39571,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -39280,7 +39603,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -39312,7 +39635,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -39344,7 +39667,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 836,
     "bone_name": ""
    }
   },

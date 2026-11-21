@@ -1066,7 +1066,8 @@ bool CharacterActionsSystem::UseItem(EntityManager& entityManager, unsigned int 
 	return true;
 }
 
-bool CharacterActionsSystem::Cast(EntityManager& entityManager, unsigned int entityID, const std::string& animationName, float releaseAt)
+bool CharacterActionsSystem::Cast(EntityManager& entityManager, unsigned int entityID, const std::string& animationName, float releaseAt,
+	bool isForced)
 {
 	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
 
@@ -1074,8 +1075,8 @@ bool CharacterActionsSystem::Cast(EntityManager& entityManager, unsigned int ent
 	if (!actions || !TryGetCharacter(entityManager, *actions, character) || !HasAnimation(character, animationName))
 		return false;
 
-	// Only a character free to act
-	if (actions->IsBusy() || !StaminaSystem::TrySpendForAction(entityManager, entityID, CharacterAction::Cast))
+	// Only a character free to act (unless a script forces it)
+	if (!isForced && (actions->IsBusy() || !StaminaSystem::TrySpendForAction(entityManager, entityID, CharacterAction::Cast)))
 		return false;
 
 	actions->castAnimation = animationName;
