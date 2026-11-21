@@ -101,6 +101,15 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
   <p><i>At zero health of his last stand the boss doesn't fall: a rift drops his armor and his sword, the pieces fly
   onto him in two beats and the engine puts his armored model on in their place (a model swapped at runtime, the
   same skeleton and clip names), then he fights with a great sword in two more phases.</i></p>
+  <img src="docs/media/sih-smile.jpg" width="356" alt="A close-up of the boss's face as he smiles" />
+  <img src="docs/media/sih-summon.jpg" width="356" alt="The summon grows a blade of light, its wheel over its head" />
+  <p><i>Faces act in the close shots: the boss's smile is a morph target of his head (the engine's model expression),
+  made by the character generator from the corners of his mouth. His summon adapts to what hurts it - the wheel over
+  its head turns an eighth each time - rushes through a player who keeps away and grows a blade of light at half health.</i></p>
+  <img src="docs/media/sih-crystal-vessel.webp" width="720" alt="The player's answer: a bottle of baby oil, the sign, crystal armor and a crystal sword" />
+  <p><i>The player's answer to the armor, shot by shot from the user's scenario: a bottle of baby oil gathers beside his
+  open hand, bursts as he makes the sign, the oil crystallizes into armor on him and a sword of frozen oil comes out of
+  a burst - rendered with the engine's crystal material.</i></p>
   <img src="docs/media/sih-armored.jpg" width="356" alt="The armored boss with his burning sword and the seal behind his back" />
   <img src="docs/media/sih-jump-plunge.webp" width="356" alt="A jump and a plunge into the ground with a shockwave" />
   <p><i>A hexagonal seal burns behind the boss from the summoning on. The player can jump, kick from the air or plunge
@@ -185,18 +194,18 @@ How big the engine and each game made with it are, counted automatically:
 
 | Part | Lines of code | Files | Languages |
 |---|---:|---:|---|
-| Engine core (`Sunta/src`, without the editor) | 34,508 | 324 | C++ 34,508 |
+| Engine core (`Sunta/src`, without the editor) | 34,519 | 324 | C++ 34,519 |
 | Editor (`Sunta/src/Sunta/Editor`, `Apps/Editor`) | 6,664 | 63 | C++ 6,664 |
 | Game runtime (`Apps/Runtime`) | 35 | 1 | C++ 35 |
 | Shaders and engine scripts (`Sunta/res`) | 1,225 | 19 | GLSL 1,181, Lua 44 |
 | Build (CMake, `cmake/`) | 252 | 5 | CMake 252 |
 | Tools (`Tools/`: asset generators, tests, docs) | 6,519 | 39 | Python 6,488, JavaScript 31 |
-| **Engine in all** | **49,203** | **451** | |
-| Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,618 | 11 | Python 3,504, Lua 3,114 |
+| **Engine in all** | **49,214** | **451** | |
+| Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,669 | 11 | Python 3,514, Lua 3,155 |
 | Game: [`Showcase`](Projects/Showcase) | 98 | 2 | Python 88, Lua 10 |
 | Game: [`MyGame`](Projects/MyGame) | 60 | 3 | Lua 45, GLSL 15 |
-| **Games in all** | **6,776** | **16** | |
-| **Everything** | **55,979** | **467** | |
+| **Games in all** | **6,827** | **16** | |
+| **Everything** | **56,041** | **467** | |
 
 Non-empty lines of the files tracked by git, without third-party code (`Dependencies/`) and generated files (scenes, models). Counted by [`Tools/count_lines.py`](Tools/count_lines.py) on every push to main.
 
