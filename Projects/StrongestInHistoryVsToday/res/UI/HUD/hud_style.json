@@ -77,6 +77,6 @@
         78
     ],
     "icon_height": 64,
-    "flask_icon": "@game/UI/HUD/icon_flask.png",
-    "currency_icon": "@game/UI/HUD/icon_soul.png"
+    "flask_icon": "@game/UI/HUD/icon_champagne.png",
+    "currency_icon": "@game/UI/HUD/icon_clout.png"
 }
