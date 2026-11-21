@@ -1637,6 +1637,9 @@ end
 function O.resetArmor()
     O.transform = nil
     O.vessel = nil
+    local player = find(PlayerName)
+    local bottle = player and player:findChild("Vessel Bottle")
+    if bottle and bottle.model then bottle.model.isVisible = false end
     if O.setPlayerSword then O.setPlayerSword(false) end
     O.hideArmorProps()
     if this.model then this.model.modelName = O.PlainModel end
@@ -1895,7 +1898,7 @@ end
 -- shoulder at him; close on his hands making the sign of his great technique, rays of light out of him; beside him as
 -- the sword of oil comes out of a burst of oil in slow motion; wide on both of them with the name of it. The boss waits
 -- Each shot starts the moment the one before it ends (the shots keep real time, the game's time is slowed meanwhile)
-O.Vessel = { { "Vessel Answer", "answer" }, { "Vessel Gesture", "gesture" }, { "Vessel Armor", "armor" },
+O.Vessel = { { "Vessel Answer", "answer" }, { "Vessel Bottle", "bottle" }, { "Vessel Gesture", "gesture" }, { "Vessel Armor", "armor" },
              { "Vessel Draw", "draw" }, { "Vessel Face-off", "faceoff" } }
 
 function O.startVessel()
@@ -1906,7 +1909,22 @@ end
 
 function O.vesselBeat(beat)
     local player = find(PlayerName)
-    if beat == "gesture" and player then
+    local bottle = player and player:findChild("Vessel Bottle")
+    if beat == "bottle" and player then
+        -- His palm opens and a bottle of baby oil gathers over it out of drops of light
+        if player.characterActions then player.characterActions:play("Cast_Orb") end
+        after(0.1, function()
+            if bottle and bottle.model then bottle.model.isVisible = true end
+            this.world:burst("Adapt Burst", player.transform.position + vec3(0, 1.2, 0), 40)
+            Audio.play("@game/Sounds/Spells/magic_whoosh.ogg", 0.6)
+        end)
+    elseif beat == "gesture" and player then
+        -- (the fist closes: the bottle bursts into the oil that becomes his armor)
+        if bottle and bottle.model then
+            bottle.model.isVisible = false
+            this.world:effect("Solid Oil Burst", player.transform.position + vec3(0, 1.3, 0), player.transform.forward)
+            Audio.play("@game/Sounds/Spells/glass_break.ogg", 1.0)
+        end
         if player.characterActions then player.characterActions:play("Cast_Great_Orb") end
         local center = player.transform.position + vec3(0, 1.1, 0)
         for i = 1, 10 do

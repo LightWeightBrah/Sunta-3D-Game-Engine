@@ -767,7 +767,9 @@ def add_oil_domain(builder, player):
         ("Domain Waves", 2.8, BOSS_NAME, 2.0, 0.6, ((2.4, 2.0, 6.0), (1.8, 2.6, 7.5), (1.2, 3.2, 9.0))),
         # His answer to the boss's armor (Divine Baby Oil: Crystal Vessel, boss_fight.lua O.startVessel): his hands close
         # and low, beside him as he draws the sword of oil, wide from aside on both of them (the boss before him)
-        ("Vessel Gesture", 1.8, PLAYER_NAME, 1.3, 0.4, ((0.35, 1.0, -1.6), (0.3, 1.1, -1.25))),
+        # (close on his open palm: a bottle of baby oil gathers over it, then the sign and it bursts)
+        ("Vessel Bottle", 1.4, PLAYER_NAME, 1.4, 0.3, ((1.1, 1.45, -2.0), (0.8, 1.5, -1.6))),
+        ("Vessel Gesture", 1.8, PLAYER_NAME, 1.45, 0.2, ((0.4, 1.45, -1.9), (0.3, 1.5, -1.5))),
         # (the oil crystallizes on him: the camera goes round him by about forty degrees)
         ("Vessel Armor", 2.0, PLAYER_NAME, 1.15, 0.3, ((1.7, 1.2, -2.3), (0.4, 1.3, -2.7))),
         ("Vessel Draw", 1.8, PLAYER_NAME, 1.2, 0.4, ((1.9, 1.25, -1.7), (1.65, 1.35, -1.35))),
@@ -840,6 +842,13 @@ def add_player(builder):
     for index, point in enumerate(((2.2, 0.5, -2.5), (1.3, 0.9, -2.2), (0.55, 1.2, -1.45), (0.3, 1.3, -1.05))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=rise)
     add_domain_spectacle(builder)
+    # The bottle of baby oil over his open palm as he answers the boss's armor (boss_fight.lua, Crystal Vessel)
+    # (standing upright where his open right palm is, not on the hand bone: it turned with the hand and lay on its side)
+    bottle = named("Vessel Bottle", (-0.12, 1.62, -0.36), model={"is_visible": False, "model_name": "sih_oil_bottle"})
+    bottle["transform"]["scale"] = [0.42] * 3
+    bottle["transform"]["rotation"] = [-90.0, 0.0, 0.0]
+    bottle["transform"]["rotation_quaternion"] = None
+    builder.add(bottle, parent=player)
     # The ball of oil he holds over his palm while he calls it (shown by his script)
     held = named("Player Held Orb", (0.0, 0.2, 0.0), liquid_orb=dict(OIL_ORB, is_visible=False))
     held["transform"]["scale"] = [0.34] * 3
