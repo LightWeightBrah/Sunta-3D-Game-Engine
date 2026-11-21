@@ -6,6 +6,7 @@
 #include "Core/InputManager.h"
 #include "Core/Log.h"
 #include "Core/VirtualFileSystem.h"
+#include "Gameplay/PauseMenu.h"
 #include "Events/EventBus.h"
 #include "Events/EventTypes.h"
 #include "Scene/Scene.h"
@@ -33,10 +34,18 @@ void RuntimeLayer::OnAttach()
 	application.GetScene().BeginPlay();
 }
 
+// Escape opens the pause menu (see PauseMenu, run by the scene): its "Quit" closes the game
 void RuntimeLayer::OnProcessInput()
 {
-	if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
+	if (PauseMenu::TakeQuitRequest())
 		application.Close();
+
+	// The cursor shows over the pause menu, the game has it hidden
+	if (PauseMenu::IsPaused() != isCursorShown)
+	{
+		isCursorShown = PauseMenu::IsPaused();
+		application.GetWindow().EnableMouseCursor(isCursorShown);
+	}
 }
 
 void RuntimeLayer::LoadStartScene()

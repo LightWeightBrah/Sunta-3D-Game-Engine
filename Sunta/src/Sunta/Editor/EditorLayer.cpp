@@ -1,6 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "EditorLayer.h"
 #include "Gameplay/DeveloperCheats.h"
+#include "Gameplay/PauseMenu.h"
 
 #include <imgui/imgui.h>
 
@@ -107,10 +108,25 @@ void EditorLayer::OnDetach()
 	EditorGUIContext::Shutdown(&application.GetWindow());
 }
 
+// Escape no longer closes the editor (too easy to hit while playing): in Play mode it opens the game's pause menu
+// (see PauseMenu), whose "Quit" stops Play mode
 void EditorLayer::OnProcessInput()
 {
-	if (InputManager::IsKeyDown(GLFW_KEY_ESCAPE))
-		RequestClose();
+	Scene& scene = application.GetScene();
+	if (PauseMenu::TakeQuitRequest() && scene.IsPlaying())
+	{
+		EditorGUI::StopPlayMode(scene);
+		if (currentEngineMode == EngineMode::Game)
+			ToggleEngineMode();
+	}
+
+	// Over the pause menu the cursor shows; in the game's mode it is hidden again
+	const bool wantsCursor = currentEngineMode == EngineMode::Editor || PauseMenu::IsPaused();
+	if (wantsCursor != isCursorShown)
+	{
+		isCursorShown = wantsCursor;
+		application.GetWindow().EnableMouseCursor(wantsCursor);
+	}
 
 	if (InputManager::IsKeyDown(GLFW_KEY_TAB))
 		ToggleEngineMode();

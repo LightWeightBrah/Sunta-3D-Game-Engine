@@ -364,4 +364,15 @@ void Audio::Update()
 	}
 }
 
+void Audio::SetPaused(bool paused)
+{
+	if (!isAvailable)
+		return;
+
+	if (paused)
+		ma_engine_stop(&engine);
+	else
+		ma_engine_start(&engine);
+}
+
 }

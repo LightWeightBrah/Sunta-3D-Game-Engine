@@ -25,6 +25,7 @@ private:
 	Application& application;
 
 	EngineMode currentEngineMode = EngineMode::Game;
+	bool       isCursorShown     = false;
 
 	// What the window title was built from, to find out when it needs to be built again
 	std::string projectName;

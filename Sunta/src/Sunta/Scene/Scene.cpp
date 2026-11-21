@@ -36,6 +36,8 @@
 #include "Gameplay/TestBot.h"
 #include "Gameplay/StrikeAimSystem.h"
 #include "Gameplay/EnemySystem.h"
+#include "Renderer/UIRenderer.h"
+#include "Gameplay/PauseMenu.h"
 #include "Gameplay/HUDSystem.h"
 #include "Gameplay/RespawnSystem.h"
 #include "Gameplay/BossSystem.h"
@@ -321,6 +323,17 @@ void Scene::ProcessInput()
 void Scene::Update()
 {
 	const bool isPlaying = IsPlaying();
+
+	// Escape pauses the game: while its menu is open nothing in the world moves
+	if (isPlaying)
+	{
+		PauseMenu::Update();
+		if (PauseMenu::IsPaused())
+		{
+			UpdateActiveCameraData();
+			return;
+		}
+	}
 
 	const glm::vec3 cameraForward = GetViewForward(activeCameraData.viewMatrix);
 	const glm::vec2 lookDelta     = isPlaying ? GetGameLookDelta() : glm::vec2(0.0f);
@@ -690,6 +703,13 @@ void Scene::Render(Renderer& renderer)
 
 		// Over everything, also over a cutscene: a flash of the whole screen asked for by a script
 		HUDSystem::DrawScreenFlash(screenSize);
+
+		if (PauseMenu::IsPaused())
+		{
+			UIRenderer::Begin(screenSize);
+			PauseMenu::Draw(hudArea.topLeft, hudArea.size);
+			UIRenderer::End();
+		}
 	}
 
 }
@@ -793,6 +813,7 @@ glm::vec3 Scene::GetWorldPositionUnderMouse(const glm::vec2& mousePosition, floa
 
 void Scene::BeginPlay()
 {
+	PauseMenu::Reset();
 	CollisionSystem::Reset();
 	LockOnSystem::ClearSightRays();
 
@@ -915,6 +936,7 @@ void Scene::SetHUDArea(const glm::vec2& topLeft, const glm::vec2& size)
 
 void Scene::EndPlay()
 {
+	PauseMenu::Reset();
 	AudioSystem::StopAll(entityManager);
 	playState = PlayState::Stopped;
 }

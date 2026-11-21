@@ -17,6 +17,7 @@ public:
 
 private:
 	Application& application;
+	bool         isCursorShown = false;
 
 	void LoadStartScene();
 };

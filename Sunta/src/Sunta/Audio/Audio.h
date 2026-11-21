@@ -68,6 +68,9 @@ public:
 
 	// Once per frame: frees the voices that finished
 	static void Update();
+
+	// Everything heard stops where it is and goes on from there when unpaused (the game's pause menu)
+	static void SetPaused(bool paused);
 };
 
 }
