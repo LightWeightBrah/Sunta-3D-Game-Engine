@@ -23,6 +23,11 @@ namespace Sunta
 //   footstepSound  each time a foot of the animation touches the ground: the bones 'leftFootBone' and 'rightFootBone'
 //                  (a model without them: every 'footstepMeters' walked)
 //   shockwaveSound a heavy blow shakes the ground (Character Actions with a shockwave)
+// Its voice (a man grunting, a monster roaring): never two of them at once, and only now and then
+//   painVoice      hurt but still alive ('painVoiceChance' of the hits)
+//   attackVoice    the effort of a blow ('attackVoiceChance' of the attacks)
+//   deathVoice     the last cry as it falls
+//   alertVoice     an enemy that notices the player (a shout, a curse)
 // 'volume' is for all of them (a giant is louder than a ghoul)
 struct CharacterSoundsComponent
 {
@@ -41,6 +46,13 @@ struct CharacterSoundsComponent
 	std::string footstepSound;
 	std::string shockwaveSound;
 
+	std::string painVoice;
+	std::string attackVoice;
+	std::string deathVoice;
+	std::string alertVoice;
+	float       painVoiceChance   = 0.7f;
+	float       attackVoiceChance = 0.35f;
+
 	float       attackSoundLeadSeconds = 0.15f;
 	std::string leftFootBone           = "Foot_L";
 	std::string rightFootBone          = "Foot_R";
@@ -58,6 +70,9 @@ struct CharacterSoundsComponent
 	bool      hasLastPosition     = false;
 
 	unsigned int soundedAttackNumber = 0;
+
+	// The voice rests this long before it is heard again (seconds)
+	float voiceRestLeft = 0.0f;
 
 	// Each foot (left, right): the lowest its bone gets above the character's feet, and whether it is in the air
 	float lowestFootHeight[FootCount]   = { 0.0f, 0.0f };
@@ -78,6 +93,12 @@ struct CharacterSoundsComponent
 				ADD_PROPERTY(CharacterSoundsComponent, rollSound, PropertyDataType::String),
 				ADD_PROPERTY(CharacterSoundsComponent, footstepSound, PropertyDataType::String),
 				ADD_PROPERTY(CharacterSoundsComponent, shockwaveSound, PropertyDataType::String),
+				ADD_PROPERTY(CharacterSoundsComponent, painVoice, PropertyDataType::String),
+				ADD_PROPERTY(CharacterSoundsComponent, attackVoice, PropertyDataType::String),
+				ADD_PROPERTY(CharacterSoundsComponent, deathVoice, PropertyDataType::String),
+				ADD_PROPERTY(CharacterSoundsComponent, alertVoice, PropertyDataType::String),
+				ADD_PROPERTY_RANGED(CharacterSoundsComponent, painVoiceChance, PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(CharacterSoundsComponent, attackVoiceChance, PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(CharacterSoundsComponent, attackSoundLeadSeconds, PropertyDataType::Float, 0.0f, MaxLeadSeconds),
 				ADD_PROPERTY(CharacterSoundsComponent, leftFootBone, PropertyDataType::String),
 				ADD_PROPERTY(CharacterSoundsComponent, rightFootBone, PropertyDataType::String),

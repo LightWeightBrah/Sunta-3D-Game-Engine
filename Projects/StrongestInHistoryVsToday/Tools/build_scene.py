@@ -1064,6 +1064,10 @@ def add_street_enemy(builder, name, kind, x, z):
                                         "swing_effect_height": 1.3, "swing_effect_distance": 0.1, "swing_effect_at": 0.3})
     entity["character_animation"].update(GUARD_STRIDE)
     entity["character_sounds"].update(BRAWL_SOUNDS)
+    # (their voices: a shout when they see the player, grunts of effort and pain, a last cry)
+    entity["character_sounds"].update({"pain_voice": "@game/Sounds/Men/Pain", "attack_voice": "@game/Sounds/Men/Effort",
+                                       "death_voice": "@game/Sounds/Men/Death", "alert_voice": "@game/Sounds/Men/Alert",
+                                       "pain_voice_chance": 0.75, "attack_voice_chance": 0.4})
     entity["enemy"].update({"sight_distance": 14.0, "hearing_distance": 4.0, "eye_height": 1.7})
     entity["strike_aim"] = dict(BOSS_STRIKE_AIM)
     if kind == "guard":
@@ -1083,7 +1087,7 @@ def add_street_enemy(builder, name, kind, x, z):
         builder.add(spell(f"{name} Flash Spell", charge_effect="", spread_degrees=0.0, at_targets_feet=False,
                           cast_animation="Cast_Spell", projectile="Boss Ring Orb", projectile_count=1, release_at=0.55,
                           min_distance=3.5, max_distance=16.0, cooldown_seconds=3.5, charge_particles_per_second=0.0,
-                          cast_sound="@game/Sounds/Spells/camera_shutter.ogg"), parent=hand)
+                          cast_sound="@game/Sounds/Spells/camera_flash.ogg"), parent=hand)
 
 
 def add_street_enemies(builder):

@@ -81,3 +81,19 @@ Picked by search for the fist fight and the techniques of 'Strongest in History 
 `Voice/*.ogg`: the player's character calling his techniques, cut from the soundtrack of the film this project is
 based on (youtube FvMWj1UzyhA): the voices separated from the music by Demucs (htdemucs), the lines found by Whisper,
 cut and leveled by ffmpeg. Not the project's own material, so it stays on this computer like `Film/`.
+
+## The men of the street (added 2026-11-21)
+
+Their voices (Character Sounds `pain_voice`, `attack_voice`, `death_voice`, `alert_voice`) and the flash of the paparazzi's
+cameras, all from Freesound under Creative Commons 0 (`Tools/Audio/freesound_log.json` keeps every download):
+
+| File | Freesound | Author |
+|---|---|---|
+| `Men/Pain/pain_547192/547197/547199/547206/547207.ogg` | [Voice_AdultMale_PainGrunts](https://freesound.org/people/MrFossy/) 547192, 547197, 547199, 547206, 547207 | MrFossy |
+| `Men/Effort/effort_464493/464494/464495.ogg` | S12-S14_Grunt_Player 464493, 464494, 464495 | kaygrum |
+| `Men/Death/death_345456.ogg` | Male_Death_04 (345456) | Artmasterrich |
+| `Men/Death/death_173126.ogg` | Death sound (male) (173126) | Replix |
+| `Men/Death/death_577033.ogg` | MaleDeathSound12 (577033) | Blankened |
+| `Men/Alert/alert_469302.ogg`, `alert_469303.ogg` | Voice Shout #04, #03 (469302, 469303) | bolkmar |
+| `Men/Alert/alert_509885.ogg` | male_shout_01 (509885) | slamaxu |
+| `Spells/camera_flash.ogg` | Camera Flash_Crackle_Near_Mono (406614) | _stubb |

@@ -23,6 +23,9 @@ public:
 
 	// E.g. Play(entityManager, targetID, &CharacterSoundsComponent::hurtSound). Nothing without Character Sounds
 	static void Play(EntityManager& entityManager, unsigned int entityID, Sound sound);
+
+	// One of its voices (painVoice, attackVoice, ...), with that chance, unless its voice is still resting from the last
+	static void PlayVoice(EntityManager& entityManager, unsigned int entityID, Sound voice, float chance = 1.0f);
 };
 
 }

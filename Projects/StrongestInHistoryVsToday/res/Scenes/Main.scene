@@ -35480,7 +35480,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 600
@@ -35832,7 +35838,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 600
@@ -36184,7 +36196,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 450
@@ -36516,7 +36534,7 @@
     "max_distance": 16.0,
     "cooldown_seconds": 3.5,
     "charge_particles_per_second": 0.0,
-    "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
+    "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
     "index": 795,
@@ -36614,7 +36632,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 600
@@ -36966,7 +36990,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 450
@@ -37298,7 +37328,7 @@
     "max_distance": 16.0,
     "cooldown_seconds": 3.5,
     "charge_particles_per_second": 0.0,
-    "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
+    "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
     "index": 805,
@@ -37396,7 +37426,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 450
@@ -37728,7 +37764,7 @@
     "max_distance": 16.0,
     "cooldown_seconds": 3.5,
     "charge_particles_per_second": 0.0,
-    "cast_sound": "@game/Sounds/Spells/camera_shutter.ogg"
+    "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
     "index": 811,
@@ -37826,7 +37862,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 600
@@ -38178,7 +38220,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 600
@@ -38530,7 +38578,13 @@
     "footstep_meters": 1.4,
     "volume": 1.0,
     "footstep_camera_shake": 0.0,
-    "footstep_shake_radius": 10.0
+    "footstep_shake_radius": 10.0,
+    "pain_voice": "@game/Sounds/Men/Pain",
+    "attack_voice": "@game/Sounds/Men/Effort",
+    "death_voice": "@game/Sounds/Men/Death",
+    "alert_voice": "@game/Sounds/Men/Alert",
+    "pain_voice_chance": 0.75,
+    "attack_voice_chance": 0.4
    },
    "currency_reward": {
     "amount": 600

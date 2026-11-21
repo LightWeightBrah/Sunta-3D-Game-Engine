@@ -435,6 +435,12 @@ namespace SceneKeys
 	constexpr const char* RollSound                 = "roll_sound";
 	constexpr const char* FootstepSound             = "footstep_sound";
 	constexpr const char* ShockwaveSound            = "shockwave_sound";
+	constexpr const char* PainVoice                 = "pain_voice";
+	constexpr const char* AttackVoice               = "attack_voice";
+	constexpr const char* DeathVoice                = "death_voice";
+	constexpr const char* AlertVoice                = "alert_voice";
+	constexpr const char* PainVoiceChance           = "pain_voice_chance";
+	constexpr const char* AttackVoiceChance         = "attack_voice_chance";
 	constexpr const char* FootstepMeters            = "footstep_meters";
 
 	constexpr const char* MaxCharges                = "max_charges";
@@ -1369,7 +1375,13 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::FootstepMeters, sounds->footstepMeters },
 				{ SceneKeys::FootstepCameraShake, sounds->footstepCameraShake },
 				{ SceneKeys::FootstepShakeRadius, sounds->footstepShakeRadius },
-				{ SceneKeys::SoundVolume,    sounds->volume         }
+				{ SceneKeys::SoundVolume,    sounds->volume         },
+				{ SceneKeys::PainVoice,      sounds->painVoice      },
+				{ SceneKeys::AttackVoice,    sounds->attackVoice    },
+				{ SceneKeys::DeathVoice,     sounds->deathVoice     },
+				{ SceneKeys::AlertVoice,     sounds->alertVoice     },
+				{ SceneKeys::PainVoiceChance,   sounds->painVoiceChance   },
+				{ SceneKeys::AttackVoiceChance, sounds->attackVoiceChance }
 			};
 		}
 
@@ -2369,6 +2381,12 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			sounds.footstepCameraShake = soundsData.value(SceneKeys::FootstepCameraShake, sounds.footstepCameraShake);
 			sounds.footstepShakeRadius = soundsData.value(SceneKeys::FootstepShakeRadius, sounds.footstepShakeRadius);
 			sounds.volume         = soundsData.value(SceneKeys::SoundVolume,    sounds.volume);
+			sounds.painVoice      = soundsData.value(SceneKeys::PainVoice,      sounds.painVoice);
+			sounds.attackVoice    = soundsData.value(SceneKeys::AttackVoice,    sounds.attackVoice);
+			sounds.deathVoice     = soundsData.value(SceneKeys::DeathVoice,     sounds.deathVoice);
+			sounds.alertVoice     = soundsData.value(SceneKeys::AlertVoice,     sounds.alertVoice);
+			sounds.painVoiceChance   = soundsData.value(SceneKeys::PainVoiceChance,   sounds.painVoiceChance);
+			sounds.attackVoiceChance = soundsData.value(SceneKeys::AttackVoiceChance, sounds.attackVoiceChance);
 		}
 
 		if (entityJson.contains(SceneKeys::PoiseComponent))

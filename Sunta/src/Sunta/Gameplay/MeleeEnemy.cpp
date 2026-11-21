@@ -1,5 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "MeleeEnemy.h"
+#include "CharacterSoundsSystem.h"
+#include "CharacterSoundsComponent.h"
 
 #include "BaseEnemyStates.h"
 #include "EnemyContext.h"
@@ -117,7 +119,12 @@ public:
 	std::string Update(EnemyContext& context) override
 	{
 		context.Stop();
-		return context.CanSeeTarget() ? Chase : "";
+		if (!context.CanSeeTarget())
+			return "";
+
+		// It has seen the player: a shout
+		CharacterSoundsSystem::PlayVoice(context.GetEntityManager(), context.GetEntityID(), &CharacterSoundsComponent::alertVoice);
+		return Chase;
 	}
 };
 

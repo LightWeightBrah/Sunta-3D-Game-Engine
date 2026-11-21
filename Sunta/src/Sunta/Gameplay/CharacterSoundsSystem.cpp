@@ -45,8 +45,15 @@ const CharacterSoundsSystem::Sound AllSounds[] =
 	&CharacterSoundsComponent::deathSound,
 	&CharacterSoundsComponent::rollSound,
 	&CharacterSoundsComponent::footstepSound,
-	&CharacterSoundsComponent::shockwaveSound
+	&CharacterSoundsComponent::shockwaveSound,
+	&CharacterSoundsComponent::painVoice,
+	&CharacterSoundsComponent::attackVoice,
+	&CharacterSoundsComponent::deathVoice,
+	&CharacterSoundsComponent::alertVoice
 };
+
+// After a voice the next one waits this long (a grunt at every blow of a combo is too much)
+constexpr float VoiceRestSeconds = 0.9f;
 
 // ========== The swoosh of an attack ==========
 
@@ -78,6 +85,7 @@ void UpdateAttackSound(EntityManager& entityManager, unsigned int entityID, Char
 
 	sounds.soundedAttackNumber = actions->attackNumber;
 	AudioSystem::PlayAtEntity(entityManager, entityID, sounds.attackSound, sounds.volume);
+	CharacterSoundsSystem::PlayVoice(entityManager, entityID, &CharacterSoundsComponent::attackVoice, sounds.attackVoiceChance);
 }
 
 // ========== Footsteps ==========
@@ -224,6 +232,7 @@ void CharacterSoundsSystem::Update(EntityManager& entityManager, float deltaTime
 	{
 		const unsigned int entityID = entityManager.GetEntityIDForComponent(sounds);
 
+		sounds.voiceRestLeft = glm::max(sounds.voiceRestLeft - deltaTime, 0.0f);
 		UpdateAttackSound(entityManager, entityID, sounds);
 		UpdateFootsteps(entityManager, entityID, sounds, deltaTime);
 	}
@@ -233,6 +242,21 @@ void CharacterSoundsSystem::Play(EntityManager& entityManager, unsigned int enti
 {
 	if (const CharacterSoundsComponent* sounds = entityManager.GetComponent<CharacterSoundsComponent>(entityID))
 		AudioSystem::PlayAtEntity(entityManager, entityID, sounds->*sound, sounds->volume);
+}
+
+void CharacterSoundsSystem::PlayVoice(EntityManager& entityManager, unsigned int entityID, Sound voice, float chance)
+{
+	CharacterSoundsComponent* sounds = entityManager.GetComponent<CharacterSoundsComponent>(entityID);
+	if (!sounds || (sounds->*voice).empty())
+		return;
+
+	// The last cry is never held back
+	const bool isDeath = voice == &CharacterSoundsComponent::deathVoice;
+	if (!isDeath && (sounds->voiceRestLeft > 0.0f || static_cast<float>(std::rand()) / RAND_MAX > chance))
+		return;
+
+	sounds->voiceRestLeft = VoiceRestSeconds;
+	AudioSystem::PlayAtEntity(entityManager, entityID, sounds->*voice, sounds->volume);
 }
 
 }

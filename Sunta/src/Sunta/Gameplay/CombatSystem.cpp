@@ -248,6 +248,7 @@ void Die(EntityManager& entityManager, unsigned int entityID, HealthComponent& h
 
 	CharacterActionsSystem::PlayDeath(entityManager, entityID);
 	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::deathSound);
+	CharacterSoundsSystem::PlayVoice(entityManager, entityID, &CharacterSoundsComponent::deathVoice);
 	CurrencySystem::OnDeath(entityManager, entityID, attackerEntityID);
 }
 
@@ -275,6 +276,11 @@ bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damag
 	const float floor = glm::clamp(minimum, 0.0f, health.currentHealth);
 	health.currentHealth = glm::max(health.currentHealth - damage, floor);
 	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::hurtSound);
+	if (health.currentHealth > 0.0f && damage > 0.0f)
+	{
+		const CharacterSoundsComponent* sounds = entityManager.GetComponent<CharacterSoundsComponent>(entityID);
+		CharacterSoundsSystem::PlayVoice(entityManager, entityID, &CharacterSoundsComponent::painVoice, sounds ? sounds->painVoiceChance : 0.0f);
+	}
 
 	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' hit '{1}' for {2} ({3} health left)", GetEntityName(entityManager, attackerEntityID),
 		GetEntityName(entityManager, entityID), damage, health.currentHealth);
