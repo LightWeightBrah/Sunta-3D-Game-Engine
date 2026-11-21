@@ -963,7 +963,8 @@ def add_armor_transformation(builder, boss):
         ("Armor Face", 2.85, 1.64, 0.35, ((0.22, 1.58, -0.85), (0.12, 1.62, -0.6))),
         ("Armor Rift Shot", 2.65, 1.9, 0.6, ((2.2, 0.45, 4.2), (2.5, 0.5, 5.0))),
         ("Armor Sword Fall", 0.85, 0.7, 0.25, ((2.6, 0.55, -3.4), (2.4, 0.6, -3.1))),
-        ("Armor Snap", 2.85, 1.35, 0.4, ((0.9, 1.35, -3.6), (0.6, 1.4, -3.0))),
+        # (to the side of the paths of the plates: from straight ahead the torso flew through the lens)
+        ("Armor Snap", 2.85, 1.3, 0.4, ((3.0, 1.5, -3.3), (2.5, 1.5, -2.8))),
         ("Armor Draw", 2.45, 1.25, 0.4, ((3.0, 1.2, -2.3), (2.6, 1.3, -1.9))),
         ("Armor Ignite Face", 1.85, 1.87, 0.3, ((-0.25, 1.84, -1.0), (-0.15, 1.87, -0.78))),
         ("Armor Ignite", 1.85, 1.4, 0.5, ((-0.4, 1.6, -1.6), (-1.0, 1.9, -4.4))),

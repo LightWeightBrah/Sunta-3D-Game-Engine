@@ -1627,7 +1627,7 @@ end
 function O.hideArmorProps()
     for _, piece in ipairs(O.Pieces) do
         local entity = O.pieceEntity(piece)
-        if entity and entity.model then entity.model.isVisible = false end
+        if entity and entity.model then entity.model.isVisible = false; entity.model.rimGlow = vec3(0, 0, 0) end
     end
     local dropped = find("Armor Drop Sword")
     if dropped and dropped.model then dropped.model.isVisible = false end
@@ -1719,12 +1719,15 @@ function O.updatePieces(tr)
                 local e = k * k * k
                 local place = spot + (onBody - spot) * e + vec3(0, math.sin(k * math.pi) * 0.9, 0)
                 entity.transform.position = place
+                -- (outlined in red as they fly: dark plates in a red dusk were hard to see)
+                entity.model.rimGlow = vec3(1.0, 0.18, 0.08) * (0.6 + 0.8 * k)
                 entity.transform.rotation = vec3(12 * (1 - e), yaw + O.PieceFloor[piece][1] * (1 - e), 0)
             elseif tr.t >= snapAt then
                 entity.transform.position = onBody
                 entity.transform.rotation = vec3(0, yaw, 0)
                 if not tr.snapped[piece] then
                     tr.snapped[piece] = true
+                    entity.model.rimGlow = vec3(0, 0, 0)
                     this.world:effect("Armor Clank", onBody, this.transform.forward)
                 end
             end
