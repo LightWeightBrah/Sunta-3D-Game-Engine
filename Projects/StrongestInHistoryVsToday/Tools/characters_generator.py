@@ -777,8 +777,8 @@ def add_smirk(character, head, preview_folder=""):
 # of the arm; and how far around the bones the body is measured, meters)
 CRYSTAL_ARMOR = {
     "chest":      ("diddy_armor_chest.glb", ("Spine", "Chest"), "Chest", 1.2, None, 0.26),
-    "pauldron_r": ("diddy_armor_pauldron.glb", ("UpperArm_R",), "UpperArm_R", 1.3, "shoulder", 0.11),
-    "bracer_r":   ("diddy_armor_bracer.glb", ("LowerArm_R",), "LowerArm_R", 1.15, "limb", 0.09),
+    "pauldron_r": ("diddy_armor_pauldron.glb", ("UpperArm_R",), "UpperArm_R", 1.15, "shoulder", 0.1),
+    "bracer_r":   ("diddy_armor_bracer.glb", ("LowerArm_R",), "LowerArm_R", 1.02, "limb", 0.07),
     "greave_r":   ("diddy_armor_greave.glb", ("Shin_R",), "Shin_R", 1.12, "limb", 0.11),
 }
 MIRRORED = {"pauldron_r": "pauldron_l", "bracer_r": "bracer_l", "greave_r": "greave_l"}
