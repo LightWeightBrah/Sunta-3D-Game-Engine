@@ -55,16 +55,16 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
 
 <div align="center">
   <h3>Physics</h3>
-  <img src="docs/media/physics.gif" width="800" alt="Falling bodies, a trigger and the collider debug view" />
-  <p><i>Collisions with collision layers, triggers that report enter, stay and exit, and raycasts. A debug view draws the colliders over the scene.</i></p>
+  <img src="docs/media/physics.webp" width="800" alt="A pyramid of crates knocked over by falling boxes and a thrown block" />
+  <p><i>Rigid bodies with mass, friction, bounce and spin: oriented boxes collide (SAT) and come to rest stacked; collision layers, triggers that report enter, stay and exit, and raycasts. The scene is <code>Projects/Showcase</code> (made by its own script).</i></p>
 </div>
 
 <br />
 
 <div align="center">
   <h3>Skeletal Animation</h3>
-  <img src="docs/media/skeletal-animation.gif" width="800" alt="Bone-based skeletal animation on a 3D model" />
-  <p><i>Bone-based animation of imported models with smooth transitions.</i></p>
+  <img src="docs/media/skeletal-animation.webp" width="800" alt="Knights and a boss, each playing another animation of its model" />
+  <p><i>Skinned glTF and FBX models with their clips: bones driven on the CPU, smooth cross-fades between clips, an upper-body layer (blocking while walking), held items on bones and procedural aim of the strikes. The scene is <code>Projects/Showcase</code>.</i></p>
 </div>
 
 <br />
@@ -79,7 +79,7 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
 
 <div align="center">
   <h3>Project Launcher and One-Click Build</h3>
-  <img src="docs/media/project-build.gif" width="800" alt="Project launcher and building a game" />
+  <img src="docs/media/project-launcher.png" width="800" alt="The project launcher with recent projects" />
   <p><i>The launcher lists your recent projects and the sample project. When the game is ready, one click packages it into a folder for players, no compiler needed.</i></p>
 </div>
 

@@ -1,0 +1,365 @@
+{
+ "entities": [
+  {
+   "tag": {
+    "name": "Sky"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "environment": {
+    "skybox_folder": "@game/Skyboxes/BurningDusk",
+    "sky_brightness": 1.0,
+    "is_fog_enabled": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Sun"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     8.0,
+     0.0
+    ],
+    "rotation": [
+     -50.0,
+     -30.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.875426098065593,
+     -0.40821789367673483,
+     -0.23456971600980447,
+     -0.109381654946615
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "directional_light": {
+    "ambient": [
+     0.3,
+     0.28,
+     0.3
+    ],
+    "diffuse": [
+     0.9,
+     0.82,
+     0.72
+    ],
+    "specular": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     40.0,
+     1.0,
+     40.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "default_material",
+    "mesh_name": "cube"
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     2.6,
+     7.5
+    ],
+    "rotation": [
+     -12.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9945218953682733,
+     -0.10452846326765347,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "camera": {
+    "far_plane": 200.0,
+    "field_of_view": 50.0,
+    "is_active": true,
+    "near_plane": 0.1
+   },
+   "script": [
+    {
+     "script_path": "@game/Scripts/orbit_camera.lua"
+    }
+   ]
+  },
+  {
+   "tag": {
+    "name": "knight Idle"
+   },
+   "transform": {
+    "position": [
+     -3.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "knight"
+   },
+   "animator": {
+    "current_animation_name": "Idle"
+   }
+  },
+  {
+   "tag": {
+    "name": "knight Attack_Light_1"
+   },
+   "transform": {
+    "position": [
+     -1.5,
+     0.0,
+     -1.8
+    ],
+    "rotation": [
+     0.0,
+     60.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8660254037844387,
+     0.0,
+     0.49999999999999994,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "knight"
+   },
+   "animator": {
+    "current_animation_name": "Attack_Light_1"
+   }
+  },
+  {
+   "tag": {
+    "name": "rusted_knight Attack_Heavy"
+   },
+   "transform": {
+    "position": [
+     1.5,
+     0.0,
+     -1.8
+    ],
+    "rotation": [
+     0.0,
+     120.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5000000000000001,
+     0.0,
+     0.8660254037844386,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "rusted_knight"
+   },
+   "animator": {
+    "current_animation_name": "Attack_Heavy"
+   }
+  },
+  {
+   "tag": {
+    "name": "rusted_knight Roll"
+   },
+   "transform": {
+    "position": [
+     3.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "rusted_knight"
+   },
+   "animator": {
+    "current_animation_name": "Roll"
+   }
+  },
+  {
+   "tag": {
+    "name": "knight Block"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     2.0
+    ],
+    "rotation": [
+     0.0,
+     240.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.4999999999999998,
+     0.0,
+     0.8660254037844387,
+     -0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "knight"
+   },
+   "animator": {
+    "current_animation_name": "Block"
+   }
+  },
+  {
+   "tag": {
+    "name": "boss Fury_Combo"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     -4.0
+    ],
+    "rotation": [
+     0.0,
+     300.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8660254037844387,
+     0.0,
+     0.49999999999999994,
+     -0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "boss"
+   },
+   "animator": {
+    "current_animation_name": "Fury_Combo"
+   }
+  }
+ ],
+ "scene_name": "Animation"
+}

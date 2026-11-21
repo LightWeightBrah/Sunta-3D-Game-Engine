@@ -1,0 +1,1337 @@
+{
+ "entities": [
+  {
+   "tag": {
+    "name": "Sun"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     8.0,
+     0.0
+    ],
+    "rotation": [
+     -55.0,
+     -35.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8459572670993778,
+     -0.44037747942673894,
+     -0.2667293017598086,
+     -0.13885048591283025
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "directional_light": {
+    "ambient": [
+     0.28,
+     0.27,
+     0.3
+    ],
+    "diffuse": [
+     0.85,
+     0.8,
+     0.72
+    ],
+    "specular": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Floor"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     40.0,
+     1.0,
+     40.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "default_material",
+    "mesh_name": "cube"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Sky"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "environment": {
+    "skybox_folder": "@game/Skyboxes/BurningDusk",
+    "sky_brightness": 1.0,
+    "is_fog_enabled": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     4.2,
+     13.0
+    ],
+    "rotation": [
+     -13.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9935718556765875,
+     -0.11320321376790672,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "camera": {
+    "far_plane": 200.0,
+    "field_of_view": 50.0,
+    "is_active": true,
+    "near_plane": 0.1
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 1"
+   },
+   "transform": {
+    "position": [
+     -2.04,
+     0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 2"
+   },
+   "transform": {
+    "position": [
+     -1.02,
+     0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 3"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 4"
+   },
+   "transform": {
+    "position": [
+     1.02,
+     0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 5"
+   },
+   "transform": {
+    "position": [
+     2.04,
+     0.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 6"
+   },
+   "transform": {
+    "position": [
+     -1.53,
+     1.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 7"
+   },
+   "transform": {
+    "position": [
+     -0.51,
+     1.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 8"
+   },
+   "transform": {
+    "position": [
+     0.51,
+     1.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 9"
+   },
+   "transform": {
+    "position": [
+     1.53,
+     1.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 10"
+   },
+   "transform": {
+    "position": [
+     -1.02,
+     2.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 11"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     2.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 12"
+   },
+   "transform": {
+    "position": [
+     1.02,
+     2.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 13"
+   },
+   "transform": {
+    "position": [
+     -0.51,
+     3.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 14"
+   },
+   "transform": {
+    "position": [
+     0.51,
+     3.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Crate 15"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     4.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "textured_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.0,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Falling Box 1"
+   },
+   "transform": {
+    "position": [
+     -3.0,
+     7.0,
+     2.5
+    ],
+    "rotation": [
+     35,
+     20,
+     50
+    ],
+    "rotation_quaternion": [
+     0.8732973755192222,
+     0.33838195603422944,
+     0.02494165532638548,
+     0.34961015370161547
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "default_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.5,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Falling Box 2"
+   },
+   "transform": {
+    "position": [
+     2.5,
+     9.0,
+     3.0
+    ],
+    "rotation": [
+     60,
+     45,
+     10
+    ],
+    "rotation_quaternion": [
+     0.8137350405585702,
+     0.4890665421833401,
+     0.28989174189720257,
+     -0.1208800192909446
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "default_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.5,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Falling Box 3"
+   },
+   "transform": {
+    "position": [
+     -1.0,
+     11.0,
+     -3.0
+    ],
+    "rotation": [
+     15,
+     70,
+     40
+    ],
+    "rotation_quaternion": [
+     0.788771739628183,
+     0.29496907738688466,
+     0.497805382263846,
+     0.2074179055400136
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "default_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.5,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Falling Box 4"
+   },
+   "transform": {
+    "position": [
+     3.5,
+     8.0,
+     -2.0
+    ],
+    "rotation": [
+     45,
+     0,
+     45
+    ],
+    "rotation_quaternion": [
+     0.8535533905932737,
+     0.3535533905932738,
+     -0.14644660940672624,
+     0.3535533905932738
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "default_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "mass": 1.5,
+    "restitution": 0.15,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  },
+  {
+   "tag": {
+    "name": "Thrown Block"
+   },
+   "transform": {
+    "position": [
+     -12.0,
+     2.5,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.4,
+     1.4,
+     1.4
+    ]
+   },
+   "mesh": {
+    "is_visible": true,
+    "material_name": "unlit_material",
+    "mesh_name": "cube"
+   },
+   "physics_body": {
+    "is_kinematic": false,
+    "use_gravity": true,
+    "velocity": [
+     14.0,
+     2.5,
+     0.0
+    ],
+    "angular_velocity": [
+     0.0,
+     0.0,
+     -3.0
+    ],
+    "mass": 8.0,
+    "restitution": 0.2,
+    "friction": 0.6,
+    "linear_damping": 0.02,
+    "angular_damping": 0.05
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     0.5,
+     0.5
+    ]
+   }
+  }
+ ],
+ "scene_name": "Physics"
+}
