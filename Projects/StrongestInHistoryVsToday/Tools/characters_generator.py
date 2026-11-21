@@ -227,8 +227,9 @@ BOSS = {
 # without the shield): quick slashes, a heavy downward cut, the blade raised to block
 SWORD_SHIELD = "Mixamo/ProSwordShield/sword and shield "
 PLAYER_SWORD = dict(PLAYER, **{
-    "Idle":           MotionClip(SWORD_SHIELD + "idle (4).fbx"),
-    "Idle_Fight":     MotionClip(SWORD_SHIELD + "idle (4).fbx"),
+    # (Mixamo's Sword And Shield Idle made for his own rig: the blade held low before him, not over the shoulder)
+    "Idle":           diddy("Sword_Idle"),
+    "Idle_Fight":     diddy("Sword_Idle"),
     "Walk":           MotionClip(SWORD_SHIELD + "walk.fbx"),
     "Run":            MotionClip(SWORD_SHIELD + "run.fbx"),
     "Walk_Back":      MotionClip(SWORD_SHIELD + "walk (2).fbx"),

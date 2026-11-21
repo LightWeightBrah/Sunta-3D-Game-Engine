@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "Systems.h"
+#include "Gameplay/CharacterActionsSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -63,6 +64,7 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 		if (!component.isDirty && !needsAnimatorSync)
 			continue;
 
+		const bool isSwapped = component.isDirty && component.modelData != nullptr;
 		if (component.isDirty)
 		{
 			component.modelData = (!component.modelName.empty() && component.modelName != ModelComponent::NULL_ASSET_NAME)
@@ -98,6 +100,10 @@ void Systems::SyncModelComponents(EntityManager& entityManager)
 			}
 
 			animatorComponent->needsModelSync = false;
+
+			// A model put on while the game plays (a boss changing his body): what the character was doing goes on
+			if (isSwapped)
+				CharacterActionsSystem::RestartAction(entityManager, entityID);
 		}
 
 	}

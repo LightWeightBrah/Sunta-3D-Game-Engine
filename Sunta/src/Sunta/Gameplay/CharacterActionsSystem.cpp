@@ -1039,6 +1039,15 @@ void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsig
 	}
 }
 
+void CharacterActionsSystem::RestartAction(EntityManager& entityManager, unsigned int entityID)
+{
+	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+	if (!actions || actions->currentAction == CharacterAction::None)
+		return;
+
+	ForceAction(entityManager, entityID, actions->currentAction);
+}
+
 bool CharacterActionsSystem::PlaySpecial(EntityManager& entityManager, unsigned int entityID, const std::string& animationName)
 {
 	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);

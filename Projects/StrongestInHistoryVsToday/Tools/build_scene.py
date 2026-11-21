@@ -1294,6 +1294,8 @@ def add_fight(builder):
     # The gateway between the unseen borders is 6 m wide (the borders at x = +-5 reach in to +-3): MyGame's fog was
     # 3.5 m, so the player could walk out of the arena beside it. It fills the gateway now, and so does its mist
     builder.get(fog)["box_collider"]["half_extents"][0] = FOG_GATE_HALF_WIDTH
+    # (a wall for the player, mist for the camera: closed behind a player standing at it, it pushed the camera into his head)
+    builder.get(fog)["box_collider"]["blocks_camera"] = False
     mist = builder.get(builder.child_named(fog, "Fog Mist"))["particle_emitter"]
     mist["spawn_half_extents"][0] = FOG_GATE_HALF_WIDTH - 0.2
     mist["particles_per_second"] = mist["particles_per_second"] * FOG_GATE_HALF_WIDTH / 1.75

@@ -41232,7 +41232,8 @@
      2.3,
      0.0
     ],
-    "show_gizmos": false
+    "show_gizmos": false,
+    "blocks_camera": false
    },
    "fog_gate": {
     "arena_center": [

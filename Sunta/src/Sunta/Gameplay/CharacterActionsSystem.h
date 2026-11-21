@@ -40,6 +40,10 @@ public:
 	// hits don't stagger it. False when the character has no such animation (or is dead)
 	static bool PlaySpecial(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);
 
+	// The character's model was swapped (a new Animator): what it is doing starts again on the new body, so an action
+	// played once ends with its animation instead of waiting forever for one the new Animator never plays
+	static void RestartAction(EntityManager& entityManager, unsigned int entityID);
+
 	// Started by a bonfire: the character kneels (moving, rolling and attacking do nothing) until StandUp,
 	// which plays the animation of getting up (or just ends the rest when there is none)
 	static void PlayRest(EntityManager& entityManager, unsigned int entityID);
