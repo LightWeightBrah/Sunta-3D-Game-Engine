@@ -1624,6 +1624,7 @@ end
 -- Back to the man of the first phases (the player died: the fight starts over)
 function O.resetArmor()
     O.transform = nil
+    if O.setPlayerSword then O.setPlayerSword(false) end
     O.hideArmorProps()
     if this.model then this.model.modelName = O.PlainModel end
     O.setHeldSword(false)
@@ -1832,6 +1833,47 @@ function O.updateTransform(deltaTime)
     end
 end
 
+-- ========== The player's answer: Divine Baby Oil: Crystal Vessel ==========
+
+-- As the boss takes up his sword, the player takes up his: his model with the sword in its fist (the same man, the
+-- same clips by name), the sword drawn out of a burst of oil, his fists no longer the weapon
+O.PlayerPlainModel, O.PlayerSwordModel = "sih_player", "sih_player_sword"
+O.PlayerSwordTitle = "Divine Baby Oil: Crystal Vessel"
+
+function O.setPlayerSword(isOn)
+    local player = find(PlayerName)
+    if not player then return end
+    if player.model then player.model.modelName = isOn and O.PlayerSwordModel or O.PlayerPlainModel end
+    local sword = player:findChild("Player Sword")
+    if sword then
+        if sword.model then sword.model.isVisible = isOn end
+        if sword.hitbox then sword.hitbox.isEnabled = isOn end
+    end
+    for _, name in ipairs({ "Right Fist", "Left Fist", "Right Foot" }) do
+        local limb = player:findChild(name)
+        if limb and limb.hitbox then limb.hitbox.isEnabled = not isOn end
+    end
+    local actions = player.characterActions
+    if not actions then return end
+    if isOn then
+        -- (the blade strikes in the middle of each slash: the windows of the knight's sword, see knight_generator)
+        for _, name in ipairs({ "Attack_Light_1", "Attack_Light_2", "Attack_Light_3", "Attack_Light_4",
+                                "Attack_Running", "Attack_Riposte" }) do actions:setMove(name, 0.28, 0.58, 1.0) end
+        for _, name in ipairs({ "Attack_Heavy", "Attack_Heavy_2" }) do actions:setMove(name, 0.42, 0.68, 1.6) end
+        actions.swingEffect, actions.heavySwingEffect = "", ""
+    end
+end
+
+function O.armPlayer()
+    local player = find(PlayerName)
+    if not player then return end
+    O.setPlayerSword(true)
+    if player.characterActions then player.characterActions:play("Draw_Sword") end
+    local hand = player.transform.position + vec3(0, 1.1, 0) + player.transform.forward * 0.4
+    this.world:effect("Solid Oil Burst", hand, player.transform.forward)
+    this.world:notify(O.PlayerSwordTitle)
+end
+
 function O.startArmoredPhase()
     phase = 5
     isChanneling = false
@@ -1856,6 +1898,8 @@ function O.startArmoredPhase()
     this.meleeEnemy.dodgeChance = 0.15
     O.armored = { slamIn = 3, dashIn = 6, whirlIn = 4, barrageIn = 99, hasExecuted = false }
     showCaption(O.ArmorTitle, 3)
+    -- (a moment later: the player's answer, his own sword of oil)
+    after(1.2, O.armPlayer)
 end
 
 function O.startPhaseSix()

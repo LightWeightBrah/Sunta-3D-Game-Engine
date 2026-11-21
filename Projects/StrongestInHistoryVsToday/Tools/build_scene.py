@@ -843,6 +843,16 @@ def add_player(builder):
     builder.add(guard, parent=player)
     # (a little bigger than a fist: a blow that looks like it lands, lands)
     add_fists_and_foot(builder, player, 26.0, PLAYER_HITBOX_LAYER, size=0.2)
+    # His sword of baby oil (Divine Baby Oil: Crystal Vessel, boss_fight.lua O.armPlayer): on the bone in the fist of
+    # his sword model, hidden and harmless until then; a trail of pink and white light while it strikes
+    sword = named("Player Sword", (0.0, 0.0, 0.0), model={"is_visible": False, "model_name": "sih_diddy_sword",
+                                                         "emissive_strength": 0.0})
+    sword["hitbox"] = {"damage": 34.0, "poise_damage": 30.0, "local_offset": [0.0, 0.5, 0.0],
+                       "half_extents": [0.12, 0.36, 0.08], "layer": PLAYER_HITBOX_LAYER, "show_gizmos": False,
+                       "hit_stop_seconds": 0.07, "camera_shake": 0.3, "is_enabled": False}
+    sword["weapon_trail"] = {"base_offset": [0.0, 0.2, 0.0], "tip_offset": [0.0, 0.82, 0.0], "color": [1.0, 0.7, 0.88],
+                             "intensity": 1.8, "lifetime_seconds": 0.18, "only_while_striking": True}
+    builder.add(sword, parent=player, bone="Weapon_R")
     # The guard of bare forearms: an unseen shield on the left hand (blocking and parrying need one)
     # Bare forearms are no shield: some of every blow comes through, and three or four of his punches break the guard
     builder.add(named("Guard", shield={"damage_through": 0.3, "guard_angle_degrees": 110.0, "stamina_per_damage": 2.4,

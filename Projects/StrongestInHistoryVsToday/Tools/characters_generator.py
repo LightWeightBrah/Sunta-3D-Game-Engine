@@ -222,6 +222,35 @@ BOSS = {
     "Ground_Pound":   library(ADDON, "Attack_Ground_Pound", speed=1.0),
 }
 
+# The player with his sword of baby oil (his answer to the boss's armor, boss_fight.lua swaps his model to it): the same
+# man and the same names of clips, but he fights with a one-handed sword now (Mixamo's Sword And Shield pack, played
+# without the shield): quick slashes, a heavy downward cut, the blade raised to block
+SWORD_SHIELD = "Mixamo/ProSwordShield/sword and shield "
+PLAYER_SWORD = dict(PLAYER, **{
+    "Idle":           MotionClip(SWORD_SHIELD + "idle (4).fbx"),
+    "Idle_Fight":     MotionClip(SWORD_SHIELD + "idle (4).fbx"),
+    "Walk":           MotionClip(SWORD_SHIELD + "walk.fbx"),
+    "Run":            MotionClip(SWORD_SHIELD + "run.fbx"),
+    "Walk_Back":      MotionClip(SWORD_SHIELD + "walk (2).fbx"),
+    "Strafe_Left":    MotionClip(SWORD_SHIELD + "strafe (2).fbx"),
+    "Strafe_Right":   MotionClip(SWORD_SHIELD + "strafe.fbx"),
+    "Attack_Light_1": MotionClip(SWORD_SHIELD + "slash.fbx", 4, 40, speed=1.45),
+    "Attack_Light_2": MotionClip(SWORD_SHIELD + "slash (3).fbx", 10, 45, speed=1.45),
+    "Attack_Light_3": MotionClip(SWORD_SHIELD + "attack (2).fbx", 6, 34, speed=1.25),
+    "Attack_Light_4": MotionClip(SWORD_SHIELD + "attack (3).fbx", speed=1.2),
+    "Attack_Heavy":   MotionClip(SWORD_SHIELD + "slash (2).fbx", 4, 36, speed=1.0),
+    "Attack_Heavy_2": MotionClip(SWORD_SHIELD + "attack (4).fbx", speed=1.0),
+    "Attack_Running": MotionClip(SWORD_SHIELD + "attack.fbx", speed=1.15),
+    "Attack_Riposte": MotionClip(SWORD_SHIELD + "slash (2).fbx", 4, 36, speed=1.1),
+    "Block":          MotionClip(SWORD_SHIELD + "block idle.fbx"),
+    "Block_Impact":   MotionClip(SWORD_SHIELD + "impact.fbx"),
+    "Parry":          MotionClip(SWORD_SHIELD + "block.fbx", speed=1.4),
+    "Hit":            MotionClip(SWORD_SHIELD + "impact (2).fbx"),
+    "Hit_2":          MotionClip(SWORD_SHIELD + "impact (2).fbx"),
+    # Drawing the sword out of the oil (the transformation's last shot)
+    "Draw_Sword":     MotionClip("Mixamo/ProSwordShield/draw sword 1.fbx"),
+})
+
 # The boss in his armor (the last two phases, after the transformation of boss_fight.lua): the same names as BOSS -
 # the engine swaps his model and the clips go on by name - but he fights with a great sword in both hands now
 # (Mixamo's Great Sword pack). Everything the fight's staging plays (his falls, signs, the summoning) stays as BOSS
@@ -395,6 +424,8 @@ GESTURES = {
 
 # (in his armor he makes the same signs)
 GESTURES["sih_boss_armored"] = GESTURES["sih_boss"]
+# (with his sword the player makes the signs of his techniques the same way; he parries with the blade, not the arm)
+GESTURES["sih_player_sword"] = {name: gestures for name, gestures in GESTURES["sih_player"].items() if name != "Parry"}
 
 
 def gesture_pin(armature, rig, gesture, size):
@@ -455,9 +486,15 @@ def pose_hands(character, armature, rig, actions):
             # (clips of other characters have no fingers for this rig: posed as everywhere else)
             clip = character.animations.get(action.name)
             own_fingers = clip is not None and clip.rig is MIXAMO_NATIVE
-            if own_fingers and action.name not in gestures and not action.name.startswith(GESTURE_FINGERS_ONLY):
-                continue
+            is_sign = action.name in gestures or action.name.startswith(GESTURE_FINGERS_ONLY)
             right, left = finger_poses_of(action.name)
+            if character.fists_always:
+                # (a held sword: the right fist stays closed around its grip in every clip, his own takes too; the left
+                # hand still makes the signs of his techniques)
+                right = "fist"
+                left = left if is_sign else "fist"
+            elif own_fingers and not is_sign:
+                continue
             poses = {"_R": right, "_L": left}
         else:
             right, left = finger_poses_of(action.name)
@@ -537,6 +574,10 @@ CHARACTERS = [
     # the transformation's cutscene
     Character("boss_armored_rigged.glb", "BossArmored", "sih_boss_armored", 1.95, BOSS_ARMORED, armor_pieces=True,
               fists_always=True, weapon="BossSword/sih_boss_sword.gltf"),
+    # The player with his sword of baby oil (the last phases): the same model, the sword in his right fist
+    Character("Mixamo/Diddy/Diddy_Skin_WeightShiftIdle.fbx", "PlayerSword", "sih_player_sword", 1.83, PLAYER_SWORD,
+              smooth_head=1, shine=0.25, mixamo_rigged=True, textures="player_v3.glb",
+              heat_weights=False, smooth_weights=0, fists_always=True, weapon="DiddySword/sih_diddy_sword.gltf"),
     Character("summon_monster_rigged.glb", "Summon", "sih_summon", 3.0, SUMMON),
     Character("enemy_guard_rigged.glb", "Guard", "sih_guard", 1.9, GUARD, shine=0.12),
     Character("enemy_paparazzo_rigged.glb", "Paparazzo", "sih_paparazzo", 1.76, PAPARAZZO, shine=0.4,
@@ -641,6 +682,27 @@ def make_character(character, arguments):
 WEAPON_BONE = knight_generator.WEAPON_BONE
 
 
+def fist_hole(armature, hand):
+    """The middle of the hole of the closed fist (where a grip goes), measured on the fingers bent into the fist:
+    halfway between the knuckles and the tip of the curled middle finger. None for a hand without three bones a finger"""
+    names = hand.bones.get("Middle")
+    if not names or len(names) != 3:
+        return None
+    rotations = finger_rig.pose_rotations(armature, hand, "fist")
+    for name, rotation in rotations.items():
+        bone = armature.pose.bones[name]
+        bone.rotation_mode = "QUATERNION"
+        bone.rotation_quaternion = rotation
+    bpy.context.view_layer.update()
+    knuckles = sum((armature.matrix_world @ armature.pose.bones[hand.bones[finger][0]].head
+                    for finger in ("Index", "Middle", "Ring")), Vector()) / 3.0
+    tip = armature.matrix_world @ armature.pose.bones[names[2]].tail
+    for name in rotations:
+        armature.pose.bones[name].rotation_quaternion = (1.0, 0.0, 0.0, 0.0)
+    bpy.context.view_layer.update()
+    return (knuckles + tip) * 0.5
+
+
 def add_weapon_bone(character, armature, rig):
     """The bone that carries the held model (its grip at the origin, its blade along +Z): in the middle of the right
     fist, the blade coming out on the side of the thumb, its edges along the fingers. Returns its rest matrix"""
@@ -649,7 +711,9 @@ def add_weapon_bone(character, armature, rig):
     edges = (hand.fingers - blade * hand.fingers.dot(blade)).normalized()
     flat = blade.cross(edges)
     # (hand.fingers is only a direction: the middle of the fist is a part of the hand's length from the wrist)
-    center = hand.wrist + hand.fingers * (hand.length * 0.45) + hand.palm.normalized() * 0.03 * character.height / 1.83
+    center = fist_hole(armature, hand)
+    if center is None:
+        center = hand.wrist + hand.fingers * (hand.length * 0.45) + hand.palm.normalized() * 0.03 * character.height / 1.83
     matrix = Matrix.Translation(center) @ Matrix((edges, flat, blade)).transposed().to_4x4()
     character_from_mesh.add_held_item_bones(armature, [(WEAPON_BONE, "Hand_R", matrix)])
     return matrix

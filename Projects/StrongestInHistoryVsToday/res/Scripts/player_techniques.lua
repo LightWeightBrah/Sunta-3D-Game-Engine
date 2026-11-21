@@ -121,9 +121,11 @@ local function updateOilGuard(deltaTime)
     local actions = this.characterActions
     if not guard or not guard.liquidOrb or not actions then return end
 
-    local target = actions.isGuarding and 1 or 0
+    -- (with his sword of oil he blocks with the blade: no wall of oil)
+    local hasSword = this.model and this.model.modelName == "sih_player_sword"
+    local target = (actions.isGuarding and not hasSword) and 1 or 0
     guardAmount = guardAmount + (target - guardAmount) * math.min(deltaTime * 14, 1)
-    if actions.isParrying then parryFlare = 1 else parryFlare = math.max(parryFlare - deltaTime * 4, 0) end
+    if actions.isParrying and not hasSword then parryFlare = 1 else parryFlare = math.max(parryFlare - deltaTime * 4, 0) end
 
     local amount = math.max(guardAmount, parryFlare)
     local size = 0.6 + 0.4 * amount + 0.35 * parryFlare
