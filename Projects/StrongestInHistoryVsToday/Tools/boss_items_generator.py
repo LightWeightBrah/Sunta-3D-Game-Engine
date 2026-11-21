@@ -7,7 +7,9 @@ Run (from the repository root):
     (optional: -- --only sword|seal --preview <folder>)
 
 Writes res/Models/Props/BossSword/sih_boss_sword.gltf and res/Models/Props/HexSeal/sih_hex_seal.gltf (+ .bin and
-textures: _diffuse, _specular, _emissive)
+textures: _diffuse, _specular, _emissive), and the player's answer to the boss's sword: his own sword of baby oil
+(res/Models/Props/DiddySword/sih_diddy_sword.gltf, Meshy's model of the user's concept B, see
+AIContext/scripts/meshy_diddy_sword.py)
 
 Where they come from: the sword is Meshy's model (Multi-Image to 3D) of the user's concept
 Tools/Blender/Concepts/StrongestInHistory/boss_sword_concept.webp (its front and side views); the seal is built here out
@@ -108,6 +110,51 @@ def make_sword(folder):
         return boss_generator.tinted(tree, glow, SWORD_EMBER)
 
     character_from_mesh.bake_emission(sword, folder, "sih_boss_sword_emissive", glowing_blade, size=1024)
+    return sword
+
+
+# ========== The player's sword of baby oil ==========
+
+DIDDY_SWORD_SOURCE = os.path.join(GENERATED, "diddy_sword.glb")
+DIDDY_SWORD_LENGTH = 1.0     # meters: a one-handed sword
+# The fist holds the grip this part of the way from the guard to the end of the pommel
+DIDDY_GRIP_FROM_GUARD = 0.45
+
+
+def make_diddy_sword(folder):
+    """The same as the boss's sword (grip at the origin, blade up along +Z, edges along X), whichever way Meshy stood
+    it: the guard is the widest slice, the blade is the longer side of it"""
+    sword = load_single_mesh(DIDDY_SWORD_SOURCE)
+    points = numpy.array([tuple(vertex.co) for vertex in sword.data.vertices])
+    # (the long side of the model is its Z or its Y: turned so it is Z)
+    if numpy.ptp(points[:, 1]) > numpy.ptp(points[:, 2]):
+        sword.data.transform(Matrix.Rotation(math.pi / 2, 4, "X"))
+        points = numpy.array([tuple(vertex.co) for vertex in sword.data.vertices])
+    low, high = points[:, 2].min(), points[:, 2].max()
+    slices = numpy.linspace(low, high, 81)
+    widths = []
+    for a, b in zip(slices[:-1], slices[1:]):
+        inside = points[(points[:, 2] >= a) & (points[:, 2] < b)]
+        widths.append(numpy.ptp(inside[:, 0]) if len(inside) else 0.0)
+    widths = numpy.array(widths)
+    # (not at the very ends: a pommel ball or a tip can't be the guard)
+    margin = len(widths) // 10
+    guard_index = margin + int(widths[margin:-margin].argmax())
+    guard = (slices[guard_index] + slices[guard_index + 1]) * 0.5
+    tip_is_up = (high - guard) > (guard - low)
+    pommel_end = low if tip_is_up else high
+    grip = guard + (pommel_end - guard) * DIDDY_GRIP_FROM_GUARD
+    scale = DIDDY_SWORD_LENGTH / (high - low)
+    turn = Matrix.Identity(4) if tip_is_up else Matrix.Rotation(math.pi, 4, "X")
+    sword.data.transform(Matrix.Scale(scale, 4) @ turn @ Matrix.Translation((0.0, 0.0, -grip)))
+    sword.name = "DiddySword"
+    tip = abs((high if tip_is_up else low) - grip) * scale
+    blade_from = abs(guard - grip) * scale + 0.02
+    print("DIDDY_SWORD guard at {:.3f}, tip at {:.3f} above the grip".format(blade_from, tip))
+    print("DIDDY_SWORD_HITBOX local_offset (0, {:.3f}, 0) half_extents (0.08, {:.3f}, 0.05)".format(
+        (blade_from + tip) * 0.5, (tip - blade_from) * 0.5))
+    # Glossy like the oil it is made of
+    character_from_mesh.make_engine_textures(sword, folder, "sih_diddy_sword", 1.1, 1.15)
     return sword
 
 
@@ -239,7 +286,8 @@ def main():
     arguments = parser.parse_args(argv)
 
     for name, folder_name, model_name, make in (("sword", "BossSword", "sih_boss_sword", make_sword),
-                                                ("seal", "HexSeal", "sih_hex_seal", make_seal)):
+                                                ("seal", "HexSeal", "sih_hex_seal", make_seal),
+                                                ("diddy_sword", "DiddySword", "sih_diddy_sword", make_diddy_sword)):
         if arguments.only and arguments.only != name:
             continue
         clear_scene()

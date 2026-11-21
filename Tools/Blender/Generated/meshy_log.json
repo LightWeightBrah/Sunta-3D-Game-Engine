@@ -1877,5 +1877,36 @@
     },
     "output": "Generated/StrongestInHistory/boss_armored_rigged.glb",
     "date": "2026-11-20T06:04:14"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a1fc6c-fd84-779e-81a4-f064a3de875a",
+    "input": "Concepts/StrongestInHistory/diddy_sword_b_single.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same one-handed sword alone, standing upright, the whole sword in the frame, on a plain pure white background. Remove every label, word, legend square and line. Keep its look exactly: a clear glass-like blade of transparent baby oil with small bubbles and a soft swirl inside, a curved glossy pink guard, a pink wrapped grip, a round pink pommel. Photorealistic product photo, studio light"
+    },
+    "output": "Concepts/StrongestInHistory/diddy_sword_clean.png",
+    "date": "2026-11-21T05:46:58"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a1fc6d-5696-710d-b70c-7e241ea8726a",
+    "input": "Concepts/StrongestInHistory/diddy_sword_clean.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 8000
+    },
+    "output": "Generated/StrongestInHistory/diddy_sword.glb",
+    "date": "2026-11-21T05:48:04"
   }
 ]
