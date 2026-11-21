@@ -633,7 +633,7 @@ PLAYER_EYES = {"R": (-0.0330, 0.1532, 0.0858), "L": (0.0330, 0.1531, 0.0857)}
 BOSS_EYES = {"R": (-0.0297, 0.1647, 0.0917), "L": (0.0359, 0.1696, 0.0873)}
 
 # When the spells leave the hands, as parts of their casting animations (looked up in the previews of the generator)
-GREAT_ORB_RELEASE_AT = 0.6
+GREAT_ORB_RELEASE_AT = 0.55
 CLEAVE_RELEASE_AT = 0.48
 
 # The speed of the walking clips (meters per second) times the scale of the character
@@ -870,13 +870,15 @@ def add_player(builder):
     entity["transform"] = transform(PLAYER_START)
     # Bodies wide enough that two boxers don't stand inside each other
     entity["box_collider"]["half_extents"] = [0.36, 0.9, 0.36]
-    entity["health"]["max_health"] = 200.0
+    # (a long fight in many phases against two bosses at once: room for mistakes, see also the champagne refilled
+    # between the phases in boss_fight.lua)
+    entity["health"]["max_health"] = 320.0
     entity["health"]["hit_effect"] = "Punch Impact"
     # A boxer keeps his feet under a jab: only a heavy blow or a few quick ones stagger him
     entity["poise"] = {"max_poise": 40.0, "recover_after_seconds": 3.0, "stagger_immunity_seconds": 1.6}
     # A volley of money or tapes costs one hit, not all of them at once
     entity["health"]["spell_immunity_seconds"] = 0.8
-    entity["healing_flask"].update({"display_name": "Champagne", "max_charges": 4, "heal_amount": 80.0})
+    entity["healing_flask"].update({"display_name": "Champagne", "max_charges": 5, "heal_amount": 110.0})
     entity["currency"]["display_name"] = "Clout"
     entity["lock_on"]["max_distance"] = 40.0
 
@@ -1257,7 +1259,7 @@ def add_summon(builder):
     entity["model"]["model_name"] = SUMMON_MODEL
     entity["character_actions"].update(SUMMON_HIT_WINDOWS)
     # Both fists into the ground: a shockwave around where they land
-    entity["character_actions"].update({"shockwave_radius": 4.5, "shockwave_damage": 42.0, "shockwave_distance": 1.8,
+    entity["character_actions"].update({"shockwave_radius": 4.5, "shockwave_damage": 28.0, "shockwave_distance": 1.8,
                                         "shockwave_effect": "Cleaver Slam Burst", "shockwave_camera_shake": 0.9,
                                         "attack_reach": 2.8, "attack_turn_degrees_per_second": 120.0,
                                         "hyper_armor": 2, "heavy_swing_effect": "Ground Slam", "swing_effect": "Boss Heavy Swing",
@@ -1269,7 +1271,7 @@ def add_summon(builder):
     # It jumps at a player who keeps away
     entity["melee_enemy"]["leap_attack_distance"] = 11.0
     entity["enemy"]["eye_height"] = 2.6
-    add_fists_and_foot(builder, summon, 30.0, ENEMY_HITBOX_LAYER, poise_damage=50.0, size=0.38, camera_shake=0.5)
+    add_fists_and_foot(builder, summon, 22.0, ENEMY_HITBOX_LAYER, poise_damage=50.0, size=0.38, camera_shake=0.5)
     entity["transform"] = transform(SUMMON_WAITING_PLACE, (0.0, 180.0, 0.0))
     # Three meters tall: a body, senses and blows of that size
     entity["box_collider"].update({"half_extents": [1.05, 1.45, 1.05], "local_offset": [0.0, 1.45, 0.0]})
@@ -1295,7 +1297,7 @@ def add_summon(builder):
     # hidden and harmless until then; it strikes in the windows of its blows like its fists
     blade = named("Summon Blade", (0.0, 0.05, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
                                                          "emissive_strength": 0.0})
-    blade["hitbox"] = {"damage": 45.0, "poise_damage": 50.0, "local_offset": [0.0, 0.95, 0.0],
+    blade["hitbox"] = {"damage": 30.0, "poise_damage": 50.0, "local_offset": [0.0, 0.95, 0.0],
                        "half_extents": [0.2, 0.8, 0.14], "layer": ENEMY_HITBOX_LAYER, "show_gizmos": False,
                        "hit_stop_seconds": 0.08, "camera_shake": 0.5, "is_enabled": False}
     blade["weapon_trail"] = {"base_offset": [0.0, 0.4, 0.0], "tip_offset": [0.0, 1.7, 0.0], "color": [1.0, 0.92, 0.7],
@@ -1371,13 +1373,15 @@ def add_fight(builder):
 # each flies in from the shot before ('blend_in_seconds') and lasts until the next one starts (no game camera between)
 SEQUENCE_SHOTS = {
     "Knockback Flight": {"duration_seconds": 6.1},
-    "Domain Sign":      {"blend_in_seconds": 0.9},
+    # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
+    "Domain Sign":      {"blend_in_seconds": 0.0},
     "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
     "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 1.8},
     # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)
-    "Technique Rise":   {"blend_in_seconds": 1.0, "duration_seconds": 4.6},
+    # (a cut from the shot over him lying: a flight there crossed the whole arena)
+    "Technique Rise":   {"blend_in_seconds": 0.0, "duration_seconds": 4.6},
     "Bottle Fall":      {"blend_in_seconds": 0.6},
 }
 

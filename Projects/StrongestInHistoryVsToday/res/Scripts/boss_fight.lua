@@ -82,7 +82,7 @@ local PhaseChangeInvulnerableSeconds = 3.0
 local DomainHealPerSecond   = 9
 local DomainSpellEverySeconds = 6.5
 local DomainBrokenSeconds   = 18
-local ChannelSpellEverySeconds = 10
+local ChannelSpellEverySeconds = 14
 local SummonAppearsAhead    = 4.5
 
 -- The guard: how often he answers a punch thrown close to him by raising his forearms, and for how long
@@ -763,10 +763,13 @@ end
 function O.updateSign(deltaTime)
     if not O.isHoldingSign then return end
 
+    -- (the first time the hand rises into the sign; then the sign is held, played again only once it is over: a
+    -- clip started again in the middle jumps)
     O.holdSignIn = O.holdSignIn - deltaTime
-    if O.holdSignIn <= 0 then
-        this.characterActions:play("Sign_Hold")
-        O.holdSignIn = 2.5
+    if O.holdSignIn <= 0 and not this.characterActions.isBusy then
+        this.characterActions:play(O.hasRaisedSign and "Sign_Hold" or "Sign_Raise")
+        O.hasRaisedSign = true
+        O.holdSignIn = 0.5
     end
 end
 
@@ -952,7 +955,7 @@ function O.updateKnock(deltaTime)
     end
     -- Rising, the hand already goes up with the sign
     if k.hasRisen and k.t >= fly + skid + O.KnockLieSeconds + O.KnockGetUpSeconds then
-        O.isHoldingSign, O.holdSignIn = true, 0
+        O.isHoldingSign, O.holdSignIn, O.hasRaisedSign = true, 0, false
         O.knock = nil
     end
 end
@@ -1092,7 +1095,8 @@ end
 -- A moment of the cutscene the player answers: the camera over him lying where the stars threw him, the prompt on
 -- the screen ('Down Wait' waits for [2]); the answer: he rises with his hand up ('Technique Rise') and the great
 -- technique leaves his hand as he stands (its voice, eyes and the bottle from the sky: player_techniques.lua)
-O.DownCutscene, O.RiseCutscene, O.RiseSeconds = "Down Wait", "Technique Rise", 1.35
+-- (the technique is called once he is nearly on his feet: called earlier his hands made the sign half way up)
+O.DownCutscene, O.RiseCutscene, O.RiseSeconds = "Down Wait", "Technique Rise", 2.6
 
 function O.updateRise(deltaTime)
     if not O.lyingUntilPress then return end
@@ -1101,9 +1105,10 @@ function O.updateRise(deltaTime)
     this.enemy:startAttackCooldown(1)
     rainIn, lineIn = math.max(rainIn, 2), math.max(lineIn, 2)
 
+    -- (played again only near its end: started again in the middle it jumped)
     O.lyingReplayIn = O.lyingReplayIn - deltaTime
     if O.lyingReplayIn <= 0 then
-        O.lyingReplayIn = 1.5
+        O.lyingReplayIn = 3.8
         O.playPlayer("Lying")
     end
 
@@ -1946,6 +1951,7 @@ end
 
 function O.startArmoredPhase()
     phase = 5
+    O.refillFlasks()
     isChanneling = false
     invulnerableLeft = 0.5
     setHealthFloor(0.5 - FloorMargin)
@@ -2298,8 +2304,18 @@ callTheSummon = function()
     O.showSeal(1)
 end
 
+-- A breath between the great parts of the fight: the player's champagne is full again
+function O.refillFlasks()
+    local player = find(PlayerName)
+    local flask = player and player.healingFlask
+    if not flask or flask.charges >= flask.maxCharges then return end
+    flask.charges = flask.maxCharges
+    this.world:notify("CHAMPAGNE REFILLED")
+end
+
 local function startLastPhase()
     phase = 4
+    O.refillFlasks()
     isChanneling = false
     this.health.isInvulnerable = false
     -- (he doesn't fall at the end of it: at the last point of health his armor comes, see O.startTransformation)
@@ -2526,7 +2542,8 @@ O.VoiceVolume    = 1.5
 
 -- While the player fights his summon up close he only watches: his storms of money are for a player who runs from it
 -- (further than this from the summon), so the summon is never fought with a rain of money in the back
-O.ChannelHoldsWithinMeters = 7
+-- (far enough that a player fighting the summon - rolling around it, backing off to drink - is never shot at)
+O.ChannelHoldsWithinMeters = 13
 
 -- ========== Called by the engine ==========
 

@@ -335,8 +335,8 @@
    },
    "healing_flask": {
     "display_name": "Champagne",
-    "max_charges": 4,
-    "heal_amount": 80.0,
+    "max_charges": 5,
+    "heal_amount": 110.0,
     "drink_animation": "Drink",
     "heal_at_progress": 0.45,
     "heal_effect": "Heal Glow",
@@ -346,7 +346,7 @@
     "heal_sound": ""
    },
    "health": {
-    "max_health": 200.0,
+    "max_health": 320.0,
     "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 1.5,
     "death_slow_motion_scale": 0.35,
@@ -2671,7 +2671,7 @@
     "title_seconds": 1.6,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 1.0
+    "blend_in_seconds": 0.0
    },
    "parent": {
     "index": 2,
@@ -3867,7 +3867,7 @@
     "projectile": "Player Great Orb",
     "projectile_count": 1,
     "spread_degrees": 0.0,
-    "release_at": 0.6,
+    "release_at": 0.55,
     "at_targets_feet": false,
     "drop_height": 13.0,
     "min_distance": 0.0,
@@ -36579,7 +36579,7 @@
     "title_seconds": 0.0,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 0.9
+    "blend_in_seconds": 0.0
    },
    "parent": {
     "index": 757,
@@ -37247,7 +37247,7 @@
     "stand_up_animation": "",
     "attack_turn_degrees_per_second": 120.0,
     "shockwave_radius": 4.5,
-    "shockwave_damage": 42.0,
+    "shockwave_damage": 28.0,
     "shockwave_distance": 1.8,
     "shockwave_effect": "Cleaver Slam Burst",
     "shockwave_camera_shake": 0.9,
@@ -37497,7 +37497,7 @@
     ]
    },
    "hitbox": {
-    "damage": 30.0,
+    "damage": 22.0,
     "half_extents": [
      0.38,
      0.38,
@@ -37547,7 +37547,7 @@
     ]
    },
    "hitbox": {
-    "damage": 30.0,
+    "damage": 22.0,
     "half_extents": [
      0.38,
      0.38,
@@ -37597,7 +37597,7 @@
     ]
    },
    "hitbox": {
-    "damage": 30.0,
+    "damage": 22.0,
     "half_extents": [
      0.38,
      0.38,
@@ -37688,7 +37688,7 @@
     "emissive_strength": 0.0
    },
    "hitbox": {
-    "damage": 45.0,
+    "damage": 30.0,
     "poise_damage": 50.0,
     "local_offset": [
      0.0,

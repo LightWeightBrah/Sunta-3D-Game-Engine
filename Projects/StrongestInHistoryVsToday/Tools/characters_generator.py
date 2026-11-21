@@ -131,7 +131,7 @@ PLAYER = {
     "Knocked_Down":   diddy("Knocked_Back", 20, 75),
     "Lying":          diddy("Knocked_Back", 140, 146, speed=0.05),
     # (quick: in the film he is up and making the sign of his technique in a second and a half)
-    "Get_Up":         diddy("GetUp_Back", speed=1.7),
+    "Get_Up":         diddy("GetUp_Back", speed=2.1),
     "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
     "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
     "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
@@ -139,7 +139,9 @@ PLAYER = {
     "Cast_Orb":       diddy("Idle_Standing", 1, 66),
     # His two great techniques are signs of the hands held still (posed below, see GESTURES): both hands pressed
     # together with two fingers up, and a triangle of both hands before the chest
-    "Cast_Great_Orb": diddy("Idle_Standing", speed=0.9),
+    # (about three seconds: the sign made, held for a breath and the technique gone, as in the film 1:47.5-1:49 - the
+    # whole clip held him still for five and a half seconds before it left his hands)
+    "Cast_Great_Orb": diddy("Idle_Standing", 1, 90, speed=1.0),
     # (short: the sign is made and held for the close-up of his hands, then the domain opens - release_at 0.9)
     "Cast_Domain":    diddy("Idle_Standing", 1, 66, speed=1.1),
     # The jump (Space): the flight is the engine's physics, so the take's own rise is taken out of the hips (the tuck
@@ -180,6 +182,8 @@ BOSS = {
     "Sign_Domain":    MotionClip(AXE + "unarmed idle.fbx", speed=0.5),
     # The same sign held from the first frame on: played again and again while his temple rises under him
     "Sign_Hold":      MotionClip(AXE + "unarmed idle.fbx", speed=0.5),
+    # Up off the ground: the hand rises into the sign (then Sign_Hold keeps it there)
+    "Sign_Raise":     MotionClip(AXE + "unarmed idle.fbx", speed=0.5),
     "Attack_Light_1": MotionClip(BRAWL + "Boxing Jab.fbx", speed=1.15, **JAB),
     "Attack_Light_2": MotionClip(BRAWL + "Cross Punch.fbx", speed=1.15, **CROSS),
     "Attack_Light_3": MotionClip(BRAWL + "Uppercut.fbx", speed=1.1, **UPPERCUT),
@@ -346,6 +350,7 @@ FINGER_POSES = (
     ("Parry", ("fist", "open")),
     ("Sign_Domain", ("two", "relaxed")),
     ("Sign_Hold", ("two", "relaxed")),
+    ("Sign_Raise", ("two", "relaxed")),
     ("Cast_Great_Orb", ("open", "open")),
     ("Cast_Domain", ("steeple", "steeple")),
     ("Cast_Orb", ("open", "relaxed")),
@@ -387,7 +392,9 @@ class Gesture:
 GESTURES = {
     "sih_boss": {
         # Beside his face, the fingers up, the palm turned half towards his own face
-        "Sign_Domain": [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.25)],
+        # (he holds the sign already when its shot starts: the hand is there from the first frame, no drop and rise)
+        "Sign_Domain": [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.0)],
+        "Sign_Raise":  [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.3)],
         # The same sign held high and forward over the battlefield: his jet comes, his domain answers, his summon rises
         "Cast_Pillars": [Gesture("_R", (0.26, 0.38, 0.30), (0.0, 0.2, 1.0), (-0.3, 0.95, 0.0), reached_at=0.3, left_from=0.85)],
         "Cast_Domain":  [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.25)],
@@ -415,8 +422,9 @@ GESTURES = {
                                    reached_at=0.16, left_from=0.5, end_at=0.9)],
         # As in the film (1:47): a diamond of both hands before the chest, the fingertips meeting above and the
         # thumbs below, the palms looking forward
-        "Cast_Great_Orb": [Gesture("_R", (0.12, 0.33, -0.06), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9),
-                           Gesture("_L", (0.12, 0.33, -0.06), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9)],
+        # (high on the chest, the wrists close: the diamond under his chin, as in the film's close shot)
+        "Cast_Great_Orb": [Gesture("_R", (0.11, 0.31, 0.04), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9),
+                           Gesture("_L", (0.11, 0.31, 0.04), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9)],
         # As in the film (2:19): both hands clasped before the chin, the index fingers straight up together
         "Cast_Domain":    [Gesture("_R", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=0.92),
                            Gesture("_L", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=0.92)],

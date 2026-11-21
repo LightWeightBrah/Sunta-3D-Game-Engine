@@ -44,7 +44,7 @@ local WheelGlow         = vec3(1.0, 0.75, 0.3)
 local AdaptHealFraction = 0.06
 
 -- Rush: from this far, now and then; this fast (meters a second), this far past the player, hurting this much
-local Rush = { From = 7.5, Every = 9.0, Windup = 0.75, Speed = 34.0, Overshoot = 3.0, Damage = 38, HitMeters = 1.9,
+local Rush = { From = 7.5, Every = 9.0, Windup = 0.75, Speed = 34.0, Overshoot = 3.0, Damage = 28, HitMeters = 1.9,
                RecoverSeconds = 0.45 }
 -- The arena it may not leave (the same as boss_fight.lua's)
 local ArenaMin, ArenaMax = vec3(-26, 0, -76), vec3(26, 0, -24)
@@ -53,7 +53,7 @@ local ArenaMin, ArenaMax = vec3(-26, 0, -76), vec3(26, 0, -24)
 local BladeOfLight = { AtFraction = 0.5, Blade = "Summon Blade", BladeGlow = vec3(1.4, 1.25, 0.9),
                       CooldownSeconds = 0.85, AttackSpeed = 1.15, LeapDistance = 14.0,
                       SlamsWithin = 5.5, SlamsEvery = 12.0, Slams = 3, BlastDelay = 0.55, BlastRadius = 7.0,
-                      BlastDamage = 40 }
+                      BlastDamage = 28 }
 
 local lastKind = nil
 local hitsInARow = 0
