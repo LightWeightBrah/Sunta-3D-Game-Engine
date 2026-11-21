@@ -518,6 +518,8 @@ namespace SceneKeys
 	constexpr const char* WaitForKey                = "wait_for_key";
 	constexpr const char* WaitPrompt                = "wait_prompt";
 	constexpr const char* BlendInSeconds            = "blend_in_seconds";
+	constexpr const char* FadeSeconds               = "fade_seconds";
+	constexpr const char* CutsceneSound             = "cutscene_sound";
 
 	constexpr const char* MaxPoise                  = "max_poise";
 	constexpr const char* RecoverAfterSeconds       = "recover_after_seconds";
@@ -1098,7 +1100,9 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::VideoFile,             cutscene->videoFile          },
 				{ SceneKeys::WaitForKey,            cutscene->waitForKey         },
 				{ SceneKeys::WaitPrompt,            cutscene->waitPrompt         },
-				{ SceneKeys::BlendInSeconds,        cutscene->blendInSeconds     }
+				{ SceneKeys::BlendInSeconds,        cutscene->blendInSeconds     },
+				{ SceneKeys::FadeSeconds,           cutscene->fadeSeconds        },
+				{ SceneKeys::CutsceneSound,         cutscene->sound              }
 			};
 		}
 
@@ -2056,6 +2060,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			cutscene.waitForKey         = cutsceneData.value(SceneKeys::WaitForKey,            cutscene.waitForKey);
 			cutscene.waitPrompt         = cutsceneData.value(SceneKeys::WaitPrompt,            cutscene.waitPrompt);
 			cutscene.blendInSeconds     = cutsceneData.value(SceneKeys::BlendInSeconds,        cutscene.blendInSeconds);
+			cutscene.fadeSeconds        = cutsceneData.value(SceneKeys::FadeSeconds,           cutscene.fadeSeconds);
+			cutscene.sound              = cutsceneData.value(SceneKeys::CutsceneSound,         cutscene.sound);
 		}
 
 		if (entityJson.contains(SceneKeys::EnvironmentComponent))

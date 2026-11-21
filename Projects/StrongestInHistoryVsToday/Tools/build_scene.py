@@ -1234,12 +1234,10 @@ def add_fight(builder):
     builder.add(named("Film Intro", cutscene={
         "duration_seconds": 6.0, "look_at_entity": BOSS_NAME, "look_at_height": 1.6, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": BOSS_DISPLAY_NAME, "title_seconds": 3.0,
-        "can_be_skipped": True, "video_file": "@game/Videos/intro.mpg"}))
-
-    # The sound of the film's opening: stopped by its script when the video ends or is skipped
-    builder.add(named("Film Intro Sound", script=script("film_intro_sound.lua"), audio_source={
-        "sound": "@game/Sounds/Film/intro.ogg", "volume": 1.0, "is_looping": False, "play_on_start": False,
-        "is_spatial": False, "min_distance": 2.0, "max_distance": 30.0}))
+        "can_be_skipped": True, "video_file": "@game/Videos/intro.mpg",
+        # (no sudden cut from the street: the game fades into black, the film comes out of it, and back after it;
+        # the film's sound starts with its picture)
+        "fade_seconds": 0.8, "cutscene_sound": "@game/Sounds/Film/intro.ogg"}))
 
     # The temple of the boss's domain: under the ground behind the far wall until the script raises it
     # (the project's own model, Tools/props_generator.py: its door looks at the arena, it towers over the far wall)

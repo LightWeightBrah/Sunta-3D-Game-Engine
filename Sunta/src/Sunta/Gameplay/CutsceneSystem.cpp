@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CutsceneSystem.h"
+#include "HUDSystem.h"
 
 #include <cctype>
 #include <cmath>
@@ -8,6 +9,7 @@
 #include "CharacterActionsSystem.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
+#include "Audio/Audio.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Core/Log.h"
@@ -36,6 +38,9 @@ constexpr const char* SkipHint         = "[E] skip";
 // The black bars: part of the screen's height each, and how long they take to slide in and out
 constexpr float BarHeight      = 0.12f;
 constexpr float BarFadeSeconds = 0.6f;
+
+// The cutscene's sound fades out this long when it ends or is skipped
+constexpr float SoundFadeOutSeconds = 0.4f;
 // After a cutscene the bars wait this long before sliding out: the next shot of a sequence keeps them
 constexpr float BarLingerSeconds = 0.9f;
 
@@ -256,6 +261,14 @@ void Finish(EntityManager& entityManager, CutsceneComponent& cutscene)
 	SUNTA_ENGINE_LOG_INFO("Cutscene: finished after {0} s", cutscene.seconds);
 	cutscene.isPlaying = false;
 	HoldEveryone(entityManager, false);
+
+	if (cutscene.soundVoice != Audio::NoVoice)
+		Audio::Stop(cutscene.soundVoice, SoundFadeOutSeconds);
+	cutscene.soundVoice = Audio::NoVoice;
+
+	// The game comes back out of the black
+	if (cutscene.fadeSeconds > 0.0f)
+		HUDSystem::FlashScreen(glm::vec3(0.0f), cutscene.fadeSeconds);
 }
 
 }
@@ -274,6 +287,8 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 	cutscene->seconds             = 0.0f;
 	cutscene->clearDistance       = -1.0f;
 	cutscene->wasAnswered         = false;
+	cutscene->fadeToBlackLeft     = cutscene->fadeSeconds;
+	cutscene->hasStartedSound     = false;
 
 	// Where the camera is now: a cutscene with 'blendInSeconds' flies from here
 	const TransformComponent* camera = FindActiveCamera(entityManager);
@@ -334,6 +349,24 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 		if (!cutscene.isPlaying)
 			continue;
 
+		// First the game fades to black (everyone already waits): the cutscene itself hasn't started
+		if (cutscene.fadeToBlackLeft > 0.0f)
+		{
+			cutscene.fadeToBlackLeft -= glm::min(deltaTime, MaxStepSeconds);
+			continue;
+		}
+
+		if (!cutscene.hasStartedSound)
+		{
+			cutscene.hasStartedSound = true;
+			if (!cutscene.sound.empty())
+			{
+				Audio::PlayOptions options;
+				options.isStreamed = true;
+				cutscene.soundVoice = Audio::Play(cutscene.sound, options);
+			}
+		}
+
 		const unsigned int cutsceneID = entityManager.GetEntityIDForComponent(cutscene);
 		// A long frame (loading something) must not skip the cutscene
 		cutscene.seconds += glm::min(deltaTime, MaxStepSeconds);
@@ -392,7 +425,7 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 
 	for (const CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
 	{
-		if (!cutscene.isPlaying)
+		if (!cutscene.isPlaying || cutscene.fadeToBlackLeft > 0.0f)
 			continue;
 
 		// A video fills the game's area as much as it can without stretching, black around it
@@ -443,6 +476,22 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 				PromptHeight, glm::vec4(glm::vec3(TitleColor), fadeIn * pulse));
 		}
 
+		UIRenderer::End();
+	}
+
+	// The fades (see fadeSeconds): the game into black before the cutscene, the cutscene out of it
+	for (const CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
+	{
+		if (!cutscene.isPlaying || cutscene.fadeSeconds <= 0.0f)
+			continue;
+
+		const float black = cutscene.fadeToBlackLeft > 0.0f ? 1.0f - cutscene.fadeToBlackLeft / cutscene.fadeSeconds
+		                                                    : 1.0f - cutscene.seconds / cutscene.fadeSeconds;
+		if (black <= 0.0f)
+			continue;
+
+		UIRenderer::Begin(screenSize);
+		UIRenderer::DrawRectangle(areaTopLeft, areaSize, glm::vec4(0.0f, 0.0f, 0.0f, glm::clamp(black, 0.0f, 1.0f)));
 		UIRenderer::End();
 	}
 }

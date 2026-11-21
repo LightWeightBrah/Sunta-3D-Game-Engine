@@ -37406,49 +37406,9 @@
     "title": "Jeffrey Epstein, Strongest in History",
     "title_seconds": 3.0,
     "can_be_skipped": true,
-    "video_file": "@game/Videos/intro.mpg"
-   }
-  },
-  {
-   "tag": {
-    "name": "Film Intro Sound"
-   },
-   "transform": {
-    "position": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "script": [
-    {
-     "script_path": "@game/Scripts/film_intro_sound.lua"
-    }
-   ],
-   "audio_source": {
-    "sound": "@game/Sounds/Film/intro.ogg",
-    "volume": 1.0,
-    "is_looping": false,
-    "play_on_start": false,
-    "is_spatial": false,
-    "min_distance": 2.0,
-    "max_distance": 30.0
+    "video_file": "@game/Videos/intro.mpg",
+    "fade_seconds": 0.8,
+    "cutscene_sound": "@game/Sounds/Film/intro.ogg"
    }
   },
   {
@@ -37511,7 +37471,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 780,
+    "index": 779,
     "bone_name": ""
    }
   },
@@ -37567,7 +37527,7 @@
     }
    },
    "parent": {
-    "index": 780,
+    "index": 779,
     "bone_name": ""
    }
   },
@@ -37599,7 +37559,7 @@
     ]
    },
    "parent": {
-    "index": 780,
+    "index": 779,
     "bone_name": ""
    }
   },
@@ -37752,7 +37712,7 @@
     ]
    },
    "parent": {
-    "index": 784,
+    "index": 783,
     "bone_name": ""
    }
   },
@@ -37784,7 +37744,7 @@
     ]
    },
    "parent": {
-    "index": 784,
+    "index": 783,
     "bone_name": ""
    }
   },
@@ -37816,7 +37776,7 @@
     ]
    },
    "parent": {
-    "index": 784,
+    "index": 783,
     "bone_name": ""
    }
   },
@@ -37848,7 +37808,7 @@
     ]
    },
    "parent": {
-    "index": 784,
+    "index": 783,
     "bone_name": ""
    }
   },
