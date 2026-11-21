@@ -219,16 +219,16 @@ def add_technique_effects(builder):
     # Imaginary Technique called up (film 1:49): he shines, then a ray of light shoots out of him (the script plays
     # it many times: each play a lying beam in another direction) and he bursts with light
     (Effect(builder, "Technique Ray", root_shape=shape(
-        PILLAR, 0.7, 0.05, 0.16, [1.0, 1.0, 1.0], [1.0, 0.55, 0.85], 6.0, height=9.0, rotation_degrees=[90.0, 0.0, 0.0],
+        PILLAR, 0.7, 0.05, 0.16, [1.0, 1.0, 0.95], [1.0, 0.62, 0.18], 6.0, height=9.0, rotation_degrees=[90.0, 0.0, 0.0],
         rotation_randomness=[35.0, 360.0, 0.0], noise_scale=3.0, scroll_speed=6.0, dissolve=0.7)))
     (Effect(builder, "Technique Burst", root_shape=shape(
-        SPHERE, 0.6, 0.3, 3.0, [1.0, 1.0, 1.0], [1.0, 0.5, 0.8], 2.0, noise_scale=3.5, scroll_speed=2.0, dissolve=0.85,
-        light_intensity=8.0, light_radius=14.0, light_color=[1.0, 0.75, 0.9]))
-     .shape("Wave", shape(RING, 0.7, 0.5, 8.0, [1.0, 0.95, 1.0], [1.0, 0.45, 0.8], 2.2, thickness=0.15, noise_scale=3.0,
+        SPHERE, 0.6, 0.3, 3.0, [1.0, 1.0, 0.95], [1.0, 0.6, 0.15], 2.0, noise_scale=3.5, scroll_speed=2.0, dissolve=0.85,
+        light_intensity=8.0, light_radius=14.0, light_color=[1.0, 0.82, 0.55]))
+     .shape("Wave", shape(RING, 0.7, 0.5, 8.0, [1.0, 0.97, 0.9], [1.0, 0.55, 0.12], 2.2, thickness=0.15, noise_scale=3.0,
                           dissolve=0.9))
-     .specks("Sparks", sparks(120, 14.0, [1.0, 0.75, 0.95], [0.8, 0.25, 0.6], lifetime=0.9, size=0.07, gravity=-3.0,
+     .specks("Sparks", sparks(120, 14.0, [1.0, 0.85, 0.5], [0.8, 0.4, 0.05], lifetime=0.9, size=0.07, gravity=-3.0,
                              drag=2.0, intensity=4.0))
-     .specks("Flash", flash(5.0, 0.18, [1.0, 0.9, 1.0], 1.4)))
+     .specks("Flash", flash(5.0, 0.18, [1.0, 0.95, 0.85], 1.4)))
 
     # The great bottle bursting: a blast of oil and fire (a ball swelling out), a wave over the whole ground,
     # a column of fire, burning drops, smoke

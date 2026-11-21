@@ -803,6 +803,8 @@ def add_crystal_armor(character, armature, body, out_folder):
     out = []
     for piece, bone in pieces:
         character_from_mesh.make_engine_textures(piece, out_folder, piece.name, 1.05, 1.6)
+        # (clear crystal in the engine: the name says so, see Material::Data::crystal)
+        piece.data.materials[0].name = piece.name + "_crystal"
         piece.vertex_groups.clear()
         group = piece.vertex_groups.new(name=bone)
         group.add(range(len(piece.data.vertices)), 1.0, "REPLACE")

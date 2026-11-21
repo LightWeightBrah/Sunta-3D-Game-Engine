@@ -852,14 +852,16 @@ def add_player(builder):
     # (a little bigger than a fist: a blow that looks like it lands, lands)
     add_fists_and_foot(builder, player, 26.0, PLAYER_HITBOX_LAYER, size=0.2)
     # His sword of baby oil (Divine Baby Oil: Crystal Vessel, boss_fight.lua O.armPlayer): on the bone in the fist of
-    # his sword model, hidden and harmless until then; a trail of pink and white light while it strikes
+    # his sword model, hidden and harmless until then; a narrow trail of warm white light along the outer half of the
+    # blade while it strikes (the film's light of his techniques is gold and white, never pink)
     sword = named("Player Sword", (0.0, 0.0, 0.0), model={"is_visible": False, "model_name": "sih_diddy_sword",
                                                          "emissive_strength": 0.0})
-    sword["hitbox"] = {"damage": 34.0, "poise_damage": 30.0, "local_offset": [0.0, 0.5, 0.0],
-                       "half_extents": [0.12, 0.36, 0.08], "layer": PLAYER_HITBOX_LAYER, "show_gizmos": False,
+    # (the blade from 0.21 to 1.11 m above the grip, boss_items_generator.py; a little wider than the blade)
+    sword["hitbox"] = {"damage": 34.0, "poise_damage": 30.0, "local_offset": [0.0, 0.67, 0.0],
+                       "half_extents": [0.14, 0.47, 0.1], "layer": PLAYER_HITBOX_LAYER, "show_gizmos": False,
                        "hit_stop_seconds": 0.07, "camera_shake": 0.3, "is_enabled": False}
-    sword["weapon_trail"] = {"base_offset": [0.0, 0.2, 0.0], "tip_offset": [0.0, 0.82, 0.0], "color": [1.0, 0.7, 0.88],
-                             "intensity": 1.8, "lifetime_seconds": 0.18, "only_while_striking": True}
+    sword["weapon_trail"] = {"base_offset": [0.0, 0.62, 0.0], "tip_offset": [0.0, 1.1, 0.0], "color": [1.0, 0.88, 0.62],
+                             "intensity": 1.3, "lifetime_seconds": 0.18, "only_while_striking": True}
     builder.add(sword, parent=player, bone="Weapon_R")
     # The guard of bare forearms: an unseen shield on the left hand (blocking and parrying need one)
     # Bare forearms are no shield: some of every blow comes through, and three or four of his punches break the guard
@@ -1159,7 +1161,7 @@ def add_boss(builder):
     entity["transform"] = transform(BOSS_START, (0.0, 180.0, 0.0))
     entity["box_collider"]["half_extents"] = [0.38, 0.95, 0.38]
     # While his summon protects him (or a phase changes) the blows glance off him with guard sparks
-    entity["health"].update({"max_health": 1500.0, "death_slow_motion_seconds": 3.0, "death_slow_motion_scale": 0.25,
+    entity["health"].update({"max_health": 2400.0, "death_slow_motion_seconds": 3.0, "death_slow_motion_scale": 0.25,
                              "hit_effect": "Punch Impact", "deflect_effect": "Guard Impact"})
     # Staggered, he can't be staggered again for 2.5 s: a string of punches doesn't pin him (see also boss_fight.lua)
     entity["poise"] = {"max_poise": 70.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 1.6}
@@ -1268,7 +1270,7 @@ def add_summon(builder):
     entity["lock_on_target"].update({"aim_height": 1.9})
     entity["enemy_health_bar"]["height_above_feet"] = 3.3
     entity["character_sounds"].update({"footstep_meters": 2.4, "footstep_camera_shake": 0.16, "footstep_shake_radius": 12.0, "volume": 1.5})
-    entity["health"].update({"max_health": 900.0, "death_slow_motion_seconds": 1.5, "death_slow_motion_scale": 0.35,
+    entity["health"].update({"max_health": 1500.0, "death_slow_motion_seconds": 1.5, "death_slow_motion_scale": 0.35,
                              "hit_effect": "Punch Impact"})
     entity["poise"] = {"max_poise": 140.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 3.0}
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 80.0, "starts_dormant": True})
@@ -1279,6 +1281,20 @@ def add_summon(builder):
     entity["currency_reward"] = {"amount": 8000}
     # It adapts to what it is hit with (see the script)
     entity["script"] = script("summon_adaptation.lua")
+    # The eight-spoked wheel over its head (the film's last frames): it turns an eighth each time the summon adapts
+    # (shown and turned by the script)
+    halo = named("Summon Halo", (0.0, 3.25, 0.0), model={"is_visible": False, "model_name": "sih_summon_wheel"})
+    builder.add(halo, parent=summon)
+    # From half its health on a blade of light grows out of its right fist (the boss's sword, lit white by the script):
+    # hidden and harmless until then; it strikes in the windows of its blows like its fists
+    blade = named("Summon Blade", (0.0, 0.05, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
+                                                         "emissive_strength": 0.0})
+    blade["hitbox"] = {"damage": 45.0, "poise_damage": 50.0, "local_offset": [0.0, 0.95, 0.0],
+                       "half_extents": [0.2, 0.8, 0.14], "layer": ENEMY_HITBOX_LAYER, "show_gizmos": False,
+                       "hit_stop_seconds": 0.08, "camera_shake": 0.5, "is_enabled": False}
+    blade["weapon_trail"] = {"base_offset": [0.0, 0.4, 0.0], "tip_offset": [0.0, 1.7, 0.0], "color": [1.0, 0.92, 0.7],
+                             "intensity": 1.4, "lifetime_seconds": 0.16, "only_while_striking": True}
+    builder.add(blade, parent=summon, bone="Hand_R")
     return summon
 
 

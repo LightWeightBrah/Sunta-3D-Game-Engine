@@ -279,13 +279,14 @@ local function updateDomainShow(deltaTime)
 end
 
 -- He lights up as he holds the sign (the camera close on his hands and eyes), then his domain opens
--- Imaginary Technique: Baby Oil Detonation, as in the film (1:47-1:50): while he calls it he lights up from inside -
--- white first, then the light turns pink and gold - and as it leaves his hands rays of light shoot out of him in every
+-- Imaginary Technique: Baby Oil Detonation, as in the film (1:47-1:50): while he calls it a golden light outlines
+-- him, then it turns white - and as it leaves his hands rays of light shoot out of him in every
 -- direction and he bursts with light; then the light dies away
 local Great = {
-    WhiteSeconds = 0.45, PinkSeconds = 0.5, FadeSeconds = 0.9,
+    GoldSeconds = 0.45, WhiteSeconds = 0.5, FadeSeconds = 0.9,
     -- (a sheen over him, not a figure of light: stronger, he became a flat silhouette)
-    White = vec3(0.25, 0.24, 0.22), Pink = vec3(0.42, 0.14, 0.3),
+    -- (no pink or violet anywhere: the film's light is gold, then white)
+    Gold = vec3(0.4, 0.25, 0.06), White = vec3(0.32, 0.3, 0.27),
     Rays = 16, RaySpreadSeconds = 0.3, RayEffect = "Technique Ray", BurstEffect = "Technique Burst",
 }
 local greatShow = nil
@@ -333,14 +334,14 @@ local function updateGreatShow(deltaTime)
     if show.fade then
         show.fade = show.fade + deltaTime
         local left = math.max(1 - show.fade / Great.FadeSeconds, 0)
-        glow = Great.Pink * (left * left)
+        glow = Great.Gold * (left * left)
         if left <= 0 and show.raysLeft <= 0 then greatShow = nil end
-    elseif show.t < Great.WhiteSeconds then
-        local k = show.t / Great.WhiteSeconds
-        glow = Great.White * (k * k)
+    elseif show.t < Great.GoldSeconds then
+        local k = show.t / Great.GoldSeconds
+        glow = Great.Gold * (k * k)
     else
-        local k = math.min((show.t - Great.WhiteSeconds) / Great.PinkSeconds, 1)
-        glow = Great.White + (Great.Pink - Great.White) * (k * k * (3 - 2 * k))
+        local k = math.min((show.t - Great.GoldSeconds) / Great.WhiteSeconds, 1)
+        glow = Great.Gold + (Great.White - Great.Gold) * (k * k * (3 - 2 * k))
     end
     techniqueGlow = glow
 end

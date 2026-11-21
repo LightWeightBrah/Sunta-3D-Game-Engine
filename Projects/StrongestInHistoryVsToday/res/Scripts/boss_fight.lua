@@ -6,7 +6,7 @@
 --
 --   Phase 1  Strongest in History : blows and volleys of orbs
 --   Phase 2  Domain Expansion     : the sky turns, the temple rises, fire under the player's feet, the domain heals him.
---                                   The player's own domain (key 2) shatters it for a while
+--                                   The player's own domain (key 3) shatters it for a while
 --   Phase 3  The Summon           : the boss can't be hurt and channels spells from afar while his summon fights
 --   Phase 4  Last Stand           : the summon is gone, the domain is back for good and everything comes faster
 --
@@ -76,10 +76,10 @@ local SummonHealthFraction = 0.34
 local FloorMargin = 0.04
 
 -- The orb that ends the film's opening has just hit the boss
-local OpeningHitDamage = 70
+local OpeningHitDamage = 110
 
 local PhaseChangeInvulnerableSeconds = 3.0
-local DomainHealPerSecond   = 6
+local DomainHealPerSecond   = 9
 local DomainSpellEverySeconds = 6.5
 local DomainBrokenSeconds   = 18
 local ChannelSpellEverySeconds = 10

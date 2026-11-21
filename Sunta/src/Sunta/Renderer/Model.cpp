@@ -205,6 +205,12 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 
 			meshMaterial->SetAlphaCutout(true);
 
+			// Clear crystal or ice by its name (a sword of frozen oil, armor of ice): see Material::Data::crystal
+			std::string lowerName = materialName.C_Str();
+			std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), [](unsigned char c) { return (char)std::tolower(c); });
+			if (lowerName.find("crystal") != std::string::npos)
+				meshMaterial->SetCrystal(1.0f);
+
 			float shininess = 0.0f;
 			bool hasShininess = (material->Get(AI_MATKEY_SHININESS, shininess) == AI_SUCCESS) && shininess > 1.0f;
 

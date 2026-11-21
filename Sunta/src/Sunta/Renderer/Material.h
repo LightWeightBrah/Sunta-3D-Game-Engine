@@ -21,6 +21,11 @@ public:
 
 		float			shininess			= 32.0f;
 		bool			useAlphaCutout      = false;
+
+		// 0..1: how much the surface is clear crystal or ice (see Lit.shader): it mirrors a sky above and the ground
+		// below, its edges catch the light, bands of light slide inside it as it turns and the lights glint on it.
+		// A model's material whose name contains "crystal" gets 1 when it is loaded
+		float			crystal				= 0.0f;
 	};
 	
 	Material(std::shared_ptr<Shader> shader);
@@ -41,6 +46,7 @@ public:
 	Material& SetShininess(float shininess);
 
 	Material& SetAlphaCutout(bool useAlphaCutout);
+	Material& SetCrystal(float crystal);
 	
 	Material& AddDiffuseMap(const std::shared_ptr<Texture> diffuseMap);
 	Material& AddSpecularMap(const std::shared_ptr<Texture> specularMap);

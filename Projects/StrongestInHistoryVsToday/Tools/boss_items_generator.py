@@ -4,7 +4,7 @@ burns behind his back from his last stand on (the way the wheel of the film's su
 
 Run (from the repository root):
     blender --background --factory-startup --python Projects/StrongestInHistoryVsToday/Tools/boss_items_generator.py
-    (optional: -- --only sword|seal --preview <folder>)
+    (optional: -- --only sword|seal|diddy_sword|wheel --preview <folder>)
 
 Writes res/Models/Props/BossSword/sih_boss_sword.gltf and res/Models/Props/HexSeal/sih_hex_seal.gltf (+ .bin and
 textures: _diffuse, _specular, _emissive), and the player's answer to the boss's sword: his own sword of baby oil
@@ -116,7 +116,7 @@ def make_sword(folder):
 # ========== The player's sword of baby oil ==========
 
 DIDDY_SWORD_SOURCE = os.path.join(GENERATED, "diddy_sword.glb")
-DIDDY_SWORD_LENGTH = 1.0     # meters: a one-handed sword
+DIDDY_SWORD_LENGTH = 1.35    # meters: a long one-handed sword (at 1.0 it barely reached the boss)
 # The fist holds the grip this part of the way from the guard to the end of the pommel
 DIDDY_GRIP_FROM_GUARD = 0.45
 
@@ -155,7 +155,73 @@ def make_diddy_sword(folder):
         (blade_from + tip) * 0.5, (tip - blade_from) * 0.5))
     # Glossy like the oil it is made of
     character_from_mesh.make_engine_textures(sword, folder, "sih_diddy_sword", 1.1, 1.15)
+    # Frozen baby oil, clear as in the film (2:29, the bottle turns to crystal): the engine renders a material whose
+    # name says crystal as clear crystal (Material::Data::crystal)
+    sword.data.materials[0].name = "sih_diddy_sword_crystal"
     return sword
+
+
+# ========== The wheel of the summon ==========
+
+# The eight-spoked wheel that floats over the summon's head (the film's last frames, 2:39): it turns an eighth each
+# time the summon adapts (summon_adaptation.lua). Lying flat, turning about its own up
+WHEEL_RADIUS = 0.8           # meters from the hub to the middle of the rim
+WHEEL_COLOR = (0.78, 0.6, 0.22)
+
+
+def make_wheel(folder):
+    parts = []
+
+    def keep():
+        parts.append(bpy.context.active_object)
+
+    bpy.ops.mesh.primitive_torus_add(major_radius=WHEEL_RADIUS, minor_radius=0.05, major_segments=64, minor_segments=10)
+    keep()
+    bpy.ops.mesh.primitive_torus_add(major_radius=WHEEL_RADIUS * 0.28, minor_radius=0.035, major_segments=32, minor_segments=8)
+    keep()
+    bpy.ops.mesh.primitive_cylinder_add(radius=0.11, depth=0.1, vertices=24)
+    keep()
+    for spoke in range(8):
+        angle = math.radians(45 * spoke)
+        out = Vector((math.cos(angle), math.sin(angle), 0.0))
+        length = WHEEL_RADIUS * 1.22
+        bpy.ops.mesh.primitive_cylinder_add(radius=0.028, depth=length, vertices=10,
+                                            location=out * length * 0.5,
+                                            rotation=(0.0, math.pi / 2, angle))
+        keep()
+        # (a handle out past the rim, like a ship's wheel)
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.065, segments=14, ring_count=8, location=out * (length + 0.03))
+        keep()
+
+    bpy.ops.object.select_all(action="DESELECT")
+    for part in parts:
+        part.select_set(True)
+    bpy.context.view_layer.objects.active = parts[0]
+    bpy.ops.object.join()
+    wheel = bpy.context.active_object
+    wheel.name = "SummonWheel"
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="SELECT")
+    bpy.ops.uv.smart_project(island_margin=0.02)
+    bpy.ops.object.mode_set(mode="OBJECT")
+    bpy.ops.object.shade_smooth()
+
+    size = 64
+    pixels = numpy.ones((size, size, 4), dtype=numpy.float32)
+    pixels[..., :3] = WHEEL_COLOR
+    image = bpy.data.images.new("wheel_gold", size, size)
+    image.pixels = pixels.ravel()
+    material = bpy.data.materials.new("SummonWheelGold")
+    material.use_nodes = True
+    texture = material.node_tree.nodes.new("ShaderNodeTexImage")
+    texture.image = image
+    shader = material.node_tree.nodes["Principled BSDF"]
+    material.node_tree.links.new(texture.outputs["Color"], shader.inputs["Base Color"])
+    shader.inputs["Roughness"].default_value = 0.25
+    wheel.data.materials.append(material)
+    character_from_mesh.make_engine_textures(wheel, folder, "sih_summon_wheel", 1.0, 1.6)
+    return wheel
 
 
 # ========== The seal ==========
@@ -287,7 +353,8 @@ def main():
 
     for name, folder_name, model_name, make in (("sword", "BossSword", "sih_boss_sword", make_sword),
                                                 ("seal", "HexSeal", "sih_hex_seal", make_seal),
-                                                ("diddy_sword", "DiddySword", "sih_diddy_sword", make_diddy_sword)):
+                                                ("diddy_sword", "DiddySword", "sih_diddy_sword", make_diddy_sword),
+                                                ("wheel", "SummonWheel", "sih_summon_wheel", make_wheel)):
         if arguments.only and arguments.only != name:
             continue
         clear_scene()

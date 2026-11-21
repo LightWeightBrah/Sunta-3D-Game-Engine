@@ -52,6 +52,7 @@ Material& Material::Apply()
 	shader->TrySetUniform1f("material.shininess", data.shininess);
 
 	shader->TrySetUniformBool("material.useAlphaCutout", data.useAlphaCutout);
+	shader->TrySetUniform1f("material.crystal", data.crystal);
 
 	for (const auto& [name, value] : customVec3Uniforms)
 	{
@@ -123,6 +124,12 @@ Material& Material::SetShininess(float shininess)
 Material& Material::SetAlphaCutout(bool useAlphaCutout)
 {
 	data.useAlphaCutout = useAlphaCutout;
+	return *this;
+}
+
+Material& Material::SetCrystal(float crystal)
+{
+	data.crystal = glm::clamp(crystal, 0.0f, 1.0f);
 	return *this;
 }
 

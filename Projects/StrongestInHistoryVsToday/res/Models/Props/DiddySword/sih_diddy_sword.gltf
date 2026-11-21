@@ -21,7 +21,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"sih_diddy_sword",
+			"name":"sih_diddy_sword_crystal",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -64,29 +64,29 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":7452,
+			"count":7454,
 			"max":[
-				0.10834544152021408,
-				0.8246874809265137,
-				0.0401543490588665
+				0.14626635611057281,
+				1.1133280992507935,
+				0.05420837178826332
 			],
 			"min":[
-				-0.10887780040502548,
-				-0.17531251907348633,
-				-0.04115124046802521
+				-0.1469850242137909,
+				-0.23667189478874207,
+				-0.05555417388677597
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":7452,
+			"count":7454,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":7452,
+			"count":7454,
 			"type":"VEC2"
 		},
 		{
@@ -99,26 +99,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":89424,
+			"byteLength":89448,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":89424,
-			"byteOffset":89424,
+			"byteLength":89448,
+			"byteOffset":89448,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":59616,
-			"byteOffset":178848,
+			"byteLength":59632,
+			"byteOffset":178896,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":48870,
-			"byteOffset":238464,
+			"byteOffset":238528,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":287336,
+			"byteLength":287400,
 			"uri":"sih_diddy_sword.bin"
 		}
 	]

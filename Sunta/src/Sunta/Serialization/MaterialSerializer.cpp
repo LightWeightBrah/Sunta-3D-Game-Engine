@@ -29,6 +29,7 @@ namespace MaterialKeys
 	constexpr const char* DiffuseMaps    = "diffuse_maps";
 	constexpr const char* SpecularMaps   = "specular_maps";
 	constexpr const char* UseAlphaCutout = "use_alpha_cutout";
+	constexpr const char* Crystal        = "crystal";
 
 }
 
@@ -54,6 +55,7 @@ bool MaterialSerializer::Serialize(const std::string& filepath, const std::share
 	data[MaterialKeys::Properties][MaterialKeys::Shininess] =   materialData.shininess;
 
 	data[MaterialKeys::Properties][MaterialKeys::UseAlphaCutout] = materialData.useAlphaCutout;
+	data[MaterialKeys::Properties][MaterialKeys::Crystal] = materialData.crystal;
 
 	json diffusePaths = json::array();
 	for (const auto& texture : material->GetDiffuseMaps())
@@ -140,6 +142,9 @@ std::shared_ptr<Material> MaterialSerializer::Deserialize(const std::string& fil
 
 		if (properties.contains(MaterialKeys::UseAlphaCutout))
 			material->SetAlphaCutout(properties[MaterialKeys::UseAlphaCutout]);
+
+		if (properties.contains(MaterialKeys::Crystal))
+			material->SetCrystal(properties[MaterialKeys::Crystal]);
 	}
 
 	if (data.contains(MaterialKeys::Textures))

@@ -934,6 +934,7 @@ void EditorGUI::DrawInspector(EntityManager& entityManager)
 			changed |= ImGui::DragFloat("Shininess", &data.shininess, 0.5f, 1.0f, 256.0f);
 
 			changed |= ImGui::Checkbox("Use Alpha Cutout", &data.useAlphaCutout);
+			changed |= ImGui::SliderFloat("Crystal", &data.crystal, 0.0f, 1.0f);
 
 			ImGui::Spacing();
 			ImGui::Separator();

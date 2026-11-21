@@ -55,6 +55,8 @@ struct Material
 	// A model's own light (glowing cracks, embers, red-hot metal): added after lighting, so it shines in the dark
 	bool  hasEmissiveMap;
 
+	// 0..1: clear crystal or ice (see CalculateCrystal)
+	float crystal;
 };
 
 struct LightColor
@@ -151,6 +153,7 @@ float CalculateShadowVisibility(vec3 normal);
 vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, 			  vec3 viewerDirection, float lightVisibility);
 vec3 CalculatePointLights(      PointLight       light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
 vec3 CalculateSpotLights(       SpotLight        light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
+vec3 CalculateCrystal(vec3 lit, vec3 normal, vec3 viewerDirection);
 
 void main()
 {
@@ -181,6 +184,9 @@ void main()
 
 	for(int i = 0; i < spotLightsCount; i++)
 		result += CalculateSpotLights(spotLights[i], normalVector, FragPos, viewerDirection);
+
+	if(material.crystal > 0.0f)
+		result = mix(result, CalculateCrystal(result, normalVector, viewerDirection), material.crystal);
 
 	if(material.hasEmissiveMap)
 		result += texture(materialEmissiveMap1, TexCoord).rgb * emissiveStrength;
@@ -294,4 +300,37 @@ vec3 CalculateSpotLights(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewer
 	vec3 specular = light.color.specularIntensity * (spec 		     * material.specularColor * vec3(texture(materialSpecularMap1, TexCoord)).rgb);
 
 	return (ambient + diffuse + specular) * attenuation * intensity;
+}
+
+// Clear crystal or ice without a map of the surroundings: seen straight on it lets through the color of the air
+// behind it (the fog's), tinted a little by its own color; seen sideways it mirrors a bright sky above and the dark
+// ground below (Fresnel); bands of light caught inside slide over it as it turns (what refraction looks like), and the
+// lights glint on it sharply
+vec3 CalculateCrystal(vec3 lit, vec3 normal, vec3 viewerDirection)
+{
+	vec3  baseColor = texture(materialDiffuseMap1, TexCoord).rgb;
+	float facing    = clamp(dot(normal, viewerDirection), 0.0f, 1.0f);
+	float fresnel   = 0.08f + 0.92f * pow(1.0f - facing, 2.5f);
+
+	vec3 reflected = reflect(-viewerDirection, normal);
+	vec3 sky       = vec3(1.0f, 0.97f, 0.9f);
+	vec3 ground    = vec3(0.1f, 0.11f, 0.13f);
+	vec3 mirrored  = mix(ground, sky, smoothstep(-0.35f, 0.75f, reflected.y));
+
+	// (the air's color half gray: a warm or cold fog doesn't paint the crystal, mixed with its edges it turned violet)
+	vec3 air     = mix(fogColor, vec3(dot(fogColor, vec3(0.333f))), 0.5f);
+	vec3 through = air * 1.6f + baseColor * 0.12f + lit * 0.12f;
+
+	float bands = 0.5f + 0.5f * sin(dot(reflected, vec3(9.1f, 6.3f, 7.7f)) + dot(FragPos, vec3(3.3f, 2.1f, 3.9f)));
+	bands = pow(bands, 8.0f);
+
+	vec3 glints = vec3(0.0f);
+	for(int i = 0; i < directionalLightsCount; i++)
+	{
+		vec3 toLight = normalize(-directionalLights[i].direction);
+		float glint  = pow(max(dot(reflected, toLight), 0.0f), 300.0f);
+		glints += directionalLights[i].color.diffuseIntensity * glint * 3.0f;
+	}
+
+	return mix(through, mirrored * 1.2f, fresnel) + vec3(1.0f, 0.96f, 0.86f) * bands * 0.55f + glints;
 }

@@ -3709,13 +3709,13 @@
     "poise_damage": 30.0,
     "local_offset": [
      0.0,
-     0.5,
+     0.67,
      0.0
     ],
     "half_extents": [
-     0.12,
-     0.36,
-     0.08
+     0.14,
+     0.47,
+     0.1
     ],
     "layer": 8,
     "show_gizmos": false,
@@ -3726,20 +3726,20 @@
    "weapon_trail": {
     "base_offset": [
      0.0,
-     0.2,
+     0.62,
      0.0
     ],
     "tip_offset": [
      0.0,
-     0.82,
+     1.1,
      0.0
     ],
     "color": [
      1.0,
-     0.7,
-     0.88
+     0.88,
+     0.62
     ],
-    "intensity": 1.8,
+    "intensity": 1.3,
     "lifetime_seconds": 0.18,
     "only_while_striking": true
    },
@@ -28867,12 +28867,12 @@
     "core_color": [
      1.0,
      1.0,
-     1.0
+     0.95
     ],
     "edge_color": [
      1.0,
-     0.55,
-     0.85
+     0.62,
+     0.18
     ],
     "intensity": 6.0,
     "height": 9.0,
@@ -28926,12 +28926,12 @@
     "core_color": [
      1.0,
      1.0,
-     1.0
+     0.95
     ],
     "edge_color": [
      1.0,
-     0.5,
-     0.8
+     0.6,
+     0.15
     ],
     "intensity": 2.0,
     "noise_scale": 3.5,
@@ -28941,8 +28941,8 @@
     "light_radius": 14.0,
     "light_color": [
      1.0,
-     0.75,
-     0.9
+     0.82,
+     0.55
     ]
    }
   },
@@ -28980,13 +28980,13 @@
     "end_radius": 8.0,
     "core_color": [
      1.0,
-     0.95,
-     1.0
+     0.97,
+     0.9
     ],
     "edge_color": [
      1.0,
-     0.45,
-     0.8
+     0.55,
+     0.12
     ],
     "intensity": 2.2,
     "thickness": 0.15,
@@ -29055,13 +29055,13 @@
     "has_middle_color": true,
     "middle_color": [
      1.0,
-     0.75,
-     0.95
+     0.85,
+     0.5
     ],
     "end_color": [
      0.8,
-     0.25,
-     0.6
+     0.4,
+     0.05
     ],
     "intensity": 4.0,
     "max_particles": 3000,
@@ -29130,14 +29130,14 @@
     "end_size": 1.5,
     "start_color": [
      1.0,
-     0.9,
-     1.0
+     0.95,
+     0.85
     ],
     "has_middle_color": false,
     "middle_color": [
      1.0,
-     0.9,
-     1.0
+     0.95,
+     0.85
     ],
     "end_color": [
      0.0,
@@ -34076,7 +34076,7 @@
     "show_seconds_after_hit": 5.0
    },
    "health": {
-    "max_health": 1500.0,
+    "max_health": 2400.0,
     "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 3.0,
     "death_slow_motion_scale": 0.25,
@@ -37145,7 +37145,7 @@
     "show_seconds_after_hit": 5.0
    },
    "health": {
-    "max_health": 900.0,
+    "max_health": 1500.0,
     "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 1.5,
     "death_slow_motion_scale": 0.35
@@ -37453,6 +37453,118 @@
    }
   },
   {
+   "tag": {
+    "name": "Summon Halo"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     3.25,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_summon_wheel"
+   },
+   "parent": {
+    "index": 828,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Summon Blade"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.05,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_boss_sword",
+    "emissive_strength": 0.0
+   },
+   "hitbox": {
+    "damage": 45.0,
+    "poise_damage": 50.0,
+    "local_offset": [
+     0.0,
+     0.95,
+     0.0
+    ],
+    "half_extents": [
+     0.2,
+     0.8,
+     0.14
+    ],
+    "layer": 16,
+    "show_gizmos": false,
+    "hit_stop_seconds": 0.08,
+    "camera_shake": 0.5,
+    "is_enabled": false
+   },
+   "weapon_trail": {
+    "base_offset": [
+     0.0,
+     0.4,
+     0.0
+    ],
+    "tip_offset": [
+     0.0,
+     1.7,
+     0.0
+    ],
+    "color": [
+     1.0,
+     0.92,
+     0.7
+    ],
+    "intensity": 1.4,
+    "lifetime_seconds": 0.16,
+    "only_while_striking": true
+   },
+   "parent": {
+    "index": 828,
+    "bone_name": "Hand_R"
+   }
+  },
+  {
    "animator": {
     "current_animation_name": "Idle"
    },
@@ -37706,7 +37818,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 833,
+    "index": 835,
     "bone_name": "Hand_R"
    }
   },
@@ -37756,7 +37868,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 833,
+    "index": 835,
     "bone_name": "Hand_L"
    }
   },
@@ -37806,7 +37918,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 833,
+    "index": 835,
     "bone_name": "Foot_R"
    }
   },
@@ -38064,7 +38176,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 837,
+    "index": 839,
     "bone_name": "Hand_R"
    }
   },
@@ -38114,7 +38226,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 837,
+    "index": 839,
     "bone_name": "Hand_L"
    }
   },
@@ -38164,7 +38276,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 837,
+    "index": 839,
     "bone_name": "Foot_R"
    }
   },
@@ -38422,7 +38534,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 841,
+    "index": 843,
     "bone_name": "Hand_R"
    }
   },
@@ -38472,7 +38584,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 841,
+    "index": 843,
     "bone_name": "Hand_L"
    }
   },
@@ -38522,7 +38634,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 841,
+    "index": 843,
     "bone_name": "Foot_R"
    }
   },
@@ -38554,7 +38666,7 @@
     ]
    },
    "parent": {
-    "index": 841,
+    "index": 843,
     "bone_name": "Hand_R"
    }
   },
@@ -38600,7 +38712,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 845,
+    "index": 847,
     "bone_name": ""
    }
   },
@@ -38858,7 +38970,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 847,
+    "index": 849,
     "bone_name": "Hand_R"
    }
   },
@@ -38908,7 +39020,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 847,
+    "index": 849,
     "bone_name": "Hand_L"
    }
   },
@@ -38958,7 +39070,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 847,
+    "index": 849,
     "bone_name": "Foot_R"
    }
   },
@@ -39216,7 +39328,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 851,
+    "index": 853,
     "bone_name": "Hand_R"
    }
   },
@@ -39266,7 +39378,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 851,
+    "index": 853,
     "bone_name": "Hand_L"
    }
   },
@@ -39316,7 +39428,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 851,
+    "index": 853,
     "bone_name": "Foot_R"
    }
   },
@@ -39348,7 +39460,7 @@
     ]
    },
    "parent": {
-    "index": 851,
+    "index": 853,
     "bone_name": "Hand_R"
    }
   },
@@ -39394,7 +39506,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 855,
+    "index": 857,
     "bone_name": ""
    }
   },
@@ -39652,7 +39764,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 857,
+    "index": 859,
     "bone_name": "Hand_R"
    }
   },
@@ -39702,7 +39814,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 857,
+    "index": 859,
     "bone_name": "Hand_L"
    }
   },
@@ -39752,7 +39864,7 @@
     "camera_shake": 0.1
    },
    "parent": {
-    "index": 857,
+    "index": 859,
     "bone_name": "Foot_R"
    }
   },
@@ -39784,7 +39896,7 @@
     ]
    },
    "parent": {
-    "index": 857,
+    "index": 859,
     "bone_name": "Hand_R"
    }
   },
@@ -39830,7 +39942,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 861,
+    "index": 863,
     "bone_name": ""
    }
   },
@@ -40088,7 +40200,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 863,
+    "index": 865,
     "bone_name": "Hand_R"
    }
   },
@@ -40138,7 +40250,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 863,
+    "index": 865,
     "bone_name": "Hand_L"
    }
   },
@@ -40188,7 +40300,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 863,
+    "index": 865,
     "bone_name": "Foot_R"
    }
   },
@@ -40446,7 +40558,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 867,
+    "index": 869,
     "bone_name": "Hand_R"
    }
   },
@@ -40496,7 +40608,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 867,
+    "index": 869,
     "bone_name": "Hand_L"
    }
   },
@@ -40546,7 +40658,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 867,
+    "index": 869,
     "bone_name": "Foot_R"
    }
   },
@@ -40804,7 +40916,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 871,
+    "index": 873,
     "bone_name": "Hand_R"
    }
   },
@@ -40854,7 +40966,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 871,
+    "index": 873,
     "bone_name": "Hand_L"
    }
   },
@@ -40904,7 +41016,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 871,
+    "index": 873,
     "bone_name": "Foot_R"
    }
   },
@@ -41010,7 +41122,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 875
+    "index": 877
    },
    "point_light": {
     "attenuation": {
@@ -41165,7 +41277,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 877
+    "index": 879
    },
    "point_light": {
     "attenuation": {
@@ -41308,7 +41420,7 @@
     ]
    },
    "parent": {
-    "index": 879
+    "index": 881
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -41448,7 +41560,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 882,
+    "index": 884,
     "bone_name": ""
    }
   },
@@ -41504,7 +41616,7 @@
     }
    },
    "parent": {
-    "index": 882,
+    "index": 884,
     "bone_name": ""
    }
   },
@@ -41536,7 +41648,7 @@
     ]
    },
    "parent": {
-    "index": 882,
+    "index": 884,
     "bone_name": ""
    }
   },
@@ -41689,7 +41801,7 @@
     ]
    },
    "parent": {
-    "index": 886,
+    "index": 888,
     "bone_name": ""
    }
   },
@@ -41721,7 +41833,7 @@
     ]
    },
    "parent": {
-    "index": 886,
+    "index": 888,
     "bone_name": ""
    }
   },
@@ -41753,7 +41865,7 @@
     ]
    },
    "parent": {
-    "index": 886,
+    "index": 888,
     "bone_name": ""
    }
   },
@@ -41785,7 +41897,7 @@
     ]
    },
    "parent": {
-    "index": 886,
+    "index": 888,
     "bone_name": ""
    }
   },
