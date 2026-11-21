@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CharacterActionsSystem.h"
+#include "CharacterControllerSystem.h"
 
 #include <random>
 #include <glm/glm.hpp>
@@ -881,7 +882,9 @@ void UpdateAir(EntityManager& entityManager, Character& character, CharacterActi
 	actions.actionProgress = progress;
 
 	// (what the last frame's physics did to the fall, before this frame steers it)
-	const bool hasLanded = HasLanded(actions, body, deltaTime);
+	// (on or against another character it is still sliding off it: the ground is further down)
+	const bool hasLanded = HasLanded(actions, body, deltaTime)
+		&& (actions.airSeconds >= MaxAirSeconds || !CharacterControllerSystem::IsOnTopOfCharacter(entityManager, character.entityID));
 
 	// The plunge: a moment held in the air, then straight down
 	if (!hasLanded && actions.isPlunging && actions.currentAction == CharacterAction::JumpAttack)
@@ -893,8 +896,8 @@ void UpdateAir(EntityManager& entityManager, Character& character, CharacterActi
 		return;
 
 	actions.isAirborne = false;
-	SUNTA_ENGINE_LOG_INFO("Actions: '{0}' landed after {1} s (vertical speed {2})", GetEntityName(entityManager, character.entityID),
-		actions.airSeconds, body.velocity.y);
+	SUNTA_ENGINE_LOG_INFO("Actions: '{0}' landed after {1} s (vertical speed {2}, at height {3})", GetEntityName(entityManager, character.entityID),
+		actions.airSeconds, body.velocity.y, character.transform->position.y);
 	CharacterSoundsSystem::Play(entityManager, character.entityID, &CharacterSoundsComponent::footstepSound);
 	if (actions.currentAction == CharacterAction::Jump)
 	{

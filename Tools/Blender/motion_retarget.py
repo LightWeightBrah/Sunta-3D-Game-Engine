@@ -269,6 +269,9 @@ class MotionClip:
     # The hips never rise more than this above their rest height (meters of our character): a jump whose height the
     # engine's physics gives keeps the crouch and the tuck of the legs but not the take's own flight. None: as taken
     hips_rise_limit: float = None
+    # Every frame moved up or down so the lowest foot is on the ground (not only the clip's lowest step): for jumps,
+    # whose height the engine's physics gives - a landing crouch or a tucked leg then never leaves the feet hanging
+    feet_on_ground: bool = False
 
 
 # ========== Rotations and directions of the bones (world space, the armature objects included) ==========
@@ -498,6 +501,27 @@ def put_on_ground(character, action, frames):
         curve.update()
 
 
+def put_every_frame_on_ground(character, action, frames):
+    """Each frame moved up or down by itself so that its lowest leg point is on the ground (see MotionClip.feet_on_ground)"""
+    scene = bpy.context.scene
+    ground = lowest_leg_point(character, is_rest=True)
+    to_local = world_rest_rotation(character, ROOT_BONE).inverted()
+    rises = {}
+    for frame in range(frames + 1):
+        scene.frame_set(frame)
+        rises[frame] = to_local @ Vector((0.0, 0.0, ground - lowest_leg_point(character)))
+
+    data_path = 'pose.bones["{}"].location'.format(ROOT_BONE)
+    for curve in [curve for curve in action_curves(action) if curve.data_path == data_path]:
+        for point in curve.keyframe_points:
+            rise = rises.get(int(round(point.co[0])))
+            if rise is None:
+                continue
+            for coordinates in (point.co, point.handle_left, point.handle_right):
+                coordinates[1] += rise[curve.array_index]
+        curve.update()
+
+
 def key_frame(character, rotations, offset, frame, previous_rotations):
     for bone in character.data.bones:
         pose_bone = character.pose.bones[bone.name]
@@ -604,4 +628,6 @@ def retarget(character, clip, action, hand_frames=None):
 
     remove_source_armature(source, actions_before | {action})
     put_on_ground(character, action, frames)
+    if clip.feet_on_ground:
+        put_every_frame_on_ground(character, action, frames)
     return frames

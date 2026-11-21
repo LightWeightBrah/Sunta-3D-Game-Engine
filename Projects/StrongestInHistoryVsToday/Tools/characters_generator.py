@@ -143,9 +143,10 @@ PLAYER = {
     "Cast_Domain":    diddy("Idle_Standing", 1, 66, speed=1.1),
     # The jump (Space): the flight is the engine's physics, so the take's own rise is taken out of the hips (the tuck
     # of the legs stays); from it a flying side kick, or (heavy) both fists raised and driven down into the ground
-    "Jump":           diddy("Jump_InPlace", 20, 50, hips_rise_limit=0.02),
-    "Jump_Attack":    diddy("Jump_FlyingKick", 4, 34, speed=1.15, hips_rise_limit=0.02, turn_degrees=90.0),
-    "Jump_Plunge":    diddy("Jump_GiantDown", 30, 72, hips_rise_limit=0.02),
+    "Jump":           diddy("Jump_InPlace", 20, 50, hips_rise_limit=0.02, feet_on_ground=True),
+    # (the take kicks along its own forward: turned by 90 degrees the leg went out to his left side)
+    "Jump_Attack":    diddy("Jump_FlyingKick", 4, 34, speed=1.15, hips_rise_limit=0.02, feet_on_ground=True),
+    "Jump_Plunge":    diddy("Jump_GiantDown", 30, 72, hips_rise_limit=0.02, feet_on_ground=True),
 }
 
 # Every downloaded clip whole, to compare them and read their strikes (--candidates)

@@ -215,6 +215,76 @@ void AddBoxColliderIfMissing(EntityManager& entityManager, unsigned int entityID
 	collider.localOffset = CharacterColliderOffset;
 }
 
+// Nobody stands on a character or hangs on its side: one that comes down on top of or next to another (a jump at
+// a boss) slides off it along the ground
+constexpr float SlideOffSpeed = 4.5f;
+
+// How far over another character's top the feet still count as on it (meters)
+constexpr float OnTopMargin = 0.2f;
+
+// How high the feet must be over the other's to count as off the ground (meters)
+constexpr float OffTheGround = 0.15f;
+
+// To the corners of the box (it turns with the character)
+float GetHorizontalRadius(const OBB& box)
+{
+	return glm::length(glm::vec2(box.halfExtents.x, box.halfExtents.z));
+}
+
+// The other character whose top the feet of 'entityID' are on, and the way off it along the ground
+bool TryFindCharacterBelow(EntityManager& entityManager, unsigned int entityID, glm::vec3& outWayOff)
+{
+	const BoxColliderComponent* collider = entityManager.GetComponent<BoxColliderComponent>(entityID);
+	if (!collider || collider->isTrigger)
+		return false;
+
+	const OBB&  box  = collider->worldOBB;
+	const float feet = box.center.y - box.halfExtents.y;
+
+	for (CharacterControllerComponent& other : entityManager.GetAllComponents<CharacterControllerComponent>())
+	{
+		const unsigned int otherID = entityManager.GetEntityIDForComponent(other);
+		const BoxColliderComponent* otherCollider = otherID != entityID ? entityManager.GetComponent<BoxColliderComponent>(otherID) : nullptr;
+		if (!otherCollider || otherCollider->isTrigger)
+			continue;
+
+		const OBB&  otherBox = otherCollider->worldOBB;
+		const float top      = otherBox.center.y + otherBox.halfExtents.y;
+
+		// Off the ground next to it or on it (a body that stands beside it has its feet as low as its own): the boxes
+		// turned to each other touch with their corners, and the solver would hold the falling body on its side
+		const float bottom = otherBox.center.y - otherBox.halfExtents.y;
+		if (feet < bottom + OffTheGround || feet > top + OnTopMargin)
+			continue;
+
+		glm::vec3 away = box.center - otherBox.center;
+		away.y = 0.0f;
+		const float distance = glm::length(away);
+		if (distance >= GetHorizontalRadius(box) + GetHorizontalRadius(otherBox))
+			continue;
+
+		outWayOff = distance > 0.01f ? away / distance : glm::vec3(1.0f, 0.0f, 0.0f);
+		return true;
+	}
+	return false;
+}
+
+void SlideOffCharacters(EntityManager& entityManager, unsigned int entityID, TransformComponent& transform, float deltaTime)
+{
+	glm::vec3 wayOff;
+	if (TryFindCharacterBelow(entityManager, entityID, wayOff))
+	{
+		transform.position += wayOff * (SlideOffSpeed * deltaTime);
+		transform.isDirty = true;
+	}
+}
+
+}
+
+bool CharacterControllerSystem::IsOnTopOfCharacter(EntityManager& entityManager, unsigned int entityID)
+{
+	glm::vec3 wayOff;
+	return TryFindCharacterBelow(entityManager, entityID, wayOff);
 }
 
 void CharacterControllerSystem::Update(EntityManager& entityManager, float deltaTime, const glm::vec3& cameraForward)
@@ -236,6 +306,8 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 		// An empty stamina bar stops running (walking is free)
 		if (controller.wantsToRun && !StaminaSystem::HasStaminaLeft(entityManager, entityID))
 			controller.wantsToRun = false;
+
+		SlideOffCharacters(entityManager, entityID, *transform, deltaTime);
 
 		if (controller.isDrivenByAction)
 			continue;

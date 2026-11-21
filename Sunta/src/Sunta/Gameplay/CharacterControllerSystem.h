@@ -21,6 +21,10 @@ public:
 	// True while the character keeps facing the enemy it is locked on to (not while it runs): it then steps sideways and backwards
 	static bool IsFacingLockedTarget(EntityManager& entityManager, unsigned int entityID);
 
+	// True while the character is off the ground on or against another character's body (it came down on someone's
+	// head or hangs on its side): it is then sliding off that body (see Update), so it hasn't landed yet
+	static bool IsOnTopOfCharacter(EntityManager& entityManager, unsigned int entityID);
+
 	// Adds the Character Controller together with the parts it needs and fills them with sensible values:
 	// a Physics Body (upright, no friction) and a Box Collider (the size of a person)
 	// Parts the entity already has are left as they are
