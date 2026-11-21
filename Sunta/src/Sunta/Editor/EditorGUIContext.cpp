@@ -6,6 +6,7 @@
 #include <imguizmo/ImGuizmo.h>
 
 #include "EditorGUIBackend.h"
+#include "ConsolePanel.h"
 #include "EditorGUI.h"
 
 #include "Core/Window.h"
@@ -135,6 +136,12 @@ void EditorGUIContext::RenderUI(Window* window, Scene& scene, RendererDevice& re
 	EditorGUI::DrawHierarchy(scene.GetEntityManager());
 	EditorGUI::End();
 
+	EditorGUI::Begin(consoleName);
+	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
+	ConsolePanel::Draw();
+	EditorGUI::End();
+
+	// (after the Console: the File Browser is the tab shown first)
 	EditorGUI::Begin(fileBrowserName);
 	EditorGUI::DrawWindowBackground("file_browser_bg", glm::vec4(0.3f, 0.25f, 0.2f, 1.0f));
 	EditorGUI::DrawFileBrowser(scene);
@@ -213,6 +220,8 @@ void EditorGUIContext::SetupInitialLayout(unsigned int dockspaceID)
 	ImGui::DockBuilderDockWindow(hierarchyName,   hierarchyPanelID);
 	ImGui::DockBuilderDockWindow(inspectorName,   inspectorPanelID);
 	ImGui::DockBuilderDockWindow(fileBrowserName, fileBrowserPanelID);
+	// (a tab next to the File Browser: the log, the editor has no console window)
+	ImGui::DockBuilderDockWindow(consoleName,     fileBrowserPanelID);
 	ImGui::DockBuilderDockWindow(viewportName,    dockspaceID);
 	
 	ImGui::DockBuilderFinish(dockspaceID);

@@ -1,4 +1,5 @@
 #pragma once
+#include "LogHistory.h"
 #include <string>
 #include <any>
 #include <iostream>
@@ -78,6 +79,11 @@ private:
 
 		// The console shows the level as a color, a file can't, so the level is written as text
 		LogFile::Write("[" + timeString + "] [" + levelLabel + "] [" + name + "]: " + message);
+
+		// The editor's Console panel
+		const LogHistory::Level historyLevel = color == Terminal::Color::Red ? LogHistory::Level::Error
+			: (color == Terminal::Color::Yellow ? LogHistory::Level::Warning : LogHistory::Level::Info);
+		LogHistory::Add(historyLevel, "[" + timeString + "] [" + name + "]: " + message);
 	}
 
 	template <typename... Args>

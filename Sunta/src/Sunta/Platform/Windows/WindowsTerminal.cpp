@@ -6,6 +6,24 @@ namespace Sunta
 
 void Terminal::Init()
 {
+	// A Windows application (no console of its own) started from a console - a command line, a build script - writes
+	// its log there. Its output already going somewhere (redirected to a file or a pipe) is left as it is
+	static bool hasTriedParent = false;
+	HANDLE outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	const bool hasOutput = outputHandle != nullptr && outputHandle != INVALID_HANDLE_VALUE && GetFileType(outputHandle) != FILE_TYPE_UNKNOWN;
+	if (!hasTriedParent && GetConsoleWindow() == nullptr && !hasOutput)
+	{
+		hasTriedParent = true;
+		if (AttachConsole(ATTACH_PARENT_PROCESS))
+		{
+			FILE* stream = nullptr;
+			freopen_s(&stream, "CONOUT$", "w", stdout);
+			freopen_s(&stream, "CONOUT$", "w", stderr);
+			std::cout.clear();
+			std::cerr.clear();
+		}
+	}
+
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	
 	if (consoleHandle == INVALID_HANDLE_VALUE)

@@ -51,6 +51,7 @@ private:
 
 	static constexpr const char* viewportName		= "Viewport";
 	static constexpr const char* fileBrowserName    = "File Browser";
+	static constexpr const char* consoleName        = "Console";
 	static constexpr const char* inspectorName		= "Inspector";
 	static constexpr const char* hierarchyName		= "Hierarchy";
 	static constexpr const char* rootWindowID		= "Main Viewport Docking Window";

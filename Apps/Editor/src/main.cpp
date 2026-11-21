@@ -80,6 +80,8 @@ void RunEditor(const std::filesystem::path& projectDirectory)
 {
 	Sunta::ApplicationSpecification specification;
 	specification.windowTitle      = "Sunta Editor";
+	// (the editor has no console window: its log is in this file and in its Console panel)
+	specification.logFilePath      = Sunta::VirtualFileSystem::GetExecutablePath().replace_extension(".log");
 	specification.maximized        = true;
 	specification.assetSource      = Sunta::AssetSource::SourceTree;
 	specification.projectDirectory = projectDirectory;
