@@ -20,6 +20,7 @@
 #include "Scripting/ScriptingEngine.h"
 #include "Audio/Audio.h"
 #include "BackgroundRun.h"
+#include "LoadingScreen.h"
 
 namespace Sunta
 {
@@ -75,6 +76,7 @@ void Application::Run()
 			// A background test run keeps drawing into the hidden window (see BackgroundRun.h)
 			if (!IsBackgroundRun())
 				window->Show();
+			LoadingScreen::End();
 			isWindowShown = true;
 		}
 
@@ -104,7 +106,11 @@ void Application::Run()
 		InputManager::Clear();
 
 		if (!isWindowShown)
+		{
 			++framesDrawn;
+			// (the loading screen stays over the first frames, while the editor's panels are still laid out)
+			LoadingScreen::Cover();
+		}
 	}
 
 	// Shutdown takes a moment, the window shouldn't sit there frozen in the meantime
@@ -154,8 +160,12 @@ void Application::Init()
 	ResourceManager::Init(Renderer::GetDevice());
 	if (specification.loadEngineResources)
 	{
+		// The window shows a loading screen while everything loads (see LoadingScreen)
+		LoadingScreen::Begin(*window, specification.windowTitle);
 		ResourceLoader::Init();
+		LoadingScreen::Step(0.92f, "Starting the sound");
 		Audio::Init();
+		LoadingScreen::Step(0.94f, "Loading the scene");
 	}
 
 	scene = std::make_unique<Scene>();

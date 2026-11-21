@@ -4,6 +4,7 @@
 #include "Core/Application.h"
 #include "Core/FatalError.h"
 #include "Core/InputManager.h"
+#include "Core/LoadingScreen.h"
 #include "Core/Log.h"
 #include "Core/VirtualFileSystem.h"
 #include "Gameplay/PauseMenu.h"
@@ -27,6 +28,7 @@ void RuntimeLayer::OnAttach()
 	application.GetScene().SetScriptHotReloadEnabled(application.GetGameConfig().developerMode);
 
 	LoadStartScene();
+	LoadingScreen::Step(0.97f, "Starting the game");
 
 	// The game has no editor mode: hides the cursor and unlocks the camera
 	EventBus::Publish<EngineModeChangedEvent>({ EngineMode::Game });

@@ -317,6 +317,11 @@ bool InputPlayback::TryGetCursor(glm::vec2& outPosition)
 	return true;
 }
 
+void InputPlayback::RequestShot(const std::string& name)
+{
+	shotsToSave.push_back(name);
+}
+
 void InputPlayback::AfterRender(unsigned int width, unsigned int height)
 {
 	if (shotsToSave.empty())

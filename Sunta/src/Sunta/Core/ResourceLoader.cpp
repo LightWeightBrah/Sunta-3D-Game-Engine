@@ -11,18 +11,46 @@
 #include "Utilities/TextureNamingConventionsUtilities.h"
 #include "Utilities/FileSystemUtilities.h"
 #include "Renderer/Renderer.h"
+#include "LoadingScreen.h"
 
 namespace Sunta
 {
 
+namespace
+{
+
+// Where the loading screen's bar is after each part (the models are most of the wait, see LoadModelsFromDirectory)
+constexpr float ModelsStartAt = 0.15f;
+constexpr float ModelsEndAt   = 0.9f;
+
+// The engine's own models loaded by name in LoadModels
+constexpr int EngineModelCount = 10;
+
+int modelsToLoad = 0;
+int modelsLoaded = 0;
+
+void ReportModel(const std::string& name)
+{
+	++modelsLoaded;
+	const float part = modelsToLoad > 0 ? (float)modelsLoaded / (float)modelsToLoad : 1.0f;
+	LoadingScreen::Step(ModelsStartAt + (ModelsEndAt - ModelsStartAt) * part, "Loading " + name);
+}
+
+}
+
 void ResourceLoader::Init()
 {
+	LoadingScreen::Step(0.02f, "Loading shaders");
 	LoadShaders();
+	LoadingScreen::Step(0.05f, "Loading textures");
 	LoadTextures();
+	LoadingScreen::Step(0.09f, "Loading materials");
 	LoadMaterials();
 	LoadMeshes();
 	LoadTexturesNamingConvention();
+	LoadingScreen::Step(ModelsStartAt, "Loading models");
 	LoadModels();
+	LoadingScreen::Step(ModelsEndAt, "Models loaded");
 }
 
 void ResourceLoader::InitEditorAssets()
@@ -117,16 +145,41 @@ void ResourceLoader::LoadModels()
 	using namespace Sunta::EngineAssets;
 
 
+	// How many there are to load, for the loading screen's bar
+	modelsToLoad = EngineModelCount;
+	modelsLoaded = 0;
+	const std::filesystem::path gameFolder = VirtualFileSystem::Resolve("@game");
+	if (std::filesystem::exists(gameFolder))
+	{
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(gameFolder))
+		{
+			std::string extension = entry.path().extension().string();
+			std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+			if (entry.is_regular_file() && IsModelExtension(extension))
+				++modelsToLoad;
+		}
+	}
+
 	ResourceManager::LoadModel(Models::Solaire,  "@engine/Models/Solaire/Solaire All Animations.fbx", 0.05f);
+	ReportModel("Solaire");
 	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj", 0.5f);
+	ReportModel("Backpack");
 	ResourceManager::LoadModel(Models::Knight,      "@engine/Models/Knight/knight.gltf");
+	ReportModel("Knight");
 	ResourceManager::LoadModel(Models::KnightSword, "@engine/Models/KnightSword/knight_sword.gltf");
+	ReportModel("KnightSword");
 	ResourceManager::LoadModel(Models::KnightShield, "@engine/Models/KnightShield/knight_shield.gltf");
+	ReportModel("KnightShield");
 	ResourceManager::LoadModel(Models::FogGate, "@engine/Models/FogGate/fog_gate.gltf");
+	ReportModel("FogGate");
 	ResourceManager::LoadModel(Models::Boss, "@engine/Models/Boss/boss.gltf");
+	ReportModel("Boss");
 	ResourceManager::LoadModel(Models::BossAxe, "@engine/Models/BossAxe/boss_axe.gltf");
+	ReportModel("BossAxe");
 	ResourceManager::LoadModel(Models::RustedKnight, "@engine/Models/RustedKnight/rusted_knight.gltf");
+	ReportModel("RustedKnight");
 	ResourceManager::LoadModel(Models::Bonfire,      "@engine/Models/Bonfire/bonfire.gltf");
+	ReportModel("Bonfire");
 
 	// Models added by the user to the game's folder. Scenes refer to them by name
 	LoadModelsFromDirectory(VirtualFileSystem::Resolve("@game"));
@@ -247,6 +300,7 @@ void ResourceLoader::LoadModelsFromDirectory(const std::filesystem::path& direct
 			continue;
 
 		ResourceManager::LoadModel(modelName, entry.path().string());
+		ReportModel(modelName);
 	}
 }
 

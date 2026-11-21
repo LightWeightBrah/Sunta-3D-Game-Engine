@@ -31,6 +31,10 @@ namespace Sunta
 		// After the frame is drawn (before swapping): saves requested frames
 		static void AfterRender(unsigned int width, unsigned int height);
 
+		// A picture of what is drawn now saved by the next AfterRender, outside the script's own shots (the loading
+		// screen records itself once this way: it is drawn before the script's time starts)
+		static void RequestShot(const std::string& name);
+
 		static bool WantsQuit();
 
 		// Commands this class doesn't know (command, three arguments, time). Returns false for an unknown one
