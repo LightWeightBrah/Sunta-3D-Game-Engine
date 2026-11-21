@@ -765,11 +765,19 @@ def add_oil_domain(builder, player):
         ("Domain Vortex", 2.6, PLAYER_NAME, 4.0, 0.5, ((9.0, 1.2, -12.0), (10.5, 2.4, -14.0), (12.0, 3.6, -16.0))),
         # (low behind him and close: the walls of oil rise over the enemy on both sides and crash together)
         ("Domain Waves", 2.8, BOSS_NAME, 2.0, 0.6, ((2.4, 2.0, 6.0), (1.8, 2.6, 7.5), (1.2, 3.2, 9.0))),
+        # His answer to the boss's armor (Divine Baby Oil: Crystal Vessel, boss_fight.lua O.startVessel): his hands close
+        # and low, beside him as he draws the sword of oil, wide from aside on both of them (the boss before him)
+        ("Vessel Gesture", 1.8, PLAYER_NAME, 1.3, 0.4, ((0.35, 1.0, -1.6), (0.3, 1.1, -1.25))),
+        ("Vessel Draw", 1.8, PLAYER_NAME, 1.2, 0.4, ((1.9, 1.25, -1.7), (1.65, 1.35, -1.35))),
+        ("Vessel Face-off", 2.2, PLAYER_NAME, 1.3, 0.6, ((6.5, 2.1, -2.4), (7.0, 2.3, -3.0))),
     )
     for name, seconds, target, height, blend, points in shots:
         shot = builder.add(named(name, cutscene={
             "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
-            "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+            "animation_name": "", "animation_at_seconds": 0.0,
+            # (the name of his answer over its last shot)
+            "title": "Divine Baby Oil: Crystal Vessel" if name == "Vessel Face-off" else "",
+            "title_seconds": 1.8 if name == "Vessel Face-off" else 0.0,
             "can_be_skipped": False, "video_file": "", "blend_in_seconds": blend}), parent=player)
         for number, point in enumerate(points):
             builder.add(named(f"Camera Point {number + 1}", point), parent=shot)
@@ -939,10 +947,13 @@ def add_armor_transformation(builder, boss):
         ("Armor Snap", 2.3, 1.2, 0.5, ((1.0, 1.3, -5.8), (0.7, 1.35, -5.1), (0.45, 1.4, -4.5))),
         ("Armor Draw", 2.0, 1.3, 0.5, ((3.2, 1.4, -2.8), (2.9, 1.5, -2.3), (2.6, 1.6, -1.9))),
         ("Armor Ignite", 2.2, 1.65, 0.4, ((0.25, 1.72, -1.3), (0.5, 1.8, -2.4), (0.9, 2.0, -4.6))),
+        # (the player's answer starts over the boss's shoulder, looking at the player: see Vessel Gesture)
+        ("Vessel Answer", 1.8, 1.4, 0.6, ((0.75, 1.95, 1.7), (0.7, 1.9, 1.35))),
     )
     for name, seconds, height, blend, points in shots:
         shot = builder.add(named(name, cutscene={
-            "duration_seconds": seconds, "look_at_entity": BOSS_NAME, "look_at_height": height, "animation_entity": "",
+            "duration_seconds": seconds, "look_at_entity": PLAYER_NAME if name.startswith("Vessel") else BOSS_NAME,
+            "look_at_height": height, "animation_entity": "",
             "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
             "can_be_skipped": False, "video_file": "", "blend_in_seconds": blend}), parent=boss)
         for number, point in enumerate(points):

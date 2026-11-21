@@ -1624,6 +1624,7 @@ end
 -- Back to the man of the first phases (the player died: the fight starts over)
 function O.resetArmor()
     O.transform = nil
+    O.vessel = nil
     if O.setPlayerSword then O.setPlayerSword(false) end
     O.hideArmorProps()
     if this.model then this.model.modelName = O.PlainModel end
@@ -1864,6 +1865,60 @@ function O.setPlayerSword(isOn)
     end
 end
 
+-- The player's answer as a short sequence of shots (the user's scenario without the armor yet): over the boss's
+-- shoulder at him; close on his hands making the sign of his great technique, rays of light out of him; beside him as
+-- the sword of oil comes out of a burst of oil in slow motion; wide on both of them with the name of it. The boss waits
+-- Each shot starts the moment the one before it ends (the shots keep real time, the game's time is slowed meanwhile)
+O.Vessel = { { "Vessel Answer", "answer" }, { "Vessel Gesture", "gesture" }, { "Vessel Draw", "draw" },
+             { "Vessel Face-off", "faceoff" } }
+
+function O.startVessel()
+    O.vessel = { step = 0, shot = nil }
+    isChanneling = true
+    this.enemy:startAttackCooldown(10)
+end
+
+function O.vesselBeat(beat)
+    local player = find(PlayerName)
+    if beat == "gesture" and player then
+        if player.characterActions then player.characterActions:play("Cast_Great_Orb") end
+        local center = player.transform.position + vec3(0, 1.1, 0)
+        for i = 1, 10 do
+            after(i * 0.08, function() this.world:effect("Technique Ray", center, player.transform.forward) end)
+        end
+        Audio.play("@game/Sounds/Spells/magic_whoosh.ogg", 1.0)
+    elseif beat == "draw" and player then
+        O.setPlayerSword(true)
+        if player.characterActions then player.characterActions:play("Draw_Sword") end
+        local hand = player.transform.position + vec3(0, 1.1, 0) + player.transform.forward * 0.4
+        this.world:effect("Solid Oil Burst", hand, player.transform.forward)
+        this.world:slowMotion(1.2, 0.4)
+        Audio.play("@game/Sounds/Spells/glass_break.ogg", 1.0)
+    elseif beat == "faceoff" then
+        -- (its name is the title of this shot)
+        Audio.playAt(RoarSound, this.transform.position, 1.0)
+    end
+end
+
+function O.updateVessel(deltaTime)
+    local v = O.vessel
+    if not v then return end
+    this.enemy:startAttackCooldown(1)
+    local current = v.shot and find(v.shot)
+    if current and current.cutscene and current.cutscene.isPlaying then return end
+
+    v.step = v.step + 1
+    local next = O.Vessel[v.step]
+    if not next then
+        O.vessel = nil
+        isChanneling = false
+        return
+    end
+    v.shot = next[1]
+    playCutscene(next[1])
+    O.vesselBeat(next[2])
+end
+
 function O.armPlayer()
     local player = find(PlayerName)
     if not player then return end
@@ -1898,8 +1953,8 @@ function O.startArmoredPhase()
     this.meleeEnemy.dodgeChance = 0.15
     O.armored = { slamIn = 3, dashIn = 6, whirlIn = 4, barrageIn = 99, hasExecuted = false }
     showCaption(O.ArmorTitle, 3)
-    -- (a moment later: the player's answer, his own sword of oil)
-    after(1.2, O.armPlayer)
+    -- (right away: the player's answer, his own sword of oil, as a short sequence of shots)
+    O.startVessel()
 end
 
 function O.startPhaseSix()
@@ -2575,7 +2630,9 @@ function OnUpdate(deltaTime)
     watchJetSpells()
     updateGamble()
     O.updateAscension(deltaTime)
-    O.updateArmored(deltaTime)
+    O.updateVessel(deltaTime)
+    -- (his sword waits while the player answers)
+    if not O.vessel then O.updateArmored(deltaTime) end
     updateDomain(deltaTime)
     updateTweens(deltaTime)
     O.updateRise(deltaTime)
