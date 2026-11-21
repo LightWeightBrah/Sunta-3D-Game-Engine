@@ -146,6 +146,14 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::FontsFolder,         "@engine/Textures/Icons/fonts_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::MaterialFolder,      "@engine/Textures/Icons/material_folder_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::SceneFolder,			"@engine/Textures/Icons/scene_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::SkyboxFolder,        "@engine/Textures/Icons/skybox_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::VideoFolder,         "@engine/Textures/Icons/video_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::UIFolder,            "@engine/Textures/Icons/ui_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::AppFolder,           "@engine/Textures/Icons/app_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::AnimationFolder,     "@engine/Textures/Icons/animation_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::EffectsFolder,       "@engine/Textures/Icons/effects_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::CharacterFolder,     "@engine/Textures/Icons/character_folder_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::PropsFolder,         "@engine/Textures/Icons/props_folder_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::DefaultFile,         "@engine/Textures/Icons/default_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::CppFile,             "@engine/Textures/Icons/cpp_file_icon.png");
@@ -157,6 +165,7 @@ void ResourceLoader::LoadIcons()
 	ResourceManager::LoadEditorIcon(Icons::FontFile,            "@engine/Textures/Icons/font_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::MaterialFile,        "@engine/Textures/Icons/material_file_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::SceneFile,			"@engine/Textures/Icons/scene_file_icon.png");
+	ResourceManager::LoadEditorIcon(Icons::VideoFile,           "@engine/Textures/Icons/video_file_icon.png");
 
 	ResourceManager::LoadEditorIcon(Icons::Cube,                "@engine/Textures/Icons/cube_icon.png");
 	ResourceManager::LoadEditorIcon(Icons::Capsule,             "@engine/Textures/Icons/capsule_icon.png");

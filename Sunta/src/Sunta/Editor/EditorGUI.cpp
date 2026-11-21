@@ -1959,7 +1959,18 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{ "materials",		"material_folder" },
 			{ "audio",			"audio_folder" },		{ "sounds",		"audio_folder" },		{ "sfx",	"audio_folder" },
 			{ "fonts",			"fonts_folder" },
-			{ "scenes",			"scene_folder" }
+			{ "scenes",			"scene_folder" },
+			{ "voice",			"audio_folder" },		{ "music",		"audio_folder" },
+			{ "skyboxes",		"skybox_folder" },		{ "skybox",		"skybox_folder" },		{ "sky",	"skybox_folder" },
+			{ "videos",			"video_folder" },		{ "video",		"video_folder" },		{ "movies", "video_folder" },
+			{ "ui",				"ui_folder" },			{ "hud",		"ui_folder" },			{ "interface", "ui_folder" },
+			{ "app",			"app_folder" },			{ "icons",		"app_folder" },
+			{ "animations",		"animation_folder" },	{ "animation",	"animation_folder" },	{ "mixamo", "animation_folder" },
+			{ "clips",			"animation_folder" },	{ "motions",	"animation_folder" },
+			{ "effects",		"effects_folder" },		{ "particles",	"effects_folder" },		{ "vfx",	"effects_folder" },
+			{ "flipbooks",		"effects_folder" },
+			{ "characters",		"character_folder" },	{ "enemies",	"character_folder" },	{ "bosses", "character_folder" },
+			{ "props",			"props_folder" },		{ "kit",		"props_folder" },		{ "arena",	"props_folder" }
 		};
 
 		std::string name = path.filename().string();
@@ -1975,11 +1986,14 @@ std::string EditorGUI::GetIconKeyForPath(const std::filesystem::path& path, bool
 			{".cpp",		"cpp_file"},		{".h", "cpp_file"},
 			{".lua",		"lua_file"},
 			{".obj",		"3d_model_file"},	{".fbx", "3d_model_file"},  {".dae", "3d_model_file"},
+			{".gltf",		"3d_model_file"},	{".glb", "3d_model_file"},  {".blend", "3d_model_file"},
 			{".shader",		"shader_file"},
 			{".png",		"image_file"},		{".jpg", "image_file"},	    {".jpeg", "image_file"}, {".tga","image_file"}, {".bmp", "image_file"}, {".psd", "image_file"}, {".hdr", "image_file"},
 			{".material",	"material_file"},
-			{".wav",		"audio_file"},		{".ogg", "audio_file"},
-			{".ttf",		"font_file"},
+			{".wav",		"audio_file"},		{".ogg", "audio_file"},		{".mp3", "audio_file"},	{".flac", "audio_file"},
+			{".ttf",		"font_file"},		{".otf", "font_file"},
+			{".mpg",		"video_file"},		{".mpeg", "video_file"},	{".mp4", "video_file"},	{".webm", "video_file"}, {".avi", "video_file"},
+			{".webp",		"image_file"},		{".ico", "image_file"},
 			{".scene",		"scene_file"}
 		};
 

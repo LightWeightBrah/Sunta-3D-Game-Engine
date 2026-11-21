@@ -99,6 +99,14 @@ namespace Sunta::EngineAssets
 		constexpr const char* FontsFolder         = "fonts_folder";
 		constexpr const char* MaterialFolder	  = "material_folder";
 		constexpr const char* SceneFolder		  = "scene_folder";
+		constexpr const char* SkyboxFolder        = "skybox_folder";
+		constexpr const char* VideoFolder         = "video_folder";
+		constexpr const char* UIFolder            = "ui_folder";
+		constexpr const char* AppFolder           = "app_folder";
+		constexpr const char* AnimationFolder     = "animation_folder";
+		constexpr const char* EffectsFolder       = "effects_folder";
+		constexpr const char* CharacterFolder     = "character_folder";
+		constexpr const char* PropsFolder         = "props_folder";
 											      
 		constexpr const char* DefaultFile         = "default_file";
 		constexpr const char* CppFile             = "cpp_file";
@@ -110,6 +118,7 @@ namespace Sunta::EngineAssets
 		constexpr const char* FontFile            = "font_file";
 		constexpr const char* MaterialFile		  = "material_file";
 		constexpr const char* SceneFile			  = "scene_file";
+		constexpr const char* VideoFile           = "video_file";
 
 		constexpr const char* Cube                = "cube";
 		constexpr const char* Capsule             = "capsule";
