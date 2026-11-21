@@ -20,6 +20,11 @@
 
 Do you want to compile the engine yourself? See [Building the Engine](#building-the-engine).
 
+**Documentation** (in [`docs/`](docs/index.md), ready for GitHub Pages): [Getting started](docs/getting-started.md),
+a step-by-step [tutorial for a small souls-like](docs/tutorial-soulslike.md), [Scripting](docs/scripting.md),
+the [Components](docs/components.md) and [Scripting reference](docs/scripting-reference.md) (both generated from the
+engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing.md).
+
 ---
 
 ## Showcase

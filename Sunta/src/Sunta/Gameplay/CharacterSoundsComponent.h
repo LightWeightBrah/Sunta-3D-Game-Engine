@@ -22,7 +22,7 @@ namespace Sunta
 //   rollSound      a roll or a backstep
 //   footstepSound  each time a foot of the animation touches the ground: the bones 'leftFootBone' and 'rightFootBone'
 //                  (a model without them: every 'footstepMeters' walked)
-//   shockwaveSound a heavy blow shakes the ground (Character Actions with a shockwave)
+//   shockwaveSound  a heavy blow shakes the ground (Character Actions with a shockwave)
 // Its voice (a man grunting, a monster roaring): never two of them at once, and only now and then
 //   painVoice      hurt but still alive ('painVoiceChance' of the hits)
 //   attackVoice    the effort of a blow ('attackVoiceChance' of the attacks)

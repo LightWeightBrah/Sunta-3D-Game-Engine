@@ -12,7 +12,7 @@ namespace Sunta
 //
 // How to use it: put it on the shield, a child entity of the character (the Souls Player and the enemies get it
 // on their left hand). The owner is the closest parent with Character Actions, which blocks while the block key is held
-// (Left Ctrl) and parries with a tap (F)
+// (the right mouse button) and parries with F
 //
 // A hit that comes from the front (inside 'guardAngleDegrees') while the owner blocks hurts only by 'damageThrough'
 // and costs stamina instead: 'staminaPerDamage' for every point of the blocked damage. When there is not enough stamina
