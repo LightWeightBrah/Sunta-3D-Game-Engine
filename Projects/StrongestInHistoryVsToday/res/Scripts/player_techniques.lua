@@ -111,7 +111,8 @@ end
 -- His guard is a wall of baby oil: it swells in front of him while he blocks, and flares up (bigger, brighter) for
 -- the moment his parry turns blows away - the player sees when the parry is live
 local OilGuard = "Player Oil Guard"
-local GuardSize = vec3(1.0, 1.15, 0.22)
+-- (a thick lens, not a flat disc: flattened that far, the ball of liquid showed only a ragged rim from the front)
+local GuardSize = vec3(1.0, 1.15, 0.5)
 local guardAmount, parryFlare = 0, 0
 local function updateOilGuard(deltaTime)
     local guard = find(OilGuard)
@@ -125,7 +126,7 @@ local function updateOilGuard(deltaTime)
     local amount = math.max(guardAmount, parryFlare)
     local size = 0.6 + 0.4 * amount + 0.35 * parryFlare
     guard.transform.scale = vec3(GuardSize.x * size, GuardSize.y * size, GuardSize.z * size)
-    guard.liquidOrb.brightness = 0.5 + 1.3 * parryFlare
+    guard.liquidOrb.brightness = 0.9 + 1.2 * parryFlare
     guard.liquidOrb.isVisible = amount > 0.05
 end
 

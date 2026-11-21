@@ -3173,7 +3173,7 @@
     "scale": [
      1.0,
      1.15,
-     0.22
+     0.5
     ]
    },
    "liquid_orb": {
@@ -3182,10 +3182,10 @@
      0.97,
      0.9
     ],
-    "brightness": 0.5,
-    "wobble": 0.1,
+    "brightness": 0.9,
+    "wobble": 0.03,
     "wobble_speed": 2.4,
-    "clearness": 0.85,
+    "clearness": 0.55,
     "is_visible": false
    },
    "parent": {

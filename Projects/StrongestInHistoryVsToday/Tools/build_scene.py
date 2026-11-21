@@ -824,9 +824,9 @@ def add_player(builder):
     # His guard: a wall of baby oil before his chest while he blocks, flaring up in the live part of a parry
     # (shown by his script; his front is his own -Z)
     # (mostly see-through: the player watches the boss through it; it brightens only for the parry)
-    guard = named("Player Oil Guard", (0.0, 1.3, -0.55), liquid_orb=dict(OIL_ORB, is_visible=False, clearness=0.85,
-                                                                          brightness=0.5, wobble=0.1))
-    guard["transform"]["scale"] = [1.0, 1.15, 0.22]
+    guard = named("Player Oil Guard", (0.0, 1.3, -0.55), liquid_orb=dict(OIL_ORB, is_visible=False, clearness=0.55,
+                                                                          brightness=0.9, wobble=0.03))
+    guard["transform"]["scale"] = [1.0, 1.15, 0.5]
     builder.add(guard, parent=player)
     # (a little bigger than a fist: a blow that looks like it lands, lands)
     add_fists_and_foot(builder, player, 26.0, PLAYER_HITBOX_LAYER, size=0.2)
