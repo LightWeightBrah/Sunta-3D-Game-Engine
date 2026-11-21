@@ -144,7 +144,8 @@ local Domain = {
     PoolGrowSeconds = 2.4, PoolStaySeconds = 14, PoolSinkSeconds = 2.5,
     -- The waves: when they rise (seconds after the spell left), when they meet (PLAYER_DOMAIN_CRASH_AT of the
     -- scene: the blast's fuse), how far to each side of the enemy they start, how big they are
-    WavesAt = 2.5, WaveCrashAt = 4.0, WaveFrom = 12, WaveLength = 12, WaveHeight = 3.4, WaveThickness = 1.6,
+    WavesAt = 2.5, WaveCrashAt = 4.0, WaveFrom = 12, WaveLength = 14, WaveHeight = 7.0, WaveThickness = 2.4,
+    -- (the wave is a ball of oil stretched: half of it under the ground, so 7 is a wall of 3.5 m over the enemy)
     -- The crests curling over along each wave, how often
     Crest = "Oil Wave Crest", CrestEverySeconds = 0.12,
     BoomSound = "@game/Sounds/Spells/deep_boom.ogg", SplashSound = "@game/Sounds/Spells/glass_break.ogg",

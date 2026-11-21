@@ -741,7 +741,7 @@ def add_oil_domain(builder, player):
     for side in ("L", "R"):
         # (a wall of oil: thin across, tall, long; the script moves it and grows it)
         wave = named(f"Oil Wave {side}", (0.0, -50.0, 0.0), liquid_orb=dict(OIL_DOMAIN_ORB, wobble=0.18, wobble_speed=3.5,
-                                                                         clearness=0.6, brightness=1.1))
+                                                                         clearness=0.35, brightness=1.35))
         wave["transform"]["scale"] = [0.01, 0.01, 0.01]
         index = builder.add(wave)
         # A wall of white foam (puffs of baked smoke, white) and drops flung up out of it
@@ -763,7 +763,8 @@ def add_oil_domain(builder, player):
     shots = (
         ("Domain Gesture", 2.0, PLAYER_NAME, 1.5, 0.4, ((0.6, 0.95, -1.4), (0.45, 1.0, -1.15), (0.32, 1.05, -0.98))),
         ("Domain Vortex", 2.6, PLAYER_NAME, 4.0, 0.5, ((9.0, 1.2, -12.0), (10.5, 2.4, -14.0), (12.0, 3.6, -16.0))),
-        ("Domain Waves", 2.8, BOSS_NAME, 1.4, 0.6, ((1.0, 7.5, 12.0), (0.6, 8.5, 14.0), (0.3, 9.5, 16.0))),
+        # (low behind him and close: the walls of oil rise over the enemy on both sides and crash together)
+        ("Domain Waves", 2.8, BOSS_NAME, 2.0, 0.6, ((2.4, 2.0, 6.0), (1.8, 2.6, 7.5), (1.2, 3.2, 9.0))),
     )
     for name, seconds, target, height, blend, points in shots:
         shot = builder.add(named(name, cutscene={
