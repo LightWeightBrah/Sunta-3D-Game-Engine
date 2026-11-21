@@ -16,5 +16,7 @@ namespace Sunta
 	{
 		unsigned int boneIDs[MAX_NUM_BONES_PER_VERTEX];
 		float		 weights[MAX_NUM_BONES_PER_VERTEX];
+		// Where its expression shape (the mesh's first morph target) moves this vertex: a smile, a frown
+		glm::vec3	 expressionOffset;
 	};
 }

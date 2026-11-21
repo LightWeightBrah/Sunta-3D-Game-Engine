@@ -248,6 +248,18 @@ SubMesh Model::ProcessSubMesh(aiMesh* mesh)
 		SetVertexData(mesh, vertices);
 		ProcessMeshBones(mesh, vertices);
 
+		// The first morph target is the model's expression (Assimp keeps the moved positions, not the offsets)
+		if (mesh->mNumAnimMeshes > 0 && mesh->mAnimMeshes[0]->mVertices && mesh->mAnimMeshes[0]->mNumVertices == mesh->mNumVertices)
+		{
+			const aiAnimMesh* expression = mesh->mAnimMeshes[0];
+			for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+			{
+				const aiVector3D offset = expression->mVertices[i] - mesh->mVertices[i];
+				vertices[i].expressionOffset = glm::vec3(offset.x, offset.y, offset.z);
+			}
+			SUNTA_ENGINE_LOG_INFO("Model: an expression shape on mesh '{}'", mesh->mName.C_Str());
+		}
+
 		// Save these vertices so LoadModel can skin them later (once bone matrices
 		// are ready) and measure their real positions to build the bounding box
 		skinnedVerticesForBounds.insert(skinnedVerticesForBounds.end(), vertices.begin(), vertices.end());

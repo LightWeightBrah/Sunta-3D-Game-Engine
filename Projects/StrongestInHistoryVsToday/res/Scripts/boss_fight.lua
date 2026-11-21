@@ -1545,18 +1545,25 @@ O.PieceOffsets = {
 }
 -- Where each lands on the floor (angle from his front, meters from him) and when it falls (seconds of the scene)
 O.PieceFloor = { torso = { 0, 2.6 }, greave_l = { -55, 2.3 }, greave_r = { 55, 2.3 }, bracer_l = { -95, 2.0 }, bracer_r = { 95, 2.0 } }
-O.PieceFallAt = { torso = 2.45, greave_l = 2.65, greave_r = 2.8, bracer_l = 2.95, bracer_r = 3.1 }
-O.FallSeconds, O.FallFrom = 0.45, 13
-O.SwordFallAt, O.SwordInGround = 3.5, 1.45
+-- (the scene takes its time: every moment of it has a shot of its own, his face close twice - the smile as his health
+-- comes back, the smile again as his eyes catch fire)
+O.PieceFallAt = { torso = 4.4, greave_l = 4.6, greave_r = 4.8, bracer_l = 5.0, bracer_r = 5.2 }
+O.FallSeconds, O.FallFrom = 0.5, 13
+O.SwordFallAt, O.SwordInGround = 6.7, 1.45
 -- The two beats of the snap: the torso and the greaves, then the bracers (and his armored model put on)
-O.FirstSnapAt, O.SecondSnapAt = 4.8, 5.7
-O.LiftFrom, O.BracersLiftFrom = 4.2, 5.0
-O.DrawAt, O.IgniteAt, O.TransformEnds = 7.4, 8.5, 10.5
-O.Shots = { { 0.0, "Armor Fakeout" }, { 2.2, "Armor Rift Shot" }, { 4.2, "Armor Snap" }, { 6.4, "Armor Draw" }, { 8.4, "Armor Ignite" } }
+O.FirstSnapAt, O.SecondSnapAt = 8.5, 9.5
+O.LiftFrom, O.BracersLiftFrom = 7.7, 8.7
+O.SlideSeconds, O.SmileAt, O.RefillAt, O.RiftAt = 1.2, 2.3, 3.3, 4.0
+O.WalkAt, O.GripAt, O.DrawAt, O.IgniteAt, O.StompAt, O.TransformEnds = 10.3, 10.95, 11.4, 13.0, 14.7, 16.2
+O.Shots = { { 0.0, "Armor Fakeout" }, { 1.2, "Armor Face" }, { 4.0, "Armor Rift Shot" }, { 6.6, "Armor Sword Fall" },
+            { 7.4, "Armor Snap" }, { 10.2, "Armor Draw" }, { 12.6, "Armor Ignite Face" }, { 14.4, "Armor Ignite" } }
+-- His smile (the expression shape of his face): on over this long
+O.SmileSeconds = 0.9
 O.ArmorTitle = "Jeffrey Epstein, Armored in Sin"
 O.Blood = {
-    light = vec3(1.0, 0.58, 0.5), ambient = vec3(0.22, 0.12, 0.12), fog = vec3(0.17, 0.05, 0.05),
-    fogDensity = 0.011, sky = 0.9, exposure = 0.9, bloom = 0.9
+    -- (red, but light enough that he is seen: the close shots of his face are in it)
+    light = vec3(1.0, 0.62, 0.55), ambient = vec3(0.3, 0.17, 0.16), fog = vec3(0.17, 0.05, 0.05),
+    fogDensity = 0.011, sky = 0.9, exposure = 1.0, bloom = 0.9
 }
 O.MetalSound = "@game/Sounds/Combat/Block"
 O.SlashSound = "@game/Sounds/Combat/Swing"
@@ -1724,16 +1731,16 @@ function O.updateTransform(deltaTime)
     tr.t = tr.t + deltaTime
     local function at(second) return before < second and tr.t >= second end
 
-    -- the shots of the cutscene, one after another
+    -- the shots of the cutscene, one after another (each cuts in on the one before at its moment)
     local shot = O.Shots[tr.shot]
-    if shot and tr.t >= shot[1] and not this.world.isCutscenePlaying then
+    if shot and tr.t >= shot[1] then
         playCutscene(shot[2])
         tr.shot = tr.shot + 1
     end
 
-    -- 0-2.2: thrown back, skidding on his boots; a beat of silence; the smile; his health fills with a boom
-    if tr.t < 0.9 then
-        local k = tr.t / 0.9
+    -- 0-4: thrown back, skidding on his boots; close on his face: a beat of silence, the smile, his health fills
+    if tr.t < O.SlideSeconds then
+        local k = tr.t / O.SlideSeconds
         this.transform.position = mix(tr.slideFrom, tr.slideTo, 1 - (1 - k) * (1 - k))
         tr.dustIn = (tr.dustIn or 0) - deltaTime
         if tr.dustIn <= 0 then
@@ -1741,8 +1748,11 @@ function O.updateTransform(deltaTime)
             this.world:burst(O.SkidDust, this.transform.position, 3)
         end
     end
-    if at(0.9) then this.characterActions:play("Idle") end
-    if at(1.45) then
+    if at(O.SlideSeconds) then this.characterActions:play("Idle") end
+    if at(O.SmileAt) and this.model then
+        O.tween(function(v) if this.model then this.model.expression = v end end, 0, 1, O.SmileSeconds)
+    end
+    if at(O.RefillAt) then
         this.world:flash(vec3(0.55, 0.12, 0.08), 0.12, 0.02)
         this.world:shakeCamera(0.6)
         Audio.play(BoomSound, 1.1)
@@ -1753,8 +1763,9 @@ function O.updateTransform(deltaTime)
         end, 0.05, 1, 0.9)
     end
 
-    -- 2.2-4.2: the rift over the arena, the pieces and the sword falling out of it
-    if at(2.2) then
+    -- 4-7.4: the rift over the arena, the pieces and the sword falling out of it
+    if at(O.RiftAt) then
+        if this.model then this.model.expression = 0 end
         this.characterActions:play("Cast_Pillars")
         this.world:effect("Armor Rift", this.transform.position + vec3(0, 11, 0), this.transform.forward)
         Audio.play(RumbleSound, 1.2)
@@ -1781,7 +1792,7 @@ function O.updateTransform(deltaTime)
         end
     end
 
-    -- 4.2-6.5: arms spread, the plates snap onto him in two beats
+    -- 7.4-10.2: arms spread, the plates snap onto him in two beats
     if at(O.LiftFrom) then this.characterActions:play("Power_Up") end
     if at(O.FirstSnapAt) then
         this.world:shakeCamera(0.55)
@@ -1799,12 +1810,12 @@ function O.updateTransform(deltaTime)
         Audio.playAt(O.MetalSound, this.transform.position, 1.5)
     end
 
-    -- 6.5-8.5: a heavy step to the sword, it is ripped out of the stone
-    if at(6.5) then this.characterActions:play("Walk") end
-    if tr.t >= 6.5 and tr.t < 7.1 then
+    -- 10.2-12.6: a heavy step to the sword, it is ripped out of the stone
+    if at(O.WalkAt) then this.characterActions:play("Walk") end
+    if tr.t >= O.WalkAt and tr.t < O.GripAt then
         this.transform.position = this.transform.position + this.transform.forward * (deltaTime * 0.9)
     end
-    if at(7.1) then this.characterActions:play("Attack_Light_3") end
+    if at(O.GripAt) then this.characterActions:play("Attack_Light_3") end
     if at(O.DrawAt) then
         if dropped and dropped.model then dropped.model.isVisible = false end
         O.setHeldSword(true)
@@ -1817,19 +1828,23 @@ function O.updateTransform(deltaTime)
         Audio.play(O.SlashSound, 1.2)
     end
 
-    -- 8.5-10.5: his eyes burn red, a stamp, a wave of dust - and he fights
+    -- 12.6-16.2: close on his face, his eyes burn red and he smiles again; then a stamp, a wave of dust - and he fights
     if at(O.IgniteAt) then
         O.setRedEyes(8.0)
         O.sealSpin = 900
         O.sealTarget = 1.2
         O.setSwordFire(28)
+        Audio.playAt(RoarSound, this.transform.position, 1.3)
+        O.tween(function(v) if this.model then this.model.expression = v end end, 0, 1, O.SmileSeconds * 0.7)
+    end
+    if at(O.StompAt) then
         this.world:effect("Armor Stomp", this.transform.position + vec3(0, 0.1, 0), this.transform.forward)
         this.world:shakeCamera(0.8)
         Audio.play(BoomSound, 1.2)
-        Audio.playAt(RoarSound, this.transform.position, 1.3)
     end
     if tr.t >= O.TransformEnds then
         O.transform = nil
+        if this.model then this.model.expression = 0 end
         O.startArmoredPhase()
     end
 end
@@ -2345,6 +2360,7 @@ local function reset()
     seconds = 0
     invulnerableLeft = 0
     domainIsUp = false
+    if this.model then this.model.expression = 0 end
     domainBrokenLeft = 0
     isChanneling = false
     hasAnnouncedSummon = false

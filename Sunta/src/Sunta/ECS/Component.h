@@ -459,6 +459,11 @@ struct ModelComponent
 	// this.model.darkness = 1, this.model.glow = vec3(1.2, 0.6, 0.1)
 	float     darkness  = 0.0f;
 	glm::vec3 glowColor = glm::vec3(0.0f);
+	// 'rimGlow' is light along its outline only (the edges that turn away from the camera): a figure outlined in light
+	// without turning flat. this.model.rimGlow = vec3(1.0, 0.7, 0.2)
+	glm::vec3 rimGlow   = glm::vec3(0.0f);
+	// 0..1: how far the model's expression shape is put on (its first morph target, e.g. a smile modelled on the face)
+	float     expression = 0.0f;
 
 	ModelComponent(const std::string& modelName)
 		: modelName(modelName) { }

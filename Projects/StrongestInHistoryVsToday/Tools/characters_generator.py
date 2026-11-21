@@ -16,6 +16,7 @@ and Quaternius' Universal Animation Library (CC0: punches, hooks, the fighting s
 """
 
 import argparse
+import math
 import os
 import sys
 from dataclasses import dataclass
@@ -560,6 +561,8 @@ class Character:
     weapon: str = ""
     # Rigid pieces of armor (CRYSTAL_ARMOR: Meshy models) fitted around his body and moved by one bone each
     crystal_armor: bool = False
+    # A cold smile as the expression shape of the head (the engine's model.expression): the corners of the mouth up
+    smirk: bool = False
 
 
 CHARACTERS = [
@@ -571,12 +574,12 @@ CHARACTERS = [
         # His generated face already looks like him; the film's still (1:03.5, smiling, tilted, other light) painted over
     # it looked worse - tried and left out:
     #   FacePhoto(os.path.join(CONCEPTS, "boss_face_film.png"), (549, 353), (671, 319), (649, 462))
-    Character("boss_rigged.glb", "Boss", "sih_boss", 1.83, BOSS),
+    Character("boss_rigged.glb", "Boss", "sih_boss", 1.83, BOSS, smirk=True),
     # In his armor (Concepts/boss_armor_apose.png, from the user's sheet): the same skeleton; his pieces (the plates
     # of the torso with the pauldrons, both bracers, both greaves) are also cut out as props that fly onto him in
     # the transformation's cutscene
     Character("boss_armored_rigged.glb", "BossArmored", "sih_boss_armored", 1.95, BOSS_ARMORED, armor_pieces=True,
-              fists_always=True, weapon="BossSword/sih_boss_sword.gltf"),
+              fists_always=True, weapon="BossSword/sih_boss_sword.gltf", smirk=True),
     # The player with his sword of baby oil (the last phases): the same model, the sword in his right fist
     Character("Mixamo/Diddy/Diddy_Skin_WeightShiftIdle.fbx", "PlayerSword", "sih_player_sword", 1.83, PLAYER_SWORD,
               smooth_head=1, shine=0.25, mixamo_rigged=True, textures="player_v3.glb",
@@ -655,6 +658,9 @@ def make_character(character, arguments):
     photo = character.face_photo if not arguments.no_face else None
     head = character_from_mesh.separate_head(body, armature, out_folder, character.name, character.height, photo, character.eye_offset)
 
+    if character.smirk:
+        add_smirk(character, head, arguments.preview)
+
     weapon = add_weapon_bone(character, armature, rig) if character.weapon else None
     armor = add_crystal_armor(character, armature, body, out_folder) if character.crystal_armor else []
 
@@ -691,6 +697,64 @@ def make_character(character, arguments):
 
 
 WEAPON_BONE = knight_generator.WEAPON_BONE
+
+
+# ========== The smile ==========
+
+# Measured from the eyes (find_eyes), times the character's size: the mouth this far under them, its corners this far
+# to each side of the middle; how far a corner goes up, out and back at the full smile, and how wide the skin around
+# it follows (a gaussian)
+# (a cold smile: one corner, his left, higher than the other)
+SMIRK = {"mouth_below_eyes": 0.072, "corner_across": 0.034, "up": 0.02, "out": 0.006, "back": 0.004, "radius": 0.017,
+         "sides": {1.0: 0.6, -1.0: 1.0}}
+
+
+def add_smirk(character, head, preview_folder=""):
+    """The shape key 'Smirk' on the head: both corners of the mouth pulled up and a little out, the skin around them
+    following - exported as the head's first morph target, the engine's expression"""
+    size = character.height / 1.83
+    right_eye, left_eye = character_from_mesh.find_eyes(head, character.height)
+    mouth_z = (right_eye.z + left_eye.z) * 0.5 - SMIRK["mouth_below_eyes"] * size
+    world = head.matrix_world
+    to_local = world.inverted().to_3x3()
+    points = [world @ vertex.co for vertex in head.data.vertices]
+
+    if not head.data.shape_keys:
+        head.shape_key_add(name="Basis", from_mix=False)
+    smirk = head.shape_key_add(name="Smirk", from_mix=False)
+    moved = 0
+    for side in (1.0, -1.0):
+        across = side * SMIRK["corner_across"] * size
+        near = [p for p in points if abs(p.z - mouth_z) < 0.015 * size and abs(p.x - across) < 0.015 * size]
+        if not near:
+            print("SMIRK no mouth corner found on side", side)
+            continue
+        corner = Vector((across, max(p.y for p in near), mouth_z))
+        offset = Vector((side * SMIRK["out"], -SMIRK["back"], SMIRK["up"])) * size * SMIRK["sides"][side]
+        radius = SMIRK["radius"] * size
+        for index, point in enumerate(points):
+            distance = (point - corner).length
+            if distance > radius * 2.5:
+                continue
+            weight = math.exp(-(distance / radius) ** 2)
+            smirk.data[index].co = smirk.data[index].co + to_local @ (offset * weight)
+            moved += 1
+        print("SMIRK corner {:.3f} {:.3f} {:.3f}".format(corner.x, corner.y, corner.z))
+    largest = max(((smirk.data[i].co - head.data.vertices[i].co).length for i in range(len(points))), default=0.0)
+    print("SMIRK {} vertices moved, the most {:.4f} (local), matrix scale {}".format(moved, largest, tuple(round(v, 3) for v in world.to_scale())))
+
+    if preview_folder:
+        camera = setup_preview_render(360, 360)
+        face = (right_eye + left_eye) * 0.5 - Vector((0.0, 0.0, SMIRK["mouth_below_eyes"] * 0.5 * size))
+        show_only([head])
+        for value in (0.0, 1.0):
+            smirk.value = value
+            for angle in (0, 30):
+                aim_camera_at(camera, face, angle, 0.3 * size, rise=0.0)
+                bpy.context.scene.render.filepath = os.path.join(os.path.abspath(preview_folder),
+                                                                 "{}_smirk_{}_{}.png".format(character.name, int(value), angle))
+                bpy.ops.render.render(write_still=True)
+        smirk.value = 0.0
 
 
 # ========== The armor of baby oil (Divine Baby Oil: Crystal Vessel) ==========

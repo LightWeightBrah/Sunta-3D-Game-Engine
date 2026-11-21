@@ -42,7 +42,8 @@ namespace VertexLayouts
 			{ ShaderDataType::Float2, "aTexCoord" },
 
 			{ ShaderDataType::Int4,   "aBoneIDs"  }, // DEPENDENT ON MAX_NUM_BONES_PER_VERTEX
-			{ ShaderDataType::Float4, "aWeights"  }  // DEPENDENT ON MAX_NUM_BONES_PER_VERTEX
+			{ ShaderDataType::Float4, "aWeights"  }, // DEPENDENT ON MAX_NUM_BONES_PER_VERTEX
+			{ ShaderDataType::Float3, "aExpressionOffset" }
 		};
 
 		//BufferLayout bufferLayout = GetStaticLayout();

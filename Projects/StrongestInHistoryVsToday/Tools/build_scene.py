@@ -940,21 +940,27 @@ def add_armor_transformation(builder, boss):
         builder.add(named("Armor Piece " + piece, (0.0, -100.0, 0.0),
                           model={"is_visible": False, "model_name": BOSS_ARMORED_MODEL + "_" + piece}))
 
-    # The shots of the transformation (his front is his own -Z): pushed in on his face as he stays on his feet and
-    # smiles, low under the rift as the pieces fall, his body as they snap on, beside him as he draws the sword, his
-    # eyes lighting up and back to the fight
+    # The shots of the transformation (his front is his own -Z), boss_fight.lua O.Shots: beside him as he skids back on
+    # his boots; close on his face - a beat of silence, then the smile as his health comes back; low behind him under
+    # the rift as the pieces rain down around him; low at the sword as it falls into the stone; his body as the plates
+    # snap on; beside him as he draws the sword; close on his face as his eyes catch fire and he smiles again; pulled
+    # back to the whole of him for the stamp (from his left: the sword in his right hand stays out of the lens)
     shots = (
-        ("Armor Fakeout", 2.2, 1.6, 0.6, ((1.0, 1.55, -5.0), (0.7, 1.62, -3.8), (0.45, 1.68, -2.8))),
-        ("Armor Rift Shot", 2.1, 3.2, 0.5, ((3.2, 0.35, -5.0), (3.0, 0.4, -4.6), (2.8, 0.45, -4.2))),
-        ("Armor Snap", 2.3, 1.2, 0.5, ((1.0, 1.3, -5.8), (0.7, 1.35, -5.1), (0.45, 1.4, -4.5))),
-        ("Armor Draw", 2.0, 1.3, 0.5, ((3.2, 1.4, -2.8), (2.9, 1.5, -2.3), (2.6, 1.6, -1.9))),
-        ("Armor Ignite", 2.2, 1.65, 0.4, ((0.25, 1.72, -1.3), (0.5, 1.8, -2.4), (0.9, 2.0, -4.6))),
+        ("Armor Fakeout", 1.25, 1.2, 0.5, ((3.4, 1.3, -1.8), (3.0, 1.25, -1.3))),
+        ("Armor Face", 2.85, 1.64, 0.35, ((0.22, 1.58, -0.85), (0.12, 1.62, -0.6))),
+        ("Armor Rift Shot", 2.65, 1.9, 0.6, ((2.2, 0.45, 4.2), (2.5, 0.5, 5.0))),
+        ("Armor Sword Fall", 0.85, 0.7, 0.25, ((2.6, 0.55, -3.4), (2.4, 0.6, -3.1))),
+        ("Armor Snap", 2.85, 1.35, 0.4, ((0.9, 1.35, -3.6), (0.6, 1.4, -3.0))),
+        ("Armor Draw", 2.45, 1.25, 0.4, ((3.0, 1.2, -2.3), (2.6, 1.3, -1.9))),
+        ("Armor Ignite Face", 1.85, 1.87, 0.3, ((-0.25, 1.84, -1.0), (-0.15, 1.87, -0.78))),
+        ("Armor Ignite", 1.85, 1.4, 0.5, ((-0.4, 1.6, -1.6), (-1.0, 1.9, -4.4))),
         # (the player's answer starts over the boss's shoulder, looking at the player: see Vessel Gesture)
         ("Vessel Answer", 1.8, 1.4, 0.6, ((0.75, 1.95, 1.7), (0.7, 1.9, 1.35))),
     )
     for name, seconds, height, blend, points in shots:
         shot = builder.add(named(name, cutscene={
-            "duration_seconds": seconds, "look_at_entity": PLAYER_NAME if name.startswith("Vessel") else BOSS_NAME,
+            "duration_seconds": seconds,
+            "look_at_entity": PLAYER_NAME if name.startswith("Vessel") else BOSS_NAME,
             "look_at_height": height, "animation_entity": "",
             "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
             "can_be_skipped": False, "video_file": "", "blend_in_seconds": blend}), parent=boss)

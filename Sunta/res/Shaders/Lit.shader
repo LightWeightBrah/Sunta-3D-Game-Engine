@@ -6,6 +6,7 @@ layout (location = 2) in  vec2  aTexCoord;
 
 layout (location = 3) in ivec4  aBoneIDs;
 layout (location = 4) in  vec4  aWeights;
+layout (location = 5) in  vec3  aExpressionOffset;
 
 out			vec3	FragPos;
 out			vec3	Normal;
@@ -18,10 +19,12 @@ uniform		mat4	projection;
 const int MAX_BONES = 200;
 uniform mat4 bones[MAX_BONES];
 uniform bool hasAnimations;
+// How far the expression shape is put on (0 = the face as modelled)
+uniform float expressionWeight;
 
 void main()
 {
-	vec4 localPosition = vec4(aPos, 1.0);
+	vec4 localPosition = vec4(aPos + aExpressionOffset * expressionWeight, 1.0);
 	vec3 localNormal   = aNormal;
 
 	if(hasAnimations)
@@ -135,6 +138,7 @@ uniform		float				emissiveStrength;
 // A model darkened to a silhouette (1 = black) and light it gives off all over (see ModelComponent)
 uniform		float				modelDarkness;
 uniform		vec3				modelGlow;
+uniform		vec3				modelRimGlow;		// light along the outline only
 
 // Distance fog (exponential squared, see learnopengl.com): the farther, the more of the fog's color. Density 0 = none
 uniform		vec3				fogColor;
@@ -197,6 +201,8 @@ void main()
 
 	// After the fog: a silhouette is black however far it stands, an aura shines through the haze
 	result = result * (1.0f - clamp(modelDarkness, 0.0f, 1.0f)) + modelGlow;
+	float rim = 1.0f - clamp(dot(normalVector, viewerDirection), 0.0f, 1.0f);
+	result += modelRimGlow * (pow(rim, 3.0f) * 0.9f + pow(rim, 8.0f) * 2.5f);
 
 	FragColor = vec4(result, 1.0f);
 

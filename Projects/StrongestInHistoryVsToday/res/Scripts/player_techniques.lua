@@ -20,7 +20,8 @@ local HeldOrbSize = 0.5
 
 -- His domain: the light he gives off at the height of the sign, and the blast when it opens
 -- (a warm sheen on him, not a figure of light: his eyes are what burns)
-local DomainGlow         = vec3(0.0, 0.0, 0.0)
+-- (a golden outline as his domain opens, film 2:19: the eyes burn, the edges of him catch the light)
+local DomainRim          = vec3(0.9, 0.6, 0.18)
 local DomainFlashSeconds = 1.3
 
 -- He calls each technique by its name, in his own voice (cut from the film's soundtrack: the voices alone, the music
@@ -35,6 +36,7 @@ local VoiceVolume = 1.3
 local eyesLeft = 0
 -- The light he gives off while calling Imaginary Technique (see updateGreatShow)
 local techniqueGlow = vec3(0, 0, 0)
+local techniqueRim = vec3(0, 0, 0)
 local wasCasting = {}
 local releasedBefore = {}
 local domainGlow = 0
@@ -280,13 +282,16 @@ end
 
 -- He lights up as he holds the sign (the camera close on his hands and eyes), then his domain opens
 -- Imaginary Technique: Baby Oil Detonation, as in the film (1:47-1:50): while he calls it a golden light outlines
--- him, then it turns white - and as it leaves his hands rays of light shoot out of him in every
+-- him (his edges, not his whole body: he stays himself inside it), the outline turns white and for a blink as it leaves
+-- his hands he is a figure of white light - and as it leaves his hands rays of light shoot out of him in every
 -- direction and he bursts with light; then the light dies away
 local Great = {
-    GoldSeconds = 0.45, WhiteSeconds = 0.5, FadeSeconds = 0.9,
+    GoldSeconds = 0.6, WhiteSeconds = 0.4, FadeSeconds = 0.9,
     -- (a sheen over him, not a figure of light: stronger, he became a flat silhouette)
     -- (no pink or violet anywhere: the film's light is gold, then white)
-    Gold = vec3(0.4, 0.25, 0.06), White = vec3(0.32, 0.3, 0.27),
+    GoldRim = vec3(1.1, 0.66, 0.16), WhiteRim = vec3(1.3, 1.26, 1.18),
+    -- (a warm sheen over him under the outline, and the white of the blink at the release)
+    GoldFill = vec3(0.06, 0.035, 0.0), WhiteFill = vec3(0.55, 0.53, 0.5),
     Rays = 16, RaySpreadSeconds = 0.3, RayEffect = "Technique Ray", BurstEffect = "Technique Burst",
 }
 local greatShow = nil
@@ -301,7 +306,7 @@ local function updateGreatShow(deltaTime)
         greatReleases = caster.timesReleased
     end
     if not greatShow then
-        techniqueGlow = vec3(0, 0, 0)
+        techniqueGlow, techniqueRim = vec3(0, 0, 0), vec3(0, 0, 0)
         return
     end
 
@@ -330,20 +335,26 @@ local function updateGreatShow(deltaTime)
         end
     end
 
-    local glow
+    local glow, rim
     if show.fade then
+        -- the blink of white light at the release, then the outline dies away
         show.fade = show.fade + deltaTime
         local left = math.max(1 - show.fade / Great.FadeSeconds, 0)
-        glow = Great.Gold * (left * left)
+        local blink = math.max(1 - show.fade / 0.25, 0)
+        glow = Great.WhiteFill * (blink * blink)
+        rim = Great.WhiteRim * (left * left)
         if left <= 0 and show.raysLeft <= 0 then greatShow = nil end
     elseif show.t < Great.GoldSeconds then
         local k = show.t / Great.GoldSeconds
-        glow = Great.Gold * (k * k)
+        glow = Great.GoldFill * k
+        rim = Great.GoldRim * (k * (2 - k))
     else
         local k = math.min((show.t - Great.GoldSeconds) / Great.WhiteSeconds, 1)
-        glow = Great.Gold + (Great.White - Great.Gold) * (k * k * (3 - 2 * k))
+        local s = k * k * (3 - 2 * k)
+        glow = Great.GoldFill * (1 - s)
+        rim = Great.GoldRim + (Great.WhiteRim - Great.GoldRim) * s
     end
-    techniqueGlow = glow
+    techniqueGlow, techniqueRim = glow, rim
 end
 
 local wasDomainCasting = false
@@ -358,7 +369,10 @@ local function updateDomain(deltaTime)
         domainGlow = math.max(domainGlow - deltaTime * 0.6, 0)
     end
 
-    if this.model then this.model.glow = DomainGlow * (domainGlow * domainGlow) + techniqueGlow end
+    if this.model then
+        this.model.glow = techniqueGlow
+        this.model.rimGlow = DomainRim * (domainGlow * domainGlow) + techniqueRim
+    end
 
     if hasJustReleased(DomainSpell) then
         startDomainShow()

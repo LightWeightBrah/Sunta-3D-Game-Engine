@@ -281,6 +281,19 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 
 
 	SUNTA_ENGINE_LOG_INFO("Cutscene: '{0}' starts", GetEntityName(entityManager, cutsceneEntityID));
+
+	// A shot started while another one plays is a cut: it takes the camera over at once (no frame of the game
+	// between two shots of one scene). A video keeps playing under it
+	for (CutsceneComponent& other : entityManager.GetAllComponents<CutsceneComponent>())
+	{
+		if (&other == cutscene || !other.isPlaying || other.isVideo)
+			continue;
+		if (other.soundVoice != Audio::NoVoice)
+			Audio::Stop(other.soundVoice, SoundFadeOutSeconds);
+		other.soundVoice = Audio::NoVoice;
+		other.isPlaying  = false;
+	}
+
 	cutscene->isPlaying           = true;
 	cutscene->hasPlayed           = true;
 	cutscene->hasStartedAnimation = false;
