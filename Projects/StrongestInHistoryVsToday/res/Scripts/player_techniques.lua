@@ -390,7 +390,34 @@ local function speakTechniques()
     end
 end
 
+-- Solid Baby Oil thrown in the air (film 0:40-0:46, the fight in the air): [1] in a jump throws the ball of oil from
+-- his hand at what he is locked on to (or straight ahead), the jump goes on - no cast of its own, which would end it
+local AirThrow = { Projectile = "Player Orb", Hand = vec3(0, 1.35, 0), Ahead = 0.55, AimHeight = 1.2 }
+local function updateAirThrow()
+    if not Input.isKeyDown(Key.Num1) then return end
+    local actions = this.characterActions
+    local action = actions and actions.action or ""
+    if action ~= "jump" and action ~= "jump_attack" then return end
+    local caster = casterOf(OrbSpell)
+    if not caster or caster.cooldownLeft > 0 then return end
+
+    local from = this.transform.position + AirThrow.Hand + this.transform.forward * AirThrow.Ahead
+    local direction = this.transform.forward
+    local lock = this.lockOn
+    if lock and lock.hasTarget then
+        direction = (lock.target.transform.position + vec3(0, AirThrow.AimHeight, 0) - from):normalized()
+    end
+    if this.world:launch(AirThrow.Projectile, this, from, direction) then
+        caster.cooldownLeft = caster.cooldownSeconds
+        -- (a splash of oil leaving the hand: the cube of solid oil is for where it lands)
+        this.world:burst("Oil Splash", from, 40)
+        Audio.play(Voices[OrbSpell], VoiceVolume)
+        eyesLeft = EyesStaySeconds
+    end
+end
+
 function OnUpdate(deltaTime)
+    updateAirThrow()
     speakTechniques()
     updateEyes(deltaTime)
     updateHeldOrb(deltaTime)

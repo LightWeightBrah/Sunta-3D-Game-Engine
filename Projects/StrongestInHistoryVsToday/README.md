@@ -40,3 +40,20 @@ One boss, staged after the film, in phases (`res/Scripts/boss_fight.lua`):
    *Divine Baby Oil: Crystal Vessel*, a sword of frozen baby oil (rendered by the engine's crystal material).
 
 The boss has 2400 health, the summon 1350; the player 320 and five bottles of champagne, refilled when the last stand and the armored phase begin, and a death in the armored phases starts the next try there. The player's techniques light him up gold and then white, as in the film.
+
+## Controls
+
+| Key | |
+|---|---|
+| W A S D, Shift (held) | move, run |
+| Shift (tapped) | roll |
+| LMB / Ctrl + LMB | punch combo / kick (with the sword: slashes) |
+| Space | jump; LMB or Ctrl + LMB in the air: a kick or a plunge with a shockwave |
+| RMB, F (in time) | guard, parry |
+| Q | lock on |
+| R | champagne |
+| 1 | Solid Baby Oil (also in the air, in a jump) |
+| 2 | Imaginary Technique: Baby Oil Detonation |
+| 3 | Domain Expansion: Divine Baby Oil Evolve |
+| E | step through the fog |
+| Esc | pause |
