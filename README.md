@@ -187,13 +187,13 @@ How big the engine and each game made with it are, counted automatically:
 | Game runtime (`Apps/Runtime`) | 35 | 1 | C++ 35 |
 | Shaders and engine scripts (`Sunta/res`) | 1,219 | 19 | GLSL 1,175, Lua 44 |
 | Build (CMake, `cmake/`) | 252 | 5 | CMake 252 |
-| Tools (`Tools/`: asset generators, tests, docs) | 6,405 | 38 | Python 6,374, JavaScript 31 |
-| **Engine in all** | **49,018** | **450** | |
+| Tools (`Tools/`: asset generators, tests, docs) | 6,519 | 39 | Python 6,488, JavaScript 31 |
+| **Engine in all** | **49,132** | **451** | |
 | Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,451 | 11 | Python 3,407, Lua 3,044 |
 | Game: [`Showcase`](Projects/Showcase) | 98 | 2 | Python 88, Lua 10 |
 | Game: [`MyGame`](Projects/MyGame) | 60 | 3 | Lua 45, GLSL 15 |
 | **Games in all** | **6,609** | **16** | |
-| **Everything** | **55,627** | **466** | |
+| **Everything** | **55,741** | **467** | |
 
 Non-empty lines of the files tracked by git, without third-party code (`Dependencies/`) and generated files (scenes, models). Counted by [`Tools/count_lines.py`](Tools/count_lines.py) on every push to main.
 
