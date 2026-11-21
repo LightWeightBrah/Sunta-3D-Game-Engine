@@ -557,6 +557,8 @@ class Character:
     fists_always: bool = False
     # A held model (a prop's gltf in res/Models/Props) on a bone of its own in the right fist: 'Weapon_R'
     weapon: str = ""
+    # Rigid pieces of armor (CRYSTAL_ARMOR: Meshy models) fitted around his body and moved by one bone each
+    crystal_armor: bool = False
 
 
 CHARACTERS = [
@@ -578,6 +580,12 @@ CHARACTERS = [
     Character("Mixamo/Diddy/Diddy_Skin_WeightShiftIdle.fbx", "PlayerSword", "sih_player_sword", 1.83, PLAYER_SWORD,
               smooth_head=1, shine=0.25, mixamo_rigged=True, textures="player_v3.glb",
               heat_weights=False, smooth_weights=0, fists_always=True, weapon="DiddySword/sih_diddy_sword.gltf"),
+    # ...and in his armor of baby oil (WORK IN PROGRESS, not in the scene yet: the pieces are fitted, but the glass of
+    # their textures is see-through and the fit on the arms needs checking): the same, with crystal pieces on his bones
+    Character("Mixamo/Diddy/Diddy_Skin_WeightShiftIdle.fbx", "PlayerArmored", "sih_player_armored", 1.83, PLAYER_SWORD,
+              smooth_head=1, shine=0.25, mixamo_rigged=True, textures="player_v3.glb",
+              heat_weights=False, smooth_weights=0, fists_always=True, weapon="DiddySword/sih_diddy_sword.gltf",
+              crystal_armor=True),
     Character("summon_monster_rigged.glb", "Summon", "sih_summon", 3.0, SUMMON),
     Character("enemy_guard_rigged.glb", "Guard", "sih_guard", 1.9, GUARD, shine=0.12),
     Character("enemy_paparazzo_rigged.glb", "Paparazzo", "sih_paparazzo", 1.76, PAPARAZZO, shine=0.4,
@@ -647,6 +655,7 @@ def make_character(character, arguments):
     head = character_from_mesh.separate_head(body, armature, out_folder, character.name, character.height, photo, character.eye_offset)
 
     weapon = add_weapon_bone(character, armature, rig) if character.weapon else None
+    armor = add_crystal_armor(character, armature, body, out_folder) if character.crystal_armor else []
 
     actions = knight_generator.create_animations(armature, character.animations)
     pose_hands(character, armature, rig, actions)
@@ -666,7 +675,7 @@ def make_character(character, arguments):
     strike_windows.print_stride_speeds(armature, actions)
 
     knight_generator.reset_to_rest_pose(armature)
-    export_gltf(os.path.join(out_folder, character.name + ".gltf"), [armature, body, head], with_animations=True)
+    export_gltf(os.path.join(out_folder, character.name + ".gltf"), [armature, body, head] + armor, with_animations=True)
 
     if arguments.preview:
         if weapon:
@@ -675,11 +684,133 @@ def make_character(character, arguments):
             head = [head, held]
         else:
             head = [head]
+        head = head + armor
         render_previews(os.path.abspath(arguments.preview), armature, [body] + head, character,
                         arguments.preview_actions.split(","), arguments.preview_steps, arguments.hands)
 
 
 WEAPON_BONE = knight_generator.WEAPON_BONE
+
+
+# ========== The armor of baby oil (Divine Baby Oil: Crystal Vessel) ==========
+
+# piece: (Meshy model in Generated/StrongestInHistory, the bones whose part of the body it covers, the bone that moves
+# it, how much bigger than the body it is, its kind: None the torso, "limb" along its bones, "shoulder" over the top
+# of the arm; and how far around the bones the body is measured, meters)
+CRYSTAL_ARMOR = {
+    "chest":      ("diddy_armor_chest.glb", ("Spine", "Chest"), "Chest", 1.1, None, 0.26),
+    "pauldron_r": ("diddy_armor_pauldron.glb", ("UpperArm_R",), "UpperArm_R", 1.3, "shoulder", 0.11),
+    "bracer_r":   ("diddy_armor_bracer.glb", ("LowerArm_R",), "LowerArm_R", 1.15, "limb", 0.09),
+    "greave_r":   ("diddy_armor_greave.glb", ("Shin_R",), "Shin_R", 1.12, "limb", 0.11),
+}
+MIRRORED = {"pauldron_r": "pauldron_l", "bracer_r": "bracer_l", "greave_r": "greave_l"}
+
+
+def import_piece(file_name):
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=os.path.join(SOURCE_FOLDER, file_name))
+    imported = [obj for obj in bpy.data.objects if obj not in before]
+    meshes = [obj for obj in imported if obj.type == "MESH"]
+    for obj in meshes:
+        obj.data.transform(obj.matrix_world)
+        obj.parent = None
+        obj.matrix_world = Matrix.Identity(4)
+    for obj in imported:
+        if obj not in meshes:
+            bpy.data.objects.remove(obj)
+    if len(meshes) > 1:
+        bpy.ops.object.select_all(action="DESELECT")
+        for obj in meshes:
+            obj.select_set(True)
+        bpy.context.view_layer.objects.active = meshes[0]
+        bpy.ops.object.join()
+    return meshes[0]
+
+
+def body_points_of(armature, body, bones, radius):
+    """The rest positions of the body's vertices around those bones: closer than 'radius' to the line from the first
+    bone's head to the last bone's tail, and between its ends (the part of the body a piece covers)"""
+    start = armature.matrix_world @ armature.data.bones[bones[0]].head_local
+    end = armature.matrix_world @ armature.data.bones[bones[-1]].tail_local
+    along = end - start
+    length = along.length
+    along.normalize()
+    points = []
+    for vertex in body.data.vertices:
+        point = body.matrix_world @ vertex.co
+        t = (point - start).dot(along)
+        if 0.0 <= t <= length and (point - (start + along * t)).length < radius:
+            points.append(point)
+    return points
+
+
+def frame_along(axis, front):
+    """x across, y backwards, z along 'axis' (a piece made by Meshy looks towards its own -Y)"""
+    z = axis.normalized()
+    y = -(front - z * front.dot(z)).normalized()
+    x = y.cross(z).normalized()
+    return Matrix((x, y, z)).transposed()
+
+
+def fit_piece(piece, points, rotation, margin):
+    """The piece turned by 'rotation' and stretched to cover the points (in the piece's own frame), a little bigger"""
+    import numpy
+    local = numpy.array([tuple(rotation.transposed() @ point) for point in points])
+    low, high = local.min(axis=0), local.max(axis=0)
+    centre = Vector(tuple((low + high) * 0.5))
+    size = (high - low) * margin
+    vertices = numpy.array([tuple(vertex.co) for vertex in piece.data.vertices])
+    p_low, p_high = vertices.min(axis=0), vertices.max(axis=0)
+    p_size = numpy.maximum(p_high - p_low, 1e-4)
+    p_centre = Vector(tuple((p_low + p_high) * 0.5))
+    scale = Matrix.Diagonal(Vector((size[0] / p_size[0], size[1] / p_size[1], size[2] / p_size[2], 1.0)))
+    piece.data.transform(Matrix.Translation(rotation @ centre) @ rotation.to_4x4() @ scale @ Matrix.Translation(-p_centre))
+
+
+def add_crystal_armor(character, armature, body, out_folder):
+    """The pieces of CRYSTAL_ARMOR fitted around the body at rest, each moved by one bone (rigid, weight 1), with
+    textures of their own. Returns the meshes (exported with the character)"""
+    front = Vector((0.0, 1.0, 0.0))   # (the character faces +Y)
+    head = lambda name: armature.matrix_world @ armature.data.bones[name].head_local
+    tail = lambda name: armature.matrix_world @ armature.data.bones[name].tail_local
+    pieces = []
+    for name, (file_name, bones, bone, margin, kind, radius) in CRYSTAL_ARMOR.items():
+        points = body_points_of(armature, body, bones, radius)
+        print("ARMOR {} covers {} points".format(name, len(points)))
+        if kind == "limb":
+            axis = tail(bones[-1]) - head(bones[0])
+        elif kind == "shoulder":
+            # (over the top of the shoulder: its own up is the world's up, only the upper third of the arm)
+            axis = Vector((0.0, 0.0, 1.0))
+            start, arm = head(bones[0]), tail(bones[0]) - head(bones[0])
+            points = [point for point in points if (point - start).dot(arm) < arm.length_squared * 0.4]
+        else:
+            axis = Vector((0.0, 0.0, 1.0))
+        piece = import_piece(file_name)
+        fit_piece(piece, points, frame_along(axis, front), margin)
+        piece.name = f"{character.name}_{name}"
+        pieces.append((piece, bone))
+        if name in MIRRORED:
+            copy = piece.copy()
+            copy.data = piece.data.copy()
+            bpy.context.scene.collection.objects.link(copy)
+            copy.data.transform(Matrix.Scale(-1.0, 4, Vector((1.0, 0.0, 0.0))))
+            copy.data.flip_normals()
+            copy.name = f"{character.name}_{MIRRORED[name]}"
+            pieces.append((copy, bone.replace("_R", "_L")))
+
+    out = []
+    for piece, bone in pieces:
+        character_from_mesh.make_engine_textures(piece, out_folder, piece.name, 1.05, 1.6)
+        piece.vertex_groups.clear()
+        group = piece.vertex_groups.new(name=bone)
+        group.add(range(len(piece.data.vertices)), 1.0, "REPLACE")
+        piece.parent = armature
+        modifier = piece.modifiers.new("Armature", "ARMATURE")
+        modifier.object = armature
+        out.append(piece)
+        print("ARMOR {} on {}".format(piece.name, bone))
+    return out
 
 
 def fist_hole(armature, hand):
