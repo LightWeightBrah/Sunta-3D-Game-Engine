@@ -20,8 +20,9 @@ local HeldOrbSize = 0.5
 
 -- His domain: the light he gives off at the height of the sign, and the blast when it opens
 -- (a warm sheen on him, not a figure of light: his eyes are what burns)
--- (a golden outline as his domain opens, film 2:19: the eyes burn, the edges of him catch the light)
-local DomainRim          = vec3(0.9, 0.6, 0.18)
+-- (in the film, 2:19, only his eyes burn as his domain opens: a faint warm edge, no more - stronger, against the
+-- sky of the low shot he became a gold silhouette)
+local DomainRim          = vec3(0.22, 0.14, 0.04)
 local DomainFlashSeconds = 1.3
 
 -- He calls each technique by its name, in his own voice (cut from the film's soundtrack: the voices alone, the music
