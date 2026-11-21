@@ -103,6 +103,33 @@ def skyline_ruins(placed):
                 ruins.append((x, z, (number * 67) % 360, size, (number + ring) % 3))
             angle += step
     return ruins
+# Half of the ground each tower model covers (meters at size 1, x and z of the model: Tools/props_generator.py), and how
+# far from the middle of the street nothing of a tower may come (the heaps of rubble along the street end there)
+TOWER_HALF_FOOTPRINTS = ((15.8, 15.9), (9.1, 13.2), (16.0, 16.3))
+STREET_CLEAR_HALF_WIDTH = 11.0
+STREET_CLEAR_FROM_Z, STREET_CLEAR_TO_Z = -22.0, 90.0
+
+
+# The heaps of rubble along the street: their inner foot (2.55 m from the middle at size 1, up to 1.22 here) ends where
+# the unseen walls stop the player (x = +-7.5), so nobody walks into the stones or under them
+STREET_HEAP_X = 10.6
+
+
+def off_the_street(ruin):
+    """The tower moved sideways until nothing of it reaches over the street (its rubble at the foot is wide: a tower
+    whose middle was off the street still covered the camera at the start and swallowed the enemies of the street)"""
+    import math
+    x, z, turned_by, size, tower = ruin
+    half_x, half_z = TOWER_HALF_FOOTPRINTS[tower]
+    angle = math.radians(turned_by)
+    reach_x = size * (abs(math.cos(angle)) * half_x + abs(math.sin(angle)) * half_z)
+    reach_z = size * (abs(math.sin(angle)) * half_x + abs(math.cos(angle)) * half_z)
+    if z + reach_z < STREET_CLEAR_FROM_Z or z - reach_z > STREET_CLEAR_TO_Z or abs(x) - reach_x >= STREET_CLEAR_HALF_WIDTH:
+        return ruin
+    side = 1.0 if x >= 0.0 else -1.0
+    return (side * (STREET_CLEAR_HALF_WIDTH + reach_x), z, turned_by, size, tower)
+
+
 CITY_RUINS = [
     (-52.0, -34.0, 20.0, 1.0, 0), (-60.0, -62.0, 110.0, 1.15, 1), (-48.0, -92.0, 200.0, 0.9, 2), (-78.0, -18.0, 70.0, 1.3, 2),
     (54.0, -30.0, 250.0, 1.1, 1), (62.0, -58.0, 300.0, 0.95, 0), (50.0, -90.0, 150.0, 1.2, 2), (82.0, -84.0, 40.0, 1.35, 0),
@@ -297,7 +324,8 @@ def rubble_heap(position, turned_by, size, name="Rubble Heap"):
     """A heap of rubble with a box the camera can't go through (a trigger: nobody walks into it), so the follow camera
     rises over it instead of coming up to the player's head (the model is 11 x 1.6 x 5.1 m at size 1)"""
     entity = prop(name, RUBBLE_MODEL, position, turned_by, size)
-    entity["box_collider"] = {"local_offset": [0.0, 0.7, 0.0], "half_extents": [5.2, 0.75, 2.3], "is_trigger": True,
+    # (a little bigger than the model: a box smaller than the heap let the camera into its stones)
+    entity["box_collider"] = {"local_offset": [0.0, 0.85, 0.0], "half_extents": [5.7, 0.95, 2.75], "is_trigger": True,
                               "layer": 1, "show_gizmos": False, "blocks_camera": True}
     return entity
 
@@ -347,7 +375,7 @@ def add_arena(builder):
         heap(right, z, False)
         z += RUBBLE_EVERY
 
-    for index, (x, z, turned_by, size, tower) in enumerate(CITY_RUINS):
+    for index, (x, z, turned_by, size, tower) in enumerate(map(off_the_street, CITY_RUINS)):
         builder.add(prop("City Ruin", TOWER_MODELS[tower], (x, -1.0, z), turned_by, size))
 
     floor = copy.deepcopy(builder.source[builder.find_source("Floor Arena")])
@@ -388,10 +416,10 @@ def add_approach(builder):
             number += 1
             wobble = ((number * 41) % 23) - 11.0
             size = 0.9 + ((number * 29) % 5) * 0.08
-            builder.add(rubble_heap((side * 9.5, -0.2, z), 90.0 + wobble, size, "Street Rubble"))
+            builder.add(rubble_heap((side * STREET_HEAP_X, -0.2, z), 90.0 + wobble, size, "Street Rubble"))
             z -= 7.0
     builder.add(prop("Rubble Heap", RUBBLE_MODEL, (0.0, -0.3, STREET_FAR_Z + 1.5), 4.0, 1.1))
-    for x, z, turned_by, size, tower in STREET_RUINS + skyline_ruins(CITY_RUINS + STREET_RUINS):
+    for x, z, turned_by, size, tower in map(off_the_street, STREET_RUINS + skyline_ruins(CITY_RUINS + STREET_RUINS)):
         builder.add(prop("City Ruin", TOWER_MODELS[tower], (x, -1.0, z), turned_by, size))
 
 
@@ -985,9 +1013,10 @@ def extend_street(builder):
     for z in STREET_FLOORS_Z:
         builder.get(builder.copy_one(floor))["transform"]["position"] = [0.0, 0.0, z]
     slab = builder.find_source("Floor Slab")
-    z = 24.0
+    # (the outer slabs: ground under the heaps of rubble and beyond them, no empty strip at their foot)
+    z = -16.0
     while z <= STREET_FAR_Z:
-        for x in (-4.0, 4.0):
+        for x in ((-20.0, -12.0, -4.0, 4.0, 12.0, 20.0) if z >= 24.0 else (-20.0, -12.0, 12.0, 20.0)):
             copied = builder.get(builder.copy_one(slab))
             copied["model"]["model_name"] = GROUND_MODEL
             copied["transform"]["position"] = [x, 0.0, z]
@@ -998,7 +1027,7 @@ def extend_street(builder):
         border = builder.get(builder.copy_one(wall))
         border["tag"]["name"] = "Street Border"
         border.pop("model", None)
-        border["transform"]["position"] = [side * 8.5, 0.0, 16.0 + (STREET_FAR_Z - 16.0) * 0.5]
+        border["transform"]["position"] = [side * 8.0, 0.0, 16.0 + (STREET_FAR_Z - 16.0) * 0.5]
         border["box_collider"]["half_extents"] = [0.5, 3.0, (STREET_FAR_Z - 16.0) * 0.5]
         border["box_collider"]["blocks_camera"] = False
     # Fires burning in the rubble along the way, each with its light: the street is lit like the arena
@@ -1017,7 +1046,7 @@ def extend_street(builder):
             number += 1
             wobble = ((number * 37) % 23) - 11.0
             size = 0.9 + ((number * 31) % 5) * 0.08
-            builder.add(rubble_heap((side * 9.5, -0.2, z), 90.0 + wobble, size, "Street Rubble"))
+            builder.add(rubble_heap((side * STREET_HEAP_X, -0.2, z), 90.0 + wobble, size, "Street Rubble"))
             z -= 7.0
 
 

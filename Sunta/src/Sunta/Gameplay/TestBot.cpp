@@ -8,6 +8,7 @@
 #include "EnemyComponent.h"
 #include "EntityName.h"
 #include "CharacterControllerComponent.h"
+#include "FollowCameraComponent.h"
 #include "Core/InputPlayback.h"
 #include "Core/Log.h"
 #include "ECS/Component.h"
@@ -215,8 +216,14 @@ void TestBot::Update(EntityManager& entityManager, float deltaTime)
 	{
 		const glm::vec3 place = PositionOf(entityManager, playerID);
 		const std::string target = targetID != 0 ? GetEntityName(entityManager, targetID) : std::string("none");
-		CombatLog::Event(std::string(wantsWhere ? "bot,where " : "bot,target ") + target + " at " + std::to_string(place.x)
-			+ " " + std::to_string(place.y) + " " + std::to_string(place.z));
+		std::string camera;
+		for (FollowCameraComponent& follow : entityManager.GetAllComponents<FollowCameraComponent>())
+		{
+			const glm::vec3 eye = PositionOf(entityManager, entityManager.GetEntityIDForComponent(follow));
+			camera = " camera " + std::to_string(eye.x) + " " + std::to_string(eye.y) + " " + std::to_string(eye.z);
+		}
+		CombatLog::Event(std::string(wantsWhere ? "bot,where " : "bot,target ") + target + " player " + std::to_string(place.x)
+			+ " " + std::to_string(place.y) + " " + std::to_string(place.z) + camera);
 		lastTargetID = targetID;
 		wantsWhere	 = false;
 	}
