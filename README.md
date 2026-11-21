@@ -148,7 +148,7 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
 * `SUNTA_FIXED_DT=0.033` advances the game by fixed steps for smooth recordings; `SUNTA_MUTE=1` silences test runs.
 
 **Engine**
-* **Rendering:** wrappers for OpenGL objects (VAO, VBO, EBO, textures, shaders), Phong lighting with directional, point and spot lights, specular maps, materials and a debug renderer for colliders.
+* **Rendering:** wrappers for OpenGL objects (VAO, VBO, EBO, textures, shaders), Phong lighting with directional, point and spot lights, shadows, fog, specular and emissive maps, materials (a *Crystal* setting renders clear crystal or ice: Fresnel edges, light caught inside, glints; set by a material named `*crystal*`) and a debug renderer for colliders.
 * **ECS:** a data-oriented entity component system. Components: Tag, Transform, Script, Mesh, Model, Animator, Directional / Point / Spot Light, Box Collider, Physics Body and Camera.
 * **Physics:** collisions (Separating Axis Theorem), collision layers, triggers (enter, stay, exit) and raycasts.
 * **Audio:** spatial sounds heard from the game camera, looping Audio Sources, character sounds played by the fight (swings, hits, blocks, parries, footsteps), battle music with fades; `.wav`, `.ogg`, `.flac` and `.mp3`.
@@ -172,6 +172,32 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
 * [**Lua**](https://www.lua.org/) and [**sol2**](https://github.com/ThePhD/sol2) - gameplay scripting.
 * [**nlohmann/json**](https://github.com/nlohmann/json) - scene and config files.
 * [**nativefiledialog-extended**](https://github.com/btzy/nativefiledialog-extended) - native file and folder dialogs.
+
+---
+
+## Lines of Code
+How big the engine and each game made with it are, counted automatically:
+
+<!-- LINES-OF-CODE:START -->
+
+| Part | Lines of code | Files | Languages |
+|---|---:|---:|---|
+| Engine core (`Sunta/src`, without the editor) | 34,443 | 324 | C++ 34,443 |
+| Editor (`Sunta/src/Sunta/Editor`, `Apps/Editor`) | 6,664 | 63 | C++ 6,664 |
+| Game runtime (`Apps/Runtime`) | 35 | 1 | C++ 35 |
+| Shaders and engine scripts (`Sunta/res`) | 1,219 | 19 | GLSL 1,175, Lua 44 |
+| Build (CMake, `cmake/`) | 252 | 5 | CMake 252 |
+| Tools (`Tools/`: asset generators, tests, docs) | 6,405 | 38 | Python 6,374, JavaScript 31 |
+| **Engine in all** | **49,018** | **450** | |
+| Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,451 | 11 | Python 3,407, Lua 3,044 |
+| Game: [`Showcase`](Projects/Showcase) | 98 | 2 | Python 88, Lua 10 |
+| Game: [`MyGame`](Projects/MyGame) | 60 | 3 | Lua 45, GLSL 15 |
+| **Games in all** | **6,609** | **16** | |
+| **Everything** | **55,627** | **466** | |
+
+Non-empty lines of the files tracked by git, without third-party code (`Dependencies/`) and generated files (scenes, models). Counted by [`Tools/count_lines.py`](Tools/count_lines.py) on every push to main.
+
+<!-- LINES-OF-CODE:END -->
 
 ---
 
@@ -309,10 +335,17 @@ Apps/
   Editor/                 SuntaEditor, the editor program
   Runtime/                SuntaRuntime, the game template
 Projects/
-  MyGame/                 sample game project
+  MyGame/                 the sample souls-like (what the launcher opens as the sample project)
+  StrongestInHistoryVsToday/  the second sample: one boss fight in phases, built by its own Tools/ scripts
+  Showcase/               small scenes recorded for this README (physics, animation)
+Tools/
+  Blender/                asset generators (characters, enemies, the arena kit) run in Blender
+  Testing/                test builds of a game driven by an input script (see docs/testing.md)
+  Docs/                   generators of docs/components.md and docs/scripting-reference.md
+  count_lines.py          the table of Lines of Code above
 cmake/                    CMake helpers (program icons)
 Dependencies/             third-party libraries
-docs/
+docs/                     documentation (GitHub Pages)
   media/                  images and GIFs of this README
 ```
 CMake targets: `Sunta` (engine core), `SuntaEditorModule` (editor code), `SuntaEditor` and `SuntaRuntime`.

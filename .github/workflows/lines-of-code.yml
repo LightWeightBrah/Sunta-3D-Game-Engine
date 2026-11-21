@@ -1,0 +1,36 @@
+name: "README: Lines of Code"
+
+# Counts the lines of source code of the engine and of each game (Tools/count_lines.py) and commits the table in
+# README.md when it changed, so the numbers stay current by themselves
+on:
+    push:
+        branches: [ "main", "master" ]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    count:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: "Count the lines and update README.md"
+              run: python Tools/count_lines.py
+
+            - name: "Commit README.md if the numbers changed"
+              run: |
+                  if git diff --quiet -- README.md; then
+                      echo "README.md is current"
+                      exit 0
+                  fi
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add README.md
+                  git commit -m "README: lines of code [skip ci]"
+                  git push
