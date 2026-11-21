@@ -2055,16 +2055,20 @@ local function startSummonPhase()
             showCaption("He is doing better than I expected.", 2.6)
             return 2.9
         end,
-        -- (film 2:34) "Well, with this treasure I summon..." - and he rises on his back
+        -- (film 2:34) "Well, with this treasure I summon..." - and he rises into the air
         function()
             Audio.play(O.VoiceTreasure, O.VoiceVolume)
             showCaption("Well, with this treasure I summon...", 2.5)
-            this.characterActions:play("Death")
+            -- (levitating, not the death fall: that take dropped him on his back while the script lifted him,
+            -- so he jerked between falling and rising)
+            this.characterActions:play("Hover")
             this.world:slowMotion(FloatSeconds, 0.6)
+            local hovered = 0
             show.during = function(deltaTime)
                 floated = math.min(floated + deltaTime / FloatSeconds, 1)
+                hovered = hovered + deltaTime
                 local eased = floated * floated * (3 - 2 * floated)
-                this.transform.position = ground + vec3(0, FloatHeight * eased, 0)
+                this.transform.position = ground + vec3(0, FloatHeight * eased + math.sin(hovered * 3) * 0.08 * eased, 0)
             end
             return FloatSeconds
         end,
