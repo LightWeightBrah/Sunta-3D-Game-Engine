@@ -39,4 +39,4 @@ One boss, staged after the film, in phases (`res/Scripts/boss_fight.lua`):
 5. **Armor and sword** - he puts on his armor and takes up a burning sword; the player answers with
    *Divine Baby Oil: Crystal Vessel*, a sword of frozen baby oil (rendered by the engine's crystal material).
 
-The boss has 2400 health, the summon 1500. The player's techniques light him up gold and then white, as in the film.
+The boss has 2400 health, the summon 1350; the player 320 and five bottles of champagne, refilled when the last stand and the armored phase begin, and a death in the armored phases starts the next try there. The player's techniques light him up gold and then white, as in the film.

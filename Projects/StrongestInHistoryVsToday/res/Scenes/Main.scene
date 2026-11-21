@@ -37566,7 +37566,7 @@
     "show_seconds_after_hit": 5.0
    },
    "health": {
-    "max_health": 1500.0,
+    "max_health": 1350.0,
     "hit_effect": "Punch Impact",
     "death_slow_motion_seconds": 1.5,
     "death_slow_motion_scale": 0.35

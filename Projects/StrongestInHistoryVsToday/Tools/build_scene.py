@@ -1289,7 +1289,7 @@ def add_summon(builder):
     entity["lock_on_target"].update({"aim_height": 1.9})
     entity["enemy_health_bar"]["height_above_feet"] = 3.3
     entity["character_sounds"].update({"footstep_meters": 2.4, "footstep_camera_shake": 0.16, "footstep_shake_radius": 12.0, "volume": 1.5})
-    entity["health"].update({"max_health": 1500.0, "death_slow_motion_seconds": 1.5, "death_slow_motion_scale": 0.35,
+    entity["health"].update({"max_health": 1350.0, "death_slow_motion_seconds": 1.5, "death_slow_motion_scale": 0.35,
                              "hit_effect": "Punch Impact"})
     entity["poise"] = {"max_poise": 140.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 3.0}
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 80.0, "starts_dormant": True})
