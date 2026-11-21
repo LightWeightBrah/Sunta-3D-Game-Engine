@@ -1293,7 +1293,8 @@ def add_summon(builder):
     entity["script"] = script("summon_adaptation.lua")
     # The eight-spoked wheel over its head (the film's last frames): it turns an eighth each time the summon adapts
     # (shown and turned by the script)
-    halo = named("Summon Halo", (0.0, 3.25, 0.0), model={"is_visible": False, "model_name": "sih_summon_wheel"})
+    # (just over its stooping head, level: on the head bone it tipped over with every move of the head)
+    halo = named("Summon Halo", (0.0, 2.75, 0.15), model={"is_visible": False, "model_name": "sih_summon_wheel"})
     builder.add(halo, parent=summon)
     # From half its health on a blade of light grows out of its right fist (the boss's sword, lit white by the script):
     # hidden and harmless until then; it strikes in the windows of its blows like its fists
