@@ -2413,9 +2413,93 @@ local function hasReached(healthFraction, atSeconds)
     return isHurtEnough or now >= atSeconds
 end
 
+-- ========== The stand-off (film 0:58-1:05) ==========
+
+-- The fight stops for a breath: over his shoulder at the player across the street, both pacing; the other way, over
+-- the player's shoulder at him; close on his face as he smiles; and both run at each other - then the fight goes on.
+-- Once, at this second of the soundtrack (the film's 0:58), in the first phase
+O.Standoff = { At = 21.8, Distance = 12, Shots = { "Standoff Boss Side", "Standoff Player Side", "Standoff Smile",
+               "Standoff Charge" }, Seconds = { 2.8, 2.0, 1.6, 1.3 }, ChargeSpeed = 7.5 }
+
+function O.startStandoff()
+    local player = find(PlayerName)
+    if not player then return end
+    O.hasStoodOff = true
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    becomeInvulnerable(9)
+
+    -- Across the street from each other, face to face
+    local from = this.transform.position
+    local toPlayer = player.transform.position - from
+    toPlayer.y = 0
+    local along = toPlayer:length() > 0.5 and toPlayer:normalized() or vec3(0, 0, 1)
+    local mid = clampToArena(from + toPlayer * 0.5)
+    local bossAt = clampToArena(mid - along * (O.Standoff.Distance * 0.5))
+    local playerAt = clampToArena(mid + along * (O.Standoff.Distance * 0.5))
+    local S = O.Standoff
+
+    local function face()
+        local b, p = this.transform.position, player.transform.position
+        this.transform.rotation = vec3(0, O.yawToward(b, p) + 180, 0)
+        player.transform.rotation = vec3(0, O.yawToward(p, b) + 180, 0)
+    end
+
+    startShow({
+        function()
+            this.transform.position = vec3(bossAt.x, from.y, bossAt.z)
+            player.transform.position = vec3(playerAt.x, player.transform.position.y, playerAt.z)
+            face()
+            this.characterActions:play("Strafe_Left")
+            O.playPlayer("Strafe_Left")
+            playCutscene(S.Shots[1])
+            return S.Seconds[1]
+        end,
+        function()
+            face()
+            playCutscene(S.Shots[2])
+            return S.Seconds[2]
+        end,
+        function()
+            this.characterActions:play("Idle")
+            playCutscene(S.Shots[3])
+            O.tween(function(v) if this.model then this.model.expression = v end end, 0, 1, 0.7)
+            return S.Seconds[3]
+        end,
+        -- Both run at each other (film 1:04-1:05)
+        function()
+            if this.model then this.model.expression = 0 end
+            face()
+            this.characterActions:play("Run")
+            O.playPlayer("Run")
+            playCutscene(S.Shots[4])
+            show.during = function(deltaTime)
+                local b, p = this.transform.position, player.transform.position
+                local between = p - b
+                between.y = 0
+                if between:length() > 2.2 then
+                    local step = between:normalized() * (S.ChargeSpeed * deltaTime)
+                    this.transform.position = b + step
+                    player.transform.position = p - step
+                end
+            end
+            return S.Seconds[4]
+        end,
+        function()
+            isChanneling = false
+            this.characterActions:play("Idle")
+            O.playPlayer("Idle")
+        end,
+    })
+end
+
 local function updatePhases()
     -- The domain opens when the player has hurt him enough (or, at the latest, late in the soundtrack): the
     -- soundtrack is moved to the film's moment of that blow, so the picture and the sound stay together
+    if phase == 1 and not O.hasStoodOff and not O.wantsKnockback and clock() >= O.Standoff.At and isFreeToAct() then
+        O.startStandoff()
+        return
+    end
     if phase == 1 and (O.wantsKnockback or clock() >= O.DomainLatestAt) then
         O.wantsKnockback = false
         Audio.seekMusic(O.KnockMusicAt)
@@ -2448,6 +2532,7 @@ end
 local function reset()
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
+    O.hasStoodOff = false
     phase = 0
     seconds = 0
     invulnerableLeft = 0

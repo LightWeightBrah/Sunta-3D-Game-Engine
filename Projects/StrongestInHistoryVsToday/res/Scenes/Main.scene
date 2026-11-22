@@ -35864,6 +35864,442 @@
   },
   {
    "tag": {
+    "name": "Standoff Boss Side"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.8,
+    "look_at_entity": "Player",
+    "look_at_height": 1.3,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 771,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.55,
+     1.85,
+     1.9
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 791,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.45,
+     1.8,
+     1.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 791,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Standoff Player Side"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.0,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.3,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 2,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     -0.5,
+     1.8,
+     1.8
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 794,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     -0.4,
+     1.75,
+     1.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 794,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Standoff Smile"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 1.6,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.64,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 771,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.2,
+     1.6,
+     -0.8
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 797,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.12,
+     1.62,
+     -0.62
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 797,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Standoff Charge"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 1.3,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.0,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 771,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     0.7,
+     -5.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 800,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.8,
+     -6.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 800,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Armor Fakeout"
    },
    "transform": {
@@ -35935,7 +36371,7 @@
     ]
    },
    "parent": {
-    "index": 791,
+    "index": 803,
     "bone_name": ""
    }
   },
@@ -35967,7 +36403,7 @@
     ]
    },
    "parent": {
-    "index": 791,
+    "index": 803,
     "bone_name": ""
    }
   },
@@ -36044,7 +36480,7 @@
     ]
    },
    "parent": {
-    "index": 794,
+    "index": 806,
     "bone_name": ""
    }
   },
@@ -36076,7 +36512,7 @@
     ]
    },
    "parent": {
-    "index": 794,
+    "index": 806,
     "bone_name": ""
    }
   },
@@ -36153,7 +36589,7 @@
     ]
    },
    "parent": {
-    "index": 797,
+    "index": 809,
     "bone_name": ""
    }
   },
@@ -36185,7 +36621,7 @@
     ]
    },
    "parent": {
-    "index": 797,
+    "index": 809,
     "bone_name": ""
    }
   },
@@ -36262,7 +36698,7 @@
     ]
    },
    "parent": {
-    "index": 800,
+    "index": 812,
     "bone_name": ""
    }
   },
@@ -36294,7 +36730,7 @@
     ]
    },
    "parent": {
-    "index": 800,
+    "index": 812,
     "bone_name": ""
    }
   },
@@ -36371,7 +36807,7 @@
     ]
    },
    "parent": {
-    "index": 803,
+    "index": 815,
     "bone_name": ""
    }
   },
@@ -36403,7 +36839,7 @@
     ]
    },
    "parent": {
-    "index": 803,
+    "index": 815,
     "bone_name": ""
    }
   },
@@ -36480,7 +36916,7 @@
     ]
    },
    "parent": {
-    "index": 806,
+    "index": 818,
     "bone_name": ""
    }
   },
@@ -36512,7 +36948,7 @@
     ]
    },
    "parent": {
-    "index": 806,
+    "index": 818,
     "bone_name": ""
    }
   },
@@ -36589,7 +37025,7 @@
     ]
    },
    "parent": {
-    "index": 809,
+    "index": 821,
     "bone_name": ""
    }
   },
@@ -36621,7 +37057,7 @@
     ]
    },
    "parent": {
-    "index": 809,
+    "index": 821,
     "bone_name": ""
    }
   },
@@ -36698,7 +37134,7 @@
     ]
    },
    "parent": {
-    "index": 812,
+    "index": 824,
     "bone_name": ""
    }
   },
@@ -36730,7 +37166,7 @@
     ]
    },
    "parent": {
-    "index": 812,
+    "index": 824,
     "bone_name": ""
    }
   },
@@ -36807,7 +37243,7 @@
     ]
    },
    "parent": {
-    "index": 815,
+    "index": 827,
     "bone_name": ""
    }
   },
@@ -36839,7 +37275,7 @@
     ]
    },
    "parent": {
-    "index": 815,
+    "index": 827,
     "bone_name": ""
    }
   },
@@ -36916,7 +37352,7 @@
     ]
    },
    "parent": {
-    "index": 818,
+    "index": 830,
     "bone_name": ""
    }
   },
@@ -36948,7 +37384,7 @@
     ]
    },
    "parent": {
-    "index": 818,
+    "index": 830,
     "bone_name": ""
    }
   },
@@ -37196,7 +37632,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 824,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37242,7 +37678,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 824,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37288,7 +37724,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 824,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37335,7 +37771,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 824,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37382,7 +37818,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 824,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37459,7 +37895,7 @@
     ]
    },
    "parent": {
-    "index": 830,
+    "index": 842,
     "bone_name": ""
    }
   },
@@ -37491,7 +37927,7 @@
     ]
    },
    "parent": {
-    "index": 830,
+    "index": 842,
     "bone_name": ""
    }
   },
@@ -37523,7 +37959,7 @@
     ]
    },
    "parent": {
-    "index": 830,
+    "index": 842,
     "bone_name": ""
    }
   },
@@ -37600,7 +38036,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 846,
     "bone_name": ""
    }
   },
@@ -37632,7 +38068,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 846,
     "bone_name": ""
    }
   },
@@ -37664,7 +38100,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 846,
     "bone_name": ""
    }
   },
@@ -37740,7 +38176,7 @@
     ]
    },
    "parent": {
-    "index": 838,
+    "index": 850,
     "bone_name": ""
    }
   },
@@ -37772,7 +38208,7 @@
     ]
    },
    "parent": {
-    "index": 838,
+    "index": 850,
     "bone_name": ""
    }
   },
@@ -37804,7 +38240,7 @@
     ]
    },
    "parent": {
-    "index": 838,
+    "index": 850,
     "bone_name": ""
    }
   },
@@ -37836,7 +38272,7 @@
     ]
    },
    "parent": {
-    "index": 838,
+    "index": 850,
     "bone_name": ""
    }
   },
@@ -37868,7 +38304,7 @@
     ]
    },
    "parent": {
-    "index": 838,
+    "index": 850,
     "bone_name": ""
    }
   },
@@ -37943,7 +38379,7 @@
     ]
    },
    "parent": {
-    "index": 844
+    "index": 856
    }
   },
   {
@@ -37974,7 +38410,7 @@
     ]
    },
    "parent": {
-    "index": 844
+    "index": 856
    }
   },
   {
@@ -38005,7 +38441,7 @@
     ]
    },
    "parent": {
-    "index": 844
+    "index": 856
    }
   },
   {
@@ -38036,7 +38472,7 @@
     ]
    },
    "parent": {
-    "index": 844
+    "index": 856
    }
   },
   {
@@ -38276,7 +38712,7 @@
     ]
    },
    "parent": {
-    "index": 849
+    "index": 861
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -38361,7 +38797,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 849,
+    "index": 861,
     "bone_name": "Hand_R"
    }
   },
@@ -38412,7 +38848,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 849,
+    "index": 861,
     "bone_name": "Hand_L"
    }
   },
@@ -38463,7 +38899,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 849,
+    "index": 861,
     "bone_name": "Foot_R"
    }
   },
@@ -38499,7 +38935,7 @@
     "model_name": "sih_summon_wheel"
    },
    "parent": {
-    "index": 849,
+    "index": 861,
     "bone_name": ""
    }
   },
@@ -38575,7 +39011,7 @@
     "only_while_striking": true
    },
    "parent": {
-    "index": 849,
+    "index": 861,
     "bone_name": "Hand_R"
    }
   },
@@ -38834,7 +39270,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 856,
+    "index": 868,
     "bone_name": "Hand_R"
    }
   },
@@ -38885,7 +39321,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 856,
+    "index": 868,
     "bone_name": "Hand_L"
    }
   },
@@ -38936,7 +39372,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 856,
+    "index": 868,
     "bone_name": "Foot_R"
    }
   },
@@ -39195,7 +39631,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 860,
+    "index": 872,
     "bone_name": "Hand_R"
    }
   },
@@ -39246,7 +39682,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 860,
+    "index": 872,
     "bone_name": "Hand_L"
    }
   },
@@ -39297,7 +39733,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 860,
+    "index": 872,
     "bone_name": "Foot_R"
    }
   },
@@ -39556,7 +39992,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 864,
+    "index": 876,
     "bone_name": "Hand_R"
    }
   },
@@ -39607,7 +40043,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 864,
+    "index": 876,
     "bone_name": "Hand_L"
    }
   },
@@ -39658,7 +40094,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 864,
+    "index": 876,
     "bone_name": "Foot_R"
    }
   },
@@ -39690,7 +40126,7 @@
     ]
    },
    "parent": {
-    "index": 864,
+    "index": 876,
     "bone_name": "Hand_R"
    }
   },
@@ -39736,7 +40172,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 868,
+    "index": 880,
     "bone_name": ""
    }
   },
@@ -39995,7 +40431,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 870,
+    "index": 882,
     "bone_name": "Hand_R"
    }
   },
@@ -40046,7 +40482,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 870,
+    "index": 882,
     "bone_name": "Hand_L"
    }
   },
@@ -40097,7 +40533,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 870,
+    "index": 882,
     "bone_name": "Foot_R"
    }
   },
@@ -40356,7 +40792,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 874,
+    "index": 886,
     "bone_name": "Hand_R"
    }
   },
@@ -40407,7 +40843,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 874,
+    "index": 886,
     "bone_name": "Hand_L"
    }
   },
@@ -40458,7 +40894,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 874,
+    "index": 886,
     "bone_name": "Foot_R"
    }
   },
@@ -40490,7 +40926,7 @@
     ]
    },
    "parent": {
-    "index": 874,
+    "index": 886,
     "bone_name": "Hand_R"
    }
   },
@@ -40536,7 +40972,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 878,
+    "index": 890,
     "bone_name": ""
    }
   },
@@ -40795,7 +41231,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 880,
+    "index": 892,
     "bone_name": "Hand_R"
    }
   },
@@ -40846,7 +41282,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 880,
+    "index": 892,
     "bone_name": "Hand_L"
    }
   },
@@ -40897,7 +41333,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 880,
+    "index": 892,
     "bone_name": "Foot_R"
    }
   },
@@ -40929,7 +41365,7 @@
     ]
    },
    "parent": {
-    "index": 880,
+    "index": 892,
     "bone_name": "Hand_R"
    }
   },
@@ -40975,7 +41411,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 884,
+    "index": 896,
     "bone_name": ""
    }
   },
@@ -41234,7 +41670,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 886,
+    "index": 898,
     "bone_name": "Hand_R"
    }
   },
@@ -41285,7 +41721,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 886,
+    "index": 898,
     "bone_name": "Hand_L"
    }
   },
@@ -41336,7 +41772,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 886,
+    "index": 898,
     "bone_name": "Foot_R"
    }
   },
@@ -41595,7 +42031,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 890,
+    "index": 902,
     "bone_name": "Hand_R"
    }
   },
@@ -41646,7 +42082,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 890,
+    "index": 902,
     "bone_name": "Hand_L"
    }
   },
@@ -41697,7 +42133,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 890,
+    "index": 902,
     "bone_name": "Foot_R"
    }
   },
@@ -41956,7 +42392,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 894,
+    "index": 906,
     "bone_name": "Hand_R"
    }
   },
@@ -42007,7 +42443,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 894,
+    "index": 906,
     "bone_name": "Hand_L"
    }
   },
@@ -42058,7 +42494,7 @@
     "knockback": 4.0
    },
    "parent": {
-    "index": 894,
+    "index": 906,
     "bone_name": "Foot_R"
    }
   },
@@ -42164,7 +42600,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 898
+    "index": 910
    },
    "point_light": {
     "attenuation": {
@@ -42319,7 +42755,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 900
+    "index": 912
    },
    "point_light": {
     "attenuation": {
@@ -42462,7 +42898,7 @@
     ]
    },
    "parent": {
-    "index": 902
+    "index": 914
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -42602,7 +43038,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 905,
+    "index": 917,
     "bone_name": ""
    }
   },
@@ -42658,7 +43094,7 @@
     }
    },
    "parent": {
-    "index": 905,
+    "index": 917,
     "bone_name": ""
    }
   },
@@ -42690,7 +43126,7 @@
     ]
    },
    "parent": {
-    "index": 905,
+    "index": 917,
     "bone_name": ""
    }
   },
@@ -42883,7 +43319,7 @@
     ]
    },
    "parent": {
-    "index": 909,
+    "index": 921,
     "bone_name": ""
    }
   },
@@ -42915,7 +43351,7 @@
     ]
    },
    "parent": {
-    "index": 909,
+    "index": 921,
     "bone_name": ""
    }
   },
@@ -42947,7 +43383,7 @@
     ]
    },
    "parent": {
-    "index": 909,
+    "index": 921,
     "bone_name": ""
    }
   },
@@ -42979,7 +43415,7 @@
     ]
    },
    "parent": {
-    "index": 909,
+    "index": 921,
     "bone_name": ""
    }
   },

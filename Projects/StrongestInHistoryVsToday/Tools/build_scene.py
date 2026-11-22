@@ -164,6 +164,13 @@ class SceneBuilder:
 
     # ----- adding to the new scene -----
 
+    def find(self, name):
+        """The index of an entity already added to the new scene"""
+        for index, entity in enumerate(self.entities):
+            if entity["tag"]["name"] == name:
+                return index
+        raise KeyError(name)
+
     def add(self, entity, parent=None, bone=None):
         if parent is not None:
             entity["parent"] = {"index": parent, "bone_name": bone or ""}
@@ -990,6 +997,23 @@ def add_armor_transformation(builder, boss):
         # (the player's answer starts over the boss's shoulder, looking at the player: see Vessel Gesture)
         ("Vessel Answer", 1.8, 1.4, 0.6, ((0.75, 1.95, 1.7), (0.7, 1.9, 1.35))),
     )
+    # The stand-off (film 0:58-1:05, boss_fight.lua O.Standoff): over his shoulder at the player, the other way over the
+    # player's shoulder, close on his smile, low and wide as they run at each other (cuts, no flights)
+    standoff = (
+        ("Standoff Boss Side", 2.8, PLAYER_NAME, 1.3, BOSS_NAME, ((0.55, 1.85, 1.9), (0.45, 1.8, 1.6))),
+        ("Standoff Player Side", 2.0, BOSS_NAME, 1.3, PLAYER_NAME, ((-0.5, 1.8, 1.8), (-0.4, 1.75, 1.5))),
+        ("Standoff Smile", 1.6, BOSS_NAME, 1.64, BOSS_NAME, ((0.2, 1.6, -0.8), (0.12, 1.62, -0.62))),
+        ("Standoff Charge", 1.3, BOSS_NAME, 1.0, BOSS_NAME, ((4.5, 0.7, -5.5), (4.0, 0.8, -6.5))),
+    )
+    for name, seconds, target, height, owner, points in standoff:
+        shot = builder.add(named(name, cutscene={
+            "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
+            "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+            "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}),
+            parent=boss if owner == BOSS_NAME else builder.find(PLAYER_NAME))
+        for number, point in enumerate(points):
+            builder.add(named(f"Camera Point {number + 1}", point), parent=shot)
+
     # What he says over the shots (the cutscene's title line): the player must know where his armor comes from
     lines = {"Armor Face": ("Did you think it was over?", 2.2),
              "Armor Rift Sky": ("My treasure is not spent yet.", 1.6),
