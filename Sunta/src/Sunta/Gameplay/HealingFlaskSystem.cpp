@@ -11,6 +11,7 @@
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 #include "Scene/EntityHierarchy.h"
+#include "Core/Log.h"
 
 namespace Sunta
 {
@@ -89,12 +90,30 @@ void UpdateDrink(EntityManager& entityManager, unsigned int entityID, HealingFla
 	const CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
 	const bool isStillDrinking = actions && actions->IsUsingItem();
 
+	// Pressed again while drinking: another drink right after this one (no more than there are charges for)
+	const int chargesLeftAfter = flask.charges - (flask.hasHealed ? 0 : 1) - flask.queuedDrinks;
+	if (isStillDrinking && WantsToDrink(entityManager, entityID) && chargesLeftAfter > 0)
+	{
+		flask.queuedDrinks++;
+		SUNTA_ENGINE_LOG_INFO("HealingFlask: another drink queued ({0})", flask.queuedDrinks);
+	}
+
 	if (isStillDrinking && !flask.hasHealed && actions->actionProgress >= flask.healAtProgress)
 		Heal(entityManager, entityID, flask);
 
 	if (!isStillDrinking)
 	{
 		flask.isDrinking = false;
+		// (a hit stops the drinking: the queued drinks are dropped too)
+		const bool wasInterrupted = !flask.hasHealed;
+		const int queued = flask.queuedDrinks;
+		flask.queuedDrinks = 0;
+		SUNTA_ENGINE_LOG_INFO("HealingFlask: drink over (healed {0}, queued {1})", flask.hasHealed, queued);
+		if (!wasInterrupted && queued > 0 && HealingFlaskSystem::Drink(entityManager, entityID))
+		{
+			flask.queuedDrinks = queued - 1;
+			return;
+		}
 		ShowDrinkingHand(entityManager, entityID, flask, false);
 	}
 }
@@ -108,6 +127,7 @@ void HealingFlaskSystem::PrepareForPlay(EntityManager& entityManager)
 		flask.charges    = flask.maxCharges;
 		flask.isDrinking = false;
 		flask.hasHealed  = false;
+		flask.queuedDrinks = 0;
 		ShowDrinkingHand(entityManager, entityManager.GetEntityIDForComponent(flask), flask, false);
 
 		Audio::Preload(flask.drinkSound);

@@ -151,7 +151,9 @@ float Animator::GetBlendFactor() const
 
 void Animator::SetLayer(Animation* animation, const std::string& rootNodeName, float fadeSeconds, bool shouldLoop)
 {
-	if (animation != layerAnimation || layerWeight <= 0.0f)
+	// (the same one-shot clip again after it ended - a second drink - starts over: it isn't kept at its end)
+	const bool hasEnded = layerAnimation && !isLayerLooping && layerTarget <= 0.0f;
+	if (animation != layerAnimation || layerWeight <= 0.0f || hasEnded)
 		layerTime = 0.0f;
 
 	layerAnimation   = animation;
