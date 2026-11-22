@@ -427,8 +427,55 @@ local function updateAirThrow()
     end
 end
 
+-- Divine Baby Oil: Tide - his technique in his armor of oil ([4]): a glowing pool of oil spreads under his feet, rings of
+-- light racing over it and drops rising, then columns of oil burst out of the ground one after another towards what he
+-- is locked on to, the last one under it (the user's idea, after an anime's water technique: oil instead of water)
+local Tide = { Key = Key.Num4, Cooldown = 14, Columns = 5, FirstAt = 0.7, Every = 0.22, Reach = 2.2, Damage = 45,
+               Name = "Divine Baby Oil: Tide" }
+local tideLeft, tide = 0, nil
+local function updateTide(deltaTime)
+    tideLeft = math.max(tideLeft - deltaTime, 0)
+    local model = this.model and this.model.modelName or ""
+    local isArmored = model == "sih_player_armored"
+    if not tide and isArmored and tideLeft <= 0 and Input.isKeyDown(Tide.Key) and not this.world.isCutscenePlaying then
+        local lock = this.lockOn
+        local target = lock and lock.hasTarget and lock.target or nil
+        local from = this.transform.position
+        local to = target and target.transform.position or (from + this.transform.forward * 9)
+        tide = { t = 0, from = from, to = to, target = target, next = 1 }
+        tideLeft = Tide.Cooldown
+        this.world:effect("Oil Circle", from + vec3(0, 0.05, 0), this.transform.forward)
+        this.world:notify(string.upper(Tide.Name))
+        Audio.play("@game/Sounds/Spells/magic_whoosh.ogg", 1.0)
+        eyesLeft = EyesStaySeconds * 2
+        if this.characterActions then this.characterActions:play("Cast_Orb") end
+    end
+    if not tide then return end
+
+    tide.t = tide.t + deltaTime
+    local at = Tide.FirstAt + (tide.next - 1) * Tide.Every
+    if tide.t >= at and tide.next <= Tide.Columns then
+        local k = tide.next / Tide.Columns
+        local where = tide.from + (tide.to - tide.from) * k
+        if tide.target then where = tide.from + (tide.target.transform.position - tide.from) * k end
+        where = vec3(where.x, 0.05, where.z)
+        this.world:effect("Oil Geyser", where, this.transform.forward)
+        this.world:shakeCamera(0.25 + 0.1 * tide.next)
+        Audio.play("@game/Sounds/Spells/deep_boom.ogg", 0.5 + 0.1 * tide.next)
+        local target = tide.target
+        if target and target.health and not target.health.isDead then
+            local d = target.transform.position - where
+            d.y = 0
+            if d:length() <= Tide.Reach then target.health:damage(Tide.Damage) end
+        end
+        tide.next = tide.next + 1
+    end
+    if tide.next > Tide.Columns then tide = nil end
+end
+
 function OnUpdate(deltaTime)
     updateAirThrow()
+    updateTide(deltaTime)
     speakTechniques()
     updateEyes(deltaTime)
     updateHeldOrb(deltaTime)

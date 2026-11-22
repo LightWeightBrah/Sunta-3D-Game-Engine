@@ -55,5 +55,6 @@ The boss has 2400 health, the summon 1350; the player 320 and five bottles of ch
 | 1 | Solid Baby Oil (also in the air, in a jump) |
 | 2 | Imaginary Technique: Baby Oil Detonation |
 | 3 | Domain Expansion: Divine Baby Oil Evolve |
+| 4 | Divine Baby Oil: Tide (in his crystal armor): a pool of oil and columns of it bursting at the enemy |
 | E | step through the fog |
 | Esc | pause |

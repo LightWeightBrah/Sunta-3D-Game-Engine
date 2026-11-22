@@ -243,6 +243,29 @@ def add_technique_effects(builder):
      .specks("Smoke", dust(40, 6.0, lifetime=2.4, size=1.4, end_size=3.6, color=(0.18, 0.14, 0.12)))
      .specks("Flash", flash(4.0, 0.12, [1.0, 0.85, 0.6], 1.2)))
 
+    # Divine Baby Oil: Tide (the player's technique in his armor): a pool of glowing oil spreads from under his feet,
+    # rings of light racing out over it one after another, drops of oil rising out of it into the air
+    (Effect(builder, "Oil Circle", root_shape=shape(
+        RING, 1.4, 0.3, 7.0, OIL_CORE, MILK_EDGE, 2.4, thickness=0.06, noise_scale=2.0, dissolve=0.5,
+        light_intensity=4.0, light_radius=10.0, light_color=[1.0, 0.95, 0.85]))
+     .shape("Pool", shape(RING, 1.6, 0.2, 6.0, [0.9, 0.85, 0.7], OIL_EDGE, 0.5, thickness=1.0, noise_scale=3.0,
+                          scroll_speed=0.6, dissolve=0.7))
+     .shape("Ring2", shape(RING, 1.2, 0.1, 4.0, [1.0, 1.0, 0.97], MILK_EDGE, 2.2, thickness=0.07, dissolve=0.5))
+     .shape("Ring3", shape(RING, 1.0, 0.05, 2.0, [1.0, 1.0, 0.97], MILK_EDGE, 2.0, thickness=0.09, dissolve=0.5))
+     .specks("Drops", specks(140, 2.2, 0.09, 0.04, [1.0, 0.99, 0.94], [1.0, 0.92, 0.7], [0.9, 0.75, 0.4], 2.5,
+                            spawn_half_extents=[3.5, 0.05, 3.5], velocity=[0.0, 2.2, 0.0], velocity_randomness=1.0,
+                            gravity=[0.0, 0.4, 0.0], drag=0.4)))
+
+    # ...and out of the pool columns of oil burst from the ground one after another at the enemy, the last one
+    # under him (each a twisting column of milk-white oil, drops raining off it, a splash ring at its foot)
+    (Effect(builder, "Oil Geyser", root_shape=shape(
+        PILLAR, 0.9, 0.5, 1.2, [1.0, 1.0, 0.97], MILK_EDGE, 1.4, height=7.0, twist_degrees=200.0,
+        spin_degrees_per_second=300.0, noise_scale=4.0, scroll_speed=3.0, dissolve=0.8,
+        light_intensity=4.0, light_radius=8.0, light_color=[1.0, 0.95, 0.85]))
+     .shape("Splash", shape(RING, 0.6, 0.4, 3.5, OIL_CORE, MILK_EDGE, 2.0, thickness=0.2, dissolve=0.8))
+     .specks("Rain", sparks(90, 9.0, [1.0, 0.99, 0.95], MILK_EDGE, lifetime=1.2, size=0.08, gravity=-14.0, drag=1.0,
+                            stretch=0.06, intensity=2.4)))
+
     # The ball of baby oil bursting like a liquid (film 2:30): a white splash out of its middle, thousands of drops
     # thrown out and raining down, a ring of oil racing over the ground, a mist of it hanging (no fire, no cubes)
     (Effect(builder, "Liquid Burst", root_shape=shape(
