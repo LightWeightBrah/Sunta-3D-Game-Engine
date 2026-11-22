@@ -1461,7 +1461,7 @@ def add_fight(builder):
     for number, point in enumerate(((1.6, 0.5, -5.5), (1.0, 0.7, -4.2))):
         builder.add(named(f"Camera Point {number + 1}", point), parent=summon_reveal)
     builder.add(named("Summon Wheel", cutscene={
-        "duration_seconds": 3.7, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
+        "duration_seconds": 4.4, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
         "video_file": "@game/Videos/summon_wheel.mpg"}))
     # Far and high enough to hold the whole temple (24 m tall) and the boss on its dome in one shot, sweeping slowly

@@ -142,6 +142,9 @@ PLAYER = {
     "Cast_Orb":       diddy("Idle_Standing", 1, 66),
     # Flying in the fight in the air (film 0:42-0:47), the ball of oil over his palm held out before him (GESTURES)
     "Fly_Orb":        library(ADDON, "Levitate Idle"),
+    # Hanging in the air with nothing in his hands (up in the sky for his domain, film 2:19-2:22): the scripts make it
+    # his standing clip meanwhile, a boxer's bounce in the sky looked wrong
+    "Float":          library(ADDON, "Levitate Idle"),
     # His two great techniques are signs of the hands held still (posed below, see GESTURES): both hands pressed
     # together with two fingers up, and a triangle of both hands before the chest
     # (about three seconds: the sign made, held for a breath and the technique gone, as in the film 1:47.5-1:49 - the
@@ -230,6 +233,9 @@ BOSS = {
     # pounding the ground with both fists
     "Power_Up":       library(ADDON, "Power Up", speed=0.5),
     "Hover":          library(ADDON, "Levitate Idle"),
+    # Away from the player into the sky before his summoning ("He is doing better than I expected"): a backflip, the
+    # script carries him up and back while he turns over (his hips' own rise taken out: the script lifts him)
+    "Leap_Back":      library(ADDON, "Backflip", hips_rise_limit=0.02),
     "Dive":           library(ADDON, "Flying Forward Super"),
     "Land_Slam":      library(ADDON, "Land_Three_Point", first_frame=14, speed=1.1),
     # Thrown back by a kick (the engine's knockback): sliding back crouched, a hand on the ground, rising clean
@@ -1083,7 +1089,7 @@ def render_previews(folder, armature, meshes, character, actions, steps, argumen
 def main():
     arguments = parse_arguments()
     for character in CHARACTERS:
-        if not arguments.only or arguments.only == character.name:
+        if not arguments.only or character.name in arguments.only.split(","):
             if arguments.candidates and character.name == "sih_player":
                 character.animations = PLAYER_CANDIDATES
             if arguments.candidates and character.name == "sih_boss_armored":

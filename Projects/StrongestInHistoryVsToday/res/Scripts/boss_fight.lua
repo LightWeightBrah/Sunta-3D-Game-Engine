@@ -1216,8 +1216,17 @@ function O.endTechniqueHold()
     end
     if O.starsWaitForTechnique then
         O.starsWaitForTechnique = false
-        local stars = O.stars()
-        if stars then stars:reset(); stars.isVisible = false end
+        -- (the wave of the bottle's blast breaks them, from the blast outwards; the bottle may still be falling:
+        -- they are cleared without it only if no blast comes)
+        O.starsAwaitWave = true
+        if O.starWave then O.starWave.resetAfter = true end
+        after(6, function()
+            if O.starsAwaitWave and not O.starWave then
+                O.starsAwaitWave = false
+                local stars = O.stars()
+                if stars then stars:reset(); stars.isVisible = false end
+            end
+        end)
     end
 end
 
@@ -2355,15 +2364,24 @@ local function startSummonPhase()
             local away = player and (ground - player.transform.position) or vec3(0, 0, -1)
             away.y = 0
             away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
-            this.characterActions:play("Hover")
+            -- (a backflip pushed off the ground, not a statue gliding up: up fast and slowing at the top, back all the
+            -- way, the hover once he has turned over)
+            this.characterActions:play("Leap_Back")
+            -- (carried by the script up there: the physics would pull him down between its frames)
+            if this.physicsBody then this.physicsBody.useGravity = false; this.physicsBody.velocity = vec3(0, 0, 0) end
             this.world:burst(O.SkidDust, ground, 30)
             this.world:shakeCamera(0.5)
             playCutscene(O.LeapAwayCutscene)
-            local leap = 0
+            local leap, hovering = 0, false
             show.during = function(deltaTime)
                 leap = math.min(leap + deltaTime / 1.4, 1)
-                local e = 1 - (1 - leap) * (1 - leap)
-                this.transform.position = clampToArena(ground + away * (O.FloatBackMeters * e)) + vec3(0, 3.5 * e, 0)
+                local back = 1 - (1 - leap) ^ 3
+                local up = math.sin(math.min(leap / 0.8, 1) * math.pi * 0.5)
+                this.transform.position = clampToArena(ground + away * (O.FloatBackMeters * back)) + vec3(0, 3.5 * up, 0)
+                if leap >= 0.75 and not hovering then
+                    hovering = true
+                    this.characterActions:play("Hover")
+                end
             end
             return 1.4
         end,
@@ -2401,11 +2419,13 @@ local function startSummonPhase()
             this.world:flash(vec3(1, 1, 1), 0.4, 0.1)
             playCutscene(WheelCutscene)
             -- (film 2:37) "47th President of the United States, Donald J. Trump." over the turning wheel
+            -- (the film's pictures to the end of his words: him falling into the white after the wheel)
             after(0.5, function() Audio.playVoice(O.VoicePresident, O.VoiceVolume) end)
-            return 3.7
+            return 4.4
         end,
         function()
             this.transform.position = ground
+            if this.physicsBody then this.physicsBody.useGravity = true; this.physicsBody.velocity = vec3(0, 0, 0) end
             this.world:flash(vec3(0.85, 0.85, 0.85), 1.0, 0.1)
             callTheSummon()
         end,
@@ -2913,7 +2933,7 @@ local function reset()
     O.isHoldingSign = false
     awaitingDetonation = false
     O.lyingUntilPress = false
-    O.holdingForTechnique, O.starsWaitForTechnique = false, false
+    O.holdingForTechnique, O.starsWaitForTechnique, O.starWave = false, false, nil
     O.starsIn = O.Stars and O.Stars.FirstAfter or 9
     isOnTheDome = false
     silhouetteLeft = 0
@@ -3096,9 +3116,42 @@ function O.watchBottle()
             this.world:impactFrame(1.0, 0.55)
             this.world:shakeCamera(0.9)
             Audio.play(BoomSound, 1.0)
+            O.startStarWave(at)
         end)
     end
     O.bottleBursts = burst
+end
+
+-- The blast runs over the ground as a wave and the stars stuck in it burst one after another as it reaches them
+-- (it is his answer that breaks them: the player sees them go from the blast outwards)
+O.StarWave = { Speed = 16, Farthest = 50, Effect = "Solid Oil Burst", EffectEvery = 0.08, Sparks = "Star Impact" }
+function O.startStarWave(at)
+    local stars = O.stars()
+    if not stars or not stars.isVisible then return end
+    O.starWave = { center = vec3(at.x, 0, at.z), radius = 0, effectIn = 0, resetAfter = O.starsAwaitWave }
+    O.starsAwaitWave = false
+    this.world:effect("Oil Circle", vec3(at.x, 0.05, at.z), this.transform.forward)
+end
+
+function O.updateStarWave(deltaTime)
+    local w = O.starWave
+    if not w then return end
+    local stars = O.stars()
+    if not stars then O.starWave = nil; return end
+    w.radius = w.radius + O.StarWave.Speed * deltaTime
+    w.effectIn = w.effectIn - deltaTime
+    for _, at in ipairs(stars:breakWithin(w.center, w.radius)) do
+        this.world:burst(O.StarWave.Sparks, at + vec3(0, 0.3, 0), 3)
+        -- (a burst of oil on as many of them as the eye can follow, sparks on all)
+        if w.effectIn <= 0 then
+            w.effectIn = O.StarWave.EffectEvery
+            this.world:effect(O.StarWave.Effect, at + vec3(0, 0.4, 0), this.transform.forward)
+        end
+    end
+    if w.radius >= O.StarWave.Farthest then
+        O.starWave = nil
+        if w.resetAfter then stars:reset(); stars.isVisible = false end
+    end
 end
 
 function OnStart()
@@ -3137,6 +3190,7 @@ function OnUpdate(deltaTime)
     O.updateSeal(deltaTime)
     O.watchBottle()
     O.updateLiquid(deltaTime)
+    O.updateStarWave(deltaTime)
     -- His transformation runs through its own cutscenes and the moments between them: nothing else meanwhile
     if O.transform then
         O.updateTransform(deltaTime)

@@ -374,12 +374,24 @@ end
 
 -- As in the film (2:19-2:22) he makes the sign up in the sky: he rises while he calls it, the whirl of oil turns
 -- around him up there, and he comes down once the waves have risen
-local DomainAir = { Height = 5.0, RiseSeconds = 1.4, StaySeconds = 3.2, FallSeconds = 0.7 }
+local DomainAir = { Height = 5.0, RiseSeconds = 1.4, StaySeconds = 3.2, FallSeconds = 0.9, AfterCrashSeconds = 0.6,
+                    LongestSeconds = 14.0 }
 local domainAir = nil
+local floatingIdles = nil
 local function setFloating(isOn)
     if this.physicsBody then
         this.physicsBody.useGravity = not isOn
         this.physicsBody.velocity = vec3(0, 0, 0)
+    end
+    -- Hanging in the air he floats calmly (not a boxer's bounce in the sky), his own stance back on the ground
+    local animation = this.characterAnimation
+    if not animation then return end
+    if isOn and not floatingIdles then
+        floatingIdles = { animation.idleAnimation, animation.lockedOnIdleAnimation }
+        animation.idleAnimation, animation.lockedOnIdleAnimation = "Float", "Float"
+    elseif not isOn and floatingIdles then
+        animation.idleAnimation, animation.lockedOnIdleAnimation = floatingIdles[1], floatingIdles[2]
+        floatingIdles = nil
     end
 end
 local function updateDomainAir(deltaTime)
@@ -417,9 +429,14 @@ local function updateDomain(deltaTime)
         setFloating(true)
     end
     wasDomainCasting = casting
-    -- (a cast cut short before it left: down again)
-    if domainAir and not casting and not domainAir.releasedAt and not domainShow then
-        domainAir.releasedAt = domainAir.t - DomainAir.StaySeconds
+    -- Down once the cast is over and the waves have met (the oil left lying on the floor afterwards doesn't keep
+    -- him up there: he hung in the sky for as long as it lay); a cast cut short before it left: down at once
+    if domainAir and not casting and not domainAir.releasedAt then
+        if not domainShow then
+            domainAir.releasedAt = domainAir.t - DomainAir.StaySeconds
+        elseif domainShow.crashed or domainAir.t > DomainAir.LongestSeconds then
+            domainAir.releasedAt = domainAir.t - DomainAir.StaySeconds + DomainAir.AfterCrashSeconds
+        end
     end
     updateDomainAir(deltaTime)
 
