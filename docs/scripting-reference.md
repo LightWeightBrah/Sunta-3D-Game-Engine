@@ -128,6 +128,21 @@ if this.characterActions.isGuarding then ... end, this.characterActions:play("Ro
 | `hyperArmor` |  |
 | `attackReach` |  |
 
+## CharacterAnimation
+
+```lua
+this.characterAnimation.idleAnimation = "Float" (hanging in the air: standing is floating now),
+this.characterAnimation.lockedOnIdleAnimation = "" (the idle while locked on too); set them back afterwards
+```
+
+| Name | Note |
+|---|---|
+| `idleAnimation` |  |
+| `walkAnimation` |  |
+| `runAnimation` |  |
+| `lockedOnIdleAnimation` |  |
+| `blendSeconds` |  |
+
 ## Health
 
 ```lua
@@ -233,6 +248,7 @@ The tuning of a Melee Enemy, e.g. a script makes it more aggressive when hurt: t
 | `lockOnTarget` |  |
 | `health` |  |
 | `characterActions` |  |
+| `characterAnimation` |  |
 | `enemy` |  |
 | `meleeEnemy` |  |
 | `boss` |  |
@@ -367,12 +383,14 @@ this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss rena
 
 ## FollowCamera
 
-Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant)
+Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant), .shoulderOffset = 0.7 (over the right shoulder: a tall enemy isn't hidden behind the player), .lockOnPitchDegrees = 10 (how far down it looks while locked on)
 
 | Name | Note |
 |---|---|
 | `distance` |  |
 | `pivotHeight` |  |
+| `shoulderOffset` |  |
+| `lockOnPitchDegrees` |  |
 
 ## GlowSprite
 
@@ -420,6 +438,7 @@ Usage in Lua (see SwarmComponent): s = find("Domain Swarm").swarm; s.isVisible =
 | `isFalling` |  |
 | `fall` |  |
 | `reset` |  |
+| `breakWithin` | for _, at in ipairs(s:breakWithin(center, 12)) do ... end: the stuck copies that close break (a list of where they were, for an effect on each) |
 
 ## Cutscene
 

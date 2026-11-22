@@ -47,6 +47,7 @@ One command a line: the second it happens (since the first frame), the command, 
 | `look` | mouse movement: x, y and over how many seconds |
 | `cursor` | the pointer of the editor's GUI: x, y and over how many seconds (clicks with `down`/`up Mouse1`) |
 | `shot` | a picture of the screen with that name (numbered when repeated) |
+| `fps` | `fps [label]`: the frames since the last `fps` - their average FPS and the slowest frame, written to the log |
 | `every` | `every <seconds> <until> <command...>`: a command repeated |
 | `log` | a line written to the log |
 | `quit` | ends the game |

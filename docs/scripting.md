@@ -114,6 +114,33 @@ this.model.modelName = "sih_boss_armored"
 this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin"
 ```
 
+## Sound, music and spoken lines
+
+```lua
+Audio.play("@game/Sounds/UI/bell.ogg", 0.8)                     -- once, as loud as 0.8
+Audio.playAt("@game/Sounds/Combat/Hit", this.transform.position)  -- heard from that point of the world
+Audio.playMusic("@game/Music/boss.ogg", 0.6)                     -- one track at a time, faded in
+Audio.seekMusic(38.6)                                             -- the music jumps there (a moment meets its beat)
+-- A line spoken by a character: the music goes quieter under it and comes back after it
+Audio.playVoice("@game/Sounds/Voice/domain_expansion.ogg", 1.5)
+Audio.setMusicDucking(0.35)                                       -- how loud the music stays meanwhile
+```
+
+## Characters standing, floating, flying
+
+The animations a character stands, walks and runs with can be changed by a script - floating in the air, standing
+in a cutscene - and set back afterwards:
+
+```lua
+local idles = { this.characterAnimation.idleAnimation, this.characterAnimation.lockedOnIdleAnimation }
+this.characterAnimation.idleAnimation, this.characterAnimation.lockedOnIdleAnimation = "Float", "Float"
+-- ... later
+this.characterAnimation.idleAnimation, this.characterAnimation.lockedOnIdleAnimation = idles[1], idles[2]
+```
+
+The follow camera can be framed differently for a moment (an enemy much taller than the player):
+`camera.followCamera.shoulderOffset = -0.75` (over the left shoulder), `camera.followCamera.lockOnPitchDegrees = 9`.
+
 ## Everything else
 
 The [Scripting reference](scripting-reference.md) lists every field and function a script can reach, generated
