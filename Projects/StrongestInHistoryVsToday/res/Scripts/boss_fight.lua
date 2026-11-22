@@ -1385,7 +1385,7 @@ function O.showSeal(size)
     O.sealTarget, O.sealSpin = size or 1, 900
     O.setSealParts(true)
     local behind = seal.transform.position
-    this.world:flash(vec3(0.7, 0.3, 0.25), 0.12, 0.03)
+    -- (no red flash of the whole screen: it hurt the eyes - the seal's burst of light is enough)
     this.world:burst("Blink Burst", this.transform.position + vec3(0, 1.7, 0), 140)
     this.world:shakeCamera(0.5)
     Audio.playAt(RumbleSound, this.transform.position, 1.0)
@@ -1462,7 +1462,7 @@ function O.startAscension()
         end,
         -- A blast of red fire out of him, and he rises on the seal's power
         function()
-            this.world:flash(vec3(0.6, 0.25, 0.18), 0.18, 0.0)
+            this.world:impactFrame(0.6, 0.25)
             O.groundBlast(ground, 0, 0, 1.0)
             local aura = find(O.AscensionAura)
             if aura and aura.particles then aura.particles.isEmitting = true end
@@ -1818,7 +1818,7 @@ function O.updateTransform(deltaTime)
         O.tween(function(v) if this.model then this.model.expression = v end end, 0, O.SmileAmount, O.SmileSeconds)
     end
     if at(O.RefillAt) then
-        this.world:flash(vec3(0.55, 0.12, 0.08), 0.12, 0.02)
+        this.world:impactFrame(0.5, 0.2)
         this.world:shakeCamera(0.6)
         Audio.play(BoomSound, 1.1)
         this.world:notify(string.upper(O.ArmorTitle))
@@ -2085,7 +2085,7 @@ function O.startPhaseSix()
     this.world:notify("THE BLADE OF THE ISLAND BURNS")
     this.world:slowMotion(0.8, 0.4)
     this.world:shakeCamera(0.9)
-    this.world:flash(vec3(1.0, 0.45, 0.35), 0.2, 0.05)
+    this.world:impactFrame(0.7, 0.3)
     Audio.playAt(RoarSound, this.transform.position, 1.5)
     O.setSwordFire(60)
     O.sealSpin, O.sealTarget = 1200, 1.45
