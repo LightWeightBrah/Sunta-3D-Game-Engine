@@ -77,6 +77,9 @@ end
 
 -- (the steps of his domain while it plays, see updateDomain below: his eyes keep burning until the waves meet)
 local domainShow = nil
+-- (declared here, before the functions that use it: declared further down, the start of the waves set a global
+-- of the same name and never let him come down)
+local domainAir = nil
 local function updateEyes(deltaTime)
     if isCasting(OrbSpell) or isCasting(GreatSpell) or isCasting(DomainSpell) or (domainShow and not domainShow.crashed) then
         eyesLeft = EyesStaySeconds
@@ -220,7 +223,7 @@ local function startDomainShow()
     domainShow = { t = 0, center = center, side = vec3(along.z, 0, -along.x), yaw = math.deg(math.atan(along.x, along.z)),
                    wavesStarted = false, crashed = false, poolsLeft = nil }
 
-    if domainAir then domainAir.releasedAt = domainAir.t end
+    -- (he stays up there until the waves have met: see updateDomain)
     -- (the whirl from the ground under him up around him in the air)
     local feet = this.transform.position
     this.world:effect(Domain.Vortex, vec3(feet.x, 0.05, feet.z), this.transform.forward)
@@ -376,7 +379,6 @@ end
 -- around him up there, and he comes down once the waves have risen
 local DomainAir = { Height = 5.0, RiseSeconds = 1.4, StaySeconds = 3.2, FallSeconds = 0.9, AfterCrashSeconds = 0.6,
                     LongestSeconds = 14.0 }
-local domainAir = nil
 local floatingIdles = nil
 local function setFloating(isOn)
     if this.physicsBody then
