@@ -1023,8 +1023,8 @@ function O.domainOpeningSteps()
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere
         -- (only once the temple stands, as in the film)
-        { 53.6, function() O.burstStars() end },
-        { 55.4, function() O.flyThroughStars() end },
+        { 52.3, function() O.burstStars() end },
+        { 54.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
             local stars = O.stars()

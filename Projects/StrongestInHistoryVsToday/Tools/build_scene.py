@@ -679,7 +679,7 @@ def add_domain_spectacle(builder):
         "spawn_half_extents": [0.1, 0.1, 0.1], "velocity": [0.0, 1.5, 0.0], "velocity_randomness": 1.2,
         "gravity": [0.0, 2.5, 0.0], "start_size": 2.4, "end_size": 1.1,
         # (molten orange, not white: tens of thousands of them added up burnt white at the old strength)
-        "start_color": [1.0, 0.22, 0.0], "end_color": [0.5, 0.03, 0.0], "intensity": 0.004, "max_particles": 30000,
+        "start_color": [1.0, 0.3, 0.02], "end_color": [0.55, 0.05, 0.0], "intensity": 0.009, "max_particles": 30000,
         "style": 1, "spawn_shape": 2, "spawn_radius": 3.0, "outward_speed": 2.0, "size_randomness": 0.5,
         "spin_degrees_per_second": 50.0}))
     # The smoke rolls out around the foot of the temple, thin: the temple must be seen rising through it
@@ -1451,13 +1451,13 @@ def add_fight(builder):
     for number, point in enumerate(((0.9, 1.0, 2.6), (1.1, 0.8, 3.2))):
         builder.add(named(f"Camera Point {number + 1}", point), parent=leap)
     # After it: the monster that came, low before it as it roars, its name (placed on it by the script)
-    reveal = builder.add(named("Summon Reveal", cutscene={
+    summon_reveal = builder.add(named("Summon Reveal", cutscene={
         "duration_seconds": 1.5, "look_at_entity": SUMMON_NAME, "look_at_height": 2.2, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": SUMMON_DISPLAY_NAME, "title_seconds": 1.4,
         "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}), parent=builder.find(SUMMON_NAME))
     # (on the monster: low before it, looking up at it, coming closer)
     for number, point in enumerate(((1.6, 0.5, -5.5), (1.0, 0.7, -4.2))):
-        builder.add(named(f"Camera Point {number + 1}", point), parent=reveal)
+        builder.add(named(f"Camera Point {number + 1}", point), parent=summon_reveal)
     builder.add(named("Summon Wheel", cutscene={
         "duration_seconds": 3.7, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
