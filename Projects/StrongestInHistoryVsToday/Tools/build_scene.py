@@ -1328,7 +1328,7 @@ def add_boss(builder):
         "duration_seconds": 5.4, "look_at_entity": BOSS_NAME, "look_at_height": 1.0, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
         "can_be_skipped": False, "video_file": ""}), parent=boss)
-    for index, point in enumerate(((5.5, 1.6, -3.5), (6.5, 1.3, 0.5), (6.0, 1.0, 3.0), (4.5, 0.9, 1.0), (2.2, 1.2, -3.2))):
+    for index, point in enumerate(((5.5, 1.6, -3.5), (6.5, 1.3, 0.5), (6.0, 1.0, 3.0), (4.0, 1.0, 0.2), (1.7, 1.45, -2.5))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=knock)
 
     # The camera circles the fallen boss (the points come from MyGame's cutscene, moved to this boss)

@@ -892,7 +892,7 @@ function O.startKnockback()
 
     -- (thrown flat, as the user liked it; then he lands into a skid on his feet)
     this.characterActions:play("Knocked_Down")
-    this.world:flash(vec3(1, 0.95, 0.85), 0.25, 0.05)
+    -- (no white flash of the whole screen: the jolt of the picture and the slow motion carry the blow)
     this.world:effect("Punch Impact", from + vec3(0, 1.3, 0), -away)
     this.world:effect("Player Heavy Swing", from + vec3(0, 1.3, 0), -away)
     this.world:impactFrame(1.0, 0.5)
