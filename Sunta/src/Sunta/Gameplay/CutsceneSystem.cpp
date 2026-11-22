@@ -555,14 +555,15 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 			UIRenderer::DrawTextCentered(cutscene.waitPrompt, areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.86f),
 				PromptHeight, glm::vec4(glm::vec3(TitleColor), fadeIn * pulse));
 
-			// How far the presses got: a big round button with the key on it in the middle of the screen, a ring around
-			// it filling up, the button popping with each press (a quick-time event of an action game)
+			// How far the presses got: a big round button with the key on it below the middle of the screen (in the
+			// middle it covered the fighters), a ring around it filling up, the button popping with each press (a
+			// quick-time event of an action game)
 			if (cutscene.waitPresses > 1)
 			{
 				const float part   = glm::clamp(cutscene.pressProgress / static_cast<float>(cutscene.waitPresses), 0.0f, 1.0f);
 				const float pop    = cutscene.pressPop * cutscene.pressPop;
 				const float radius = areaSize.y * PressButtonRadiusOfHeight * (1.0f + 0.08f * pop);
-				const glm::vec2 center = areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.6f);
+				const glm::vec2 center = areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.73f);
 				const glm::vec4 gold = glm::vec4(glm::vec3(TitleColor), fadeIn);
 
 				// (quiet colors: a dark translucent button, a thin gold ring, the key in gold - it only brightens a little)
