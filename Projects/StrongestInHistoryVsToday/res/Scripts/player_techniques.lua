@@ -220,7 +220,10 @@ local function startDomainShow()
     domainShow = { t = 0, center = center, side = vec3(along.z, 0, -along.x), yaw = math.deg(math.atan(along.x, along.z)),
                    wavesStarted = false, crashed = false, poolsLeft = nil }
 
-    this.world:effect(Domain.Vortex, this.transform.position, this.transform.forward)
+    if domainAir then domainAir.releasedAt = domainAir.t end
+    -- (the whirl from the ground under him up around him in the air)
+    local feet = this.transform.position
+    this.world:effect(Domain.Vortex, vec3(feet.x, 0.05, feet.z), this.transform.forward)
     this.world:shakeCamera(0.6)
     Audio.play(Domain.BoomSound, 0.9)
     playShot(Domain.VortexShot)
@@ -369,11 +372,56 @@ local function updateGreatShow(deltaTime)
     techniqueGlow, techniqueRim = glow, rim
 end
 
+-- As in the film (2:19-2:22) he makes the sign up in the sky: he rises while he calls it, the whirl of oil turns
+-- around him up there, and he comes down once the waves have risen
+local DomainAir = { Height = 5.0, RiseSeconds = 1.4, StaySeconds = 3.2, FallSeconds = 0.7 }
+local domainAir = nil
+local function setFloating(isOn)
+    if this.physicsBody then
+        this.physicsBody.useGravity = not isOn
+        this.physicsBody.velocity = vec3(0, 0, 0)
+    end
+end
+local function updateDomainAir(deltaTime)
+    local a = domainAir
+    if not a then return end
+    a.t = a.t + deltaTime
+    local A = DomainAir
+    local h
+    if not a.releasedAt then
+        local k = math.min(a.t / A.RiseSeconds, 1)
+        h = A.Height * (1 - (1 - k) * (1 - k))
+    else
+        local since = a.t - a.releasedAt
+        if since < A.StaySeconds then
+            h = A.Height + math.sin(a.t * 2.0) * 0.15
+        else
+            local k = math.min((since - A.StaySeconds) / A.FallSeconds, 1)
+            h = A.Height * (1 - k * k)
+            if k >= 1 then
+                domainAir = nil
+                setFloating(false)
+            end
+        end
+    end
+    local here = this.transform.position
+    this.transform.position = vec3(here.x, a.ground + h, here.z)
+end
+
 local wasDomainCasting = false
 local function updateDomain(deltaTime)
     local casting = isCasting(DomainSpell)
-    if casting and not wasDomainCasting then playShot(Domain.GestureShot) end
+    if casting and not wasDomainCasting then
+        playShot(Domain.GestureShot)
+        domainAir = { t = 0, ground = this.transform.position.y }
+        setFloating(true)
+    end
     wasDomainCasting = casting
+    -- (a cast cut short before it left: down again)
+    if domainAir and not casting and not domainAir.releasedAt and not domainShow then
+        domainAir.releasedAt = domainAir.t - DomainAir.StaySeconds
+    end
+    updateDomainAir(deltaTime)
 
     if casting then
         domainGlow = math.min(domainGlow + deltaTime * 1.4, 1)
