@@ -137,6 +137,14 @@ end
 
 -- ========== The wheel and the blade ==========
 
+-- The wheel right before the camera (the monster circling behind the player) filled half the screen: hidden then
+local function wheelNearCamera()
+    local camera = find("Camera")
+    if not camera then return false end
+    local wheel = this.transform.position + vec3(0, 2.75 * this.transform.scale.y, 0)
+    return (camera.transform.position - wheel):length() < 4.5
+end
+
 local function showWheel(isOn)
     local wheel = child(WheelName)
     if wheel and wheel.model then wheel.model.isVisible = isOn end
@@ -346,7 +354,7 @@ function OnUpdate(deltaTime)
         return
     end
 
-    showWheel(not this.health.isDead)
+    showWheel(not this.health.isDead and not wheelNearCamera())
     updateWheel(deltaTime)
     if this.health.isDead then
         if hasBlade then setBlade(false); hasBlade = false end
