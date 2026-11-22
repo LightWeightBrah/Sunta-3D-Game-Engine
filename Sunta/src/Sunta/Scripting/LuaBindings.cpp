@@ -1122,10 +1122,14 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"knockback", MemberProperty(&HitboxComponent::knockback, 0.0f)
 	);
 
-	// Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant)
+	// Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant),
+	// .shoulderOffset = 0.7 (over the right shoulder: a tall enemy isn't hidden behind the player),
+	// .lockOnPitchDegrees = 10 (how far down it looks while locked on)
 	lua.new_usertype<FollowCameraHandle>("FollowCamera", sol::no_constructor,
-		"distance",    MemberProperty(&FollowCameraComponent::distance,    0.0f),
-		"pivotHeight", MemberProperty(&FollowCameraComponent::pivotHeight, 0.0f)
+		"distance",           MemberProperty(&FollowCameraComponent::distance,           0.0f),
+		"pivotHeight",        MemberProperty(&FollowCameraComponent::pivotHeight,        0.0f),
+		"shoulderOffset",     MemberProperty(&FollowCameraComponent::shoulderOffset,     0.0f),
+		"lockOnPitchDegrees", MemberProperty(&FollowCameraComponent::lockOnPitchDegrees, 0.0f)
 	);
 
 	// Usage in Lua: eye.glowSprite.isVisible = true, eye.glowSprite.intensity = 8 (glowing eyes turned on by a script)
