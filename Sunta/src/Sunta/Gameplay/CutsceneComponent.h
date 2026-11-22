@@ -58,6 +58,9 @@ struct CutsceneComponent
 	std::string waitPrompt;
 	int         waitPresses        = 1;
 	float       pressWindowSeconds = 0.6f;
+	// Played on every press of a many-press moment (a blow landing, a grunt): each press is felt, as in an action
+	// game's quick-time event
+	std::string pressSound;
 
 	float       blendInSeconds = 0.0f;
 
@@ -76,6 +79,8 @@ struct CutsceneComponent
 	float seconds             = 0.0f;
 	// How far the presses got (see waitPresses), draining while the player doesn't press
 	float pressProgress       = 0.0f;
+	// 1 the moment the key is pressed, falling back to 0 (the button on the screen pops with each press)
+	float pressPop            = 0.0f;
 	// The player pressed 'waitForKey' (the last time it played)
 	bool  wasAnswered         = false;
 	// Where the camera was when it started (see blendInSeconds)
@@ -102,6 +107,7 @@ struct CutsceneComponent
 				ADD_PROPERTY(CutsceneComponent, sound, PropertyDataType::String),
 				ADD_PROPERTY(CutsceneComponent, waitForKey, PropertyDataType::String),
 				ADD_PROPERTY(CutsceneComponent, waitPrompt, PropertyDataType::String),
+				ADD_PROPERTY(CutsceneComponent, pressSound, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(CutsceneComponent, waitPresses, PropertyDataType::Int, 1, 30),
 				ADD_PROPERTY_RANGED(CutsceneComponent, pressWindowSeconds, PropertyDataType::Float, 0.1f, 3.0f),
 				ADD_PROPERTY_RANGED(CutsceneComponent, blendInSeconds, PropertyDataType::Float, 0.0f, 10.0f),

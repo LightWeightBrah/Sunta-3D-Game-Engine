@@ -412,7 +412,8 @@ GESTURES = {
     "sih_player": {
         # As in the film (1:16): standing calm, the open palm turned up at his side, a little forward, the ball of oil
         # floating over it; then the palm pushes it straight at the enemy (the spell leaves at 0.66) and comes back
-        "Cast_Orb":       [Gesture("_R", (0.30, 0.25, -0.30), (0.25, 1.0, 0.0), (0.0, 0.0, 1.0),
+        # (the palm in front of him a little under the chest, the arm reaching forward, as in the film's close shot)
+        "Cast_Orb":       [Gesture("_R", (0.24, 0.42, -0.16), (0.2, 1.0, 0.0), (0.0, 0.0, 1.0),
                                    reached_at=0.16, left_from=0.52, end_at=0.64),
                            Gesture("_R", (0.10, 0.62, -0.02), (0.0, 0.25, 1.0), (0.0, 1.0, 0.0),
                                    start_at=0.52, reached_at=0.64, left_from=0.80, end_at=0.98)],

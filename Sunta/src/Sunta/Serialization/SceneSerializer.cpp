@@ -524,6 +524,7 @@ namespace SceneKeys
 	constexpr const char* WaitForKey                = "wait_for_key";
 	constexpr const char* WaitPrompt                = "wait_prompt";
 	constexpr const char* WaitPresses               = "wait_presses";
+	constexpr const char* PressSound                = "press_sound";
 	constexpr const char* PressWindowSeconds        = "press_window_seconds";
 	constexpr const char* BlendInSeconds            = "blend_in_seconds";
 	constexpr const char* FadeSeconds               = "fade_seconds";
@@ -1110,6 +1111,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::WaitPrompt,            cutscene->waitPrompt         },
 				{ SceneKeys::WaitPresses,           cutscene->waitPresses        },
 				{ SceneKeys::PressWindowSeconds,    cutscene->pressWindowSeconds },
+				{ SceneKeys::PressSound,            cutscene->pressSound         },
 				{ SceneKeys::BlendInSeconds,        cutscene->blendInSeconds     },
 				{ SceneKeys::FadeSeconds,           cutscene->fadeSeconds        },
 				{ SceneKeys::CutsceneSound,         cutscene->sound              }
@@ -2077,6 +2079,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			cutscene.waitPrompt         = cutsceneData.value(SceneKeys::WaitPrompt,            cutscene.waitPrompt);
 			cutscene.waitPresses        = cutsceneData.value(SceneKeys::WaitPresses,           cutscene.waitPresses);
 			cutscene.pressWindowSeconds = cutsceneData.value(SceneKeys::PressWindowSeconds,    cutscene.pressWindowSeconds);
+			cutscene.pressSound         = cutsceneData.value(SceneKeys::PressSound,            cutscene.pressSound);
 			cutscene.blendInSeconds     = cutsceneData.value(SceneKeys::BlendInSeconds,        cutscene.blendInSeconds);
 			cutscene.fadeSeconds        = cutsceneData.value(SceneKeys::FadeSeconds,           cutscene.fadeSeconds);
 			cutscene.sound              = cutsceneData.value(SceneKeys::CutsceneSound,         cutscene.sound);

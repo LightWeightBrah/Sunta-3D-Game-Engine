@@ -187,6 +187,36 @@ void UIRenderer::DrawRectangleOutline(const glm::vec2& topLeft, const glm::vec2&
 	DrawRectangle(glm::vec2(topLeft.x + size.x - thickness, topLeft.y), glm::vec2(thickness, size.y), color);
 }
 
+// (a disc of one-pixel-high strips: the UI draws only rectangles; translucent strips must not overlap, so each row is
+// one strip)
+void UIRenderer::DrawDisc(const glm::vec2& center, float radius, const glm::vec4& color)
+{
+	const int rows = glm::max(static_cast<int>(radius * 2.0f), 1);
+	for (int row = 0; row < rows; row++)
+	{
+		const float y     = -radius + (static_cast<float>(row) + 0.5f) * (2.0f * radius / static_cast<float>(rows));
+		const float halfX = std::sqrt(glm::max(radius * radius - y * y, 0.0f));
+		DrawRectangle(glm::vec2(center.x - halfX, center.y + y - radius / static_cast<float>(rows)),
+			glm::vec2(halfX * 2.0f, 2.0f * radius / static_cast<float>(rows)), color);
+	}
+}
+
+// (small squares close together along the arc)
+void UIRenderer::DrawRing(const glm::vec2& center, float radius, float thickness, float fraction, const glm::vec4& color)
+{
+	fraction = glm::clamp(fraction, 0.0f, 1.0f);
+	if (fraction <= 0.0f)
+		return;
+	const float circumference = 2.0f * 3.14159265f * radius;
+	const int   steps         = glm::max(static_cast<int>(circumference * fraction / (thickness * 0.35f)), 1);
+	for (int step = 0; step <= steps; step++)
+	{
+		const float angle = 2.0f * 3.14159265f * fraction * static_cast<float>(step) / static_cast<float>(steps);
+		const glm::vec2 point = center + glm::vec2(std::sin(angle), -std::cos(angle)) * radius;
+		DrawRectangle(point - glm::vec2(thickness * 0.5f), glm::vec2(thickness), color);
+	}
+}
+
 void UIRenderer::DrawLetters(const std::string& text, const glm::vec2& topLeft, float pixelHeight, const glm::vec4& color)
 {
 	for (const Font::LetterQuad& letter : font->LayOut(text, topLeft, pixelHeight))

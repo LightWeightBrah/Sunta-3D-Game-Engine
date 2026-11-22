@@ -100,11 +100,11 @@ local BlinkStrikeDelay  = 0.5
 
 -- A ring of orbs flying out from him in all directions (roll through it, or stand in a gap)
 local RingOrbs         = 14
-local RingEverySeconds = 13
+local RingEverySeconds = 20
 local RingHeight       = 1.1
 
 -- Lines of fire across the domain: three rows, one after another like a wave, each this long
-local LineEverySeconds = 10
+local LineEverySeconds = 15
 local LineFires        = 9
 local LineSpacing      = 2.3
 local LineGap          = 3.6
@@ -126,8 +126,8 @@ local RainEverySeconds = 16
 
 -- His great patterns (the rain, the lines of fire, the ring, the bombing of the domain) take turns: after one starts
 -- the next waits this long, so the player always has a moment to answer with blows of their own
-local PatternGapSeconds = 5.5
-local LastStandGapSeconds = 3.5
+local PatternGapSeconds = 9
+local LastStandGapSeconds = 6
 
 -- The last gamble: below this part of his health, once, three rings from the middle of the arena
 local GambleHealthFraction = 0.14
@@ -513,7 +513,10 @@ local function startRain()
     rainIn = RainEverySeconds
 end
 
+-- (not used any more: bundles thrown from somewhere over the far wall hit the player in the back out of nowhere, and
+-- a soulslike boss throws little - the domain keeps its lines of fire and its stars)
 local function updateRain(deltaTime)
+    do return end
     if not domainIsUp then return end
 
     rainIn = rainIn - deltaTime
@@ -1045,10 +1048,10 @@ function O.domainOpeningSteps()
         end },
         { 63.7, function() O.playPlayer("Lying") end },
         { 65.2, function() this.world:shakeCamera(0.6); Audio.play(BoomSound, 0.8) end },
-        { 66.6, function() O.playPlayer("Lying") end },
+
         -- (he stays down: the player gets him up with [2], see O.updateRise)
         -- The temple sinks again, he is back on the ground before the player, still black with white eyes
-        { 68.4, function()
+        { 65.8, function()
             isOnTheDome = false
             O.isHoldingSign = false
             local temple = find(TempleName)
@@ -1063,8 +1066,8 @@ function O.domainOpeningSteps()
             silhouetteLeft = SilhouetteSeconds
             moveTemple(TempleSunkenY, 4.5)
         end },
-        -- The player's turn (film 1:45.6: up in time for the sign at 1:47.5 when [2] comes at once)
-        { 69.4, function()
+        -- The player's turn: early enough that he is up for the sign of the film (1:47.5) with the presses it takes
+        { 66.0, function()
             awaitingDetonation = true
             O.detonationHintLeft = O.DetonationHintSeconds
             O.lyingUntilPress, O.lyingReplayIn = true, 0
@@ -1150,7 +1153,7 @@ end
 
 -- Two fingers raised before his face, then both hands point at the player and a fan of the stars of his domain flies
 -- low across the arena at them (in the phases without his sword)
-O.Stars = { EverySeconds = 12, FirstAfter = 9, Count = 5, SpreadDegrees = 15, ReleaseAfter = 1.5, Height = 1.4,
+O.Stars = { EverySeconds = 18, FirstAfter = 12, Count = 5, SpreadDegrees = 15, ReleaseAfter = 1.5, Height = 1.4,
             Bolt = "Boss Star Bolt", Caption = "Island Stars: Constellation", MinDistance = 4, MaxDistance = 18 }
 O.starsIn = O.Stars.FirstAfter
 
@@ -2539,6 +2542,8 @@ local ChannelState = {
         channelSpellIn = channelSpellIn - deltaTime
         if channelSpellIn > 0 then return end
 
+        -- (while his summon fights he only watches: a monster in front and money from behind left no room to act)
+        do return end
         if phase ~= 3 then return end
         local summon, player = find(SummonName), find(PlayerName)
         local isNearSummon = false

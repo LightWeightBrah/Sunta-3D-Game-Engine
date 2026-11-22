@@ -46,6 +46,10 @@ public:
 
 	static void DrawRectangleOutline(const glm::vec2& topLeft, const glm::vec2& size, float thickness, const glm::vec4& color);
 
+	// A filled circle, and a ring of 'thickness' pixels drawn clockwise from the top for 'fraction' (0..1) of its way
+	static void DrawDisc(const glm::vec2& center, float radius, const glm::vec4& color);
+	static void DrawRing(const glm::vec2& center, float radius, float thickness, float fraction, const glm::vec4& color);
+
 	// Letters 'pixelHeight' tall with a soft dark shadow, so the text can be read over a bright scene
 	static void DrawTextAt(const std::string& text, const glm::vec2& topLeft, float pixelHeight, const glm::vec4& color);
 	static void DrawTextCentered(const std::string& text, const glm::vec2& center, float pixelHeight, const glm::vec4& color);

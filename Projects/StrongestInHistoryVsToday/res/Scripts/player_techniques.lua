@@ -16,7 +16,7 @@ local EyesStaySeconds = 0.9
 local EyeIntensity    = 9
 
 -- The ball over his palm grows to this size (meters across) by the time it is thrown
-local HeldOrbSize = 0.5
+local HeldOrbSize = 0.62
 
 -- His domain: the light he gives off at the height of the sign, and the blast when it opens
 -- (a warm sheen on him, not a figure of light: his eyes are what burns)

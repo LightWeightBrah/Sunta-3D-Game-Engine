@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "CharacterActionsSystem.h"
+#include "FollowCameraSystem.h"
 #include "EntityName.h"
 #include "GameplayMath.h"
 #include "Audio/Audio.h"
@@ -64,6 +65,10 @@ constexpr float     TitleHeight = 64.0f;
 const glm::vec4     TitleColor  = glm::vec4(0.92f, 0.78f, 0.52f, 1.0f);
 constexpr float     HintHeight  = 18.0f;
 constexpr float     PromptHeight = 30.0f;
+// A many-press moment (waitPresses): the button on the screen, how fast its pop fades, how hard each press shakes
+constexpr float     PressButtonRadiusOfHeight = 0.065f;
+constexpr float     PressPopFadePerSecond     = 7.0f;
+constexpr float     PressShake                = 0.25f;
 const glm::vec4     HintColor   = glm::vec4(0.7f, 0.7f, 0.7f, 0.6f);
 const glm::vec3     WorldUp     = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -305,6 +310,7 @@ void CutsceneSystem::Play(EntityManager& entityManager, unsigned int cutsceneEnt
 	cutscene->fadeToBlackLeft     = cutscene->fadeSeconds;
 	cutscene->hasStartedSound     = false;
 	cutscene->pressProgress       = 0.0f;
+	cutscene->pressPop            = 0.0f;
 
 	// Where the camera is now: a cutscene with 'blendInSeconds' flies from here
 	const TransformComponent* camera = FindActiveCamera(entityManager);
@@ -404,14 +410,29 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 			{
 				const float window = glm::max(cutscene.pressWindowSeconds, 0.05f);
 				cutscene.pressProgress = glm::max(cutscene.pressProgress - glm::min(deltaTime, MaxStepSeconds) / window, 0.0f);
+				cutscene.pressPop = glm::max(cutscene.pressPop - glm::min(deltaTime, MaxStepSeconds) * PressPopFadePerSecond, 0.0f);
 				if (isPressed)
+				{
 					cutscene.pressProgress += 1.0f;
+					cutscene.pressPop = 1.0f;
+					// Each press is felt: a jolt of the camera growing with the progress, and its sound
+					const float part = cutscene.pressProgress / static_cast<float>(cutscene.waitPresses);
+					FollowCameraSystem::Shake(entityManager, PressShake * (0.5f + part));
+					if (!cutscene.pressSound.empty())
+						Audio::Play(cutscene.pressSound);
+				}
 			}
 			else if (isPressed)
 				cutscene.pressProgress = 1.0f;
 
 			if (cutscene.pressProgress >= static_cast<float>(cutscene.waitPresses))
 			{
+				// (done: a flash of the screen and a hard jolt)
+				if (cutscene.waitPresses > 1)
+				{
+					HUDSystem::FlashScreen(glm::vec3(1.0f, 0.95f, 0.8f), 0.35f);
+					FollowCameraSystem::Shake(entityManager, PressShake * 3.0f);
+				}
 				cutscene.wasAnswered = true;
 				Finish(entityManager, cutscene);
 				continue;
@@ -510,14 +531,25 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 			UIRenderer::DrawTextCentered(cutscene.waitPrompt, areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.86f),
 				PromptHeight, glm::vec4(glm::vec3(TitleColor), fadeIn * pulse));
 
-			// How far the presses got: a bar under the prompt
+			// How far the presses got: a big round button with the key on it in the middle of the screen, a ring around
+			// it filling up, the button popping with each press (a quick-time event of an action game)
 			if (cutscene.waitPresses > 1)
 			{
-				const float part = glm::clamp(cutscene.pressProgress / static_cast<float>(cutscene.waitPresses), 0.0f, 1.0f);
-				const glm::vec2 barSize = glm::vec2(areaSize.y * 0.36f, glm::max(areaSize.y * 0.012f, 5.0f));
-				const glm::vec2 barTopLeft = areaTopLeft + glm::vec2((areaSize.x - barSize.x) * 0.5f, areaSize.y * 0.905f);
-				UIRenderer::DrawRectangle(barTopLeft - glm::vec2(2.0f), barSize + glm::vec2(4.0f), glm::vec4(0.0f, 0.0f, 0.0f, 0.7f * fadeIn));
-				UIRenderer::DrawRectangle(barTopLeft, glm::vec2(barSize.x * part, barSize.y), glm::vec4(glm::vec3(TitleColor), fadeIn));
+				const float part   = glm::clamp(cutscene.pressProgress / static_cast<float>(cutscene.waitPresses), 0.0f, 1.0f);
+				const float pop    = cutscene.pressPop * cutscene.pressPop;
+				const float radius = areaSize.y * PressButtonRadiusOfHeight * (1.0f + 0.22f * pop);
+				const glm::vec2 center = areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.6f);
+				const glm::vec4 gold = glm::vec4(glm::vec3(TitleColor), fadeIn);
+
+				UIRenderer::DrawDisc(center, radius * 1.32f, glm::vec4(0.0f, 0.0f, 0.0f, 0.55f * fadeIn));
+				UIRenderer::DrawRing(center, radius * 1.22f, radius * 0.14f, 1.0f, glm::vec4(0.25f, 0.2f, 0.15f, 0.8f * fadeIn));
+				UIRenderer::DrawRing(center, radius * 1.22f, radius * 0.16f, part, gold);
+				UIRenderer::DrawDisc(center, radius, glm::vec4(glm::mix(glm::vec3(0.12f, 0.1f, 0.08f), glm::vec3(TitleColor), 0.35f + 0.65f * pop), fadeIn));
+				std::string key = cutscene.waitForKey;
+				for (char& letter : key)
+					letter = static_cast<char>(std::toupper(static_cast<unsigned char>(letter)));
+				UIRenderer::DrawTextCentered(key, center + glm::vec2(0.0f, radius * 0.05f), radius * 1.1f,
+					glm::vec4(glm::mix(glm::vec3(TitleColor), glm::vec3(0.1f), pop), fadeIn));
 			}
 		}
 

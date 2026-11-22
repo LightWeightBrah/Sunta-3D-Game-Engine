@@ -52,7 +52,7 @@ VIDEOS = {
 
 # The voices of the player's techniques (seconds of the film), without the music
 VOICES = {
-    "solid_baby_oil.ogg":         (51.70, 53.30),  # "Solid baby oil" (without the "unleash" after it)
+    "solid_baby_oil.ogg":         (51.65, 54.60),  # "Solid baby oil, unleash!"
     "divine_baby_oil_evolve.ogg": (138.85, 142.1),
     "baby_oil_detonation.ogg":    (107.0, 110.7),
     # The boss's lines (played by boss_fight.lua at the film's moments)
@@ -114,6 +114,24 @@ def make_soundtrack(film, song):
          "-vn", "-c:a", "libvorbis", "-q:a", 6, os.path.join(folder, "fight_music.ogg")])
 
 
+def remove_music_bed(vocals, rate):
+    try:
+        import noisereduce
+        import numpy
+    except ImportError:
+        return vocals
+    mono = vocals.mean(axis=1)
+    frame = int(rate * 0.05)
+    frames = [mono[i:i + frame] for i in range(0, len(mono) - frame, frame)]
+    energies = numpy.array([numpy.sqrt((f ** 2).mean()) for f in frames])
+    quiet = numpy.argsort(energies)[:max(4, len(frames) // 5)]
+    noise = numpy.concatenate([frames[i] for i in sorted(quiet)])
+    clean = noisereduce.reduce_noise(y=mono, sr=rate, y_noise=noise, stationary=False, prop_decrease=0.95, n_fft=2048)
+    clean = noisereduce.reduce_noise(y=clean, sr=rate, y_noise=noise * 0.5, stationary=True, prop_decrease=0.75, n_fft=2048)
+    clean *= numpy.abs(mono).max() / (numpy.abs(clean).max() + 1e-9)
+    return numpy.stack([clean, clean], axis=1)
+
+
 def make_voices(film):
     import soundfile
     import torch
@@ -146,6 +164,10 @@ def make_voices(film):
                 wave = stems[vocals_index] * std + mean
                 mean, std = wave.mean(), wave.std()
             vocals = wave.numpy().T
+
+            # What music is left under the voice: the quietest stretches between the words are its profile, taken away
+            # (noisereduce, MIT; skipped when it is not installed)
+            vocals = remove_music_bed(vocals, rate)
 
             separated = os.path.join(work, "vocals.wav")
             soundfile.write(separated, vocals, rate)

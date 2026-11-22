@@ -564,7 +564,7 @@ def add_effects(builder):
     # The rain of the domain's opening (film 1:31-1:46): formed high in the sky over the whole arena, hanging there,
     # then falling straight down where they were (not at the player), glowing like meteors (the script lights them)
     add_projectile(builder, "Boss Orb", "sih_money", 24, 1.6, spin_degrees_per_second=540.0, speed=13.0, damage=16.0, poise_damage=10.0, radius=0.5,
-                           homing_degrees_per_second=34.0, lifetime_seconds=4.0, fuse_seconds=0.0,
+                           homing_degrees_per_second=16.0, lifetime_seconds=4.0, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="Money Burst", hit_burst=10, hit_sound="@game/Sounds/Spells/coins.ogg",
                            hit_stop_seconds=0.05, camera_shake=0.12)
@@ -808,8 +808,9 @@ def add_player(builder):
                                         "swing_effect_height": 1.25, "swing_effect_distance": 0.1, "swing_effect_at": 0.3})
     # A souls-like stamina: five or six punches, then the player has to back off, guard or roll and breathe
     # (cheaper since the playtest: a whole combo and a roll fit in one bar, and it comes back quickly)
-    entity["stamina"].update({"light_attack_cost": 11.0, "heavy_attack_cost": 22.0, "roll_cost": 12.0, "backstep_cost": 9.0,
-                              "regeneration_per_second": 50.0, "regeneration_delay_seconds": 0.5})
+    # (a fight like the film's: long strings of blows, stamina that comes back fast)
+    entity["stamina"].update({"max_stamina": 160.0, "light_attack_cost": 8.0, "heavy_attack_cost": 16.0, "roll_cost": 10.0,
+                              "backstep_cost": 7.0, "regeneration_per_second": 80.0, "regeneration_delay_seconds": 0.3})
     entity["character_animation"].update(PLAYER_STRIDE)
     entity["character_animation"]["locked_on_idle_animation"] = "Idle_Fight"
     # His boxing clips punch from a deep crouch, at the chest of a man of his size: while he attacks the spine
@@ -824,22 +825,23 @@ def add_player(builder):
     # Down on his back after the stars of the boss's domain: the camera comes over him and waits for the player's
     # answer, [3] (a moment of the cutscene the player plays; boss_fight.lua goes on with 'Technique Rise')
     down = builder.add(named("Down Wait", cutscene={
-        "duration_seconds": 3.5, "look_at_entity": PLAYER_NAME, "look_at_height": 0.3, "animation_entity": "",
+        "duration_seconds": 1.6, "look_at_entity": PLAYER_NAME, "look_at_height": 0.3, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
         "can_be_skipped": False, "video_file": "", "wait_for_key": "2",
-        # (a moment the player fights through: [2] again and again, quickly, until he is up)
-        "wait_presses": 6, "press_window_seconds": 0.45,
-        "wait_prompt": "Press [2] quickly to rise   -   Imaginary Technique: Baby Oil Detonation"}), parent=player)
+        # (a quick-time event: [2] again and again, quickly, a blow felt with each press, until he is up)
+        "wait_presses": 8, "press_window_seconds": 0.4, "press_sound": "@game/Sounds/Brawl/Punch",
+        "wait_prompt": "Mash [2] to rise   -   Imaginary Technique: Baby Oil Detonation"}), parent=player)
     for index, point in enumerate(((3.2, 3.4, 2.4), (2.4, 2.6, 0.2), (1.6, 2.1, -1.6))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=down)
     # Rising from the ground with his hand up for his great technique (started by boss_fight.lua when the player
     # presses [3] lying down): the camera low in front of him, coming up with him (his front is his own -Z)
     # It ends close on his hands making the sign before his chest and his glowing eyes (film 1:47.5)
     rise = builder.add(named("Technique Rise", cutscene={
-        "duration_seconds": 2.6, "look_at_entity": PLAYER_NAME, "look_at_height": 1.3, "animation_entity": "",
+        "duration_seconds": 2.6, "look_at_entity": PLAYER_NAME, "look_at_height": 1.0, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "Imaginary Technique: Baby Oil Detonation",
         "title_seconds": 1.6, "can_be_skipped": False, "video_file": ""}), parent=player)
-    for index, point in enumerate(((2.2, 0.5, -2.5), (1.3, 0.9, -2.2), (0.55, 1.2, -1.45), (0.3, 1.3, -1.05))):
+    # (close and low from the start, rising with him: from farther it looked at the ruins over him lying)
+    for index, point in enumerate(((1.6, 1.3, -2.4), (1.4, 1.2, -2.8), (1.1, 1.15, -3.1), (0.8, 1.15, -3.3))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=rise)
     add_domain_spectacle(builder)
     # The bottle of baby oil over his open palm as he answers the boss's armor (boss_fight.lua, Crystal Vessel)
@@ -886,7 +888,8 @@ def add_player(builder):
     entity["health"]["max_health"] = 320.0
     entity["health"]["hit_effect"] = "Punch Impact"
     # A boxer keeps his feet under a jab: only a heavy blow or a few quick ones stagger him
-    entity["poise"] = {"max_poise": 40.0, "recover_after_seconds": 3.0, "stagger_immunity_seconds": 1.6}
+    # (a few blows before he staggers, and a long while after it: staggered again and again he could do nothing)
+    entity["poise"] = {"max_poise": 110.0, "recover_after_seconds": 1.8, "stagger_immunity_seconds": 3.0}
     # A volley of money or tapes costs one hit, not all of them at once
     entity["health"]["spell_immunity_seconds"] = 0.8
     entity["healing_flask"].update({"display_name": "Champagne", "max_charges": 5, "heal_amount": 110.0})
@@ -1209,15 +1212,15 @@ def add_boss(builder):
     # What the boss chooses by itself between its blows
     builder.add(spell("Boss Orb Volley Spell", **{**common, "cast_animation": "Cast_Spell", "projectile": "Boss Orb",
                       "projectile_count": 3, "spread_degrees": 13.0, "release_at": 0.5, "min_distance": 4.5,
-                      "max_distance": 30.0, "cooldown_seconds": 6.0, "charge_particles_per_second": 90.0,
+                      "max_distance": 30.0, "cooldown_seconds": 14.0, "charge_particles_per_second": 90.0,
                       "cast_sound": "@game/Sounds/Spells/cash_register.ogg"}), parent=staff)
     builder.add(spell("Boss Cleave Spell", **{**common, "cast_animation": "Cast_Cleave", "projectile": "Boss Slash",
                       "projectile_count": 5, "spread_degrees": 8.0, "release_at": CLEAVE_RELEASE_AT, "min_distance": 5.0,
-                      "max_distance": 30.0, "cooldown_seconds": 9.0, "charge_particles_per_second": 160.0,
+                      "max_distance": 30.0, "cooldown_seconds": 18.0, "charge_particles_per_second": 160.0,
                       "cast_sound": "@game/Sounds/Spells/throw.ogg"}), parent=staff)
     builder.add(spell("Boss Fire Pillar Spell", **{**common, "cast_animation": "Cast_Pillars", "projectile": "Cultist Fire Pillar",
                       "projectile_count": 3, "release_at": 0.36, "at_targets_feet": True, "min_distance": 5.0,
-                      "max_distance": 30.0, "cooldown_seconds": 12.0, "charge_particles_per_second": 140.0,
+                      "max_distance": 30.0, "cooldown_seconds": 22.0, "charge_particles_per_second": 140.0,
                       "cast_sound": ""}), parent=staff)
     # What only the script casts: the great spells of the later phases
     builder.add(spell("Boss Domain Pillars Spell", **{**common, "cast_animation": "Cast_Pillars", "projectile": "Cultist Fire Pillar",
@@ -1283,7 +1286,7 @@ def add_summon(builder):
     # It jumps at a player who keeps away
     entity["melee_enemy"]["leap_attack_distance"] = 11.0
     entity["enemy"]["eye_height"] = 2.6
-    add_fists_and_foot(builder, summon, 22.0, ENEMY_HITBOX_LAYER, poise_damage=50.0, size=0.38, camera_shake=0.5)
+    add_fists_and_foot(builder, summon, 22.0, ENEMY_HITBOX_LAYER, poise_damage=35.0, size=0.38, camera_shake=0.5)
     entity["transform"] = transform(SUMMON_WAITING_PLACE, (0.0, 180.0, 0.0))
     # Three meters tall: a body, senses and blows of that size
     entity["box_collider"].update({"half_extents": [1.05, 1.45, 1.05], "local_offset": [0.0, 1.45, 0.0]})
@@ -1310,7 +1313,7 @@ def add_summon(builder):
     # hidden and harmless until then; it strikes in the windows of its blows like its fists
     blade = named("Summon Blade", (0.0, 0.05, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
                                                          "emissive_strength": 0.0})
-    blade["hitbox"] = {"damage": 30.0, "poise_damage": 50.0, "local_offset": [0.0, 0.95, 0.0],
+    blade["hitbox"] = {"damage": 30.0, "poise_damage": 40.0, "local_offset": [0.0, 0.95, 0.0],
                        "half_extents": [0.2, 0.8, 0.14], "layer": ENEMY_HITBOX_LAYER, "show_gizmos": False,
                        "hit_stop_seconds": 0.08, "camera_shake": 0.5, "is_enabled": False}
     blade["weapon_trail"] = {"base_offset": [0.0, 0.4, 0.0], "tip_offset": [0.0, 1.7, 0.0], "color": [1.0, 0.92, 0.7],
