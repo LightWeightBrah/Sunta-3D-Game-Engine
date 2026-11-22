@@ -1554,16 +1554,19 @@ O.PieceOffsets = {
 O.PieceFloor = { torso = { 0, 2.6 }, greave_l = { -55, 2.3 }, greave_r = { 55, 2.3 }, bracer_l = { -95, 2.0 }, bracer_r = { 95, 2.0 } }
 -- (the scene takes its time: every moment of it has a shot of its own, his face close twice - the smile as his health
 -- comes back, the smile again as his eyes catch fire)
-O.PieceFallAt = { torso = 4.4, greave_l = 4.6, greave_r = 4.8, bracer_l = 5.0, bracer_r = 5.2 }
-O.FallSeconds, O.FallFrom = 0.5, 13
-O.SwordFallAt, O.SwordInGround = 6.7, 1.45
+-- (the rift is seen opening in the sky and the pieces seen coming out of it, before they land around him)
+O.PieceFallAt = { torso = 5.6, greave_l = 5.85, greave_r = 6.1, bracer_l = 6.35, bracer_r = 6.6 }
+O.FallSeconds, O.FallFrom = 1.1, 16
+O.SwordFallAt, O.SwordInGround = 8.6, 1.45
 -- The two beats of the snap: the torso and the greaves, then the bracers (and his armored model put on)
-O.FirstSnapAt, O.SecondSnapAt = 8.5, 9.5
-O.LiftFrom, O.BracersLiftFrom = 7.7, 8.7
-O.SlideSeconds, O.SmileAt, O.RefillAt, O.RiftAt = 1.2, 2.3, 3.3, 4.0
-O.WalkAt, O.GripAt, O.DrawAt, O.IgniteAt, O.StompAt, O.TransformEnds = 10.3, 10.95, 11.4, 13.0, 14.7, 16.2
-O.Shots = { { 0.0, "Armor Fakeout" }, { 1.2, "Armor Face" }, { 4.0, "Armor Rift Shot" }, { 6.6, "Armor Sword Fall" },
-            { 7.4, "Armor Snap" }, { 10.2, "Armor Draw" }, { 12.6, "Armor Ignite Face" }, { 14.4, "Armor Ignite" } }
+O.FirstSnapAt, O.SecondSnapAt = 10.8, 11.8
+O.LiftFrom, O.BracersLiftFrom = 9.9, 11.0
+O.SlideSeconds, O.SmileAt, O.RefillAt, O.RiftAt = 1.2, 2.4, 3.6, 4.8
+O.WalkAt, O.GripAt, O.DrawAt, O.IgniteAt, O.StompAt, O.TransformEnds = 12.6, 13.25, 13.7, 15.4, 17.2, 18.8
+O.Shots = { { 0.0, "Armor Fakeout" }, { 1.2, "Armor Face" }, { 4.8, "Armor Rift Sky" }, { 6.5, "Armor Rift Shot" },
+            { 8.5, "Armor Sword Fall" }, { 9.5, "Armor Snap" }, { 12.5, "Armor Draw" }, { 15.0, "Armor Ignite Face" },
+            { 17.0, "Armor Ignite" } }
+
 -- His smile (the expression shape of his face): on over this long
 O.SmileSeconds = 0.9
 O.ArmorTitle = "Jeffrey Epstein, Armored in Sin"

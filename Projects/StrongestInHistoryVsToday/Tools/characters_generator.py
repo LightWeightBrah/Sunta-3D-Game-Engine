@@ -729,7 +729,7 @@ WEAPON_BONE = knight_generator.WEAPON_BONE
 # to each side of the middle; how far a corner goes up, out and back at the full smile, and how wide the skin around
 # it follows (a gaussian)
 # (a cold smile: one corner, his left, higher than the other)
-SMIRK = {"mouth_below_eyes": 0.072, "corner_across": 0.034, "up": 0.02, "out": 0.006, "back": 0.004, "radius": 0.017,
+SMIRK = {"mouth_below_eyes": 0.072, "corner_across": 0.034, "up": 0.03, "out": 0.008, "back": 0.006, "radius": 0.021,
          "sides": {1.0: 0.6, -1.0: 1.0}}
 
 
@@ -760,7 +760,11 @@ def add_smirk(character, head, preview_folder=""):
             distance = (point - corner).length
             if distance > radius * 2.5:
                 continue
-            weight = math.exp(-(distance / radius) ** 2)
+            # (only the front of the face: moving the skin behind the corner tore the outline of the cheek)
+            behind = corner.y - point.y
+            if behind > 0.04 * size:
+                continue
+            weight = math.exp(-(distance / radius) ** 2) * max(0.0, 1.0 - max(behind, 0.0) / (0.04 * size))
             smirk.data[index].co = smirk.data[index].co + to_local @ (offset * weight)
             moved += 1
         print("SMIRK corner {:.3f} {:.3f} {:.3f}".format(corner.x, corner.y, corner.z))

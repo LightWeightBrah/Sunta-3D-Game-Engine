@@ -971,23 +971,30 @@ def add_armor_transformation(builder, boss):
     # back to the whole of him for the stamp (from his left: the sword in his right hand stays out of the lens)
     shots = (
         ("Armor Fakeout", 1.25, 1.2, 0.5, ((3.4, 1.3, -1.8), (3.0, 1.25, -1.3))),
-        ("Armor Face", 2.85, 1.64, 0.35, ((0.22, 1.58, -0.85), (0.12, 1.62, -0.6))),
-        ("Armor Rift Shot", 2.65, 1.9, 0.6, ((2.2, 0.45, 4.2), (2.5, 0.5, 5.0))),
-        ("Armor Sword Fall", 0.85, 0.7, 0.25, ((2.6, 0.55, -3.4), (2.4, 0.6, -3.1))),
+        ("Armor Face", 3.65, 1.64, 0.35, ((0.22, 1.58, -0.85), (0.12, 1.62, -0.6))),
+        # (low beside him looking up: the rift opening over him and the pieces coming out of it)
+        ("Armor Rift Sky", 1.75, 9.0, 0.4, ((1.8, 0.6, -2.2), (1.6, 0.5, -2.6))),
+        ("Armor Rift Shot", 2.05, 1.9, 0.5, ((2.2, 0.45, 4.2), (2.5, 0.5, 5.0))),
+        ("Armor Sword Fall", 1.05, 0.7, 0.25, ((2.6, 0.55, -3.4), (2.4, 0.6, -3.1))),
         # (to the side of the paths of the plates: from straight ahead the torso flew through the lens)
-        ("Armor Snap", 2.85, 1.3, 0.4, ((3.0, 1.5, -3.3), (2.5, 1.5, -2.8))),
-        ("Armor Draw", 2.45, 1.25, 0.4, ((3.0, 1.2, -2.3), (2.6, 1.3, -1.9))),
-        ("Armor Ignite Face", 1.85, 1.87, 0.3, ((-0.25, 1.84, -1.0), (-0.15, 1.87, -0.78))),
+        ("Armor Snap", 3.05, 1.3, 0.4, ((3.0, 1.5, -3.3), (2.5, 1.5, -2.8))),
+        ("Armor Draw", 2.55, 1.25, 0.4, ((3.0, 1.2, -2.3), (2.6, 1.3, -1.9))),
+        ("Armor Ignite Face", 2.05, 1.87, 0.3, ((-0.25, 1.84, -1.0), (-0.15, 1.87, -0.78))),
         ("Armor Ignite", 1.85, 1.4, 0.5, ((-0.4, 1.6, -1.6), (-1.0, 1.9, -4.4))),
         # (the player's answer starts over the boss's shoulder, looking at the player: see Vessel Gesture)
         ("Vessel Answer", 1.8, 1.4, 0.6, ((0.75, 1.95, 1.7), (0.7, 1.9, 1.35))),
     )
+    # What he says over the shots (the cutscene's title line): the player must know where his armor comes from
+    lines = {"Armor Face": ("Did you think it was over?", 2.2),
+             "Armor Rift Sky": ("My treasure is not spent yet.", 1.6),
+             "Armor Ignite": ("Jeffrey Epstein, Armored in Sin", 1.6)}
     for name, seconds, height, blend, points in shots:
+        line, line_seconds = lines.get(name, ("", 0.0))
         shot = builder.add(named(name, cutscene={
             "duration_seconds": seconds,
             "look_at_entity": PLAYER_NAME if name.startswith("Vessel") else BOSS_NAME,
             "look_at_height": height, "animation_entity": "",
-            "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+            "animation_name": "", "animation_at_seconds": 0.0, "title": line, "title_seconds": line_seconds,
             "can_be_skipped": False, "video_file": "", "blend_in_seconds": blend}), parent=boss)
         for number, point in enumerate(points):
             builder.add(named(f"Camera Point {number + 1}", point), parent=shot)
