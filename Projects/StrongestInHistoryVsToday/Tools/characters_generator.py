@@ -808,8 +808,9 @@ CRYSTAL_ARMOR = {
     "bracer_r":   ("diddy_armor_bracer.glb", ("LowerArm_R",), "LowerArm_R", 1.02, "limb", 0.07),
     "greave_r":   ("diddy_armor_greave.glb", ("Shin_R",), "Shin_R", 1.12, "limb", 0.11),
 }
-# (the thighs covered too: the shin plate's model fitted along the thigh, its knee cap at the knee)
-CRYSTAL_ARMOR["cuisse_r"] = ("diddy_armor_greave.glb", ("Thigh_R",), "Thigh_R", 1.06, "limb", 0.13)
+# (the thighs covered too, by the bracer's model fitted along the thigh: it wraps around the limb - the shin plate's,
+# a plate in front with a knee cap, sat on the thigh as a lump at the knee)
+CRYSTAL_ARMOR["cuisse_r"] = ("diddy_armor_bracer.glb", ("Thigh_R",), "Thigh_R", 1.08, "limb", 0.13)
 MIRRORED = {"pauldron_r": "pauldron_l", "bracer_r": "bracer_l", "greave_r": "greave_l", "cuisse_r": "cuisse_l"}
 
 
