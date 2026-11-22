@@ -89,6 +89,16 @@ bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, Co
 		}, outHit);
 }
 
+bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
+	const std::vector<unsigned int>& ignoredEntityIDs, RaycastHit& outHit)
+{
+	return RaycastIgnoring(entityManager, ray, maxDistance, layerMask,
+		[&ignoredEntityIDs](unsigned int entityID)
+		{
+			return std::find(ignoredEntityIDs.begin(), ignoredEntityIDs.end(), entityID) != ignoredEntityIDs.end();
+		}, outHit);
+}
+
 }
 
 }

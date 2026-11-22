@@ -2,6 +2,7 @@
 
 #include <initializer_list>
 #include <limits>
+#include <vector>
 #include <glm/glm.hpp>
 
 #include "CollisionLayers.h"
@@ -36,6 +37,10 @@ bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, Co
 // The same, with any number of ignored entities, e.g. Raycast(..., { player, enemy }, hit) for a ray between two characters
 bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
 	std::initializer_list<unsigned int> ignoredEntityIDs, RaycastHit& outHit);
+
+// The same, with a list of ignored entities that grows while looking (past one see-through collider after another)
+bool Raycast(EntityManager& entityManager, const Ray& ray, float maxDistance, CollisionMask layerMask,
+	const std::vector<unsigned int>& ignoredEntityIDs, RaycastHit& outHit);
 
 }
 

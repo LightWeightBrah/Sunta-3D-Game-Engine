@@ -33,7 +33,9 @@ constexpr float WallMargin = 0.25f;
 // A camera pushed by a wall never comes closer to the player than this
 constexpr float MinDistanceFromPivot = 0.4f;
 // A hit nearer than this is a collider the pivot is inside of (see GetFreeDistance)
-constexpr float StartsInsideDistance = 0.02f;
+constexpr float StartsInsideDistance = 0.05f;
+// How many see-through colliders one look past the player may go through
+constexpr int   MostPassedThrough    = 8;
 
 // How quickly the camera moves back out after a wall stopped pushing it
 constexpr float DistanceReturnSharpness = 6.0f;
@@ -149,17 +151,16 @@ float GetFreeDistance(const FrameInfo& frame, const FollowCameraComponent& follo
 	// (and so is what the pivot itself is inside: the player standing on a heap of rubble has its collider around his
 	// head, every ray "hit" it at once and the camera sat at his neck)
 	auto isPassedThrough = [&isSeeThrough](const RaycastHit& hit) { return hit.distance < StartsInsideDistance || isSeeThrough(hit.entityID); };
+	// (any number of them in a row, up to a few: in a corner of an arena two unseen walls overlap a heap of rubble)
 	RaycastHit hit;
-	if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, frame.playerEntityID, hit))
-		return follow.distance;
-	if (isPassedThrough(hit))
+	std::vector<unsigned int> ignored = { frame.playerEntityID };
+	for (int passed = 0; ; ++passed)
 	{
-		const unsigned int first = hit.entityID;
-		if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, { frame.playerEntityID, first }, hit))
+		if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, ignored, hit))
 			return follow.distance;
-		if (isPassedThrough(hit)
-		    && !Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, { frame.playerEntityID, first, hit.entityID }, hit))
-			return follow.distance;
+		if (passed >= MostPassedThrough || !isPassedThrough(hit))
+			break;
+		ignored.push_back(hit.entityID);
 	}
 
 	const float freeLength = glm::clamp(hit.distance - WallMargin, MinDistanceFromPivot, wantedLength);
@@ -186,7 +187,9 @@ float ChooseRise(const FrameInfo& frame, const FollowCameraComponent& follow, co
 		up.origin    = follow.pivot;
 		up.direction = WorldUp;
 		RaycastHit hit;
-		if (Physics::Raycast(frame.entityManager, up, rise + WallMargin, SightBlockingLayers, frame.playerEntityID, hit))
+		// (what the pivot is inside of is no ceiling: standing in the box of a heap of rubble the camera never rose)
+		if (Physics::Raycast(frame.entityManager, up, rise + WallMargin, SightBlockingLayers, frame.playerEntityID, hit)
+		    && hit.distance >= StartsInsideDistance)
 			break;
 
 		const float raisedFree = GetFreeDistance(frame, follow, cameraOffset + WorldUp * rise);
