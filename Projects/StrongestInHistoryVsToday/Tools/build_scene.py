@@ -994,7 +994,8 @@ def add_armor_transformation(builder, boss):
         # (to the side of the paths of the plates: from straight ahead the torso flew through the lens)
         ("Armor Snap", 3.05, 1.3, 0.4, ((3.0, 1.5, -3.3), (2.5, 1.5, -2.8))),
         ("Armor Draw", 2.55, 1.25, 0.4, ((3.0, 1.2, -2.3), (2.6, 1.3, -1.9))),
-        ("Armor Ignite Face", 2.05, 1.87, 0.3, ((-0.25, 1.84, -1.0), (-0.15, 1.87, -0.78))),
+        # (aimed at his nose: aimed at his eyes, his mouth - the smile - was under the black bar)
+        ("Armor Ignite Face", 2.05, 1.7, 0.3, ((-0.25, 1.72, -1.05), (-0.15, 1.72, -0.82))),
         ("Armor Ignite", 1.85, 1.45, 0.5, ((-0.8, 1.5, -2.9), (-1.3, 1.75, -5.0))),
         # (the player's answer starts over the boss's shoulder, looking at the player: see Vessel Gesture)
         ("Vessel Answer", 1.8, 1.4, 0.6, ((0.75, 1.95, 1.7), (0.7, 1.9, 1.35))),

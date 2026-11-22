@@ -38331,7 +38331,7 @@
    "cutscene": {
     "duration_seconds": 2.05,
     "look_at_entity": "Boss",
-    "look_at_height": 1.87,
+    "look_at_height": 1.7,
     "animation_entity": "",
     "animation_name": "",
     "animation_at_seconds": 0.0,
@@ -38353,8 +38353,8 @@
    "transform": {
     "position": [
      -0.25,
-     1.84,
-     -1.0
+     1.72,
+     -1.05
     ],
     "rotation": [
      0.0,
@@ -38385,8 +38385,8 @@
    "transform": {
     "position": [
      -0.15,
-     1.87,
-     -0.78
+     1.72,
+     -0.82
     ],
     "rotation": [
      0.0,
