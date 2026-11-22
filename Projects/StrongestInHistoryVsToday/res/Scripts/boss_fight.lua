@@ -1607,6 +1607,7 @@ O.FallSeconds, O.FallFrom = 1.1, 16
 O.SwordFallAt, O.SwordInGround = 8.6, 1.45
 -- The two beats of the snap: the torso and the greaves, then the bracers (and his armored model put on)
 O.FirstSnapAt, O.SecondSnapAt = 10.8, 11.8
+O.SnapPose = "Hover"
 O.LiftFrom, O.BracersLiftFrom = 9.9, 11.0
 O.SlideSeconds, O.SmileAt, O.RefillAt, O.RiftAt = 1.2, 2.4, 3.6, 4.8
 O.WalkAt, O.GripAt, O.DrawAt, O.IgniteAt, O.StompAt, O.TransformEnds = 12.6, 13.25, 13.7, 15.4, 17.2, 18.8
@@ -1668,8 +1669,16 @@ end
 function O.pieceEntity(piece) return find("Armor Piece " .. piece) end
 
 -- A point around him: 'local' in his own space (front -Z), turned with him
+-- Which way he faces (degrees about Y, 0 = his front along -Z): from where he looks, not from his rotation's Euler
+-- angles - read back from his rotation they can come out as another set (180, y, 180), the plates were put on him
+-- turned a quarter, a shoulder plate hiding his head
+function O.facingYaw()
+    local f = this.transform.forward
+    return math.deg(math.atan(-f.x, -f.z))
+end
+
 function O.onHim(offset)
-    return this.transform.position + O.turned(offset, this.transform.rotation.y)
+    return this.transform.position + O.turned(offset, O.facingYaw())
 end
 
 function O.floorSpot(piece)
@@ -1747,7 +1756,7 @@ function O.updatePieces(tr)
         local entity = O.pieceEntity(piece)
         if entity and entity.model then
             local spot = O.floorSpot(piece)
-            local yaw = this.transform.rotation.y
+            local yaw = O.facingYaw()
             local fallAt = O.PieceFallAt[piece]
             local isBracer = piece == "bracer_l" or piece == "bracer_r"
             local liftFrom = isBracer and O.BracersLiftFrom or O.LiftFrom
@@ -1863,8 +1872,18 @@ function O.updateTransform(deltaTime)
     end
 
     -- 7.4-10.2: arms spread, the plates snap onto him in two beats
-    if at(O.LiftFrom) then this.characterActions:play("Idle") end
+    -- (squarely facing his front while the plates fly on: in his fighting stance (Idle) his body is turned a quarter
+    -- and the still plates sat across it, a shoulder plate over his head)
+    if at(O.LiftFrom) then this.characterActions:play(O.SnapPose) end
     if at(O.FirstSnapAt) then
+        -- The torso and the greaves are on him: his armored body from now (the loose plates never sat exactly on
+        -- his moving body - a shoulder plate stood over his head); only the bracers still fly on
+        if this.model then this.model.modelName = O.ArmoredModel end
+        for _, piece in ipairs({ "torso", "greave_l", "greave_r" }) do
+            local entity = O.pieceEntity(piece)
+            if entity and entity.model then entity.model.isVisible = false end
+        end
+        this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.torso), this.transform.forward)
         this.world:shakeCamera(0.55)
         Audio.playAt(O.MetalSound, this.transform.position, 1.4)
     end
