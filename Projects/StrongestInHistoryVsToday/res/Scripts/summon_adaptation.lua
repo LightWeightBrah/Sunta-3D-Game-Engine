@@ -19,8 +19,8 @@
 -- ('weaponDamageTaken', 'spellDamageTaken'), a state of its own ('Own Move') holds the engine's melee while it rushes
 -- or slams, and children of its entity are the wheel ("Summon Halo") and the blade ("Summon Blade")
 
-local HitsToAdapt   = 4      -- of one kind in a row
-local AdaptedTaken  = 0.2    -- the part of the damage that still gets through
+local HitsToAdapt   = 9      -- of one kind in a row (the player first sees it hurt normally)
+local AdaptedTaken  = 0.08   -- the part of the damage that still gets through
 local ForgetSeconds = 14     -- not hit by the kind it adapted to for this long: it forgets it
 local AdaptEffect   = "Adapt Burst"
 local AdaptSound    = "@game/Sounds/Boss/roar.ogg"

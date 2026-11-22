@@ -473,7 +473,19 @@ local function updateTide(deltaTime)
     if tide.next > Tide.Columns then tide = nil end
 end
 
+-- For testing the boss fight: true starts the player right before the fog of the arena instead of at the far end of
+-- the street (the test build turns it on, see Tools/build_arena_test.py)
+local StartAtArena = false
+local hasStarted = false
+
 function OnUpdate(deltaTime)
+    if not hasStarted then
+        hasStarted = true
+        if StartAtArena then
+            this.transform.position = vec3(0, 0.1, -15)
+            this.transform.rotation = vec3(0, 0, 0)
+        end
+    end
     updateAirThrow()
     updateTide(deltaTime)
     speakTechniques()

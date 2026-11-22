@@ -111,7 +111,8 @@ def make_soundtrack(film, song):
          + "[a][b]acrossfade=d=1.0:c1=tri:c2=tri[out]",
          "-map", "[out]", "-vn", "-c:a", "libvorbis", "-q:a", 5, os.path.join(folder, "fight.ogg")])
     run([ffmpeg(), "-y", "-loglevel", "error", "-i", song, "-af",
-         "atrim=start={},asetpts=PTS-STARTPTS,afade=t=in:d=0.3,aresample=44100".format(FIGHT_MUSIC_FROM),
+         # (without the song's silent end: the game loops it, a long silence came round on every loop)
+         "atrim=start={},asetpts=PTS-STARTPTS,afade=t=in:d=0.3,atrim=0:244.2,afade=t=out:st=242.4:d=1.8,aresample=44100".format(FIGHT_MUSIC_FROM),
          "-vn", "-c:a", "libvorbis", "-q:a", 6, os.path.join(folder, "fight_music.ogg")])
 
 

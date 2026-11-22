@@ -883,7 +883,8 @@ function O.startKnockback()
     local skid = clampToArena(land + away * O.KnockSkidMeters)
     skid.y = 0
 
-    this.characterActions:play("Knock_Flight")
+    -- (thrown flat, as the user liked it; then he lands into a skid on his feet)
+    this.characterActions:play("Knocked_Down")
     this.world:flash(vec3(1, 0.95, 0.85), 0.25, 0.05)
     this.world:effect("Punch Impact", from + vec3(0, 1.3, 0), -away)
     this.world:effect("Player Heavy Swing", from + vec3(0, 1.3, 0), -away)
@@ -1137,6 +1138,12 @@ end
 -- the player's answer has landed: then the stars are gone with the blast (O.endTechniqueHold)
 function O.holdForTechnique()
     if not O.holdingForTechnique then return end
+    -- (he stands where he is and takes it: he walked up and struck the player in the middle of the sign)
+    if not isChanneling then
+        isChanneling = true
+        O.isChannelingForTechnique = true
+        this.enemy:changeState("Channel")
+    end
     this.enemy:startAttackCooldown(1)
     rainIn, lineIn = math.max(rainIn, 2), math.max(lineIn, 2)
 
@@ -1187,6 +1194,10 @@ end
 
 function O.endTechniqueHold()
     O.holdingForTechnique = false
+    if O.isChannelingForTechnique then
+        O.isChannelingForTechnique = false
+        isChanneling = false
+    end
     if O.starsWaitForTechnique then
         O.starsWaitForTechnique = false
         local stars = O.stars()
@@ -1416,7 +1427,7 @@ function O.startAscension()
         end,
         -- A blast of red fire out of him, and he rises on the seal's power
         function()
-            this.world:flash(vec3(1.0, 0.2, 0.1), 0.8, 0.08)
+            this.world:flash(vec3(0.6, 0.25, 0.18), 0.18, 0.0)
             O.groundBlast(ground, 0, 0, 1.0)
             local aura = find(O.AscensionAura)
             if aura and aura.particles then aura.particles.isEmitting = true end
@@ -1570,6 +1581,8 @@ O.Shots = { { 0.0, "Armor Fakeout" }, { 1.2, "Armor Face" }, { 4.8, "Armor Rift 
 
 -- His smile (the expression shape of his face): on over this long
 O.SmileSeconds = 0.9
+-- (part of the way: the full shape looked strange in the close shots)
+O.SmileAmount = 0.55
 O.ArmorTitle = "Jeffrey Epstein, Armored in Sin"
 O.Blood = {
     -- (red, but light enough that he is seen: the close shots of his face are in it)
@@ -1767,7 +1780,7 @@ function O.updateTransform(deltaTime)
     end
     if at(O.SlideSeconds) then this.characterActions:play("Idle") end
     if at(O.SmileAt) and this.model then
-        O.tween(function(v) if this.model then this.model.expression = v end end, 0, 1, O.SmileSeconds)
+        O.tween(function(v) if this.model then this.model.expression = v end end, 0, O.SmileAmount, O.SmileSeconds)
     end
     if at(O.RefillAt) then
         this.world:flash(vec3(0.55, 0.12, 0.08), 0.12, 0.02)
@@ -1815,7 +1828,7 @@ function O.updateTransform(deltaTime)
     end
 
     -- 7.4-10.2: arms spread, the plates snap onto him in two beats
-    if at(O.LiftFrom) then this.characterActions:play("Power_Up") end
+    if at(O.LiftFrom) then this.characterActions:play("Idle") end
     if at(O.FirstSnapAt) then
         this.world:shakeCamera(0.55)
         Audio.playAt(O.MetalSound, this.transform.position, 1.4)
@@ -1825,7 +1838,7 @@ function O.updateTransform(deltaTime)
         if this.model then this.model.modelName = O.ArmoredModel end
         O.hideArmorProps()
         if dropped and dropped.model then dropped.model.isVisible = true end
-        this.characterActions:play("Power_Up")
+        this.characterActions:play("Idle")
         this.world:shakeCamera(0.7)
         this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_l), this.transform.forward)
         this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_r), this.transform.forward)
@@ -1857,7 +1870,7 @@ function O.updateTransform(deltaTime)
         O.sealTarget = 1.2
         O.setSwordFire(28)
         Audio.playAt(RoarSound, this.transform.position, 1.3)
-        O.tween(function(v) if this.model then this.model.expression = v end end, 0, 1, O.SmileSeconds * 0.7)
+        O.tween(function(v) if this.model then this.model.expression = v end end, 0, O.SmileAmount, O.SmileSeconds * 0.7)
     end
     if at(O.StompAt) then
         this.world:effect("Armor Stomp", this.transform.position + vec3(0, 0.1, 0), this.transform.forward)
@@ -2423,7 +2436,8 @@ end
 
 -- Once in the first phase: both rise into the air facing each other; he makes his sign and shoots his stars, the
 -- player forms a ball of baby oil over his palm and throws it; they meet in the middle in a blast; both come down.
-O.AirFight = { At = 10.5, Height = 4.5, Distance = 11, RiseSeconds = 1.2,
+-- (off: the user found it random, out of nowhere at the start of the fight)
+O.AirFight = { IsOn = false, At = 10.5, Height = 4.5, Distance = 11, RiseSeconds = 1.2,
                Shots = { "Air Rise", "Air Diddy", "Air Clash" }, Seconds = { 1.6, 2.0, 1.8 } }
 
 function O.startAirFight()
@@ -2526,9 +2540,8 @@ function O.startAirFight()
         function()
             this.world:burst(O.SkidDust, bossGround, 16)
             this.world:burst(O.SkidDust, playerGround, 16)
-            this.characterActions:play("Idle")
-            O.playPlayer("Idle")
             float(false)
+            O.restorePlayer()
             isChanneling = false
         end,
     })
@@ -2644,11 +2657,18 @@ function O.startSkyBrawl()
             return 0.8
         end,
         function()
-            this.characterActions:play("Idle")
-            O.playPlayer("Idle")
+            O.restorePlayer()
             isChanneling = false
         end,
     })
+end
+
+-- After a staged moment, and whenever the fight starts over: the player falls again and acts again
+function O.restorePlayer()
+    local player = find(PlayerName)
+    if not player then return end
+    if player.physicsBody then player.physicsBody.useGravity = true end
+    if this.physicsBody then this.physicsBody.useGravity = true end
 end
 
 -- ========== The stand-off (film 0:58-1:05) ==========
@@ -2657,7 +2677,7 @@ end
 -- the player's shoulder at him; close on his face as he smiles; and both run at each other - then the fight goes on.
 -- Once, at this second of the soundtrack (the film's 0:58), in the first phase
 O.Standoff = { At = 21.8, Distance = 12, Shots = { "Standoff Boss Side", "Standoff Player Side", "Standoff Smile",
-               "Standoff Charge" }, Seconds = { 2.8, 2.0, 1.6, 1.3 }, ChargeSpeed = 7.5 }
+               "Standoff Charge" }, Seconds = { 2.8, 2.0, 1.6, 1.3 }, ChargeSpeed = 7.5, ClashGap = 1.7 }
 
 function O.startStandoff()
     local player = find(PlayerName)
@@ -2701,7 +2721,7 @@ function O.startStandoff()
         function()
             this.characterActions:play("Idle")
             playCutscene(S.Shots[3])
-            O.tween(function(v) if this.model then this.model.expression = v end end, 0, 1, 0.7)
+            O.tween(function(v) if this.model then this.model.expression = v end end, 0, O.SmileAmount, 0.7)
             return S.Seconds[3]
         end,
         -- Both run at each other (film 1:04-1:05)
@@ -2711,22 +2731,34 @@ function O.startStandoff()
             this.characterActions:play("Run")
             O.playPlayer("Run")
             playCutscene(S.Shots[4])
+            local hasClashed = false
             show.during = function(deltaTime)
                 local b, p = this.transform.position, player.transform.position
                 local between = p - b
                 between.y = 0
-                if between:length() > 2.2 then
-                    local step = between:normalized() * (S.ChargeSpeed * deltaTime)
+                if between:length() > S.ClashGap then
+                    local step = between:normalized() * math.min(S.ChargeSpeed * deltaTime, (between:length() - S.ClashGap) * 0.5)
                     this.transform.position = b + step
                     player.transform.position = p - step
+                elseif not hasClashed then
+                    -- (they meet: fist against fist, a blast between them - not walking into each other)
+                    hasClashed = true
+                    this.characterActions:play("Attack_Light_2")
+                    O.playPlayer("Attack_Light_2")
+                    after(0.25, function()
+                        local mid = (this.transform.position + player.transform.position) * 0.5 + vec3(0, 1.4, 0)
+                        this.world:effect("Punch Impact", mid, between:normalized())
+                        this.world:impactFrame(0.8, 0.3)
+                        this.world:shakeCamera(0.7)
+                        Audio.play(BoomSound, 0.8)
+                    end)
                 end
             end
-            return S.Seconds[4]
+            return S.Seconds[4] + 0.4
         end,
         function()
             isChanneling = false
-            this.characterActions:play("Idle")
-            O.playPlayer("Idle")
+            O.restorePlayer()
         end,
     })
 end
@@ -2738,7 +2770,7 @@ local function updatePhases()
         O.startSkyBrawl()
         return
     end
-    if phase == 1 and not O.hasFoughtInAir and not O.wantsKnockback and clock() >= O.AirFight.At and isFreeToAct() then
+    if O.AirFight.IsOn and phase == 1 and not O.hasFoughtInAir and not O.wantsKnockback and clock() >= O.AirFight.At and isFreeToAct() then
         O.startAirFight()
         return
     end
@@ -2779,6 +2811,7 @@ local function reset()
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
     O.hasStoodOff, O.hasFoughtInAir, O.hasSkyBrawled = false, false, false
+    if O.restorePlayer then O.restorePlayer() end
     if this.lockOnTarget then this.lockOnTarget.isLockable = true end
     phase = 0
     seconds = 0

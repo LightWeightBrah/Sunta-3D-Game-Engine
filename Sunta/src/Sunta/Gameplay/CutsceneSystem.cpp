@@ -68,7 +68,7 @@ constexpr float     PromptHeight = 30.0f;
 // A many-press moment (waitPresses): the button on the screen, how fast its pop fades, how hard each press shakes
 constexpr float     PressButtonRadiusOfHeight = 0.065f;
 constexpr float     PressPopFadePerSecond     = 7.0f;
-constexpr float     PressShake                = 0.25f;
+constexpr float     PressShake                = 0.15f;
 const glm::vec4     HintColor   = glm::vec4(0.7f, 0.7f, 0.7f, 0.6f);
 const glm::vec3     WorldUp     = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -456,10 +456,7 @@ void CutsceneSystem::Update(EntityManager& entityManager, float deltaTime)
 			{
 				// (done: a flash of the screen and a hard jolt)
 				if (cutscene.waitPresses > 1)
-				{
-					HUDSystem::FlashScreen(glm::vec3(1.0f, 0.95f, 0.8f), 0.35f);
-					FollowCameraSystem::Shake(entityManager, PressShake * 3.0f);
-				}
+					FollowCameraSystem::Shake(entityManager, PressShake * 2.0f);
 				cutscene.wasAnswered = true;
 				Finish(entityManager, cutscene);
 				continue;
@@ -564,19 +561,20 @@ void CutsceneSystem::DrawOverlay(EntityManager& entityManager, const glm::vec2& 
 			{
 				const float part   = glm::clamp(cutscene.pressProgress / static_cast<float>(cutscene.waitPresses), 0.0f, 1.0f);
 				const float pop    = cutscene.pressPop * cutscene.pressPop;
-				const float radius = areaSize.y * PressButtonRadiusOfHeight * (1.0f + 0.22f * pop);
+				const float radius = areaSize.y * PressButtonRadiusOfHeight * (1.0f + 0.08f * pop);
 				const glm::vec2 center = areaTopLeft + glm::vec2(areaSize.x * 0.5f, areaSize.y * 0.6f);
 				const glm::vec4 gold = glm::vec4(glm::vec3(TitleColor), fadeIn);
 
-				UIRenderer::DrawDisc(center, radius * 1.32f, glm::vec4(0.0f, 0.0f, 0.0f, 0.55f * fadeIn));
-				UIRenderer::DrawRing(center, radius * 1.22f, radius * 0.14f, 1.0f, glm::vec4(0.25f, 0.2f, 0.15f, 0.8f * fadeIn));
-				UIRenderer::DrawRing(center, radius * 1.22f, radius * 0.16f, part, gold);
-				UIRenderer::DrawDisc(center, radius, glm::vec4(glm::mix(glm::vec3(0.12f, 0.1f, 0.08f), glm::vec3(TitleColor), 0.35f + 0.65f * pop), fadeIn));
-				std::string key = cutscene.waitForKey;
+				// (quiet colors: a dark translucent button, a thin gold ring, the key in gold - it only brightens a little)
+				UIRenderer::DrawRing(center, radius * 1.18f, radius * 0.07f, 1.0f, glm::vec4(0.2f, 0.17f, 0.13f, 0.5f * fadeIn));
+				UIRenderer::DrawRing(center, radius * 1.18f, radius * 0.08f, part, glm::vec4(glm::vec3(TitleColor), 0.85f * fadeIn));
+				UIRenderer::DrawDisc(center, radius, glm::vec4(glm::vec3(0.08f, 0.07f, 0.06f) + glm::vec3(0.08f) * pop, 0.6f * fadeIn));
+				std::string key = cutscene.waitForKey == " " ? std::string("SPACE") : cutscene.waitForKey;
 				for (char& letter : key)
 					letter = static_cast<char>(std::toupper(static_cast<unsigned char>(letter)));
-				UIRenderer::DrawTextCentered(key, center + glm::vec2(0.0f, radius * 0.05f), radius * 1.1f,
-					glm::vec4(glm::mix(glm::vec3(TitleColor), glm::vec3(0.1f), pop), fadeIn));
+				const float keyHeight = key.size() > 1 ? radius * 0.45f : radius * 0.9f;
+				UIRenderer::DrawTextCentered(key, center + glm::vec2(0.0f, radius * 0.04f), keyHeight,
+					glm::vec4(glm::vec3(TitleColor) * (0.85f + 0.15f * pop), 0.9f * fadeIn));
 			}
 		}
 
