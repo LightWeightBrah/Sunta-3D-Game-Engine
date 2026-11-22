@@ -42157,6 +42157,46 @@
   },
   {
    "tag": {
+    "name": "Summon Float"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 5.2,
+    "look_at_entity": "",
+    "look_at_height": 0.0,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "@game/Videos/summon_float.mpg"
+   }
+  },
+  {
+   "tag": {
     "name": "Summon Wheel"
    },
    "transform": {

@@ -47,6 +47,7 @@ FIGHT_MUSIC_FROM = 70.482
 VIDEOS = {
     "intro.mpg":        (0.0, 36.2),     # the opening
     "domain_smile.mpg": (94.72, 97.10),  # his smile, the white eyes, the black shape before the blast
+    "summon_float.mpg": (151.4, 156.6),  # he hangs in the air on his back over the burning city, then his face close
     "summon_wheel.mpg": (156.6, 160.3),  # the wheel that turns before the summoning
 }
 

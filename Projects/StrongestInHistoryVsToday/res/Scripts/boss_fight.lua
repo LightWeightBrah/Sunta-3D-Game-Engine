@@ -2303,35 +2303,39 @@ local function startSummonPhase()
     local floated = 0
 
     startShow({
-        -- (film 2:31) "He is doing better than I expected."
+        -- (film 2:31) "He is doing better than I expected." - the film's own pictures of him floating on his back
+        -- over the burning city as he speaks, and he rises in the game meanwhile: up and back, away from the player
         function()
             Audio.play(O.VoiceBetter, O.VoiceVolume)
-            this.enemy:lookAtTarget(true)
-            showCaption("He is doing better than I expected.", 2.6)
-            return 2.9
-        end,
-        -- (film 2:34) "Well, with this treasure I summon..." - and he rises into the air
-        function()
-            Audio.play(O.VoiceTreasure, O.VoiceVolume)
-            showCaption("Well, with this treasure I summon...", 2.5)
-            -- (levitating, not the death fall: that take dropped him on his back while the script lifted him,
-            -- so he jerked between falling and rising)
+            playCutscene(O.FloatCutscene)
             this.characterActions:play("Hover")
-            this.world:slowMotion(FloatSeconds, 0.6)
+            local player = find(PlayerName)
+            local away = player and (ground - player.transform.position) or vec3(0, 0, -1)
+            away.y = 0
+            away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
             local hovered = 0
-            show.during = function(deltaTime)
-                floated = math.min(floated + deltaTime / FloatSeconds, 1)
+            O.floatDuring = function(deltaTime)
+                floated = math.min(floated + deltaTime / O.FloatRiseSeconds, 1)
                 hovered = hovered + deltaTime
                 local eased = floated * floated * (3 - 2 * floated)
-                this.transform.position = ground + vec3(0, FloatHeight * eased + math.sin(hovered * 3) * 0.08 * eased, 0)
+                this.transform.position = clampToArena(ground + away * (O.FloatBackMeters * eased))
+                    + vec3(0, FloatHeight * eased + math.sin(hovered * 2.2) * 0.12 * eased, 0)
             end
-            return FloatSeconds
+            show.during = O.floatDuring
+            return 2.9
+        end,
+        -- (film 2:34) "Well, with this treasure I summon..."
+        function()
+            Audio.play(O.VoiceTreasure, O.VoiceVolume)
+            show.during = O.floatDuring
+            return 2.3
         end,
         function()
             this.world:flash(vec3(1, 1, 1), 0.4, 0.1)
             playCutscene(WheelCutscene)
             -- (film 2:37) "47th President of the United States, Donald J. Trump." over the turning wheel
             after(0.5, function() Audio.play(O.VoicePresident, O.VoiceVolume) end)
+            return 3.7
         end,
         function()
             this.transform.position = ground
@@ -2608,6 +2612,8 @@ O.PlayerDomainCrashAt = 4.0
 -- His lines from the film (the music no longer carries them)
 O.VoiceDomain    = "@game/Sounds/Voice/epstein_domain_expansion.ogg"
 O.VoiceBetter    = "@game/Sounds/Voice/epstein_better_than_expected.ogg"
+-- The film's pictures over his two lines before the summoning; meanwhile he rises up and back over this long, this far
+O.FloatCutscene, O.FloatRiseSeconds, O.FloatBackMeters = "Summon Float", 4.5, 6
 O.VoiceTreasure  = "@game/Sounds/Voice/epstein_treasure_summon.ogg"
 O.VoicePresident = "@game/Sounds/Voice/epstein_president_trump.ogg"
 O.VoiceVolume    = 1.5
@@ -2672,6 +2678,8 @@ function OnUpdate(deltaTime)
 
     -- A cutscene holds the fight still, but the world goes on changing (the temple rising in the domain's reveal)
     if this.world.isCutscenePlaying then
+        -- (a staged moment's steps are timed to the voices: they go on under the film's pictures)
+        if show then updateShow(deltaTime) end
         if phase > 0 then
             updateOpening()
             O.updateRise(deltaTime)

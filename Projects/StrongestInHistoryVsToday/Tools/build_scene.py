@@ -1373,6 +1373,11 @@ def add_fight(builder):
         "duration_seconds": 2.4, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
         "video_file": "@game/Videos/domain_smile.mpg"}))
+    # The film's own pictures of him floating on his back over the burning city as he speaks (2:31.4-2:36.6)
+    builder.add(named("Summon Float", cutscene={
+        "duration_seconds": 5.2, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
+        "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
+        "video_file": "@game/Videos/summon_float.mpg"}))
     builder.add(named("Summon Wheel", cutscene={
         "duration_seconds": 3.7, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
