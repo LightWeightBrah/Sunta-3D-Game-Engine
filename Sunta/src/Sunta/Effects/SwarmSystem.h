@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <glm/glm.hpp>
 
 namespace Sunta
@@ -29,6 +30,10 @@ public:
 	// The copies come down, one after another (see SwarmComponent)
 	static void Fall(SwarmComponent& swarm);
 	static void Reset(SwarmComponent& swarm);
+
+	// The stuck copies within 'radius' meters of 'center' (across the ground) break and are gone; where each one
+	// was is added to 'broken' (a wave that runs over the ground breaks them one after another as it reaches them)
+	static void BreakWithin(SwarmComponent& swarm, const glm::vec3& center, float radius, std::vector<glm::vec3>& broken);
 };
 
 }

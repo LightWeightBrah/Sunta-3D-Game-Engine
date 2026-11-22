@@ -8,6 +8,7 @@
 #include "ECS/Entity.h"
 #include "ECS/Component.h"
 #include "Gameplay/CharacterActionsSystem.h"
+#include "Gameplay/CharacterAnimationComponent.h"
 #include "Gameplay/CutsceneSystem.h"
 #include "Gameplay/EntityName.h"
 #include "Scene/EntityHierarchy.h"
@@ -59,6 +60,7 @@ using LockOnHandle        = ComponentHandle<LockOnComponent>;
 using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
 using HealthHandle        = ComponentHandle<HealthComponent>;
 using CharacterActionsHandle = ComponentHandle<CharacterActionsComponent>;
+using CharacterAnimationHandle = ComponentHandle<CharacterAnimationComponent>;
 using EnemyHandle         = ComponentHandle<EnemyComponent>;
 using MeleeEnemyHandle    = ComponentHandle<MeleeEnemyComponent>;
 using BossHandle          = ComponentHandle<BossComponent>;
@@ -552,6 +554,16 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 		"hyperArmor",            MemberProperty(&CharacterActionsComponent::hyperArmor,            0),
 		"attackReach",           MemberProperty(&CharacterActionsComponent::attackReach,           0.0f)
 	);
+
+	// Usage in Lua: this.characterAnimation.idleAnimation = "Float" (hanging in the air: standing is floating now),
+	// this.characterAnimation.lockedOnIdleAnimation = "" (the idle while locked on too); set them back afterwards
+	lua.new_usertype<CharacterAnimationHandle>("CharacterAnimation", sol::no_constructor,
+		"idleAnimation",         MemberProperty(&CharacterAnimationComponent::idleAnimation,         std::string()),
+		"walkAnimation",         MemberProperty(&CharacterAnimationComponent::walkAnimation,         std::string()),
+		"runAnimation",          MemberProperty(&CharacterAnimationComponent::runAnimation,          std::string()),
+		"lockedOnIdleAnimation", MemberProperty(&CharacterAnimationComponent::lockedOnIdleAnimation, std::string()),
+		"blendSeconds",          MemberProperty(&CharacterAnimationComponent::blendSeconds,          0.2f)
+	);
 }
 
 void LuaBindings::RegisterHealthComponent(sol::state& lua)
@@ -862,6 +874,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>(),
 		"health",              ComponentHandleProperty<HealthComponent>(),
 		"characterActions",    ComponentHandleProperty<CharacterActionsComponent>(),
+		"characterAnimation",  ComponentHandleProperty<CharacterAnimationComponent>(),
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),
 		"meleeEnemy",          ComponentHandleProperty<MeleeEnemyComponent>(),
 		"boss",                ComponentHandleProperty<BossComponent>(),
@@ -1159,6 +1172,19 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 			{
 				if (SwarmComponent* swarm = handle.TryGetComponent())
 					SwarmSystem::Reset(*swarm);
+			},
+		// for _, at in ipairs(s:breakWithin(center, 12)) do ... end: the stuck copies that close break (a list of
+		// where they were, for an effect on each)
+		"breakWithin", [](const SwarmHandle& handle, const glm::vec3& center, float radius, sol::this_state state)
+			{
+				std::vector<glm::vec3> broken;
+				if (SwarmComponent* swarm = handle.TryGetComponent())
+					SwarmSystem::BreakWithin(*swarm, center, radius, broken);
+				sol::state_view lua(state);
+				sol::table list = lua.create_table();
+				for (std::size_t i = 0; i < broken.size(); ++i)
+					list[i + 1] = broken[i];
+				return list;
 			}
 	);
 

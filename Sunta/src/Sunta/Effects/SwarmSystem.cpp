@@ -227,11 +227,28 @@ void SwarmSystem::Reset(SwarmComponent& swarm)
 	{
 		piece.isFalling = false;
 		piece.isStuck   = false;
+		piece.isBroken  = false;
 		piece.heat      = 0.0f;
 		piece.stuckFor  = 0.0f;
 	}
 	swarm.instances.clear();
 	swarm.streaks.clear();
+}
+
+void SwarmSystem::BreakWithin(SwarmComponent& swarm, const glm::vec3& center, float radius, std::vector<glm::vec3>& broken)
+{
+	for (SwarmComponent::Piece& piece : swarm.pieces)
+	{
+		if (!piece.isStuck || piece.isBroken)
+			continue;
+
+		const glm::vec2 across(piece.position.x - center.x, piece.position.z - center.z);
+		if (glm::dot(across, across) > radius * radius)
+			continue;
+
+		piece.isBroken = true;
+		broken.push_back(piece.position);
+	}
 }
 
 void SwarmSystem::Clear(EntityManager& entityManager)
@@ -267,6 +284,9 @@ void SwarmSystem::Update(EntityManager& entityManager, float deltaTime)
 
 		for (SwarmComponent::Piece& piece : swarm.pieces)
 		{
+			if (piece.isBroken)
+				continue;
+
 			float scale = swarm.pieceSize * piece.size;
 
 			if (!piece.isFalling && !piece.isStuck)

@@ -96,6 +96,7 @@ struct SwarmComponent
 		// The fall
 		bool      isFalling = false;
 		bool      isStuck   = false;
+		bool      isBroken  = false;   // struck by something after it stuck: gone (SwarmSystem::BreakWithin)
 		glm::vec3 position  = glm::vec3(0.0f);
 		glm::quat rotation  = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 		float     heat      = 0.0f;
