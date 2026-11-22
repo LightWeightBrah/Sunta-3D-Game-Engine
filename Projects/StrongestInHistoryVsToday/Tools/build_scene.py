@@ -850,7 +850,7 @@ def add_player(builder):
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
         "can_be_skipped": False, "video_file": "", "wait_for_key": "2",
         # (a quick-time event: [2] again and again, quickly, a blow felt with each press, until he is up)
-        "wait_presses": 8, "press_window_seconds": 0.4, "press_sound": "@game/Sounds/Brawl/Punch",
+        "wait_presses": 8, "press_window_seconds": 0.5, "press_sound": "@game/Sounds/Brawl/Punch",
         "wait_prompt": "Mash [2] to rise   -   Imaginary Technique: Baby Oil Detonation"}), parent=player)
     # (a cut, high beside him: the stars that threw him down stuck around him, and him; no flight across the arena)
     for index, point in enumerate(((3.4, 3.0, 2.6), (3.0, 2.6, 1.2))):
@@ -1011,8 +1011,10 @@ def add_armor_transformation(builder, boss):
     # them in the clouds while the player mashes [Space] - a blow of his with every press (a quick-time event)
     standoff = standoff + (
         ("Sky Leap", 1.2, BOSS_NAME, 1.2, BOSS_NAME, ((3.5, 0.4, -4.5), (3.0, 2.5, -4.0))),
-        ("Sky Brawl", 2.0, BOSS_NAME, 1.5, BOSS_NAME, ((5.6, 2.2, -4.0), (6.2, 1.9, 1.0), (2.8, 2.2, 5.4))),
-        ("Sky Fall", 1.4, BOSS_NAME, 1.0, BOSS_NAME, ((-3.0, 3.5, -3.0), (-3.5, 2.0, -4.0))),
+        # (close beside them, level with them, high over the roofs: the sky, the clouds and the city far below behind them as
+        # in the film - from above, the street under them looked like the ground they stood on)
+        ("Sky Brawl", 2.0, BOSS_NAME, 1.5, BOSS_NAME, ((4.4, 1.3, -1.8), (4.6, 1.1, -0.7), (4.2, 1.3, 0.4))),
+        ("Sky Fall", 1.4, BOSS_NAME, 1.0, BOSS_NAME, ((-3.0, 2.5, -3.5), (-3.5, 1.5, -4.5))),
     )
     # The fight in the air (film 0:40-0:50, boss_fight.lua O.AirFight): low looking up at both rising, beside the player
     # as the ball of oil grows over his palm, wide from the side as they throw and it bursts between them

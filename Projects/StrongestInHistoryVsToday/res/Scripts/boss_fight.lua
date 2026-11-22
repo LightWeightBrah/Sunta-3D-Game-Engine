@@ -2626,7 +2626,7 @@ end
 
 -- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
 -- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
-O.SkyBrawl = { At = 95, Height = 9, Gap = 1.6, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
+O.SkyBrawl = { At = 95, Height = 75, Gap = 1.6, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
                "Attack_Light_3", "Attack_Light_4" } }
 
 function O.startSkyBrawl()
@@ -2657,7 +2657,7 @@ function O.startSkyBrawl()
     float(true)
     local risen, punch, pushed = 0, 0, 0
     local function inTheSky(deltaTime)
-        risen = math.min(risen + deltaTime / 0.9, 1)
+        risen = math.min(risen + deltaTime / B.RiseSeconds, 1)
         local e = 1 - (1 - risen) * (1 - risen)
         local bob = math.sin(seconds * 3) * 0.15
         this.transform.position = ground + up * e + vec3(0, bob, 0)
@@ -2679,12 +2679,20 @@ function O.startSkyBrawl()
         -- The brawl: held until the player has struck enough (a blow and a reel for every press)
         function()
             playCutscene("Sky Brawl")
-            local mid = (this.transform.position + player.transform.position) * 0.5
-            for i = 0, 2 do
-                after(i * 0.5, function() this.world:effect("Sky Clouds", mid + vec3(0, -3.0, 0), this.transform.forward) end)
-            end
+            local cloudsIn = 0
             show.during = function(deltaTime)
                 inTheSky(deltaTime)
+                -- Clouds drift under and past them the whole time (the film: they fight among the clouds)
+                cloudsIn = cloudsIn - deltaTime
+                if cloudsIn <= 0 then
+                    cloudsIn = B.CloudsEvery
+                    local mid = (this.transform.position + player.transform.position) * 0.5
+                    local a = math.random() * math.pi * 2
+                    local r = 5 + math.random() * 7
+                    this.world:effect("Sky Clouds", mid + vec3(math.cos(a) * r, -2.5 - math.random() * 3, math.sin(a) * r),
+                        this.transform.forward)
+                    this.world:effect("Sky Clouds", mid + vec3(0, -4.0, 0), this.transform.forward)
+                end
                 -- (an exchange, not a beating: every third press he blocks and strikes back, the player reels)
                 pushed = math.max(pushed - deltaTime * 3, 0)
                 this.transform.position = this.transform.position - along * pushed
@@ -2724,12 +2732,12 @@ function O.startSkyBrawl()
             local land = clampToArena(ground - along * 6)
             land.y = 0
             show.during = function(deltaTime)
-                fall = math.min(fall + deltaTime / 0.7, 1)
+                fall = math.min(fall + deltaTime / B.FallSeconds, 1)
                 local across = mix(from, land, fall)
                 this.transform.position = vec3(across.x, from.y * (1 - fall * fall), across.z)
                 player.transform.position = mix(pFrom, playerGround, fall * fall)
             end
-            return 0.7
+            return B.FallSeconds
         end,
         -- He crashes into the ground and skids
         function()

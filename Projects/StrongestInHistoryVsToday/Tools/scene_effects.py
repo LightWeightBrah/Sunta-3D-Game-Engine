@@ -268,9 +268,9 @@ def add_technique_effects(builder):
 
     # Clouds of smoke around the two fighting in the sky (film 2:11-2:16): big slow grey-white puffs drifting out
     # (under and around them, not over them: a thick white cloud washed both fighters out)
-    (Effect(builder, "Sky Clouds", root_specks=dust(14, 5.0, lifetime=3.5, size=3.0, end_size=6.0,
-                                                   color=(0.45, 0.43, 0.43)))
-     .specks("Dark", dust(10, 4.0, lifetime=4.0, size=3.5, end_size=7.0, color=(0.18, 0.16, 0.16))))
+    (Effect(builder, "Sky Clouds", root_specks=dust(16, 3.0, lifetime=4.0, size=5.0, end_size=9.0,
+                                                   color=(0.78, 0.77, 0.8)))
+     .specks("Dark", dust(10, 2.5, lifetime=4.5, size=5.0, end_size=10.0, color=(0.32, 0.31, 0.34))))
 
     # The ball of baby oil bursting like a liquid (film 2:30): a white splash out of its middle, thousands of drops
     # thrown out and raining down, a ring of oil racing over the ground, a mist of it hanging (no fire, no cubes)
