@@ -2533,6 +2533,123 @@ function O.startAirFight()
     })
 end
 
+-- ========== The fist fight in the sky (film 2:11-2:16) ==========
+
+-- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
+-- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
+O.SkyBrawl = { At = 95, Height = 9, Gap = 1.6, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
+               "Attack_Light_3", "Attack_Light_4" } }
+
+function O.startSkyBrawl()
+    local player = find(PlayerName)
+    if not player then return end
+    O.hasSkyBrawled = true
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    becomeInvulnerable(30)
+    local B = O.SkyBrawl
+    local ground = this.transform.position
+    local toPlayer = player.transform.position - ground
+    toPlayer.y = 0
+    local along = toPlayer:length() > 0.5 and toPlayer:normalized() or vec3(0, 0, 1)
+    local playerGround = clampToArena(ground + along * B.Gap)
+    playerGround.y = 0
+    local up = vec3(0, B.Height, 0)
+    local function float(isOn)
+        for _, who in ipairs({ this, player }) do
+            if who.physicsBody then who.physicsBody.useGravity = not isOn; who.physicsBody.velocity = vec3(0, 0, 0) end
+        end
+    end
+    local function face()
+        local b, p = this.transform.position, player.transform.position
+        this.transform.rotation = vec3(0, O.yawToward(b, p) + 180, 0)
+        player.transform.rotation = vec3(0, O.yawToward(p, b) + 180, 0)
+    end
+    float(true)
+    local risen, punch = 0, 0
+    local function inTheSky(deltaTime)
+        risen = math.min(risen + deltaTime / 0.9, 1)
+        local e = 1 - (1 - risen) * (1 - risen)
+        local bob = math.sin(seconds * 3) * 0.15
+        this.transform.position = ground + up * e + vec3(0, bob, 0)
+        player.transform.position = playerGround + up * e + vec3(0, bob, 0)
+        face()
+    end
+
+    startShow({
+        function()
+            this.world:burst(O.SkidDust, ground, 30)
+            this.world:effect("Crash Impact", ground, this.transform.forward)
+            this.world:shakeCamera(0.8)
+            O.playPlayer("Jump")
+            this.characterActions:play("Hover")
+            playCutscene("Sky Leap")
+            show.during = inTheSky
+            return 1.2
+        end,
+        -- The brawl: held until the player has struck enough (a blow and a reel for every press)
+        function()
+            playCutscene("Sky Brawl")
+            local mid = (this.transform.position + player.transform.position) * 0.5
+            for i = 0, 2 do
+                after(i * 0.5, function() this.world:effect("Sky Clouds", mid + vec3(0, -1.5 + i, 0), this.transform.forward) end)
+            end
+            show.during = function(deltaTime)
+                inTheSky(deltaTime)
+                if Input.isKeyDown(Key.Space) then
+                    punch = punch % #B.Punches + 1
+                    O.playPlayer(B.Punches[punch])
+                    this.characterActions:play("Hit")
+                    local at = (this.transform.position + player.transform.position) * 0.5 + vec3(0, 1.4, 0)
+                    this.world:effect("Punch Impact", at, player.transform.forward)
+                    this.world:impactFrame(0.5, 0.15)
+                end
+                local shot = find("Sky Brawl")
+                if shot and shot.cutscene and shot.cutscene.wasAnswered then show.waitLeft = 0 end
+            end
+            return 999
+        end,
+        -- The last blow: he is hurled down to the ground
+        function()
+            O.playPlayer("Attack_Heavy")
+            this.characterActions:play("Knock_Flight")
+            this.world:flash(vec3(1, 0.95, 0.85), 0.15, 0.0)
+            this.world:impactFrame(1.0, 0.5)
+            this.world:shakeCamera(1.0)
+            Audio.play(BoomSound, 1.0)
+            playCutscene("Sky Fall")
+            local fall = 0
+            local from, pFrom = this.transform.position, player.transform.position
+            local land = clampToArena(ground - along * 6)
+            land.y = 0
+            show.during = function(deltaTime)
+                fall = math.min(fall + deltaTime / 0.7, 1)
+                local across = mix(from, land, fall)
+                this.transform.position = vec3(across.x, from.y * (1 - fall * fall), across.z)
+                player.transform.position = mix(pFrom, playerGround, fall * fall)
+            end
+            return 0.7
+        end,
+        -- He crashes into the ground and skids
+        function()
+            this.world:effect("Crash Impact", this.transform.position, this.transform.forward)
+            this.world:burst(O.SkidDust, this.transform.position, 30)
+            this.world:shakeCamera(0.9)
+            this.characterActions:play("Skid_Crouch")
+            float(false)
+            invulnerableLeft = 0
+            this.health.isInvulnerable = false
+            this.health:damage(O.SkyBrawl.Damage)
+            return 0.8
+        end,
+        function()
+            this.characterActions:play("Idle")
+            O.playPlayer("Idle")
+            isChanneling = false
+        end,
+    })
+end
+
 -- ========== The stand-off (film 0:58-1:05) ==========
 
 -- The fight stops for a breath: over his shoulder at the player across the street, both pacing; the other way, over
@@ -2616,6 +2733,10 @@ end
 local function updatePhases()
     -- The domain opens when the player has hurt him enough (or, at the latest, late in the soundtrack): the
     -- soundtrack is moved to the film's moment of that blow, so the picture and the sound stay together
+    if phase == 2 and not O.hasSkyBrawled and clock() >= O.SkyBrawl.At and domainIsUp and isFreeToAct() then
+        O.startSkyBrawl()
+        return
+    end
     if phase == 1 and not O.hasFoughtInAir and not O.wantsKnockback and clock() >= O.AirFight.At and isFreeToAct() then
         O.startAirFight()
         return
@@ -2656,7 +2777,7 @@ end
 local function reset()
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
-    O.hasStoodOff, O.hasFoughtInAir = false, false
+    O.hasStoodOff, O.hasFoughtInAir, O.hasSkyBrawled = false, false, false
     if this.lockOnTarget then this.lockOnTarget.isLockable = true end
     phase = 0
     seconds = 0

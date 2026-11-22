@@ -1005,6 +1005,13 @@ def add_armor_transformation(builder, boss):
         ("Standoff Smile", 1.6, BOSS_NAME, 1.64, BOSS_NAME, ((0.2, 1.6, -0.8), (0.12, 1.62, -0.62))),
         ("Standoff Charge", 1.3, BOSS_NAME, 1.0, BOSS_NAME, ((4.5, 0.7, -5.5), (4.0, 0.8, -6.5))),
     )
+    # The fist fight in the sky (film 2:11-2:16, boss_fight.lua O.SkyBrawl): beside them as they leap, then circling
+    # them in the clouds while the player mashes [Space] - a blow of his with every press (a quick-time event)
+    standoff = standoff + (
+        ("Sky Leap", 1.2, BOSS_NAME, 1.2, BOSS_NAME, ((3.5, 0.4, -4.5), (3.0, 2.5, -4.0))),
+        ("Sky Brawl", 2.0, BOSS_NAME, 1.2, BOSS_NAME, ((4.2, 1.6, -3.0), (4.6, 1.3, 0.8), (2.0, 1.6, 4.0))),
+        ("Sky Fall", 1.4, BOSS_NAME, 1.0, BOSS_NAME, ((-3.0, 3.5, -3.0), (-3.5, 2.0, -4.0))),
+    )
     # The fight in the air (film 0:40-0:50, boss_fight.lua O.AirFight): low looking up at both rising, beside the player
     # as the ball of oil grows over his palm, wide from the side as they throw and it bursts between them
     standoff = standoff + (
@@ -1014,10 +1021,13 @@ def add_armor_transformation(builder, boss):
         ("Air Clash", 1.8, BOSS_NAME, 1.4, BOSS_NAME, ((7.5, 2.5, -5.5), (8.5, 3.0, -6.0))),
     )
     for name, seconds, target, height, owner, points in standoff:
-        shot = builder.add(named(name, cutscene={
+        quick = {"wait_for_key": " ", "wait_presses": 7, "press_window_seconds": 0.45,
+                 "press_sound": "@game/Sounds/Brawl/Punch",
+                 "wait_prompt": "Mash [Space] - strike him in the clouds"} if name == "Sky Brawl" else {}
+        shot = builder.add(named(name, cutscene=dict({
             "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
             "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
-            "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}),
+            "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}, **quick)),
             parent=boss if owner == BOSS_NAME else builder.find(PLAYER_NAME))
         for number, point in enumerate(points):
             builder.add(named(f"Camera Point {number + 1}", point), parent=shot)

@@ -266,6 +266,11 @@ def add_technique_effects(builder):
      .specks("Rain", sparks(90, 9.0, [1.0, 0.99, 0.95], MILK_EDGE, lifetime=1.2, size=0.08, gravity=-14.0, drag=1.0,
                             stretch=0.06, intensity=2.4)))
 
+    # Clouds of smoke around the two fighting in the sky (film 2:11-2:16): big slow grey-white puffs drifting out
+    (Effect(builder, "Sky Clouds", root_specks=dust(40, 3.0, lifetime=4.0, size=3.5, end_size=7.0,
+                                                   color=(0.62, 0.6, 0.6)))
+     .specks("Dark", dust(24, 2.0, lifetime=4.5, size=4.0, end_size=8.0, color=(0.22, 0.2, 0.2))))
+
     # The ball of baby oil bursting like a liquid (film 2:30): a white splash out of its middle, thousands of drops
     # thrown out and raining down, a ring of oil racing over the ground, a mist of it hanging (no fire, no cubes)
     (Effect(builder, "Liquid Burst", root_shape=shape(
