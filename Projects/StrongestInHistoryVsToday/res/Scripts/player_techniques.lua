@@ -444,7 +444,7 @@ end
 local function speakTechniques()
     for spell, voice in pairs(Voices) do
         local casting = isCasting(spell)
-        if casting and not wasCasting[spell] then Audio.play(voice, VoiceVolume) end
+        if casting and not wasCasting[spell] then Audio.playVoice(voice, VoiceVolume) end
         wasCasting[spell] = casting
     end
 end
@@ -470,7 +470,7 @@ local function updateAirThrow()
         caster.cooldownLeft = caster.cooldownSeconds
         -- (a splash of oil leaving the hand: the cube of solid oil is for where it lands)
         this.world:burst("Oil Splash", from, 40)
-        Audio.play(Voices[OrbSpell], VoiceVolume)
+        Audio.playVoice(Voices[OrbSpell], VoiceVolume)
         eyesLeft = EyesStaySeconds
     end
 end

@@ -679,7 +679,7 @@ def add_domain_spectacle(builder):
         "spawn_half_extents": [0.1, 0.1, 0.1], "velocity": [0.0, 1.5, 0.0], "velocity_randomness": 1.2,
         "gravity": [0.0, 2.5, 0.0], "start_size": 2.4, "end_size": 1.1,
         # (molten orange, not white: tens of thousands of them added up burnt white at the old strength)
-        "start_color": [1.0, 0.3, 0.02], "end_color": [0.55, 0.05, 0.0], "intensity": 0.009, "max_particles": 30000,
+        "start_color": [1.0, 0.3, 0.02], "end_color": [0.55, 0.05, 0.0], "intensity": 0.022, "max_particles": 30000,
         "style": 1, "spawn_shape": 2, "spawn_radius": 3.0, "outward_speed": 2.0, "size_randomness": 0.5,
         "spin_degrees_per_second": 50.0}))
     # The smoke rolls out around the foot of the temple, thin: the temple must be seen rising through it
@@ -710,13 +710,13 @@ def add_domain_spectacle(builder):
         "fall_speed": 14.0, "fall_spread_seconds": 1.2, "ground_height": 0.0, "stuck_seconds": 3.0,
         "glow_color": [0.0, 0.0, 0.0], "trail_length": 0.0, "hit_effect": "Skid Dust", "hit_burst": 1}))
 
-    # The camera flies through the sphere of stars and out among them (placed by the script where the temple is)
+    # The stars burst out of the dome seen from behind the player (placed by the script where he stands, its +Z away
+    # from the temple, far enough back for him whole below the temple): he and the whole temple in one shot, the camera drawing slowly back (no flight over the arena)
     flight = builder.add(named("Star Flight", cutscene={
         "duration_seconds": 3.6, "look_at_entity": "Star Flight Focus", "look_at_height": 0.0, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
         "video_file": ""}))
-    for index, point in enumerate(((-62.0, 20.0, 52.0), (-38.0, 30.0, 34.0), (-14.0, 42.0, 18.0), (16.0, 48.0, 2.0),
-                                   (44.0, 52.0, -16.0))):
+    for index, point in enumerate(((3.0, 4.0, 19.0), (2.6, 4.4, 21.0), (2.2, 4.8, 23.0))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=flight)
     builder.add(named("Star Flight Focus", (0.0, 26.0, 0.0)))
 
@@ -1430,8 +1430,8 @@ def add_fight(builder):
     # The moment the domain opens: the camera leaves the fight and watches the temple come out of the ground
     # (the script puts it where the temple comes up, turned like the temple: the points are around the temple)
     reveal = builder.add(named("Domain Reveal", cutscene={
-        "duration_seconds": 6.2, "look_at_entity": "Domain Reveal Focus", "look_at_height": 0.0, "animation_entity": BOSS_NAME,
-        "animation_name": "Sign_Domain", "animation_at_seconds": 0.0, "title": "Domain Expansion: Epstein Island Temple",
+        "duration_seconds": 6.2, "look_at_entity": "Domain Reveal Focus", "look_at_height": 0.0, "animation_entity": "",
+        "animation_name": "", "animation_at_seconds": 0.0, "title": "Domain Expansion: Epstein Island Temple",
         "title_seconds": 3.5, "can_be_skipped": False, "video_file": ""}))
 
     # Two moments taken from the film itself, as it can't be made in the engine (a face that smiles): his smile as his
@@ -1479,8 +1479,8 @@ SEQUENCE_SHOTS = {
     "Knockback Flight": {"duration_seconds": 6.1},
     # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
     "Domain Sign":      {"blend_in_seconds": 0.0},
-    "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
-    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
+    "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 5.4},
+    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 6.05},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},
     # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)

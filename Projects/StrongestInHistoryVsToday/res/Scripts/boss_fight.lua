@@ -853,11 +853,17 @@ function O.flyThroughStars()
     local center = entity.transform.position
     local flight = find(O.StarFlight)
     if flight then
-        flight.transform.position = vec3(center.x, 0, center.z)
-        flight.transform.rotation = vec3(0, O.yawToward(center, player.transform.position), 0)
+        local feet = player.transform.position
+        flight.transform.position = vec3(feet.x, 0, feet.z)
+        flight.transform.rotation = vec3(0, O.yawToward(center, feet), 0)
     end
+    -- (aimed a third of the way from the temple to the player, at the temple's middle height: the temple with him
+    -- and the stars, the player below; a point inside the temple made the camera hop in front of its own walls)
     local focus = find(O.StarFlightFocus)
-    if focus then focus.transform.position = center end
+    if focus then
+        local feet = player.transform.position
+        focus.transform.position = vec3(mix(center.x, feet.x, 0.35), center.y * 0.4, mix(center.z, feet.z, 0.35))
+    end
     playCutscene(O.StarFlight)
 
     local over = player.transform.position
@@ -975,6 +981,13 @@ function O.placeTempleUnderBoss()
     local feet = clampToArena(player.transform.position + away:normalized() * distance)
     feet.y = 0
     local yaw = O.yawToward(feet, player.transform.position)
+    -- (the dome comes up under his feet where he stands, if that is far enough: he isn't moved in the middle of
+    -- his sign's close shot, the fire swelling behind him)
+    if math.abs(away:length() - distance) < 0.5 then
+        local offset = O.turned(OnTheDome, yaw)
+        local under = clampToArena(vec3(this.transform.position.x - offset.x, 0, this.transform.position.z - offset.z))
+        feet = vec3(under.x, 0, under.z)
+    end
     temple.transform.position = vec3(feet.x, TempleSunkenY, feet.z)
     temple.transform.rotation = vec3(0, yaw, 0)
     O.domeOffset = O.turned(OnTheDome, yaw)
@@ -1005,26 +1018,29 @@ function O.domainOpeningSteps()
             playCutscene(SignCutscene)
         end },
         -- "Domain expansion: Epstein Island Temple."
-        { 45.05, function() Audio.play(O.VoiceDomain, O.VoiceVolume) end },
-        { 46.3, function()
+        { 45.05, function() Audio.playVoice(O.VoiceDomain, O.VoiceVolume) end },
+        -- The hill of fire swells while he still speaks (film 1:22.3), the temple rising out of it carries him up: it stands as his words end (1:24.7), as in the film
+        { 46.1, function()
             changeLook(Domain, 1.8)
             setAsh(true)
             this.world:shakeCamera(0.5)
-            Audio.playAt(RoarSound, this.transform.position, 1.0)
-        end },
-        { 48.0, function()
+            -- (quieter than his words)
+            Audio.playAt(RoarSound, this.transform.position, 0.6)
             O.placeTempleUnderBoss()
             isOnTheDome = true
             O.isHoldingSign, O.holdSignIn = true, 0
+            moveTemple(TempleRisenY, 4.6)
+            Audio.play(RumbleSound, 0.8)
+        end },
+        -- (the fire with the wide shot: close to him the camera was inside it, the screen white)
+        { 47.0, function()
             O.startSun(find(TempleName).transform.position)
-            moveTemple(TempleRisenY, 5.4)
-            Audio.play(RumbleSound, 1.0)
             playCutscene(RevealCutscene)
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere
         -- (only once the temple stands, as in the film)
-        { 52.3, function() O.burstStars() end },
-        { 54.4, function() O.flyThroughStars() end },
+        { 51.0, function() O.burstStars() end },
+        { 52.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
             local stars = O.stars()
@@ -1221,6 +1237,15 @@ end
 -- While the temple rises he stands on its dome (on the ground until the dome reaches his feet), and the swarm pours
 -- out from under his feet
 local function rideTheDome(deltaTime)
+    -- (carried, not falling: no gravity and no push of the rising walls against his body, or he jerked up and down
+    -- every frame between the script's place and the physics'; given back the moment he leaves the dome)
+    local body = this.physicsBody
+    if O.isRidingDome ~= isOnTheDome and body then
+        body.useGravity = not isOnTheDome
+        body.isKinematic = isOnTheDome
+        body.velocity = vec3(0, 0, 0)
+    end
+    O.isRidingDome = isOnTheDome
     if not isOnTheDome then return end
 
     local temple = find(TempleName)
@@ -2348,7 +2373,7 @@ local function startSummonPhase()
             local hangAt = this.transform.position
             ground = vec3(hangAt.x, 0, hangAt.z)
             floated = 1
-            Audio.play(O.VoiceBetter, O.VoiceVolume)
+            Audio.playVoice(O.VoiceBetter, O.VoiceVolume)
             playCutscene(O.FloatCutscene)
             this.characterActions:play("Hover")
             local player = find(PlayerName)
@@ -2368,7 +2393,7 @@ local function startSummonPhase()
         end,
         -- (film 2:34) "Well, with this treasure I summon..."
         function()
-            Audio.play(O.VoiceTreasure, O.VoiceVolume)
+            Audio.playVoice(O.VoiceTreasure, O.VoiceVolume)
             show.during = O.floatDuring
             return 2.3
         end,
@@ -2376,7 +2401,7 @@ local function startSummonPhase()
             this.world:flash(vec3(1, 1, 1), 0.4, 0.1)
             playCutscene(WheelCutscene)
             -- (film 2:37) "47th President of the United States, Donald J. Trump." over the turning wheel
-            after(0.5, function() Audio.play(O.VoicePresident, O.VoiceVolume) end)
+            after(0.5, function() Audio.playVoice(O.VoicePresident, O.VoiceVolume) end)
             return 3.7
         end,
         function()
