@@ -194,7 +194,7 @@ void Run(const TimedCommand& c, float now)
 		hasCursor = true;
 	}
 	else if (c.command == "log")
-		SUNTA_ENGINE_LOG_INFO("InputPlayback [{0:.2f}s]: {1} {2} {3}", now, c.argument, c.argument2, c.argument3);
+		SUNTA_ENGINE_LOG_INFO("InputPlayback [{0}s]: {1} {2} {3}", now, c.argument, c.argument2, c.argument3);
 	else if (c.command == "fps")
 	{
 		// "fps [label]": the frames since the last report - their average and the slowest one (a hitch is felt)
