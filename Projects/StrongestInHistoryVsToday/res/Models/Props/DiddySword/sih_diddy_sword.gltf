@@ -64,29 +64,29 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":7454,
+			"count":7498,
 			"max":[
 				0.14626635611057281,
 				1.1133280992507935,
-				0.05420837178826332
+				0.05013607069849968
 			],
 			"min":[
 				-0.1469850242137909,
 				-0.23667189478874207,
-				-0.05555417388677597
+				-0.05202462151646614
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":7454,
+			"count":7498,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":7454,
+			"count":7498,
 			"type":"VEC2"
 		},
 		{
@@ -99,26 +99,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":89448,
+			"byteLength":89976,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":89448,
-			"byteOffset":89448,
+			"byteLength":89976,
+			"byteOffset":89976,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":59632,
-			"byteOffset":178896,
+			"byteLength":59984,
+			"byteOffset":179952,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":48870,
-			"byteOffset":238528,
+			"byteOffset":239936,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":287400,
+			"byteLength":288808,
 			"uri":"sih_diddy_sword.bin"
 		}
 	]

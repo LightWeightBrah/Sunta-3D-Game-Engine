@@ -116,6 +116,7 @@ def make_sword(folder):
 # ========== The player's sword of baby oil ==========
 
 DIDDY_SWORD_SOURCE = os.path.join(GENERATED, "diddy_sword.glb")
+DIDDY_GRIP_WIDTH = 0.04      # meters across the grip (a closed fist's hole)
 DIDDY_SWORD_LENGTH = 1.35    # meters: a long one-handed sword (at 1.0 it barely reached the boss)
 # The fist holds the grip this part of the way from the guard to the end of the pommel
 DIDDY_GRIP_FROM_GUARD = 0.45
@@ -147,6 +148,20 @@ def make_diddy_sword(folder):
     scale = DIDDY_SWORD_LENGTH / (high - low)
     turn = Matrix.Identity(4) if tip_is_up else Matrix.Rotation(math.pi, 4, "X")
     sword.data.transform(Matrix.Scale(scale, 4) @ turn @ Matrix.Translation((0.0, 0.0, -grip)))
+    # The grip as thick as a fist closes around (scaled with the length it was as thick as a forearm, the fist sank
+    # into it): the hilt below the guard made thinner across, tapering back to the model's own width at the guard
+    points = numpy.array([tuple(vertex.co) for vertex in sword.data.vertices])
+    blade_from_z = abs(guard - grip) * scale
+    near_grip = points[numpy.abs(points[:, 2]) < 0.05]
+    grip_width = max(numpy.ptp(near_grip[:, 0]), numpy.ptp(near_grip[:, 1]), 1e-4) if len(near_grip) else DIDDY_GRIP_WIDTH
+    thin = min(DIDDY_GRIP_WIDTH / grip_width, 1.0)
+    for vertex in sword.data.vertices:
+        z = vertex.co.z
+        if z < blade_from_z:
+            k = thin if z < blade_from_z - 0.06 else thin + (1.0 - thin) * (z - (blade_from_z - 0.06)) / 0.06
+            vertex.co.x *= k
+            vertex.co.y *= k
+    print("DIDDY_SWORD grip {:.3f} m across, made {:.3f}".format(grip_width, grip_width * thin))
     sword.name = "DiddySword"
     tip = abs((high if tip_is_up else low) - grip) * scale
     blade_from = abs(guard - grip) * scale + 0.02

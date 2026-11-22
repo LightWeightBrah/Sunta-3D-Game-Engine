@@ -796,7 +796,9 @@ CRYSTAL_ARMOR = {
     "bracer_r":   ("diddy_armor_bracer.glb", ("LowerArm_R",), "LowerArm_R", 1.02, "limb", 0.07),
     "greave_r":   ("diddy_armor_greave.glb", ("Shin_R",), "Shin_R", 1.12, "limb", 0.11),
 }
-MIRRORED = {"pauldron_r": "pauldron_l", "bracer_r": "bracer_l", "greave_r": "greave_l"}
+# (the thighs covered too: the shin plate's model fitted along the thigh, its knee cap at the knee)
+CRYSTAL_ARMOR["cuisse_r"] = ("diddy_armor_greave.glb", ("Thigh_R",), "Thigh_R", 1.06, "limb", 0.13)
+MIRRORED = {"pauldron_r": "pauldron_l", "bracer_r": "bracer_l", "greave_r": "greave_l", "cuisse_r": "cuisse_l"}
 
 
 def import_piece(file_name):
