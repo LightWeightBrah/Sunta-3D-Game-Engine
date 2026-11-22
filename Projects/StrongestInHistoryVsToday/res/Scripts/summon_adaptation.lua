@@ -137,6 +137,29 @@ end
 
 -- ========== The wheel and the blade ==========
 
+-- Slain, it lies a moment, then sinks into the ground in a cloud of dust and is gone, as a summoned thing does (its
+-- body, three meters of it, lay in the middle of the arena for the rest of the fight, in the way of the camera)
+local SinkAfterSeconds, SinkSeconds, SinkDepth = 3.0, 2.2, 3.5
+local deadFor = 0
+local function sinkWhenDead(deltaTime)
+    local before = deadFor
+    deadFor = deadFor + deltaTime
+    if deadFor < SinkAfterSeconds then return end
+    if before < SinkAfterSeconds then
+        if this.physicsBody then this.physicsBody.useGravity = false; this.physicsBody.isKinematic = true end
+        this.world:burst("Skid Dust", this.transform.position + vec3(0, 0.5, 0), 60)
+    end
+    if deadFor < SinkAfterSeconds + SinkSeconds then
+        local here = this.transform.position
+        this.transform.position = vec3(here.x, here.y - SinkDepth / SinkSeconds * deltaTime, here.z)
+        if math.floor(deadFor * 4) ~= math.floor(before * 4) then
+            this.world:burst("Skid Dust", vec3(here.x, 0.3, here.z), 20)
+        end
+    elseif this.model and this.model.isVisible then
+        this.model.isVisible = false
+    end
+end
+
 -- The wheel right before the camera (the monster circling behind the player) filled half the screen: hidden then
 local function wheelNearCamera()
     local camera = find("Camera")
@@ -351,6 +374,11 @@ function OnUpdate(deltaTime)
         if adaptedTo ~= nil or hitsInARow > 0 then forget() end
         if hasBlade or rush or slams then stopOwnMoves() end
         showWheel(false)
+        if deadFor > 0 then
+            deadFor = 0
+            if this.model then this.model.isVisible = true end
+            if this.physicsBody then this.physicsBody.isKinematic = false; this.physicsBody.useGravity = true end
+        end
         return
     end
 
@@ -358,6 +386,7 @@ function OnUpdate(deltaTime)
     updateWheel(deltaTime)
     if this.health.isDead then
         if hasBlade then setBlade(false); hasBlade = false end
+        sinkWhenDead(deltaTime)
         return
     end
 
