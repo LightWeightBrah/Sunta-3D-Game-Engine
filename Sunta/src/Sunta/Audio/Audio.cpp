@@ -2,6 +2,7 @@
 #include "Audio.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cctype>
 #include <filesystem>
 #include <memory>
@@ -32,6 +33,13 @@ bool      isAvailable = false;
 std::unordered_map<Audio::VoiceID, std::unique_ptr<ma_sound>> voices;
 Audio::VoiceID nextVoiceID = 1;
 Audio::VoiceID musicVoice  = Audio::NoVoice;
+float          musicVolume = 1.0f;
+
+// The lines spoken over the music: while one plays the music glides down to musicDucking, then back up
+std::set<Audio::VoiceID> duckingVoices;
+float musicDucking  = 0.35f;
+float musicDuckNow  = 1.0f;
+std::chrono::steady_clock::time_point lastUpdate = std::chrono::steady_clock::now();
 
 // The files of each folder used as a sound, found once
 std::unordered_map<std::string, std::vector<std::string>> folderFiles;
@@ -244,6 +252,8 @@ Audio::VoiceID Audio::Play(const std::string& sound, const PlayOptions& options)
 
 	const VoiceID voiceID = nextVoiceID++;
 	voices.emplace(voiceID, std::move(voice));
+	if (options.ducksMusic)
+		duckingVoices.insert(voiceID);
 	return voiceID;
 }
 
@@ -266,6 +276,7 @@ void Audio::StopAll()
 		FreeVoice(sound);
 
 	voices.clear();
+	duckingVoices.clear();
 	musicVoice = NoVoice;
 }
 
@@ -297,7 +308,10 @@ void Audio::PlayMusic(const std::string& sound, float volume, float fadeSeconds)
 	options.isStreamed    = true;
 	options.fadeInSeconds = fadeSeconds;
 
-	musicVoice = Play(sound, options);
+	musicVolume = volume;
+	musicVoice  = Play(sound, options);
+	if (ma_sound* music = FindVoice(musicVoice))
+		ma_sound_set_volume(music, musicVolume * musicDuckNow);
 }
 
 void Audio::StopMusic(float fadeSeconds)
@@ -323,6 +337,11 @@ void Audio::SeekMusic(float seconds)
 		return;
 
 	ma_sound_seek_to_second(sound, seconds > 0.0f ? seconds : 0.0f);
+}
+
+void Audio::SetMusicDucking(float volume)
+{
+	musicDucking = std::clamp(volume, 0.0f, 1.0f);
 }
 
 void Audio::SetListener(const glm::vec3& position, const glm::vec3& forward, const glm::vec3& up)
@@ -359,9 +378,21 @@ void Audio::Update()
 			continue;
 		}
 
+		duckingVoices.erase(voice->first);
 		FreeVoice(voice->second);
 		voice = voices.erase(voice);
 	}
+
+	// The music under the spoken lines: down quickly (0.25 s) as a line starts, back up slowly (1 s) after it
+	const auto now = std::chrono::steady_clock::now();
+	const float deltaTime = std::min(std::chrono::duration<float>(now - lastUpdate).count(), 0.1f);
+	lastUpdate = now;
+	const float target = duckingVoices.empty() ? 1.0f : musicDucking;
+	const float speed  = target < musicDuckNow ? 1.0f / 0.25f : 1.0f / 1.0f;
+	musicDuckNow = target < musicDuckNow ? std::max(target, musicDuckNow - speed * deltaTime)
+	                                     : std::min(target, musicDuckNow + speed * deltaTime);
+	if (ma_sound* music = FindVoice(musicVoice))
+		ma_sound_set_volume(music, musicVolume * musicDuckNow);
 }
 
 void Audio::SetPaused(bool paused)

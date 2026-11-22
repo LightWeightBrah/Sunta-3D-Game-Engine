@@ -1252,6 +1252,21 @@ void LuaBindings::RegisterAudio(sol::state& lua)
 				Audio::Play(sound, options);
 			},
 
+		// Audio.playVoice("@game/Sounds/Voice/line.ogg", 1.5): a line spoken, the music quieter under it
+		// (Audio.setMusicDucking(0.35): how loud the music stays meanwhile)
+		"playVoice", [](const std::string& sound, sol::optional<float> volume)
+			{
+				Audio::PlayOptions options;
+				options.volume     = volume.value_or(1.0f);
+				options.ducksMusic = true;
+				Audio::Play(sound, options);
+			},
+
+		"setMusicDucking", [](float volume)
+			{
+				Audio::SetMusicDucking(volume);
+			},
+
 		"playAt", [](const std::string& sound, const glm::vec3& position, sol::optional<float> volume)
 			{
 				Audio::PlayOptions options;

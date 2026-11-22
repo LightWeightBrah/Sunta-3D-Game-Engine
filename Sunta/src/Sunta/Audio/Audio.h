@@ -34,6 +34,7 @@ public:
 
 		float fadeInSeconds = 0.0f;
 		bool  isStreamed    = false;    // long files (music): read while playing instead of decoded whole in advance
+		bool  ducksMusic    = false;    // a line spoken: the music goes quieter while it plays (it is heard over it)
 	};
 
 	static void Init();
@@ -59,6 +60,8 @@ public:
 	static float GetMusicSeconds();
 	// Jumps the music to this second of it (a staged moment that must meet its place in a soundtrack)
 	static void SeekMusic(float seconds);
+	// How loud the music stays while a line is spoken (PlayOptions::ducksMusic): 0.35 = a third of its volume
+	static void SetMusicDucking(float volume);
 
 	// Where the ears are: the camera of the game
 	static void SetListener(const glm::vec3& position, const glm::vec3& forward, const glm::vec3& up);
