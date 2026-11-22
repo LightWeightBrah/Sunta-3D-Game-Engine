@@ -182,6 +182,9 @@
      "Hit_2"
     ],
     "heavy_hit_reaction_animation": "Hit_Heavy",
+    "knockback_animation": "Knockback",
+    "knockback_seconds": 0.75,
+    "knockback_dust": "Skid Dust",
     "attack_moves": [
      {
       "animation": "Attack_Light_1",
@@ -3820,7 +3823,8 @@
     "poise_damage": 20.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 2,
@@ -3870,7 +3874,8 @@
     "poise_damage": 20.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 2,
@@ -3920,7 +3925,8 @@
     "poise_damage": 20.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 2,
@@ -34275,6 +34281,9 @@
     "attack_delay_chance": 0.15,
     "attack_delay_seconds": 0.35,
     "attack_delay_at": 0.7,
+    "knockback_animation": "Knockback",
+    "knockback_seconds": 0.8,
+    "knockback_dust": "Skid Dust",
     "hyper_armor": 1,
     "swing_effect": "Boss Swing",
     "heavy_swing_effect": "Boss Heavy Swing",
@@ -34522,7 +34531,8 @@
     "poise_damage": 22.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.3
+    "camera_shake": 0.3,
+    "knockback": 0.0
    },
    "parent": {
     "index": 764,
@@ -34572,7 +34582,8 @@
     "poise_damage": 22.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.3
+    "camera_shake": 0.3,
+    "knockback": 0.0
    },
    "parent": {
     "index": 764,
@@ -34622,7 +34633,8 @@
     "poise_damage": 22.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.3
+    "camera_shake": 0.3,
+    "knockback": 4.0
    },
    "parent": {
     "index": 764,
@@ -37767,7 +37779,8 @@
     "poise_damage": 35.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.5
+    "camera_shake": 0.5,
+    "knockback": 0.0
    },
    "parent": {
     "index": 839,
@@ -37817,7 +37830,8 @@
     "poise_damage": 35.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.5
+    "camera_shake": 0.5,
+    "knockback": 0.0
    },
    "parent": {
     "index": 839,
@@ -37867,7 +37881,8 @@
     "poise_damage": 35.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.5
+    "camera_shake": 0.5,
+    "knockback": 4.0
    },
    "parent": {
     "index": 839,
@@ -38237,7 +38252,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 846,
@@ -38287,7 +38303,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 846,
@@ -38337,7 +38354,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 846,
@@ -38595,7 +38613,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 850,
@@ -38645,7 +38664,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 850,
@@ -38695,7 +38715,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 850,
@@ -38953,7 +38974,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 0.0
    },
    "parent": {
     "index": 854,
@@ -39003,7 +39025,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 0.0
    },
    "parent": {
     "index": 854,
@@ -39053,7 +39076,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 4.0
    },
    "parent": {
     "index": 854,
@@ -39389,7 +39413,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 860,
@@ -39439,7 +39464,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 860,
@@ -39489,7 +39515,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 860,
@@ -39747,7 +39774,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 0.0
    },
    "parent": {
     "index": 864,
@@ -39797,7 +39825,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 0.0
    },
    "parent": {
     "index": 864,
@@ -39847,7 +39876,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 4.0
    },
    "parent": {
     "index": 864,
@@ -40183,7 +40213,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 0.0
    },
    "parent": {
     "index": 870,
@@ -40233,7 +40264,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 0.0
    },
    "parent": {
     "index": 870,
@@ -40283,7 +40315,8 @@
     "poise_damage": 10.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.1
+    "camera_shake": 0.1,
+    "knockback": 4.0
    },
    "parent": {
     "index": 870,
@@ -40619,7 +40652,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 876,
@@ -40669,7 +40703,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 876,
@@ -40719,7 +40754,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 876,
@@ -40977,7 +41013,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 880,
@@ -41027,7 +41064,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 880,
@@ -41077,7 +41115,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 880,
@@ -41335,7 +41374,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 884,
@@ -41385,7 +41425,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 0.0
    },
    "parent": {
     "index": 884,
@@ -41435,7 +41476,8 @@
     "poise_damage": 18.0,
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
-    "camera_shake": 0.2
+    "camera_shake": 0.2,
+    "knockback": 4.0
    },
    "parent": {
     "index": 884,

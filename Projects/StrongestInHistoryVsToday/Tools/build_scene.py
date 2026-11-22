@@ -247,11 +247,17 @@ def spell(name, **settings):
     return entity
 
 
+# Meters a kick throws back the one it staggers (the engine's knockback: sliding back on the feet, as in the film's
+# fights): the feet throw, the fists only stagger
+KICK_KNOCKBACK = 4.0
+
+
 def add_limb(builder, character, name, bone, damage, layer, poise_damage=20.0, size=0.14, camera_shake=0.2):
     """A limb that hurts during the hit window of an attack (as a weapon does): a Hitbox on a bone of the character"""
     builder.add(named(name, hitbox={
         "damage": damage, "half_extents": [size, size, size], "layer": layer, "local_offset": [0.0, 0.08, 0.0],
-        "poise_damage": poise_damage, "show_gizmos": False, "hit_stop_seconds": 0.07, "camera_shake": camera_shake}),
+        "poise_damage": poise_damage, "show_gizmos": False, "hit_stop_seconds": 0.07, "camera_shake": camera_shake,
+        "knockback": KICK_KNOCKBACK if bone.startswith("Foot") else 0.0}),
         parent=character, bone=bone)
 
 
@@ -601,6 +607,7 @@ PLAYER_MORE_ATTACKS = {
     "dodge_attack_animation": "",
     "riposte_animation": "Attack_Riposte", "riposte_reach": 2.6,
     "extra_hit_reaction_animations": ["Hit_2"], "heavy_hit_reaction_animation": "Hit_Heavy",
+    "knockback_animation": "Knockback", "knockback_seconds": 0.75, "knockback_dust": "Skid Dust",
     "attack_moves": PLAYER_ATTACK_MOVES,
     # A punch steps in to reach, but never slides more than a step
     "attack_lunge_max_distance": 0.9,
@@ -1164,6 +1171,8 @@ def add_boss(builder):
     entity["tag"]["name"] = BOSS_NAME
     entity["model"]["model_name"] = BOSS_MODEL
     entity["character_actions"].update(BOSS_HIT_WINDOWS)
+    entity["character_actions"].update({"knockback_animation": "Knockback", "knockback_seconds": 0.8,
+                                        "knockback_dust": "Skid Dust"})
     # He steps in to reach with his punches, now and then holds one back for a moment, hops out of the way of blows
     # and orbs and takes punches on his forearms (the script raises his guard)
     entity["character_actions"].update({"shockwave_radius": 0.0, "shockwave_effect": "", "attack_reach": 1.3,

@@ -12,6 +12,7 @@
 #include "GameplayMath.h"
 #include "LockOnSystem.h"
 #include "StaminaSystem.h"
+#include "Effects/ParticleSystem.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
 #include "Core/Log.h"
@@ -35,6 +36,10 @@ constexpr int HeavyAttackKey    = SUNTA_KEY_LEFT_CONTROL; // held with the attac
 constexpr int BlockButton       = SUNTA_MOUSE_BUTTON_RIGHT;
 constexpr int ParryKey          = SUNTA_KEY_F;
 constexpr int JumpKey           = SUNTA_KEY_SPACE;
+
+// Dust under the feet of a character thrown back: a burst this often, of at most this many specks
+constexpr float KnockbackDustEverySeconds = 0.05f;
+constexpr float KnockbackDustMost         = 6.0f;
 
 // The upper body fades into the block (and out of it) in this time
 constexpr float BlockFadeSeconds = 0.15f;
@@ -355,7 +360,16 @@ float GetActionSpeed(const CharacterActionsComponent& actions, CharacterAction a
 	case CharacterAction::JumpAttack:
 		return (actions.isAirborne && !actions.isPlunging) ? actions.currentJumpMoveSpeed : 0.0f;
 
-	// A hit character and a dead one stand where they are
+	// Thrown back: fast at first, slowing to a stop (the direction is the action's, set by PlayKnockback)
+	case CharacterAction::HitReaction:
+	{
+		if (actions.knockbackStartSpeed <= 0.0f)
+			return 0.0f;
+		const float part = glm::clamp(actions.knockbackElapsed / glm::max(actions.knockbackSeconds, 0.05f), 0.0f, 1.0f);
+		return actions.knockbackStartSpeed * (1.0f - part) * (1.0f - part);
+	}
+
+	// A dead character stands where it is
 	default:
 		return 0.0f;
 	}
@@ -563,6 +577,9 @@ float ChooseAttackDelay(const CharacterActionsComponent& actions)
 void StartAction(EntityManager& entityManager, Character& character, CharacterAction action, const std::string& animationName)
 {
 	CharacterActionsComponent& actions = *character.actions;
+	// (only PlayKnockback makes a stagger a knockback, after it started)
+	actions.knockbackStartSpeed = 0.0f;
+	actions.knockbackElapsed    = 0.0f;
 
 	if (ChoosesDirection(action))
 	{
@@ -909,6 +926,24 @@ void UpdateAir(EntityManager& entityManager, Character& character, CharacterActi
 	MoveBody(character, progress);
 }
 
+// Thrown back: the time of the slide, and dust at the feet while it is fast
+void UpdateKnockback(EntityManager& entityManager, Character& character, float deltaTime)
+{
+	CharacterActionsComponent& actions = *character.actions;
+	if (actions.currentAction != CharacterAction::HitReaction || actions.knockbackStartSpeed <= 0.0f)
+		return;
+
+	actions.knockbackElapsed += deltaTime;
+	const float part = actions.knockbackElapsed / glm::max(actions.knockbackSeconds, 0.05f);
+	actions.knockbackDustIn -= deltaTime;
+	if (!actions.knockbackDust.empty() && part < 0.85f && actions.knockbackDustIn <= 0.0f)
+	{
+		actions.knockbackDustIn = KnockbackDustEverySeconds;
+		const int count = 1 + static_cast<int>(KnockbackDustMost * (1.0f - part));
+		ParticleSystem::BurstAt(entityManager, actions.knockbackDust, character.transform->position, count, -actions.actionDirection);
+	}
+}
+
 void UpdateCurrentAction(EntityManager& entityManager, Character& character, CharacterAction request, float deltaTime)
 {
 	CharacterActionsComponent& actions = *character.actions;
@@ -949,6 +984,7 @@ void UpdateCurrentAction(EntityManager& entityManager, Character& character, Cha
 	    && TryStartAction(entityManager, character, request))
 		return;
 
+	UpdateKnockback(entityManager, character, deltaTime);
 	TrackTarget(entityManager, character, progress, deltaTime);
 	SteerLeap(entityManager, character, progress, deltaTime);
 	UpdateAttackDelay(character, progress, deltaTime);
@@ -1037,6 +1073,32 @@ void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsig
 		actions->chosenHitReaction.clear();
 		ForceAction(entityManager, entityID, CharacterAction::HitReaction);
 	}
+}
+
+bool CharacterActionsSystem::PlayKnockback(EntityManager& entityManager, unsigned int entityID, const glm::vec3& direction, float meters)
+{
+	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
+	if (!actions || actions->currentAction == CharacterAction::Special || actions->currentAction == CharacterAction::Death)
+		return false;
+
+	glm::vec3 along = glm::vec3(direction.x, 0.0f, direction.z);
+	if (glm::length(along) < 0.001f)
+		return false;
+	along = glm::normalize(along);
+
+	actions->chosenHitReaction = !actions->knockbackAnimation.empty() ? actions->knockbackAnimation : actions->heavyHitReactionAnimation;
+	if (!ForceAction(entityManager, entityID, CharacterAction::HitReaction))
+		return false;
+
+	// (the distance of a speed falling to 0 as (1 - t)^2 over T seconds is speed * T / 3)
+	actions->knockbackStartSpeed = 3.0f * glm::max(meters, 0.0f) / glm::max(actions->knockbackSeconds, 0.05f);
+	actions->knockbackDustIn     = 0.0f;
+	actions->actionDirection     = along;
+	// (facing the blow: it slides back, not sideways)
+	Character character;
+	if (TryGetCharacter(entityManager, *actions, character))
+		FaceDirection(character, -along);
+	return true;
 }
 
 void CharacterActionsSystem::RestartAction(EntityManager& entityManager, unsigned int entityID)

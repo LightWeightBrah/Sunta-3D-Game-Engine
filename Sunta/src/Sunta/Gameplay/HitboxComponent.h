@@ -30,6 +30,9 @@ struct HitboxComponent
 	// How a landed hit feels when the player gives or takes it: the game's time stands still for a moment (hit stop,
 	// seconds; a heavy attack holds it half again as long) and the camera shakes (0..1, see FollowCameraComponent)
 	float hitStopSeconds = 0.06f;
+	// Meters a staggered target is thrown back along the ground (0 = it staggers where it stands): it slides back on
+	// its feet, slowing down, a trail of dust behind it (see CharacterActionsComponent::knockbackAnimation)
+	float knockback = 0.0f;
 	float cameraShake    = 0.2f;
 
 	// The box, in the space of the weapon (the Knight's sword: the blade goes up along +Y from the grip)
@@ -60,6 +63,7 @@ struct HitboxComponent
 				ADD_PROPERTY_RANGED(HitboxComponent, poiseDamage, PropertyDataType::Float, 0.0f, MaxDamage),
 				ADD_PROPERTY_RANGED(HitboxComponent, hitStopSeconds, PropertyDataType::Float, 0.0f, 0.3f),
 				ADD_PROPERTY_RANGED(HitboxComponent, cameraShake,    PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(HitboxComponent, knockback,      PropertyDataType::Float, 0.0f, 20.0f),
 				ADD_PROPERTY(HitboxComponent, localOffset, PropertyDataType::Float3),
 				ADD_PROPERTY(HitboxComponent, halfExtents, PropertyDataType::Float3),
 				ADD_PROPERTY(HitboxComponent, layer,       PropertyDataType::CollisionLayer),

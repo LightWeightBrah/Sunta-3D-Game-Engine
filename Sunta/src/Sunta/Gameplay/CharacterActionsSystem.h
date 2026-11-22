@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <string>
 
 namespace Sunta
@@ -19,6 +21,10 @@ public:
 	// Started by the Health: the character staggers (interrupting what it does), or dies and never acts again
 	// 'isHeavyBlow': the hit came from a heavy attack or a leap (the heavy hit reaction plays, when there is one)
 	static void PlayHitReaction(EntityManager& entityManager, unsigned int entityID, bool isHeavyBlow = false);
+
+	// Thrown back 'meters' along the ground away along 'direction' (see knockbackAnimation). False when it can't be (dead,
+	// in a special move)
+	static bool PlayKnockback(EntityManager& entityManager, unsigned int entityID, const glm::vec3& direction, float meters);
 	// Drinking from a flask or using any item: the animation plays once on the upper body, the character walks slowly.
 	// False when the character is busy (attacking, rolling, staggering) or has no such animation
 	static bool UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);

@@ -449,6 +449,13 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 				return actions && actions->IsBusy();
 			}),
 
+		// Thrown back along the ground: this.characterActions:knockBack(direction, meters) (see knockbackAnimation)
+		"knockBack", [](const CharacterActionsHandle& handle, const glm::vec3& direction, float meters)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && CharacterActionsSystem::PlayKnockback(*entityManager, handle.owner.GetID(), direction, meters);
+			},
+
 		"isGuarding", sol::readonly_property([](const CharacterActionsHandle& handle)
 			{
 				const CharacterActionsComponent* actions = handle.TryGetComponent();
@@ -1082,7 +1089,8 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 
 	lua.new_usertype<HitboxHandle>("Hitbox", sol::no_constructor,
 		"isEnabled", MemberProperty(&HitboxComponent::isEnabled, false),
-		"damage",    MemberProperty(&HitboxComponent::damage,    0.0f)
+		"damage",    MemberProperty(&HitboxComponent::damage,    0.0f),
+		"knockback", MemberProperty(&HitboxComponent::knockback, 0.0f)
 	);
 
 	// Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant)

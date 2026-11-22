@@ -119,6 +119,9 @@ PLAYER = {
     "Hit":            diddy("Hit_HeadMedium"),
     "Hit_2":          diddy("Hit_Stomach"),
     "Hit_Heavy":      diddy("Hit_HeadBig"),
+    # Thrown back by a kick (the engine's knockback: he slides back on his feet), catching himself in a crouch and
+    # standing up clean
+    "Knockback":      diddy("Jump_Landing", speed=0.8),
     "Parried":        diddy("Parried_Rocked", 1, 60),
     "Death":          diddy("Knocked_Back"),
     # The guard: both forearms up before the face; a blow on it rocks him back; the parry swats it aside inward
@@ -226,6 +229,8 @@ BOSS = {
     "Hover":          library(ADDON, "Levitate Idle"),
     "Dive":           library(ADDON, "Flying Forward Super"),
     "Land_Slam":      library(ADDON, "Land_Three_Point", first_frame=14, speed=1.1),
+    # Thrown back by a kick (the engine's knockback): sliding back crouched, a hand on the ground, rising clean
+    "Knockback":      library(ADDON, "Land_Three_Point", first_frame=14, speed=0.8),
     # Thrown back by the player's last blow before his domain he lands on his feet, crouched, a hand on the ground,
     # and skids on (film 1:19-1:21): the end of the same landing, held
     "Skid_Crouch":    library(ADDON, "Land_Three_Point", first_frame=22, speed=0.3),

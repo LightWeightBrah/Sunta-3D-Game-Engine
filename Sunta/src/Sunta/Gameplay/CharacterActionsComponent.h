@@ -142,6 +142,13 @@ struct CharacterActionsComponent
 	std::vector<std::string> extraHitReactionAnimations;
 	std::string heavyHitReactionAnimation;
 
+	// Thrown back by a blow (a hitbox's 'knockback', or a script): this animation (sliding back on the feet, catching
+	// itself, standing up - or the heavy hit reaction when empty), moving back the blow's meters over 'knockbackSeconds',
+	// fast at first and slowing down, the Particle Emitter of the scene named 'knockbackDust' bursting at the feet
+	std::string knockbackAnimation;
+	float       knockbackSeconds = 0.7f;
+	std::string knockbackDust;
+
 	// A shockwave where a heavy attack or a leap lands (0 radius = none): everyone of the other side within
 	// 'shockwaveRadius' of the point 'shockwaveDistance' in front of the character takes 'shockwaveDamage' (a roll dodges it)
 	// when the attack starts to hit. The Particle Emitter of the child named 'shockwaveEffect' bursts there
@@ -257,6 +264,10 @@ struct CharacterActionsComponent
 	std::string currentAnimation;
 	// The stagger chosen for the next hit reaction (see extraHitReactionAnimations)
 	std::string chosenHitReaction;
+	// The current stagger is a knockback: the speed it started with (meters a second), the dust still to come
+	float knockbackStartSpeed = 0.0f;
+	float knockbackElapsed    = 0.0f;
+	float knockbackDustIn     = 0.0f;
 	// The current attack started from a run (it lunges at 'runningAttackSpeed')
 	bool isRunningAttack = false;
 

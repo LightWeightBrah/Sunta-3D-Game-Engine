@@ -162,7 +162,7 @@ bool CanHurt(const HitboxComponent& hitbox, const BoxColliderComponent& targetBo
 }
 
 HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID,
-	DamageKind kind = DamageKind::Weapon);
+	DamageKind kind = DamageKind::Weapon, float knockback = 0.0f);
 void      FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComponent& hitbox, const CharacterActionsComponent& owner,
 	unsigned int ownerID, unsigned int targetID, const glm::vec3& contactPoint);
 
@@ -204,7 +204,7 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 		if (!TryClaimHit(ownerID, owner.attackNumber, targetID))
 			continue;
 
-		const HitResult result = HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID);
+		const HitResult result = HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID, DamageKind::Weapon, hitbox.knockback);
 		if (result == HitResult::Blocked || result == HitResult::Hurt || result == HitResult::Riposte)
 			hitbox.hitFlashSecondsLeft = HitFlashSeconds;
 
@@ -422,7 +422,7 @@ float GetRiposteMultiplier(EntityManager& entityManager, unsigned int defenderID
 // Goes through the target's defences: a parry turns it away (not a spell), a shield takes it, poise keeps the target
 // on its feet
 HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, float damage, float poiseDamage, unsigned int attackerID,
-	DamageKind kind)
+	DamageKind kind, float knockback)
 {
 	if (!CanBeHurt(entityManager, targetID))
 		return HitResult::Missed;
@@ -461,7 +461,15 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	                                             || attackerActions->currentAction == CharacterAction::LeapAttack);
 
 	if (LoseHealth(entityManager, targetID, damage, attackerID, kind) && staggers)
-		CharacterActionsSystem::PlayHitReaction(entityManager, targetID, isHeavyBlow);
+	{
+		// A blow that throws: away from the attacker, along the ground
+		const TransformComponent* target   = entityManager.GetComponent<TransformComponent>(targetID);
+		const TransformComponent* attacker = entityManager.GetComponent<TransformComponent>(attackerID);
+		const bool isThrown = knockback > 0.0f && target && attacker
+			&& CharacterActionsSystem::PlayKnockback(entityManager, targetID, target->position - attacker->position, knockback);
+		if (!isThrown)
+			CharacterActionsSystem::PlayHitReaction(entityManager, targetID, isHeavyBlow);
+	}
 
 	if (block == BlockResult::GuardBroken)
 		return HitResult::Blocked;

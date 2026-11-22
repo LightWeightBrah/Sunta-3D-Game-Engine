@@ -376,6 +376,10 @@ namespace SceneKeys
 	constexpr const char* MoveStrikeHeight          = "strike_height";
 	constexpr const char* ExtraHitReactionAnimations = "extra_hit_reaction_animations";
 	constexpr const char* HeavyHitReactionAnimation = "heavy_hit_reaction_animation";
+	constexpr const char* KnockbackAnimation        = "knockback_animation";
+	constexpr const char* KnockbackSeconds          = "knockback_seconds";
+	constexpr const char* KnockbackDust             = "knockback_dust";
+	constexpr const char* Knockback                 = "knockback";
 	constexpr const char* LightHitFrom              = "light_hit_from";
 	constexpr const char* LightHitTo                = "light_hit_to";
 	constexpr const char* HeavyHitFrom              = "heavy_hit_from";
@@ -990,7 +994,10 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::DodgeCancelFrom,        actions->dodgeCancelFrom        },
 				{ SceneKeys::HitReactionDodgeFrom,   actions->hitReactionDodgeFrom   },
 				{ SceneKeys::ExtraHitReactionAnimations, actions->extraHitReactionAnimations },
-				{ SceneKeys::HeavyHitReactionAnimation, actions->heavyHitReactionAnimation }
+				{ SceneKeys::HeavyHitReactionAnimation, actions->heavyHitReactionAnimation },
+				{ SceneKeys::KnockbackAnimation,     actions->knockbackAnimation     },
+				{ SceneKeys::KnockbackSeconds,       actions->knockbackSeconds       },
+				{ SceneKeys::KnockbackDust,          actions->knockbackDust          }
 			};
 
 			nlohmann::json moves = nlohmann::json::array();
@@ -1046,6 +1053,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::Damage,                     hitbox->damage       },
 				{ SceneKeys::PoiseDamage,                hitbox->poiseDamage  },
 				{ SceneKeys::HitStopSeconds,             hitbox->hitStopSeconds },
+				{ SceneKeys::Knockback,                  hitbox->knockback    },
 				{ SceneKeys::CameraShake,                hitbox->cameraShake  },
 				{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
 				{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
@@ -1952,6 +1960,9 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.hitReactionDodgeFrom   = actionsData.value(SceneKeys::HitReactionDodgeFrom,   actions.hitReactionDodgeFrom);
 			actions.extraHitReactionAnimations = actionsData.value(SceneKeys::ExtraHitReactionAnimations, actions.extraHitReactionAnimations);
 			actions.heavyHitReactionAnimation = actionsData.value(SceneKeys::HeavyHitReactionAnimation, actions.heavyHitReactionAnimation);
+			actions.knockbackAnimation = actionsData.value(SceneKeys::KnockbackAnimation, actions.knockbackAnimation);
+			actions.knockbackSeconds   = actionsData.value(SceneKeys::KnockbackSeconds,   actions.knockbackSeconds);
+			actions.knockbackDust      = actionsData.value(SceneKeys::KnockbackDust,      actions.knockbackDust);
 
 			if (actionsData.contains(SceneKeys::AttackMoves))
 			{
@@ -2010,6 +2021,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			hitbox.damage      = hitboxData.value(SceneKeys::Damage,      hitbox.damage);
 			hitbox.poiseDamage = hitboxData.value(SceneKeys::PoiseDamage, hitbox.poiseDamage);
 			hitbox.hitStopSeconds = hitboxData.value(SceneKeys::HitStopSeconds, hitbox.hitStopSeconds);
+			hitbox.knockback      = hitboxData.value(SceneKeys::Knockback,      hitbox.knockback);
 			hitbox.cameraShake    = hitboxData.value(SceneKeys::CameraShake,    hitbox.cameraShake);
 			hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
 			hitbox.isEnabled  = hitboxData.value(SceneKeys::HitboxIsEnabled, hitbox.isEnabled);
