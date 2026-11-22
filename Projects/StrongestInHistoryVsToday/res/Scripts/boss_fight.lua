@@ -2350,6 +2350,10 @@ end
 
 callTheSummon = function()
     this.characterActions:play("Summon")
+    -- (while his summon fights he can't be locked on to: locked on to him behind it, the monster filled the screen)
+    if this.lockOnTarget then this.lockOnTarget.isLockable = false end
+    local lockedPlayer = find(PlayerName)
+    if lockedPlayer and lockedPlayer.lockOn then lockedPlayer.lockOn:clear() end
 
     -- (the music goes on: the film's soundtrack runs straight into the rest of its song, see FightMusic)
 
@@ -2389,6 +2393,7 @@ end
 
 local function startLastPhase()
     phase = 4
+    if this.lockOnTarget then this.lockOnTarget.isLockable = true end
     O.refillFlasks()
     isChanneling = false
     this.health.isInvulnerable = false
@@ -2652,6 +2657,7 @@ local function reset()
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
     O.hasStoodOff, O.hasFoughtInAir = false, false
+    if this.lockOnTarget then this.lockOnTarget.isLockable = true end
     phase = 0
     seconds = 0
     invulnerableLeft = 0
