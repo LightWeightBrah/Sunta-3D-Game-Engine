@@ -92,6 +92,11 @@ struct ProjectileComponent
 	float hitStopSeconds = 0.05f;
 	float cameraShake    = 0.3f;
 
+	// Filled while the game plays (not saved): how many of its projectiles burst so far, and where the last one did
+	// (a script answers a landing with its own show: the bottle from the sky turning into the oil)
+	mutable int       timesBurst        = 0;
+	mutable glm::vec3 lastBurstPosition = glm::vec3(0.0f);
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<ProjectileComponent>("Projectile", EngineAssets::Icons::Particle,

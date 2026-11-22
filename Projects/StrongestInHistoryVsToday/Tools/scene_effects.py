@@ -243,6 +243,19 @@ def add_technique_effects(builder):
      .specks("Smoke", dust(40, 6.0, lifetime=2.4, size=1.4, end_size=3.6, color=(0.18, 0.14, 0.12)))
      .specks("Flash", flash(4.0, 0.12, [1.0, 0.85, 0.6], 1.2)))
 
+    # The ball of baby oil bursting like a liquid (film 2:30): a white splash out of its middle, thousands of drops
+    # thrown out and raining down, a ring of oil racing over the ground, a mist of it hanging (no fire, no cubes)
+    (Effect(builder, "Liquid Burst", root_shape=shape(
+        SPHERE, 0.55, 1.0, 9.0, [1.0, 1.0, 0.98], MILK_EDGE, 1.6, noise_scale=5.5, scroll_speed=3.0, dissolve=0.95,
+        light_intensity=7.0, light_radius=22.0, light_color=[1.0, 0.95, 0.85]))
+     .shape("Splash", shape(RING, 0.7, 1.2, 18.0, OIL_CORE, MILK_EDGE, 2.0, thickness=0.3, noise_scale=6.0, dissolve=0.9))
+     .specks("Drops", sparks(420, 22.0, [1.0, 0.99, 0.95], MILK_EDGE, lifetime=1.4, size=0.12, gravity=-14.0, drag=1.2,
+                            stretch=0.08, intensity=2.6))
+     .specks("Spray", sparks(260, 9.0, [1.0, 0.97, 0.9], OIL_EDGE, lifetime=1.8, size=0.07, gravity=-6.0, drag=0.8,
+                            stretch=0.05, intensity=2.0))
+     .specks("Mist", dust(60, 7.0, lifetime=2.6, size=1.8, end_size=4.5, color=(0.85, 0.85, 0.82)))
+     .specks("Flash", flash(6.0, 0.14, [1.0, 1.0, 0.95], 1.4)))
+
     # The domain shattering (the player's [3] inside it): a white sphere and a wave across the arena
     # (a wave along the ground and shards: no sphere - it took in the camera and the whole screen went white)
     (Effect(builder, "Domain Shatter", root_specks=flash(3.0, 0.15, [1.0, 0.8, 0.5], 1.2))

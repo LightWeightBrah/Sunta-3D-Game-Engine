@@ -528,8 +528,14 @@ def add_effects(builder):
                            damage=150.0, poise_damage=400.0, radius=3.4,
                            homing_degrees_per_second=0.0, lifetime_seconds=4.0, fuse_seconds=0.0,
                            trail_effect="", trail_particles_per_second=0.0,
-                           hit_effect="Oil Cube", hit_burst=60, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
+                           # (where it lands the bottle turns into the oil itself: boss_fight.lua 'Detonation Oil')
+                           hit_effect="", hit_burst=0, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
                            hit_stop_seconds=0.2, camera_shake=1.0)
+    # The bottle become baby oil without its bottle (film 2:28-2:30): a glowing capsule of oil that swells into a ball
+    # and bursts like a liquid (shaped and shown by boss_fight.lua)
+    detonation = named("Detonation Oil", (0.0, -100.0, 0.0), liquid_orb=dict(OIL_ORB, is_visible=False, clearness=0.12,
+                                                                              brightness=2.4, wobble=0.1, wobble_speed=3.5))
+    builder.add(detonation)
     # The boss's cleave: a fan of blades of light that fly straight and fast (step between them or roll through)
     add_projectile(builder, "Boss Slash", "sih_black_book", 12, 1.5, spin_degrees_per_second=900.0, speed=27.0, damage=15.0, poise_damage=12.0, radius=0.45,
                            homing_degrees_per_second=0.0, lifetime_seconds=1.6, fuse_seconds=0.0,

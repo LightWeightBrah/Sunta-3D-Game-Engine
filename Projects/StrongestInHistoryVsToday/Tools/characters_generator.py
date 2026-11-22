@@ -218,8 +218,9 @@ BOSS = {
     # (the second take; the first one's rising ended in a crouch). Cut before the second take's own raising of the hand
     # (it came out as a hand pressed to the chest): the sign is made by GESTURES ('Sign_Hold') right after
     "Knocked_Down":   MotionClip(KIMODO_KNOCK, 1, 34, speed=0.8, rig=SOMA),
-    # (only the throw backwards, slowed over the flight: he comes down on his feet into Skid_Crouch, not on his back)
-    "Knock_Flight":   MotionClip(KIMODO_KNOCK, 1, 18, speed=0.45, rig=SOMA),
+    # (a real blow from the front, slowed over the flight: doubled over, thrown back - he comes down on his feet into
+    # Skid_Crouch; the Kimodo take leaned back stiffly with his arms spread)
+    "Knock_Flight":   MotionClip(MAGIC + "Standing React Large From Front.fbx", 1, 12, speed=0.22),
     "Lying":          MotionClip(KIMODO_KNOCK, 60, 63, speed=0.05, rig=SOMA),
     "Get_Up":         MotionClip(KIMODO_GET_UP, 1, 100, speed=1.6, rig=SOMA),
     # His ascension (the last phase): his own private jet comes down on him and he rises out of the fire wearing it

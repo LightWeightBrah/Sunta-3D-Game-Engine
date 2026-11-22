@@ -69,6 +69,7 @@ using EnemyHealthBarHandle = ComponentHandle<EnemyHealthBarComponent>;
 using ParticleEmitterHandle = ComponentHandle<ParticleEmitterComponent>;
 using EnvironmentHandle   = ComponentHandle<EnvironmentComponent>;
 using CutsceneHandle      = ComponentHandle<CutsceneComponent>;
+using ProjectileHandle    = ComponentHandle<ProjectileComponent>;
 using AudioSourceHandle   = ComponentHandle<AudioSourceComponent>;
 using HealingFlaskHandle  = ComponentHandle<HealingFlaskComponent>;
 using CurrencyHandle      = ComponentHandle<CurrencyComponent>;
@@ -868,6 +869,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"model",               ComponentHandleProperty<ModelComponent>(),
 		"hitbox",              ComponentHandleProperty<HitboxComponent>(),
 		"enemyHealthBar",      ComponentHandleProperty<EnemyHealthBarComponent>(),
+		"projectile",          ComponentHandleProperty<ProjectileComponent>(),
 		"particles",           ComponentHandleProperty<ParticleEmitterComponent>(),
 		"environment",         ComponentHandleProperty<EnvironmentComponent>(),
 		"cutscene",            ComponentHandleProperty<CutsceneComponent>(),
@@ -1082,6 +1084,20 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 
 	// Usage in Lua: sword.hitbox.isEnabled = true (a weapon taken up), boss's fist: fist.hitbox.isEnabled = false;
 	// sword.hitbox.damage = 40
+	// Usage in Lua (on a projectile template): if bottle.projectile.timesBurst > seen then ... bottle.projectile.lastBurstPosition
+	lua.new_usertype<ProjectileHandle>("Projectile", sol::no_constructor,
+		"timesBurst", sol::readonly_property([](const ProjectileHandle& handle)
+			{
+				const ProjectileComponent* projectile = handle.TryGetComponent();
+				return projectile ? projectile->timesBurst : 0;
+			}),
+		"lastBurstPosition", sol::readonly_property([](const ProjectileHandle& handle)
+			{
+				const ProjectileComponent* projectile = handle.TryGetComponent();
+				return projectile ? projectile->lastBurstPosition : glm::vec3(0.0f);
+			})
+	);
+
 	// Usage in Lua: this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss renamed by its phase)
 	lua.new_usertype<EnemyHealthBarHandle>("EnemyHealthBar", sol::no_constructor,
 		"displayName", MemberProperty(&EnemyHealthBarComponent::displayName, std::string())
@@ -1112,7 +1128,8 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"isVisible",  MemberProperty(&LiquidOrbComponent::isVisible,  false),
 		"tint",       MemberProperty(&LiquidOrbComponent::tint,       glm::vec3(1.0f)),
 		"brightness", MemberProperty(&LiquidOrbComponent::brightness, 1.0f),
-		"clearness",  MemberProperty(&LiquidOrbComponent::clearness,  0.0f)
+		"clearness",  MemberProperty(&LiquidOrbComponent::clearness,  0.0f),
+		"wobble",     MemberProperty(&LiquidOrbComponent::wobble,     0.0f)
 	);
 
 	// Usage in Lua (see SwarmComponent): s = find("Domain Swarm").swarm; s.isVisible = true; s.gathered = 1;

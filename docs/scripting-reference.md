@@ -240,6 +240,7 @@ The tuning of a Melee Enemy, e.g. a script makes it more aggressive when hurt: t
 | `model` |  |
 | `hitbox` |  |
 | `enemyHealthBar` |  |
+| `projectile` |  |
 | `particles` |  |
 | `environment` |  |
 | `cutscene` |  |
@@ -333,11 +334,22 @@ this.model.isVisible = false, this.model.emissiveStrength = 2 (its glowing parts
 | `expression` |  |
 | `modelName` | this.model.modelName = "sih_boss_armored": another model put on in its place (a boss changing its body). Its animations go on by name, so the two models should share their skeleton and the names of their clips |
 
-## EnemyHealthBar
+## Projectile
 
 ```lua
 sword.hitbox.isEnabled = true (a weapon taken up), boss's fist: fist.hitbox.isEnabled = false;
 sword.hitbox.damage = 40
+Usage in Lua (on a projectile template): if bottle.projectile.timesBurst > seen then ... bottle.projectile.lastBurstPosition
+```
+
+| Name | Note |
+|---|---|
+| `timesBurst` |  |
+| `lastBurstPosition` |  |
+
+## EnemyHealthBar
+
+```lua
 this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss renamed by its phase)
 ```
 
@@ -387,6 +399,7 @@ orb.liquidOrb.isVisible = true, orb.liquidOrb.brightness = 2
 | `tint` |  |
 | `brightness` |  |
 | `clearness` |  |
+| `wobble` |  |
 
 ## Swarm
 

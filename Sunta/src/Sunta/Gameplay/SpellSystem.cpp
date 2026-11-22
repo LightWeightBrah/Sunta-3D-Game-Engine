@@ -506,6 +506,9 @@ glm::vec3 GetClosestPoint(const OBB& box, const glm::vec3& point)
 
 void Burst(EntityManager& entityManager, const ProjectileComponent& settings, const glm::vec3& point, unsigned int casterID)
 {
+	settings.timesBurst++;
+	settings.lastBurstPosition = point;
+
 	if (!settings.hitEffect.empty())
 		ParticleSystem::BurstAt(entityManager, settings.hitEffect, point, settings.hitBurst);
 

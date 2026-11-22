@@ -2609,7 +2609,11 @@ function O.notePressure()
     end
 end
 
-O.CubeBurstsAfter = 0.8
+-- The bottle from the sky become oil (film 2:28-2:30): a capsule of oil the shape of the bottle for a moment, swelling
+-- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
+O.CubeBurstsAfter = 1.15
+O.Liquid = { Entity = "Detonation Oil", CapsuleSeconds = 0.35, Capsule = vec3(2.2, 4.6, 2.2), Ball = 5.2,
+             Effect = "Liquid Burst" }
 O.PlayerDomainCrashAt = 4.0
 
 -- His lines from the film (the music no longer carries them)
@@ -2634,19 +2638,32 @@ function OnDamaged(amount, kind, attacker)
     if phase == 1 and not O.opening and this.health.fraction <= DomainHealthFraction then
         O.wantsKnockback = true
     end
-    -- The bottle from the sky: where it lands it becomes a block of baby oil around him (its hit effect, 'Oil Cube'),
-    -- which bursts a moment later into a ball of oil and fire - no white screen, the blast is seen
-    if kind == "spell" and amount >= 100 then
+end
+
+-- The bottle from the sky landed (wherever: hurt or not, the boss may be out of reach of harm then): it turns into
+-- the oil itself and bursts
+function O.watchBottle()
+    local bottle = find("Player Great Orb")
+    local projectile = bottle and bottle.projectile
+    if not projectile then return end
+    local burst = projectile.timesBurst
+    if burst > (O.bottleBursts or 0) then
+        local at = projectile.lastBurstPosition + vec3(0, 1.4, 0)
+        O.liquid = { t = 0, at = at }
         this.world:slowMotion(0.9, 0.3)
         this.world:shakeCamera(0.4)
-        local at = this.transform.position + vec3(0, 1.4, 0)
         after(O.CubeBurstsAfter, function()
-            this.world:effect("Oil Detonation", at)
+            O.liquid = nil
+            local oil = find(O.Liquid.Entity)
+            if oil and oil.liquidOrb then oil.liquidOrb.isVisible = false end
+            this.world:effect(O.Liquid.Effect, at)
+            this.world:flash(vec3(1, 1, 0.95), 0.12, 0.0)
             this.world:impactFrame(1.0, 0.55)
             this.world:shakeCamera(0.9)
             Audio.play(BoomSound, 1.0)
         end)
     end
+    O.bottleBursts = burst
 end
 
 function OnStart()
@@ -2655,9 +2672,36 @@ function OnStart()
     reset()
 end
 
+-- The oil of the bottle: the bottle's shape for a moment, then swelling into a ball that trembles harder and burns
+-- brighter until it bursts (see OnDamaged)
+function O.updateLiquid(deltaTime)
+    local l = O.liquid
+    if not l then return end
+    local oil = find(O.Liquid.Entity)
+    if not oil or not oil.liquidOrb then return end
+    l.t = l.t + deltaTime
+    oil.liquidOrb.isVisible = true
+    oil.transform.position = l.at
+    local L = O.Liquid
+    local size
+    if l.t < L.CapsuleSeconds then
+        size = L.Capsule
+    else
+        local k = math.min((l.t - L.CapsuleSeconds) / (O.CubeBurstsAfter - L.CapsuleSeconds), 1)
+        local e = k * k * (3 - 2 * k)
+        local ball = vec3(L.Ball, L.Ball, L.Ball)
+        size = L.Capsule + (ball - L.Capsule) * e
+        oil.liquidOrb.wobble = 0.1 + 0.25 * k
+        oil.liquidOrb.brightness = 2.4 + 3.0 * k * k
+    end
+    oil.transform.scale = size
+end
+
 function OnUpdate(deltaTime)
     local boss = this.boss
     O.updateSeal(deltaTime)
+    O.watchBottle()
+    O.updateLiquid(deltaTime)
     -- His transformation runs through its own cutscenes and the moments between them: nothing else meanwhile
     if O.transform then
         O.updateTransform(deltaTime)
