@@ -644,8 +644,9 @@ local function updateCameraDistance(deltaTime)
     local camera = find(CameraName)
     if not camera or not camera.followCamera then return end
 
-    -- (in his armor he stands taller with a great sword: farther back, he was hidden behind the player)
-    local wanted = (phase == 3) and GiantCameraDistance or (phase >= 5) and O.SwordFightCameraDistance or FistFightCameraDistance
+    -- (in his armor: O.updateSwordCamera - this function comes before the table O, which it can't see)
+    if phase >= 5 then return end
+    local wanted = (phase == 3) and GiantCameraDistance or FistFightCameraDistance
     local now = camera.followCamera.distance
     local step = CameraZoomPerSecond * deltaTime
     camera.followCamera.distance = now + math.max(-step, math.min(step, wanted - now))
@@ -3064,6 +3065,7 @@ end
 -- The bottle from the sky become oil (film 2:28-2:30): a capsule of oil the shape of the bottle for a moment, swelling
 -- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
 O.SwordFightCameraDistance = 5.6
+O.SwordCamera = { Shoulder = -0.75, Pitch = 9 }
 O.BrawlCooldown = 0.6
 O.CubeBurstsAfter = 1.15
 O.Liquid = { Entity = "Detonation Oil", CapsuleSeconds = 0.35, Capsule = vec3(2.2, 4.6, 2.2), Ball = 5.2,
@@ -3185,6 +3187,26 @@ function O.updateLiquid(deltaTime)
     oil.transform.scale = size
 end
 
+-- Against his great sword the camera stands lower and over the player's left shoulder (his sword is in the right hand: the camera caught on it): from right behind and
+-- above him the armored boss stood hidden behind the player's back for most of the fight
+function O.updateSwordCamera(deltaTime)
+    local camera = find(CameraName)
+    if not camera or not camera.followCamera then return end
+    local follow = camera.followCamera
+    -- (in his armor he stands taller with a great sword: farther back, he was hidden behind the player)
+    if phase >= 5 then
+        local step = CameraZoomPerSecond * deltaTime
+        follow.distance = follow.distance + math.max(-step, math.min(step, O.SwordFightCameraDistance - follow.distance))
+    end
+    if not O.cameraHome then O.cameraHome = { follow.shoulderOffset, follow.lockOnPitchDegrees } end
+    local isSwordFight = phase >= 5
+    local shoulder = isSwordFight and O.SwordCamera.Shoulder or O.cameraHome[1]
+    local pitch = isSwordFight and O.SwordCamera.Pitch or O.cameraHome[2]
+    local glide = math.min(deltaTime * 1.5, 1)
+    follow.shoulderOffset = follow.shoulderOffset + (shoulder - follow.shoulderOffset) * glide
+    follow.lockOnPitchDegrees = follow.lockOnPitchDegrees + (pitch - follow.lockOnPitchDegrees) * glide
+end
+
 function OnUpdate(deltaTime)
     local boss = this.boss
     O.updateSeal(deltaTime)
@@ -3260,6 +3282,7 @@ function OnUpdate(deltaTime)
 
     updateSilhouette(deltaTime)
     updateCameraDistance(deltaTime)
+    O.updateSwordCamera(deltaTime)
 
     seconds = seconds + deltaTime
 
