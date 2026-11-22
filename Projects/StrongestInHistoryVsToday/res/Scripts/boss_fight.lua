@@ -1120,6 +1120,7 @@ end
 -- technique leaves his hand as he stands (its voice, eyes and the bottle from the sky: player_techniques.lua)
 -- (the technique is called once he is nearly on his feet: called earlier his hands made the sign half way up)
 O.DownCutscene, O.RiseCutscene, O.RiseSeconds = "Down Wait", "Technique Rise", 2.6
+O.RiseClearsStars = 6.5
 
 function O.updateRise(deltaTime)
     if not O.lyingUntilPress then return end
@@ -1141,6 +1142,16 @@ function O.updateRise(deltaTime)
     O.lyingUntilPress = false
     O.playPlayer("Get_Up")
     playCutscene(O.RiseCutscene)
+    -- Getting up he throws off the stars stuck right around him (the camera of his rise stood behind one of them and
+    -- saw nothing else for three seconds); the rest stay for his technique's blast to break
+    local stars = O.stars()
+    local player = O.playerEntity()
+    if stars and stars.isVisible and player then
+        for _, at in ipairs(stars:breakWithin(player.transform.position, O.RiseClearsStars)) do
+            this.world:burst(O.StarWave.Sparks, at + vec3(0, 0.3, 0), 3)
+        end
+        this.world:effect("Solid Oil Burst", player.transform.position + vec3(0, 1.0, 0), player.transform.forward)
+    end
     -- He doesn't strike until the player's technique has landed (O.holdingForTechnique ends with its blast)
     O.holdingForTechnique = true
     O.techniqueEndsIn = nil
