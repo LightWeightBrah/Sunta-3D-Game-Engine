@@ -32,6 +32,8 @@ constexpr float WallMargin = 0.25f;
 
 // A camera pushed by a wall never comes closer to the player than this
 constexpr float MinDistanceFromPivot = 0.4f;
+// A hit nearer than this is a collider the pivot is inside of (see GetFreeDistance)
+constexpr float StartsInsideDistance = 0.02f;
 
 // How quickly the camera moves back out after a wall stopped pushing it
 constexpr float DistanceReturnSharpness = 6.0f;
@@ -144,15 +146,18 @@ float GetFreeDistance(const FrameInfo& frame, const FollowCameraComponent& follo
 		return frame.entityManager.GetComponent<FogGateComponent>(entityID) || (collider && !collider->blocksCamera);
 	};
 	const float reach = wantedLength + WallMargin;
+	// (and so is what the pivot itself is inside: the player standing on a heap of rubble has its collider around his
+	// head, every ray "hit" it at once and the camera sat at his neck)
+	auto isPassedThrough = [&isSeeThrough](const RaycastHit& hit) { return hit.distance < StartsInsideDistance || isSeeThrough(hit.entityID); };
 	RaycastHit hit;
 	if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, frame.playerEntityID, hit))
 		return follow.distance;
-	if (isSeeThrough(hit.entityID))
+	if (isPassedThrough(hit))
 	{
 		const unsigned int first = hit.entityID;
 		if (!Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, { frame.playerEntityID, first }, hit))
 			return follow.distance;
-		if (isSeeThrough(hit.entityID)
+		if (isPassedThrough(hit)
 		    && !Physics::Raycast(frame.entityManager, ray, reach, SightBlockingLayers, { frame.playerEntityID, first, hit.entityID }, hit))
 			return follow.distance;
 	}
