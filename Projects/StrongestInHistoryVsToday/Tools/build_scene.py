@@ -894,7 +894,8 @@ def add_player(builder):
     # (the blade from 0.21 to 1.11 m above the grip, boss_items_generator.py; a little wider than the blade)
     sword["hitbox"] = {"damage": 34.0, "poise_damage": 30.0, "local_offset": [0.0, 0.67, 0.0],
                        "half_extents": [0.14, 0.47, 0.1], "layer": PLAYER_HITBOX_LAYER, "show_gizmos": False,
-                       "hit_stop_seconds": 0.07, "camera_shake": 0.3, "is_enabled": False}
+                       "hit_stop_seconds": 0.07, "camera_shake": 0.3, "is_enabled": False,
+                       "knockback": 3.0}
     sword["weapon_trail"] = {"base_offset": [0.0, 0.62, 0.0], "tip_offset": [0.0, 1.1, 0.0], "color": [1.0, 0.88, 0.62],
                              "intensity": 1.3, "lifetime_seconds": 0.18, "only_while_striking": True}
     builder.add(sword, parent=player, bone="Weapon_R")
@@ -957,7 +958,7 @@ def add_armor_transformation(builder, boss):
     sword = named("Boss Sword", (0.0, 0.0, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
                                                          "emissive_strength": 1.5})
     sword["hitbox"] = dict(SWORD_HITBOX, damage=30.0, poise_damage=45.0, layer=ENEMY_HITBOX_LAYER, show_gizmos=False,
-                           hit_stop_seconds=0.1, camera_shake=0.45, is_enabled=False)
+                           hit_stop_seconds=0.1, camera_shake=0.45, is_enabled=False, knockback=3.5)
     # (a trail of crimson fire behind the blade while it strikes, as the swords of the souls bosses that burn)
     sword["weapon_trail"] = {"base_offset": [0.0, 0.25, 0.0], "tip_offset": [0.0, 1.42, 0.0], "color": [1.0, 0.18, 0.06],
                              "intensity": 2.2, "lifetime_seconds": 0.22, "only_while_striking": True}

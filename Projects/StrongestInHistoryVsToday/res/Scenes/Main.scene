@@ -3950,7 +3950,8 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.3,
-    "is_enabled": false
+    "is_enabled": false,
+    "knockback": 3.0
    },
    "weapon_trail": {
     "base_offset": [
@@ -36178,7 +36179,8 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.1,
     "camera_shake": 0.45,
-    "is_enabled": false
+    "is_enabled": false,
+    "knockback": 3.5
    },
    "weapon_trail": {
     "base_offset": [
