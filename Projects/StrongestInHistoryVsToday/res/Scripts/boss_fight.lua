@@ -2609,7 +2609,7 @@ function O.startSkyBrawl()
         player.transform.rotation = vec3(0, O.yawToward(p, b) + 180, 0)
     end
     float(true)
-    local risen, punch = 0, 0
+    local risen, punch, pushed = 0, 0, 0
     local function inTheSky(deltaTime)
         risen = math.min(risen + deltaTime / 0.9, 1)
         local e = 1 - (1 - risen) * (1 - risen)
@@ -2635,17 +2635,29 @@ function O.startSkyBrawl()
             playCutscene("Sky Brawl")
             local mid = (this.transform.position + player.transform.position) * 0.5
             for i = 0, 2 do
-                after(i * 0.5, function() this.world:effect("Sky Clouds", mid + vec3(0, -1.5 + i, 0), this.transform.forward) end)
+                after(i * 0.5, function() this.world:effect("Sky Clouds", mid + vec3(0, -3.0, 0), this.transform.forward) end)
             end
             show.during = function(deltaTime)
                 inTheSky(deltaTime)
+                -- (an exchange, not a beating: every third press he blocks and strikes back, the player reels)
+                pushed = math.max(pushed - deltaTime * 3, 0)
+                this.transform.position = this.transform.position - along * pushed
                 if Input.isKeyDown(Key.Space) then
-                    punch = punch % #B.Punches + 1
-                    O.playPlayer(B.Punches[punch])
-                    this.characterActions:play("Hit")
+                    punch = punch + 1
                     local at = (this.transform.position + player.transform.position) * 0.5 + vec3(0, 1.4, 0)
-                    this.world:effect("Punch Impact", at, player.transform.forward)
-                    this.world:impactFrame(0.5, 0.15)
+                    if punch % 3 == 0 then
+                        this.characterActions:play(B.Punches[(punch % #B.Punches) + 1])
+                        O.playPlayer("Hit")
+                        this.world:effect("Punch Impact", at, -player.transform.forward)
+                        this.world:shakeCamera(0.35)
+                    else
+                        O.playPlayer(B.Punches[(punch % #B.Punches) + 1])
+                        this.characterActions:play("Hit")
+                        this.world:effect("Punch Impact", at, player.transform.forward)
+                        this.world:impactFrame(0.5, 0.15)
+                        this.world:shakeCamera(0.25)
+                        pushed = 0.6
+                    end
                 end
                 local shot = find("Sky Brawl")
                 if shot and shot.cutscene and shot.cutscene.wasAnswered then show.waitLeft = 0 end

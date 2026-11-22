@@ -1011,7 +1011,7 @@ def add_armor_transformation(builder, boss):
     # them in the clouds while the player mashes [Space] - a blow of his with every press (a quick-time event)
     standoff = standoff + (
         ("Sky Leap", 1.2, BOSS_NAME, 1.2, BOSS_NAME, ((3.5, 0.4, -4.5), (3.0, 2.5, -4.0))),
-        ("Sky Brawl", 2.0, BOSS_NAME, 1.2, BOSS_NAME, ((4.2, 1.6, -3.0), (4.6, 1.3, 0.8), (2.0, 1.6, 4.0))),
+        ("Sky Brawl", 2.0, BOSS_NAME, 1.5, BOSS_NAME, ((5.6, 2.2, -4.0), (6.2, 1.9, 1.0), (2.8, 2.2, 5.4))),
         ("Sky Fall", 1.4, BOSS_NAME, 1.0, BOSS_NAME, ((-3.0, 3.5, -3.0), (-3.5, 2.0, -4.0))),
     )
     # The fight in the air (film 0:40-0:50, boss_fight.lua O.AirFight): low looking up at both rising, beside the player
