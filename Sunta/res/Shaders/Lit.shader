@@ -320,12 +320,14 @@ vec3 CalculateCrystal(vec3 lit, vec3 normal, vec3 viewerDirection)
 
 	vec3 reflected = reflect(-viewerDirection, normal);
 	vec3 sky       = vec3(1.0f, 0.97f, 0.9f);
-	vec3 ground    = vec3(0.1f, 0.11f, 0.13f);
+	// (a warm gray ground, not black: mirrored nearly black, the parts turned down read as holes in the crystal)
+	vec3 ground    = vec3(0.21f, 0.19f, 0.16f);
 	vec3 mirrored  = mix(ground, sky, smoothstep(-0.35f, 0.75f, reflected.y));
 
 	// (the air's color half gray: a warm or cold fog doesn't paint the crystal, mixed with its edges it turned violet)
 	vec3 air     = mix(fogColor, vec3(dot(fogColor, vec3(0.333f))), 0.5f);
-	vec3 through = air * 1.6f + baseColor * 0.12f + lit * 0.12f;
+	// (a milky body of its own under the clear surface: crystal of oil, not a mirror of chrome)
+	vec3 through = air * 1.2f + vec3(0.2f, 0.17f, 0.11f) + baseColor * 0.15f + lit * 0.12f;
 
 	float bands = 0.5f + 0.5f * sin(dot(reflected, vec3(9.1f, 6.3f, 7.7f)) + dot(FragPos, vec3(3.3f, 2.1f, 3.9f)));
 	bands = pow(bands, 8.0f);
