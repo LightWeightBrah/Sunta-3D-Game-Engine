@@ -1410,6 +1410,8 @@ def add_fight(builder):
     mist = builder.get(builder.child_named(fog, "Fog Mist"))["particle_emitter"]
     mist["spawn_half_extents"][0] = FOG_GATE_HALF_WIDTH - 0.2
     mist["particles_per_second"] = mist["particles_per_second"] * FOG_GATE_HALF_WIDTH / 1.75
+    # (fainter: fighting by the gate, its puffs right before the camera hid a third of the screen)
+    mist["intensity"] = 0.22
 
     builder.add(named("Film Intro", cutscene={
         "duration_seconds": 6.0, "look_at_entity": BOSS_NAME, "look_at_height": 1.6, "animation_entity": "",
