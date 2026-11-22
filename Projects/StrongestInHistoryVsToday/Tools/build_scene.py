@@ -658,7 +658,8 @@ def add_domain_spectacle(builder):
         "is_emitting": False, "particles_per_second": 16000.0, "lifetime_seconds": 1.0,
         "spawn_half_extents": [0.1, 0.1, 0.1], "velocity": [0.0, 1.5, 0.0], "velocity_randomness": 1.2,
         "gravity": [0.0, 2.5, 0.0], "start_size": 2.4, "end_size": 1.1,
-        "start_color": [1.0, 0.24, 0.02], "end_color": [0.4, 0.02, 0.0], "intensity": 0.07, "max_particles": 30000,
+        # (molten orange, not white: tens of thousands of them added up burnt white at the old strength)
+        "start_color": [1.0, 0.22, 0.0], "end_color": [0.5, 0.03, 0.0], "intensity": 0.004, "max_particles": 30000,
         "style": 1, "spawn_shape": 2, "spawn_radius": 3.0, "outward_speed": 2.0, "size_randomness": 0.5,
         "spin_degrees_per_second": 50.0}))
     # The smoke rolls out around the foot of the temple, thin: the temple must be seen rising through it

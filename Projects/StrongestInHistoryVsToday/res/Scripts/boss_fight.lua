@@ -690,11 +690,11 @@ local O = {
     KnockCutscene  = "Knockback Flight",
     KnockMusicAt   = 38.6,
     KnockMeters    = 20,
-    KnockSkidMeters = 5,
+    KnockSkidMeters = 8,
     KnockFlySeconds = 1.4,
-    KnockSkidSeconds = 1.0,
-    KnockLieSeconds = 0.6,
-    KnockGetUpSeconds = 2.1,
+    KnockSkidSeconds = 1.7,
+    -- (as in the film he doesn't lie: he lands crouched and skids, and rises with the sign while still sliding)
+    KnockRiseAt = 0.55,
     -- If the player never hurts him enough, the domain still opens (seconds of the soundtrack)
     DomainLatestAt = 150,
     DetonationPrompt = "2: Imaginary Technique: Baby Oil Detonation",
@@ -769,7 +769,7 @@ function O.updateSign(deltaTime)
     -- (the first time the hand rises into the sign; then the sign is held, played again only once it is over: a
     -- clip started again in the middle jumps)
     O.holdSignIn = O.holdSignIn - deltaTime
-    if O.holdSignIn <= 0 and not this.characterActions.isBusy then
+    if O.holdSignIn <= 0 and (not this.characterActions.isBusy or not O.hasRaisedSign) then
         this.characterActions:play(O.hasRaisedSign and "Sign_Hold" or "Sign_Raise")
         O.hasRaisedSign = true
         O.holdSignIn = 0.5
@@ -816,10 +816,10 @@ function O.startSun(place)
         smoke.particles.isEmitting = true
     end
 
-    -- (it burns out early: the temple is what the shot is about)
-    after(1.4, function()
-        O.tween(function(v) sun.particles.particlesPerSecond = v end, O.SunRate, 0, 1.0)
-        after(1.7, function() sun.particles.isEmitting = false end)
+    -- (it burns while the temple rises out of it, carrying him up on its top, then it dies down into the temple)
+    after(3.6, function()
+        O.tween(function(v) sun.particles.particlesPerSecond = v end, O.SunRate, 0, 1.6)
+        after(2.3, function() sun.particles.isEmitting = false end)
     end)
     after(4.5, function() if smoke and smoke.particles then smoke.particles.isEmitting = false end end)
 end
@@ -882,7 +882,7 @@ function O.startKnockback()
     local skid = clampToArena(land + away * O.KnockSkidMeters)
     skid.y = 0
 
-    this.characterActions:play("Knocked_Down")
+    this.characterActions:play("Knock_Flight")
     this.world:flash(vec3(1, 0.95, 0.85), 0.25, 0.05)
     this.world:effect("Punch Impact", from + vec3(0, 1.3, 0), -away)
     this.world:effect("Player Heavy Swing", from + vec3(0, 1.3, 0), -away)
@@ -936,31 +936,29 @@ function O.updateKnock(deltaTime)
     if k.t < fly + skid then
         if not k.hasLanded then
             k.hasLanded = true
-            this.characterActions:play("Lying")
+            this.characterActions:play("Skid_Crouch")
             this.world:shakeCamera(0.7)
-            this.world:burst(O.SkidDust, k.land, 20)
+            this.world:burst(O.SkidDust, k.land, 24)
+            this.world:effect("Crash Impact", k.land, this.transform.forward)
         end
         local f = (k.t - fly) / skid
         this.transform.position = mix(k.land, k.skid, 1 - (1 - f) * (1 - f))
+        -- (a furrow of dust behind his feet, thinning as he slows)
         k.dustIn = k.dustIn - deltaTime
         if k.dustIn <= 0 then
-            k.dustIn = 0.1
-            this.world:burst(O.SkidDust, this.transform.position, 2)
+            k.dustIn = 0.05
+            this.world:burst(O.SkidDust, this.transform.position, math.floor(6 * (1 - f)) + 1)
+        end
+        -- Still sliding, he straightens up and raises the sign
+        if not k.hasRisen and f >= O.KnockRiseAt then
+            k.hasRisen = true
+            O.isHoldingSign, O.holdSignIn, O.hasRaisedSign = true, 0, false
         end
         return
     end
 
     this.transform.position = k.skid
-    if not k.hasRisen and k.t >= fly + skid + O.KnockLieSeconds then
-        k.hasRisen = true
-        this.characterActions:play("Get_Up")
-        this.world:burst(O.SkidDust, k.skid, 12)
-    end
-    -- Rising, the hand already goes up with the sign
-    if k.hasRisen and k.t >= fly + skid + O.KnockLieSeconds + O.KnockGetUpSeconds then
-        O.isHoldingSign, O.holdSignIn, O.hasRaisedSign = true, 0, false
-        O.knock = nil
-    end
+    O.knock = nil
 end
 
 function O.placeTempleUnderBoss()
@@ -1022,8 +1020,9 @@ function O.domainOpeningSteps()
             playCutscene(RevealCutscene)
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere
-        { 52.3, function() O.burstStars() end },
-        { 54.4, function() O.flyThroughStars() end },
+        -- (only once the temple stands, as in the film)
+        { 53.6, function() O.burstStars() end },
+        { 55.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
             local stars = O.stars()

@@ -215,6 +215,8 @@ BOSS = {
     # (the second take; the first one's rising ended in a crouch). Cut before the second take's own raising of the hand
     # (it came out as a hand pressed to the chest): the sign is made by GESTURES ('Sign_Hold') right after
     "Knocked_Down":   MotionClip(KIMODO_KNOCK, 1, 34, speed=0.8, rig=SOMA),
+    # (only the throw backwards, slowed over the flight: he comes down on his feet into Skid_Crouch, not on his back)
+    "Knock_Flight":   MotionClip(KIMODO_KNOCK, 1, 18, speed=0.45, rig=SOMA),
     "Lying":          MotionClip(KIMODO_KNOCK, 60, 63, speed=0.05, rig=SOMA),
     "Get_Up":         MotionClip(KIMODO_GET_UP, 1, 100, speed=1.6, rig=SOMA),
     # His ascension (the last phase): his own private jet comes down on him and he rises out of the fire wearing it
@@ -224,6 +226,9 @@ BOSS = {
     "Hover":          library(ADDON, "Levitate Idle"),
     "Dive":           library(ADDON, "Flying Forward Super"),
     "Land_Slam":      library(ADDON, "Land_Three_Point", first_frame=14, speed=1.1),
+    # Thrown back by the player's last blow before his domain he lands on his feet, crouched, a hand on the ground,
+    # and skids on (film 1:19-1:21): the end of the same landing, held
+    "Skid_Crouch":    library(ADDON, "Land_Three_Point", first_frame=22, speed=0.3),
     "Ground_Pound":   library(ADDON, "Attack_Ground_Pound", speed=1.0),
 }
 
