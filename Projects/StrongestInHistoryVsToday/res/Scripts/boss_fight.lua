@@ -556,7 +556,8 @@ local function updateLines(deltaTime)
 
     lineIn = lineIn - deltaTime
     if lineIn <= 0 and takePatternTurn() then
-        lineIn = (phase == 4) and LineEverySeconds * 0.7 or LineEverySeconds
+        -- (after his summon not more often but less: a soulslike throws few things at the player)
+        lineIn = (phase == 4) and LineEverySeconds * 1.3 or LineEverySeconds
         drawLines()
     end
 end
@@ -1347,7 +1348,7 @@ local function updateDomain(deltaTime)
     domainSpellIn = domainSpellIn - deltaTime
     if domainSpellIn <= 0 and not isChanneling and patternLeft <= 0 and phase ~= 3 and castSpell(DomainPillars) then
         patternLeft = (phase == 4) and LastStandGapSeconds or PatternGapSeconds
-        domainSpellIn = (phase == 4) and DomainSpellEverySeconds * 0.7 or DomainSpellEverySeconds
+        domainSpellIn = (phase == 4) and DomainSpellEverySeconds * 1.3 or DomainSpellEverySeconds
     end
 end
 
