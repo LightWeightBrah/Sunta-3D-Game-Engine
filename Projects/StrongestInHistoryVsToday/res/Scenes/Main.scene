@@ -24291,12 +24291,12 @@
    },
    "projectile": {
     "spin_degrees_per_second": 0.0,
-    "speed": 46.0,
+    "speed": 30.0,
     "damage": 0.0,
     "poise_damage": 0.0,
     "radius": 0.1,
     "homing_degrees_per_second": 0.0,
-    "lifetime_seconds": 2.4,
+    "lifetime_seconds": 3.6,
     "fuse_seconds": 0.0,
     "trail_effect": "Fireball Trail",
     "trail_particles_per_second": 140.0,
@@ -24329,9 +24329,9 @@
      0.0
     ],
     "scale": [
-     1.6,
-     1.6,
-     1.6
+     2.6,
+     2.6,
+     2.6
     ]
    },
    "model": {
@@ -24365,9 +24365,9 @@
      0.0
     ],
     "scale": [
-     1.6,
-     1.6,
-     1.6
+     2.6,
+     2.6,
+     2.6
     ]
    },
    "model": {
@@ -24401,9 +24401,9 @@
      0.0
     ],
     "scale": [
-     1.6,
-     1.6,
-     1.6
+     2.6,
+     2.6,
+     2.6
     ]
    },
    "model": {
@@ -35471,7 +35471,7 @@
     "is_lockable": true
    },
    "melee_enemy": {
-    "attack_cooldown_seconds": 1.25,
+    "attack_cooldown_seconds": 0.6,
     "attack_distance": 1.7,
     "give_up_distance": 120.0,
     "heavy_attack_chance": 0.25,
@@ -44582,7 +44582,226 @@
     "title": "",
     "title_seconds": 0.0,
     "can_be_skipped": false,
-    "video_file": "@game/Videos/summon_float.mpg"
+    "video_file": "@game/Videos/summon_float.mpg",
+    "fade_seconds": 0.5
+   }
+  },
+  {
+   "tag": {
+    "name": "Summon Leap Away"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 1.4,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.6,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 2,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.9,
+     1.0,
+     2.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 953,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     1.1,
+     0.8,
+     3.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 953,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Summon Reveal"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 1.5,
+    "look_at_entity": "Summon",
+    "look_at_height": 2.2,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "Donald J. Trump, the Summoned",
+    "title_seconds": 1.4,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 890,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     1.6,
+     0.5,
+     -5.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 956,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     1.0,
+     0.7,
+     -4.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 956,
+    "bone_name": ""
    }
   },
   {
@@ -44653,7 +44872,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 956,
     "bone_name": ""
    }
   },
@@ -44685,7 +44904,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 956,
     "bone_name": ""
    }
   },
@@ -44717,7 +44936,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 956,
     "bone_name": ""
    }
   },
@@ -44749,7 +44968,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 956,
     "bone_name": ""
    }
   },

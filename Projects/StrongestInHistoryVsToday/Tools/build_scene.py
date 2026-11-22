@@ -571,8 +571,8 @@ def add_effects(builder):
                            hit_effect="Impact Smoke", hit_burst=22, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
                            hit_stop_seconds=0.06, camera_shake=0.12))
     # The jet that flies over before the fire comes down: it hurts nobody itself (far above everyone's heads)
-    add_projectile(builder, "Private Jet", "sih_jet", 3, 1.6, spin_degrees_per_second=0.0, speed=46.0,
-                   damage=0.0, poise_damage=0.0, radius=0.1, homing_degrees_per_second=0.0, lifetime_seconds=2.4,
+    add_projectile(builder, "Private Jet", "sih_jet", 3, 2.6, spin_degrees_per_second=0.0, speed=30.0,
+                   damage=0.0, poise_damage=0.0, radius=0.1, homing_degrees_per_second=0.0, lifetime_seconds=3.6,
                    fuse_seconds=0.0, trail_effect="Fireball Trail", trail_particles_per_second=140.0,
                    hit_effect="", hit_burst=0, hit_sound="", hit_stop_seconds=0.0, camera_shake=0.0)
     # What rains from the temple when the domain opens: bundles of money, faster than the tapes
@@ -1257,7 +1257,7 @@ def add_boss(builder):
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 3.0, "eye_height": 1.7})
     entity["enemy_health_bar"].update({"is_boss": True, "display_name": BOSS_DISPLAY_NAME})
     # Pressure: short breaths between his combos, longer combos (boss_fight.lua speeds him up in later phases)
-    entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 7.0, "attack_cooldown_seconds": 1.25,
+    entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 7.0, "attack_cooldown_seconds": 0.6,
                                   "heavy_attack_chance": 0.25, "max_light_combo": 3, "finisher_chance": 0.35,
                                   "recover_seconds": 0.7, "dodge_chance": 0.3, "dodge_distance": 3.0,
                                   "dodge_cooldown_seconds": 3.0})
@@ -1442,7 +1442,22 @@ def add_fight(builder):
     builder.add(named("Summon Float", cutscene={
         "duration_seconds": 5.2, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
-        "video_file": "@game/Videos/summon_float.mpg"}))
+        "video_file": "@game/Videos/summon_float.mpg", "fade_seconds": 0.5}))
+    # Before it: low behind the player as Epstein leaps away from him into the air (he is seen going, then the film)
+    leap = builder.add(named("Summon Leap Away", cutscene={
+        "duration_seconds": 1.4, "look_at_entity": BOSS_NAME, "look_at_height": 1.6, "animation_entity": "",
+        "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
+        "video_file": "", "blend_in_seconds": 0.0}), parent=builder.find(PLAYER_NAME))
+    for number, point in enumerate(((0.9, 1.0, 2.6), (1.1, 0.8, 3.2))):
+        builder.add(named(f"Camera Point {number + 1}", point), parent=leap)
+    # After it: the monster that came, low before it as it roars, its name (placed on it by the script)
+    reveal = builder.add(named("Summon Reveal", cutscene={
+        "duration_seconds": 1.5, "look_at_entity": SUMMON_NAME, "look_at_height": 2.2, "animation_entity": "",
+        "animation_name": "", "animation_at_seconds": 0.0, "title": SUMMON_DISPLAY_NAME, "title_seconds": 1.4,
+        "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}), parent=builder.find(SUMMON_NAME))
+    # (on the monster: low before it, looking up at it, coming closer)
+    for number, point in enumerate(((1.6, 0.5, -5.5), (1.0, 0.7, -4.2))):
+        builder.add(named(f"Camera Point {number + 1}", point), parent=reveal)
     builder.add(named("Summon Wheel", cutscene={
         "duration_seconds": 3.7, "look_at_entity": "", "look_at_height": 0.0, "animation_entity": "", "animation_name": "",
         "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,

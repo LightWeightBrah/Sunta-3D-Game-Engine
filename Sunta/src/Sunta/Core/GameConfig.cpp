@@ -20,6 +20,7 @@ namespace GameConfigKeys
 	constexpr const char* Fullscreen   = "fullscreen";
 	constexpr const char* VSync        = "vsync";
 	constexpr const char* DeveloperMode = "developer_mode";
+	constexpr const char* DeveloperCheats = "developer_cheats";
 }
 
 bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
@@ -47,6 +48,7 @@ bool GameConfig::TryLoad(const std::string& virtualPath, GameConfig& outConfig)
 		loadedConfig.fullscreen   = configJson.value(GameConfigKeys::Fullscreen,   loadedConfig.fullscreen);
 		loadedConfig.vsync        = configJson.value(GameConfigKeys::VSync,        loadedConfig.vsync);
 		loadedConfig.developerMode = configJson.value(GameConfigKeys::DeveloperMode, loadedConfig.developerMode);
+		loadedConfig.developerCheats = configJson.value(GameConfigKeys::DeveloperCheats, loadedConfig.developerCheats);
 		loadedConfig.collisionSettings = CollisionSettingsSerializer::Deserialize(configJson, loadedConfig.collisionSettings);
 
 		outConfig = loadedConfig;
@@ -83,6 +85,8 @@ bool GameConfig::TrySaveToFile(const std::filesystem::path& filePath, const Game
 	// A normal project never has this key, so a shipped game can't get a console by accident
 	if (config.developerMode)
 		configJson[GameConfigKeys::DeveloperMode] = true;
+	if (config.developerCheats)
+		configJson[GameConfigKeys::DeveloperCheats] = true;
 
 	std::ofstream configFile(physicalPath);
 	if (!configFile.is_open())

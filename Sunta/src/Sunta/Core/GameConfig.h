@@ -29,6 +29,10 @@ struct GameConfig
 	// the game opens a console window, shows its log there and reloads changed scripts. Written to the file only when true
 	bool         developerMode = false;
 
+	// The developer's keys (F1: the player can't die, ...) in any build, without a console: for a game handed out to
+	// testers. Written to the file only when true
+	bool         developerCheats = false;
+
 	// Returns false (and leaves outConfig untouched) if the file is missing or broken
 	static bool TryLoad(const std::string& virtualPath, GameConfig& outConfig);
 

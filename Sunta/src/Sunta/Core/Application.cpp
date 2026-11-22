@@ -192,6 +192,8 @@ void Application::LoadGameConfig()
 // A development build (see GameBuilder) shows its log in a console window, other builds stay clean
 void Application::ApplyDeveloperMode()
 {
+	if (gameConfig.developerCheats)
+		DeveloperCheats::isAllowed = true;
 	if (!gameConfig.developerMode)
 		return;
 

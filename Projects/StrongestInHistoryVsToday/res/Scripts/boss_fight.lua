@@ -111,7 +111,7 @@ local LineGap          = 3.6
 local LineWaveSeconds  = 0.4
 
 -- The jet that flies over the arena before fire comes down: how high, and how far before its target it appears
-local JetHeight      = 15
+local JetHeight      = 8   -- (low over the fight: the player sees it pass)
 local JetRunUp       = 52
 
 -- The rain of the domain: bundles thrown from above the far wall (where the temple stands) at where the player is,
@@ -2266,6 +2266,10 @@ end
 
 local function startFight()
     phase = 1
+    -- (a brawl: he comes at the player again and again, short breaths between his combos)
+    this.meleeEnemy.attackCooldownSeconds = O.BrawlCooldown
+    this.meleeEnemy.recoverSeconds = 0.45
+    this.meleeEnemy.maxLightCombo = 4
     seconds = 0
     hasSeenDefeat = false
     setHealthFloor(DomainHealthFraction - FloorMargin)
@@ -2320,9 +2324,30 @@ local function startSummonPhase()
     local floated = 0
 
     startShow({
-        -- (film 2:31) "He is doing better than I expected." - the film's own pictures of him floating on his back
-        -- over the burning city as he speaks, and he rises in the game meanwhile: up and back, away from the player
+        -- He leaps away from the player into the air, seen in the game, before the film's pictures fade in
         function()
+            local player = find(PlayerName)
+            local away = player and (ground - player.transform.position) or vec3(0, 0, -1)
+            away.y = 0
+            away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
+            this.characterActions:play("Hover")
+            this.world:burst(O.SkidDust, ground, 30)
+            this.world:shakeCamera(0.5)
+            playCutscene(O.LeapAwayCutscene)
+            local leap = 0
+            show.during = function(deltaTime)
+                leap = math.min(leap + deltaTime / 1.4, 1)
+                local e = 1 - (1 - leap) * (1 - leap)
+                this.transform.position = clampToArena(ground + away * (O.FloatBackMeters * e)) + vec3(0, 3.5 * e, 0)
+            end
+            return 1.4
+        end,
+        -- (film 2:31) "He is doing better than I expected." - the film's own pictures of him floating on his back
+        -- over the burning city as he speaks (faded in from black), and in the game he keeps hanging up there
+        function()
+            local hangAt = this.transform.position
+            ground = vec3(hangAt.x, 0, hangAt.z)
+            floated = 1
             Audio.play(O.VoiceBetter, O.VoiceVolume)
             playCutscene(O.FloatCutscene)
             this.characterActions:play("Hover")
@@ -2386,7 +2411,7 @@ callTheSummon = function()
     summon.characterActions:play("Taunt")
     Audio.playAt(RoarSound, place, 1.6)
 
-    this.world:burst("Summon Burst", place + vec3(0, 1.0, 0), 500)
+    this.world:burst("Summon Burst", place + vec3(0, 1.0, 0), 160)
     this.world:shakeCamera(0.9)
     this.world:slowMotion(1.5, 0.3)
     flash = 0.6
@@ -2394,6 +2419,10 @@ callTheSummon = function()
     this.world:notify("WITH THIS TREASURE, I SUMMON...")
     -- The seal burns behind his back from now on
     O.showSeal(1)
+    -- A look at what came: low before the monster as it roars, its title over it
+    -- (it faces the player first: the shot is in front of it)
+    if player then summon.transform.rotation = vec3(0, O.yawToward(place, player.transform.position) + 180, 0) end
+    after(0.3, function() playCutscene(O.SummonRevealCutscene) end)
 end
 
 -- A breath between the great parts of the fight: the player's champagne is full again
@@ -2676,7 +2705,8 @@ end
 -- The fight stops for a breath: over his shoulder at the player across the street, both pacing; the other way, over
 -- the player's shoulder at him; close on his face as he smiles; and both run at each other - then the fight goes on.
 -- Once, at this second of the soundtrack (the film's 0:58), in the first phase
-O.Standoff = { At = 21.8, Distance = 12, Shots = { "Standoff Boss Side", "Standoff Player Side", "Standoff Smile",
+-- (off: the user found it random and it broke the flow of the fight - a game, not a film)
+O.Standoff = { IsOn = false, At = 21.8, Distance = 12, Shots = { "Standoff Boss Side", "Standoff Player Side", "Standoff Smile",
                "Standoff Charge" }, Seconds = { 2.8, 2.0, 1.6, 1.3 }, ChargeSpeed = 7.5, ClashGap = 1.7 }
 
 function O.startStandoff()
@@ -2774,7 +2804,7 @@ local function updatePhases()
         O.startAirFight()
         return
     end
-    if phase == 1 and not O.hasStoodOff and not O.wantsKnockback and clock() >= O.Standoff.At and isFreeToAct() then
+    if O.Standoff.IsOn and phase == 1 and not O.hasStoodOff and not O.wantsKnockback and clock() >= O.Standoff.At and isFreeToAct() then
         O.startStandoff()
         return
     end
@@ -2825,7 +2855,7 @@ local function reset()
     flash = 0
     playerDomainCasts = 0
 
-    this.meleeEnemy.attackCooldownSeconds = 1.25
+    this.meleeEnemy.attackCooldownSeconds = O.BrawlCooldown or 0.6
     this.meleeEnemy.heavyAttackChance = 0.25
     this.meleeEnemy.dodgeChance = 0.3
     this.characterActions.attackSpeed = 1.1
@@ -2977,6 +3007,7 @@ end
 -- The bottle from the sky become oil (film 2:28-2:30): a capsule of oil the shape of the bottle for a moment, swelling
 -- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
 O.SwordFightCameraDistance = 5.6
+O.BrawlCooldown = 0.6
 O.CubeBurstsAfter = 1.15
 O.Liquid = { Entity = "Detonation Oil", CapsuleSeconds = 0.35, Capsule = vec3(2.2, 4.6, 2.2), Ball = 5.2,
              Effect = "Liquid Burst" }
@@ -2987,6 +3018,7 @@ O.VoiceDomain    = "@game/Sounds/Voice/epstein_domain_expansion.ogg"
 O.VoiceBetter    = "@game/Sounds/Voice/epstein_better_than_expected.ogg"
 -- The film's pictures over his two lines before the summoning; meanwhile he rises up and back over this long, this far
 O.FloatCutscene, O.FloatRiseSeconds, O.FloatBackMeters = "Summon Float", 4.5, 6
+O.LeapAwayCutscene, O.SummonRevealCutscene = "Summon Leap Away", "Summon Reveal"
 O.VoiceTreasure  = "@game/Sounds/Voice/epstein_treasure_summon.ogg"
 O.VoicePresident = "@game/Sounds/Voice/epstein_president_trump.ogg"
 O.VoiceVolume    = 1.5
