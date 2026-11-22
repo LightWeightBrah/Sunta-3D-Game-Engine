@@ -670,7 +670,7 @@ def add_domain_spectacle(builder):
         "piece_size": 2.2, "size_variation": 0.5, "radius": 2.0, "shell_thickness": 0.55,
         "spin_degrees_per_second": 26.0, "tumble_degrees_per_second": 70.0,
         "sky_center": [0.0, 36.0, -20.0], "sky_half_extents": [60.0, 12.0, 60.0],
-        "fall_speed": 34.0, "fall_spread_seconds": 6.5, "ground_height": 0.0, "stuck_seconds": 6.0,
+        "fall_speed": 34.0, "fall_spread_seconds": 6.5, "ground_height": 0.0, "stuck_seconds": 120.0,
         "glow_color": [1.3, 0.34, 0.05], "trail_length": 11.0, "hit_effect": "Star Impact", "hit_burst": 2}))
 
     # Tens of thousands of tongues of fire on a dome that grows (its radius set by the script)
@@ -852,7 +852,8 @@ def add_player(builder):
         # (a quick-time event: [2] again and again, quickly, a blow felt with each press, until he is up)
         "wait_presses": 8, "press_window_seconds": 0.4, "press_sound": "@game/Sounds/Brawl/Punch",
         "wait_prompt": "Mash [2] to rise   -   Imaginary Technique: Baby Oil Detonation"}), parent=player)
-    for index, point in enumerate(((3.2, 3.4, 2.4), (2.4, 2.6, 0.2), (1.6, 2.1, -1.6))):
+    # (a cut, high beside him: the stars that threw him down stuck around him, and him; no flight across the arena)
+    for index, point in enumerate(((3.4, 3.0, 2.6), (3.0, 2.6, 1.2))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=down)
     # Rising from the ground with his hand up for his great technique (started by boss_fight.lua when the player
     # presses [3] lying down): the camera low in front of him, coming up with him (his front is his own -Z)
@@ -1480,7 +1481,7 @@ SEQUENCE_SHOTS = {
     "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
     "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
-    "Down Wait":        {"blend_in_seconds": 1.8},
+    "Down Wait":        {"blend_in_seconds": 0.0},
     # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)
     # (a cut from the shot over him lying: a flight there crossed the whole arena)
     "Technique Rise":   {"blend_in_seconds": 0.0, "duration_seconds": 4.6},
