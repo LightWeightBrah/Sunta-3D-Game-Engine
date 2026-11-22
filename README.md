@@ -145,7 +145,11 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
 * **Cutscenes:** sequences of camera shots and character moves, skippable, chained into staged moments; a shot started
   during another cuts in on it, and the HUD stays away between the shots of one scene. Faces can act in them: a
   model's first morph target is its expression (`model.expression`, e.g. a smile), and a character can be outlined in
-  light (`model.rimGlow`) for the moment a technique is called.
+  light (`model.rimGlow`) for the moment a technique is called. *View > Show Cutscene Camera Paths* draws every shot's
+  camera points and the curve its camera flies along in the editor; a quick-time event (pressing a key quickly, a
+  button on the screen popping with each press) is a cutscene setting.
+* **Knockback:** a blow can throw the one it staggers back along the ground - sliding back on the feet, slowing
+  down in a trail of dust, standing up clean (`hitbox.knockback`, `characterActions:knockBack()`).
 * **Transformations at runtime:** a script can put another model on a character (same skeleton, same clip names), switch
   its weapons' hitboxes, change the timing of its attacks and the effects of its swings - a boss that takes up armor and
   a sword in the middle of the fight.
@@ -194,18 +198,18 @@ How big the engine and each game made with it are, counted automatically:
 
 | Part | Lines of code | Files | Languages |
 |---|---:|---:|---|
-| Engine core (`Sunta/src`, without the editor) | 34,519 | 324 | C++ 34,519 |
-| Editor (`Sunta/src/Sunta/Editor`, `Apps/Editor`) | 6,664 | 63 | C++ 6,664 |
+| Engine core (`Sunta/src`, without the editor) | 34,747 | 324 | C++ 34,747 |
+| Editor (`Sunta/src/Sunta/Editor`, `Apps/Editor`) | 6,669 | 63 | C++ 6,669 |
 | Game runtime (`Apps/Runtime`) | 35 | 1 | C++ 35 |
 | Shaders and engine scripts (`Sunta/res`) | 1,225 | 19 | GLSL 1,181, Lua 44 |
 | Build (CMake, `cmake/`) | 252 | 5 | CMake 252 |
 | Tools (`Tools/`: asset generators, tests, docs) | 6,519 | 39 | Python 6,488, JavaScript 31 |
-| **Engine in all** | **49,214** | **451** | |
-| Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,669 | 11 | Python 3,514, Lua 3,155 |
+| **Engine in all** | **49,447** | **451** | |
+| Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,786 | 11 | Python 3,590, Lua 3,196 |
 | Game: [`Showcase`](Projects/Showcase) | 98 | 2 | Python 88, Lua 10 |
 | Game: [`MyGame`](Projects/MyGame) | 60 | 3 | Lua 45, GLSL 15 |
-| **Games in all** | **6,827** | **16** | |
-| **Everything** | **56,041** | **467** | |
+| **Games in all** | **6,944** | **16** | |
+| **Everything** | **56,391** | **467** | |
 
 Non-empty lines of the files tracked by git, without third-party code (`Dependencies/`) and generated files (scenes, models). Counted by [`Tools/count_lines.py`](Tools/count_lines.py) on every push to main.
 

@@ -32,6 +32,7 @@ public:
 	static const glm::vec3& GetBoundsGizmoColor()	{ return boundsGizmoColor;   }
 	static       float      GetGizmosLineWidth()    { return gizmosLineWidth;    }
 	static       bool       GetShowLockOnSightRays() { return showLockOnSightRays; }
+	static       bool       GetShowCutscenePaths()   { return showCutscenePaths;   }
 	static       bool       GetShowWeaponHitboxes()  { return showWeaponHitboxes;  }
 
 	static void SetShowAllGizmos(bool show)                   { showAllGizmos      = show;  }
@@ -41,6 +42,7 @@ public:
 	static void SetBoundsGizmoColor(const glm::vec3& color)	  { boundsGizmoColor   = color; }
 	static void SetGizmosLineWidth(float width)               { gizmosLineWidth    = width; }
 	static void SetShowLockOnSightRays(bool show)             { showLockOnSightRays = show; }
+	static void SetShowCutscenePaths(bool show)               { showCutscenePaths = show; }
 	static void SetShowWeaponHitboxes(bool show)              { showWeaponHitboxes  = show; }
 
 private:
@@ -66,6 +68,7 @@ private:
 	static inline float     gizmosLineWidth         = 1.0f;
 
 	static inline bool      showLockOnSightRays     = false;
+	static inline bool      showCutscenePaths       = false;
 	static inline bool      showWeaponHitboxes      = false;
 
 };

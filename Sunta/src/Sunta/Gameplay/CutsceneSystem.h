@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <glm/glm.hpp>
 
 namespace Sunta
@@ -25,6 +26,17 @@ public:
 	// True for a moment after a shot ended: a script that starts the next shot of a scene a frame later doesn't flash
 	// the HUD between the two
 	static bool IsBetweenShots();
+
+	// For the editor's gizmos: every shot of the scene as the line its camera flies along (the points of its children
+	// on the same smooth curve the camera takes), its points, and where it looks
+	struct ShotPath
+	{
+		std::vector<glm::vec3> points;
+		std::vector<glm::vec3> curve;
+		glm::vec3 lookAt   = glm::vec3(0.0f);
+		bool      hasLookAt = false;
+	};
+	static std::vector<ShotPath> GetShotPaths(EntityManager& entityManager);
 
 	// Call once per frame AFTER the follow camera: the cutscene's camera wins
 	static void Update(EntityManager& entityManager, float deltaTime);

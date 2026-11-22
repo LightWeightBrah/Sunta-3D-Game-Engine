@@ -336,6 +336,33 @@ bool CutsceneSystem::PlayByName(EntityManager& entityManager, const std::string&
 	return true;
 }
 
+std::vector<CutsceneSystem::ShotPath> CutsceneSystem::GetShotPaths(EntityManager& entityManager)
+{
+	std::vector<ShotPath> paths;
+	for (CutsceneComponent& cutscene : entityManager.GetAllComponents<CutsceneComponent>())
+	{
+		const unsigned int cutsceneID = entityManager.GetEntityIDForComponent(cutscene);
+		ShotPath path;
+		for (unsigned int childID : EntityHierarchy::GetChildren(entityManager, cutsceneID))
+			path.points.push_back(GetWorldPosition(entityManager, childID));
+		if (path.points.empty())
+			continue;
+
+		constexpr int Steps = 24;
+		for (int step = 0; step <= Steps; step++)
+			path.curve.push_back(PointOnPath(path.points, static_cast<float>(step) / Steps));
+
+		unsigned int targetID = 0;
+		if (TryFindEntityByName(entityManager, cutscene.lookAtEntity, targetID))
+		{
+			path.lookAt    = GetWorldPosition(entityManager, targetID) + WorldUp * cutscene.lookAtHeight;
+			path.hasLookAt = true;
+		}
+		paths.push_back(std::move(path));
+	}
+	return paths;
+}
+
 bool CutsceneSystem::IsBetweenShots()
 {
 	const Letterbox& letterbox = GetLetterbox();

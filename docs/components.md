@@ -385,6 +385,7 @@ How to use it: put it on the weapon, a child entity of the character (the Souls 
 | `poiseDamage` | Float |
 | `hitStopSeconds` | Float |
 | `cameraShake` | Float |
+| `knockback` | Float |
 | `localOffset` | Float3 |
 | `halfExtents` | Float3 |
 | `layer` | CollisionLayer |
@@ -791,6 +792,7 @@ How to use it: Add Component > Cutscene on an empty entity, then give it childre
 | `sound` | String |
 | `waitForKey` | String |
 | `waitPrompt` | String |
+| `pressSound` | String |
 | `waitPresses` | Int |
 | `pressWindowSeconds` | Float |
 | `blendInSeconds` | Float |

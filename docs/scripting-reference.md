@@ -111,6 +111,7 @@ if this.characterActions.isGuarding then ... end, this.characterActions:play("Ro
 | `play` |  |
 | `request` |  |
 | `isBusy` |  |
+| `knockBack` | Thrown back along the ground: this.characterActions:knockBack(direction, meters) (see knockbackAnimation) |
 | `isGuarding` |  |
 | `isParrying` | True during the part of a parry that turns blows away (a script can show it: a flash, a shield of light) |
 | `isOpenToRiposte` |  |
@@ -350,6 +351,7 @@ this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss rena
 |---|---|
 | `isEnabled` |  |
 | `damage` |  |
+| `knockback` |  |
 
 ## FollowCamera
 

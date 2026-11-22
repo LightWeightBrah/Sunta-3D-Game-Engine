@@ -90,6 +90,12 @@ namespace
 	const glm::vec3 SightRayHitColor        = glm::vec3(1.0f, 0.6f, 0.0f);
 	constexpr float SightRayHitMarkHalfSize = 0.25f;
 
+	// The paths of the cutscene cameras (View > Show Cutscene Camera Paths)
+	const glm::vec3 CutscenePointColor     = glm::vec3(1.0f, 0.85f, 0.2f);
+	const glm::vec3 CutscenePathColor      = glm::vec3(0.3f, 0.8f, 1.0f);
+	const glm::vec3 CutsceneLookColor      = glm::vec3(0.6f, 0.6f, 0.6f);
+	constexpr float CutscenePointHalfSize  = 0.15f;
+
 	// A camera has no mesh, so the mouse picks it by a small box in front of it
 	const glm::vec3 CameraPickingBoxMin = glm::vec3(-0.3f, -0.2f, -0.8f);
 	const glm::vec3 CameraPickingBoxMax = glm::vec3( 0.3f,  0.2f,  0.0f);
@@ -689,6 +695,21 @@ void Scene::Render(Renderer& renderer)
 	{
 		for (const LockOnSystem::SightRay& sightRay : LockOnSystem::GetSightRays())
 			DrawSightRay(sightRay, sceneData);
+	}
+
+	// The cameras of the cutscenes (View > Show Cutscene Camera Paths): a cross at each point, the curve flown along,
+	// and a line from its start to what it looks at
+	if (!isPlaying && DebugRenderer::GetShowCutscenePaths())
+	{
+		for (const CutsceneSystem::ShotPath& path : CutsceneSystem::GetShotPaths(entityManager))
+		{
+			for (const glm::vec3& point : path.points)
+				DebugRenderer::DrawCross(point, CutscenePointHalfSize, CutscenePointColor, sceneData);
+			for (size_t i = 1; i < path.curve.size(); i++)
+				DebugRenderer::DrawLine(path.curve[i - 1], path.curve[i], CutscenePathColor, sceneData);
+			if (path.hasLookAt)
+				DebugRenderer::DrawLine(path.points.front(), path.lookAt, CutsceneLookColor, sceneData);
+		}
 	}
 
 	// The finished scene on the screen, then the HUD over it (the HUD is neither tone mapped nor glowing)

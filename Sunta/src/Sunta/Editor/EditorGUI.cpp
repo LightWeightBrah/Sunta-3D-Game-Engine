@@ -411,6 +411,13 @@ void EditorGUI::DrawMainMenuBar(Scene& scene)
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("While playing, Q draws the line of sight to every enemy it checks.\nGreen: visible. Red: hits a wall there (orange cross), grey: the rest of the way to the enemy");
 
+			bool showCutscenePaths = DebugRenderer::GetShowCutscenePaths();
+			if (ImGui::Checkbox("Show Cutscene Camera Paths", &showCutscenePaths))
+				DebugRenderer::SetShowCutscenePaths(showCutscenePaths);
+
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Draws where the camera of every cutscene flies: a cross at each of its Camera Points,\nthe smooth curve it takes (blue) and a line to what it looks at (grey)");
+
 			bool showWeaponHitboxes = DebugRenderer::GetShowWeaponHitboxes();
 			if (ImGui::Checkbox("Show Weapon Hitboxes", &showWeaponHitboxes))
 				DebugRenderer::SetShowWeaponHitboxes(showWeaponHitboxes);
