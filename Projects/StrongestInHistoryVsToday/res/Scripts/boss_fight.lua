@@ -1054,6 +1054,7 @@ function O.domainOpeningSteps()
             if this.model then this.model.darkness = 1 end
             setEyes(10)
             playCutscene(O.MeteorCutscene)
+            O.runIntoStars()
         end },
         -- The first of them come down around him: he is thrown off his feet
         { 62.5, function()
@@ -3155,6 +3156,36 @@ end
 -- The blast runs over the ground as a wave and the stars stuck in it burst one after another as it reaches them
 -- (it is his answer that breaks them: the player sees them go from the blast outwards)
 O.StarWave = { Speed = 16, Farthest = 50, Effect = "Solid Oil Burst", EffectEvery = 0.08, Sparks = "Star Impact" }
+-- As in the film (1:37.5-1:39.5) he runs at the boss into the falling stars, until they throw him off his feet
+-- (he stood still waiting for them; the camera of the shot is his own child and runs with him)
+O.RunIntoStars = { Meters = 7, Seconds = 1.6 }
+function O.runIntoStars()
+    local player = O.playerEntity()
+    if not player then return end
+    local from = player.transform.position
+    local toBoss = this.transform.position - from
+    toBoss.y = 0
+    if toBoss:length() < 2 then return end
+    local along = toBoss:normalized()
+    local meters = math.min(O.RunIntoStars.Meters, toBoss:length() - 3)
+    player.transform.rotation = vec3(0, O.yawToward(from, this.transform.position) + 180, 0)
+    -- (carried by the script his body doesn't move by itself: running is his standing clip for the run)
+    local animation = player.characterAnimation
+    if animation then
+        local idles = { animation.idleAnimation, animation.lockedOnIdleAnimation }
+        animation.idleAnimation, animation.lockedOnIdleAnimation = "Run", "Run"
+        after(O.RunIntoStars.Seconds, function()
+            animation.idleAnimation, animation.lockedOnIdleAnimation = idles[1], idles[2]
+        end)
+    end
+    O.tween(function(v)
+        if O.playerEntity() then
+            local at = clampToArena(from + along * v)
+            player.transform.position = vec3(at.x, from.y, at.z)
+        end
+    end, 0, meters, O.RunIntoStars.Seconds)
+end
+
 function O.startStarWave(at)
     local stars = O.stars()
     if not stars or not stars.isVisible then return end
