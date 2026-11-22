@@ -19,6 +19,7 @@ namespace Sunta
 	//   every STEP UNTIL COMMAND...  repeat COMMAND every STEP seconds until the time UNTIL
 	//   shot NAME                    save the frame as NAME.png in SUNTA_TEST_OUT (default: the working folder)
 	//   log TEXT                     write TEXT to the log (marks a moment in the combat log)
+	//   fps [LABEL]                  log the frames since the last fps: average FPS and the slowest frame (ms)
 	//   quit                         close the game
 	// Other commands go to the handler set with SetCommandHandler (the gameplay test bot: lockon, approach, fight)
 	class InputPlayback

@@ -11,6 +11,8 @@
 
 #include <stb/stb_image_write.h>
 
+#include <algorithm>
+
 namespace Sunta
 {
 
@@ -99,6 +101,10 @@ int ParseKey(std::string name)
 	SUNTA_ENGINE_LOG_WARNING("InputPlayback: unknown key '{0}'", name);
 	return -1;
 }
+
+// How long each frame took since the last "fps" command (seconds), to report how smoothly a moment of the game runs
+std::vector<float> frameSeconds;
+float lastFrameAt = -1.0f;
 
 // Every change of a mouse button the script made, in order, for the editor's GUI (see TakeMouseButtonChanges)
 std::vector<std::pair<int, bool>> mouseButtonChanges;
@@ -189,6 +195,27 @@ void Run(const TimedCommand& c, float now)
 	}
 	else if (c.command == "log")
 		SUNTA_ENGINE_LOG_INFO("InputPlayback [{0:.2f}s]: {1} {2} {3}", now, c.argument, c.argument2, c.argument3);
+	else if (c.command == "fps")
+	{
+		// "fps [label]": the frames since the last report - their average and the slowest one (a hitch is felt)
+		if (!frameSeconds.empty())
+		{
+			float sum = 0.0f, slowest = 0.0f;
+			for (float seconds : frameSeconds)
+			{
+				sum += seconds;
+				slowest = std::max(slowest, seconds);
+			}
+			const float average = sum / static_cast<float>(frameSeconds.size());
+			// (the log has no number formats: the text is made here)
+			char report[160];
+			std::snprintf(report, sizeof(report), "fps %s average %.1f (%.1f ms), slowest frame %.1f ms, %d frames",
+				c.argument.c_str(), average > 0.0f ? 1.0f / average : 0.0f, average * 1000.0f, slowest * 1000.0f,
+				static_cast<int>(frameSeconds.size()));
+			SUNTA_ENGINE_LOG_INFO("InputPlayback [{0}s]: {1}", static_cast<int>(now), report);
+		}
+		frameSeconds.clear();
+	}
 	else if (c.command == "quit")
 		wantsQuit = true;
 	else if (!customHandler || !customHandler(c.command, c.argument, c.argument2, c.argument3, now))
@@ -273,6 +300,10 @@ void InputPlayback::Update(float now)
 {
 	if (!isActive)
 		return;
+
+	if (lastFrameAt >= 0.0f && now > lastFrameAt)
+		frameSeconds.push_back(now - lastFrameAt);
+	lastFrameAt = now;
 
 	for (auto it = releases.begin(); it != releases.end();)
 	{
