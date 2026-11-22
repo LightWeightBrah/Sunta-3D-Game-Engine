@@ -474,8 +474,8 @@ local function updateTide(deltaTime)
 end
 
 -- For testing the boss fight: true starts the player right before the fog of the arena instead of at the far end of
--- the street (the test build turns it on, see Tools/build_arena_test.py)
-local StartAtArena = false
+-- the street (ON while the user tests the boss fight; false for the finished game)
+local StartAtArena = true
 local hasStarted = false
 
 function OnUpdate(deltaTime)
@@ -485,6 +485,12 @@ function OnUpdate(deltaTime)
             this.transform.position = vec3(0, 0.1, -15)
             this.transform.rotation = vec3(0, 0, 0)
         end
+    end
+    -- For testing: F2 puts the player right before the fog of the arena (the street skipped)
+    if Input.isKeyDown(Key.F2) and not this.world.isCutscenePlaying then
+        this.transform.position = vec3(0, 0.1, -15)
+        this.transform.rotation = vec3(0, 0, 0)
+        this.world:notify("TELEPORTED TO THE ARENA (F2)")
     end
     updateAirThrow()
     updateTide(deltaTime)

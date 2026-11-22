@@ -1385,6 +1385,10 @@ void LuaBindings::RegisterInput(sol::state& lua)
 
 	for (char digit = '0'; digit <= '9'; ++digit)
 		keys[std::string("Num") + digit] = static_cast<int>(digit);
+
+	// The function keys (Key.F2)
+	for (int number = 1; number <= 12; ++number)
+		keys["F" + std::to_string(number)] = SUNTA_KEY_F1 + number - 1;
 }
 
 }

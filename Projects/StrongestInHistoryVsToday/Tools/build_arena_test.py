@@ -12,7 +12,7 @@ PROJECT = REPO / "Projects" / "StrongestInHistoryVsToday"
 OUT = PROJECT / "Build" / "Strongest in History Vs Today_ArenaTest"
 
 result = subprocess.run([sys.executable, str(REPO / "Tools" / "Testing" / "build_test_game.py"), "StrongestInHistoryVsToday",
-                         "SihArenaTest", "Scripts/player_techniques.lua::local StartAtArena = false::local StartAtArena = true"],
+                         "SihArenaTest", "Scripts/player_techniques.lua::local StartAtArena = true::local StartAtArena = true"],
                         capture_output=True, text=True, env=dict(os.environ, SUNTA_BACKGROUND="1"))
 if result.returncode != 0:
     print(result.stdout, result.stderr)
