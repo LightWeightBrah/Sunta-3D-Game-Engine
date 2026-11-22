@@ -35903,8 +35903,8 @@
    },
    "particle_emitter": {
     "is_emitting": false,
-    "particles_per_second": 26.0,
-    "lifetime_seconds": 1.8,
+    "particles_per_second": 9.0,
+    "lifetime_seconds": 1.4,
     "spawn_half_extents": [
      0.9,
      0.9,
@@ -35921,8 +35921,8 @@
      0.3,
      0.0
     ],
-    "start_size": 0.7,
-    "end_size": 1.6,
+    "start_size": 0.45,
+    "end_size": 0.9,
     "start_color": [
      0.35,
      0.03,
@@ -36046,8 +36046,8 @@
    },
    "particle_emitter": {
     "is_emitting": false,
-    "particles_per_second": 30.0,
-    "lifetime_seconds": 1.0,
+    "particles_per_second": 14.0,
+    "lifetime_seconds": 0.8,
     "spawn_half_extents": [
      0.38,
      0.9,
@@ -36064,8 +36064,8 @@
      0.6,
      0.0
     ],
-    "start_size": 0.35,
-    "end_size": 0.75,
+    "start_size": 0.25,
+    "end_size": 0.5,
     "start_color": [
      0.55,
      0.06,

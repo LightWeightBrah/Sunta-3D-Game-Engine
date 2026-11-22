@@ -644,7 +644,8 @@ local function updateCameraDistance(deltaTime)
     local camera = find(CameraName)
     if not camera or not camera.followCamera then return end
 
-    local wanted = (phase == 3) and GiantCameraDistance or FistFightCameraDistance
+    -- (in his armor he stands taller with a great sword: farther back, he was hidden behind the player)
+    local wanted = (phase == 3) and GiantCameraDistance or (phase >= 5) and O.SwordFightCameraDistance or FistFightCameraDistance
     local now = camera.followCamera.distance
     local step = CameraZoomPerSecond * deltaTime
     camera.followCamera.distance = now + math.max(-step, math.min(step, wanted - now))
@@ -2942,6 +2943,7 @@ end
 
 -- The bottle from the sky become oil (film 2:28-2:30): a capsule of oil the shape of the bottle for a moment, swelling
 -- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
+O.SwordFightCameraDistance = 5.6
 O.CubeBurstsAfter = 1.15
 O.Liquid = { Entity = "Detonation Oil", CapsuleSeconds = 0.35, Capsule = vec3(2.2, 4.6, 2.2), Ball = 5.2,
              Effect = "Liquid Burst" }

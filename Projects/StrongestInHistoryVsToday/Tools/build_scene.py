@@ -1075,9 +1075,10 @@ def add_seal(builder, boss):
     builder.add(seal, parent=boss)
     # Dark red smoke curling off it, and embers
     builder.add(named("Boss Seal Smoke", (0.0, SEAL_HEIGHT, SEAL_BEHIND), particle_emitter={
-        "is_emitting": False, "particles_per_second": 26.0, "lifetime_seconds": 1.8,
+        # (thin: a thick cloud of it covered half the screen behind him in the fight)
+        "is_emitting": False, "particles_per_second": 9.0, "lifetime_seconds": 1.4,
         "spawn_half_extents": [0.9, 0.9, 0.15], "velocity": [0.0, 0.9, 0.3], "velocity_randomness": 0.5,
-        "gravity": [0.0, 0.3, 0.0], "start_size": 0.7, "end_size": 1.6, "start_color": [0.35, 0.03, 0.02],
+        "gravity": [0.0, 0.3, 0.0], "start_size": 0.45, "end_size": 0.9, "start_color": [0.35, 0.03, 0.02],
         "end_color": [0.08, 0.01, 0.01], "intensity": 0.8, "max_particles": 120, "is_dark": True, "style": 2,
         "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png", "flipbook_columns": 8, "flipbook_rows": 8,
         "flipbook_loops": 1.0, "flipbook_random_start": True}), parent=boss)
@@ -1089,9 +1090,9 @@ def add_seal(builder, boss):
                 parent=boss)
     # The aura: wisps of dark red smoke rising all around his body, lit from inside (the concept's red glow)
     builder.add(named("Boss Red Aura", (0.0, 0.0, 0.0), particle_emitter={
-        "is_emitting": False, "particles_per_second": 30.0, "lifetime_seconds": 1.0,
+        "is_emitting": False, "particles_per_second": 14.0, "lifetime_seconds": 0.8,
         "spawn_half_extents": [0.38, 0.9, 0.38], "velocity": [0.0, 1.1, 0.0], "velocity_randomness": 0.35,
-        "gravity": [0.0, 0.6, 0.0], "start_size": 0.35, "end_size": 0.75, "start_color": [0.55, 0.06, 0.04],
+        "gravity": [0.0, 0.6, 0.0], "start_size": 0.25, "end_size": 0.5, "start_color": [0.55, 0.06, 0.04],
         "end_color": [0.12, 0.01, 0.01], "intensity": 0.7, "max_particles": 120, "style": 2, "size_randomness": 0.35,
         "spin_degrees_per_second": 40.0, "flipbook_texture": "@engine/Textures/Flipbooks/smoke_puff_8x8.png",
         "flipbook_columns": 8, "flipbook_rows": 8, "flipbook_loops": 1.0, "flipbook_random_start": True}),
