@@ -39,7 +39,7 @@ constexpr float DistanceReturnSharpness = 6.0f;
 // Something low behind the player (a heap of rubble, a low wall) would push the camera into the player's head: it rises
 // over it instead, looking down at the player, when rising one of these heights clears most of the view. It goes up
 // quickly and comes down slowly
-constexpr float RiseSteps[]          = { 0.6f, 1.2f, 1.8f, 2.4f };
+constexpr float RiseSteps[]          = { 0.6f, 1.2f, 1.8f, 2.4f, 3.2f, 4.0f }; // (high heaps of rubble: 2.4 m left it at the neck)
 constexpr float RiseIsWorthFrom      = 0.75f; // pushed in to less than this part of the distance: try rising
 constexpr float RiseClearsFrom       = 0.9f;  // rising helps when the view is then this free
 constexpr float RiseBetterBy         = 1.5f;  // ...or, when nothing clears it, when it frees this much more of it
