@@ -89,6 +89,7 @@ end
 
 -- The oil gathers over his palm while he winds up, and is gone from the hand the moment it flies
 local heldGrowth = 0
+local flyGrowth = 0
 local function updateHeldOrb(deltaTime)
     local held = find(HeldOrb)
     if not held or not held.liquidOrb then return end
@@ -109,6 +110,16 @@ local function updateHeldOrb(deltaTime)
     elseif caster and caster.isCasting then
         heldGrowth = -1
     end
+
+    -- (flying in the fight in the air the ball floats over his palm the whole time: the boss's script stages it)
+    local actions = this.characterActions
+    if actions and actions.animation == "Fly_Orb" then
+        flyGrowth = math.min((flyGrowth or 0) + deltaTime * 1.2, 1)
+        held.transform.scale = vec3(1, 1, 1) * (HeldOrbSize * 0.75 * flyGrowth)
+        held.liquidOrb.isVisible = true
+        return
+    end
+    flyGrowth = 0
 
     held.liquidOrb.isVisible = isHolding and heldGrowth > 0.05
 end

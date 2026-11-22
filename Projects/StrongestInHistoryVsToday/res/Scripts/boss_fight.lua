@@ -2413,6 +2413,121 @@ local function hasReached(healthFraction, atSeconds)
     return isHurtEnough or now >= atSeconds
 end
 
+-- ========== The fight in the air (film 0:40-0:50) ==========
+
+-- Once in the first phase: both rise into the air facing each other; he makes his sign and shoots his stars, the
+-- player forms a ball of baby oil over his palm and throws it; they meet in the middle in a blast; both come down.
+O.AirFight = { At = 10.5, Height = 4.5, Distance = 11, RiseSeconds = 1.2,
+               Shots = { "Air Rise", "Air Diddy", "Air Clash" }, Seconds = { 1.6, 2.0, 1.8 } }
+
+function O.startAirFight()
+    local player = find(PlayerName)
+    if not player then return end
+    O.hasFoughtInAir = true
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    becomeInvulnerable(8)
+    local A = O.AirFight
+
+    local from = this.transform.position
+    local toPlayer = player.transform.position - from
+    toPlayer.y = 0
+    local along = toPlayer:length() > 0.5 and toPlayer:normalized() or vec3(0, 0, 1)
+    local mid = clampToArena(from + toPlayer * 0.5)
+    local bossGround = clampToArena(mid - along * (A.Distance * 0.5))
+    local playerGround = clampToArena(mid + along * (A.Distance * 0.5))
+    bossGround.y, playerGround.y = 0, 0
+    local up = vec3(0, A.Height, 0)
+    local risen = 0
+
+    local function face()
+        local b, p = this.transform.position, player.transform.position
+        this.transform.rotation = vec3(0, O.yawToward(b, p) + 180, 0)
+        player.transform.rotation = vec3(0, O.yawToward(p, b) + 180, 0)
+    end
+    -- (in the air nothing pulls them down while the scene holds them there)
+    local function float(isOn)
+        for _, who in ipairs({ this, player }) do
+            if who.physicsBody then
+                who.physicsBody.useGravity = not isOn
+                who.physicsBody.velocity = vec3(0, 0, 0)
+            end
+        end
+    end
+    float(true)
+    local function hold(deltaTime)
+        -- (the floating clips again when they ended: both stay in the air until they come down)
+        if not this.characterActions.isBusy then this.characterActions:play("Hover") end
+        if player.characterActions and not player.characterActions.isBusy then O.playPlayer("Fly_Orb") end
+        risen = math.min(risen + deltaTime / A.RiseSeconds, 1)
+        local e = risen * risen * (3 - 2 * risen)
+        local bob = math.sin(seconds * 2.5) * 0.12
+        this.transform.position = bossGround + up * e + vec3(0, bob, 0)
+        player.transform.position = playerGround + up * e + vec3(0, -bob, 0)
+        face()
+    end
+
+    startShow({
+        function()
+            this.world:burst(O.SkidDust, bossGround, 20)
+            this.world:burst(O.SkidDust, playerGround, 20)
+            this.characterActions:play("Hover")
+            O.playPlayer("Fly_Orb")
+            playCutscene(A.Shots[1])
+            show.during = hold
+            return A.Seconds[1]
+        end,
+        -- He makes his sign (film 0:41), the player's ball of oil grows over his palm (0:43)
+        function()
+            this.characterActions:play("Cast_Stars")
+            playCutscene(A.Shots[2])
+            show.during = hold
+            return A.Seconds[2]
+        end,
+        -- Both throw: his stars and the ball of oil meet in the middle and burst (0:47-0:50)
+        function()
+            playCutscene(A.Shots[3])
+            local b, p = this.transform.position + vec3(0, 1.4, 0), player.transform.position + vec3(0, 1.4, 0)
+            local middle = (b + p) * 0.5
+            O.playPlayer("Cast_Orb")
+            for i = 1, 5 do
+                local turn = math.rad((i - 3) * 6)
+                local dir = (p - b):normalized()
+                this.world:effect("Technique Ray", b, vec3(dir.x * math.cos(turn) - dir.z * math.sin(turn), 0, dir.x * math.sin(turn) + dir.z * math.cos(turn)))
+            end
+            after(0.45, function()
+                this.world:effect("Solid Oil Burst", middle, (b - p):normalized())
+                this.world:effect("Liquid Burst", middle)
+                this.world:flash(vec3(1, 0.97, 0.9), 0.12, 0.0)
+                this.world:impactFrame(1.0, 0.4)
+                this.world:shakeCamera(1.0)
+                Audio.play(BoomSound, 1.0)
+            end)
+            show.during = hold
+            return A.Seconds[3]
+        end,
+        -- Both come down
+        function()
+            local fall = 0
+            local bFrom, pFrom = this.transform.position, player.transform.position
+            show.during = function(deltaTime)
+                fall = math.min(fall + deltaTime / 0.5, 1)
+                this.transform.position = mix(bFrom, bossGround, fall * fall)
+                player.transform.position = mix(pFrom, playerGround, fall * fall)
+            end
+            return 0.5
+        end,
+        function()
+            this.world:burst(O.SkidDust, bossGround, 16)
+            this.world:burst(O.SkidDust, playerGround, 16)
+            this.characterActions:play("Idle")
+            O.playPlayer("Idle")
+            float(false)
+            isChanneling = false
+        end,
+    })
+end
+
 -- ========== The stand-off (film 0:58-1:05) ==========
 
 -- The fight stops for a breath: over his shoulder at the player across the street, both pacing; the other way, over
@@ -2496,6 +2611,10 @@ end
 local function updatePhases()
     -- The domain opens when the player has hurt him enough (or, at the latest, late in the soundtrack): the
     -- soundtrack is moved to the film's moment of that blow, so the picture and the sound stay together
+    if phase == 1 and not O.hasFoughtInAir and not O.wantsKnockback and clock() >= O.AirFight.At and isFreeToAct() then
+        O.startAirFight()
+        return
+    end
     if phase == 1 and not O.hasStoodOff and not O.wantsKnockback and clock() >= O.Standoff.At and isFreeToAct() then
         O.startStandoff()
         return
@@ -2532,7 +2651,7 @@ end
 local function reset()
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
-    O.hasStoodOff = false
+    O.hasStoodOff, O.hasFoughtInAir = false, false
     phase = 0
     seconds = 0
     invulnerableLeft = 0

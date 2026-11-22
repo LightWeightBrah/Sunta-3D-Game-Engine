@@ -140,6 +140,8 @@ PLAYER = {
     "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
     # Solid Baby Oil: the ball over his open palm at his side (GESTURES), then thrown overhand at the enemy
     "Cast_Orb":       diddy("Idle_Standing", 1, 66),
+    # Flying in the fight in the air (film 0:42-0:47), the ball of oil over his palm held out before him (GESTURES)
+    "Fly_Orb":        library(ADDON, "Levitate Idle"),
     # His two great techniques are signs of the hands held still (posed below, see GESTURES): both hands pressed
     # together with two fingers up, and a triangle of both hands before the chest
     # (about three seconds: the sign made, held for a breath and the technique gone, as in the film 1:47.5-1:49 - the
@@ -363,6 +365,7 @@ FINGER_POSES = (
     ("Sign_Hold", ("two", "relaxed")),
     ("Sign_Raise", ("two", "relaxed")),
     ("Cast_Great_Orb", ("open", "open")),
+    ("Fly_Orb", ("open", "relaxed")),
     ("Cast_Domain", ("steeple", "steeple")),
     ("Cast_Orb", ("open", "relaxed")),
     ("Cast_Pillars", ("two", "relaxed")),
@@ -428,6 +431,8 @@ GESTURES = {
                                    reached_at=0.16, left_from=0.52, end_at=0.64),
                            Gesture("_R", (0.10, 0.62, -0.02), (0.0, 0.25, 1.0), (0.0, 1.0, 0.0),
                                    start_at=0.52, reached_at=0.64, left_from=0.80, end_at=0.98)],
+        # Flying (film 0:43): the arm held out forward, the palm up under the ball of oil
+        "Fly_Orb":        [Gesture("_R", (0.26, 0.48, -0.08), (0.2, 1.0, 0.0), (0.0, 0.0, 1.0), reached_at=0.0, start_at=0.0, left_from=1.01, end_at=1.02)],
         # The parry: the lead (left) forearm leaves the guard and sweeps out and forward, the open palm turning the
         # blow away, then comes back to the guard
         "Parry":          [Gesture("_L", (0.42, 0.40, 0.12), (0.15, 0.35, 1.0), (0.75, 0.65, 0.0),

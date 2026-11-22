@@ -1005,6 +1005,14 @@ def add_armor_transformation(builder, boss):
         ("Standoff Smile", 1.6, BOSS_NAME, 1.64, BOSS_NAME, ((0.2, 1.6, -0.8), (0.12, 1.62, -0.62))),
         ("Standoff Charge", 1.3, BOSS_NAME, 1.0, BOSS_NAME, ((4.5, 0.7, -5.5), (4.0, 0.8, -6.5))),
     )
+    # The fight in the air (film 0:40-0:50, boss_fight.lua O.AirFight): low looking up at both rising, beside the player
+    # as the ball of oil grows over his palm, wide from the side as they throw and it bursts between them
+    standoff = standoff + (
+        # (both in the shot: low on the ground between them and to the side, they rise into it)
+        ("Air Rise", 1.6, BOSS_NAME, 1.3, BOSS_NAME, ((1.8, 0.3, -2.8), (2.0, 0.1, -3.2))),
+        ("Air Diddy", 2.0, PLAYER_NAME, 1.5, PLAYER_NAME, ((-1.3, 1.7, -2.0), (-1.1, 1.75, -1.7))),
+        ("Air Clash", 1.8, BOSS_NAME, 1.4, BOSS_NAME, ((7.5, 2.5, -5.5), (8.5, 3.0, -6.0))),
+    )
     for name, seconds, target, height, owner, points in standoff:
         shot = builder.add(named(name, cutscene={
             "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
