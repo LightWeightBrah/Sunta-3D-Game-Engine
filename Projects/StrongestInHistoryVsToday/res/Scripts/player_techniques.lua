@@ -309,13 +309,14 @@ local Great = {
     GoldSeconds = 1.0, WhiteSeconds = 0.5, FadeSeconds = 0.9,
     -- (a sheen over him, not a figure of light: stronger, he became a flat silhouette)
     -- (no pink or violet anywhere: the film's light is gold, then white)
-    GoldRim = vec3(1.1, 0.66, 0.16), WhiteRim = vec3(1.3, 1.26, 1.18),
+    GoldRim = vec3(1.5, 0.6, 0.1), WhiteRim = vec3(1.6, 1.1, 0.6),
     -- (a warm sheen over him under the outline, and the white of the blink at the release)
     -- (as the film shows it: the light starts at his edges and spreads over all of him - gold, then a figure of white)
-    GoldFill = vec3(0.75, 0.42, 0.06), WhiteFill = vec3(1.4, 1.36, 1.28),
+    GoldFill = vec3(0.85, 0.36, 0.04), WhiteFill = vec3(1.5, 1.05, 0.6),
     -- The film (1:48.4-1:49.5): a thick soft glow of gold around all of him, out beyond his outline, that turns white
     -- (engine: model.aura); the gold lasts a little longer than before, as in the film
-    GoldAura = vec3(0.7, 0.38, 0.07), WhiteAura = vec3(0.9, 0.87, 0.8), AuraSize = 0.035,
+    -- (the user: the shell of light around him read as armor - no aura, the light is his own: orange)
+    GoldAura = vec3(0, 0, 0), WhiteAura = vec3(0, 0, 0), AuraSize = 0.0,
     Rays = 16, RaySpreadSeconds = 0.3, RayEffect = "Technique Ray", BurstEffect = "Technique Burst",
 }
 local greatShow = nil
