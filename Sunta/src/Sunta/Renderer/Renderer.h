@@ -41,6 +41,10 @@ public:
 	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
 		float emissiveStrength = 1.0f, float darkness = 0.0f, const glm::vec3& glowColor = glm::vec3(0.0f),
 		const glm::vec3& rimGlow = glm::vec3(0.0f), float expression = 0.0f) const;
+	// The aura of a model (see ModelComponent::aura): its copy made bigger along its normals, drawn as added light
+	// brightest where it turns away from the camera - a soft glow out beyond its outline. After the solid things
+	void DrawModelAura(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
+		const glm::vec3& auraColor, float auraSize) const;
 	void DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 
 	static RendererDevice& GetDevice() { return *rendererDevice; }

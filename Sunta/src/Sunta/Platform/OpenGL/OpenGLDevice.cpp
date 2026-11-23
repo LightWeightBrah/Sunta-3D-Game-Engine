@@ -73,6 +73,19 @@ void OpenGLDevice::SetDepthWrite(bool isEnabled)
 	GLCall(glDepthMask(isEnabled ? GL_TRUE : GL_FALSE));
 }
 
+void OpenGLDevice::SetBackFacesOnly(bool isEnabled)
+{
+	if (isEnabled)
+	{
+		GLCall(glEnable(GL_CULL_FACE));
+		GLCall(glCullFace(GL_FRONT));
+	}
+	else
+	{
+		GLCall(glDisable(GL_CULL_FACE));
+	}
+}
+
 void OpenGLDevice::SetPolygonOffset(bool isEnabled, float factor, float units)
 {
 	if (!isEnabled)

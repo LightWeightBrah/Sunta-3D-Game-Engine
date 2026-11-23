@@ -48,6 +48,9 @@ public:
 	// and see-through things that shouldn't hide each other are drawn without writing their depth
 	virtual void SetAdditiveBlending(bool isEnabled) = 0;
 	virtual void SetDepthWrite(bool isEnabled) = 0;
+	// Only the faces turned away from the camera are drawn (true), or every face as usual (false): a copy of a model
+	// made bigger and drawn from the inside shows only around it, the model itself hides the rest (an aura)
+	virtual void SetBackFacesOnly(bool isEnabled) = 0;
 
 	// Pushes the depth of what is drawn a little farther away: 'factor' more on surfaces seen at a steep angle, 'units'
 	// a fixed amount (e.g. a shadow map, so that a surface doesn't shadow itself with stripes)

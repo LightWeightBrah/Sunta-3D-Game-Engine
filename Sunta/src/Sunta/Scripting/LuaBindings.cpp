@@ -1088,6 +1088,9 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"glow",             MemberProperty(&ModelComponent::glowColor,        glm::vec3(0.0f)),
 		// this.model.rimGlow = vec3(1.0, 0.7, 0.2): light along its outline; this.model.expression = 1: its smile on
 		"rimGlow",          MemberProperty(&ModelComponent::rimGlow,          glm::vec3(0.0f)),
+		// this.model.aura = vec3(1.4, 0.8, 0.2): a soft glow around the figure, beyond its outline; .auraSize = 0.12 (m)
+		"aura",             MemberProperty(&ModelComponent::aura,             glm::vec3(0.0f)),
+		"auraSize",         MemberProperty(&ModelComponent::auraSize,         0.0f),
 		"expression",       MemberProperty(&ModelComponent::expression,       0.0f),
 		// this.model.modelName = "sih_boss_armored": another model put on in its place (a boss changing its body).
 		// Its animations go on by name, so the two models should share their skeleton and the names of their clips

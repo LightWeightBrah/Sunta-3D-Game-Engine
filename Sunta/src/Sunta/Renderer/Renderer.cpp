@@ -116,6 +116,49 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 	}
 }
 
+void Renderer::DrawModelAura(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
+	const glm::vec3& auraColor, float auraSize) const
+{
+	rendererDevice->SetAdditiveBlending(true);
+	rendererDevice->SetDepthWrite(false);
+	// (from the inside: the figure hides the copy in front of it, only the glow around its outline is seen)
+	rendererDevice->SetBackFacesOnly(true);
+
+	for (const auto& subMesh : model.GetSubMeshes())
+	{
+		if (!subMesh.mesh || !subMesh.material)
+			continue;
+
+		auto shader = subMesh.material->GetShader();
+		shader->Bind();
+		SetBaseTransform(*shader, modelMatrix, sceneData);
+		SetBaseLighting(*shader, sceneData);
+		shader->TrySetUniform1f("expressionWeight", 0.0f);
+		shader->TrySetUniform1f("auraInflate", auraSize);
+		shader->TrySetUniform3f("modelAura", auraColor);
+
+		const bool isSkinnedMesh = shader->HasFeature(ShaderFeature::Skinning) && model.HasBones();
+		if (shader->HasFeature(ShaderFeature::Skinning))
+		{
+			shader->SetUniform1i("hasAnimations", isSkinnedMesh);
+			if (isSkinnedMesh)
+				shader->TrySetBoneMatrices(animator && animator->GetCurrentAnimation() ? animator->GetFinalBoneMatrices()
+				                                                                         : model.GetDefaultBoneMatrices());
+		}
+
+		subMesh.material->Apply();
+		subMesh.mesh->Bind();
+		rendererDevice->DrawElements(subMesh.mesh->GetVertexArray());
+
+		// (back to an ordinary draw for the next model that uses this shader)
+		shader->TrySetUniform1f("auraInflate", 0.0f);
+	}
+
+	rendererDevice->SetBackFacesOnly(false);
+	rendererDevice->SetDepthWrite(true);
+	rendererDevice->SetAdditiveBlending(false);
+}
+
 void Renderer::DrawLigthSource(const Mesh& mesh, Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const
 {
 	shader.Bind();

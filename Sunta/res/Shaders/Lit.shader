@@ -21,6 +21,8 @@ uniform mat4 bones[MAX_BONES];
 uniform bool hasAnimations;
 // How far the expression shape is put on (0 = the face as modelled)
 uniform float expressionWeight;
+// Above 0 while the model's aura is drawn: the copy pushed out along its normals by this much (meters)
+uniform float auraInflate;
 
 void main()
 {
@@ -37,6 +39,9 @@ void main()
 		localPosition = boneTransform       * localPosition;
 		localNormal   = mat3(boneTransform) * localNormal;
     }
+
+	if(auraInflate > 0.0)
+		localPosition.xyz += normalize(localNormal) * auraInflate;
 
 	gl_Position = projection * view * model * localPosition;
 	FragPos		= vec3(model * localPosition);
@@ -139,6 +144,8 @@ uniform		float				emissiveStrength;
 uniform		float				modelDarkness;
 uniform		vec3				modelGlow;
 uniform		vec3				modelRimGlow;		// light along the outline only
+uniform		vec3				modelAura;			// the color of the aura while it is drawn (see auraInflate)
+uniform		float				auraInflate;
 
 // Distance fog (exponential squared, see learnopengl.com): the farther, the more of the fog's color. Density 0 = none
 uniform		vec3				fogColor;
@@ -174,6 +181,16 @@ void main()
 
 	vec3 normalVector 	 = normalize(Normal);
 	vec3 viewerDirection = normalize(viewerPosition - FragPos);
+
+	// The aura (see ModelComponent::aura): light, faint where the copy faces the camera, bright towards its edges and
+	// fading out at the very edge - a soft halo beyond the figure's outline
+	if(auraInflate > 0.0)
+	{
+		float facing = abs(dot(normalVector, viewerDirection));
+		float halo   = pow(1.0 - facing, 2.6) * smoothstep(0.0, 0.3, facing) * 2.2;
+		FragColor = vec4(modelAura * halo, 1.0);
+		return;
+	}
 
 	vec3 result = vec3(0.0f);
 

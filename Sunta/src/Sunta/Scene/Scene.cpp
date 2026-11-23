@@ -453,6 +453,8 @@ void Scene::Render(Renderer& renderer)
 		glm::vec3 glowColor;
 		glm::vec3 rimGlow;
 		float expression;
+		glm::vec3 aura;
+		float auraSize;
 	};
 
 	struct GizmosDrawItem
@@ -554,7 +556,8 @@ void Scene::Render(Renderer& renderer)
 				const Animator* animator = animatorComponent ? &animatorComponent->animator : nullptr;
 
 				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix, modelComponent->emissiveStrength,
-					modelComponent->darkness, modelComponent->glowColor, modelComponent->rimGlow, modelComponent->expression });
+					modelComponent->darkness, modelComponent->glowColor, modelComponent->rimGlow, modelComponent->expression,
+					modelComponent->aura, modelComponent->auraSize });
 			}
 		}
 
@@ -674,6 +677,11 @@ void Scene::Render(Renderer& renderer)
 	for (const auto& item : modelQueue)
 		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength, item.darkness, item.glowColor,
 			item.rimGlow, item.expression);
+
+	// The auras around the figures that have one: light, after everything solid
+	for (const auto& item : modelQueue)
+		if (item.aura.x + item.aura.y + item.aura.z > 0.001f)
+			renderer.DrawModelAura(*item.model, item.matrix, sceneData, item.animator, item.aura, item.auraSize);
 
 	// The swarms: thousands of solid copies, then the streaks of light behind the falling ones
 	SwarmSystem::Draw(entityManager, sceneData);

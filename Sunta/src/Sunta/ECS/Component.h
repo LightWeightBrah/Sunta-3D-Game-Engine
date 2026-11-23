@@ -462,6 +462,11 @@ struct ModelComponent
 	// 'rimGlow' is light along its outline only (the edges that turn away from the camera): a figure outlined in light
 	// without turning flat. this.model.rimGlow = vec3(1.0, 0.7, 0.2)
 	glm::vec3 rimGlow   = glm::vec3(0.0f);
+	// 'aura' is a soft light around the figure, out beyond its outline (a second, slightly bigger copy of it drawn as
+	// light, brightest at its edges): a figure wrapped in a golden glow. this.model.aura = vec3(1.4, 0.8, 0.2),
+	// this.model.auraSize = 0.12 (meters out from the body)
+	glm::vec3 aura      = glm::vec3(0.0f);
+	float     auraSize  = 0.1f;
 	// 0..1: how far the model's expression shape is put on (its first morph target, e.g. a smile modelled on the face)
 	float     expression = 0.0f;
 

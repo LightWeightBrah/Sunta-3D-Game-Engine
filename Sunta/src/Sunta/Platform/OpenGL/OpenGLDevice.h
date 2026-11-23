@@ -15,6 +15,7 @@ public:
 	virtual void SetAlphaBlending(bool isEnabled) override;
 	virtual void SetAdditiveBlending(bool isEnabled) override;
 	virtual void SetDepthWrite(bool isEnabled) override;
+	virtual void SetBackFacesOnly(bool isEnabled) override;
 	virtual void SetPolygonOffset(bool isEnabled, float factor = 0.0f, float units = 0.0f) override;
 
 	virtual void DrawElements(const VertexArray& vertexArray) override;
