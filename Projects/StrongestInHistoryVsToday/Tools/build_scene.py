@@ -54,7 +54,9 @@ TEMPLE_LIGHT = {"attenuation": {"attenuation_constant": 1.0, "attenuation_linear
 ARENA_CENTER = [0.0, 0.0, -50.0]
 # (high: the boss rides the dome of his temple 21 meters up and must still count as inside, or the fog gate takes
 # him for gone - it clears itself, plays the victory and stops the music)
-ARENA_HALF_EXTENTS = [30.0, 60.0, 29.6]
+# (high: the fist fight in the sky is 75 m up - at 60 the arena thought both had left it, the boss fell for it and
+# the fog cleared, the music stopped and the fight went no further)
+ARENA_HALF_EXTENTS = [30.0, 200.0, 29.6]
 ARENA_STARTS_AT_Z = -19.5
 FOG_GATE_HALF_WIDTH = 3.2
 

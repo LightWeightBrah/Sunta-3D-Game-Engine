@@ -44137,7 +44137,7 @@
     ],
     "arena_half_extents": [
      30.0,
-     60.0,
+     200.0,
      29.6
     ],
     "is_crossed_with_key": true,
