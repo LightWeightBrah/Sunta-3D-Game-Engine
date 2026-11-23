@@ -2147,6 +2147,8 @@ function O.startArmoredPhase(isResumed)
     -- (right away: the player's answer, his own sword of oil, as a short sequence of shots - seen once: a try that
     -- resumes here gives him his armor and sword at once)
     if isResumed then O.armPlayer() else O.startVessel() end
+    -- (how his sword fight is won: the deflects of Sekiro)
+    after(isResumed and 2 or 12, function() if phase >= 5 then showCaption("Block just as his blade lands to deflect it - three deflects break his guard", 5) end end)
 end
 
 function O.startPhaseSix()
@@ -3402,6 +3404,48 @@ end
 
 -- Against his great sword the camera stands lower and over the player's left shoulder (his sword is in the right hand: the camera caught on it): from right behind and
 -- above him the armored boss stood hidden behind the player's back for most of the fight
+-- The sword fight's deflects, as in Sekiro (the user found the sword fight dull): every blow of his the player
+-- parries throws sparks between the blades with a ring of steel and a beat of slow motion; the third parry in a row
+-- breaks his guard - a deathblow: a heavy cut of the player's, a big part of his health
+O.Deflect = { Breaks = 3, Forget = 8, DeathblowFraction = 0.08 }
+function O.updateDeflects(deltaTime)
+    if phase < 5 then return end
+    local d = O.deflects or { count = 0, since = 0, was = false }
+    O.deflects = d
+    d.since = d.since + deltaTime
+    if d.since > O.Deflect.Forget then d.count = 0 end
+    local isParried = this.characterActions.action == "parried"
+    if isParried and not d.was then
+        d.count, d.since = d.count + 1, 0
+        local player = O.playerEntity()
+        local at = this.transform.position + vec3(0, 1.4, 0)
+        if player then at = (at + player.transform.position + vec3(0, 1.4, 0)) * 0.5 end
+        this.world:effect("Punch Impact", at, this.transform.forward)
+        this.world:burst("Star Impact", at, 30)
+        this.world:slowMotion(0.25, 0.15)
+        this.world:shakeCamera(0.5)
+        Audio.playAt("@game/Sounds/Combat/Parry", at, 1.4)
+        if d.count >= O.Deflect.Breaks then
+            d.count = 0
+            this.world:notify("DEATHBLOW")
+            this.world:effect("Solid Oil Burst", at, this.transform.forward)
+            this.world:impactFrame(1.0, 0.5)
+            this.world:slowMotion(0.6, 0.2)
+            if player then O.playPlayer("Attack_Heavy") end
+            after(0.35, function()
+                if this.health and not this.health.isDead then
+                    this.health:damage(this.health.max * O.Deflect.DeathblowFraction)
+                    this.world:effect("Punch Impact", this.transform.position + vec3(0, 1.4, 0), this.transform.forward)
+                    this.world:shakeCamera(0.9)
+                end
+            end)
+        else
+            showCaption("Deflected " .. d.count .. " / " .. O.Deflect.Breaks, 1.2)
+        end
+    end
+    d.was = isParried
+end
+
 -- Floating over the arena while his summon fights
 O.SummonHoverHeight = 6
 function O.updateSummonHover(deltaTime)
@@ -3520,6 +3564,7 @@ function OnUpdate(deltaTime)
     updateCameraDistance(deltaTime)
     O.updateSwordCamera(deltaTime)
     O.updateSummonHover(deltaTime)
+    O.updateDeflects(deltaTime)
 
     seconds = seconds + deltaTime
 

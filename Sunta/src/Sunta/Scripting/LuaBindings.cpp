@@ -501,6 +501,7 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 				case CharacterAction::HitReaction: return "hit";
 				case CharacterAction::Block:       return "block";
 				case CharacterAction::Parry:       return "parry";
+				case CharacterAction::Parried:     return "parried";
 				case CharacterAction::Special:     return "special";
 				case CharacterAction::Cast:        return "cast";
 				case CharacterAction::UseItem:     return "item";
