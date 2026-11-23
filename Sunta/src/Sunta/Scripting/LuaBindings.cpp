@@ -552,7 +552,11 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 		"heavySwingEffect",      MemberProperty(&CharacterActionsComponent::heavySwingEffect,      std::string()),
 		"swingEffectHeight",     MemberProperty(&CharacterActionsComponent::swingEffectHeight,     0.0f),
 		"hyperArmor",            MemberProperty(&CharacterActionsComponent::hyperArmor,            0),
-		"attackReach",           MemberProperty(&CharacterActionsComponent::attackReach,           0.0f)
+		"attackReach",           MemberProperty(&CharacterActionsComponent::attackReach,           0.0f),
+		// this.characterActions.finisherKnockback = 3: the last blow of the light combo throws the target 3 m back;
+		// .heavyKnockback the same for heavy attacks
+		"finisherKnockback",     MemberProperty(&CharacterActionsComponent::finisherKnockback,     0.0f),
+		"heavyKnockback",        MemberProperty(&CharacterActionsComponent::heavyKnockback,        0.0f)
 	);
 
 	// Usage in Lua: this.characterAnimation.idleAnimation = "Float" (hanging in the air: standing is floating now),

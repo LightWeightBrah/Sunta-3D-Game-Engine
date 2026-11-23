@@ -460,7 +460,19 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	const bool isHeavyBlow = attackerActions && (attackerActions->currentAction == CharacterAction::HeavyAttack
 	                                             || attackerActions->currentAction == CharacterAction::LeapAttack);
 
-	if (LoseHealth(entityManager, targetID, damage, attackerID, kind) && staggers)
+	// The attacker's own throwing blows (its combo's last blow, its heavy attacks): thrown even without a stagger
+	float ownKnockback = 0.0f;
+	if (attackerActions && !hasHyperArmor && block != BlockResult::GuardBroken)
+	{
+		const int lastLightStep = 2 + static_cast<int>(attackerActions->extraLightAttackAnimations.size());
+		if (attackerActions->currentAction == CharacterAction::LightAttack && attackerActions->lightAttackStep >= lastLightStep)
+			ownKnockback = attackerActions->finisherKnockback;
+		else if (isHeavyBlow)
+			ownKnockback = attackerActions->heavyKnockback;
+	}
+	knockback = glm::max(knockback, ownKnockback);
+
+	if (LoseHealth(entityManager, targetID, damage, attackerID, kind) && (staggers || ownKnockback > 0.0f))
 	{
 		// A blow that throws: away from the attacker, along the ground
 		const TransformComponent* target   = entityManager.GetComponent<TransformComponent>(targetID);

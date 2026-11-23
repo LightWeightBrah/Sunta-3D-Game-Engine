@@ -147,6 +147,11 @@ struct CharacterActionsComponent
 	// fast at first and slowing down, the Particle Emitter of the scene named 'knockbackDust' bursting at the feet
 	std::string knockbackAnimation;
 	float       knockbackSeconds = 0.7f;
+	// Blows of this character that always throw the one they hit back (meters; 0 = only a blow that breaks the
+	// target's poise and has a knockback of its own): the last blow of its light combo, and its heavy attacks.
+	// A target with hyper armor or a guard isn't thrown. Fights that fly apart, as in an anime
+	float       finisherKnockback = 0.0f;
+	float       heavyKnockback    = 0.0f;
 	std::string knockbackDust;
 
 	// A shockwave where a heavy attack or a leap lands (0 radius = none): everyone of the other side within

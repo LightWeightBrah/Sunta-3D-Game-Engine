@@ -330,6 +330,8 @@ namespace SceneKeys
 	constexpr const char* AttackTurnDegreesPerSecond = "attack_turn_degrees_per_second";
 	constexpr const char* AttackLungeSpeed          = "attack_lunge_speed";
 	constexpr const char* AttackReach               = "attack_reach";
+	constexpr const char* FinisherKnockback         = "finisher_knockback";
+	constexpr const char* HeavyKnockback            = "heavy_knockback";
 	constexpr const char* AttackDelayChance         = "attack_delay_chance";
 	constexpr const char* AttackDelaySeconds        = "attack_delay_seconds";
 	constexpr const char* AttackDelayAt             = "attack_delay_at";
@@ -971,6 +973,8 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::AttackTurnDegreesPerSecond, actions->attackTurnDegreesPerSecond },
 				{ SceneKeys::AttackLungeSpeed,      actions->attackLungeSpeed      },
 				{ SceneKeys::AttackReach,           actions->attackReach           },
+				{ SceneKeys::FinisherKnockback,     actions->finisherKnockback     },
+				{ SceneKeys::HeavyKnockback,        actions->heavyKnockback        },
 				{ SceneKeys::AttackDelayChance,     actions->attackDelayChance     },
 				{ SceneKeys::AttackDelaySeconds,    actions->attackDelaySeconds    },
 				{ SceneKeys::AttackDelayAt,         actions->attackDelayAt         },
@@ -1936,6 +1940,8 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.attackTurnDegreesPerSecond = actionsData.value(SceneKeys::AttackTurnDegreesPerSecond, actions.attackTurnDegreesPerSecond);
 			actions.attackLungeSpeed      = actionsData.value(SceneKeys::AttackLungeSpeed,      actions.attackLungeSpeed);
 			actions.attackReach           = actionsData.value(SceneKeys::AttackReach,           actions.attackReach);
+			actions.finisherKnockback     = actionsData.value(SceneKeys::FinisherKnockback,     actions.finisherKnockback);
+			actions.heavyKnockback        = actionsData.value(SceneKeys::HeavyKnockback,        actions.heavyKnockback);
 			actions.attackDelayChance     = actionsData.value(SceneKeys::AttackDelayChance,     actions.attackDelayChance);
 			actions.attackDelaySeconds    = actionsData.value(SceneKeys::AttackDelaySeconds,    actions.attackDelaySeconds);
 			actions.attackDelayAt         = actionsData.value(SceneKeys::AttackDelayAt,         actions.attackDelayAt);

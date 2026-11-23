@@ -127,6 +127,8 @@ if this.characterActions.isGuarding then ... end, this.characterActions:play("Ro
 | `swingEffectHeight` |  |
 | `hyperArmor` |  |
 | `attackReach` |  |
+| `finisherKnockback` | this.characterActions.finisherKnockback = 3: the last blow of the light combo throws the target 3 m back; .heavyKnockback the same for heavy attacks |
+| `heavyKnockback` |  |
 
 ## CharacterAnimation
 
