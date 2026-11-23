@@ -1005,20 +1005,12 @@ function O.placeTempleUnderBoss()
     local player = O.playerEntity()
     if not temple or not player then return end
 
-    local away = this.transform.position - player.transform.position
-    away.y = 0
-    if away:length() < 0.1 then away = vec3(0, 0, -1) end
-    local distance = math.max(O.TempleNearest, math.min(away:length(), O.TempleFarthest))
-    local feet = clampToArena(player.transform.position + away:normalized() * distance)
-    feet.y = 0
-    local yaw = O.yawToward(feet, player.transform.position)
-    -- (the dome comes up under his feet where he stands, if that is far enough: he isn't moved in the middle of
-    -- his sign's close shot, the fire swelling behind him)
-    if math.abs(away:length() - distance) < 0.5 then
-        local offset = O.turned(OnTheDome, yaw)
-        local under = clampToArena(vec3(this.transform.position.x - offset.x, 0, this.transform.position.z - offset.z))
-        feet = vec3(under.x, 0, under.z)
-    end
+    -- The temple comes up right where he stands, its dome under his feet (the user: he was moved - teleported -
+    -- to a set distance from the player); turned to face the player
+    local here = this.transform.position
+    local yaw = O.yawToward(vec3(here.x, 0, here.z), player.transform.position)
+    local offset = O.turned(OnTheDome, yaw)
+    local feet = vec3(here.x - offset.x, 0, here.z - offset.z)
     temple.transform.position = vec3(feet.x, TempleSunkenY, feet.z)
     temple.transform.rotation = vec3(0, yaw, 0)
     O.domeOffset = O.turned(OnTheDome, yaw)
@@ -1910,7 +1902,8 @@ function O.updateTransform(deltaTime)
     if dropped and dropped.model then
         local ground = O.onHim(vec3(0, 0, -O.SwordInGround))
         local stuck = vec3(ground.x, 1.13, ground.z)
-        if tr.t >= O.SwordFallAt and tr.t < O.DrawAt then
+        -- (until he grips it: shown after, it stood in the stone as he held it - two swords)
+        if tr.t >= O.SwordFallAt and tr.t < O.GripAt then
             dropped.model.isVisible = true
             local k = math.min((tr.t - O.SwordFallAt) / 0.35, 1)
             dropped.transform.position = stuck + vec3(0, 14 * (1 - k * k), 0)
@@ -2128,7 +2121,8 @@ function O.startArmoredPhase(isResumed)
     O.refillFlasks()
     isChanneling = false
     invulnerableLeft = 0.5
-    setHealthFloor(0.5 - FloorMargin)
+    -- (the floor under his blazing blade's moment: at 0.5 it stopped every blow once his health came back only to 55%)
+    setHealthFloor(O.PhaseSixAt - FloorMargin)
     O.setFists(false)
     O.setHeldSword(true)
     changeLook(O.Blood, 1.5)
@@ -2712,7 +2706,7 @@ end
 
 -- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
 -- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
-O.SkyBrawl = { At = 95, Height = 75, SkidMeters = 7, SkidSeconds = 1.2, WhipAt = 0.45, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
+O.SkyBrawl = { At = 95, Height = 75, SkidMeters = 7, SkidSeconds = 1.2, LaunchSeconds = 0.6, LaunchMeters = 14, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
                "Attack_Light_3", "Attack_Light_4" } }
 
 function O.startSkyBrawl()
@@ -2772,16 +2766,32 @@ function O.startSkyBrawl()
             this.world:shakeCamera(0.8)
             -- (both leap off the ground, the player already swinging; as in the film (2:11.2) the way up isn't seen:
             -- a blurred whip of the picture and they are in the clouds - seen rising slowly it looked unnatural)
-            -- (no way up is shown at all - the user found every rise unnatural: a blow, a flash of white, and
-            -- they are already fighting in the clouds)
-            O.playPlayer(B.Punches[1])
-            this.characterActions:play("Hit")
-            this.world:flash(vec3(1, 1, 0.97), 0.45, 0.15)
+            -- (a blow launches both: they shoot up together, faster and faster, seen from below with streaks of
+            -- speed - not a slow lift (unnatural) nor a cut (a teleport, the user); a flash and they are in the clouds)
+            O.playPlayer("Jump")
+            this.characterActions:play("Hover")
             this.world:impactFrame(1.0, 0.35)
-            risen = 1
-            inTheSky(0)
-            show.during = inTheSky
-            return 0.15
+            local leapShot = find("Sky Leap")
+            if leapShot then
+                leapShot.transform.position = vec3(this.transform.position.x, 0, this.transform.position.z)
+                leapShot.transform.rotation = vec3(0, this.transform.rotation.y, 0)
+            end
+            playCutscene("Sky Leap")
+            local launched = 0
+            local bossFrom, playerFrom = this.transform.position, player.transform.position
+            show.during = function(deltaTime)
+                launched = math.min(launched + deltaTime / B.LaunchSeconds, 1)
+                local lift = vec3(0, B.LaunchMeters * launched * launched, 0)
+                this.transform.position = bossFrom + lift
+                player.transform.position = playerFrom + lift
+                this.world:effect("Dash Streak", this.transform.position + vec3(0, 1.0, 0), vec3(0, 1, 0))
+                if launched >= 1 and risen < 1 then
+                    this.world:flash(vec3(1, 1, 0.97), 0.35, 0.05)
+                    risen = 1
+                    inTheSky(0)
+                end
+            end
+            return B.LaunchSeconds + 0.05
         end,
         -- The brawl: held until the player has struck enough (a blow and a reel for every press)
         function()

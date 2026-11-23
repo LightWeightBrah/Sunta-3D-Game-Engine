@@ -263,8 +263,9 @@ def spell(name, **settings):
 
 # Meters a kick throws back the one it staggers (the engine's knockback: sliding back on the feet, as in the film's
 # fights): the feet throw, the fists only stagger
-# (none: thrown back by kicks in the ordinary fight too often - the user; a player's heavy attack still throws)
-KICK_KNOCKBACK = 0.0
+# (rare: a kick throws back only when it breaks the one hit's poise - with a heavy reel, not the slide; the user
+# wanted throws back, but not often)
+KICK_KNOCKBACK = 2.5
 
 
 def add_limb(builder, character, name, bone, damage, layer, poise_damage=20.0, size=0.14, camera_shake=0.2):
@@ -631,8 +632,8 @@ PLAYER_MORE_ATTACKS = {
     # (an ordinary throw is a heavy reeling step back, not the slide on a knee: that is kept for the blow before his
     # domain - the user)
     "knockback_animation": "Hit_Heavy", "knockback_seconds": 0.55, "knockback_dust": "Skid Dust",
-    # (none from ordinary blows: still too often for the user)
-    "finisher_knockback": 0.0, "heavy_knockback": 0.0,
+    # (his heavy attack throws the boss back a little: his own choice, so not often)
+    "finisher_knockback": 0.0, "heavy_knockback": 2.5,
     "attack_moves": PLAYER_ATTACK_MOVES,
     # A punch steps in to reach, but never slides more than a step
     "attack_lunge_max_distance": 0.9,
@@ -1042,7 +1043,8 @@ def add_armor_transformation(builder, boss):
     # The fist fight in the sky (film 2:11-2:16, boss_fight.lua O.SkyBrawl): beside them as they leap, then circling
     # them in the clouds while the player mashes [Space] - a blow of his with every press (a quick-time event)
     standoff = standoff + (
-        ("Sky Leap", 1.2, BOSS_NAME, 1.2, BOSS_NAME, ((3.5, 0.4, -4.5), (3.0, 2.5, -4.0))),
+        # (low on the ground, left behind as they shoot up past it: placed by the script where the boss stands)
+        ("Sky Leap", 0.65, BOSS_NAME, 1.2, None, ((4.0, 0.3, -5.0), (3.8, 0.4, -4.8))),
         # (close beside them, level with them, high over the roofs: the sky, the clouds and the city far below behind them as
         # in the film - from above, the street under them looked like the ground they stood on)
         ("Sky Brawl", 2.0, BOSS_NAME, 1.5, BOSS_NAME, ((4.4, 1.3, -1.8), (4.6, 1.1, -0.7), (4.2, 1.3, 0.4))),
@@ -1064,7 +1066,7 @@ def add_armor_transformation(builder, boss):
             "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
             "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
             "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}, **quick)),
-            parent=boss if owner == BOSS_NAME else builder.find(PLAYER_NAME))
+            parent=boss if owner == BOSS_NAME else (builder.find(PLAYER_NAME) if owner else None))
         for number, point in enumerate(points):
             builder.add(named(f"Camera Point {number + 1}", point), parent=shot)
 

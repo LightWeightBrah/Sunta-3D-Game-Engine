@@ -186,7 +186,7 @@
     "knockback_seconds": 0.55,
     "knockback_dust": "Skid Dust",
     "finisher_knockback": 0.0,
-    "heavy_knockback": 0.0,
+    "heavy_knockback": 2.5,
     "attack_moves": [
      {
       "animation": "Attack_Light_1",
@@ -3996,7 +3996,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 2,
@@ -35819,7 +35819,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.3,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 783,
@@ -37043,7 +37043,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 1.2,
+    "duration_seconds": 0.65,
     "look_at_entity": "Boss",
     "look_at_height": 1.2,
     "animation_entity": "",
@@ -37054,10 +37054,6 @@
     "can_be_skipped": false,
     "video_file": "",
     "blend_in_seconds": 0.0
-   },
-   "parent": {
-    "index": 783,
-    "bone_name": ""
    }
   },
   {
@@ -37066,9 +37062,9 @@
    },
    "transform": {
     "position": [
-     3.5,
-     0.4,
-     -4.5
+     4.0,
+     0.3,
+     -5.0
     ],
     "rotation": [
      0.0,
@@ -37098,9 +37094,9 @@
    },
    "transform": {
     "position": [
-     3.0,
-     2.5,
-     -4.0
+     3.8,
+     0.4,
+     -4.8
     ],
     "rotation": [
      0.0,
@@ -40336,7 +40332,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.5,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 893,
@@ -40810,7 +40806,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 900,
@@ -41171,7 +41167,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 904,
@@ -41532,7 +41528,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.1,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 908,
@@ -41971,7 +41967,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 914,
@@ -42332,7 +42328,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.1,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 918,
@@ -42771,7 +42767,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.1,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 924,
@@ -43210,7 +43206,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 930,
@@ -43571,7 +43567,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 934,
@@ -43932,7 +43928,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 0.0
+    "knockback": 2.5
    },
    "parent": {
     "index": 938,
