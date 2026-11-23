@@ -293,13 +293,14 @@ def add_technique_effects(builder):
 
     # The player's domain (film 2:20): a huge whirl of baby oil around him, growing; milky white with a cold sheen
     # (the film's oil is white water, not fire), sprays of drops flung out of it, a wave of oil over the ground
+    # (the film 2:22-2:23: a great wall of white oil curling up round him - wide, thick, warm white, not blue)
     (Effect(builder, "Oil Vortex", root_shape=shape(
-        PILLAR, 3.0, 0.8, 4.2, MILK_CORE, MILK_EDGE, 0.75, height=11.0, twist_degrees=720.0,
+        PILLAR, 3.4, 1.0, 6.5, MILK_CORE, [1.0, 0.9, 0.72], 1.1, height=15.0, twist_degrees=720.0,
         spin_degrees_per_second=420.0, noise_scale=3.5, scroll_speed=2.5, dissolve=0.75,
         light_intensity=3.0, light_radius=14.0, light_color=[0.9, 0.95, 1.0]))
-     .shape("Inner", shape(PILLAR, 2.8, 0.5, 2.6, [1.0, 1.0, 1.0], MILK_EDGE, 0.6, height=9.0, twist_degrees=-540.0,
+     .shape("Inner", shape(PILLAR, 3.0, 0.6, 3.8, [1.0, 1.0, 1.0], [1.0, 0.92, 0.78], 0.9, height=12.0, twist_degrees=-540.0,
                            spin_degrees_per_second=-520.0, noise_scale=4.5, scroll_speed=3.0, dissolve=0.8))
-     .shape("Outer", shape(PILLAR, 3.2, 1.2, 6.5, MILK_CORE, [0.65, 0.78, 1.0], 0.35, height=14.0, twist_degrees=900.0,
+     .shape("Outer", shape(PILLAR, 3.6, 1.5, 10.0, MILK_CORE, [1.0, 0.88, 0.66], 0.6, height=20.0, twist_degrees=900.0,
                            spin_degrees_per_second=300.0, noise_scale=3.0, scroll_speed=2.0, dissolve=0.85))
      .shape("Ground", shape(RING, 2.6, 1.5, 26.0, MILK_CORE, MILK_EDGE, 1.0, thickness=0.2, noise_scale=2.5,
                             scroll_speed=1.0, dissolve=0.85))

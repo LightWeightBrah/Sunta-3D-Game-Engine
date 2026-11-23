@@ -763,8 +763,10 @@ def add_oil_domain(builder, player):
         builder.add(pool)
     for side in ("L", "R"):
         # (a wall of oil: thin across, tall, long; the script moves it and grows it)
+        # (milky and bright, as the film's walls of oil: see-through they took the red of the sky and read as pink)
         wave = named(f"Oil Wave {side}", (0.0, -50.0, 0.0), liquid_orb=dict(OIL_DOMAIN_ORB, wobble=0.18, wobble_speed=3.5,
-                                                                         clearness=0.35, brightness=1.35))
+                                                                         clearness=0.05, brightness=2.6,
+                                                                         tint=[1.0, 1.0, 0.97]))
         wave["transform"]["scale"] = [0.01, 0.01, 0.01]
         index = builder.add(wave)
         # A wall of white foam (puffs of baked smoke, white) and drops flung up out of it
@@ -784,8 +786,10 @@ def add_oil_domain(builder, player):
     # The shots (his front is his own -Z): his hands and glowing eyes from close and low, then the whirl of oil
     # around him from afar, then from behind him the waves meeting on the enemy
     shots = (
-        ("Domain Gesture", 2.0, PLAYER_NAME, 1.5, 0.4, ((0.6, 0.95, -1.4), (0.45, 1.0, -1.15), (0.32, 1.05, -0.98))),
-        ("Domain Vortex", 2.6, PLAYER_NAME, 4.0, 0.5, ((9.0, 1.2, -12.0), (10.5, 2.4, -14.0), (12.0, 3.6, -16.0))),
+        # (a little below his face: lower, against the bright sky, his face was a black shape)
+        ("Domain Gesture", 2.0, PLAYER_NAME, 1.55, 0.4, ((0.6, 0.9, -1.4), (0.45, 0.95, -1.15), (0.32, 1.0, -0.98))),
+        # (the film 2:21.5-2:23: low beside him, close, looking up as he rises into the whirl of oil turning round him)
+        ("Domain Vortex", 2.6, PLAYER_NAME, 1.3, 0.5, ((3.2, 0.4, -4.2), (3.0, 1.2, -4.0), (2.6, 2.4, -3.6))),
         # (low behind him and close: the walls of oil rise over the enemy on both sides and crash together)
         ("Domain Waves", 2.8, BOSS_NAME, 2.0, 0.6, ((2.4, 2.0, 6.0), (1.8, 2.6, 7.5), (1.2, 3.2, 9.0))),
         # His answer to the boss's armor (Divine Baby Oil: Crystal Vessel, boss_fight.lua O.startVessel): his hands close
