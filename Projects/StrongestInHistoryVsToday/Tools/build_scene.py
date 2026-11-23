@@ -1325,10 +1325,11 @@ def add_boss(builder):
     # The bottle of the player's great technique coming down on him, seen from the ground looking up (film 2:27-2:30):
     # started by the player's script the moment the bottle is called
     fall = builder.add(named("Bottle Fall", cutscene={
-        "duration_seconds": 2.3, "look_at_entity": BOSS_NAME, "look_at_height": 4.2, "animation_entity": "",
+        "duration_seconds": 4.6, "look_at_entity": BOSS_NAME, "look_at_height": 3.4, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
         "can_be_skipped": False, "video_file": ""}), parent=boss)
-    for index, point in enumerate(((-4.5, 0.8, -15.0), (-3.5, 0.7, -14.0), (-2.6, 0.6, -13.0))):
+    # (then drawing back for the burst of oil: it was seen from the game's camera behind the player standing idle)
+    for index, point in enumerate(((-4.5, 0.8, -15.0), (-3.6, 0.7, -14.0), (-5.5, 1.6, -18.0), (-8.5, 2.8, -22.0))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=fall)
 
     # Thrown by the player's last blow before his domain (film 1:15-1:21): the camera flies beside him as he is

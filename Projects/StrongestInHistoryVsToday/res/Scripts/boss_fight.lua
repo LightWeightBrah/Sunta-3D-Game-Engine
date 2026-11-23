@@ -1093,6 +1093,13 @@ function O.domainOpeningSteps()
         -- The first of them come down around him: he is thrown off his feet
         { 62.5, function()
             local player = O.playerEntity()
+            -- (the stars strike him where he is: some of them always hit him, never only the floor around him)
+            if player then
+                local at = player.transform.position
+                this.world:effect("Crash Impact", at, player.transform.forward)
+                this.world:burst("Star Impact", at + vec3(0, 1.0, 0), 40)
+                this.world:effect("Punch Impact", at + vec3(0, 1.2, 0), player.transform.forward)
+            end
             O.playPlayer("Knocked_Down")
             if player and player.health and player.health.current > O.KnockdownDamage + 1 then
                 player.health:damage(O.KnockdownDamage)
@@ -3232,7 +3239,8 @@ end
 O.StarWave = { Speed = 16, Farthest = 50, Effect = "Solid Oil Burst", EffectEvery = 0.08, Sparks = "Star Impact" }
 -- As in the film (1:37.5-1:39.5) he runs at the boss into the falling stars, until they throw him off his feet
 -- (he stood still waiting for them; the camera of the shot is his own child and runs with him)
-O.RunIntoStars = { Meters = 7, Seconds = 1.6 }
+-- (a sprint, as in the film: fast and all the way to where they throw him)
+O.RunIntoStars = { Meters = 12, Seconds = 1.6 }
 function O.runIntoStars()
     local player = O.playerEntity()
     if not player then return end
