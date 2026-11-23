@@ -2654,7 +2654,7 @@ end
 
 -- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
 -- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
-O.SkyBrawl = { At = 95, Height = 75, Gap = 1.6, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
+O.SkyBrawl = { At = 95, Height = 75, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
                "Attack_Light_3", "Attack_Light_4" } }
 
 function O.startSkyBrawl()
@@ -2683,13 +2683,27 @@ function O.startSkyBrawl()
         player.transform.rotation = vec3(0, O.yawToward(p, b) + 180, 0)
     end
     float(true)
+    -- As in the film (2:11-2:16) they are thrown up together in an arc to one side, not lifted straight up, and up
+    -- there they fly on through the clouds close to each other, circling as they trade blows (they stood still
+    -- facing each other, the camera fixed on them)
     local risen, punch, pushed = 0, 0, 0
+    local middle = (ground + playerGround) * 0.5
+    local side = vec3(along.z, 0, -along.x)
+    local angle = math.atan(along.x, along.z)
+    local drift = vec3(0, 0, 0)
     local function inTheSky(deltaTime)
         risen = math.min(risen + deltaTime / B.RiseSeconds, 1)
-        local e = 1 - (1 - risen) * (1 - risen)
-        local bob = math.sin(seconds * 3) * 0.15
-        this.transform.position = ground + up * e + vec3(0, bob, 0)
-        player.transform.position = playerGround + up * e + vec3(0, bob, 0)
+        local e = 1 - (1 - risen) ^ 3
+        local arc = math.sin(risen * math.pi) * B.ArcSide
+        angle = angle + math.rad(B.CircleDegreesPerSecond) * deltaTime * risen
+        -- (the drift goes round a circle, never far: drifting one way the long brawl left the arena)
+        local driftAngle = (angle - math.atan(along.x, along.z)) * 0.6
+        drift = vec3(math.sin(driftAngle), 0, math.cos(driftAngle) - 1) * B.DriftRadius
+        local center = clampToArena(middle + side * arc + drift) + up * e
+        local toPlayer = vec3(math.sin(angle), 0, math.cos(angle)) * (B.Gap * 0.5)
+        local sway = math.sin(seconds * 2.3) * 0.25
+        this.transform.position = center - toPlayer + vec3(0, sway, 0)
+        player.transform.position = center + toPlayer + vec3(0, -sway * 0.6, 0)
         face()
     end
 
@@ -2698,8 +2712,9 @@ function O.startSkyBrawl()
             this.world:burst(O.SkidDust, ground, 30)
             this.world:effect("Crash Impact", ground, this.transform.forward)
             this.world:shakeCamera(0.8)
-            O.playPlayer("Jump")
-            this.characterActions:play("Hover")
+            -- (both leap off the ground, the player already swinging)
+            O.playPlayer(B.Punches[1])
+            this.characterActions:play("Hit")
             playCutscene("Sky Leap")
             show.during = inTheSky
             return 1.2
@@ -2723,7 +2738,9 @@ function O.startSkyBrawl()
                 end
                 -- (an exchange, not a beating: every third press he blocks and strikes back, the player reels)
                 pushed = math.max(pushed - deltaTime * 3, 0)
-                this.transform.position = this.transform.position - along * pushed
+                local away = this.transform.position - player.transform.position
+                away.y = 0
+                if away:length() > 0.01 then this.transform.position = this.transform.position + away:normalized() * pushed end
                 if Input.isKeyDown(Key.Space) then
                     punch = punch + 1
                     local at = (this.transform.position + player.transform.position) * 0.5 + vec3(0, 1.4, 0)
