@@ -2709,7 +2709,7 @@ end
 
 -- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
 -- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
-O.SkyBrawl = { At = 95, Height = 75, SkidMeters = 7, SkidSeconds = 1.2, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
+O.SkyBrawl = { At = 95, Height = 75, SkidMeters = 7, SkidSeconds = 1.2, WhipAt = 0.45, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
                "Attack_Light_3", "Attack_Light_4" } }
 
 function O.startSkyBrawl()
@@ -2767,12 +2767,18 @@ function O.startSkyBrawl()
             this.world:burst(O.SkidDust, ground, 30)
             this.world:effect("Crash Impact", ground, this.transform.forward)
             this.world:shakeCamera(0.8)
-            -- (both leap off the ground, the player already swinging)
+            -- (both leap off the ground, the player already swinging; as in the film (2:11.2) the way up isn't seen:
+            -- a blurred whip of the picture and they are in the clouds - seen rising slowly it looked unnatural)
             O.playPlayer(B.Punches[1])
             this.characterActions:play("Hit")
             playCutscene("Sky Leap")
-            show.during = inTheSky
-            return 1.2
+            after(B.WhipAt, function()
+                this.world:flash(vec3(0.85, 0.82, 0.8), 0.35, 0.05)
+                this.world:impactFrame(1.0, 0.35)
+                risen = 1
+            end)
+            show.during = function(deltaTime) if risen >= 1 then inTheSky(deltaTime) end end
+            return B.WhipAt + 0.05
         end,
         -- The brawl: held until the player has struck enough (a blow and a reel for every press)
         function()
