@@ -1892,7 +1892,7 @@ function O.updateTransform(deltaTime)
         O.tween(function(v)
             local wanted = this.health.max * v
             if this.health.current < wanted then this.health:heal(wanted - this.health.current) end
-        end, 0.05, 1, 0.9)
+        end, 0.05, O.ArmoredHealthFraction, 0.9)
     end
 
     -- 4-7.4: the rift over the arena, the pieces and the sword falling out of it
@@ -3017,7 +3017,7 @@ local function updatePhases()
         if not summon or summon.health.isDead then startLastPhase() end
     elseif phase == 4 and this.health.current <= this.health.minimum + 0.5 and not O.dive and isFreeToAct() then
         O.startTransformation()
-    elseif phase == 5 and this.health.fraction <= 0.5 + 0.01 and invulnerableLeft <= 0 and isFreeToAct() then
+    elseif phase == 5 and this.health.fraction <= O.PhaseSixAt + 0.01 and invulnerableLeft <= 0 and isFreeToAct() then
         O.startPhaseSix()
     end
 end
@@ -3201,6 +3201,9 @@ end
 -- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
 O.SwordFightCameraDistance = 5.6
 O.SwordCamera = { Shoulder = 0.0, Pitch = 13 }
+-- (the sword fight was long and dull to the user: his health in armor comes back to a bit over half, not all of
+-- it, his blazing blade at a quarter)
+O.ArmoredHealthFraction, O.PhaseSixAt = 0.55, 0.28
 O.BrawlCooldown = 0.6
 O.OpenWithFistsSeconds = 10
 O.CubeBurstsAfter = 1.15

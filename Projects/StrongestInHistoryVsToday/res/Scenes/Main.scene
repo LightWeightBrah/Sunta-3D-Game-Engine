@@ -4036,8 +4036,8 @@
     "emissive_strength": 0.0
    },
    "hitbox": {
-    "damage": 34.0,
-    "poise_damage": 30.0,
+    "damage": 46.0,
+    "poise_damage": 40.0,
     "local_offset": [
      0.0,
      0.67,
@@ -4050,10 +4050,10 @@
     ],
     "layer": 8,
     "show_gizmos": false,
-    "hit_stop_seconds": 0.07,
-    "camera_shake": 0.3,
+    "hit_stop_seconds": 0.1,
+    "camera_shake": 0.4,
     "is_enabled": false,
-    "knockback": 1.2
+    "knockback": 0.0
    },
    "weapon_trail": {
     "base_offset": [

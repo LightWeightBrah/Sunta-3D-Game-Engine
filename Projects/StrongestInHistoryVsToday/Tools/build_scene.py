@@ -922,10 +922,11 @@ def add_player(builder):
     sword = named("Player Sword", (0.0, 0.0, 0.0), model={"is_visible": False, "model_name": "sih_diddy_sword",
                                                          "emissive_strength": 0.0})
     # (the blade from 0.21 to 1.11 m above the grip, boss_items_generator.py; a little wider than the blade)
-    sword["hitbox"] = {"damage": 34.0, "poise_damage": 30.0, "local_offset": [0.0, 0.67, 0.0],
+    # (a sword that bites: the armored fight dragged on with 34)
+    sword["hitbox"] = {"damage": 46.0, "poise_damage": 40.0, "local_offset": [0.0, 0.67, 0.0],
                        "half_extents": [0.14, 0.47, 0.1], "layer": PLAYER_HITBOX_LAYER, "show_gizmos": False,
-                       "hit_stop_seconds": 0.07, "camera_shake": 0.3, "is_enabled": False,
-                       "knockback": 1.2}
+                       "hit_stop_seconds": 0.1, "camera_shake": 0.4, "is_enabled": False,
+                       "knockback": 0.0}
     sword["weapon_trail"] = {"base_offset": [0.0, 0.62, 0.0], "tip_offset": [0.0, 1.1, 0.0], "color": [1.0, 0.88, 0.62],
                              "intensity": 1.3, "lifetime_seconds": 0.18, "only_while_striking": True}
     builder.add(sword, parent=player, bone="Weapon_R")
