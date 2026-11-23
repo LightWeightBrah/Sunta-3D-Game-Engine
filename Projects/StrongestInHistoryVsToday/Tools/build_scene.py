@@ -631,7 +631,7 @@ PLAYER_MORE_ATTACKS = {
     "extra_hit_reaction_animations": ["Hit_2"], "heavy_hit_reaction_animation": "Hit_Heavy",
     # (a throw is the quick slide back on his feet with dust - the heavy reel read as weak and odd, the knock-down with
     # its slow getting up broke the fight's pace: the user)
-    "knockback_animation": "Knockback", "knockback_seconds": 0.6, "knockback_dust": "Skid Dust",
+    "knockback_animation": "Knockback", "knockback_seconds": 0.45, "knockback_dust": "Skid Dust",
     # (his heavy attack throws the boss back a little: his own choice, so not often)
     "finisher_knockback": 0.0, "heavy_knockback": 3.2, "heavy_knockback_chance": 0.5,
     # (never knocked off his feet: falling and getting up slowly broke the fight's pace - the user)
@@ -1060,6 +1060,11 @@ def add_armor_transformation(builder, boss):
         # (close beside them, level with them, high over the roofs: the sky, the clouds and the city far below behind them as
         # in the film - from above, the street under them looked like the ground they stood on)
         ("Sky Brawl", 2.0, BOSS_NAME, 1.5, BOSS_NAME, ((4.4, 1.3, -1.8), (4.6, 1.1, -0.7), (4.2, 1.3, 0.4))),
+        # (the film cuts around them as they trade blows: over his shoulder at the player, from below against the sky,
+        # over the player's shoulder at him - boss_fight.lua O.SkyBrawl.Shots, each 1.7 s)
+        ("Sky Brawl Over", 2.0, PLAYER_NAME, 1.45, BOSS_NAME, ((0.75, 1.9, 1.5), (0.6, 1.85, 1.15))),
+        ("Sky Brawl Low", 2.0, BOSS_NAME, 1.3, BOSS_NAME, ((2.6, -2.4, -1.2), (3.1, -1.9, 0.2))),
+        ("Sky Brawl Player Side", 2.0, BOSS_NAME, 1.5, BOSS_NAME, ((-0.7, 1.9, -3.0), (-0.55, 1.85, -2.6))),
         ("Sky Fall", 1.4, BOSS_NAME, 1.0, BOSS_NAME, ((-3.0, 2.5, -3.5), (-3.5, 1.5, -4.5))),
     )
     # The fight in the air (film 0:40-0:50, boss_fight.lua O.AirFight): low looking up at both rising, beside the player
@@ -1071,9 +1076,9 @@ def add_armor_transformation(builder, boss):
         ("Air Clash", 1.8, BOSS_NAME, 1.4, BOSS_NAME, ((7.5, 2.5, -5.5), (8.5, 3.0, -6.0))),
     )
     for name, seconds, target, height, owner, points in standoff:
-        quick = {"wait_for_key": " ", "wait_presses": 7, "press_window_seconds": 0.45,
-                 "press_sound": "@game/Sounds/Brawl/Punch",
-                 "wait_prompt": "Mash [Space] - strike him in the clouds"} if name == "Sky Brawl" else {}
+        # (the presses are counted by the script now: the shots cut between angles; the call to press is their line -
+        # the game's prompt is hidden under a cutscene)
+        quick = {"title": "Mash [Space] - strike him in the clouds", "title_seconds": 2.0} if name.startswith("Sky Brawl") else {}
         shot = builder.add(named(name, cutscene=dict({
             "duration_seconds": seconds, "look_at_entity": target, "look_at_height": height, "animation_entity": "",
             "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
@@ -1358,14 +1363,30 @@ def add_boss(builder):
                       "max_distance": 60.0, "cooldown_seconds": 5.5, "charge_particles_per_second": 220.0,
                       "cast_sound": "@game/Sounds/Spells/cash_register.ogg", "cast_on_request_only": True}), parent=staff)
 
-    # The sign of his domain, seen from close: the camera comes in on his raised hand
-    sign = builder.add(named("Domain Sign", cutscene={
-        "duration_seconds": 3.4, "look_at_entity": BOSS_NAME, "look_at_height": 1.55, "animation_entity": BOSS_NAME,
-        "animation_name": "Sign_Domain", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
-        "can_be_skipped": False, "video_file": ""}), parent=boss)
+    # The sign of his domain as in the film (1:20.5-1:24.5): low beside him as he rises out of his skid and the hand
+    # comes up; a whip in close on his face and the sign; then before him against the fire, drawing back and up
+    # (boss_fight.lua's opening steps; the sign is his own clip - the shots only look)
     # (in front of him: his front is his own -Z)
-    for index, point in enumerate(((-1.5, 1.75, -1.9), (-1.1, 1.7, -1.4), (-0.8, 1.68, -1.05))):
-        builder.add(named(f"Camera Point {index + 1}", point), parent=sign)
+    sign_shots = (
+        ("Knock Rise", 2.2, 1.2, ((-2.6, 0.55, -2.4), (-2.3, 0.75, -2.0))),
+        ("Domain Sign", 1.0, 1.62, ((-0.32, 1.62, -1.05), (-0.26, 1.63, -0.9))),
+        ("Sign Fire", 1.8, 1.45, ((-0.6, 1.35, -2.4), (-1.3, 2.4, -5.2))),
+    )
+    for name, seconds, height, points in sign_shots:
+        sign = builder.add(named(name, cutscene={
+            "duration_seconds": seconds, "look_at_entity": BOSS_NAME, "look_at_height": height, "animation_entity": "",
+            "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+            "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}), parent=boss)
+        for index, point in enumerate(points):
+            builder.add(named(f"Camera Point {index + 1}", point), parent=sign)
+    # Between his skid and his rising: the player who threw him, standing calm, eyes glowing (film 1:16.8, without the
+    # ball of oil the user found too much)
+    look = builder.add(named("Knock Player", cutscene={
+        "duration_seconds": 2.1, "look_at_entity": PLAYER_NAME, "look_at_height": 1.6, "animation_entity": "",
+        "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0,
+        "can_be_skipped": False, "video_file": "", "blend_in_seconds": 0.0}), parent=builder.find(PLAYER_NAME))
+    for index, point in enumerate(((0.55, 1.62, -1.6), (0.45, 1.62, -1.25))):
+        builder.add(named(f"Camera Point {index + 1}", point), parent=look)
 
     # The bottle of the player's great technique coming down on him, seen from the ground looking up (film 2:27-2:30):
     # started by the player's script the moment the bottle is called
@@ -1545,10 +1566,12 @@ def add_fight(builder):
 # The shots of the domain's opening and of the player's answer flow into each other as one sequence (film 1:15-1:49):
 # each flies in from the shot before ('blend_in_seconds') and lasts until the next one starts (no game camera between)
 SEQUENCE_SHOTS = {
-    "Knockback Flight": {"duration_seconds": 6.1},
-    # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
-    "Domain Sign":      {"blend_in_seconds": 0.0},
-        "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 7.0},
+    # (the flight and the skid, then the player, his rising, the sign close, the fire: boss_fight.lua's steps)
+    "Knockback Flight": {"duration_seconds": 3.2},
+    # (a whip in close: a short fly, as the film's blurred swing)
+    "Domain Sign":      {"blend_in_seconds": 0.2},
+    "Sign Fire":        {"blend_in_seconds": 0.15},
+        "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
     "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},

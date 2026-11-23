@@ -119,9 +119,9 @@ PLAYER = {
     "Hit":            diddy("Hit_HeadMedium"),
     "Hit_2":          diddy("Hit_Stomach"),
     "Hit_Heavy":      diddy("Hit_HeadBig"),
-    # Thrown back by a kick (the engine's knockback: he slides back on his feet), catching himself in a crouch and
-    # standing up clean
-    "Knockback":      diddy("Jump_Landing", speed=0.8),
+    # Thrown back by a kick (the engine's knockback: he slides back on his feet): the big snap of the head, quick
+    # (the landing of a jump it was made of hopped him up and held the controls too long - the user)
+    "Knockback":      diddy("Hit_HeadBig", speed=1.4),
     "Parried":        diddy("Parried_Rocked", 1, 60),
     "Death":          diddy("Knocked_Back"),
     # The guard: both forearms up before the face; a blow on it rocks him back; the parry swats it aside inward
@@ -247,6 +247,9 @@ BOSS = {
     # Thrown back by the player's last blow before his domain he lands on his feet, crouched, a hand on the ground,
     # and skids on (film 1:19-1:21): the end of the same landing, held
     "Skid_Crouch":    library(ADDON, "Land_Three_Point", first_frame=22, speed=0.3),
+    # Crouched still in the dust after the skid until he rises with the sign (the landing's own end stood him up
+    # before his shot of rising began)
+    "Skid_Hold":      library(ADDON, "Land_Three_Point", first_frame=22, last_frame=25, speed=0.05),
     "Ground_Pound":   library(ADDON, "Attack_Ground_Pound", speed=1.0),
 }
 
@@ -424,7 +427,8 @@ GESTURES = {
         # Beside his face, the fingers up, the palm turned half towards his own face
         # (he holds the sign already when its shot starts: the hand is there from the first frame, no drop and rise)
         "Sign_Domain": [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.0)],
-        "Sign_Raise":  [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.3)],
+        # (up in half a second, as in the film: at 0.3 of this long clip the hand took three seconds to rise)
+        "Sign_Raise":  [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.05)],
         # The same sign held high and forward over the battlefield: his jet comes, his domain answers, his summon rises
         "Cast_Pillars": [Gesture("_R", (0.26, 0.38, 0.30), (0.0, 0.2, 1.0), (-0.3, 0.95, 0.0), reached_at=0.3, left_from=0.85)],
         "Cast_Domain":  [Gesture("_R", (0.30, 0.20, 0.05), (0.0, 0.08, 1.0), (-0.6, 0.8, 0.0), reached_at=0.25)],

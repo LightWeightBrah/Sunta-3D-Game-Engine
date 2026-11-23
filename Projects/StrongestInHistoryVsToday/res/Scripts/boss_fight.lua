@@ -699,11 +699,16 @@ local O = {
     -- One throw, smooth (the user: a ball of oil striking him again made it two jerky throws): hurled through the
     -- ruins, he lands into a long skid on his feet slowing down, straightening up with the sign as he stops - in
     -- time with the film's sound (the close shot of the sign at 1:20.8)
+    -- (as the film (1:19.8-1:21): a short fast skid, crouched in the dust while the player is seen, then rising out of
+    -- the last of the slide with the sign coming up quickly - the long slow skid and the slow hand were off the
+    -- film's pace, the user)
     KnockFlySeconds = 1.2,
     KnockWaitSeconds = 0.0,
-    KnockSkidSeconds = 4.3,
+    KnockSkidSeconds = 1.9,
     KnockOrbAt = 99,
-    KnockRiseAt = 0.8,
+    KnockRiseAt = 99,
+    -- seconds after the blow he rises (in time with the film's 1:20.5), how far he still slides as he does
+    KnockRiseAfter = 5.6, KnockRiseSlide = 1.2, KnockRiseSlideSeconds = 0.55,
     -- If the player never hurts him enough, the domain still opens (seconds of the soundtrack)
     DomainLatestAt = 150,
     DetonationPrompt = "2: Imaginary Technique: Baby Oil Detonation",
@@ -969,8 +974,8 @@ function O.updateKnock(deltaTime)
             this.world:effect("Crash Impact", k.land, this.transform.forward)
         end
         local f = (k.t - fly - wait) / skid
-        -- (fast out of the landing, slowing a long way to a stop)
-        this.transform.position = mix(k.land, k.skid, 1 - (1 - f) ^ 4)
+        -- (fast out of the landing, slowing to a stop)
+        this.transform.position = mix(k.land, k.skid, 1 - (1 - f) ^ 3)
         -- (a furrow of dust behind his feet, thinning as he slows)
         k.dustIn = k.dustIn - deltaTime
         if k.dustIn <= 0 then
@@ -985,8 +990,30 @@ function O.updateKnock(deltaTime)
         return
     end
 
-    this.transform.position = k.skid
-    O.knock = nil
+    -- Crouched where the skid ended (the shot is on the player meanwhile), then up out of the last of the slide,
+    -- the sign coming up as he straightens
+    local riseAt = O.KnockRiseAfter
+    if k.t < riseAt then
+        if not k.isHolding then
+            k.isHolding = true
+            this.characterActions:play("Skid_Hold")
+        end
+        this.transform.position = k.skid
+        return
+    end
+    if not k.hasRisen then
+        k.hasRisen = true
+        k.riseFrom = this.transform.position
+        local away = k.skid - k.land
+        away.y = 0
+        k.riseTo = clampToArena(k.skid + (away:length() > 0.1 and away:normalized() or vec3(0, 0, 0)) * O.KnockRiseSlide)
+        k.riseTo.y = 0
+        O.isHoldingSign, O.holdSignIn, O.hasRaisedSign = true, 0, false
+        this.world:burst(O.SkidDust, this.transform.position, 14)
+    end
+    local f = math.min((k.t - riseAt) / O.KnockRiseSlideSeconds, 1)
+    this.transform.position = mix(k.riseFrom, k.riseTo, 1 - (1 - f) * (1 - f))
+    if f >= 1 then O.knock = nil end
 end
 
 -- The player throws a ball of baby oil at him (film 1:16.8): his throw and the ball, no voice (the film's sound)
@@ -1043,11 +1070,13 @@ function O.domainOpeningSteps()
             -- found the cut-out voices worse and off the film's timing); the soundtrack goes on silent under it
             O.playFilmAudio(O.DomainFilmAudio, O.DomainFilmAudioSeconds)
         end },
-        { 44.6, function()
-            O.knock = nil
-            O.isHoldingSign = false
-            playCutscene(SignCutscene)
-        end },
+        -- (film 1:16.8) the player who threw him, while he lies crouched in the dust
+        { 41.9, function() playCutscene("Knock Player") end },
+        -- (film 1:19.8-1:21) low beside him: he rises out of the slide, the sign comes up
+        { 43.9, function() playCutscene("Knock Rise") end },
+        -- (film 1:22) a whip in close on his face and the sign; (1:22.8) before him against the fire, drawing back
+        { 45.8, function() playCutscene(SignCutscene) end },
+        { 46.75, function() playCutscene("Sign Fire") end },
         -- As in the older version the user liked (his video): the sky darkens, then the wide shot with the hill of
         -- fire, the temple rising out of it carrying him up, the stars bursting out of the dome and the camera
         -- flying on over them without a cut (in step with the film's sound: the temple at its 1:24.5)
@@ -1068,9 +1097,9 @@ function O.domainOpeningSteps()
             playCutscene(RevealCutscene)
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere, as the temple stands
-        -- (a second later than at first: the user)
-        { 53.3, function() O.burstStars() end },
-        { 54.9, function() O.flyThroughStars() end },
+        -- (half a second later than at first: the user)
+        { 52.8, function() O.burstStars() end },
+        { 54.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
             local stars = O.stars()
@@ -2620,9 +2649,11 @@ local function startSummonPhase()
             -- As in the film (2:29-2:31) a blast throws him back and up, the screen goes white and the film's own
             -- pictures of him floating come out of it (a leap of his own looked unnatural to the user)
             this.characterActions:play("Knock_Flight")
-            this.world:effect("Liquid Burst", ground + vec3(0, 1.2, 0), this.transform.forward)
+            -- (a blow and a ring of fire, not a burst of white oil: it filled the shot with white - the user)
+            this.world:effect("Punch Impact", ground + vec3(0, 1.3, 0), this.transform.forward)
+            this.world:effect("Crash Impact", ground + vec3(0, 0.1, 0), this.transform.forward)
             this.world:impactFrame(1.0, 0.5)
-            after(0.7, function() this.world:flash(vec3(1, 1, 0.97), 0.6, 0.35) end)
+            -- (no white screen before the film's pictures: they fade in by themselves - the user)
             -- (carried by the script up there: the physics would pull him down between its frames)
             if this.physicsBody then this.physicsBody.useGravity = false; this.physicsBody.velocity = vec3(0, 0, 0) end
             this.world:burst(O.SkidDust, ground, 30)
@@ -2672,7 +2703,7 @@ local function startSummonPhase()
             return O.SummonWheelAfter - 3.0
         end,
         function()
-            this.world:flash(vec3(1, 1, 1), 0.4, 0.1)
+            -- (no white screens of our own between the film's pictures: the user)
             playCutscene(WheelCutscene)
             -- (film 2:37) "47th President of the United States, Donald J. Trump." over the turning wheel
             -- (the film's pictures to the end of his words: him falling into the white after the wheel; his words in
@@ -2682,7 +2713,6 @@ local function startSummonPhase()
         function()
             this.transform.position = ground
             if this.physicsBody then this.physicsBody.useGravity = true; this.physicsBody.velocity = vec3(0, 0, 0) end
-            this.world:flash(vec3(0.85, 0.85, 0.85), 1.0, 0.1)
             callTheSummon()
         end,
     })
@@ -2718,7 +2748,7 @@ callTheSummon = function()
     this.world:burst("Summon Burst", place + vec3(0, 1.0, 0), 160)
     this.world:shakeCamera(0.9)
     this.world:slowMotion(1.5, 0.3)
-    flash = 0.6
+    flash = 0.2
 
     this.world:notify("WITH THIS TREASURE, I SUMMON...")
     -- The seal burns behind his back from now on
@@ -2900,7 +2930,12 @@ end
 -- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
 -- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
 O.SkyBrawl = { At = 95, Height = 75, SkidMeters = 7, SkidSeconds = 1.2, LaunchSeconds = 0.6, LaunchMeters = 14, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
-               "Attack_Light_3", "Attack_Light_4" } }
+               "Attack_Light_3", "Attack_Light_4" },
+               -- the presses it takes, the longest it lasts; his own blows and how often; the shots it cuts between;
+               -- how long the fight goes on after it before he calls his summon
+               Presses = 9, LongestSeconds = 14, OwnEvery = 1.25, OwnBlows = { "Attack_Light_1", "Attack_Light_2", "Attack_Heavy" },
+               ShotSeconds = 1.7, Shots = { "Sky Brawl", "Sky Brawl Over", "Sky Brawl Low", "Sky Brawl Player Side" },
+               BreathBeforeSummon = 14 }
 
 function O.startSkyBrawl()
     local player = find(PlayerName)
@@ -2979,19 +3014,31 @@ function O.startSkyBrawl()
                 player.transform.position = playerFrom + lift
                 this.world:effect("Dash Streak", this.transform.position + vec3(0, 1.0, 0), vec3(0, 1, 0))
                 if launched >= 1 and risen < 1 then
-                    this.world:flash(vec3(1, 1, 0.97), 0.35, 0.05)
+                    -- (a cut into the clouds, as the film's: no white screen - the user)
+                    this.world:shakeCamera(0.6)
                     risen = 1
                     inTheSky(0)
                 end
             end
             return B.LaunchSeconds + 0.05
         end,
-        -- The brawl: held until the player has struck enough (a blow and a reel for every press)
+        -- The brawl: held until the player has struck enough (a blow and a reel for every press); as in the film
+        -- (2:11-2:18) an exchange - he comes at the player on his own, punches and kicks, and the picture cuts from
+        -- angle to angle around them (one fixed shot while only the player struck looked dull - the user)
         function()
-            playCutscene("Sky Brawl")
-            local cloudsIn = 0
+            local shotIndex, shotLeft = 1, 0
+            local cloudsIn, ownIn, brawled = 0, 0.8, 0
             show.during = function(deltaTime)
                 inTheSky(deltaTime)
+                brawled = brawled + deltaTime
+                shotLeft = shotLeft - deltaTime
+                if shotLeft <= 0 then
+                    shotLeft = B.ShotSeconds
+                    -- (again and again: a cutscene plays once unless replayed)
+                    local shot = find(B.Shots[shotIndex])
+                    if shot and shot.cutscene then shot.cutscene:replay() end
+                    shotIndex = shotIndex % #B.Shots + 1
+                end
                 -- Clouds drift under and past them the whole time (the film: they fight among the clouds)
                 cloudsIn = cloudsIn - deltaTime
                 if cloudsIn <= 0 then
@@ -3003,35 +3050,45 @@ function O.startSkyBrawl()
                         this.transform.forward)
                     this.world:effect("Sky Clouds", mid + vec3(0, -4.0, 0), this.transform.forward)
                 end
-                -- (an exchange, not a beating: every third press he blocks and strikes back, the player reels)
                 pushed = math.max(pushed - deltaTime * 3, 0)
                 local away = this.transform.position - player.transform.position
                 away.y = 0
                 if away:length() > 0.01 then this.transform.position = this.transform.position + away:normalized() * pushed end
+                local at = (this.transform.position + player.transform.position) * 0.5 + vec3(0, 1.4, 0)
+                -- His own blows, on his own time: the player reels back from each
+                ownIn = ownIn - deltaTime
+                if ownIn <= 0 then
+                    ownIn = B.OwnEvery * (0.8 + math.random() * 0.4)
+                    this.characterActions:play(B.OwnBlows[math.random(#B.OwnBlows)])
+                    after(0.22, function()
+                        if not O.isSkyBrawling then return end
+                        O.playPlayer("Hit")
+                        this.world:effect("Punch Impact", (this.transform.position + player.transform.position) * 0.5
+                            + vec3(0, 1.4, 0), -player.transform.forward)
+                        this.world:impactFrame(0.5, 0.15)
+                        this.world:shakeCamera(0.35)
+                        Audio.play("@game/Sounds/Brawl/Punch", 0.9)
+                    end)
+                end
                 if Input.isKeyDown(Key.Space) then
                     punch = punch + 1
-                    local at = (this.transform.position + player.transform.position) * 0.5 + vec3(0, 1.4, 0)
-                    if punch % 3 == 0 then
-                        this.characterActions:play(B.Punches[(punch % #B.Punches) + 1])
-                        O.playPlayer("Hit")
-                        this.world:effect("Punch Impact", at, -player.transform.forward)
-                        this.world:shakeCamera(0.35)
-                    else
-                        O.playPlayer(B.Punches[(punch % #B.Punches) + 1])
-                        this.characterActions:play("Hit")
-                        this.world:effect("Punch Impact", at, player.transform.forward)
-                        this.world:impactFrame(0.5, 0.15)
-                        this.world:shakeCamera(0.25)
-                        pushed = 0.6
-                    end
+                    O.playPlayer(B.Punches[(punch % #B.Punches) + 1])
+                    this.characterActions:play("Hit")
+                    this.world:effect("Punch Impact", at, player.transform.forward)
+                    this.world:impactFrame(0.5, 0.15)
+                    this.world:shakeCamera(0.25)
+                    Audio.play("@game/Sounds/Brawl/Punch", 1.0)
+                    pushed = 0.6
+                    ownIn = math.max(ownIn, 0.45)
                 end
-                local shot = find("Sky Brawl")
-                if shot and shot.cutscene and shot.cutscene.wasAnswered then show.waitLeft = 0 end
+                if punch >= B.Presses or brawled >= B.LongestSeconds then show.waitLeft = 0 end
             end
+            O.isSkyBrawling = true
             return 999
         end,
         -- The last blow: he is hurled down to the ground
         function()
+            O.isSkyBrawling = false
             O.playPlayer("Attack_Heavy")
             this.characterActions:play("Knock_Flight")
             this.world:flash(vec3(1, 0.95, 0.85), 0.15, 0.0)
@@ -3084,6 +3141,8 @@ function O.startSkyBrawl()
         function()
             O.restorePlayer()
             isChanneling = false
+            -- (the fight goes on a while before he calls his summon: it followed the fall at once - the user)
+            O.summonNotBefore = clock() + O.SkyBrawl.BreathBeforeSummon
         end,
     })
 end
@@ -3212,7 +3271,7 @@ local function updatePhases()
         if not hasAnnouncedSummon and seconds >= SummonAtSeconds - 4 then
             hasAnnouncedSummon = true
         end
-        if invulnerableLeft <= 0 and hasReached(SummonHealthFraction, SummonAtSeconds) then
+        if invulnerableLeft <= 0 and hasReached(SummonHealthFraction, SummonAtSeconds) and clock() >= (O.summonNotBefore or 0) then
             startSummonPhase()
         end
     elseif phase == 3 then
@@ -3238,6 +3297,7 @@ local function reset()
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
     O.hasStoodOff, O.hasFoughtInAir, O.hasSkyBrawled = false, false, false
+    O.summonNotBefore, O.isSkyBrawling = nil, false
     if O.restorePlayer then O.restorePlayer() end
     if this.lockOnTarget then this.lockOnTarget.isLockable = true end
     phase = 0

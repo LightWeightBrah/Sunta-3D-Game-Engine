@@ -183,7 +183,7 @@
     ],
     "heavy_hit_reaction_animation": "Hit_Heavy",
     "knockback_animation": "Knockback",
-    "knockback_seconds": 0.6,
+    "knockback_seconds": 0.45,
     "knockback_dust": "Skid Dust",
     "finisher_knockback": 0.0,
     "heavy_knockback": 3.2,
@@ -37401,16 +37401,11 @@
     "animation_entity": "",
     "animation_name": "",
     "animation_at_seconds": 0.0,
-    "title": "",
-    "title_seconds": 0.0,
+    "title": "Mash [Space] - strike him in the clouds",
+    "title_seconds": 2.0,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 0.0,
-    "wait_for_key": " ",
-    "wait_presses": 7,
-    "press_window_seconds": 0.45,
-    "press_sound": "@game/Sounds/Brawl/Punch",
-    "wait_prompt": "Mash [Space] - strike him in the clouds"
+    "blend_in_seconds": 0.0
    },
    "parent": {
     "index": 786,
@@ -37515,6 +37510,333 @@
   },
   {
    "tag": {
+    "name": "Sky Brawl Over"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.0,
+    "look_at_entity": "Player",
+    "look_at_height": 1.45,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "Mash [Space] - strike him in the clouds",
+    "title_seconds": 2.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 786,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.75,
+     1.9,
+     1.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 825,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.6,
+     1.85,
+     1.15
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 825,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sky Brawl Low"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.0,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.3,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "Mash [Space] - strike him in the clouds",
+    "title_seconds": 2.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 786,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     2.6,
+     -2.4,
+     -1.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 828,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     3.1,
+     -1.9,
+     0.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 828,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sky Brawl Player Side"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.0,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.5,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "Mash [Space] - strike him in the clouds",
+    "title_seconds": 2.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 786,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     -0.7,
+     1.9,
+     -3.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 831,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     -0.55,
+     1.85,
+     -2.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 831,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
     "name": "Sky Fall"
    },
    "transform": {
@@ -37586,7 +37908,7 @@
     ]
    },
    "parent": {
-    "index": 825,
+    "index": 834,
     "bone_name": ""
    }
   },
@@ -37618,7 +37940,7 @@
     ]
    },
    "parent": {
-    "index": 825,
+    "index": 834,
     "bone_name": ""
    }
   },
@@ -37695,7 +38017,7 @@
     ]
    },
    "parent": {
-    "index": 828,
+    "index": 837,
     "bone_name": ""
    }
   },
@@ -37727,7 +38049,7 @@
     ]
    },
    "parent": {
-    "index": 828,
+    "index": 837,
     "bone_name": ""
    }
   },
@@ -37804,7 +38126,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 840,
     "bone_name": ""
    }
   },
@@ -37836,7 +38158,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 840,
     "bone_name": ""
    }
   },
@@ -37913,7 +38235,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 843,
     "bone_name": ""
    }
   },
@@ -37945,7 +38267,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 843,
     "bone_name": ""
    }
   },
@@ -38022,7 +38344,7 @@
     ]
    },
    "parent": {
-    "index": 837,
+    "index": 846,
     "bone_name": ""
    }
   },
@@ -38054,7 +38376,7 @@
     ]
    },
    "parent": {
-    "index": 837,
+    "index": 846,
     "bone_name": ""
    }
   },
@@ -38131,7 +38453,7 @@
     ]
    },
    "parent": {
-    "index": 840,
+    "index": 849,
     "bone_name": ""
    }
   },
@@ -38163,7 +38485,7 @@
     ]
    },
    "parent": {
-    "index": 840,
+    "index": 849,
     "bone_name": ""
    }
   },
@@ -38240,7 +38562,7 @@
     ]
    },
    "parent": {
-    "index": 843,
+    "index": 852,
     "bone_name": ""
    }
   },
@@ -38272,7 +38594,7 @@
     ]
    },
    "parent": {
-    "index": 843,
+    "index": 852,
     "bone_name": ""
    }
   },
@@ -38349,7 +38671,7 @@
     ]
    },
    "parent": {
-    "index": 846,
+    "index": 855,
     "bone_name": ""
    }
   },
@@ -38381,7 +38703,7 @@
     ]
    },
    "parent": {
-    "index": 846,
+    "index": 855,
     "bone_name": ""
    }
   },
@@ -38458,7 +38780,7 @@
     ]
    },
    "parent": {
-    "index": 849,
+    "index": 858,
     "bone_name": ""
    }
   },
@@ -38490,7 +38812,7 @@
     ]
    },
    "parent": {
-    "index": 849,
+    "index": 858,
     "bone_name": ""
    }
   },
@@ -38567,7 +38889,7 @@
     ]
    },
    "parent": {
-    "index": 852,
+    "index": 861,
     "bone_name": ""
    }
   },
@@ -38599,7 +38921,7 @@
     ]
    },
    "parent": {
-    "index": 852,
+    "index": 861,
     "bone_name": ""
    }
   },
@@ -38676,7 +38998,7 @@
     ]
    },
    "parent": {
-    "index": 855,
+    "index": 864,
     "bone_name": ""
    }
   },
@@ -38708,7 +39030,7 @@
     ]
    },
    "parent": {
-    "index": 855,
+    "index": 864,
     "bone_name": ""
    }
   },
@@ -38785,7 +39107,7 @@
     ]
    },
    "parent": {
-    "index": 858,
+    "index": 867,
     "bone_name": ""
    }
   },
@@ -38817,7 +39139,7 @@
     ]
    },
    "parent": {
-    "index": 858,
+    "index": 867,
     "bone_name": ""
    }
   },
@@ -38894,7 +39216,7 @@
     ]
    },
    "parent": {
-    "index": 861,
+    "index": 870,
     "bone_name": ""
    }
   },
@@ -38926,7 +39248,7 @@
     ]
    },
    "parent": {
-    "index": 861,
+    "index": 870,
     "bone_name": ""
    }
   },
@@ -39003,7 +39325,7 @@
     ]
    },
    "parent": {
-    "index": 864,
+    "index": 873,
     "bone_name": ""
    }
   },
@@ -39035,7 +39357,7 @@
     ]
    },
    "parent": {
-    "index": 864,
+    "index": 873,
     "bone_name": ""
    }
   },
@@ -39112,7 +39434,7 @@
     ]
    },
    "parent": {
-    "index": 867,
+    "index": 876,
     "bone_name": ""
    }
   },
@@ -39144,7 +39466,7 @@
     ]
    },
    "parent": {
-    "index": 867,
+    "index": 876,
     "bone_name": ""
    }
   },
@@ -39221,7 +39543,7 @@
     ]
    },
    "parent": {
-    "index": 870,
+    "index": 879,
     "bone_name": ""
    }
   },
@@ -39253,7 +39575,7 @@
     ]
    },
    "parent": {
-    "index": 870,
+    "index": 879,
     "bone_name": ""
    }
   },
@@ -39330,7 +39652,7 @@
     ]
    },
    "parent": {
-    "index": 873,
+    "index": 882,
     "bone_name": ""
    }
   },
@@ -39362,7 +39684,7 @@
     ]
    },
    "parent": {
-    "index": 873,
+    "index": 882,
     "bone_name": ""
    }
   },
@@ -39439,7 +39761,7 @@
     ]
    },
    "parent": {
-    "index": 876,
+    "index": 885,
     "bone_name": ""
    }
   },
@@ -39471,7 +39793,7 @@
     ]
    },
    "parent": {
-    "index": 876,
+    "index": 885,
     "bone_name": ""
    }
   },
@@ -39719,7 +40041,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 882,
+    "index": 891,
     "bone_name": ""
    }
   },
@@ -39765,7 +40087,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 882,
+    "index": 891,
     "bone_name": ""
    }
   },
@@ -39811,7 +40133,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 882,
+    "index": 891,
     "bone_name": ""
    }
   },
@@ -39858,7 +40180,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 882,
+    "index": 891,
     "bone_name": ""
    }
   },
@@ -39905,7 +40227,116 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 882,
+    "index": 891,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Knock Rise"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.2,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.2,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 786,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     -2.6,
+     0.55,
+     -2.4
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 897,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     -2.3,
+     0.75,
+     -2.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 897,
     "bone_name": ""
    }
   },
@@ -39937,17 +40368,17 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 3.4,
+    "duration_seconds": 1.0,
     "look_at_entity": "Boss",
-    "look_at_height": 1.55,
-    "animation_entity": "Boss",
-    "animation_name": "Sign_Domain",
+    "look_at_height": 1.62,
+    "animation_entity": "",
+    "animation_name": "",
     "animation_at_seconds": 0.0,
     "title": "",
     "title_seconds": 0.0,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 0.0
+    "blend_in_seconds": 0.2
    },
    "parent": {
     "index": 786,
@@ -39960,72 +40391,8 @@
    },
    "transform": {
     "position": [
-     -1.5,
-     1.75,
-     -1.9
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "parent": {
-    "index": 888,
-    "bone_name": ""
-   }
-  },
-  {
-   "tag": {
-    "name": "Camera Point 2"
-   },
-   "transform": {
-    "position": [
-     -1.1,
-     1.7,
-     -1.4
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "parent": {
-    "index": 888,
-    "bone_name": ""
-   }
-  },
-  {
-   "tag": {
-    "name": "Camera Point 3"
-   },
-   "transform": {
-    "position": [
-     -0.8,
-     1.68,
+     -0.32,
+     1.62,
      -1.05
     ],
     "rotation": [
@@ -40046,7 +40413,257 @@
     ]
    },
    "parent": {
-    "index": 888,
+    "index": 900,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     -0.26,
+     1.63,
+     -0.9
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 900,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Sign Fire"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 1.8,
+    "look_at_entity": "Boss",
+    "look_at_height": 1.45,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.15
+   },
+   "parent": {
+    "index": 786,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     -0.6,
+     1.35,
+     -2.4
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 903,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     -1.3,
+     2.4,
+     -5.2
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 903,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Knock Player"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 2.1,
+    "look_at_entity": "Player",
+    "look_at_height": 1.6,
+    "animation_entity": "",
+    "animation_name": "",
+    "animation_at_seconds": 0.0,
+    "title": "",
+    "title_seconds": 0.0,
+    "can_be_skipped": false,
+    "video_file": "",
+    "blend_in_seconds": 0.0
+   },
+   "parent": {
+    "index": 2,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.55,
+     1.62,
+     -1.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 906,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     0.45,
+     1.62,
+     -1.25
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 906,
     "bone_name": ""
    }
   },
@@ -40123,7 +40740,7 @@
     ]
    },
    "parent": {
-    "index": 892,
+    "index": 909,
     "bone_name": ""
    }
   },
@@ -40155,7 +40772,7 @@
     ]
    },
    "parent": {
-    "index": 892,
+    "index": 909,
     "bone_name": ""
    }
   },
@@ -40187,7 +40804,7 @@
     ]
    },
    "parent": {
-    "index": 892,
+    "index": 909,
     "bone_name": ""
    }
   },
@@ -40219,7 +40836,7 @@
     ]
    },
    "parent": {
-    "index": 892,
+    "index": 909,
     "bone_name": ""
    }
   },
@@ -40251,7 +40868,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 6.1,
+    "duration_seconds": 3.2,
     "look_at_entity": "Boss",
     "look_at_height": 1.0,
     "animation_entity": "",
@@ -40295,7 +40912,7 @@
     ]
    },
    "parent": {
-    "index": 897,
+    "index": 914,
     "bone_name": ""
    }
   },
@@ -40327,7 +40944,7 @@
     ]
    },
    "parent": {
-    "index": 897,
+    "index": 914,
     "bone_name": ""
    }
   },
@@ -40359,7 +40976,7 @@
     ]
    },
    "parent": {
-    "index": 897,
+    "index": 914,
     "bone_name": ""
    }
   },
@@ -40391,7 +41008,7 @@
     ]
    },
    "parent": {
-    "index": 897,
+    "index": 914,
     "bone_name": ""
    }
   },
@@ -40423,7 +41040,7 @@
     ]
    },
    "parent": {
-    "index": 897,
+    "index": 914,
     "bone_name": ""
    }
   },
@@ -40498,7 +41115,7 @@
     ]
    },
    "parent": {
-    "index": 903
+    "index": 920
    }
   },
   {
@@ -40529,7 +41146,7 @@
     ]
    },
    "parent": {
-    "index": 903
+    "index": 920
    }
   },
   {
@@ -40560,7 +41177,7 @@
     ]
    },
    "parent": {
-    "index": 903
+    "index": 920
    }
   },
   {
@@ -40591,7 +41208,7 @@
     ]
    },
    "parent": {
-    "index": 903
+    "index": 920
    }
   },
   {
@@ -40831,7 +41448,7 @@
     ]
    },
    "parent": {
-    "index": 908
+    "index": 925
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -40916,7 +41533,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 908,
+    "index": 925,
     "bone_name": "Hand_R"
    }
   },
@@ -40967,7 +41584,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 908,
+    "index": 925,
     "bone_name": "Hand_L"
    }
   },
@@ -41018,7 +41635,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 908,
+    "index": 925,
     "bone_name": "Foot_R"
    }
   },
@@ -41054,7 +41671,7 @@
     "model_name": "sih_summon_wheel"
    },
    "parent": {
-    "index": 908,
+    "index": 925,
     "bone_name": "Head",
     "bone_position_only": true
    }
@@ -41131,7 +41748,7 @@
     "only_while_striking": true
    },
    "parent": {
-    "index": 908,
+    "index": 925,
     "bone_name": "Hand_R"
    }
   },
@@ -41390,7 +42007,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 915,
+    "index": 932,
     "bone_name": "Hand_R"
    }
   },
@@ -41441,7 +42058,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 915,
+    "index": 932,
     "bone_name": "Hand_L"
    }
   },
@@ -41492,7 +42109,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 915,
+    "index": 932,
     "bone_name": "Foot_R"
    }
   },
@@ -41751,7 +42368,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 919,
+    "index": 936,
     "bone_name": "Hand_R"
    }
   },
@@ -41802,7 +42419,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 919,
+    "index": 936,
     "bone_name": "Hand_L"
    }
   },
@@ -41853,7 +42470,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 919,
+    "index": 936,
     "bone_name": "Foot_R"
    }
   },
@@ -42112,7 +42729,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 923,
+    "index": 940,
     "bone_name": "Hand_R"
    }
   },
@@ -42163,7 +42780,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 923,
+    "index": 940,
     "bone_name": "Hand_L"
    }
   },
@@ -42214,7 +42831,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 923,
+    "index": 940,
     "bone_name": "Foot_R"
    }
   },
@@ -42246,7 +42863,7 @@
     ]
    },
    "parent": {
-    "index": 923,
+    "index": 940,
     "bone_name": "Hand_R"
    }
   },
@@ -42292,7 +42909,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 927,
+    "index": 944,
     "bone_name": ""
    }
   },
@@ -42551,7 +43168,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 929,
+    "index": 946,
     "bone_name": "Hand_R"
    }
   },
@@ -42602,7 +43219,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 929,
+    "index": 946,
     "bone_name": "Hand_L"
    }
   },
@@ -42653,7 +43270,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 929,
+    "index": 946,
     "bone_name": "Foot_R"
    }
   },
@@ -42912,7 +43529,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 933,
+    "index": 950,
     "bone_name": "Hand_R"
    }
   },
@@ -42963,7 +43580,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 933,
+    "index": 950,
     "bone_name": "Hand_L"
    }
   },
@@ -43014,7 +43631,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 933,
+    "index": 950,
     "bone_name": "Foot_R"
    }
   },
@@ -43046,7 +43663,7 @@
     ]
    },
    "parent": {
-    "index": 933,
+    "index": 950,
     "bone_name": "Hand_R"
    }
   },
@@ -43092,7 +43709,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 937,
+    "index": 954,
     "bone_name": ""
    }
   },
@@ -43351,7 +43968,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 939,
+    "index": 956,
     "bone_name": "Hand_R"
    }
   },
@@ -43402,7 +44019,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 939,
+    "index": 956,
     "bone_name": "Hand_L"
    }
   },
@@ -43453,7 +44070,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 939,
+    "index": 956,
     "bone_name": "Foot_R"
    }
   },
@@ -43485,7 +44102,7 @@
     ]
    },
    "parent": {
-    "index": 939,
+    "index": 956,
     "bone_name": "Hand_R"
    }
   },
@@ -43531,7 +44148,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 943,
+    "index": 960,
     "bone_name": ""
    }
   },
@@ -43790,7 +44407,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 945,
+    "index": 962,
     "bone_name": "Hand_R"
    }
   },
@@ -43841,7 +44458,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 945,
+    "index": 962,
     "bone_name": "Hand_L"
    }
   },
@@ -43892,7 +44509,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 945,
+    "index": 962,
     "bone_name": "Foot_R"
    }
   },
@@ -44151,7 +44768,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 949,
+    "index": 966,
     "bone_name": "Hand_R"
    }
   },
@@ -44202,7 +44819,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 949,
+    "index": 966,
     "bone_name": "Hand_L"
    }
   },
@@ -44253,7 +44870,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 949,
+    "index": 966,
     "bone_name": "Foot_R"
    }
   },
@@ -44512,7 +45129,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 953,
+    "index": 970,
     "bone_name": "Hand_R"
    }
   },
@@ -44563,7 +45180,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 953,
+    "index": 970,
     "bone_name": "Hand_L"
    }
   },
@@ -44614,7 +45231,7 @@
     "knockback": 3.2
    },
    "parent": {
-    "index": 953,
+    "index": 970,
     "bone_name": "Foot_R"
    }
   },
@@ -44720,7 +45337,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 957
+    "index": 974
    },
    "point_light": {
     "attenuation": {
@@ -44875,7 +45492,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 959
+    "index": 976
    },
    "point_light": {
     "attenuation": {
@@ -45018,7 +45635,7 @@
     ]
    },
    "parent": {
-    "index": 961
+    "index": 978
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -45158,7 +45775,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 964,
+    "index": 981,
     "bone_name": ""
    }
   },
@@ -45214,7 +45831,7 @@
     }
    },
    "parent": {
-    "index": 964,
+    "index": 981,
     "bone_name": ""
    }
   },
@@ -45246,7 +45863,7 @@
     ]
    },
    "parent": {
-    "index": 964,
+    "index": 981,
     "bone_name": ""
    }
   },
@@ -45278,7 +45895,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 7.0,
+    "duration_seconds": 6.5,
     "look_at_entity": "Domain Reveal Focus",
     "look_at_height": 0.0,
     "animation_entity": "",
@@ -45445,7 +46062,7 @@
     ]
    },
    "parent": {
-    "index": 971,
+    "index": 988,
     "bone_name": ""
    }
   },
@@ -45477,7 +46094,7 @@
     ]
    },
    "parent": {
-    "index": 971,
+    "index": 988,
     "bone_name": ""
    }
   },
@@ -45522,7 +46139,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 908,
+    "index": 925,
     "bone_name": ""
    }
   },
@@ -45554,7 +46171,7 @@
     ]
    },
    "parent": {
-    "index": 974,
+    "index": 991,
     "bone_name": ""
    }
   },
@@ -45586,7 +46203,7 @@
     ]
    },
    "parent": {
-    "index": 974,
+    "index": 991,
     "bone_name": ""
    }
   },
@@ -45658,7 +46275,7 @@
     ]
    },
    "parent": {
-    "index": 968,
+    "index": 985,
     "bone_name": ""
    }
   },
@@ -45690,7 +46307,7 @@
     ]
    },
    "parent": {
-    "index": 968,
+    "index": 985,
     "bone_name": ""
    }
   },
@@ -45722,7 +46339,7 @@
     ]
    },
    "parent": {
-    "index": 968,
+    "index": 985,
     "bone_name": ""
    }
   },
@@ -45754,7 +46371,7 @@
     ]
    },
    "parent": {
-    "index": 968,
+    "index": 985,
     "bone_name": ""
    }
   },
