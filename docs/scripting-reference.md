@@ -347,6 +347,8 @@ this.model.isVisible = false, this.model.emissiveStrength = 2 (its glowing parts
 | `darkness` | this.model.darkness = 1 (a black silhouette), this.model.glow = vec3(1.2, 0.6, 0.1) (an aura of light all over) |
 | `glow` |  |
 | `rimGlow` | this.model.rimGlow = vec3(1.0, 0.7, 0.2): light along its outline; this.model.expression = 1: its smile on |
+| `aura` | this.model.aura = vec3(1.4, 0.8, 0.2): a soft glow around the figure, beyond its outline; .auraSize = 0.12 (m) |
+| `auraSize` |  |
 | `expression` |  |
 | `modelName` | this.model.modelName = "sih_boss_armored": another model put on in its place (a boss changing its body). Its animations go on by name, so the two models should share their skeleton and the names of their clips |
 
