@@ -1210,6 +1210,17 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 					CutsceneSystem::Play(*entityManager, handle.owner.GetID());
 			},
 
+		// Plays it even if it was already played (a shot cut back to again and again: angles taken in turn)
+		"replay", [](const CutsceneHandle& handle)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				if (CutsceneComponent* cutscene = handle.TryGetComponent(); entityManager && cutscene)
+				{
+					cutscene->hasPlayed = false;
+					CutsceneSystem::Play(*entityManager, handle.owner.GetID());
+				}
+			},
+
 		// The player pressed its 'waitForKey' (a moment the player answers)
 		"wasAnswered", sol::readonly_property([](const CutsceneHandle& handle)
 			{

@@ -447,7 +447,7 @@ Usage in Lua (see SwarmComponent): s = find("Domain Swarm").swarm; s.isVisible =
 
 ## Cutscene
 
-Usage in Lua (on the cutscene's entity): this.cutscene:play(), if this.cutscene.isPlaying then ... end
+Usage in Lua (on the cutscene's entity): this.cutscene:play(), this.cutscene:replay() (again, even if it was played), if this.cutscene.isPlaying then ... end
 
 | Name | Note |
 |---|---|
