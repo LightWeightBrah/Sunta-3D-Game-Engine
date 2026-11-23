@@ -633,7 +633,10 @@ PLAYER_MORE_ATTACKS = {
     # domain - the user)
     "knockback_animation": "Hit_Heavy", "knockback_seconds": 0.55, "knockback_dust": "Skid Dust",
     # (his heavy attack throws the boss back a little: his own choice, so not often)
-    "finisher_knockback": 0.0, "heavy_knockback": 2.5,
+    "finisher_knockback": 0.0, "heavy_knockback": 2.5, "heavy_knockback_chance": 0.5,
+    # The rare big throw (the user: two kinds - an ordinary reel, and now and then off his feet): a heavy blow that
+    # throws him knocks him down a third of the time, flying back on his back, sliding, getting up
+    "knockdown_animation": "Knocked_Down", "get_up_animation": "Get_Up", "knockdown_chance": 0.3, "knockdown_seconds": 1.0,
     "attack_moves": PLAYER_ATTACK_MOVES,
     # A punch steps in to reach, but never slides more than a step
     "attack_lunge_max_distance": 0.9,
@@ -1269,7 +1272,12 @@ def add_boss(builder):
                                         "knockback_dust": "Skid Dust",
                                         # (none of his own: thrown by them the player lost the controls too
                                         # often - only his kicks that break the player's poise still throw)
-                                        "finisher_knockback": 0.0, "heavy_knockback": 0.0})
+                                        # (a third of his kicks throw the player back)
+                                        "finisher_knockback": 0.0, "heavy_knockback": 2.5,
+                                        "heavy_knockback_chance": 0.35,
+                                        # (knocked off his feet now and then too, as the player is)
+                                        "knockdown_animation": "Knocked_Down", "get_up_animation": "Get_Up",
+                                        "knockdown_chance": 0.3, "knockdown_seconds": 1.0})
     # He steps in to reach with his punches, now and then holds one back for a moment, hops out of the way of blows
     # and orbs and takes punches on his forearms (the script raises his guard)
     entity["character_actions"].update({"shockwave_radius": 0.0, "shockwave_effect": "", "attack_reach": 1.3,

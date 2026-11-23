@@ -2118,6 +2118,8 @@ end
 
 function O.startArmoredPhase(isResumed)
     phase = 5
+    -- (his armored model has no clips to fall and get up with: only the reel)
+    this.characterActions.knockdownChance = 0
     O.refillFlasks()
     isChanneling = false
     invulnerableLeft = 0.5
@@ -3059,6 +3061,7 @@ end
 
 -- Everything back to how the scene starts (the player died, the boss rests again)
 local function reset()
+    if this.characterActions then this.characterActions.knockdownChance = 0.3 end
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
     O.hasStoodOff, O.hasFoughtInAir, O.hasSkyBrawled = false, false, false

@@ -129,6 +129,7 @@ if this.characterActions.isGuarding then ... end, this.characterActions:play("Ro
 | `attackReach` |  |
 | `finisherKnockback` | this.characterActions.finisherKnockback = 3: the last blow of the light combo throws the target 3 m back; .heavyKnockback the same for heavy attacks |
 | `heavyKnockback` |  |
+| `knockdownChance` | .knockdownChance = 0.3: now and then a heavy throw knocks it off its feet (0 = never: a model without the clips) |
 
 ## CharacterAnimation
 

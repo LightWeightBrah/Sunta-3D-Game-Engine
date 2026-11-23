@@ -24,7 +24,8 @@ public:
 
 	// Thrown back 'meters' along the ground away along 'direction' (see knockbackAnimation). False when it can't be (dead,
 	// in a special move)
-	static bool PlayKnockback(EntityManager& entityManager, unsigned int entityID, const glm::vec3& direction, float meters);
+	static bool PlayKnockback(EntityManager& entityManager, unsigned int entityID, const glm::vec3& direction, float meters,
+		bool mayKnockDown = false);
 	// Drinking from a flask or using any item: the animation plays once on the upper body, the character walks slowly.
 	// False when the character is busy (attacking, rolling, staggering) or has no such animation
 	static bool UseItem(EntityManager& entityManager, unsigned int entityID, const std::string& animationName);

@@ -556,7 +556,9 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 		// this.characterActions.finisherKnockback = 3: the last blow of the light combo throws the target 3 m back;
 		// .heavyKnockback the same for heavy attacks
 		"finisherKnockback",     MemberProperty(&CharacterActionsComponent::finisherKnockback,     0.0f),
-		"heavyKnockback",        MemberProperty(&CharacterActionsComponent::heavyKnockback,        0.0f)
+		"heavyKnockback",        MemberProperty(&CharacterActionsComponent::heavyKnockback,        0.0f),
+		// .knockdownChance = 0.3: now and then a heavy throw knocks it off its feet (0 = never: a model without the clips)
+		"knockdownChance",       MemberProperty(&CharacterActionsComponent::knockdownChance,       0.0f)
 	);
 
 	// Usage in Lua: this.characterAnimation.idleAnimation = "Float" (hanging in the air: standing is floating now),

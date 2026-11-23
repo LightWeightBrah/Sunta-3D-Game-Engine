@@ -332,6 +332,11 @@ namespace SceneKeys
 	constexpr const char* AttackReach               = "attack_reach";
 	constexpr const char* FinisherKnockback         = "finisher_knockback";
 	constexpr const char* HeavyKnockback            = "heavy_knockback";
+	constexpr const char* KnockdownAnimation        = "knockdown_animation";
+	constexpr const char* HeavyKnockbackChance      = "heavy_knockback_chance";
+	constexpr const char* GetUpAnimation            = "get_up_animation";
+	constexpr const char* KnockdownChance           = "knockdown_chance";
+	constexpr const char* KnockdownSeconds          = "knockdown_seconds";
 	constexpr const char* AttackDelayChance         = "attack_delay_chance";
 	constexpr const char* AttackDelaySeconds        = "attack_delay_seconds";
 	constexpr const char* AttackDelayAt             = "attack_delay_at";
@@ -978,6 +983,11 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::AttackReach,           actions->attackReach           },
 				{ SceneKeys::FinisherKnockback,     actions->finisherKnockback     },
 				{ SceneKeys::HeavyKnockback,        actions->heavyKnockback        },
+				{ SceneKeys::KnockdownAnimation,    actions->knockdownAnimation    },
+				{ SceneKeys::HeavyKnockbackChance,  actions->heavyKnockbackChance  },
+				{ SceneKeys::GetUpAnimation,        actions->getUpAnimation        },
+				{ SceneKeys::KnockdownChance,       actions->knockdownChance       },
+				{ SceneKeys::KnockdownSeconds,      actions->knockdownSeconds      },
 				{ SceneKeys::AttackDelayChance,     actions->attackDelayChance     },
 				{ SceneKeys::AttackDelaySeconds,    actions->attackDelaySeconds    },
 				{ SceneKeys::AttackDelayAt,         actions->attackDelayAt         },
@@ -1945,6 +1955,11 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			actions.attackReach           = actionsData.value(SceneKeys::AttackReach,           actions.attackReach);
 			actions.finisherKnockback     = actionsData.value(SceneKeys::FinisherKnockback,     actions.finisherKnockback);
 			actions.heavyKnockback        = actionsData.value(SceneKeys::HeavyKnockback,        actions.heavyKnockback);
+			actions.knockdownAnimation    = actionsData.value(SceneKeys::KnockdownAnimation,    actions.knockdownAnimation);
+			actions.heavyKnockbackChance  = actionsData.value(SceneKeys::HeavyKnockbackChance,  actions.heavyKnockbackChance);
+			actions.getUpAnimation        = actionsData.value(SceneKeys::GetUpAnimation,        actions.getUpAnimation);
+			actions.knockdownChance       = actionsData.value(SceneKeys::KnockdownChance,       actions.knockdownChance);
+			actions.knockdownSeconds      = actionsData.value(SceneKeys::KnockdownSeconds,      actions.knockdownSeconds);
 			actions.attackDelayChance     = actionsData.value(SceneKeys::AttackDelayChance,     actions.attackDelayChance);
 			actions.attackDelaySeconds    = actionsData.value(SceneKeys::AttackDelaySeconds,    actions.attackDelaySeconds);
 			actions.attackDelayAt         = actionsData.value(SceneKeys::AttackDelayAt,         actions.attackDelayAt);

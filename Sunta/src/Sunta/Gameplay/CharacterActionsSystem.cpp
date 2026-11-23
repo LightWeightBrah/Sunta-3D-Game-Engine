@@ -365,7 +365,7 @@ float GetActionSpeed(const CharacterActionsComponent& actions, CharacterAction a
 	{
 		if (actions.knockbackStartSpeed <= 0.0f)
 			return 0.0f;
-		const float part = glm::clamp(actions.knockbackElapsed / glm::max(actions.knockbackSeconds, 0.05f), 0.0f, 1.0f);
+		const float part = glm::clamp(actions.knockbackElapsed / glm::max(actions.knockbackSlideSeconds, 0.05f), 0.0f, 1.0f);
 		return actions.knockbackStartSpeed * (1.0f - part) * (1.0f - part);
 	}
 
@@ -812,7 +812,18 @@ void EndOrChainAction(EntityManager& entityManager, Character& character, float 
 	const bool animationIsOver = character.animator->animator.IsFinished() && EndsWithItsAnimation(actions.currentAction);
 
 	if (animationIsOver || walksAway)
+	{
+		// Knocked off its feet: it gets up before anything else
+		const bool getsUp = actions.currentAction == CharacterAction::HitReaction && actions.getsUpAfterThrow
+			&& !actions.getUpAnimation.empty();
+		actions.getsUpAfterThrow = false;
 		FinishAction(character);
+		if (getsUp)
+		{
+			actions.specialAnimation = actions.getUpAnimation;
+			TryStartAction(entityManager, character, CharacterAction::Special);
+		}
+	}
 }
 
 // Blocking lasts while it is asked for. Anything else asked for instead (a roll, an attack) starts at once
@@ -934,7 +945,7 @@ void UpdateKnockback(EntityManager& entityManager, Character& character, float d
 		return;
 
 	actions.knockbackElapsed += deltaTime;
-	const float part = actions.knockbackElapsed / glm::max(actions.knockbackSeconds, 0.05f);
+	const float part = actions.knockbackElapsed / glm::max(actions.knockbackSlideSeconds, 0.05f);
 	actions.knockbackDustIn -= deltaTime;
 	if (!actions.knockbackDust.empty() && part < 0.85f && actions.knockbackDustIn <= 0.0f)
 	{
@@ -1075,7 +1086,8 @@ void CharacterActionsSystem::PlayHitReaction(EntityManager& entityManager, unsig
 	}
 }
 
-bool CharacterActionsSystem::PlayKnockback(EntityManager& entityManager, unsigned int entityID, const glm::vec3& direction, float meters)
+bool CharacterActionsSystem::PlayKnockback(EntityManager& entityManager, unsigned int entityID, const glm::vec3& direction, float meters,
+	bool mayKnockDown)
 {
 	CharacterActionsComponent* actions = entityManager.GetComponent<CharacterActionsComponent>(entityID);
 	if (!actions || actions->currentAction == CharacterAction::Special || actions->currentAction == CharacterAction::Death)
@@ -1086,12 +1098,23 @@ bool CharacterActionsSystem::PlayKnockback(EntityManager& entityManager, unsigne
 		return false;
 	along = glm::normalize(along);
 
-	actions->chosenHitReaction = !actions->knockbackAnimation.empty() ? actions->knockbackAnimation : actions->heavyHitReactionAnimation;
+	// Now and then a heavy blow knocks it off its feet (thrown farther, on its back, getting up after)
+	static std::mt19937 knockdownRandom(std::random_device{}());
+	const bool knocksDown = mayKnockDown && !actions->knockdownAnimation.empty() && actions->knockdownChance > 0.0f
+		&& std::uniform_real_distribution<float>(0.0f, 1.0f)(knockdownRandom) < actions->knockdownChance;
+
+	actions->chosenHitReaction = knocksDown ? actions->knockdownAnimation
+		: !actions->knockbackAnimation.empty() ? actions->knockbackAnimation : actions->heavyHitReactionAnimation;
 	if (!ForceAction(entityManager, entityID, CharacterAction::HitReaction))
 		return false;
 
+	actions->knockbackSlideSeconds = knocksDown ? actions->knockdownSeconds : actions->knockbackSeconds;
+	SUNTA_ENGINE_LOG_INFO("CharacterActions: thrown {0} m{1}", meters, knocksDown ? " - knocked down" : "");
+	actions->getsUpAfterThrow      = knocksDown;
+	if (knocksDown)
+		meters *= actions->knockdownDistanceMultiplier;
 	// (the distance of a speed falling to 0 as (1 - t)^2 over T seconds is speed * T / 3)
-	actions->knockbackStartSpeed = 3.0f * glm::max(meters, 0.0f) / glm::max(actions->knockbackSeconds, 0.05f);
+	actions->knockbackStartSpeed = 3.0f * glm::max(meters, 0.0f) / glm::max(actions->knockbackSlideSeconds, 0.05f);
 	actions->knockbackDustIn     = 0.0f;
 	actions->actionDirection     = along;
 	// (facing the blow: it slides back, not sideways)

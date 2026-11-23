@@ -152,6 +152,16 @@ struct CharacterActionsComponent
 	// A target with hyper armor or a guard isn't thrown. Fights that fly apart, as in an anime
 	float       finisherKnockback = 0.0f;
 	float       heavyKnockback    = 0.0f;
+	// The part of its heavy blows that throw (0..1): a throw now and then, not every time
+	float       heavyKnockbackChance = 1.0f;
+	// The rare big throw: a heavy blow that throws this character knocks it off its feet now and then ('knockdownChance',
+	// 0..1) - it is thrown farther (the blow's meters times 'knockdownDistanceMultiplier') with 'knockdownAnimation'
+	// (falling on its back), sliding over 'knockdownSeconds', then gets up with 'getUpAnimation'. Empty: never
+	std::string knockdownAnimation;
+	std::string getUpAnimation;
+	float       knockdownChance             = 0.0f;
+	float       knockdownSeconds            = 1.1f;
+	float       knockdownDistanceMultiplier = 1.6f;
 	std::string knockbackDust;
 
 	// A shockwave where a heavy attack or a leap lands (0 radius = none): everyone of the other side within
@@ -271,6 +281,9 @@ struct CharacterActionsComponent
 	std::string chosenHitReaction;
 	// The current stagger is a knockback: the speed it started with (meters a second), the dust still to come
 	float knockbackStartSpeed = 0.0f;
+	// How long the current throw slides (knockbackSeconds, or knockdownSeconds for a knockdown); a knockdown gets up after
+	float knockbackSlideSeconds = 0.7f;
+	bool  getsUpAfterThrow      = false;
 	float knockbackElapsed    = 0.0f;
 	float knockbackDustIn     = 0.0f;
 	// The current attack started from a run (it lunges at 'runningAttackSpeed')

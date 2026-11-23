@@ -1,5 +1,7 @@
 #include "Core/SuntaPreCompiled.h"
 #include "CombatSystem.h"
+
+#include <random>
 #include "Renderer/PostProcessing.h"
 #include "DeveloperCheats.h"
 #include "Effects/EffectSystem.h"
@@ -468,7 +470,11 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 		if (attackerActions->currentAction == CharacterAction::LightAttack && attackerActions->lightAttackStep >= lastLightStep)
 			ownKnockback = attackerActions->finisherKnockback;
 		else if (isHeavyBlow)
-			ownKnockback = attackerActions->heavyKnockback;
+		{
+			static std::mt19937 throwRandom(std::random_device{}());
+			if (std::uniform_real_distribution<float>(0.0f, 1.0f)(throwRandom) < attackerActions->heavyKnockbackChance)
+				ownKnockback = attackerActions->heavyKnockback;
+		}
 	}
 	knockback = glm::max(knockback, ownKnockback);
 
@@ -478,7 +484,8 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 		const TransformComponent* target   = entityManager.GetComponent<TransformComponent>(targetID);
 		const TransformComponent* attacker = entityManager.GetComponent<TransformComponent>(attackerID);
 		const bool isThrown = knockback > 0.0f && target && attacker
-			&& CharacterActionsSystem::PlayKnockback(entityManager, targetID, target->position - attacker->position, knockback);
+			&& CharacterActionsSystem::PlayKnockback(entityManager, targetID, target->position - attacker->position, knockback,
+				isHeavyBlow);
 		if (!isThrown)
 			CharacterActionsSystem::PlayHitReaction(entityManager, targetID, isHeavyBlow);
 	}
