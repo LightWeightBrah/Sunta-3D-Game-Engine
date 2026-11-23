@@ -842,8 +842,8 @@ function O.burstStars()
     entity.transform.position = this.transform.position + vec3(0, 1.5, 0)
     stars:reset()
     stars.isVisible = true
-    O.tween(function(v) stars.gathered = v end, 0, 1, 2.2)
-    O.tween(function(v) stars.radius = v end, 3, 36, 4.2)
+    O.tween(function(v) stars.gathered = v end, 0, 1, 0.8)
+    O.tween(function(v) stars.radius = v end, 5, 36, 3.2)
 end
 
 -- The camera flies through them, while they spread over the whole sky above the player (film 1:30.75-1:32.75)
@@ -853,19 +853,14 @@ function O.flyThroughStars()
     if not stars or not player then return end
 
     local center = entity.transform.position
+    -- The camera flies over the sphere of stars and out among them (as the user liked it: kept)
     local flight = find(O.StarFlight)
     if flight then
-        local feet = player.transform.position
-        flight.transform.position = vec3(feet.x, 0, feet.z)
-        flight.transform.rotation = vec3(0, O.yawToward(center, feet), 0)
+        flight.transform.position = vec3(center.x, 0, center.z)
+        flight.transform.rotation = vec3(0, O.yawToward(center, player.transform.position), 0)
     end
-    -- (aimed a third of the way from the temple to the player, at the temple's middle height: the temple with him
-    -- and the stars, the player below; a point inside the temple made the camera hop in front of its own walls)
     local focus = find(O.StarFlightFocus)
-    if focus then
-        local feet = player.transform.position
-        focus.transform.position = vec3(mix(center.x, feet.x, 0.35), center.y * 0.4, mix(center.z, feet.z, 0.35))
-    end
+    if focus then focus.transform.position = center end
     playCutscene(O.StarFlight)
 
     local over = player.transform.position
@@ -1041,8 +1036,9 @@ function O.domainOpeningSteps()
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere
         -- (only once the temple stands, as in the film)
-        { 51.0, function() O.burstStars() end },
-        { 52.4, function() O.flyThroughStars() end },
+        -- (film 1:28.3: they burst out of the dome at once - grown over two seconds they were seen a second late)
+        { 51.9, function() O.burstStars() end },
+        { 54.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
             local stars = O.stars()

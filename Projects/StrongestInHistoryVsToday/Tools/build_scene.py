@@ -710,13 +710,13 @@ def add_domain_spectacle(builder):
         "fall_speed": 14.0, "fall_spread_seconds": 1.2, "ground_height": 0.0, "stuck_seconds": 3.0,
         "glow_color": [0.0, 0.0, 0.0], "trail_length": 0.0, "hit_effect": "Skid Dust", "hit_burst": 1}))
 
-    # The stars burst out of the dome seen from behind the player (placed by the script where he stands, its +Z away
-    # from the temple, far enough back for him whole below the temple): he and the whole temple in one shot, the camera drawing slowly back (no flight over the arena)
+    # The camera flies through the sphere of stars and out among them (placed by the script where the temple is)
     flight = builder.add(named("Star Flight", cutscene={
         "duration_seconds": 3.6, "look_at_entity": "Star Flight Focus", "look_at_height": 0.0, "animation_entity": "",
         "animation_name": "", "animation_at_seconds": 0.0, "title": "", "title_seconds": 0.0, "can_be_skipped": False,
         "video_file": ""}))
-    for index, point in enumerate(((3.0, 4.0, 19.0), (2.6, 4.4, 21.0), (2.2, 4.8, 23.0))):
+    for index, point in enumerate(((-62.0, 20.0, 52.0), (-38.0, 30.0, 34.0), (-14.0, 42.0, 18.0), (16.0, 48.0, 2.0),
+                                   (44.0, 52.0, -16.0))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=flight)
     builder.add(named("Star Flight Focus", (0.0, 26.0, 0.0)))
 
@@ -1484,8 +1484,8 @@ SEQUENCE_SHOTS = {
     "Knockback Flight": {"duration_seconds": 6.1},
     # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
     "Domain Sign":      {"blend_in_seconds": 0.0},
-    "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 5.4},
-    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 6.05},
+    "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 7.4},
+    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},
     # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)
