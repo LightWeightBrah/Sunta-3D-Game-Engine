@@ -304,6 +304,11 @@ BOSS_ARMORED = dict(BOSS, **{
     "Sword_Spin":     MotionClip(GREAT_SWORD + "high spin attack.fbx", speed=1.25),
     "Sword_Power_Up": MotionClip(GREAT_SWORD + "power up.fbx"),
     "Sword_Draw":     MotionClip(GREAT_SWORD_PACK + "draw a great sword 1.fbx"),
+    # His empty hands in his armor before he takes up his sword from the stone (the transformation: holding a sword
+    # that still lay on the floor looked wrong to the user)
+    "Idle_Empty":     MotionClip(AXE + "unarmed idle.fbx"),
+    "Walk_Empty":     MotionClip(AXE + "unarmed walk forward.fbx"),
+    "Hover":          library(ADDON, "Levitate Idle"),
     "Sword_Cast":     MotionClip(GREAT_SWORD + "casting.fbx"),
 })
 ARMORED_CANDIDATES = {name[:-4].replace(" ", "_").replace("(", "").replace(")", ""): MotionClip(GREAT_SWORD_PACK + name)

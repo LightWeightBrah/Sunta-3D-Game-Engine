@@ -1945,7 +1945,8 @@ function O.updateTransform(deltaTime)
         if this.model then this.model.modelName = O.ArmoredModel end
         O.hideArmorProps()
         if dropped and dropped.model then dropped.model.isVisible = true end
-        this.characterActions:play("Idle")
+        -- (empty hands: his sword still stands in the stone)
+        this.characterActions:play("Idle_Empty")
         this.world:shakeCamera(0.7)
         this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_l), this.transform.forward)
         this.world:effect("Armor Clank", O.onHim(O.PieceOffsets.bracer_r), this.transform.forward)
@@ -1953,14 +1954,17 @@ function O.updateTransform(deltaTime)
     end
 
     -- 10.2-12.6: a heavy step to the sword, it is ripped out of the stone
-    if at(O.WalkAt) then this.characterActions:play("Walk") end
+    if at(O.WalkAt) then this.characterActions:play("Walk_Empty") end
     if tr.t >= O.WalkAt and tr.t < O.GripAt then
         this.transform.position = this.transform.position + this.transform.forward * (deltaTime * 0.9)
     end
-    if at(O.GripAt) then this.characterActions:play("Attack_Light_3") end
-    if at(O.DrawAt) then
+    -- (the sword in his hand the moment he grips it, gone from the stone: never a sword pose with empty hands)
+    if at(O.GripAt) then
+        this.characterActions:play("Attack_Light_3")
         if dropped and dropped.model then dropped.model.isVisible = false end
         O.setHeldSword(true)
+    end
+    if at(O.DrawAt) then
         if O.child("Boss Sword") and O.child("Boss Sword").hitbox then O.child("Boss Sword").hitbox.isEnabled = false end
         local ground = O.onHim(vec3(0, 0.2, -O.SwordInGround * 0.6))
         this.world:burst(O.SkidDust, ground, 24)
