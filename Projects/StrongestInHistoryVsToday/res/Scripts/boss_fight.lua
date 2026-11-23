@@ -2438,9 +2438,12 @@ local function startSummonPhase()
             local away = player and (ground - player.transform.position) or vec3(0, 0, -1)
             away.y = 0
             away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
-            -- (a backflip pushed off the ground, not a statue gliding up: up fast and slowing at the top, back all the
-            -- way, the hover once he has turned over)
-            this.characterActions:play("Leap_Back")
+            -- As in the film (2:29-2:31) a blast throws him back and up, the screen goes white and the film's own
+            -- pictures of him floating come out of it (a leap of his own looked unnatural to the user)
+            this.characterActions:play("Knock_Flight")
+            this.world:effect("Liquid Burst", ground + vec3(0, 1.2, 0), this.transform.forward)
+            this.world:impactFrame(1.0, 0.5)
+            after(0.7, function() this.world:flash(vec3(1, 1, 0.97), 0.6, 0.35) end)
             -- (carried by the script up there: the physics would pull him down between its frames)
             if this.physicsBody then this.physicsBody.useGravity = false; this.physicsBody.velocity = vec3(0, 0, 0) end
             this.world:burst(O.SkidDust, ground, 30)
@@ -2452,7 +2455,7 @@ local function startSummonPhase()
                 local back = 1 - (1 - leap) ^ 3
                 local up = math.sin(math.min(leap / 0.8, 1) * math.pi * 0.5)
                 this.transform.position = clampToArena(ground + away * (O.FloatBackMeters * back)) + vec3(0, 3.5 * up, 0)
-                if leap >= 0.75 and not hovering then
+                if leap >= 0.85 and not hovering then
                     hovering = true
                     this.characterActions:play("Hover")
                 end
@@ -2699,7 +2702,7 @@ end
 
 -- Once in his domain: both leap into the clouds and trade blows there; the player mashes [Space] (a quick-time event,
 -- a blow of his for each press, him reeling), the last blow sends him down to the ground where he skids
-O.SkyBrawl = { At = 95, Height = 75, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
+O.SkyBrawl = { At = 95, Height = 75, SkidMeters = 7, SkidSeconds = 1.2, Gap = 1.35, ArcSide = 5, CircleDegreesPerSecond = 22, DriftRadius = 5, CloudsEvery = 0.45, RiseSeconds = 1.2, FallSeconds = 1.3, Damage = 140, Punches = { "Attack_Light_1", "Attack_Light_2",
                "Attack_Light_3", "Attack_Light_4" } }
 
 function O.startSkyBrawl()
@@ -2829,17 +2832,35 @@ function O.startSkyBrawl()
             end
             return B.FallSeconds
         end,
-        -- He crashes into the ground and skids
+        -- He crashes into the ground and skids on, a furrow of dust behind him, slowing to a stop (he only crouched
+        -- where he fell: the user found the end of the fight in the sky weak)
         function()
-            this.world:effect("Crash Impact", this.transform.position, this.transform.forward)
-            this.world:burst(O.SkidDust, this.transform.position, 30)
-            this.world:shakeCamera(0.9)
+            local hit = this.transform.position
+            this.world:effect("Crash Impact", hit, this.transform.forward)
+            this.world:burst(O.SkidDust, hit, 40)
+            this.world:shakeCamera(1.0)
+            this.world:impactFrame(0.8, 0.35)
             this.characterActions:play("Skid_Crouch")
             float(false)
             invulnerableLeft = 0
             this.health.isInvulnerable = false
             this.health:damage(O.SkyBrawl.Damage)
-            return 0.8
+            local away = hit - playerGround
+            away.y = 0
+            away = away:length() > 0.1 and away:normalized() or vec3(0, 0, -1)
+            local to = clampToArena(hit + away * B.SkidMeters)
+            to.y = 0
+            local slid, dustIn = 0, 0
+            show.during = function(deltaTime)
+                slid = math.min(slid + deltaTime / B.SkidSeconds, 1)
+                this.transform.position = mix(vec3(hit.x, 0, hit.z), to, 1 - (1 - slid) * (1 - slid))
+                dustIn = dustIn - deltaTime
+                if dustIn <= 0 and slid < 1 then
+                    dustIn = 0.05
+                    this.world:burst(O.SkidDust, this.transform.position, math.floor(6 * (1 - slid)) + 1)
+                end
+            end
+            return B.SkidSeconds + 0.3
         end,
         function()
             O.restorePlayer()
@@ -3183,8 +3204,8 @@ O.VoiceVolume    = 1.5
 -- to the player lying down, and the lines before his summoning (2:30.6-2:41). The music goes silent under it (it
 -- keeps its clock); as loud as the music (the film's mix is louder)
 O.DomainFilmAudio, O.DomainFilmAudioSeconds = "@game/Sounds/Film/domain_opening_film.ogg", 27.8
-O.SummonFilmAudio, O.SummonFilmAudioSeconds = "@game/Sounds/Film/summoning_film.ogg", 10.4
-O.SummonFloatVideoAfter, O.SummonWheelAfter = 0.8, 6.0
+O.SummonFilmAudio, O.SummonFilmAudioSeconds = "@game/Sounds/Film/summoning_film.ogg", 10.15
+O.SummonFloatVideoAfter, O.SummonWheelAfter = 0.0, 5.75
 O.FilmAudioVolume = 0.55
 function O.playFilmAudio(sound, seconds)
     Audio.setMusicDucking(0)

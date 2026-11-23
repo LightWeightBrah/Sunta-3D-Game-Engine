@@ -103,7 +103,7 @@ def make_videos(film):
 # (boss_fight.lua O.playFilmAudio): the opening of his domain, the lines before his summoning
 FILM_AUDIO = {
     "domain_opening_film.ogg": (74.8, 102.6),
-    "summoning_film.ogg":      (150.6, 161.0),
+    "summoning_film.ogg":      (150.85, 161.0),
 }
 
 
