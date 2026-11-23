@@ -168,13 +168,21 @@ glm::mat4 EntityHierarchy::GetParentSpace(EntityManager& entityManager, unsigned
 	if (!TryGetParent(entityManager, entityID, parentID))
 		return glm::mat4(1.0f);
 
-	const std::string& boneName = entityManager.GetComponent<ParentComponent>(entityID)->boneName;
+	const ParentComponent* parent = entityManager.GetComponent<ParentComponent>(entityID);
+	const std::string& boneName = parent->boneName;
+	const WorldMatrixComponent* parentWorldMatrix = entityManager.GetComponent<WorldMatrixComponent>(parentID);
 
 	glm::mat4 boneWorldTransform;
 	if (!boneName.empty() && TryGetBoneWorldTransform(entityManager, parentID, boneName, boneWorldTransform))
-		return boneWorldTransform;
+	{
+		if (!parent->followsBonePositionOnly || !parentWorldMatrix)
+			return boneWorldTransform;
+		// (where the bone is, turned as the parent)
+		glm::mat4 space = parentWorldMatrix->matrix;
+		space[3] = boneWorldTransform[3];
+		return space;
+	}
 
-	const WorldMatrixComponent* parentWorldMatrix = entityManager.GetComponent<WorldMatrixComponent>(parentID);
 	return parentWorldMatrix ? parentWorldMatrix->matrix : glm::mat4(1.0f);
 }
 

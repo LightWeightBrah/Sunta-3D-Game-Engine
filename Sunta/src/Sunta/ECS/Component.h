@@ -182,6 +182,9 @@ struct ParentComponent
 
 	// Empty: follows the parent itself. Otherwise the name of a bone (or socket) of the parent's Model
 	std::string boneName;
+	// Follows only where the bone is, turned as the parent (not as the bone): a halo over a monster's head rises
+	// and sinks with its jumps and slams, but stays level
+	bool followsBonePositionOnly = false;
 
 	static void RegisterToInspector()
 	{

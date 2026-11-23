@@ -569,6 +569,7 @@ namespace SceneKeys
 	// The parent is saved as its place in the list of entities (entity IDs change every time a scene is loaded)
 	constexpr const char* ParentIndex               = "index";
 	constexpr const char* BoneName                  = "bone_name";
+	constexpr const char* BonePositionOnly          = "bone_position_only";
 
 }
 
@@ -589,7 +590,8 @@ static void SerializeParents(EntityManager& entityManager, const SavedIndices& s
 		entitiesArray[child->second][SceneKeys::ParentComponent] =
 		{
 			{ SceneKeys::ParentIndex, savedParent->second },
-			{ SceneKeys::BoneName,    parent.boneName     }
+			{ SceneKeys::BoneName,    parent.boneName     },
+			{ SceneKeys::BonePositionOnly, parent.followsBonePositionOnly }
 		};
 	}
 }
@@ -614,6 +616,7 @@ static void DeserializeParents(EntityManager& entityManager, const json& entitie
 		ParentComponent& parent = entityManager.AddComponent<ParentComponent>(static_cast<unsigned int>(childID));
 		parent.parentID = static_cast<unsigned int>(entityAtSavedIndex[parentIndex]);
 		parent.boneName = parentData.value(SceneKeys::BoneName, std::string());
+		parent.followsBonePositionOnly = parentData.value(SceneKeys::BonePositionOnly, false);
 	}
 }
 
