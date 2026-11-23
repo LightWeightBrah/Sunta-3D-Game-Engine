@@ -44,6 +44,12 @@ struct PlayerHUDComponent
 	std::string notificationText;
 	float notificationSecondsLeft = 0.0f;
 
+	// The banner of a won boss fight across the screen (as the death message, in gold): it waits until no cutscene
+	// plays (the boss's fall is seen first), then fades in, stays and fades away
+	std::string victoryText;
+	float victoryWaitLeft = 0.0f;
+	float victorySeconds  = -1.0f;   // since it showed, -1 = not showing
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<PlayerHUDComponent>("Player HUD", EngineAssets::Icons::Bonfire,

@@ -327,6 +327,9 @@ void UpdateFogWall(EntityManager& entityManager, unsigned int fogID, const FogGa
 		wall->isTrigger = !isWall;
 }
 
+// How long after the last boss falls its banner may show (its slow motion; a cutscene after it is waited for too)
+constexpr float VictoryBannerAfterSeconds = 7.0f;
+
 void SetFogClosed(EntityManager& entityManager, unsigned int fogID, FogGateComponent& fog, bool isClosed)
 {
 	fog.isClosed = isClosed;
@@ -355,8 +358,9 @@ void ClearFog(EntityManager& entityManager, unsigned int fogID, FogGateComponent
 	if (ModelComponent* model = entityManager.GetComponent<ModelComponent>(fogID))
 		model->isVisible = false;
 
+	// (a banner across the screen once the boss's fall has been seen: its slow motion and its cutscene)
 	if (!fog.victoryMessage.empty())
-		HUDSystem::ShowNotification(entityManager, fog.victoryMessage);
+		HUDSystem::ShowVictory(entityManager, fog.victoryMessage, VictoryBannerAfterSeconds);
 
 	Audio::StopMusic(VictoryMusicFadeOutSeconds);
 	Audio::Play(fog.victorySound);

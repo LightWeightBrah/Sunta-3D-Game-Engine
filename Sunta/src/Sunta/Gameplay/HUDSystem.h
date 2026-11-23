@@ -33,6 +33,9 @@ public:
 	// A big message in the middle of the screen that fades away after a few seconds
 	static void ShowNotification(EntityManager& entityManager, const std::string& text);
 
+	// A won boss fight: a gold banner across the screen, after 'afterSeconds' and once no cutscene plays
+	static void ShowVictory(EntityManager& entityManager, const std::string& text, float afterSeconds);
+
 	// The whole screen turns to a color and fades back in 'seconds' (a blinding explosion, a blackout).
 	// 'holdSeconds' keeps it full before it starts to fade. Drawn over everything, also over a cutscene
 	static void FlashScreen(const glm::vec3& color, float seconds, float holdSeconds = 0.0f);

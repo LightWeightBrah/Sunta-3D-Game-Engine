@@ -14,6 +14,7 @@
 #include "Renderer/Texture.h"
 #include "Renderer/UIRenderer.h"
 #include "Scene/EntityHierarchy.h"
+#include "CutsceneSystem.h"
 
 namespace Sunta
 {
@@ -58,6 +59,11 @@ const glm::vec4 MarkerColor        = glm::vec4(1.0f, 1.0f, 1.0f, 0.95f);
 const glm::vec4 MarkerOutlineColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.8f);
 const glm::vec4 DeathBandColor     = glm::vec4(0.0f, 0.0f, 0.0f, 0.65f);
 const glm::vec4 DeathMessageColor  = glm::vec4(0.62f, 0.05f, 0.04f, 1.0f);
+// The victory banner: gold on the same dark band, in, held, out (seconds)
+const glm::vec4 VictoryMessageColor = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
+constexpr float VictoryFadeIn  = 1.2f;
+constexpr float VictoryHold    = 4.0f;
+constexpr float VictoryFadeOut = 1.5f;
 
 constexpr float PromptHeight        = 28.0f;
 // Above the bars of two bosses fighting at once
@@ -213,6 +219,25 @@ void UpdatePlayer(EntityManager& entityManager, float deltaTime)
 	hud->secondsSinceDeath = health->isDead ? hud->secondsSinceDeath + deltaTime : 0.0f;
 
 	hud->notificationSecondsLeft = glm::max(hud->notificationSecondsLeft - deltaTime, 0.0f);
+
+	if (!hud->victoryText.empty())
+	{
+		if (hud->victorySeconds < 0.0f)
+		{
+			hud->victoryWaitLeft = glm::max(hud->victoryWaitLeft - deltaTime, 0.0f);
+			if (hud->victoryWaitLeft <= 0.0f && !CutsceneSystem::IsPlaying(entityManager))
+				hud->victorySeconds = 0.0f;
+		}
+		else
+		{
+			hud->victorySeconds += deltaTime;
+			if (hud->victorySeconds > VictoryFadeIn + VictoryHold + VictoryFadeOut)
+			{
+				hud->victoryText.clear();
+				hud->victorySeconds = -1.0f;
+			}
+		}
+	}
 }
 
 PlayerHUDComponent* TryGetPlayerHUD(EntityManager& entityManager)
@@ -289,6 +314,21 @@ void DrawDeathMessage(const HUDArea& area, const PlayerHUDComponent& hud)
 
 	UIRenderer::DrawRectangle(bandTopLeft, glm::vec2(area.size.x, DeathBandHeight), WithAlpha(DeathBandColor, fadeIn));
 	UIRenderer::DrawTextCentered(hud.deathMessage, center, DeathMessageHeight, WithAlpha(DeathMessageColor, fadeIn));
+}
+
+void DrawVictoryMessage(const HUDArea& area, const PlayerHUDComponent& hud)
+{
+	if (hud.victoryText.empty() || hud.victorySeconds < 0.0f)
+		return;
+
+	const float t = hud.victorySeconds;
+	const float alpha = t < VictoryFadeIn ? t / VictoryFadeIn
+	                  : glm::clamp(1.0f - (t - VictoryFadeIn - VictoryHold) / VictoryFadeOut, 0.0f, 1.0f);
+	const glm::vec2 center = area.topLeft + area.size * 0.5f;
+	const glm::vec2 bandTopLeft = glm::vec2(area.topLeft.x, center.y - DeathBandHeight * 0.5f);
+
+	UIRenderer::DrawRectangle(bandTopLeft, glm::vec2(area.size.x, DeathBandHeight), WithAlpha(DeathBandColor, alpha));
+	UIRenderer::DrawTextCentered(hud.victoryText, center, DeathMessageHeight * 0.85f, WithAlpha(VictoryMessageColor, alpha));
 }
 
 void DrawPrompt(const HUDArea& area, const PlayerHUDComponent& hud)
@@ -472,6 +512,7 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	LevelUpSystem::DrawMenu(entityManager, area);
 	DrawPrompt(area, *hud);
 	DrawNotification(area, *hud);
+	DrawVictoryMessage(area, *hud);
 
 	if (health && health->isDead)
 		DrawDeathMessage(area, *hud);
@@ -624,6 +665,8 @@ void HUDSystem::PrepareForPlay(EntityManager& entityManager)
 
 		hud.trailingHealth    = health ? health->maxHealth : 0.0f;
 		hud.secondsSinceDeath = 0.0f;
+		hud.victoryText.clear();
+		hud.victorySeconds = -1.0f;
 	}
 
 	for (EnemyHealthBarComponent& bar : entityManager.GetAllComponents<EnemyHealthBarComponent>())
@@ -678,6 +721,16 @@ void HUDSystem::ShowPrompt(EntityManager& entityManager, const std::string& text
 {
 	if (PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager))
 		hud->promptText = text;
+}
+
+void HUDSystem::ShowVictory(EntityManager& entityManager, const std::string& text, float afterSeconds)
+{
+	if (PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager))
+	{
+		hud->victoryText     = text;
+		hud->victoryWaitLeft = afterSeconds;
+		hud->victorySeconds  = -1.0f;
+	}
 }
 
 void HUDSystem::ShowNotification(EntityManager& entityManager, const std::string& text)
