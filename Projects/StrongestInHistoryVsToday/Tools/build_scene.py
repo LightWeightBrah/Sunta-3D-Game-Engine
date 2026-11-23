@@ -1494,7 +1494,8 @@ SEQUENCE_SHOTS = {
     "Knockback Flight": {"duration_seconds": 6.1},
     # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
     "Domain Sign":      {"blend_in_seconds": 0.0},
-    "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 7.4},
+    # (a cut, as in the film 1:24.5: a flight from his face out to the temple was neither smooth nor the film's)
+    "Domain Reveal":    {"blend_in_seconds": 0.0, "duration_seconds": 7.4},
     "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},

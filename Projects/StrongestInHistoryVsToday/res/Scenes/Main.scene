@@ -44476,7 +44476,7 @@
     "title_seconds": 3.5,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 1.4
+    "blend_in_seconds": 0.0
    }
   },
   {

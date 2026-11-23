@@ -692,12 +692,16 @@ local O = {
     -- this far through the air, skids on, gets up with the sign
     KnockCutscene  = "Knockback Flight",
     KnockMusicAt   = 38.6,
-    KnockMeters    = 20,
+    KnockMeters    = 18,
     KnockSkidMeters = 8,
-    KnockFlySeconds = 1.4,
+    -- As in the film (1:14.8-1:21, its sound plays with it): thrown through the ruins (1.5 s), he crouches where he
+    -- fell while the player throws a ball of oil at him (1:16.8), it strikes (1:18.8) and he skids away on his
+    -- feet, straightening up with the sign as he stops (1:20.8)
+    KnockFlySeconds = 1.5,
+    KnockWaitSeconds = 2.5,
     KnockSkidSeconds = 1.7,
-    -- (as in the film he doesn't lie: he lands crouched and skids, and rises with the sign while still sliding)
-    KnockRiseAt = 0.55,
+    KnockOrbAt = 2.0,
+    KnockRiseAt = 0.9,
     -- If the player never hurts him enough, the domain still opens (seconds of the soundtrack)
     DomainLatestAt = 150,
     DetonationPrompt = "2: Imaginary Technique: Baby Oil Detonation",
@@ -938,7 +942,9 @@ function O.updateKnock(deltaTime)
         return
     end
 
-    if k.t < fly + skid then
+    -- Crouched where he fell; the player's ball of oil flies at him
+    local wait = O.KnockWaitSeconds
+    if k.t < fly + wait then
         if not k.hasLanded then
             k.hasLanded = true
             this.characterActions:play("Skid_Crouch")
@@ -946,7 +952,24 @@ function O.updateKnock(deltaTime)
             this.world:burst(O.SkidDust, k.land, 24)
             this.world:effect("Crash Impact", k.land, this.transform.forward)
         end
-        local f = (k.t - fly) / skid
+        this.transform.position = k.land
+        if not k.hasThrown and k.t >= O.KnockOrbAt then
+            k.hasThrown = true
+            O.throwOrbAtBoss()
+        end
+        return
+    end
+
+    if k.t < fly + wait + skid then
+        if not k.isSkidding then
+            k.isSkidding = true
+            -- (the ball strikes: thrown on along the ground)
+            this.characterActions:play("Skid_Crouch")
+            this.world:effect("Solid Oil Burst", k.land + vec3(0, 1.2, 0), this.transform.forward)
+            this.world:shakeCamera(0.6)
+            this.world:burst(O.SkidDust, k.land, 24)
+        end
+        local f = (k.t - fly - wait) / skid
         this.transform.position = mix(k.land, k.skid, 1 - (1 - f) * (1 - f))
         -- (a furrow of dust behind his feet, thinning as he slows)
         k.dustIn = k.dustIn - deltaTime
@@ -964,6 +987,19 @@ function O.updateKnock(deltaTime)
 
     this.transform.position = k.skid
     O.knock = nil
+end
+
+-- The player throws a ball of baby oil at him (film 1:16.8): his throw and the ball, no voice (the film's sound)
+function O.throwOrbAtBoss()
+    local player = O.playerEntity()
+    if not player then return end
+    local from = player.transform.position + vec3(0, 1.35, 0)
+    local to = this.transform.position + vec3(0, 1.0, 0)
+    local direction = to - from
+    if direction:length() < 0.1 then return end
+    player.transform.rotation = vec3(0, O.yawToward(player.transform.position, this.transform.position) + 180, 0)
+    O.playPlayer("Cast_Orb")
+    after(0.35, function() this.world:launch("Player Orb", player, from + direction:normalized() * 0.6, direction:normalized()) end)
 end
 
 function O.placeTempleUnderBoss()
@@ -1026,7 +1062,8 @@ function O.domainOpeningSteps()
             Audio.playAt(RoarSound, this.transform.position, 0.6)
             O.placeTempleUnderBoss()
             isOnTheDome = true
-            O.isHoldingSign, O.holdSignIn = true, 0
+            -- (the sign he already holds goes on: started again here his hand dropped and rose a second time)
+            O.isHoldingSign, O.holdSignIn = true, 2.5
             moveTemple(TempleRisenY, 4.6)
             Audio.play(RumbleSound, 0.8)
         end },
