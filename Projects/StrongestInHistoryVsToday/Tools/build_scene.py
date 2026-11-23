@@ -62,7 +62,9 @@ FOG_GATE_HALF_WIDTH = 3.2
 
 # Outside the arena, on the street that leads to it: the player walks up to the fog and enters with E
 PLAYER_START = [0.0, 0.0, 62.0]
-BOSS_START = [0.0, 0.0, -58.0]
+# (15 m inside the fog: after the film's opening he stands close and comes at the player - from 35 m away the
+# fight began with a long walk; the user wanted the start smoother)
+BOSS_START = [0.0, 0.0, -38.0]
 # A dormant enemy still has a body: it waits on its own piece of floor far outside the arena
 SUMMON_WAITING_PLACE = [0.0, 0.0, -160.0]
 

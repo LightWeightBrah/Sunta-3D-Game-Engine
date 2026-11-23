@@ -2382,6 +2382,13 @@ local function startFight()
     hasSeenDefeat = false
     setHealthFloor(DomainHealthFraction - FloorMargin)
     Audio.playMusic(FightMusic, 0.9, 0.2)
+    -- He opens with his fists: he runs at the player straight out of the film's opening, his thrown techniques only
+    -- after a while (they flew at the player from across the arena before the fight had begun)
+    for _, name in ipairs({ "Boss Orb Volley Spell", "Boss Cleave Spell", "Boss Fire Pillar Spell" }) do
+        local spell = find(name)
+        if spell and spell.spellCaster then spell.spellCaster.cooldownLeft = O.OpenWithFistsSeconds end
+    end
+    this.enemy:changeState("Chase")
 
     -- A try after dying in his armor starts in his armor (a checkpoint): no opening, no phases before it again
     if O.resumeArmored then
@@ -3184,8 +3191,9 @@ end
 -- The bottle from the sky become oil (film 2:28-2:30): a capsule of oil the shape of the bottle for a moment, swelling
 -- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
 O.SwordFightCameraDistance = 5.6
-O.SwordCamera = { Shoulder = -0.75, Pitch = 9 }
+O.SwordCamera = { Shoulder = 0.0, Pitch = 13 }
 O.BrawlCooldown = 0.6
+O.OpenWithFistsSeconds = 10
 O.CubeBurstsAfter = 1.15
 O.Liquid = { Entity = "Detonation Oil", CapsuleSeconds = 0.35, Capsule = vec3(2.2, 4.6, 2.2), Ball = 5.2,
              Effect = "Liquid Burst" }
