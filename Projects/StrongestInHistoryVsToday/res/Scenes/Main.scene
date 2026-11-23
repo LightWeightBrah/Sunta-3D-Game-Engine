@@ -185,6 +185,8 @@
     "knockback_animation": "Knockback",
     "knockback_seconds": 0.75,
     "knockback_dust": "Skid Dust",
+    "finisher_knockback": 3.0,
+    "heavy_knockback": 3.5,
     "attack_moves": [
      {
       "animation": "Attack_Light_1",
@@ -35365,6 +35367,8 @@
     "knockback_animation": "Knockback",
     "knockback_seconds": 0.8,
     "knockback_dust": "Skid Dust",
+    "finisher_knockback": 2.5,
+    "heavy_knockback": 3.0,
     "hyper_armor": 1,
     "swing_effect": "Boss Swing",
     "heavy_swing_effect": "Boss Heavy Swing",
