@@ -163,6 +163,7 @@ local Domain = {
     -- How big each pool grows (meters across; the same list as OIL_POOLS of Tools/build_scene.py) and how deep
     PoolSizes = { 34, 18, 20, 19, 18, 16, 18, 14, 14 }, PoolDepth = 0.05,
     PoolGrowSeconds = 2.4, PoolStaySeconds = 14, PoolSinkSeconds = 2.5,
+    WaveCurlWidth = 5.0,
     -- The waves: when they rise (seconds after the spell left), when they meet (PLAYER_DOMAIN_CRASH_AT of the
     -- scene: the blast's fuse), how far to each side of the enemy they start, how big they are
     WavesAt = 2.5, WaveCrashAt = 4.0, WaveFrom = 12, WaveLength = 14, WaveHeight = 7.0, WaveThickness = 2.4,
@@ -195,7 +196,17 @@ local function setWave(side, place, yaw, grown)
     wave.transform.rotation = vec3(0, yaw, 0)
     local k = math.max(grown, 0.001)
     wave.transform.scale = vec3(Domain.WaveThickness * k, Domain.WaveHeight * k, Domain.WaveLength * k)
-    wave.liquidOrb.isVisible = grown > 0.01
+    -- (the sphere of liquid only carries the spray and the foam now: the wave's own model is what is seen)
+    wave.liquidOrb.isVisible = false
+    local body = find("Oil Wave Body " .. side)
+    if body and body.model then
+        body.model.isVisible = grown > 0.01
+        -- its foot on the ground, rising out of it; curled towards the enemy (the right one turned round)
+        body.transform.position = vec3(place.x, -Domain.WaveHeight * (1 - math.min(grown * 1.4, 1)), place.z)
+        body.transform.rotation = vec3(0, yaw + (side == "R" and 180 or 0), 0)
+        body.transform.scale = vec3(Domain.WaveCurlWidth * k, Domain.WaveHeight * k, Domain.WaveLength * k)
+        body.model.rimGlow = vec3(0.35, 0.32, 0.28)
+    end
     for _, part in ipairs({ " Spray", " Foam" }) do
         local emitter = find("Oil Wave " .. side .. part)
         if emitter and emitter.particles then emitter.particles.isEmitting = grown > 0.2 end
