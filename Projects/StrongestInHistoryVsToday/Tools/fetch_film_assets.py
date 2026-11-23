@@ -99,6 +99,22 @@ def make_videos(film):
              "-vf", "scale=1280:720,fps=30", "-c:v", "mpeg1video", "-q:v", 4, "-an", os.path.join(folder, name)])
 
 
+# The film's own sound (voices, music, blasts) for the staged moments the game plays in step with the film
+# (boss_fight.lua O.playFilmAudio): the opening of his domain, the lines before his summoning
+FILM_AUDIO = {
+    "domain_opening_film.ogg": (74.8, 102.6),
+    "summoning_film.ogg":      (150.6, 161.0),
+}
+
+
+def make_film_audio(film):
+    folder = os.path.join(RES, "Sounds", "Film")
+    os.makedirs(folder, exist_ok=True)
+    for name, (start, end) in FILM_AUDIO.items():
+        run([ffmpeg(), "-y", "-loglevel", "error", "-ss", start, "-to", end, "-i", film, "-vn", "-ac", 2, "-ar", 44100,
+             "-c:a", "libvorbis", "-q:a", 6, os.path.join(folder, name)])
+
+
 def make_soundtrack(film, song):
     folder = os.path.join(RES, "Sounds", "Film")
     os.makedirs(folder, exist_ok=True)
@@ -194,6 +210,7 @@ def main():
         return
 
     make_videos(film)
+    make_film_audio(film)
     make_soundtrack(film, song)
     if not arguments.no_voices:
         make_voices(film)

@@ -1008,14 +1008,15 @@ function O.domainOpeningSteps()
         { O.KnockMusicAt, function()
             becomeInvulnerable(45)
             O.startKnockback()
+            -- The film's own sound from here to the player lying down (his words, the music, the blasts: the user
+            -- found the cut-out voices worse and off the film's timing); the soundtrack goes on silent under it
+            O.playFilmAudio(O.DomainFilmAudio, O.DomainFilmAudioSeconds)
         end },
         { 44.6, function()
             O.knock = nil
             O.isHoldingSign = false
             playCutscene(SignCutscene)
         end },
-        -- "Domain expansion: Epstein Island Temple."
-        { 45.05, function() Audio.playVoice(O.VoiceDomain, O.VoiceVolume) end },
         -- The hill of fire swells while he still speaks (film 1:22.3), the temple rising out of it carries him up: it stands as his words end (1:24.7), as in the film
         { 46.1, function()
             changeLook(Domain, 1.8)
@@ -2420,8 +2421,9 @@ local function startSummonPhase()
             local hangAt = this.transform.position
             ground = vec3(hangAt.x, 0, hangAt.z)
             floated = 1
-            Audio.playVoice(O.VoiceBetter, O.VoiceVolume)
-            playCutscene(O.FloatCutscene)
+            -- The film's own sound of the three lines and the wheel (film 2:30.6-2:41), its pictures in step with it
+            O.playFilmAudio(O.SummonFilmAudio, O.SummonFilmAudioSeconds)
+            after(O.SummonFloatVideoAfter, function() playCutscene(O.FloatCutscene) end)
             this.characterActions:play("Hover")
             local player = find(PlayerName)
             local away = player and (ground - player.transform.position) or vec3(0, 0, -1)
@@ -2436,20 +2438,19 @@ local function startSummonPhase()
                     + vec3(0, FloatHeight * eased + math.sin(hovered * 2.2) * 0.12 * eased, 0)
             end
             show.during = O.floatDuring
-            return 2.9
+            return 3.0
         end,
-        -- (film 2:34) "Well, with this treasure I summon..."
+        -- (film 2:34) "Well, with this treasure I summon..." (in the film's sound)
         function()
-            Audio.playVoice(O.VoiceTreasure, O.VoiceVolume)
             show.during = O.floatDuring
-            return 2.3
+            return O.SummonWheelAfter - 3.0
         end,
         function()
             this.world:flash(vec3(1, 1, 1), 0.4, 0.1)
             playCutscene(WheelCutscene)
             -- (film 2:37) "47th President of the United States, Donald J. Trump." over the turning wheel
-            -- (the film's pictures to the end of his words: him falling into the white after the wheel)
-            after(0.5, function() Audio.playVoice(O.VoicePresident, O.VoiceVolume) end)
+            -- (the film's pictures to the end of his words: him falling into the white after the wheel; his words in
+            -- the film's sound)
             return 4.4
         end,
         function()
@@ -3134,6 +3135,18 @@ O.LeapAwayCutscene, O.SummonRevealCutscene = "Summon Leap Away", "Summon Reveal"
 O.VoiceTreasure  = "@game/Sounds/Voice/epstein_treasure_summon.ogg"
 O.VoicePresident = "@game/Sounds/Voice/epstein_president_trump.ogg"
 O.VoiceVolume    = 1.5
+-- The film's own sound (voices, music, blasts) for the staged moments: from the blow before his domain (film 1:14.8)
+-- to the player lying down, and the lines before his summoning (2:30.6-2:41). The music goes silent under it (it
+-- keeps its clock); as loud as the music (the film's mix is louder)
+O.DomainFilmAudio, O.DomainFilmAudioSeconds = "@game/Sounds/Film/domain_opening_film.ogg", 27.8
+O.SummonFilmAudio, O.SummonFilmAudioSeconds = "@game/Sounds/Film/summoning_film.ogg", 10.4
+O.SummonFloatVideoAfter, O.SummonWheelAfter = 0.8, 6.0
+O.FilmAudioVolume = 0.55
+function O.playFilmAudio(sound, seconds)
+    Audio.setMusicDucking(0)
+    Audio.playVoice(sound, O.FilmAudioVolume)
+    after(seconds + 0.5, function() Audio.setMusicDucking(0.35) end)
+end
 
 -- While the player fights his summon up close he only watches: his storms of money are for a player who runs from it
 -- (further than this from the summon), so the summon is never fought with a rain of money in the back
