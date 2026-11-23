@@ -182,11 +182,11 @@
      "Hit_2"
     ],
     "heavy_hit_reaction_animation": "Hit_Heavy",
-    "knockback_animation": "Knockback",
-    "knockback_seconds": 0.75,
+    "knockback_animation": "Hit_Heavy",
+    "knockback_seconds": 0.55,
     "knockback_dust": "Skid Dust",
     "finisher_knockback": 0.0,
-    "heavy_knockback": 3.5,
+    "heavy_knockback": 0.0,
     "attack_moves": [
      {
       "animation": "Attack_Light_1",
@@ -4017,7 +4017,7 @@
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.3,
     "is_enabled": false,
-    "knockback": 3.0
+    "knockback": 1.2
    },
    "weapon_trail": {
     "base_offset": [
@@ -35428,8 +35428,8 @@
     "attack_delay_chance": 0.15,
     "attack_delay_seconds": 0.35,
     "attack_delay_at": 0.7,
-    "knockback_animation": "Knockback",
-    "knockback_seconds": 0.8,
+    "knockback_animation": "Hit",
+    "knockback_seconds": 0.55,
     "knockback_dust": "Skid Dust",
     "finisher_knockback": 0.0,
     "heavy_knockback": 0.0,
@@ -36248,7 +36248,7 @@
     "hit_stop_seconds": 0.1,
     "camera_shake": 0.45,
     "is_enabled": false,
-    "knockback": 3.5
+    "knockback": 1.2
    },
    "weapon_trail": {
     "base_offset": [
@@ -40314,7 +40314,7 @@
    "transform": {
     "position": [
      0.0,
-     2.75,
+     0.55,
      0.15
     ],
     "rotation": [
@@ -40340,7 +40340,8 @@
    },
    "parent": {
     "index": 892,
-    "bone_name": ""
+    "bone_name": "Head",
+    "bone_position_only": true
    }
   },
   {

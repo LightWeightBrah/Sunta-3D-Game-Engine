@@ -625,10 +625,11 @@ PLAYER_MORE_ATTACKS = {
     "dodge_attack_animation": "",
     "riposte_animation": "Attack_Riposte", "riposte_reach": 2.6,
     "extra_hit_reaction_animations": ["Hit_2"], "heavy_hit_reaction_animation": "Hit_Heavy",
-    "knockback_animation": "Knockback", "knockback_seconds": 0.75, "knockback_dust": "Skid Dust",
-    # (the user: more dynamic fights - his heavy blows throw the enemy back; only those, a choice of the player's:
-    # thrown at every combo's end it was too often)
-    "finisher_knockback": 0.0, "heavy_knockback": 3.5,
+    # (an ordinary throw is a heavy reeling step back, not the slide on a knee: that is kept for the blow before his
+    # domain - the user)
+    "knockback_animation": "Hit_Heavy", "knockback_seconds": 0.55, "knockback_dust": "Skid Dust",
+    # (none from ordinary blows: still too often for the user)
+    "finisher_knockback": 0.0, "heavy_knockback": 0.0,
     "attack_moves": PLAYER_ATTACK_MOVES,
     # A punch steps in to reach, but never slides more than a step
     "attack_lunge_max_distance": 0.9,
@@ -912,7 +913,7 @@ def add_player(builder):
     sword["hitbox"] = {"damage": 34.0, "poise_damage": 30.0, "local_offset": [0.0, 0.67, 0.0],
                        "half_extents": [0.14, 0.47, 0.1], "layer": PLAYER_HITBOX_LAYER, "show_gizmos": False,
                        "hit_stop_seconds": 0.07, "camera_shake": 0.3, "is_enabled": False,
-                       "knockback": 3.0}
+                       "knockback": 1.2}
     sword["weapon_trail"] = {"base_offset": [0.0, 0.62, 0.0], "tip_offset": [0.0, 1.1, 0.0], "color": [1.0, 0.88, 0.62],
                              "intensity": 1.3, "lifetime_seconds": 0.18, "only_while_striking": True}
     builder.add(sword, parent=player, bone="Weapon_R")
@@ -975,7 +976,7 @@ def add_armor_transformation(builder, boss):
     sword = named("Boss Sword", (0.0, 0.0, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
                                                          "emissive_strength": 1.5})
     sword["hitbox"] = dict(SWORD_HITBOX, damage=30.0, poise_damage=45.0, layer=ENEMY_HITBOX_LAYER, show_gizmos=False,
-                           hit_stop_seconds=0.1, camera_shake=0.45, is_enabled=False, knockback=3.5)
+                           hit_stop_seconds=0.1, camera_shake=0.45, is_enabled=False, knockback=1.2)
     # (a trail of crimson fire behind the blade while it strikes, as the swords of the souls bosses that burn)
     sword["weapon_trail"] = {"base_offset": [0.0, 0.25, 0.0], "tip_offset": [0.0, 1.42, 0.0], "color": [1.0, 0.18, 0.06],
                              "intensity": 2.2, "lifetime_seconds": 0.22, "only_while_striking": True}
@@ -1249,7 +1250,7 @@ def add_boss(builder):
     entity["tag"]["name"] = BOSS_NAME
     entity["model"]["model_name"] = BOSS_MODEL
     entity["character_actions"].update(BOSS_HIT_WINDOWS)
-    entity["character_actions"].update({"knockback_animation": "Knockback", "knockback_seconds": 0.8,
+    entity["character_actions"].update({"knockback_animation": "Hit", "knockback_seconds": 0.55,
                                         "knockback_dust": "Skid Dust",
                                         # (none of his own: thrown by them the player lost the controls too
                                         # often - only his kicks that break the player's poise still throw)
@@ -1399,8 +1400,11 @@ def add_summon(builder):
     # The eight-spoked wheel over its head (the film's last frames): it turns an eighth each time the summon adapts
     # (shown and turned by the script)
     # (just over its stooping head, level: on the head bone it tipped over with every move of the head)
-    halo = named("Summon Halo", (0.0, 2.75, 0.15), model={"is_visible": False, "model_name": "sih_summon_wheel"})
-    builder.add(halo, parent=summon)
+    # (over its head bone, level: it rises and sinks with the monster's leaps and slams - over the root it hung in
+    # the air where its head had been)
+    halo = named("Summon Halo", (0.0, 0.55, 0.15), model={"is_visible": False, "model_name": "sih_summon_wheel"})
+    halo_index = builder.add(halo, parent=summon, bone="Head")
+    builder.entities[halo_index]["parent"]["bone_position_only"] = True
     # From half its health on a blade of light grows out of its right fist (the boss's sword, lit white by the script):
     # hidden and harmless until then; it strikes in the windows of its blows like its fists
     blade = named("Summon Blade", (0.0, 0.05, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",

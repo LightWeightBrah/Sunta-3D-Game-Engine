@@ -1041,6 +1041,9 @@ function O.domainOpeningSteps()
         -- The last blow: he is hurled back, skids, gets up (the soundtrack was moved here: see startDomainPhase)
         { O.KnockMusicAt, function()
             becomeInvulnerable(45)
+            -- (his own feet still: from the end of his skid to his sign he walked at the player - the user)
+            isChanneling = true
+            this.enemy:changeState("Channel")
             O.startKnockback()
             -- The film's own sound from here to the player lying down (his words, the music, the blasts: the user
             -- found the cut-out voices worse and off the film's timing); the soundtrack goes on silent under it
@@ -1108,6 +1111,7 @@ function O.domainOpeningSteps()
         -- (he stays down: the player gets him up with [2], see O.updateRise)
         -- The temple sinks again, he is back on the ground before the player, still black with white eyes
         { 65.8, function()
+            isChanneling = false
             isOnTheDome = false
             O.isHoldingSign = false
             local temple = find(TempleName)
