@@ -693,15 +693,15 @@ local O = {
     KnockCutscene  = "Knockback Flight",
     KnockMusicAt   = 38.6,
     KnockMeters    = 18,
-    KnockSkidMeters = 8,
-    -- As in the film (1:14.8-1:21, its sound plays with it): thrown through the ruins (1.5 s), he crouches where he
-    -- fell while the player throws a ball of oil at him (1:16.8), it strikes (1:18.8) and he skids away on his
-    -- feet, straightening up with the sign as he stops (1:20.8)
-    KnockFlySeconds = 1.5,
-    KnockWaitSeconds = 2.5,
-    KnockSkidSeconds = 1.7,
-    KnockOrbAt = 2.0,
-    KnockRiseAt = 0.9,
+    KnockSkidMeters = 12,
+    -- One throw, smooth (the user: a ball of oil striking him again made it two jerky throws): hurled through the
+    -- ruins, he lands into a long skid on his feet slowing down, straightening up with the sign as he stops - in
+    -- time with the film's sound (the close shot of the sign at 1:20.8)
+    KnockFlySeconds = 2.2,
+    KnockWaitSeconds = 0.0,
+    KnockSkidSeconds = 3.3,
+    KnockOrbAt = 99,
+    KnockRiseAt = 0.8,
     -- If the player never hurts him enough, the domain still opens (seconds of the soundtrack)
     DomainLatestAt = 150,
     DetonationPrompt = "2: Imaginary Technique: Baby Oil Detonation",
@@ -953,21 +953,18 @@ function O.updateKnock(deltaTime)
             this.world:effect("Crash Impact", k.land, this.transform.forward)
         end
         this.transform.position = k.land
-        if not k.hasThrown and k.t >= O.KnockOrbAt then
-            k.hasThrown = true
-            O.throwOrbAtBoss()
-        end
+
         return
     end
 
     if k.t < fly + wait + skid then
         if not k.isSkidding then
             k.isSkidding = true
-            -- (the ball strikes: thrown on along the ground)
+            -- (he lands straight into the skid: one throw)
             this.characterActions:play("Skid_Crouch")
-            this.world:effect("Solid Oil Burst", k.land + vec3(0, 1.2, 0), this.transform.forward)
-            this.world:shakeCamera(0.6)
+            this.world:shakeCamera(0.7)
             this.world:burst(O.SkidDust, k.land, 24)
+            this.world:effect("Crash Impact", k.land, this.transform.forward)
         end
         local f = (k.t - fly - wait) / skid
         this.transform.position = mix(k.land, k.skid, 1 - (1 - f) * (1 - f))
@@ -1074,8 +1071,9 @@ function O.domainOpeningSteps()
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere
         -- (only once the temple stands, as in the film)
-        -- (film 1:28.3: they burst out of the dome at once - grown over two seconds they were seen a second late)
-        { 51.9, function() O.burstStars() end },
+        -- (the moment the temple has risen: the film shows the player between them, the game doesn't - waiting
+        -- for the film's second they came late)
+        { 50.3, function() O.burstStars() end },
         { 54.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
