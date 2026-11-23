@@ -62,6 +62,9 @@ FOG_GATE_HALF_WIDTH = 3.2
 
 # Outside the arena, on the street that leads to it: the player walks up to the fog and enters with E
 PLAYER_START = [0.0, 0.0, 62.0]
+# Where the champagne sits in his right hand (bone space: position, rotation degrees)
+# (upside down along the fingers: his hand at his mouth holds it by the neck, its bottom up - drinking from it)
+CHAMPAGNE_IN_HAND = ((0.0, 0.3, 0.02), (180.0, 0.0, 0.0))
 # (15 m inside the fog: after the film's opening he stands close and comes at the player - from 35 m away the
 # fight began with a long walk; the user wanted the start smoother)
 BOSS_START = [0.0, 0.0, -38.0]
@@ -832,6 +835,8 @@ def add_player(builder):
     entity["tag"]["name"] = PLAYER_NAME
     entity["model"]["model_name"] = PLAYER_MODEL
     entity["healing_flask"]["hidden_while_drinking"] = ""
+    # (the user: he must really drink something - his champagne bottle in his hand while he drinks)
+    entity["healing_flask"]["shown_while_drinking"] = "Player Champagne"
     entity["character_actions"].update(PLAYER_HIT_WINDOWS)
     entity["character_actions"].update(PLAYER_MORE_ATTACKS)
     # Quick hands: the next punch may be asked for early and cuts the end of the one before, and the parry turns
@@ -895,6 +900,13 @@ def add_player(builder):
     held = named("Player Held Orb", (0.0, 0.2, 0.0), liquid_orb=dict(OIL_ORB, is_visible=False))
     held["transform"]["scale"] = [0.34] * 3
     builder.add(held, parent=player, bone="Hand_R")
+    # His champagne in his left fist (the hand the drinking clip lifts), shown only while he drinks
+    # (Tools/champagne_generator.py)
+    builder.add(named("Player Champagne", CHAMPAGNE_IN_HAND[0], model={"is_visible": False, "model_name": "sih_champagne"}),
+                parent=player, bone="Hand_L")
+    builder.entities[-1]["transform"]["rotation"] = list(CHAMPAGNE_IN_HAND[1])
+    # (the engine reads the quaternion: upside down = half a turn about X)
+    builder.entities[-1]["transform"]["rotation_quaternion"] = [0.0, 1.0, 0.0, 0.0]
     # His guard: a wall of baby oil before his chest while he blocks, flaring up in the live part of a parry
     # (shown by his script; his front is his own -Z)
     # (mostly see-through: the player watches the boss through it; it brightens only for the parry)
