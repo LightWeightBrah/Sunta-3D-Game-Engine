@@ -22,7 +22,8 @@ local HeldOrbSize = 0.62
 -- (a warm sheen on him, not a figure of light: his eyes are what burns)
 -- (in the film, 2:19, only his eyes burn as his domain opens: a faint warm edge, no more - stronger, against the
 -- sky of the low shot he became a gold silhouette)
-local DomainRim          = vec3(0.22, 0.14, 0.04)
+-- (the film, 2:19-2:21: at his domain only his eyes burn, his body doesn't shine)
+local DomainRim          = vec3(0.0, 0.0, 0.0)
 local DomainFlashSeconds = 1.3
 
 -- He calls each technique by its name, in his own voice (cut from the film's soundtrack: the voices alone, the music
@@ -38,6 +39,7 @@ local eyesLeft = 0
 -- The light he gives off while calling Imaginary Technique (see updateGreatShow)
 local techniqueGlow = vec3(0, 0, 0)
 local techniqueRim = vec3(0, 0, 0)
+local techniqueAura = vec3(0, 0, 0)
 local wasCasting = {}
 local releasedBefore = {}
 local domainGlow = 0
@@ -304,12 +306,16 @@ end
 -- his hands he is a figure of white light - and as it leaves his hands rays of light shoot out of him in every
 -- direction and he bursts with light; then the light dies away
 local Great = {
-    GoldSeconds = 0.6, WhiteSeconds = 0.4, FadeSeconds = 0.9,
+    GoldSeconds = 1.0, WhiteSeconds = 0.5, FadeSeconds = 0.9,
     -- (a sheen over him, not a figure of light: stronger, he became a flat silhouette)
     -- (no pink or violet anywhere: the film's light is gold, then white)
     GoldRim = vec3(1.1, 0.66, 0.16), WhiteRim = vec3(1.3, 1.26, 1.18),
     -- (a warm sheen over him under the outline, and the white of the blink at the release)
-    GoldFill = vec3(0.06, 0.035, 0.0), WhiteFill = vec3(0.55, 0.53, 0.5),
+    -- (as the film shows it: the light starts at his edges and spreads over all of him - gold, then a figure of white)
+    GoldFill = vec3(0.75, 0.42, 0.06), WhiteFill = vec3(1.4, 1.36, 1.28),
+    -- The film (1:48.4-1:49.5): a thick soft glow of gold around all of him, out beyond his outline, that turns white
+    -- (engine: model.aura); the gold lasts a little longer than before, as in the film
+    GoldAura = vec3(0.7, 0.38, 0.07), WhiteAura = vec3(0.9, 0.87, 0.8), AuraSize = 0.035,
     Rays = 16, RaySpreadSeconds = 0.3, RayEffect = "Technique Ray", BurstEffect = "Technique Burst",
 }
 local greatShow = nil
@@ -324,7 +330,7 @@ local function updateGreatShow(deltaTime)
         greatReleases = caster.timesReleased
     end
     if not greatShow then
-        techniqueGlow, techniqueRim = vec3(0, 0, 0), vec3(0, 0, 0)
+        techniqueGlow, techniqueRim, techniqueAura = vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0)
         return
     end
 
@@ -358,19 +364,22 @@ local function updateGreatShow(deltaTime)
         -- the blink of white light at the release, then the outline dies away
         show.fade = show.fade + deltaTime
         local left = math.max(1 - show.fade / Great.FadeSeconds, 0)
-        local blink = math.max(1 - show.fade / 0.25, 0)
-        glow = Great.WhiteFill * (blink * blink)
+        glow = Great.WhiteFill * (left * left * left)
         rim = Great.WhiteRim * (left * left)
+        techniqueAura = Great.WhiteAura * (left * left)
         if left <= 0 and show.raysLeft <= 0 then greatShow = nil end
     elseif show.t < Great.GoldSeconds then
         local k = show.t / Great.GoldSeconds
-        glow = Great.GoldFill * k
+        -- the edges first (rim and glow around him at once), the light over his body only later and slowly
+        glow = Great.GoldFill * (k * k * k)
         rim = Great.GoldRim * (k * (2 - k))
+        techniqueAura = Great.GoldAura * (k * (2 - k))
     else
         local k = math.min((show.t - Great.GoldSeconds) / Great.WhiteSeconds, 1)
         local s = k * k * (3 - 2 * k)
-        glow = Great.GoldFill * (1 - s)
+        glow = Great.GoldFill + (Great.WhiteFill - Great.GoldFill) * s
         rim = Great.GoldRim + (Great.WhiteRim - Great.GoldRim) * s
+        techniqueAura = Great.GoldAura + (Great.WhiteAura - Great.GoldAura) * s
     end
     techniqueGlow, techniqueRim = glow, rim
 end
@@ -451,6 +460,8 @@ local function updateDomain(deltaTime)
     if this.model then
         this.model.glow = techniqueGlow
         this.model.rimGlow = DomainRim * (domainGlow * domainGlow) + techniqueRim
+        this.model.aura = techniqueAura
+        this.model.auraSize = Great.AuraSize
     end
 
     if hasJustReleased(DomainSpell) then
