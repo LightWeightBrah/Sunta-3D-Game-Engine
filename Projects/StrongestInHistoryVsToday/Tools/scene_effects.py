@@ -294,14 +294,18 @@ def add_technique_effects(builder):
     # The player's domain (film 2:20): a huge whirl of baby oil around him, growing; milky white with a cold sheen
     # (the film's oil is white water, not fire), sprays of drops flung out of it, a wave of oil over the ground
     # (the film 2:22-2:23: a great wall of white oil curling up round him - wide, thick, warm white, not blue)
+    # (thinner and more torn than at first: the camera stands inside it and the whole screen went white - the player is
+    # seen through it now; a gold sheen at its edges and gold glints rising in it, the film's light of his techniques)
     (Effect(builder, "Oil Vortex", root_shape=shape(
-        PILLAR, 3.4, 1.0, 6.5, MILK_CORE, [1.0, 0.9, 0.72], 1.1, height=15.0, twist_degrees=720.0,
-        spin_degrees_per_second=420.0, noise_scale=3.5, scroll_speed=2.5, dissolve=0.75,
-        light_intensity=3.0, light_radius=14.0, light_color=[0.9, 0.95, 1.0]))
-     .shape("Inner", shape(PILLAR, 3.0, 0.6, 3.8, [1.0, 1.0, 1.0], [1.0, 0.92, 0.78], 0.9, height=12.0, twist_degrees=-540.0,
-                           spin_degrees_per_second=-520.0, noise_scale=4.5, scroll_speed=3.0, dissolve=0.8))
-     .shape("Outer", shape(PILLAR, 3.6, 1.5, 10.0, MILK_CORE, [1.0, 0.88, 0.66], 0.6, height=20.0, twist_degrees=900.0,
-                           spin_degrees_per_second=300.0, noise_scale=3.0, scroll_speed=2.0, dissolve=0.85))
+        PILLAR, 3.4, 1.0, 6.5, MILK_CORE, [1.0, 0.8, 0.45], 0.75, height=15.0, twist_degrees=720.0,
+        spin_degrees_per_second=420.0, noise_scale=3.5, scroll_speed=2.5, dissolve=0.86,
+        light_intensity=3.0, light_radius=14.0, light_color=[1.0, 0.9, 0.7]))
+     .shape("Inner", shape(PILLAR, 3.0, 0.6, 3.8, [1.0, 1.0, 1.0], [1.0, 0.85, 0.6], 0.55, height=12.0, twist_degrees=-540.0,
+                           spin_degrees_per_second=-520.0, noise_scale=4.5, scroll_speed=3.0, dissolve=0.88))
+     .shape("Outer", shape(PILLAR, 3.6, 1.5, 10.0, MILK_CORE, [1.0, 0.78, 0.4], 0.35, height=20.0, twist_degrees=900.0,
+                           spin_degrees_per_second=300.0, noise_scale=3.0, scroll_speed=2.0, dissolve=0.9))
+     .specks("Glints", sparks(160, 5.0, [1.0, 0.85, 0.45], [0.9, 0.45, 0.05], lifetime=2.4, size=0.07, gravity=5.0,
+                             drag=0.8, stretch=0.03, intensity=3.0))
      .shape("Ground", shape(RING, 2.6, 1.5, 26.0, MILK_CORE, MILK_EDGE, 1.0, thickness=0.2, noise_scale=2.5,
                             scroll_speed=1.0, dissolve=0.85))
      .specks("Spray", sparks(220, 12.0, [0.95, 0.97, 1.0], [0.6, 0.7, 0.85], lifetime=1.8, size=0.1, gravity=-7.0,
@@ -318,16 +322,24 @@ def add_technique_effects(builder):
                             drag=1.5, intensity=1.4)))
 
     # The two waves of oil meeting on the enemy: a burst of white, a wave over the ground, drops flung high
+    # (sharper than at first: a short burst, a crown of drops thrown high, a gold blink - its white sphere and mist hung
+    # about like a lump of cotton)
     (Effect(builder, "Oil Wave Crash", root_shape=shape(
-        SPHERE, 0.7, 1.0, 5.0, [1.0, 1.0, 1.0], MILK_EDGE, 1.4, noise_scale=3.5, scroll_speed=1.5, dissolve=0.85,
-        light_intensity=6.0, light_radius=16.0, light_color=[0.9, 0.95, 1.0]))
+        SPHERE, 0.45, 1.0, 5.5, [1.0, 1.0, 1.0], [1.0, 0.85, 0.6], 1.4, noise_scale=3.5, scroll_speed=1.5, dissolve=0.9,
+        light_intensity=7.0, light_radius=18.0, light_color=[1.0, 0.92, 0.75]))
+     .specks("Crown", specks(260, 1.6, 0.12, 0.05, [1.0, 0.99, 0.95], [1.0, 0.98, 0.92], MILK_EDGE, 2.4, style=3,
+                             velocity=[0.0, 16.0, 0.0], velocity_randomness=0.55, spawn_shape=1, spawn_radius=1.2,
+                             outward_speed=6.0, gravity=[0.0, -18.0, 0.0], drag=0.6, stretch=0.07,
+                             size_randomness=0.4))
+     .specks("Gold", sparks(120, 14.0, [1.0, 0.85, 0.45], [0.9, 0.4, 0.05], lifetime=1.1, size=0.06, gravity=-6.0,
+                            drag=1.6, intensity=3.2))
      .shape("Wave", shape(RING, 1.0, 1.5, 14.0, MILK_CORE, MILK_EDGE, 1.8, thickness=0.2, noise_scale=3.0, dissolve=0.9))
      .shape("Column", shape(PILLAR, 0.9, 1.5, 3.5, [1.0, 1.0, 1.0], MILK_EDGE, 0.9, height=9.0, twist_degrees=200.0,
                             spin_degrees_per_second=200.0, noise_scale=4.0, scroll_speed=3.0, dissolve=0.85))
      .specks("Drops", sparks(220, 17.0, [0.95, 0.97, 1.0], [0.55, 0.65, 0.8], lifetime=1.5, size=0.11, gravity=-12.0,
                             drag=1.4, intensity=2.2))
-     .specks("Mist", dust(36, 7.0, lifetime=2.2, size=1.4, end_size=4.0, color=(0.8, 0.82, 0.86)))
-     .specks("Flash", flash(4.5, 0.14, [0.95, 0.97, 1.0], 1.2)))
+     .specks("Mist", dust(14, 7.0, lifetime=1.3, size=1.2, end_size=3.0, color=(0.8, 0.82, 0.86)))
+     .specks("Flash", flash(5.0, 0.14, [1.0, 0.95, 0.8], 1.3)))
 
     # The boss's knockback through the ruins: a burst of rock and fire where he smashes through
     (Effect(builder, "Crash Impact", root_shape=shape(

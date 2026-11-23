@@ -212,12 +212,24 @@ local function setWave(side, place, yaw, grown)
     end
 end
 
--- The enemy the waves are for: the boss (or the summon fighting for him, when it is closer)
+-- The enemy the waves are for: the one locked on, else the boss or the summon fighting for him, whichever is closer -
+-- never one floating high over the arena (the boss watching his summon fight: the waves went for him in the air)
 local function domainTarget()
+    -- (while the summon fights it is the enemy: the boss only watches it)
+    local summon = find("Summon")
+    if summon and summon.health and not summon.health.isDead and summon.enemy and not summon.enemy.isDormant then
+        return summon
+    end
+    local lock = this.lockOn
+    if lock and lock.hasTarget and lock.target and lock.target.health and not lock.target.health.isDead
+        and lock.target.transform.position.y < 3 then
+        return lock.target
+    end
     local best, bestDistance = nil, 1e9
     for _, name in ipairs({ "Boss", "Summon" }) do
         local enemy = find(name)
-        if enemy and enemy.health and not enemy.health.isDead and not (enemy.enemy and enemy.enemy.isDormant) then
+        if enemy and enemy.health and not enemy.health.isDead and not (enemy.enemy and enemy.enemy.isDormant)
+            and enemy.transform.position.y < 3 then
             local d = (enemy.transform.position - this.transform.position):length()
             if d < bestDistance then best, bestDistance = enemy, d end
         end
@@ -232,7 +244,7 @@ local function startDomainShow()
     along.y = 0
     if along:length() < 0.1 then along = this.transform.forward end
     along = along:normalized()
-    domainShow = { t = 0, center = center, side = vec3(along.z, 0, -along.x), yaw = math.deg(math.atan(along.x, along.z)),
+    domainShow = { t = 0, center = center, target = target, side = vec3(along.z, 0, -along.x), yaw = math.deg(math.atan(along.x, along.z)),
                    wavesStarted = false, crashed = false, poolsLeft = nil }
 
     -- (he stays up there until the waves have met: see updateDomain)
@@ -248,6 +260,12 @@ local function updateDomainShow(deltaTime)
     local show = domainShow
     if not show then return end
     show.t = show.t + deltaTime
+    -- (the waves close on the enemy where it is, not where it stood when the sign was made: it walked out of them)
+    local target = show.target
+    if target and not show.crashed and target.health and not target.health.isDead then
+        local at = target.transform.position
+        show.center = show.center + (vec3(at.x, show.center.y, at.z) - show.center) * math.min(deltaTime * 4, 1)
+    end
 
     -- The oil spreads over the floor while the whirl grows
     if show.t <= Domain.PoolGrowSeconds then
@@ -410,7 +428,7 @@ local function setFloating(isOn)
     if not animation then return end
     if isOn and not floatingIdles then
         floatingIdles = { animation.idleAnimation, animation.lockedOnIdleAnimation }
-        animation.idleAnimation, animation.lockedOnIdleAnimation = "Float", "Float"
+        animation.idleAnimation, animation.lockedOnIdleAnimation = "Float_Sign", "Float_Sign"
     elseif not isOn and floatingIdles then
         animation.idleAnimation, animation.lockedOnIdleAnimation = floatingIdles[1], floatingIdles[2]
         floatingIdles = nil

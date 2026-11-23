@@ -55,6 +55,11 @@ local BladeOfLight = { AtFraction = 0.5, Blade = "Summon Blade", BladeGlow = vec
                       SlamsWithin = 5.5, SlamsEvery = 16.0, Slams = 2, BlastDelay = 0.9, BlastRadius = 5.5,
                       BlastDamage = 28 }
 
+-- A blow of another kind than the one it adapted to catches it off balance: it reels, a beat of slow motion - the
+-- moment to change how one fights it pays (the user found the fight dull: hitting a wall of adaptation)
+local Counter = { EverySeconds = 7.0, Animation = "Parried" }
+local counterIn = 0
+
 local lastKind = nil
 local hitsInARow = 0
 local adaptedTo = nil
@@ -397,6 +402,7 @@ function OnUpdate(deltaTime)
 
     watchGreatSpell(deltaTime)
     updateOwnMoves(deltaTime)
+    counterIn = counterIn - deltaTime
 
     local player = find("Player")
     local action = player and player.characterActions and player.characterActions.action or ""
@@ -432,6 +438,16 @@ function OnDamaged(amount, kind, attacker)
     if not hitKind then return end
 
     if hitKind == adaptedTo then sinceAdaptedHit = 0 end
+
+    if adaptedTo and hitKind ~= adaptedTo and counterIn <= 0 and not rush and not slams then
+        counterIn = Counter.EverySeconds
+        this.characterActions:play(Counter.Animation)
+        this.world:impactFrame(0.8, 0.35)
+        this.world:slowMotion(0.45, 0.2)
+        this.world:shakeCamera(0.7)
+        this.world:effect("Punch Impact", this.transform.position + vec3(0, 2.0, 0), this.transform.forward)
+        this.world:notify("OFF BALANCE")
+    end
 
     hitsInARow = (hitKind == lastKind) and hitsInARow + 1 or 1
     lastKind = hitKind

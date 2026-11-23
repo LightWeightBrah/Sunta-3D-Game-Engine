@@ -569,6 +569,8 @@ local function updateGuard()
     local hasJustStarted = isAttacking and not wasPlayerAttacking
     wasPlayerAttacking = isAttacking
 
+    -- (with his sword he deflects instead: O.updateDuel)
+    if phase >= 5 then return end
     if hasJustStarted and isFreeToAct() and this.enemy.distanceToTarget <= GuardDistance and math.random() < GuardChance then
         this.enemy:changeState("Guard")
     end
@@ -1066,8 +1068,9 @@ function O.domainOpeningSteps()
             playCutscene(RevealCutscene)
         end },
         -- Out of the dome under his feet the stars burst into a turning sphere, as the temple stands
-        { 52.3, function() O.burstStars() end },
-        { 54.4, function() O.flyThroughStars() end },
+        -- (a second later than at first: the user)
+        { 53.3, function() O.burstStars() end },
+        { 54.9, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
             local stars = O.stars()
@@ -1900,7 +1903,10 @@ function O.updateTransform(deltaTime)
 
     local dropped = find("Armor Drop Sword")
     if dropped and dropped.model then
-        local ground = O.onHim(vec3(0, 0, -O.SwordInGround))
+        -- (where it falls is fixed the moment it falls: worked out from him every frame it moved along as he walked
+        -- to it, never reached, and was suddenly in his hand - the user)
+        if not tr.swordGround and tr.t >= O.SwordFallAt then tr.swordGround = O.onHim(vec3(0, 0, -O.SwordInGround)) end
+        local ground = tr.swordGround or O.onHim(vec3(0, 0, -O.SwordInGround))
         local stuck = vec3(ground.x, 1.13, ground.z)
         -- (until he grips it: shown after, it stood in the stone as he held it - two swords)
         if tr.t >= O.SwordFallAt and tr.t < O.GripAt then
@@ -1948,8 +1954,18 @@ function O.updateTransform(deltaTime)
 
     -- 10.2-12.6: a heavy step to the sword, it is ripped out of the stone
     if at(O.WalkAt) then this.characterActions:play("Walk_Empty") end
-    if tr.t >= O.WalkAt and tr.t < O.GripAt then
-        this.transform.position = this.transform.position + this.transform.forward * (deltaTime * 0.9)
+    if tr.t >= O.WalkAt and tr.t < O.GripAt and tr.swordGround then
+        -- to the sword in the stone, facing it, stopping an arm's length short of it
+        local to = tr.swordGround - this.transform.position
+        to.y = 0
+        if to:length() > 0.05 then
+            this.transform.rotation = vec3(0, O.yawToward(this.transform.position, tr.swordGround) + 180, 0)
+        end
+        local left = to:length() - 0.75
+        if left > 0 then
+            local stepLength = math.min(left, deltaTime * math.max(0.9, left / math.max(O.GripAt - tr.t, 0.1)))
+            this.transform.position = this.transform.position + to:normalized() * stepLength
+        end
     end
     -- (the sword in his hand the moment he grips it, gone from the stone: never a sword pose with empty hands)
     if at(O.GripAt) then
@@ -2132,15 +2148,20 @@ function O.startArmoredPhase(isResumed)
     local actions = this.characterActions
     actions.swingEffect, actions.heavySwingEffect, actions.swingEffectHeight = "Boss Sword Swing", "Boss Sword Heavy Swing", 1.1
     actions.hyperArmor, actions.attackReach = 1, 1.9
-    actions.attackSpeed = 1.1
-    actions.attackDelayChance = 0.2
+    -- (as in Sekiro: long strings of cuts one after another, now and then one held back a moment to catch a block let
+    -- go too early - the player answers with deflects; he barely stops between them)
+    actions.attackSpeed = 1.15
+    actions.attackDelayChance = 0.3
     actions:setMove("Attack_Light_1", 0.25, 0.62, 1.0)
     actions:setMove("Attack_Light_2", 0.2, 0.6, 1.0)
     actions:setMove("Attack_Light_3", 0.35, 0.64, 1.1)
     actions:setMove("Attack_Heavy", 0.42, 0.72, 1.6)
     this.meleeEnemy.attackDistance = 2.6
-    this.meleeEnemy.attackCooldownSeconds = 1.0
-    this.meleeEnemy.heavyAttackChance = 0.35
+    this.meleeEnemy.attackCooldownSeconds = 0.55
+    this.meleeEnemy.recoverSeconds = 0.35
+    this.meleeEnemy.maxLightCombo = 4
+    this.meleeEnemy.heavyAttackChance = 0.3
+    O.Duel.cooldown = 3
     this.meleeEnemy.dodgeChance = 0.15
     O.armored = { slamIn = 3, dashIn = 6, whirlIn = 4, barrageIn = 99, hasExecuted = false }
     showCaption(O.ArmorTitle, 3)
@@ -2153,7 +2174,9 @@ end
 
 function O.startPhaseSix()
     phase = 6
+    -- (one point of health is left to him: the last blow is the finale's - O.startFinale)
     setHealthFloor(0)
+    this.health.minimum = 1
     becomeInvulnerable(2.2)
     this.characterActions:play("Sword_Power_Up")
     this.world:notify("THE BLADE OF THE ISLAND BURNS")
@@ -2192,6 +2215,18 @@ function O.wavesAtPlayer(from, count, spreadDegrees)
     end
 end
 
+-- A perilous blow, as in Sekiro: a red glint on him and a sharp sound before it - not one to block, one to get out of
+-- the way of (his leap with the sword into the floor, his rush through the player)
+function O.warnPerilous()
+    local head = this.transform.position + vec3(0, 1.9, 0)
+    this.world:burst("Hit Embers", head, 40)
+    this.world:effect("Punch Impact", head, this.transform.forward)
+    this.world:effect("Pillar Warning", vec3(this.transform.position.x, 0.05, this.transform.position.z), this.transform.forward)
+    this.world:flash(vec3(1.0, 0.12, 0.05), 0.22, 0.06)
+    Audio.play(O.MetalSound, 1.3)
+    showCaption("PERILOUS - DODGE", 1.0)
+end
+
 -- Black Blade: Earthsplitter - a leap onto the player and the sword into the floor: the floor caves in, waves run out
 function O.startSlam()
     local player = find(PlayerName)
@@ -2204,7 +2239,7 @@ function O.startSlam()
     isChanneling = true
     this.enemy:changeState("Channel")
     this.characterActions:play("Sword_Slam")
-    showCaption(O.SlamTechnique, 2.2)
+    O.warnPerilous()
     Audio.playAt(O.SlashSound, this.transform.position, 1.2)
 end
 
@@ -2254,7 +2289,7 @@ function O.startDash()
     isChanneling = true
     this.enemy:changeState("Channel")
     this.characterActions:play("Sword_Slide")
-    showCaption(O.DashTechnique, 1.8)
+    O.warnPerilous()
     O.sealSpin = 1000
     this.world:burst("Blink Burst", this.transform.position + vec3(0, 1.0, 0), 60)
 end
@@ -2263,7 +2298,8 @@ function O.updateDash(deltaTime)
     local d = O.dash
     if not d then return false end
     d.t = d.t + deltaTime
-    local windup = 0.4
+    -- (a breath longer than before: the red glint is there to be answered)
+    local windup = 0.6
     if d.t >= windup and d.t < windup + O.DashSeconds then
         local k = (d.t - windup) / O.DashSeconds
         this.transform.position = mix(d.from, d.to, k)
@@ -2343,9 +2379,144 @@ function O.startExecution()
     after(3.2, function() if not this.health.isDead and not O.slam then O.startSlam() end end)
 end
 
+-- ========== The end of him (the user: a scene of his defeat first, then he falls, then the reward) ==========
+-- The player's last cut: the two face each other, the blade goes through, his armor bursts off him in pieces and his
+-- sword flies out of his hands, close on his face as the fire leaves his eyes, and he falls - only then he is dead
+O.FinaleShots = { { 0.0, "Finale Clash" }, { 1.25, "Finale Strike" }, { 2.6, "Finale Face" }, { 4.6, "Finale Fall" } }
+O.Finale = { StrikeAt = 1.5, ShatterAt = 1.6, EyesOutAt = 3.4, FallAt = 4.8, EndAt = 8.4, PlayerAhead = 2.3 }
+
+function O.startFinale()
+    O.slam, O.dash = nil, nil
+    O.finale = { t = 0, shot = 1, pieces = {} }
+    becomeInvulnerable(30)
+    isChanneling = true
+    this.enemy:changeState("Channel")
+    timers = {}
+    local player = O.playerEntity()
+    -- face to face, the player a step in front of him
+    local yaw = O.facingYaw()
+    this.transform.rotation = vec3(0, yaw + 180, 0)
+    if player then
+        local place = O.onHim(vec3(0, 0, -O.Finale.PlayerAhead))
+        player.transform.position = vec3(place.x, player.transform.position.y, place.z)
+        player.transform.rotation = vec3(0, O.yawToward(place, this.transform.position) + 180, 0)
+        if player.health then player.health.isInvulnerable = true end
+    end
+    this.characterActions:play("Parried")
+    this.world:effect("Punch Impact", this.transform.position + vec3(0, 1.4, 0) - this.transform.forward * 0.8, this.transform.forward)
+    this.world:burst("Star Impact", this.transform.position + vec3(0, 1.4, 0), 40)
+    this.world:slowMotion(0.4, 0.3)
+    Audio.play("@game/Sounds/Combat/Parry", 1.4)
+    O.setSwordFire(0)
+    playCutscene(O.FinaleShots[1][2])
+end
+
+function O.updateFinale(deltaTime)
+    local f = O.finale
+    if not f then return false end
+    local was = f.t
+    f.t = f.t + deltaTime
+    local function at(moment) return was < moment and f.t >= moment end
+    local F = O.Finale
+
+    local nextShot = O.FinaleShots[f.shot + 1]
+    if nextShot and f.t >= nextShot[1] then
+        f.shot = f.shot + 1
+        playCutscene(nextShot[2])
+    end
+
+    -- the run in and the cut
+    if at(F.StrikeAt - 0.35) then O.playPlayer("Attack_Heavy") end
+    if at(F.StrikeAt) then
+        local chest = this.transform.position + vec3(0, 1.3, 0)
+        this.world:flash(vec3(1, 0.95, 0.85), 0.2, 0.05)
+        this.world:impactFrame(1.0, 0.5)
+        this.world:slowMotion(0.7, 0.2)
+        this.world:shakeCamera(1.0)
+        this.world:effect("Boss Sword Heavy Swing", chest, this.transform.forward)
+        this.world:effect("Solid Oil Burst", chest, this.transform.forward)
+        this.world:burst("Star Impact", chest, 80)
+        Audio.play(BoomSound, 1.3)
+        Audio.play(O.SlashSound, 1.4)
+    end
+
+    -- his armor bursts off him, his sword is torn out of his hands
+    if at(F.ShatterAt) then
+        if this.model then this.model.modelName = O.PlainModel end
+        O.setHeldSword(false)
+        this.characterActions:play("Hit")
+        for _, piece in ipairs(O.Pieces) do
+            local spot = O.floorSpot(piece)
+            local from = O.onHim(O.PieceOffsets[piece])
+            f.pieces[piece] = { from = from, to = from + (spot - from) * 1.9 }
+            this.world:effect("Armor Clank", from, this.transform.forward)
+        end
+        f.swordFrom = O.onHim(vec3(0.4, 1.2, -0.4))
+        f.swordTo = O.onHim(vec3(-0.6, 0, 3.2))
+        Audio.playAt(O.MetalSound, this.transform.position, 1.6)
+    end
+    if f.t >= F.ShatterAt then
+        local k = math.min((f.t - F.ShatterAt) / 0.9, 1)
+        for piece, path in pairs(f.pieces) do
+            local entity = O.pieceEntity(piece)
+            if entity and entity.model then
+                entity.model.isVisible = true
+                entity.model.rimGlow = vec3(1.0, 0.18, 0.08) * (1 - k)
+                entity.transform.position = mix(path.from, path.to, k) + vec3(0, math.sin(k * math.pi) * 1.4, 0)
+                entity.transform.rotation = vec3(90 * k, O.facingYaw() + O.PieceFloor[piece][1] * k, 40 * k)
+                if k >= 1 and not path.landed then
+                    path.landed = true
+                    this.world:effect("Armor Land", path.to, this.transform.forward)
+                end
+            end
+        end
+        local dropped = find("Armor Drop Sword")
+        if dropped and dropped.model and f.swordFrom then
+            local s = math.min((f.t - F.ShatterAt) / 1.1, 1)
+            dropped.model.isVisible = true
+            local place = mix(f.swordFrom, vec3(f.swordTo.x, 1.13, f.swordTo.z), s) + vec3(0, math.sin(s * math.pi) * 3.5, 0)
+            dropped.transform.position = place
+            dropped.transform.rotation = vec3(180 * s + 180 * (1 - s) + 540 * (1 - s), O.facingYaw() + 90, 0)
+            if s >= 1 and not f.swordLanded then
+                f.swordLanded = true
+                dropped.transform.rotation = vec3(180, O.facingYaw() + 90, 0)
+                this.world:effect("Armor Land", vec3(f.swordTo.x, 0.1, f.swordTo.z), this.transform.forward)
+                this.world:shakeCamera(0.4)
+                Audio.play(BoomSound, 0.7)
+            end
+        end
+    end
+
+    -- the fire leaves his eyes
+    if at(F.EyesOutAt) then
+        O.tween(function(v) setEyes(v) end, 8, 0, 1.0)
+        O.hideSeal()
+        changeLook(Dawn, 4)
+    end
+
+    -- and he falls: now he is dead (the reward, the banner)
+    if at(F.FallAt) then
+        invulnerableLeft = 0
+        this.health.isInvulnerable = false
+        this.health.minimum = 0
+        this.health:damage(this.health.max * 10)
+        this.world:shakeCamera(0.5)
+    end
+    if f.t >= F.EndAt then
+        O.finale = nil
+        local player = O.playerEntity()
+        if player and player.health then player.health.isInvulnerable = false end
+    end
+    return true
+end
+
 function O.updateArmored(deltaTime)
     local a = O.armored
     if not a or phase < 5 then return end
+    if phase == 6 and not O.finale and this.health.current <= this.health.minimum + 0.5 then
+        O.startFinale()
+        return
+    end
     if O.updateSlam(deltaTime) or O.updateDash(deltaTime) then return end
 
     for key, value in pairs(a) do
@@ -3063,7 +3234,7 @@ end
 
 -- Everything back to how the scene starts (the player died, the boss rests again)
 local function reset()
-    if this.characterActions then this.characterActions.knockdownChance = 0.3 end
+    if this.characterActions then this.characterActions.knockdownChance = 0 end
     -- (died in his armored phases: the next try starts there - the fight before it is long, and was already won)
     if phase >= 5 then O.resumeArmored = true end
     O.hasStoodOff, O.hasFoughtInAir, O.hasSkyBrawled = false, false, false
@@ -3408,6 +3579,33 @@ end
 -- parries throws sparks between the blades with a ring of steel and a beat of slow motion; the third parry in a row
 -- breaks his guard - a deathblow: a heavy cut of the player's, a big part of his health
 O.Deflect = { Breaks = 3, Forget = 8, DeathblowFraction = 0.08 }
+
+-- With his sword, as in Sekiro: now and then he deflects the player's cut blade to blade and cuts back at once
+O.Duel = { DeflectChance = 0.4, DeflectEvery = 2.2, GuardSeconds = 0.45, cooldown = 0, guardLeft = 0, wasAttacking = false }
+function O.updateDuel(deltaTime)
+    local duel = O.Duel
+    duel.cooldown = duel.cooldown - deltaTime
+    -- (his blade up against the cut: a block is held only while it is asked for, every frame - then he cuts back)
+    if duel.guardLeft > 0 then
+        duel.guardLeft = duel.guardLeft - deltaTime
+        if phase >= 5 and not this.health.isDead then
+            if duel.guardLeft > 0 then
+                this.enemy:attack("block")
+            elseif not O.slam and not O.dash then
+                this.enemy:attack("light")
+            end
+        end
+    end
+    local player = O.playerEntity()
+    local isAttacking = player ~= nil and player.characterActions ~= nil and player.characterActions.isAttacking
+    local hasJustStarted = isAttacking and not duel.wasAttacking
+    duel.wasAttacking = isAttacking
+    if phase < 5 or not hasJustStarted or duel.cooldown > 0 or not isFreeToAct() or O.slam or O.dash then return end
+    if this.enemy.distanceToTarget > GuardDistance + 0.4 or math.random() >= duel.DeflectChance then return end
+    duel.cooldown = duel.DeflectEvery
+    duel.guardLeft = duel.GuardSeconds
+    this.enemy:attack("block")
+end
 function O.updateDeflects(deltaTime)
     if phase < 5 then return end
     local d = O.deflects or { count = 0, since = 0, was = false }
@@ -3501,6 +3699,16 @@ function OnUpdate(deltaTime)
         return
     end
 
+    -- The scene of his defeat runs by itself (and on through his fall, after he is dead)
+    if O.finale then
+        O.updateFinale(deltaTime)
+        updateTweens(deltaTime)
+        if not this.health.isDead then
+            updateLook(deltaTime)
+            return
+        end
+    end
+
     if boss.isDefeated or this.health.isDead then
         if not hasSeenDefeat then onDefeat() end
         updateLook(deltaTime)
@@ -3565,6 +3773,7 @@ function OnUpdate(deltaTime)
     O.updateSwordCamera(deltaTime)
     O.updateSummonHover(deltaTime)
     O.updateDeflects(deltaTime)
+    O.updateDuel(deltaTime)
 
     seconds = seconds + deltaTime
 

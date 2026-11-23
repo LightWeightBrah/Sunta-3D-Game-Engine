@@ -263,9 +263,8 @@ def spell(name, **settings):
 
 # Meters a kick throws back the one it staggers (the engine's knockback: sliding back on the feet, as in the film's
 # fights): the feet throw, the fists only stagger
-# (rare: a kick throws back only when it breaks the one hit's poise - with a heavy reel, not the slide; the user
-# wanted throws back, but not often)
-KICK_KNOCKBACK = 2.5
+# (rare: a kick throws back only when it breaks the one hit's poise; the user wanted throws back, but not often)
+KICK_KNOCKBACK = 3.2
 
 
 def add_limb(builder, character, name, bone, damage, layer, poise_damage=20.0, size=0.14, camera_shake=0.2):
@@ -535,7 +534,8 @@ def add_effects(builder):
     # (it lands when the two waves of oil meet on the enemy: player_techniques.lua plays them)
     builder.add(projectile("Player Domain Blast", speed=0.0, damage=130.0, poise_damage=500.0, radius=10.0,
                            homing_degrees_per_second=0.0, lifetime_seconds=6.0, fuse_seconds=PLAYER_DOMAIN_CRASH_AT,
-                           trail_effect="Oil Trail", trail_particles_per_second=60.0,
+                           # (no trail: lying still at the enemy's feet for its fuse it grew a white lump of smoke)
+                           trail_effect="", trail_particles_per_second=0.0,
                            hit_effect="", hit_burst=0, hit_sound="@game/Sounds/Spells/deep_boom.ogg",
                            hit_stop_seconds=0.15, camera_shake=1.0))
     # The player's great spell: slow, wide, and it hits like a truck
@@ -629,14 +629,13 @@ PLAYER_MORE_ATTACKS = {
     "dodge_attack_animation": "",
     "riposte_animation": "Attack_Riposte", "riposte_reach": 2.6,
     "extra_hit_reaction_animations": ["Hit_2"], "heavy_hit_reaction_animation": "Hit_Heavy",
-    # (an ordinary throw is a heavy reeling step back, not the slide on a knee: that is kept for the blow before his
-    # domain - the user)
-    "knockback_animation": "Hit_Heavy", "knockback_seconds": 0.55, "knockback_dust": "Skid Dust",
+    # (a throw is the quick slide back on his feet with dust - the heavy reel read as weak and odd, the knock-down with
+    # its slow getting up broke the fight's pace: the user)
+    "knockback_animation": "Knockback", "knockback_seconds": 0.6, "knockback_dust": "Skid Dust",
     # (his heavy attack throws the boss back a little: his own choice, so not often)
-    "finisher_knockback": 0.0, "heavy_knockback": 2.5, "heavy_knockback_chance": 0.5,
-    # The rare big throw (the user: two kinds - an ordinary reel, and now and then off his feet): a heavy blow that
-    # throws him knocks him down a third of the time, flying back on his back, sliding, getting up
-    "knockdown_animation": "Knocked_Down", "get_up_animation": "Get_Up", "knockdown_chance": 0.3, "knockdown_seconds": 1.0,
+    "finisher_knockback": 0.0, "heavy_knockback": 3.2, "heavy_knockback_chance": 0.5,
+    # (never knocked off his feet: falling and getting up slowly broke the fight's pace - the user)
+    "knockdown_chance": 0.0,
     "attack_moves": PLAYER_ATTACK_MOVES,
     # A punch steps in to reach, but never slides more than a step
     "attack_lunge_max_distance": 0.9,
@@ -1029,6 +1028,16 @@ def add_armor_transformation(builder, boss):
         # (to the side of the paths of the plates: from straight ahead the torso flew through the lens)
         ("Armor Snap", 3.05, 1.3, 0.4, ((3.0, 1.5, -3.3), (2.5, 1.5, -2.8))),
         ("Armor Draw", 2.55, 1.25, 0.4, ((3.0, 1.2, -2.3), (2.6, 1.3, -1.9))),
+        # The scene of his defeat (boss_fight.lua O.FinaleShots; the player a step in front of him): from the side as
+        # they stand blade to blade; low behind the player as the cut goes through and the armor bursts; close on his
+        # face as the fire leaves his eyes; wide and low as he falls
+        # (each longer than its moment: the next one cuts in - the slow motion of the cut stretched the script's time
+        # and the game showed between them)
+        ("Finale Clash", 3.0, 1.35, 0.3, ((3.6, 1.3, -1.4), (3.3, 1.25, -1.2))),
+        # (wide to the side behind the player: straight behind him his armored back filled the screen)
+        ("Finale Strike", 3.0, 1.3, 0.0, ((2.6, 0.8, -6.4), (2.3, 0.7, -5.8))),
+        ("Finale Face", 3.5, 1.64, 0.3, ((0.22, 1.58, -0.85), (0.14, 1.6, -0.65))),
+        ("Finale Fall", 3.6, 0.9, 0.5, ((4.2, 0.6, -2.6), (5.4, 1.1, -3.6))),
         # (aimed at his nose: aimed at his eyes, his mouth - the smile - was under the black bar)
         ("Armor Ignite Face", 2.05, 1.7, 0.3, ((-0.25, 1.72, -1.05), (-0.15, 1.72, -0.82))),
         ("Armor Ignite", 1.85, 1.45, 0.5, ((-0.8, 1.5, -2.9), (-1.3, 1.75, -5.0))),
@@ -1075,6 +1084,7 @@ def add_armor_transformation(builder, boss):
 
     # What he says over the shots (the cutscene's title line): the player must know where his armor comes from
     lines = {"Armor Face": ("Did you think it was over?", 2.2),
+             "Finale Face": ("History... remembers... me...", 2.0),
              "Armor Rift Sky": ("My treasure is not spent yet.", 1.6),
              "Armor Ignite": ("Jeffrey Epstein, Armored in Sin", 1.6)}
     for name, seconds, height, blend, points in shots:
@@ -1268,16 +1278,16 @@ def add_boss(builder):
     entity["tag"]["name"] = BOSS_NAME
     entity["model"]["model_name"] = BOSS_MODEL
     entity["character_actions"].update(BOSS_HIT_WINDOWS)
-    entity["character_actions"].update({"knockback_animation": "Hit", "knockback_seconds": 0.55,
+    # (his throw: the big reel from the gut sliding back - the slide on a knee is kept for the blow before his domain)
+    entity["character_actions"].update({"knockback_animation": "Hit", "knockback_seconds": 0.6,
                                         "knockback_dust": "Skid Dust",
                                         # (none of his own: thrown by them the player lost the controls too
                                         # often - only his kicks that break the player's poise still throw)
                                         # (a third of his kicks throw the player back)
-                                        "finisher_knockback": 0.0, "heavy_knockback": 2.5,
+                                        "finisher_knockback": 0.0, "heavy_knockback": 3.2,
                                         "heavy_knockback_chance": 0.35,
-                                        # (knocked off his feet now and then too, as the player is)
-                                        "knockdown_animation": "Knocked_Down", "get_up_animation": "Get_Up",
-                                        "knockdown_chance": 0.3, "knockdown_seconds": 1.0})
+                                        # (never knocked off his feet: the slow getting up broke the pace)
+                                        "knockdown_chance": 0.0})
     # He steps in to reach with his punches, now and then holds one back for a moment, hops out of the way of blows
     # and orbs and takes punches on his forearms (the script raises his guard)
     entity["character_actions"].update({"shockwave_radius": 0.0, "shockwave_effect": "", "attack_reach": 1.3,
@@ -1299,7 +1309,7 @@ def add_boss(builder):
     entity["transform"] = transform(BOSS_START, (0.0, 180.0, 0.0))
     entity["box_collider"]["half_extents"] = [0.38, 0.95, 0.38]
     # While his summon protects him (or a phase changes) the blows glance off him with guard sparks
-    entity["health"].update({"max_health": 2400.0, "death_slow_motion_seconds": 3.0, "death_slow_motion_scale": 0.25,
+    entity["health"].update({"max_health": 2400.0, "death_slow_motion_seconds": 0.8, "death_slow_motion_scale": 0.6,
                              "hit_effect": "Punch Impact", "deflect_effect": "Guard Impact"})
     # Staggered, he can't be staggered again for 2.5 s: a string of punches doesn't pin him (see also boss_fight.lua)
     entity["poise"] = {"max_poise": 70.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 1.6}
@@ -1314,7 +1324,8 @@ def add_boss(builder):
     entity["currency_reward"] = {"amount": 20000}
     # The engine's own second phase is not used: the phases of this fight are in the script
     entity["boss"] = {"phase_two_health_fraction": 0.0, "phase_two_damage_multiplier": 1.0, "phase_two_attack_speedup": 1.0,
-                      "defeat_cutscene": "Boss Defeat", "defeat_cutscene_delay": 3.5}
+                      "defeat_cutscene": "", "defeat_cutscene_delay": 3.5}
+    # (no camera circling him once he lies dead: the scene of his defeat comes before his fall - boss_fight.lua O.Finale)
     entity["script"] = script("boss_fight.lua")
     add_eyes(builder, boss, "Boss", BOSS_EYES, [1.0, 1.0, 1.0], 0.1)
     add_seal(builder, boss)
@@ -1415,9 +1426,13 @@ def add_summon(builder):
     entity["poise"] = {"max_poise": 140.0, "recover_after_seconds": 4.0, "stagger_immunity_seconds": 3.0}
     entity["enemy"].update({"sight_distance": 80.0, "hearing_distance": 80.0, "starts_dormant": True})
     entity["enemy_health_bar"].update({"is_boss": True, "display_name": SUMMON_DISPLAY_NAME})
-    entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 5.0, "attack_cooldown_seconds": 1.3,
-                                  "heavy_attack_chance": 0.4, "max_light_combo": 3, "finisher_chance": 0.4})
-    entity["character_controller"].update({"walk_speed": 2.0, "run_speed": 5.6})
+    # (pressing harder: with long breaths between its blows and after them the fight dragged - the user found it dull)
+    entity["melee_enemy"].update({"give_up_distance": 120.0, "run_distance": 5.0, "attack_cooldown_seconds": 0.85,
+                                  # (its heavy blow, both fists into the ground, bursts in a ring of fire: often it
+                                  # was the explosions out of nowhere the user found irritating)
+                                  "recover_seconds": 0.6, "heavy_attack_chance": 0.2, "max_light_combo": 3,
+                                  "finisher_chance": 0.4})
+    entity["character_controller"].update({"walk_speed": 2.4, "run_speed": 6.4})
     entity["currency_reward"] = {"amount": 8000}
     # It adapts to what it is hit with (see the script)
     entity["script"] = script("summon_adaptation.lua")
@@ -1533,7 +1548,7 @@ SEQUENCE_SHOTS = {
     "Knockback Flight": {"duration_seconds": 6.1},
     # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
     "Domain Sign":      {"blend_in_seconds": 0.0},
-        "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
+        "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 7.0},
     "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},

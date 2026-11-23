@@ -145,6 +145,10 @@ PLAYER = {
     # Hanging in the air with nothing in his hands (up in the sky for his domain, film 2:19-2:22): the scripts make it
     # his standing clip meanwhile, a boxer's bounce in the sky looked wrong
     "Float":          library(ADDON, "Levitate Idle"),
+    # Up in the sky for his domain (film 2:19-2:22): standing calm in the air, the sign of the domain held before his
+    # chin the whole time (GESTURES) - hanging in the levitation clip his legs dangled bent and his hands dropped (the
+    # user: his bones looked odd up there)
+    "Float_Sign":     diddy("Idle_Standing", 1, 66, speed=0.6),
     # His two great techniques are signs of the hands held still (posed below, see GESTURES): both hands pressed
     # together with two fingers up, and a triangle of both hands before the chest
     # (about three seconds: the sign made, held for a breath and the technique gone, as in the film 1:47.5-1:49 - the
@@ -378,6 +382,7 @@ FINGER_POSES = (
     ("Cast_Great_Orb", ("open", "open")),
     ("Fly_Orb", ("open", "relaxed")),
     ("Cast_Domain", ("steeple", "steeple")),
+    ("Float_Sign", ("steeple", "steeple")),
     ("Cast_Orb", ("open", "relaxed")),
     ("Cast_Pillars", ("two", "relaxed")),
     ("Summon", ("two", "relaxed")),
@@ -454,8 +459,12 @@ GESTURES = {
         "Cast_Great_Orb": [Gesture("_R", (0.11, 0.31, 0.04), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9),
                            Gesture("_L", (0.11, 0.31, 0.04), (-0.75, 0.0, 0.7), (0.0, 1.0, 0.1), reached_at=0.3, left_from=0.9)],
         # As in the film (2:19): both hands clasped before the chin, the index fingers straight up together
-        "Cast_Domain":    [Gesture("_R", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=0.92),
-                           Gesture("_L", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=0.92)],
+        "Cast_Domain":    [Gesture("_R", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=1.01, end_at=1.02),
+                           Gesture("_L", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), reached_at=0.25, left_from=1.01, end_at=1.02)],
+        # (the same sign held all along while he stands in the air after it: from its first frame, looping - start_at under 0,
+        # or its first frame had the clip's own hands)
+        "Float_Sign":     [Gesture("_R", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), start_at=-0.01, reached_at=0.0, left_from=1.01, end_at=1.02),
+                           Gesture("_L", (0.02, 0.30, 0.12), (0.0, 0.25, 1.0), (-1.0, 0.0, 0.0), start_at=-0.01, reached_at=0.0, left_from=1.01, end_at=1.02)],
     },
 }
 
