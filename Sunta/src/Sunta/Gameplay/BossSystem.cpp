@@ -395,7 +395,9 @@ bool HasLivingBoss(EntityManager& entityManager, const FogGateComponent& fog)
 		const unsigned int bossID = entityManager.GetEntityIDForComponent(boss);
 
 		glm::vec3 position;
-		if (IsAlive(entityManager, bossID) && TryGetPosition(entityManager, bossID, position) && IsInside(fog, position))
+		// (an awake boss still fighting counts wherever he is: carried out of the arena's box for a moment - a fight
+		// high in the sky - he isn't fallen, the fog stays and the music plays on)
+		if (IsAlive(entityManager, bossID) && TryGetPosition(entityManager, bossID, position) && (boss.isAwake || IsInside(fog, position)))
 			return true;
 	}
 
