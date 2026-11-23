@@ -1499,7 +1499,8 @@ SEQUENCE_SHOTS = {
     "Domain Sign":      {"blend_in_seconds": 0.0},
     # (a cut, as in the film 1:24.5: a flight from his face out to the temple was neither smooth nor the film's)
     "Domain Reveal":    {"blend_in_seconds": 0.0, "duration_seconds": 7.4},
-    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
+    # (a cut, as in the film 1:30.5: flown from the wide shot of the temple the camera swung across half the arena)
+    "Star Flight":      {"blend_in_seconds": 0.0, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},
     # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)
