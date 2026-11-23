@@ -692,14 +692,14 @@ local O = {
     -- this far through the air, skids on, gets up with the sign
     KnockCutscene  = "Knockback Flight",
     KnockMusicAt   = 38.6,
-    KnockMeters    = 18,
-    KnockSkidMeters = 12,
+    KnockMeters    = 22,
+    KnockSkidMeters = 14,
     -- One throw, smooth (the user: a ball of oil striking him again made it two jerky throws): hurled through the
     -- ruins, he lands into a long skid on his feet slowing down, straightening up with the sign as he stops - in
     -- time with the film's sound (the close shot of the sign at 1:20.8)
-    KnockFlySeconds = 2.2,
+    KnockFlySeconds = 1.2,
     KnockWaitSeconds = 0.0,
-    KnockSkidSeconds = 3.3,
+    KnockSkidSeconds = 4.3,
     KnockOrbAt = 99,
     KnockRiseAt = 0.8,
     -- If the player never hurts him enough, the domain still opens (seconds of the soundtrack)
@@ -967,7 +967,8 @@ function O.updateKnock(deltaTime)
             this.world:effect("Crash Impact", k.land, this.transform.forward)
         end
         local f = (k.t - fly - wait) / skid
-        this.transform.position = mix(k.land, k.skid, 1 - (1 - f) * (1 - f))
+        -- (fast out of the landing, slowing a long way to a stop)
+        this.transform.position = mix(k.land, k.skid, 1 - (1 - f) ^ 4)
         -- (a furrow of dust behind his feet, thinning as he slows)
         k.dustIn = k.dustIn - deltaTime
         if k.dustIn <= 0 then
@@ -1050,30 +1051,27 @@ function O.domainOpeningSteps()
             O.isHoldingSign = false
             playCutscene(SignCutscene)
         end },
-        -- The hill of fire swells while he still speaks (film 1:22.3), the temple rising out of it carries him up: it stands as his words end (1:24.7), as in the film
-        { 46.1, function()
+        -- As in the older version the user liked (his video): the sky darkens, then the wide shot with the hill of
+        -- fire, the temple rising out of it carrying him up, the stars bursting out of the dome and the camera
+        -- flying on over them without a cut (in step with the film's sound: the temple at its 1:24.5)
+        { 46.3, function()
             changeLook(Domain, 1.8)
             setAsh(true)
             this.world:shakeCamera(0.5)
-            -- (quieter than his words)
             Audio.playAt(RoarSound, this.transform.position, 0.6)
+        end },
+        { 48.0, function()
             O.placeTempleUnderBoss()
             isOnTheDome = true
             -- (the sign he already holds goes on: started again here his hand dropped and rose a second time)
             O.isHoldingSign, O.holdSignIn = true, 2.5
-            moveTemple(TempleRisenY, 4.6)
-            Audio.play(RumbleSound, 0.8)
-        end },
-        -- (the fire with the wide shot: close to him the camera was inside it, the screen white)
-        { 47.0, function()
             O.startSun(find(TempleName).transform.position)
+            moveTemple(TempleRisenY, 5.4)
+            Audio.play(RumbleSound, 0.8)
             playCutscene(RevealCutscene)
         end },
-        -- Out of the dome under his feet the stars burst into a turning sphere
-        -- (only once the temple stands, as in the film)
-        -- (the moment the temple has risen: the film shows the player between them, the game doesn't - waiting
-        -- for the film's second they came late)
-        { 50.3, function() O.burstStars() end },
+        -- Out of the dome under his feet the stars burst into a turning sphere, as the temple stands
+        { 52.3, function() O.burstStars() end },
         { 54.4, function() O.flyThroughStars() end },
         { 58.45, function() playCutscene(SmileCutscene) end },
         { 60.85, function()
@@ -1086,7 +1084,6 @@ function O.domainOpeningSteps()
             if this.model then this.model.darkness = 1 end
             setEyes(10)
             playCutscene(O.MeteorCutscene)
-            O.runIntoStars()
         end },
         -- The first of them come down around him: he is thrown off his feet
         { 62.5, function()
@@ -2767,16 +2764,16 @@ function O.startSkyBrawl()
             this.world:shakeCamera(0.8)
             -- (both leap off the ground, the player already swinging; as in the film (2:11.2) the way up isn't seen:
             -- a blurred whip of the picture and they are in the clouds - seen rising slowly it looked unnatural)
+            -- (no way up is shown at all - the user found every rise unnatural: a blow, a flash of white, and
+            -- they are already fighting in the clouds)
             O.playPlayer(B.Punches[1])
             this.characterActions:play("Hit")
-            playCutscene("Sky Leap")
-            after(B.WhipAt, function()
-                this.world:flash(vec3(0.85, 0.82, 0.8), 0.35, 0.05)
-                this.world:impactFrame(1.0, 0.35)
-                risen = 1
-            end)
-            show.during = function(deltaTime) if risen >= 1 then inTheSky(deltaTime) end end
-            return B.WhipAt + 0.05
+            this.world:flash(vec3(1, 1, 0.97), 0.45, 0.15)
+            this.world:impactFrame(1.0, 0.35)
+            risen = 1
+            inTheSky(0)
+            show.during = inTheSky
+            return 0.15
         end,
         -- The brawl: held until the player has struck enough (a blow and a reel for every press)
         function()

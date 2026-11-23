@@ -1425,6 +1425,38 @@
   },
   {
    "tag": {
+    "name": "Oil Wave Body L"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -50.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.01,
+     0.01,
+     0.01
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_oil_wave"
+   }
+  },
+  {
+   "tag": {
     "name": "Oil Wave L Spray"
    },
    "transform": {
@@ -1605,6 +1637,38 @@
   },
   {
    "tag": {
+    "name": "Oil Wave Body R"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -50.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.01,
+     0.01,
+     0.01
+    ]
+   },
+   "model": {
+    "is_visible": false,
+    "model_name": "sih_oil_wave"
+   }
+  },
+  {
+   "tag": {
     "name": "Oil Wave R Spray"
    },
    "transform": {
@@ -1666,7 +1730,7 @@
     "max_particles": 2500
    },
    "parent": {
-    "index": 29,
+    "index": 30,
     "bone_name": ""
    }
   },
@@ -1739,7 +1803,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 29,
+    "index": 30,
     "bone_name": ""
    }
   },
@@ -1816,7 +1880,7 @@
     ]
    },
    "parent": {
-    "index": 32,
+    "index": 34,
     "bone_name": ""
    }
   },
@@ -1848,7 +1912,7 @@
     ]
    },
    "parent": {
-    "index": 32,
+    "index": 34,
     "bone_name": ""
    }
   },
@@ -1880,7 +1944,7 @@
     ]
    },
    "parent": {
-    "index": 32,
+    "index": 34,
     "bone_name": ""
    }
   },
@@ -1957,7 +2021,7 @@
     ]
    },
    "parent": {
-    "index": 36,
+    "index": 38,
     "bone_name": ""
    }
   },
@@ -1989,7 +2053,7 @@
     ]
    },
    "parent": {
-    "index": 36,
+    "index": 38,
     "bone_name": ""
    }
   },
@@ -2021,7 +2085,7 @@
     ]
    },
    "parent": {
-    "index": 36,
+    "index": 38,
     "bone_name": ""
    }
   },
@@ -2098,7 +2162,7 @@
     ]
    },
    "parent": {
-    "index": 40,
+    "index": 42,
     "bone_name": ""
    }
   },
@@ -2130,7 +2194,7 @@
     ]
    },
    "parent": {
-    "index": 40,
+    "index": 42,
     "bone_name": ""
    }
   },
@@ -2162,7 +2226,7 @@
     ]
    },
    "parent": {
-    "index": 40,
+    "index": 42,
     "bone_name": ""
    }
   },
@@ -2239,7 +2303,7 @@
     ]
    },
    "parent": {
-    "index": 44,
+    "index": 46,
     "bone_name": ""
    }
   },
@@ -2271,7 +2335,7 @@
     ]
    },
    "parent": {
-    "index": 44,
+    "index": 46,
     "bone_name": ""
    }
   },
@@ -2348,7 +2412,7 @@
     ]
    },
    "parent": {
-    "index": 47,
+    "index": 49,
     "bone_name": ""
    }
   },
@@ -2380,7 +2444,7 @@
     ]
    },
    "parent": {
-    "index": 47,
+    "index": 49,
     "bone_name": ""
    }
   },
@@ -2457,7 +2521,7 @@
     ]
    },
    "parent": {
-    "index": 50,
+    "index": 52,
     "bone_name": ""
    }
   },
@@ -2489,7 +2553,7 @@
     ]
    },
    "parent": {
-    "index": 50,
+    "index": 52,
     "bone_name": ""
    }
   },
@@ -2566,7 +2630,7 @@
     ]
    },
    "parent": {
-    "index": 53,
+    "index": 55,
     "bone_name": ""
    }
   },
@@ -2598,7 +2662,7 @@
     ]
    },
    "parent": {
-    "index": 53,
+    "index": 55,
     "bone_name": ""
    }
   },
@@ -2675,7 +2739,7 @@
     ]
    },
    "parent": {
-    "index": 56,
+    "index": 58,
     "bone_name": ""
    }
   },
@@ -2707,7 +2771,7 @@
     ]
    },
    "parent": {
-    "index": 56,
+    "index": 58,
     "bone_name": ""
    }
   },
@@ -2789,7 +2853,7 @@
     ]
    },
    "parent": {
-    "index": 59,
+    "index": 61,
     "bone_name": ""
    }
   },
@@ -2821,7 +2885,7 @@
     ]
    },
    "parent": {
-    "index": 59,
+    "index": 61,
     "bone_name": ""
    }
   },
@@ -2898,7 +2962,7 @@
     ]
    },
    "parent": {
-    "index": 62,
+    "index": 64,
     "bone_name": ""
    }
   },
@@ -2930,7 +2994,7 @@
     ]
    },
    "parent": {
-    "index": 62,
+    "index": 64,
     "bone_name": ""
    }
   },
@@ -2962,7 +3026,7 @@
     ]
    },
    "parent": {
-    "index": 62,
+    "index": 64,
     "bone_name": ""
    }
   },
@@ -2994,7 +3058,7 @@
     ]
    },
    "parent": {
-    "index": 62,
+    "index": 64,
     "bone_name": ""
    }
   },
@@ -3119,7 +3183,7 @@
      0.05,
      0.0
     ],
-    "intensity": 0.022,
+    "intensity": 0.07,
     "max_particles": 30000,
     "style": 1,
     "spawn_shape": 2,
@@ -3435,7 +3499,7 @@
     "title_seconds": 0.0,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 0.0
+    "blend_in_seconds": 1.2
    }
   },
   {
@@ -3466,7 +3530,7 @@
     ]
    },
    "parent": {
-    "index": 73,
+    "index": 75,
     "bone_name": ""
    }
   },
@@ -3498,7 +3562,7 @@
     ]
    },
    "parent": {
-    "index": 73,
+    "index": 75,
     "bone_name": ""
    }
   },
@@ -3530,7 +3594,7 @@
     ]
    },
    "parent": {
-    "index": 73,
+    "index": 75,
     "bone_name": ""
    }
   },
@@ -3562,7 +3626,7 @@
     ]
    },
    "parent": {
-    "index": 73,
+    "index": 75,
     "bone_name": ""
    }
   },
@@ -3594,7 +3658,7 @@
     ]
    },
    "parent": {
-    "index": 73,
+    "index": 75,
     "bone_name": ""
    }
   },
@@ -3896,7 +3960,7 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
     "index": 2,
@@ -20481,7 +20545,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 483,
+    "index": 485,
     "bone_name": ""
    }
   },
@@ -20525,7 +20589,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 483,
+    "index": 485,
     "bone_name": ""
    }
   },
@@ -20569,7 +20633,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 483,
+    "index": 485,
     "bone_name": ""
    }
   },
@@ -20613,7 +20677,7 @@
     "is_visible": false
    },
    "parent": {
-    "index": 483,
+    "index": 485,
     "bone_name": ""
    }
   },
@@ -20740,7 +20804,7 @@
     "model_name": "sih_oil_bottle"
    },
    "parent": {
-    "index": 489,
+    "index": 491,
     "bone_name": ""
    }
   },
@@ -20861,7 +20925,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -20897,7 +20961,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -20933,7 +20997,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -20969,7 +21033,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21005,7 +21069,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21041,7 +21105,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21077,7 +21141,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21113,7 +21177,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21149,7 +21213,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21185,7 +21249,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21221,7 +21285,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21257,7 +21321,7 @@
     "model_name": "sih_black_book"
    },
    "parent": {
-    "index": 492,
+    "index": 494,
     "bone_name": ""
    }
   },
@@ -21338,7 +21402,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21374,7 +21438,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21410,7 +21474,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21446,7 +21510,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21482,7 +21546,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21518,7 +21582,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21554,7 +21618,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21590,7 +21654,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21626,7 +21690,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21662,7 +21726,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21698,7 +21762,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21734,7 +21798,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21770,7 +21834,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21806,7 +21870,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21842,7 +21906,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21878,7 +21942,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21914,7 +21978,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21950,7 +22014,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -21986,7 +22050,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22022,7 +22086,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22058,7 +22122,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22094,7 +22158,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22130,7 +22194,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22166,7 +22230,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22202,7 +22266,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22238,7 +22302,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22274,7 +22338,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22310,7 +22374,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22346,7 +22410,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22382,7 +22446,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22418,7 +22482,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22454,7 +22518,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22490,7 +22554,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22526,7 +22590,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22562,7 +22626,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22598,7 +22662,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22634,7 +22698,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22670,7 +22734,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22706,7 +22770,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22742,7 +22806,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22778,7 +22842,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22814,7 +22878,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22850,7 +22914,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22886,7 +22950,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22922,7 +22986,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22958,7 +23022,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -22994,7 +23058,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -23030,7 +23094,7 @@
     "model_name": "sih_tape"
    },
    "parent": {
-    "index": 505,
+    "index": 507,
     "bone_name": ""
    }
   },
@@ -23112,7 +23176,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23149,7 +23213,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23186,7 +23250,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23223,7 +23287,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23260,7 +23324,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23297,7 +23361,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23334,7 +23398,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23371,7 +23435,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23408,7 +23472,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23445,7 +23509,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23482,7 +23546,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23519,7 +23583,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23556,7 +23620,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23593,7 +23657,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23630,7 +23694,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23667,7 +23731,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23704,7 +23768,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23741,7 +23805,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23778,7 +23842,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23815,7 +23879,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23852,7 +23916,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23889,7 +23953,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23926,7 +23990,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -23963,7 +24027,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24000,7 +24064,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24037,7 +24101,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24074,7 +24138,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24111,7 +24175,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24148,7 +24212,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24185,7 +24249,7 @@
     "emissive_strength": 2.5
    },
    "parent": {
-    "index": 554,
+    "index": 556,
     "bone_name": ""
    }
   },
@@ -24310,7 +24374,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 586,
+    "index": 588,
     "bone_name": ""
    }
   },
@@ -24346,7 +24410,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 586,
+    "index": 588,
     "bone_name": ""
    }
   },
@@ -24382,7 +24446,7 @@
     "model_name": "sih_jet"
    },
    "parent": {
-    "index": 586,
+    "index": 588,
     "bone_name": ""
    }
   },
@@ -24464,7 +24528,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24500,7 +24564,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24536,7 +24600,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24572,7 +24636,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24608,7 +24672,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24644,7 +24708,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24680,7 +24744,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24716,7 +24780,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24752,7 +24816,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24788,7 +24852,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24824,7 +24888,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24860,7 +24924,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24896,7 +24960,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24932,7 +24996,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -24968,7 +25032,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25004,7 +25068,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25040,7 +25104,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25076,7 +25140,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25112,7 +25176,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25148,7 +25212,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25184,7 +25248,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25220,7 +25284,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25256,7 +25320,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25292,7 +25356,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25328,7 +25392,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25364,7 +25428,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25400,7 +25464,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25436,7 +25500,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25472,7 +25536,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25508,7 +25572,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25544,7 +25608,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25580,7 +25644,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25616,7 +25680,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25652,7 +25716,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25688,7 +25752,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25724,7 +25788,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25760,7 +25824,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25796,7 +25860,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25832,7 +25896,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25868,7 +25932,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 590,
+    "index": 592,
     "bone_name": ""
    }
   },
@@ -25949,7 +26013,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -25985,7 +26049,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26021,7 +26085,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26057,7 +26121,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26093,7 +26157,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26129,7 +26193,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26165,7 +26229,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26201,7 +26265,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26237,7 +26301,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26273,7 +26337,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26309,7 +26373,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26345,7 +26409,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26381,7 +26445,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26417,7 +26481,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26453,7 +26517,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26489,7 +26553,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26525,7 +26589,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26561,7 +26625,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26597,7 +26661,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26633,7 +26697,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26669,7 +26733,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26705,7 +26769,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26741,7 +26805,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26777,7 +26841,7 @@
     "model_name": "sih_money"
    },
    "parent": {
-    "index": 631,
+    "index": 633,
     "bone_name": ""
    }
   },
@@ -26900,7 +26964,7 @@
     "dissolve": 0.6
    },
    "parent": {
-    "index": 656,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -26962,7 +27026,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 656,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -27043,7 +27107,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 656,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -27117,7 +27181,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 656,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -27203,7 +27267,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 656,
+    "index": 658,
     "bone_name": ""
    }
   },
@@ -27344,7 +27408,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 662,
+    "index": 664,
     "bone_name": ""
    }
   },
@@ -27418,7 +27482,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 662,
+    "index": 664,
     "bone_name": ""
    }
   },
@@ -27559,7 +27623,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 665,
+    "index": 667,
     "bone_name": ""
    }
   },
@@ -27685,7 +27749,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 667,
+    "index": 669,
     "bone_name": ""
    }
   },
@@ -27766,7 +27830,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 667,
+    "index": 669,
     "bone_name": ""
    }
   },
@@ -27902,7 +27966,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 670,
+    "index": 672,
     "bone_name": ""
    }
   },
@@ -28028,7 +28092,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 672,
+    "index": 674,
     "bone_name": ""
    }
   },
@@ -28109,7 +28173,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 672,
+    "index": 674,
     "bone_name": ""
    }
   },
@@ -28218,7 +28282,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 675,
+    "index": 677,
     "bone_name": ""
    }
   },
@@ -28273,7 +28337,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 675,
+    "index": 677,
     "bone_name": ""
    }
   },
@@ -28354,7 +28418,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 675,
+    "index": 677,
     "bone_name": ""
    }
   },
@@ -28440,7 +28504,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 675,
+    "index": 677,
     "bone_name": ""
    }
   },
@@ -28514,7 +28578,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 675,
+    "index": 677,
     "bone_name": ""
    }
   },
@@ -28623,7 +28687,7 @@
     "dissolve": 0.3
    },
    "parent": {
-    "index": 681,
+    "index": 683,
     "bone_name": ""
    }
   },
@@ -28704,7 +28768,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 681,
+    "index": 683,
     "bone_name": ""
    }
   },
@@ -28812,7 +28876,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 684,
+    "index": 686,
     "bone_name": ""
    }
   },
@@ -28864,7 +28928,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 684,
+    "index": 686,
     "bone_name": ""
    }
   },
@@ -28945,7 +29009,7 @@
     "stretch": 0.02
    },
    "parent": {
-    "index": 684,
+    "index": 686,
     "bone_name": ""
    }
   },
@@ -29026,7 +29090,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 684,
+    "index": 686,
     "bone_name": ""
    }
   },
@@ -29100,7 +29164,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 684,
+    "index": 686,
     "bone_name": ""
    }
   },
@@ -29266,7 +29330,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 691,
+    "index": 693,
     "bone_name": ""
    }
   },
@@ -29347,7 +29411,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 691,
+    "index": 693,
     "bone_name": ""
    }
   },
@@ -29421,7 +29485,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 691,
+    "index": 693,
     "bone_name": ""
    }
   },
@@ -29528,7 +29592,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 695,
+    "index": 697,
     "bone_name": ""
    }
   },
@@ -29583,7 +29647,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 695,
+    "index": 697,
     "bone_name": ""
    }
   },
@@ -29669,7 +29733,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 695,
+    "index": 697,
     "bone_name": ""
    }
   },
@@ -29750,7 +29814,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 695,
+    "index": 697,
     "bone_name": ""
    }
   },
@@ -29836,7 +29900,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 695,
+    "index": 697,
     "bone_name": ""
    }
   },
@@ -29910,7 +29974,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 695,
+    "index": 697,
     "bone_name": ""
    }
   },
@@ -30018,7 +30082,7 @@
     "dissolve": 0.7
    },
    "parent": {
-    "index": 702,
+    "index": 704,
     "bone_name": ""
    }
   },
@@ -30069,7 +30133,7 @@
     "dissolve": 0.5
    },
    "parent": {
-    "index": 702,
+    "index": 704,
     "bone_name": ""
    }
   },
@@ -30120,7 +30184,7 @@
     "dissolve": 0.5
    },
    "parent": {
-    "index": 702,
+    "index": 704,
     "bone_name": ""
    }
   },
@@ -30195,7 +30259,7 @@
     "drag": 0.4
    },
    "parent": {
-    "index": 702,
+    "index": 704,
     "bone_name": ""
    }
   },
@@ -30304,7 +30368,7 @@
     "dissolve": 0.8
    },
    "parent": {
-    "index": 707,
+    "index": 709,
     "bone_name": ""
    }
   },
@@ -30385,7 +30449,7 @@
     "stretch": 0.06
    },
    "parent": {
-    "index": 707,
+    "index": 709,
     "bone_name": ""
    }
   },
@@ -30553,7 +30617,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 710,
+    "index": 712,
     "bone_name": ""
    }
   },
@@ -30660,7 +30724,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 712,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -30741,7 +30805,7 @@
     "stretch": 0.08
    },
    "parent": {
-    "index": 712,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -30822,7 +30886,7 @@
     "stretch": 0.05
    },
    "parent": {
-    "index": 712,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -30908,7 +30972,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 712,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -30982,7 +31046,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 712,
+    "index": 714,
     "bone_name": ""
    }
   },
@@ -31103,7 +31167,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 718,
+    "index": 720,
     "bone_name": ""
    }
   },
@@ -31184,7 +31248,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 718,
+    "index": 720,
     "bone_name": ""
    }
   },
@@ -31297,7 +31361,7 @@
     "dissolve": 0.8
    },
    "parent": {
-    "index": 721,
+    "index": 723,
     "bone_name": ""
    }
   },
@@ -31352,7 +31416,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 721,
+    "index": 723,
     "bone_name": ""
    }
   },
@@ -31405,7 +31469,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 721,
+    "index": 723,
     "bone_name": ""
    }
   },
@@ -31486,7 +31550,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 721,
+    "index": 723,
     "bone_name": ""
    }
   },
@@ -31572,7 +31636,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 721,
+    "index": 723,
     "bone_name": ""
    }
   },
@@ -31713,7 +31777,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 727,
+    "index": 729,
     "bone_name": ""
    }
   },
@@ -31820,7 +31884,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 729,
+    "index": 731,
     "bone_name": ""
    }
   },
@@ -31875,7 +31939,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 729,
+    "index": 731,
     "bone_name": ""
    }
   },
@@ -31956,7 +32020,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 729,
+    "index": 731,
     "bone_name": ""
    }
   },
@@ -32042,7 +32106,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 729,
+    "index": 731,
     "bone_name": ""
    }
   },
@@ -32116,7 +32180,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 729,
+    "index": 731,
     "bone_name": ""
    }
   },
@@ -32251,7 +32315,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 735,
+    "index": 737,
     "bone_name": ""
    }
   },
@@ -32337,7 +32401,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 735,
+    "index": 737,
     "bone_name": ""
    }
   },
@@ -32449,7 +32513,7 @@
     "dissolve": 0.7
    },
    "parent": {
-    "index": 738,
+    "index": 740,
     "bone_name": ""
    }
   },
@@ -32530,7 +32594,7 @@
     "stretch": 0.12
    },
    "parent": {
-    "index": 738,
+    "index": 740,
     "bone_name": ""
    }
   },
@@ -32616,7 +32680,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 738,
+    "index": 740,
     "bone_name": ""
    }
   },
@@ -32751,7 +32815,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 742,
+    "index": 744,
     "bone_name": ""
    }
   },
@@ -32837,7 +32901,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 742,
+    "index": 744,
     "bone_name": ""
    }
   },
@@ -32971,7 +33035,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 745,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33045,7 +33109,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 745,
+    "index": 747,
     "bone_name": ""
    }
   },
@@ -33193,7 +33257,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 748,
+    "index": 750,
     "bone_name": ""
    }
   },
@@ -33274,7 +33338,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 748,
+    "index": 750,
     "bone_name": ""
    }
   },
@@ -33400,7 +33464,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 751,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33486,7 +33550,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 751,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33567,7 +33631,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 751,
+    "index": 753,
     "bone_name": ""
    }
   },
@@ -33676,7 +33740,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -33729,7 +33793,7 @@
     "dissolve": 1.0
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -33784,7 +33848,7 @@
     "dissolve": 0.85
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -33865,7 +33929,7 @@
     "stretch": 0.0
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -33946,7 +34010,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -34032,7 +34096,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -34106,7 +34170,7 @@
     "burst_amount": 1
    },
    "parent": {
-    "index": 755,
+    "index": 757,
     "bone_name": ""
    }
   },
@@ -34250,7 +34314,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 763,
+    "index": 765,
     "bone_name": ""
    }
   },
@@ -34386,7 +34450,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 765,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34467,7 +34531,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 765,
+    "index": 767,
     "bone_name": ""
    }
   },
@@ -34607,7 +34671,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 768,
+    "index": 770,
     "bone_name": ""
    }
   },
@@ -34676,7 +34740,7 @@
     ]
    },
    "parent": {
-    "index": 461,
+    "index": 463,
     "bone_name": ""
    }
   },
@@ -34727,7 +34791,7 @@
     "dissolve": 0.9
    },
    "parent": {
-    "index": 461,
+    "index": 463,
     "bone_name": ""
    }
   },
@@ -34808,7 +34872,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 461,
+    "index": 463,
     "bone_name": ""
    }
   },
@@ -34867,7 +34931,7 @@
     ]
    },
    "parent": {
-    "index": 478,
+    "index": 480,
     "bone_name": ""
    }
   },
@@ -34953,7 +35017,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 478,
+    "index": 480,
     "bone_name": ""
    }
   },
@@ -35034,7 +35098,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 478,
+    "index": 480,
     "bone_name": ""
    }
   },
@@ -35097,7 +35161,7 @@
     ]
    },
    "parent": {
-    "index": 467,
+    "index": 469,
     "bone_name": ""
    }
   },
@@ -35154,7 +35218,7 @@
     ]
    },
    "parent": {
-    "index": 476,
+    "index": 478,
     "bone_name": ""
    }
   },
@@ -35217,7 +35281,7 @@
     ]
    },
    "parent": {
-    "index": 473,
+    "index": 475,
     "bone_name": ""
    }
   },
@@ -35298,7 +35362,7 @@
     "stretch": 0.045
    },
    "parent": {
-    "index": 473,
+    "index": 475,
     "bone_name": ""
    }
   },
@@ -35569,7 +35633,7 @@
     "block_effect": "Guard Impact"
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Hand_L"
    }
   },
@@ -35620,7 +35684,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Hand_R"
    }
   },
@@ -35671,7 +35735,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Hand_L"
    }
   },
@@ -35719,10 +35783,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.3,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Foot_R"
    }
   },
@@ -35764,7 +35828,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Head"
    }
   },
@@ -35806,7 +35870,7 @@
     "intensity": 9.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Head"
    }
   },
@@ -35843,7 +35907,7 @@
     "emissive_strength": 1.2
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -35917,7 +35981,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -35986,7 +36050,7 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -36061,7 +36125,7 @@
     "flipbook_random_start": true
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Hips"
    }
   },
@@ -36130,7 +36194,7 @@
     "size_randomness": 0.5
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Hips"
    }
   },
@@ -36207,7 +36271,7 @@
     "only_while_striking": true
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Weapon_R"
    }
   },
@@ -36282,7 +36346,7 @@
     "flipbook_random_start": false
    },
    "parent": {
-    "index": 792,
+    "index": 794,
     "bone_name": ""
    }
   },
@@ -36520,7 +36584,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -36552,7 +36616,7 @@
     ]
    },
    "parent": {
-    "index": 800,
+    "index": 802,
     "bone_name": ""
    }
   },
@@ -36584,7 +36648,7 @@
     ]
    },
    "parent": {
-    "index": 800,
+    "index": 802,
     "bone_name": ""
    }
   },
@@ -36661,7 +36725,7 @@
     ]
    },
    "parent": {
-    "index": 803,
+    "index": 805,
     "bone_name": ""
    }
   },
@@ -36693,7 +36757,7 @@
     ]
    },
    "parent": {
-    "index": 803,
+    "index": 805,
     "bone_name": ""
    }
   },
@@ -36738,7 +36802,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -36770,7 +36834,7 @@
     ]
    },
    "parent": {
-    "index": 806,
+    "index": 808,
     "bone_name": ""
    }
   },
@@ -36802,7 +36866,7 @@
     ]
    },
    "parent": {
-    "index": 806,
+    "index": 808,
     "bone_name": ""
    }
   },
@@ -36847,7 +36911,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -36879,7 +36943,7 @@
     ]
    },
    "parent": {
-    "index": 809,
+    "index": 811,
     "bone_name": ""
    }
   },
@@ -36911,7 +36975,7 @@
     ]
    },
    "parent": {
-    "index": 809,
+    "index": 811,
     "bone_name": ""
    }
   },
@@ -36956,7 +37020,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -36988,7 +37052,7 @@
     ]
    },
    "parent": {
-    "index": 812,
+    "index": 814,
     "bone_name": ""
    }
   },
@@ -37020,7 +37084,7 @@
     ]
    },
    "parent": {
-    "index": 812,
+    "index": 814,
     "bone_name": ""
    }
   },
@@ -37070,7 +37134,7 @@
     "wait_prompt": "Mash [Space] - strike him in the clouds"
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37102,7 +37166,7 @@
     ]
    },
    "parent": {
-    "index": 815,
+    "index": 817,
     "bone_name": ""
    }
   },
@@ -37134,7 +37198,7 @@
     ]
    },
    "parent": {
-    "index": 815,
+    "index": 817,
     "bone_name": ""
    }
   },
@@ -37166,7 +37230,7 @@
     ]
    },
    "parent": {
-    "index": 815,
+    "index": 817,
     "bone_name": ""
    }
   },
@@ -37211,7 +37275,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37243,7 +37307,7 @@
     ]
    },
    "parent": {
-    "index": 819,
+    "index": 821,
     "bone_name": ""
    }
   },
@@ -37275,7 +37339,7 @@
     ]
    },
    "parent": {
-    "index": 819,
+    "index": 821,
     "bone_name": ""
    }
   },
@@ -37320,7 +37384,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37352,7 +37416,7 @@
     ]
    },
    "parent": {
-    "index": 822,
+    "index": 824,
     "bone_name": ""
    }
   },
@@ -37384,7 +37448,7 @@
     ]
    },
    "parent": {
-    "index": 822,
+    "index": 824,
     "bone_name": ""
    }
   },
@@ -37461,7 +37525,7 @@
     ]
    },
    "parent": {
-    "index": 825,
+    "index": 827,
     "bone_name": ""
    }
   },
@@ -37493,7 +37557,7 @@
     ]
    },
    "parent": {
-    "index": 825,
+    "index": 827,
     "bone_name": ""
    }
   },
@@ -37538,7 +37602,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37570,7 +37634,7 @@
     ]
    },
    "parent": {
-    "index": 828,
+    "index": 830,
     "bone_name": ""
    }
   },
@@ -37602,7 +37666,7 @@
     ]
    },
    "parent": {
-    "index": 828,
+    "index": 830,
     "bone_name": ""
    }
   },
@@ -37647,7 +37711,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37679,7 +37743,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 833,
     "bone_name": ""
    }
   },
@@ -37711,7 +37775,7 @@
     ]
    },
    "parent": {
-    "index": 831,
+    "index": 833,
     "bone_name": ""
    }
   },
@@ -37756,7 +37820,7 @@
     "blend_in_seconds": 0.35
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37788,7 +37852,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37820,7 +37884,7 @@
     ]
    },
    "parent": {
-    "index": 834,
+    "index": 836,
     "bone_name": ""
    }
   },
@@ -37865,7 +37929,7 @@
     "blend_in_seconds": 0.4
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -37897,7 +37961,7 @@
     ]
    },
    "parent": {
-    "index": 837,
+    "index": 839,
     "bone_name": ""
    }
   },
@@ -37929,7 +37993,7 @@
     ]
    },
    "parent": {
-    "index": 837,
+    "index": 839,
     "bone_name": ""
    }
   },
@@ -37974,7 +38038,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38006,7 +38070,7 @@
     ]
    },
    "parent": {
-    "index": 840,
+    "index": 842,
     "bone_name": ""
    }
   },
@@ -38038,7 +38102,7 @@
     ]
    },
    "parent": {
-    "index": 840,
+    "index": 842,
     "bone_name": ""
    }
   },
@@ -38083,7 +38147,7 @@
     "blend_in_seconds": 0.25
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38115,7 +38179,7 @@
     ]
    },
    "parent": {
-    "index": 843,
+    "index": 845,
     "bone_name": ""
    }
   },
@@ -38147,7 +38211,7 @@
     ]
    },
    "parent": {
-    "index": 843,
+    "index": 845,
     "bone_name": ""
    }
   },
@@ -38192,7 +38256,7 @@
     "blend_in_seconds": 0.4
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38224,7 +38288,7 @@
     ]
    },
    "parent": {
-    "index": 846,
+    "index": 848,
     "bone_name": ""
    }
   },
@@ -38256,7 +38320,7 @@
     ]
    },
    "parent": {
-    "index": 846,
+    "index": 848,
     "bone_name": ""
    }
   },
@@ -38301,7 +38365,7 @@
     "blend_in_seconds": 0.4
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38333,7 +38397,7 @@
     ]
    },
    "parent": {
-    "index": 849,
+    "index": 851,
     "bone_name": ""
    }
   },
@@ -38365,7 +38429,7 @@
     ]
    },
    "parent": {
-    "index": 849,
+    "index": 851,
     "bone_name": ""
    }
   },
@@ -38410,7 +38474,7 @@
     "blend_in_seconds": 0.3
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38442,7 +38506,7 @@
     ]
    },
    "parent": {
-    "index": 852,
+    "index": 854,
     "bone_name": ""
    }
   },
@@ -38474,7 +38538,7 @@
     ]
    },
    "parent": {
-    "index": 852,
+    "index": 854,
     "bone_name": ""
    }
   },
@@ -38519,7 +38583,7 @@
     "blend_in_seconds": 0.5
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38551,7 +38615,7 @@
     ]
    },
    "parent": {
-    "index": 855,
+    "index": 857,
     "bone_name": ""
    }
   },
@@ -38583,7 +38647,7 @@
     ]
    },
    "parent": {
-    "index": 855,
+    "index": 857,
     "bone_name": ""
    }
   },
@@ -38628,7 +38692,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -38660,7 +38724,7 @@
     ]
    },
    "parent": {
-    "index": 858,
+    "index": 860,
     "bone_name": ""
    }
   },
@@ -38692,7 +38756,7 @@
     ]
    },
    "parent": {
-    "index": 858,
+    "index": 860,
     "bone_name": ""
    }
   },
@@ -38894,7 +38958,7 @@
     ]
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": "Hand_R"
    }
   },
@@ -38940,7 +39004,7 @@
     "cast_sound": "@game/Sounds/Spells/cash_register.ogg"
    },
    "parent": {
-    "index": 864,
+    "index": 866,
     "bone_name": ""
    }
   },
@@ -38986,7 +39050,7 @@
     "cast_sound": "@game/Sounds/Spells/throw.ogg"
    },
    "parent": {
-    "index": 864,
+    "index": 866,
     "bone_name": ""
    }
   },
@@ -39032,7 +39096,7 @@
     "cast_sound": ""
    },
    "parent": {
-    "index": 864,
+    "index": 866,
     "bone_name": ""
    }
   },
@@ -39079,7 +39143,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 864,
+    "index": 866,
     "bone_name": ""
    }
   },
@@ -39126,7 +39190,7 @@
     "cast_on_request_only": true
    },
    "parent": {
-    "index": 864,
+    "index": 866,
     "bone_name": ""
    }
   },
@@ -39171,7 +39235,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -39203,7 +39267,7 @@
     ]
    },
    "parent": {
-    "index": 870,
+    "index": 872,
     "bone_name": ""
    }
   },
@@ -39235,7 +39299,7 @@
     ]
    },
    "parent": {
-    "index": 870,
+    "index": 872,
     "bone_name": ""
    }
   },
@@ -39267,7 +39331,7 @@
     ]
    },
    "parent": {
-    "index": 870,
+    "index": 872,
     "bone_name": ""
    }
   },
@@ -39312,7 +39376,7 @@
     "blend_in_seconds": 0.6
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -39344,7 +39408,7 @@
     ]
    },
    "parent": {
-    "index": 874,
+    "index": 876,
     "bone_name": ""
    }
   },
@@ -39376,7 +39440,7 @@
     ]
    },
    "parent": {
-    "index": 874,
+    "index": 876,
     "bone_name": ""
    }
   },
@@ -39408,7 +39472,7 @@
     ]
    },
    "parent": {
-    "index": 874,
+    "index": 876,
     "bone_name": ""
    }
   },
@@ -39440,7 +39504,7 @@
     ]
    },
    "parent": {
-    "index": 874,
+    "index": 876,
     "bone_name": ""
    }
   },
@@ -39484,7 +39548,7 @@
     "video_file": ""
    },
    "parent": {
-    "index": 780,
+    "index": 782,
     "bone_name": ""
    }
   },
@@ -39516,7 +39580,7 @@
     ]
    },
    "parent": {
-    "index": 879,
+    "index": 881,
     "bone_name": ""
    }
   },
@@ -39548,7 +39612,7 @@
     ]
    },
    "parent": {
-    "index": 879,
+    "index": 881,
     "bone_name": ""
    }
   },
@@ -39580,7 +39644,7 @@
     ]
    },
    "parent": {
-    "index": 879,
+    "index": 881,
     "bone_name": ""
    }
   },
@@ -39612,7 +39676,7 @@
     ]
    },
    "parent": {
-    "index": 879,
+    "index": 881,
     "bone_name": ""
    }
   },
@@ -39644,7 +39708,7 @@
     ]
    },
    "parent": {
-    "index": 879,
+    "index": 881,
     "bone_name": ""
    }
   },
@@ -39676,7 +39740,7 @@
     ]
    },
    "parent": {
-    "index": 780
+    "index": 782
    },
    "cutscene": {
     "duration_seconds": 6.0,
@@ -39719,7 +39783,7 @@
     ]
    },
    "parent": {
-    "index": 885
+    "index": 887
    }
   },
   {
@@ -39750,7 +39814,7 @@
     ]
    },
    "parent": {
-    "index": 885
+    "index": 887
    }
   },
   {
@@ -39781,7 +39845,7 @@
     ]
    },
    "parent": {
-    "index": 885
+    "index": 887
    }
   },
   {
@@ -39812,7 +39876,7 @@
     ]
    },
    "parent": {
-    "index": 885
+    "index": 887
    }
   },
   {
@@ -40052,7 +40116,7 @@
     ]
    },
    "parent": {
-    "index": 890
+    "index": 892
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -40137,7 +40201,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 890,
+    "index": 892,
     "bone_name": "Hand_R"
    }
   },
@@ -40188,7 +40252,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 890,
+    "index": 892,
     "bone_name": "Hand_L"
    }
   },
@@ -40236,10 +40300,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.5,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 890,
+    "index": 892,
     "bone_name": "Foot_R"
    }
   },
@@ -40275,7 +40339,7 @@
     "model_name": "sih_summon_wheel"
    },
    "parent": {
-    "index": 890,
+    "index": 892,
     "bone_name": ""
    }
   },
@@ -40351,7 +40415,7 @@
     "only_while_striking": true
    },
    "parent": {
-    "index": 890,
+    "index": 892,
     "bone_name": "Hand_R"
    }
   },
@@ -40610,7 +40674,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 897,
+    "index": 899,
     "bone_name": "Hand_R"
    }
   },
@@ -40661,7 +40725,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 897,
+    "index": 899,
     "bone_name": "Hand_L"
    }
   },
@@ -40709,10 +40773,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 897,
+    "index": 899,
     "bone_name": "Foot_R"
    }
   },
@@ -40971,7 +41035,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 901,
+    "index": 903,
     "bone_name": "Hand_R"
    }
   },
@@ -41022,7 +41086,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 901,
+    "index": 903,
     "bone_name": "Hand_L"
    }
   },
@@ -41070,10 +41134,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 901,
+    "index": 903,
     "bone_name": "Foot_R"
    }
   },
@@ -41332,7 +41396,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 905,
+    "index": 907,
     "bone_name": "Hand_R"
    }
   },
@@ -41383,7 +41447,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 905,
+    "index": 907,
     "bone_name": "Hand_L"
    }
   },
@@ -41431,10 +41495,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.1,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 905,
+    "index": 907,
     "bone_name": "Foot_R"
    }
   },
@@ -41466,7 +41530,7 @@
     ]
    },
    "parent": {
-    "index": 905,
+    "index": 907,
     "bone_name": "Hand_R"
    }
   },
@@ -41512,7 +41576,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 909,
+    "index": 911,
     "bone_name": ""
    }
   },
@@ -41771,7 +41835,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 911,
+    "index": 913,
     "bone_name": "Hand_R"
    }
   },
@@ -41822,7 +41886,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 911,
+    "index": 913,
     "bone_name": "Hand_L"
    }
   },
@@ -41870,10 +41934,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 911,
+    "index": 913,
     "bone_name": "Foot_R"
    }
   },
@@ -42132,7 +42196,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 915,
+    "index": 917,
     "bone_name": "Hand_R"
    }
   },
@@ -42183,7 +42247,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 915,
+    "index": 917,
     "bone_name": "Hand_L"
    }
   },
@@ -42231,10 +42295,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.1,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 915,
+    "index": 917,
     "bone_name": "Foot_R"
    }
   },
@@ -42266,7 +42330,7 @@
     ]
    },
    "parent": {
-    "index": 915,
+    "index": 917,
     "bone_name": "Hand_R"
    }
   },
@@ -42312,7 +42376,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 919,
+    "index": 921,
     "bone_name": ""
    }
   },
@@ -42571,7 +42635,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 921,
+    "index": 923,
     "bone_name": "Hand_R"
    }
   },
@@ -42622,7 +42686,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 921,
+    "index": 923,
     "bone_name": "Hand_L"
    }
   },
@@ -42670,10 +42734,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.1,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 921,
+    "index": 923,
     "bone_name": "Foot_R"
    }
   },
@@ -42705,7 +42769,7 @@
     ]
    },
    "parent": {
-    "index": 921,
+    "index": 923,
     "bone_name": "Hand_R"
    }
   },
@@ -42751,7 +42815,7 @@
     "cast_sound": "@game/Sounds/Spells/camera_flash.ogg"
    },
    "parent": {
-    "index": 925,
+    "index": 927,
     "bone_name": ""
    }
   },
@@ -43010,7 +43074,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 927,
+    "index": 929,
     "bone_name": "Hand_R"
    }
   },
@@ -43061,7 +43125,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 927,
+    "index": 929,
     "bone_name": "Hand_L"
    }
   },
@@ -43109,10 +43173,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 927,
+    "index": 929,
     "bone_name": "Foot_R"
    }
   },
@@ -43371,7 +43435,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 931,
+    "index": 933,
     "bone_name": "Hand_R"
    }
   },
@@ -43422,7 +43486,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 931,
+    "index": 933,
     "bone_name": "Hand_L"
    }
   },
@@ -43470,10 +43534,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 931,
+    "index": 933,
     "bone_name": "Foot_R"
    }
   },
@@ -43732,7 +43796,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 935,
+    "index": 937,
     "bone_name": "Hand_R"
    }
   },
@@ -43783,7 +43847,7 @@
     "knockback": 0.0
    },
    "parent": {
-    "index": 935,
+    "index": 937,
     "bone_name": "Hand_L"
    }
   },
@@ -43831,10 +43895,10 @@
     "show_gizmos": false,
     "hit_stop_seconds": 0.07,
     "camera_shake": 0.2,
-    "knockback": 4.0
+    "knockback": 0.0
    },
    "parent": {
-    "index": 935,
+    "index": 937,
     "bone_name": "Foot_R"
    }
   },
@@ -43940,7 +44004,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 939
+    "index": 941
    },
    "point_light": {
     "attenuation": {
@@ -44095,7 +44159,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 941
+    "index": 943
    },
    "point_light": {
     "attenuation": {
@@ -44238,7 +44302,7 @@
     ]
    },
    "parent": {
-    "index": 943
+    "index": 945
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -44378,7 +44442,7 @@
     "model_name": "sih_temple"
    },
    "parent": {
-    "index": 946,
+    "index": 948,
     "bone_name": ""
    }
   },
@@ -44434,7 +44498,7 @@
     }
    },
    "parent": {
-    "index": 946,
+    "index": 948,
     "bone_name": ""
    }
   },
@@ -44466,7 +44530,7 @@
     ]
    },
    "parent": {
-    "index": 946,
+    "index": 948,
     "bone_name": ""
    }
   },
@@ -44498,7 +44562,7 @@
     ]
    },
    "cutscene": {
-    "duration_seconds": 7.4,
+    "duration_seconds": 6.5,
     "look_at_entity": "Domain Reveal Focus",
     "look_at_height": 0.0,
     "animation_entity": "",
@@ -44508,7 +44572,7 @@
     "title_seconds": 3.5,
     "can_be_skipped": false,
     "video_file": "",
-    "blend_in_seconds": 0.0
+    "blend_in_seconds": 1.4
    }
   },
   {
@@ -44665,7 +44729,7 @@
     ]
    },
    "parent": {
-    "index": 953,
+    "index": 955,
     "bone_name": ""
    }
   },
@@ -44697,7 +44761,7 @@
     ]
    },
    "parent": {
-    "index": 953,
+    "index": 955,
     "bone_name": ""
    }
   },
@@ -44742,7 +44806,7 @@
     "blend_in_seconds": 0.0
    },
    "parent": {
-    "index": 890,
+    "index": 892,
     "bone_name": ""
    }
   },
@@ -44774,7 +44838,7 @@
     ]
    },
    "parent": {
-    "index": 956,
+    "index": 958,
     "bone_name": ""
    }
   },
@@ -44806,7 +44870,7 @@
     ]
    },
    "parent": {
-    "index": 956,
+    "index": 958,
     "bone_name": ""
    }
   },
@@ -44878,7 +44942,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 952,
     "bone_name": ""
    }
   },
@@ -44910,7 +44974,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 952,
     "bone_name": ""
    }
   },
@@ -44942,7 +45006,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 952,
     "bone_name": ""
    }
   },
@@ -44974,7 +45038,7 @@
     ]
    },
    "parent": {
-    "index": 950,
+    "index": 952,
     "bone_name": ""
    }
   },

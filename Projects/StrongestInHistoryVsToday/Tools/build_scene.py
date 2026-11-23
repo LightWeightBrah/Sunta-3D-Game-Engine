@@ -260,7 +260,8 @@ def spell(name, **settings):
 
 # Meters a kick throws back the one it staggers (the engine's knockback: sliding back on the feet, as in the film's
 # fights): the feet throw, the fists only stagger
-KICK_KNOCKBACK = 4.0
+# (none: thrown back by kicks in the ordinary fight too often - the user; a player's heavy attack still throws)
+KICK_KNOCKBACK = 0.0
 
 
 def add_limb(builder, character, name, bone, damage, layer, poise_damage=20.0, size=0.14, camera_shake=0.2):
@@ -686,7 +687,7 @@ def add_domain_spectacle(builder):
         "spawn_half_extents": [0.1, 0.1, 0.1], "velocity": [0.0, 1.5, 0.0], "velocity_randomness": 1.2,
         "gravity": [0.0, 2.5, 0.0], "start_size": 2.4, "end_size": 1.1,
         # (molten orange, not white: tens of thousands of them added up burnt white at the old strength)
-        "start_color": [1.0, 0.3, 0.02], "end_color": [0.55, 0.05, 0.0], "intensity": 0.022, "max_particles": 30000,
+        "start_color": [1.0, 0.3, 0.02], "end_color": [0.55, 0.05, 0.0], "intensity": 0.07, "max_particles": 30000,
         "style": 1, "spawn_shape": 2, "spawn_radius": 3.0, "outward_speed": 2.0, "size_randomness": 0.5,
         "spin_degrees_per_second": 50.0}))
     # The smoke rolls out around the foot of the temple, thin: the temple must be seen rising through it
@@ -774,6 +775,11 @@ def add_oil_domain(builder, player):
                                                                          tint=[1.0, 1.0, 0.97]))
         wave["transform"]["scale"] = [0.01, 0.01, 0.01]
         index = builder.add(wave)
+        # The wave's own shape (Tools/oil_wave_generator.py): a crest curling over towards the enemy, milky crystal -
+        # the stretched sphere of liquid above read as a lump; the script moves and grows both
+        body = named(f"Oil Wave Body {side}", (0.0, -50.0, 0.0), model={"is_visible": False, "model_name": "sih_oil_wave"})
+        body["transform"]["scale"] = [0.01, 0.01, 0.01]
+        builder.add(body)
         # A wall of white foam (puffs of baked smoke, white) and drops flung up out of it
         builder.add(named(f"Oil Wave {side} Spray", (0.0, 0.0, 0.0), particle_emitter={
             "is_emitting": False, "particles_per_second": 700.0, "lifetime_seconds": 1.0,
@@ -1499,10 +1505,8 @@ SEQUENCE_SHOTS = {
     "Knockback Flight": {"duration_seconds": 6.1},
     # (a cut, not a flight: he stands at the edge of the arena and the way there goes through the rubble)
     "Domain Sign":      {"blend_in_seconds": 0.0},
-    # (a cut, as in the film 1:24.5: a flight from his face out to the temple was neither smooth nor the film's)
-    "Domain Reveal":    {"blend_in_seconds": 0.0, "duration_seconds": 7.4},
-    # (a cut, as in the film 1:30.5: flown from the wide shot of the temple the camera swung across half the arena)
-    "Star Flight":      {"blend_in_seconds": 0.0, "duration_seconds": 4.2},
+        "Domain Reveal":    {"blend_in_seconds": 1.4, "duration_seconds": 6.5},
+    "Star Flight":      {"blend_in_seconds": 1.2, "duration_seconds": 4.2},
     "Meteor Fall":      {"duration_seconds": 10.0},
     "Down Wait":        {"blend_in_seconds": 0.0},
     # (lasts until the bottle's shot takes over: no game camera between his rising and the bottle coming down)
