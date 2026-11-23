@@ -46,7 +46,7 @@ struct HealingFlaskComponent
 	int  charges    = 5;
 	bool isDrinking = false;
 	bool hasHealed  = false;
-	// The key pressed again while drinking: that many more drinks follow at once, one after another (as in Elden Ring)
+	// The key pressed again before the heal's moment of a drink: that many more charges are drunk in the same swig
 	int  queuedDrinks = 0;
 
 	static void RegisterToInspector()
