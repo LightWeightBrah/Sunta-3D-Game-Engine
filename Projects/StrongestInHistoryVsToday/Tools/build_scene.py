@@ -1394,7 +1394,8 @@ def add_summon(builder):
     # It jumps at a player who keeps away
     entity["melee_enemy"]["leap_attack_distance"] = 11.0
     entity["enemy"]["eye_height"] = 2.6
-    add_fists_and_foot(builder, summon, 22.0, ENEMY_HITBOX_LAYER, poise_damage=35.0, size=0.38, camera_shake=0.5)
+    # (its blows stagger the player less: staggered again and again he could do nothing - the user)
+    add_fists_and_foot(builder, summon, 22.0, ENEMY_HITBOX_LAYER, poise_damage=18.0, size=0.38, camera_shake=0.5)
     entity["transform"] = transform(SUMMON_WAITING_PLACE, (0.0, 180.0, 0.0))
     # Three meters tall: a body, senses and blows of that size
     entity["box_collider"].update({"half_extents": [1.05, 1.45, 1.05], "local_offset": [0.0, 1.45, 0.0]})
@@ -1424,7 +1425,7 @@ def add_summon(builder):
     # hidden and harmless until then; it strikes in the windows of its blows like its fists
     blade = named("Summon Blade", (0.0, 0.05, 0.0), model={"is_visible": False, "model_name": "sih_boss_sword",
                                                          "emissive_strength": 0.0})
-    blade["hitbox"] = {"damage": 30.0, "poise_damage": 40.0, "local_offset": [0.0, 0.95, 0.0],
+    blade["hitbox"] = {"damage": 30.0, "poise_damage": 25.0, "local_offset": [0.0, 0.95, 0.0],
                        "half_extents": [0.2, 0.8, 0.14], "layer": ENEMY_HITBOX_LAYER, "show_gizmos": False,
                        "hit_stop_seconds": 0.08, "camera_shake": 0.5, "is_enabled": False}
     blade["weapon_trail"] = {"base_offset": [0.0, 0.4, 0.0], "tip_offset": [0.0, 1.7, 0.0], "color": [1.0, 0.92, 0.7],

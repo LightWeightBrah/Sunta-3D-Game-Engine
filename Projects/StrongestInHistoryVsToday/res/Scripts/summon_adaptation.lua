@@ -52,7 +52,7 @@ local ArenaMin, ArenaMax = vec3(-26, 0, -76), vec3(26, 0, -24)
 -- Blade of Light: below this part of its health; its blade and how it fights then; the slams in a row
 local BladeOfLight = { AtFraction = 0.5, Blade = "Summon Blade", BladeGlow = vec3(1.4, 1.25, 0.9),
                       CooldownSeconds = 0.85, AttackSpeed = 1.15, LeapDistance = 14.0,
-                      SlamsWithin = 5.5, SlamsEvery = 12.0, Slams = 3, BlastDelay = 0.55, BlastRadius = 7.0,
+                      SlamsWithin = 5.5, SlamsEvery = 16.0, Slams = 2, BlastDelay = 0.9, BlastRadius = 5.5,
                       BlastDamage = 28 }
 
 local lastKind = nil
@@ -323,7 +323,12 @@ local function updateSlams(deltaTime, player)
     this.characterActions:play("Attack_Heavy")
     s.left = s.left - 1
     s.waitFor = 0.15
-    if s.left == 0 then s.blastIn = BladeOfLight.BlastDelay end
+    if s.left == 0 then
+        s.blastIn = BladeOfLight.BlastDelay
+        -- (the blast is warned of: a ring of light on the ground where it will burst - it came out of nowhere)
+        this.world:effect("Oil Circle", this.transform.position + vec3(0, 0.05, 0), this.transform.forward)
+        this.world:burst("Pillar Warning", this.transform.position + vec3(0, 0.2, 0), 120)
+    end
 end
 
 -- The engine's melee waits while it rushes or slams

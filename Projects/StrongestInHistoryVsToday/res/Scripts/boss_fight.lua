@@ -2515,6 +2515,9 @@ end
 
 callTheSummon = function()
     this.characterActions:play("Summon")
+    -- He rises over the arena and watches his summon fight, as in the film (he floats over the city): he stood idle
+    -- on the ground, neither fighting nor away
+    O.summonHover = { t = 0, from = this.transform.position }
     -- (while his summon fights he can't be locked on to: locked on to him behind it, the monster filled the screen)
     if this.lockOnTarget then this.lockOnTarget.isLockable = false end
     local lockedPlayer = find(PlayerName)
@@ -2562,6 +2565,21 @@ end
 
 local function startLastPhase()
     phase = 4
+    -- (down from the sky to fight again)
+    if O.summonHover then
+        local h = O.summonHover
+        O.summonHover = nil
+        if h.idles and this.characterAnimation then
+            this.characterAnimation.idleAnimation, this.characterAnimation.lockedOnIdleAnimation = h.idles[1], h.idles[2]
+        end
+        local from = this.transform.position
+        O.tween(function(v) this.transform.position = mix(from, vec3(from.x, 0, from.z), v) end, 0, 1, 1.0)
+        after(1.0, function()
+            if this.physicsBody then this.physicsBody.useGravity = true; this.physicsBody.isKinematic = false end
+            this.world:effect("Crash Impact", this.transform.position, this.transform.forward)
+            this.world:shakeCamera(0.6)
+        end)
+    end
     if this.lockOnTarget then this.lockOnTarget.isLockable = true end
     O.refillFlasks()
     isChanneling = false
@@ -3381,6 +3399,29 @@ end
 
 -- Against his great sword the camera stands lower and over the player's left shoulder (his sword is in the right hand: the camera caught on it): from right behind and
 -- above him the armored boss stood hidden behind the player's back for most of the fight
+-- Floating over the arena while his summon fights
+O.SummonHoverHeight = 6
+function O.updateSummonHover(deltaTime)
+    local h = O.summonHover
+    if not h or phase ~= 3 then return end
+    h.t = h.t + deltaTime
+    if this.physicsBody then this.physicsBody.useGravity = false; this.physicsBody.isKinematic = true end
+    local k = math.min(h.t / 1.5, 1)
+    local e = k * k * (3 - 2 * k)
+    this.transform.position = vec3(h.from.x, O.SummonHoverHeight * e + math.sin(h.t * 1.6) * 0.2 * e, h.from.z)
+    if not h.isHovering then
+        h.isHovering = true
+        -- (floating is his standing clip up there, his own back when he comes down)
+        local animation = this.characterAnimation
+        if animation then
+            h.idles = { animation.idleAnimation, animation.lockedOnIdleAnimation }
+            animation.idleAnimation, animation.lockedOnIdleAnimation = "Hover", "Hover"
+        end
+    end
+    local player = O.playerEntity()
+    if player then this.transform.rotation = vec3(0, O.yawToward(this.transform.position, player.transform.position) + 180, 0) end
+end
+
 function O.updateSwordCamera(deltaTime)
     local camera = find(CameraName)
     if not camera or not camera.followCamera then return end
@@ -3475,6 +3516,7 @@ function OnUpdate(deltaTime)
     updateSilhouette(deltaTime)
     updateCameraDistance(deltaTime)
     O.updateSwordCamera(deltaTime)
+    O.updateSummonHover(deltaTime)
 
     seconds = seconds + deltaTime
 
