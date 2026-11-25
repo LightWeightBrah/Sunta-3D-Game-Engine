@@ -58,6 +58,19 @@ this.world:slowMotion(1.5, 0.3)                               -- 1.5 real second
 this.world:shakeCamera(0.6)
 ```
 
+### Spawning entities while the game plays
+
+Any entity of the scene can be a template: `spawn` makes a copy of it with all its children (an enemy with its
+weapon in its hand, a pickup with its light), where it is wanted and turned to a side. Keep the template out of the
+game: far away, an enemy that is asleep (its `Enemy` is dormant). The copy's scripts start in the next frame.
+
+```lua
+local guard = this.world:spawn("Bodyguard Template", this.transform.position + vec3(3, 0, 0), 180)  -- nil without it
+guard.enemy:wake()
+...
+this.world:destroy(guard)   -- removed with its children at the end of the frame
+```
+
 ## Enemies with your own behaviour
 
 An enemy is a state machine (Idle, Chase, Attack, ...). A script can add states or replace any of them by name,

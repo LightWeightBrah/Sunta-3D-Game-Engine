@@ -145,14 +145,24 @@ void TellScriptsAboutDamage(EntityManager& entityManager)
 
 void Systems::UpdateScripts(EntityManager& entityManager, float deltaTime, bool isHotReloadEnabled)
 {
-	auto& scriptComponents = entityManager.GetAllComponents<ScriptComponent>();
+	// The owners as they are now: a script may spawn entities with scripts of their own (they start next frame), which
+	// moves the components in memory - so each one is looked up again before each of its scripts
+	std::vector<unsigned int> owners;
+	for (auto& component : entityManager.GetAllComponents<ScriptComponent>())
+		owners.push_back(entityManager.GetEntityIDForComponent(component));
 
-	for (auto& component : scriptComponents)
+	for (unsigned int ownerID : owners)
 	{
-		Entity owner(entityManager.GetEntityIDForComponent(component), &entityManager);
+		Entity owner(ownerID, &entityManager);
 
-		for (auto& script : component.scripts)
+		for (size_t scriptIndex = 0; ; scriptIndex++)
 		{
+			ScriptComponent* found = entityManager.GetComponent<ScriptComponent>(ownerID);
+			if (!found || scriptIndex >= found->scripts.size())
+				break;
+			ScriptComponent& component = *found;
+			auto& script = component.scripts[scriptIndex];
+
 			if (script.scriptPath.empty())
 				continue;
 

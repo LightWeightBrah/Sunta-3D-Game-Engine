@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "LuaBindings.h"
+#include "Scene/WorldSpawner.h"
 
 #include <string>
 #include <type_traits>
@@ -1002,6 +1003,23 @@ void LuaBindings::RegisterWorld(sol::state& lua)
 					return sol::nullopt;
 
 				return Entity(entityID, world.entityManager);
+			},
+
+		// A copy of an entity of the scene used as a template (with its children) where it is wanted, turned 'yaw'
+		// degrees: local guard = this.world:spawn("Bodyguard Template", position, 180) (nil without the template).
+		// Keep the template itself out of the fight (far away, an enemy asleep). Its scripts start next frame
+		"spawn", [](const WorldHandle& world, const std::string& templateName, const glm::vec3& position, sol::optional<float> yawDegrees) -> sol::optional<Entity>
+			{
+				unsigned int copyID = 0;
+				if (!world.entityManager || !WorldSpawner::Spawn(*world.entityManager, templateName, position, yawDegrees.value_or(0.0f), copyID))
+					return sol::nullopt;
+				return Entity(copyID, world.entityManager);
+			},
+
+		// Removes an entity and everything under it at the end of the frame: this.world:destroy(guard)
+		"destroy", [](const WorldHandle&, const Entity& entity)
+			{
+				WorldSpawner::RequestDestroy(entity.GetID());
 			},
 
 		"notify", [](const WorldHandle& world, const std::string& text)

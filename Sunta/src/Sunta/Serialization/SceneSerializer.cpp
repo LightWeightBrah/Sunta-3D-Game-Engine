@@ -7,6 +7,7 @@
 
 #include "Scene/Scene.h"
 #include "ECS/EntityManager.h"
+#include "Scene/EntityHierarchy.h"
 #include "ECS/Component.h"
 #include "Core/Log.h"
 #include "Physics/CollisionLayers.h"
@@ -685,6 +686,1812 @@ static void DeserializeAttenuation(const json& j, Attenuation& attenuation)
 	if (j.contains(SceneKeys::AttenuationQuadratic)) attenuation.quadratic = j[SceneKeys::AttenuationQuadratic];
 }
 
+// One entity as it is saved (every component it has)
+static json SerializeEntity(EntityManager& entityManager, unsigned int i)
+{
+	json entityJson;
+
+	if (auto* tag = entityManager.GetComponent<TagComponent>(i))
+	{
+		entityJson[SceneKeys::TagComponent] = { { SceneKeys::Name, tag->name } };
+	}
+
+	if (auto* transform = entityManager.GetComponent<TransformComponent>(i))
+	{
+		entityJson[SceneKeys::TransformComponent] =
+		{
+			{ SceneKeys::Position, SerializeVec3(transform->position) },
+			{ SceneKeys::Rotation, SerializeVec3(transform->rotation) },
+			{ SceneKeys::Scale,    SerializeVec3(transform->scale)    },
+			{ SceneKeys::RotationQuaternion, SerializeQuaternion(transform->rotationQuaternion) }
+		};
+	}
+
+	if (auto* script = entityManager.GetComponent<ScriptComponent>(i))
+	{
+		if (!script->scripts.empty())
+		{
+			json scriptsArray = json::array();
+			for (const auto& container : script->scripts)
+			{
+				// Saved as a virtual path ("@game/Scripts/a.lua"), because the physical path differs on every machine and in the packaged game
+				scriptsArray.push_back({ { SceneKeys::ScriptPath, VirtualFileSystem::ToVirtualPath(container.scriptPath) } });
+			}
+
+			entityJson[SceneKeys::ScriptComponent] = scriptsArray;
+		}
+	}
+
+	if (auto* mesh = entityManager.GetComponent<MeshComponent>(i))
+	{
+		entityJson[SceneKeys::MeshComponent] =
+		{
+			{ SceneKeys::IsVisible,    mesh->isVisible     },
+			{ SceneKeys::MeshName,     mesh->meshName      },
+			{ SceneKeys::MaterialName, mesh->materialName  }
+		};
+	}
+
+	if (auto* model = entityManager.GetComponent<ModelComponent>(i))
+	{
+		entityJson[SceneKeys::ModelComponent] =
+		{
+			{ SceneKeys::IsVisible,        model->isVisible        },
+			{ SceneKeys::ModelName,        model->modelName        },
+			{ SceneKeys::EmissiveStrength, model->emissiveStrength }
+		};
+	}
+
+	if (auto* animator = entityManager.GetComponent<AnimatorComponent>(i))
+	{
+		entityJson[SceneKeys::AnimatorComponent] =
+		{
+			{ SceneKeys::CurrentAnimationName, animator->currentAnimationName }
+		};
+	}
+
+	if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
+	{
+		entityJson[SceneKeys::BoxColliderComponent] =
+		{
+			{ SceneKeys::ShowGizmos,                      boxCollider->showGizmos   },
+			{ SceneKeys::LocalOffset,       SerializeVec3(boxCollider->localOffset) },
+			{ SceneKeys::HalfExtents,       SerializeVec3(boxCollider->halfExtents) },
+			{ SceneKeys::IsTrigger,                       boxCollider->isTrigger    },
+			{ SceneKeys::BlocksCamera,                    boxCollider->blocksCamera },
+			{ SceneKeys::Layer, static_cast<unsigned int>(boxCollider->layer)       }
+		};
+	}
+
+	if (auto* physicsBody = entityManager.GetComponent<PhysicsBodyComponent>(i))
+	{
+		entityJson[SceneKeys::PhysicsBodyComponent] =
+		{
+			{ SceneKeys::IsKinematic,                    physicsBody->isKinematic     },
+			{ SceneKeys::UseGravity,                     physicsBody->useGravity      },
+			{ SceneKeys::Velocity,         SerializeVec3(physicsBody->velocity)       },
+			{ SceneKeys::AngularVelocity,  SerializeVec3(physicsBody->angularVelocity)},
+
+			{ SceneKeys::FreezeRotationX,                physicsBody->freezeRotationX },
+			{ SceneKeys::FreezeRotationY,                physicsBody->freezeRotationY },
+			{ SceneKeys::FreezeRotationZ,                physicsBody->freezeRotationZ },
+
+			{ SceneKeys::Mass,                           physicsBody->mass            },
+			{ SceneKeys::Restitution,                    physicsBody->restitution     },
+			{ SceneKeys::Friction,                       physicsBody->friction        },
+			{ SceneKeys::LinearDamping,                  physicsBody->linearDamping   },
+			{ SceneKeys::AngularDamping,                 physicsBody->angularDamping  }
+		};
+	}
+
+
+	if (auto* directionalLight = entityManager.GetComponent<DirectionalLightComponent>(i))
+	{
+		json lightJson = SerializeLightColor(directionalLight->color);
+		lightJson[SceneKeys::CastsShadows]     = directionalLight->castsShadows;
+		lightJson[SceneKeys::ShadowDistance]   = directionalLight->shadowDistance;
+		lightJson[SceneKeys::ShadowStrength]   = directionalLight->shadowStrength;
+		lightJson[SceneKeys::ShadowSoftness]   = directionalLight->shadowSoftness;
+		lightJson[SceneKeys::ShadowResolution] = directionalLight->shadowResolution;
+
+		entityJson[SceneKeys::DirectionalLightComponent] = lightJson;
+	}
+
+	if (auto* pointLight = entityManager.GetComponent<PointLightComponent>(i))
+	{
+		entityJson[SceneKeys::PointLightComponent] =
+		{
+			{ SceneKeys::Color,       SerializeLightColor(pointLight->color)        },
+			{ SceneKeys::Attenuation, SerializeAttenuation(pointLight->attenuation) }
+		};
+	}
+
+	if (auto* spotLight = entityManager.GetComponent<SpotLightComponent>(i))
+	{
+		entityJson[SceneKeys::SpotLightComponent] =
+		{
+			{ SceneKeys::Color,       SerializeLightColor(spotLight->color)        },
+			{ SceneKeys::Attenuation, SerializeAttenuation(spotLight->attenuation) },
+			{ SceneKeys::InnerCutOff, spotLight->innerCutOffAngle                  },
+			{ SceneKeys::OuterCutOff, spotLight->outerCutOffAngle                  }
+		};
+	}
+
+	if (auto* camera = entityManager.GetComponent<CameraComponent>(i))
+	{
+		entityJson[SceneKeys::CameraComponent] =
+		{
+			{ SceneKeys::FieldOfView, camera->fieldOfView },
+			{ SceneKeys::NearPlane,   camera->nearPlane   },
+			{ SceneKeys::FarPlane,    camera->farPlane    },
+			{ SceneKeys::IsActive,    camera->isActive    }
+		};
+	}
+
+	if (auto* characterController = entityManager.GetComponent<CharacterControllerComponent>(i))
+	{
+		entityJson[SceneKeys::CharacterControllerComponent] =
+		{
+			{ SceneKeys::WalkSpeed,           characterController->walkSpeed           },
+			{ SceneKeys::RunSpeed,            characterController->runSpeed            },
+			{ SceneKeys::Acceleration,        characterController->acceleration        },
+			{ SceneKeys::TurnSpeed,           characterController->turnSpeed           },
+			{ SceneKeys::FacingOffsetDegrees, characterController->facingOffsetDegrees },
+			{ SceneKeys::IsPlayerControlled,  characterController->isPlayerControlled  }
+		};
+	}
+
+	if (auto* characterAnimation = entityManager.GetComponent<CharacterAnimationComponent>(i))
+	{
+		entityJson[SceneKeys::CharacterAnimationComponent] =
+		{
+			{ SceneKeys::IdleAnimation, characterAnimation->idleAnimation },
+			{ SceneKeys::WalkAnimation, characterAnimation->walkAnimation },
+			{ SceneKeys::RunAnimation,  characterAnimation->runAnimation  },
+			{ SceneKeys::WalkBackAnimation,    characterAnimation->walkBackAnimation    },
+			{ SceneKeys::StrafeLeftAnimation,  characterAnimation->strafeLeftAnimation  },
+			{ SceneKeys::StrafeRightAnimation, characterAnimation->strafeRightAnimation },
+			{ SceneKeys::LockedOnIdleAnimation, characterAnimation->lockedOnIdleAnimation },
+			{ SceneKeys::BlendSeconds,  characterAnimation->blendSeconds  },
+			{ SceneKeys::WalkAnimationSpeed, characterAnimation->walkAnimationSpeed },
+			{ SceneKeys::RunAnimationSpeed,  characterAnimation->runAnimationSpeed  }
+		};
+	}
+
+	if (auto* followCamera = entityManager.GetComponent<FollowCameraComponent>(i))
+	{
+		entityJson[SceneKeys::FollowCameraComponent] =
+		{
+			{ SceneKeys::Distance,         followCamera->distance           },
+			{ SceneKeys::PivotHeight,      followCamera->pivotHeight        },
+			{ SceneKeys::ShoulderOffset,   followCamera->shoulderOffset     },
+			{ SceneKeys::ViewYawOffsetDegrees,   followCamera->viewYawOffsetDegrees   },
+			{ SceneKeys::ViewPitchOffsetDegrees, followCamera->viewPitchOffsetDegrees },
+			{ SceneKeys::MouseSensitivity, followCamera->mouseSensitivity   },
+			{ SceneKeys::InvertY,          followCamera->invertY            },
+			{ SceneKeys::MinPitchDegrees,  followCamera->minPitchDegrees    },
+			{ SceneKeys::MaxPitchDegrees,  followCamera->maxPitchDegrees    },
+			{ SceneKeys::FollowSharpness,  followCamera->followSharpness    },
+			{ SceneKeys::LockOnPitchDegrees, followCamera->lockOnPitchDegrees },
+			{ SceneKeys::LockOnSideDegrees, followCamera->lockOnSideDegrees },
+			{ SceneKeys::LockOnSharpness,  followCamera->lockOnSharpness    },
+			{ SceneKeys::ShakeDegrees,       followCamera->shakeDegrees       },
+			{ SceneKeys::ShakeFrequency,     followCamera->shakeFrequency     },
+			{ SceneKeys::ShakeFadePerSecond, followCamera->shakeFadePerSecond }
+		};
+	}
+
+	if (auto* aim = entityManager.GetComponent<StrikeAimComponent>(i))
+	{
+		entityJson[SceneKeys::StrikeAimComponent] =
+		{
+			{ SceneKeys::StrikeAimSpineBones,     aim->spineBones       },
+			{ SceneKeys::StrikeAimClipHeight,     aim->clipStrikeHeight },
+			{ SceneKeys::StrikeAimTargetHeight,   aim->targetHeight     },
+			{ SceneKeys::StrikeAimMaxPitch,       aim->maxPitchDegrees  },
+			{ SceneKeys::StrikeAimMaxYaw,         aim->maxYawDegrees    },
+			{ SceneKeys::StrikeAimFadeSeconds,    aim->fadeSeconds      },
+			{ SceneKeys::StrikeAimSearchDistance, aim->searchDistance   }
+		};
+	}
+
+	if (auto* lockOn = entityManager.GetComponent<LockOnComponent>(i))
+	{
+		entityJson[SceneKeys::LockOnComponent] =
+		{
+			{ SceneKeys::MaxDistance,         lockOn->maxDistance         },
+			{ SceneKeys::SearchAngleDegrees,  lockOn->searchAngleDegrees  },
+			{ SceneKeys::EyeHeight,           lockOn->eyeHeight           },
+			{ SceneKeys::SwitchMouseDistance, lockOn->switchMouseDistance },
+			{ SceneKeys::RequireLineOfSight,  lockOn->requireLineOfSight  },
+			{ SceneKeys::IsPlayerControlled,  lockOn->isPlayerControlled  },
+			{ SceneKeys::ShowSightRays,       lockOn->showSightRays       }
+		};
+	}
+
+	if (auto* lockOnTarget = entityManager.GetComponent<LockOnTargetComponent>(i))
+	{
+		entityJson[SceneKeys::LockOnTargetComponent] =
+		{
+			{ SceneKeys::IsLockable, lockOnTarget->isLockable },
+			{ SceneKeys::AimHeight,  lockOnTarget->aimHeight  },
+			{ SceneKeys::AimBone,    lockOnTarget->aimBone    }
+		};
+	}
+
+	if (auto* actions = entityManager.GetComponent<CharacterActionsComponent>(i))
+	{
+		entityJson[SceneKeys::CharacterActionsComponent] =
+		{
+			{ SceneKeys::RollAnimation,         actions->rollAnimation         },
+			{ SceneKeys::BackstepAnimation,     actions->backstepAnimation     },
+			{ SceneKeys::LightAttack1Animation, actions->lightAttack1Animation },
+			{ SceneKeys::LightAttack2Animation, actions->lightAttack2Animation },
+			{ SceneKeys::LightAttack3Animation, actions->lightAttack3Animation },
+			{ SceneKeys::HeavyAttackAnimation,  actions->heavyAttackAnimation  },
+			{ SceneKeys::LeapAttackAnimation,   actions->leapAttackAnimation   },
+			{ SceneKeys::LeapSpeed,             actions->leapSpeed             },
+			{ SceneKeys::LeapHitFrom,           actions->leapHitFrom           },
+			{ SceneKeys::LeapHitTo,             actions->leapHitTo             },
+			{ SceneKeys::RollSpeed,             actions->rollSpeed             },
+			{ SceneKeys::BackstepSpeed,         actions->backstepSpeed         },
+			{ SceneKeys::AttackStepSpeed,       actions->attackStepSpeed       },
+			{ SceneKeys::InvulnerableFrom,      actions->invulnerableFrom      },
+			{ SceneKeys::InvulnerableTo,        actions->invulnerableTo        },
+			{ SceneKeys::InputBufferFrom,       actions->inputBufferFrom       },
+			{ SceneKeys::CancelFrom,            actions->cancelFrom            },
+			{ SceneKeys::BlendSeconds,          actions->blendSeconds          },
+			{ SceneKeys::HitReactionAnimation,  actions->hitReactionAnimation  },
+			{ SceneKeys::DeathAnimation,        actions->deathAnimation        },
+			{ SceneKeys::RestAnimation,         actions->restAnimation         },
+			{ SceneKeys::StandUpAnimation,      actions->standUpAnimation      },
+			{ SceneKeys::BlockAnimation,        actions->blockAnimation        },
+			{ SceneKeys::BlockImpactAnimation,  actions->blockImpactAnimation  },
+			{ SceneKeys::ParryAnimation,        actions->parryAnimation        },
+			{ SceneKeys::ParriedAnimation,      actions->parriedAnimation      },
+			{ SceneKeys::JumpAnimation,         actions->jumpAnimation         },
+			{ SceneKeys::JumpAttackAnimation,   actions->jumpAttackAnimation   },
+			{ SceneKeys::JumpHeavyAttackAnimation, actions->jumpHeavyAttackAnimation },
+			{ SceneKeys::JumpSpeed,             actions->jumpSpeed             },
+			{ SceneKeys::JumpMoveSpeed,         actions->jumpMoveSpeed         },
+			{ SceneKeys::JumpPlungeSpeed,       actions->jumpPlungeSpeed       },
+			{ SceneKeys::JumpPlungeFrom,        actions->jumpPlungeFrom        },
+			{ SceneKeys::JumpAttackDamageMultiplier, actions->jumpAttackDamageMultiplier },
+			{ SceneKeys::JumpPlungeShockwaveRadius, actions->jumpPlungeShockwaveRadius },
+			{ SceneKeys::JumpPlungeShockwaveDamage, actions->jumpPlungeShockwaveDamage },
+			{ SceneKeys::JumpPlungeEffect,      actions->jumpPlungeEffect      },
+			{ SceneKeys::UpperBodyBone,         actions->upperBodyBone         },
+			{ SceneKeys::ShockwaveRadius,       actions->shockwaveRadius       },
+			{ SceneKeys::ShockwaveDamage,       actions->shockwaveDamage       },
+			{ SceneKeys::ShockwaveDistance,     actions->shockwaveDistance     },
+			{ SceneKeys::ShockwaveEffect,       actions->shockwaveEffect       },
+			{ SceneKeys::SwingEffect,           actions->swingEffect           },
+			{ SceneKeys::HyperArmor,            actions->hyperArmor            },
+			{ SceneKeys::HeavySwingEffect,      actions->heavySwingEffect      },
+			{ SceneKeys::SwingEffectHeight,     actions->swingEffectHeight     },
+			{ SceneKeys::SwingEffectDistance,   actions->swingEffectDistance   },
+			{ SceneKeys::SwingEffectAt,         actions->swingEffectAt         },
+			{ SceneKeys::ShockwaveCameraShake,  actions->shockwaveCameraShake  },
+			{ SceneKeys::AttackTurnDegreesPerSecond, actions->attackTurnDegreesPerSecond },
+			{ SceneKeys::AttackLungeSpeed,      actions->attackLungeSpeed      },
+			{ SceneKeys::AttackReach,           actions->attackReach           },
+			{ SceneKeys::FinisherKnockback,     actions->finisherKnockback     },
+			{ SceneKeys::HeavyKnockback,        actions->heavyKnockback        },
+			{ SceneKeys::KnockdownAnimation,    actions->knockdownAnimation    },
+			{ SceneKeys::HeavyKnockbackChance,  actions->heavyKnockbackChance  },
+			{ SceneKeys::GetUpAnimation,        actions->getUpAnimation        },
+			{ SceneKeys::KnockdownChance,       actions->knockdownChance       },
+			{ SceneKeys::KnockdownSeconds,      actions->knockdownSeconds      },
+			{ SceneKeys::AttackDelayChance,     actions->attackDelayChance     },
+			{ SceneKeys::AttackDelaySeconds,    actions->attackDelaySeconds    },
+			{ SceneKeys::AttackDelayAt,         actions->attackDelayAt         },
+			{ SceneKeys::ParryFrom,             actions->parryFrom             },
+			{ SceneKeys::ParryTo,               actions->parryTo               },
+			{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
+			{ SceneKeys::LightHitFrom,          actions->lightHitFrom          },
+			{ SceneKeys::LightHitTo,            actions->lightHitTo            },
+			{ SceneKeys::HeavyHitFrom,          actions->heavyHitFrom          },
+			{ SceneKeys::HeavyHitTo,            actions->heavyHitTo            },
+			{ SceneKeys::HeavyDamageMultiplier, actions->heavyDamageMultiplier },
+			{ SceneKeys::AttackSpeed,           actions->attackSpeed           },
+			{ SceneKeys::ExtraLightAttackAnimations, actions->extraLightAttackAnimations },
+			{ SceneKeys::HeavyAttack2Animation,  actions->heavyAttack2Animation  },
+			{ SceneKeys::RunningAttackAnimation, actions->runningAttackAnimation },
+			{ SceneKeys::RunningAttackSpeed,     actions->runningAttackSpeed     },
+			{ SceneKeys::DodgeAttackAnimation,   actions->dodgeAttackAnimation   },
+			{ SceneKeys::RiposteAnimation,       actions->riposteAnimation       },
+			{ SceneKeys::RiposteReach,           actions->riposteReach           },
+			{ SceneKeys::AttackLungeMaxDistance, actions->attackLungeMaxDistance },
+			{ SceneKeys::DodgeCancelFrom,        actions->dodgeCancelFrom        },
+			{ SceneKeys::HitReactionDodgeFrom,   actions->hitReactionDodgeFrom   },
+			{ SceneKeys::ExtraHitReactionAnimations, actions->extraHitReactionAnimations },
+			{ SceneKeys::HeavyHitReactionAnimation, actions->heavyHitReactionAnimation },
+			{ SceneKeys::KnockbackAnimation,     actions->knockbackAnimation     },
+			{ SceneKeys::KnockbackSeconds,       actions->knockbackSeconds       },
+			{ SceneKeys::KnockbackDust,          actions->knockbackDust          }
+		};
+
+		nlohmann::json moves = nlohmann::json::array();
+		for (const AttackMove& move : actions->attackMoves)
+		{
+			moves.push_back({
+				{ SceneKeys::MoveAnimation,        move.animation        },
+				{ SceneKeys::MoveHitFrom,          move.hitFrom          },
+				{ SceneKeys::MoveHitTo,            move.hitTo            },
+				{ SceneKeys::MoveDamageMultiplier, move.damageMultiplier },
+				{ SceneKeys::MoveCancelFrom,       move.cancelFrom       },
+				{ SceneKeys::MoveStrikeHeight,     move.strikeHeight     }
+			});
+		}
+		entityJson[SceneKeys::CharacterActionsComponent][SceneKeys::AttackMoves] = moves;
+	}
+
+	if (auto* health = entityManager.GetComponent<HealthComponent>(i))
+	{
+		entityJson[SceneKeys::HealthComponent] =
+		{
+			{ SceneKeys::MaxHealth,              health->maxHealth              },
+			{ SceneKeys::HitEffect,              health->hitEffect              },
+			{ SceneKeys::DeflectEffect,          health->deflectEffect          },
+			{ SceneKeys::DeathSlowMotionSeconds, health->deathSlowMotionSeconds },
+			{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   },
+			{ SceneKeys::WeaponDamageTaken,      health->weaponDamageTaken      },
+			{ SceneKeys::SpellDamageTaken,       health->spellDamageTaken       },
+			{ SceneKeys::SpellImmunitySeconds,   health->spellImmunitySeconds   }
+		};
+	}
+
+	if (auto* stamina = entityManager.GetComponent<StaminaComponent>(i))
+	{
+		entityJson[SceneKeys::StaminaComponent] =
+		{
+			{ SceneKeys::MaxStamina,               stamina->maxStamina               },
+			{ SceneKeys::RegenerationPerSecond,    stamina->regenerationPerSecond    },
+			{ SceneKeys::RegenerationDelaySeconds, stamina->regenerationDelaySeconds },
+			{ SceneKeys::RollCost,                 stamina->rollCost                 },
+			{ SceneKeys::BackstepCost,             stamina->backstepCost             },
+			{ SceneKeys::LightAttackCost,          stamina->lightAttackCost          },
+			{ SceneKeys::HeavyAttackCost,          stamina->heavyAttackCost          },
+			{ SceneKeys::ParryCost,                stamina->parryCost                },
+			{ SceneKeys::RunCostPerSecond,         stamina->runCostPerSecond         }
+		};
+	}
+
+	if (auto* hitbox = entityManager.GetComponent<HitboxComponent>(i))
+	{
+		entityJson[SceneKeys::HitboxComponent] =
+		{
+			{ SceneKeys::Damage,                     hitbox->damage       },
+			{ SceneKeys::PoiseDamage,                hitbox->poiseDamage  },
+			{ SceneKeys::HitStopSeconds,             hitbox->hitStopSeconds },
+			{ SceneKeys::Knockback,                  hitbox->knockback    },
+			{ SceneKeys::CameraShake,                hitbox->cameraShake  },
+			{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
+			{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
+			{ SceneKeys::Layer, static_cast<unsigned int>(hitbox->layer)  },
+			{ SceneKeys::ShowGizmos,                 hitbox->showGizmos   },
+			{ SceneKeys::HitboxIsEnabled,            hitbox->isEnabled    }
+		};
+	}
+
+	if (auto* shield = entityManager.GetComponent<ShieldComponent>(i))
+	{
+		entityJson[SceneKeys::ShieldComponent] =
+		{
+			{ SceneKeys::GuardAngleDegrees, shield->guardAngleDegrees },
+			{ SceneKeys::DamageThrough,     shield->damageThrough     },
+			{ SceneKeys::StaminaPerDamage,  shield->staminaPerDamage  },
+			{ SceneKeys::BlockEffect,       shield->blockEffect       }
+		};
+	}
+
+	if (auto* boss = entityManager.GetComponent<BossComponent>(i))
+	{
+		entityJson[SceneKeys::BossComponent] =
+		{
+			{ SceneKeys::PhaseTwoHealthFraction,   boss->phaseTwoHealthFraction   },
+			{ SceneKeys::PhaseTwoDamageMultiplier, boss->phaseTwoDamageMultiplier },
+			{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    },
+			{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
+			{ SceneKeys::PhaseTwoSound,            boss->phaseTwoSound            },
+			{ SceneKeys::PhaseTwoMusic,            boss->phaseTwoMusic            },
+			{ SceneKeys::DefeatCutscene,           boss->defeatCutscene           },
+			{ SceneKeys::DefeatCutsceneDelay,      boss->defeatCutsceneDelay      },
+			{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
+			{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           },
+			{ SceneKeys::PhaseTwoLight1Animation,  boss->phaseTwoLight1Animation  },
+			{ SceneKeys::PhaseTwoLight2Animation,  boss->phaseTwoLight2Animation  },
+			{ SceneKeys::PhaseTwoLight3Animation,  boss->phaseTwoLight3Animation  },
+			{ SceneKeys::PhaseTwoHeavyAnimation,   boss->phaseTwoHeavyAnimation   },
+			{ SceneKeys::PhaseTwoLightHitFrom,     boss->phaseTwoLightHitFrom     },
+			{ SceneKeys::PhaseTwoLightHitTo,       boss->phaseTwoLightHitTo       },
+			{ SceneKeys::PhaseTwoHeavyHitFrom,     boss->phaseTwoHeavyHitFrom     },
+			{ SceneKeys::PhaseTwoHeavyHitTo,       boss->phaseTwoHeavyHitTo       },
+			{ SceneKeys::PhaseTwoShockwaveRadius,  boss->phaseTwoShockwaveRadius  },
+			{ SceneKeys::PhaseTwoMaxLightCombo,    boss->phaseTwoMaxLightCombo    }
+		};
+	}
+
+	if (auto* cutscene = entityManager.GetComponent<CutsceneComponent>(i))
+	{
+		entityJson[SceneKeys::CutsceneComponent] =
+		{
+			{ SceneKeys::DurationSeconds,       cutscene->durationSeconds    },
+			{ SceneKeys::LookAtEntity,          cutscene->lookAtEntity       },
+			{ SceneKeys::LookAtHeight,          cutscene->lookAtHeight       },
+			{ SceneKeys::LookAlsoAtEntity,      cutscene->lookAlsoAtEntity   },
+			{ SceneKeys::AnimationEntity,       cutscene->animationEntity    },
+			{ SceneKeys::CutsceneAnimationName, cutscene->animationName      },
+			{ SceneKeys::AnimationAtSeconds,    cutscene->animationAtSeconds },
+			{ SceneKeys::CutsceneTitle,         cutscene->title              },
+			{ SceneKeys::TitleSeconds,          cutscene->titleSeconds       },
+			{ SceneKeys::CanBeSkipped,          cutscene->canBeSkipped       },
+			{ SceneKeys::VideoFile,             cutscene->videoFile          },
+			{ SceneKeys::WaitForKey,            cutscene->waitForKey         },
+			{ SceneKeys::WaitPrompt,            cutscene->waitPrompt         },
+			{ SceneKeys::WaitPresses,           cutscene->waitPresses        },
+			{ SceneKeys::PressWindowSeconds,    cutscene->pressWindowSeconds },
+			{ SceneKeys::PressSound,            cutscene->pressSound         },
+			{ SceneKeys::BlendInSeconds,        cutscene->blendInSeconds     },
+			{ SceneKeys::FadeSeconds,           cutscene->fadeSeconds        },
+			{ SceneKeys::CutsceneSound,         cutscene->sound              }
+		};
+	}
+
+	if (auto* environment = entityManager.GetComponent<EnvironmentComponent>(i))
+	{
+		entityJson[SceneKeys::EnvironmentComponent] =
+		{
+			{ SceneKeys::SkyboxFolder,  environment->skyboxFolder           },
+			{ SceneKeys::SkyBrightness, environment->skyBrightness          },
+			{ SceneKeys::IsFogEnabled,  environment->isFogEnabled           },
+			{ SceneKeys::FogColor,      SerializeVec3(environment->fogColor) },
+			{ SceneKeys::FogDensity,    environment->fogDensity             },
+			{ SceneKeys::IsPostProcessingEnabled, environment->isPostProcessingEnabled },
+			{ SceneKeys::Exposure,                environment->exposure                },
+			{ SceneKeys::IsBloomEnabled,          environment->isBloomEnabled          },
+			{ SceneKeys::BloomThreshold,          environment->bloomThreshold          },
+			{ SceneKeys::BloomIntensity,          environment->bloomIntensity          },
+			{ SceneKeys::BloomBlurPasses,         environment->bloomBlurPasses         },
+			{ SceneKeys::HitImpactFrame,          environment->hitImpactFrame          }
+		};
+	}
+
+	if (auto* emitter = entityManager.GetComponent<ParticleEmitterComponent>(i))
+	{
+		entityJson[SceneKeys::ParticleEmitterComponent] =
+		{
+			{ SceneKeys::IsEmitting,         emitter->isEmitting                     },
+			{ SceneKeys::ParticlesPerSecond, emitter->particlesPerSecond             },
+			{ SceneKeys::LifetimeSeconds,    emitter->lifetimeSeconds                },
+			{ SceneKeys::SpawnHalfExtents,   SerializeVec3(emitter->spawnHalfExtents) },
+			{ SceneKeys::ParticleVelocity,   SerializeVec3(emitter->velocity)        },
+			{ SceneKeys::VelocityRandomness, emitter->velocityRandomness             },
+			{ SceneKeys::ParticleGravity,    SerializeVec3(emitter->gravity)         },
+			{ SceneKeys::StartSize,          emitter->startSize                      },
+			{ SceneKeys::EndSize,            emitter->endSize                        },
+			{ SceneKeys::StartColor,         SerializeVec3(emitter->startColor)      },
+			{ SceneKeys::EndColor,           SerializeVec3(emitter->endColor)        },
+			{ SceneKeys::ParticleIntensity,  emitter->intensity                      },
+			{ SceneKeys::MaxParticles,       emitter->maxParticles                   },
+			{ SceneKeys::IsDark,             emitter->isDark                         },
+			{ SceneKeys::ParticleStyle,      emitter->style                          },
+			{ SceneKeys::SpawnShape,         emitter->spawnShape                     },
+			{ SceneKeys::SpawnRadius,        emitter->spawnRadius                    },
+			{ SceneKeys::OutwardSpeed,       emitter->outwardSpeed                   },
+			{ SceneKeys::SizeRandomness,     emitter->sizeRandomness                 },
+			{ SceneKeys::ParticleSpin,       emitter->spinDegreesPerSecond           },
+			{ SceneKeys::ParticleDrag,       emitter->drag                           },
+			{ SceneKeys::ParticleStretch,    emitter->stretch                        },
+			{ SceneKeys::HasMiddleColor,     emitter->hasMiddleColor                 },
+			{ SceneKeys::MiddleColor,        SerializeVec3(emitter->middleColor)     },
+			{ SceneKeys::BurstAmount,        emitter->burstAmount                    },
+			{ SceneKeys::FlipbookTexture,    emitter->flipbookTexture                },
+			{ SceneKeys::FlipbookColumns,    emitter->flipbookColumns                },
+			{ SceneKeys::FlipbookRows,       emitter->flipbookRows                   },
+			{ SceneKeys::FlipbookLoops,      emitter->flipbookLoops                  },
+			{ SceneKeys::FlipbookRandomStart, emitter->flipbookRandomStart           }
+		};
+	}
+
+	if (auto* shape = entityManager.GetComponent<EffectShapeComponent>(i))
+	{
+		entityJson[SceneKeys::EffectShapeComponent] =
+		{
+			{ SceneKeys::ShapeKind,               shape->kind                              },
+			{ SceneKeys::ShapeLifetime,           shape->lifetimeSeconds                   },
+			{ SceneKeys::ShapeStartRadius,        shape->startRadius                       },
+			{ SceneKeys::ShapeEndRadius,          shape->endRadius                         },
+			{ SceneKeys::ShapeThickness,          shape->thickness                         },
+			{ SceneKeys::ShapeHeight,             shape->height                            },
+			{ SceneKeys::ShapeArcDegrees,         shape->arcDegrees                        },
+			{ SceneKeys::ShapeRotation,           SerializeVec3(shape->rotationDegrees)    },
+			{ SceneKeys::ShapeRotationRandomness, SerializeVec3(shape->rotationRandomness) },
+			{ SceneKeys::ShapeOffset,             SerializeVec3(shape->offset)             },
+			{ SceneKeys::ShapeSpin,               shape->spinDegreesPerSecond              },
+			{ SceneKeys::ShapeTwist,              shape->twistDegrees                      },
+			{ SceneKeys::ShapeCoreColor,          SerializeVec3(shape->coreColor)          },
+			{ SceneKeys::ShapeEdgeColor,          SerializeVec3(shape->edgeColor)          },
+			{ SceneKeys::ShapeIntensity,          shape->intensity                         },
+			{ SceneKeys::ShapeNoiseScale,         shape->noiseScale                        },
+			{ SceneKeys::ShapeScrollSpeed,        shape->scrollSpeed                       },
+			{ SceneKeys::ShapeDissolve,           shape->dissolve                          },
+			{ SceneKeys::ShapeLightIntensity,     shape->lightIntensity                    },
+			{ SceneKeys::ShapeLightRadius,        shape->lightRadius                       },
+			{ SceneKeys::ShapeLightColor,         SerializeVec3(shape->lightColor)         }
+		};
+	}
+
+	if (auto* sprite = entityManager.GetComponent<GlowSpriteComponent>(i))
+	{
+		entityJson[SceneKeys::GlowSpriteComponent] =
+		{
+			{ SceneKeys::IsVisible,         sprite->isVisible            },
+			{ SceneKeys::SpriteColor,       SerializeVec3(sprite->color) },
+			{ SceneKeys::SpriteSize,        sprite->size                 },
+			{ SceneKeys::ParticleIntensity, sprite->intensity            }
+		};
+	}
+
+	if (auto* orb = entityManager.GetComponent<LiquidOrbComponent>(i))
+	{
+		entityJson[SceneKeys::LiquidOrbComponent] =
+		{
+			{ SceneKeys::IsVisible,      orb->isVisible           },
+			{ SceneKeys::OrbTint,        SerializeVec3(orb->tint) },
+			{ SceneKeys::OrbBrightness,  orb->brightness          },
+			{ SceneKeys::OrbWobble,      orb->wobble              },
+			{ SceneKeys::OrbWobbleSpeed, orb->wobbleSpeed         },
+			{ SceneKeys::OrbClearness,   orb->clearness           }
+		};
+	}
+
+	if (auto* swarm = entityManager.GetComponent<SwarmComponent>(i))
+	{
+		entityJson[SceneKeys::SwarmComponent] =
+		{
+			{ SceneKeys::IsVisible,           swarm->isVisible                      },
+			{ SceneKeys::SwarmModelName,      swarm->modelName                      },
+			{ SceneKeys::SwarmCount,          swarm->count                          },
+			{ SceneKeys::SwarmSeed,           swarm->seed                           },
+			{ SceneKeys::SwarmPieceSize,      swarm->pieceSize                      },
+			{ SceneKeys::SwarmSizeVariation,  swarm->sizeVariation                  },
+			{ SceneKeys::SwarmRadius,         swarm->radius                         },
+			{ SceneKeys::SwarmShellThickness, swarm->shellThickness                 },
+			{ SceneKeys::SwarmSpin,           swarm->spinDegreesPerSecond           },
+			{ SceneKeys::SwarmTumble,         swarm->tumbleDegreesPerSecond         },
+			{ SceneKeys::SwarmSkyCenter,      SerializeVec3(swarm->skyCenter)       },
+			{ SceneKeys::SwarmSkyHalfExtents, SerializeVec3(swarm->skyHalfExtents)  },
+			{ SceneKeys::SwarmFallSpeed,      swarm->fallSpeed                      },
+			{ SceneKeys::SwarmFallSpread,     swarm->fallSpreadSeconds              },
+			{ SceneKeys::SwarmGroundHeight,   swarm->groundHeight                   },
+			{ SceneKeys::SwarmStuckSeconds,   swarm->stuckSeconds                   },
+			{ SceneKeys::SwarmGlowColor,      SerializeVec3(swarm->glowColor)       },
+			{ SceneKeys::SwarmTrailLength,    swarm->trailLength                    },
+			{ SceneKeys::SwarmHitEffect,      swarm->hitEffect                      },
+			{ SceneKeys::SwarmHitBurst,       swarm->hitBurst                       }
+		};
+	}
+
+	if (auto* trail = entityManager.GetComponent<WeaponTrailComponent>(i))
+	{
+		entityJson[SceneKeys::WeaponTrailComponent] =
+		{
+			{ SceneKeys::BaseOffset,        SerializeVec3(trail->baseOffset) },
+			{ SceneKeys::TipOffset,         SerializeVec3(trail->tipOffset)  },
+			{ SceneKeys::Color,        SerializeVec3(trail->color)      },
+			{ SceneKeys::ParticleIntensity, trail->intensity                 },
+			{ SceneKeys::LifetimeSeconds,   trail->lifetimeSeconds           },
+			{ SceneKeys::OnlyWhileStriking, trail->onlyWhileStriking         }
+		};
+	}
+
+	if (auto* fogGate = entityManager.GetComponent<FogGateComponent>(i))
+	{
+		entityJson[SceneKeys::FogGateComponent] =
+		{
+			{ SceneKeys::ArenaCenter,      SerializeVec3(fogGate->arenaCenter)      },
+			{ SceneKeys::ArenaHalfExtents, SerializeVec3(fogGate->arenaHalfExtents) },
+			{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     },
+			{ SceneKeys::IsCrossedWithKey,              fogGate->isCrossedWithKey   },
+			{ SceneKeys::FogCutscene,                   fogGate->cutscene           },
+			{ SceneKeys::BattleMusic,                   fogGate->battleMusic        },
+			{ SceneKeys::BattleMusicVolume,             fogGate->battleMusicVolume  },
+			{ SceneKeys::VictorySound,                  fogGate->victorySound       }
+		};
+	}
+
+	if (auto* flask = entityManager.GetComponent<HealingFlaskComponent>(i))
+	{
+		entityJson[SceneKeys::HealingFlaskComponent] =
+		{
+			{ SceneKeys::DisplayName,    flask->displayName    },
+			{ SceneKeys::MaxCharges,     flask->maxCharges     },
+			{ SceneKeys::HealAmount,     flask->healAmount     },
+			{ SceneKeys::DrinkAnimation, flask->drinkAnimation },
+			{ SceneKeys::HealAtProgress, flask->healAtProgress },
+			{ SceneKeys::HiddenWhileDrinking, flask->hiddenWhileDrinking },
+			{ SceneKeys::ShownWhileDrinking,  flask->shownWhileDrinking  },
+			{ SceneKeys::HealEffect,     flask->healEffect     },
+			{ SceneKeys::DrinkSound,     flask->drinkSound     },
+			{ SceneKeys::HealSound,      flask->healSound      }
+		};
+	}
+
+	if (auto* currency = entityManager.GetComponent<CurrencyComponent>(i))
+	{
+		entityJson[SceneKeys::CurrencyComponent] =
+		{
+			{ SceneKeys::DisplayName,        currency->displayName        },
+			{ SceneKeys::CurrencyAmount,     currency->amount             },
+			{ SceneKeys::IsDroppedOnDeath,   currency->isDroppedOnDeath   },
+			{ SceneKeys::DropMarker,         currency->dropMarker         },
+			{ SceneKeys::RetrieveDistance,   currency->retrieveDistance   },
+			{ SceneKeys::IsRetrievedWithKey, currency->isRetrievedWithKey },
+			{ SceneKeys::RetrievePrompt,     currency->retrievePrompt     },
+			{ SceneKeys::GainSound,          currency->gainSound          },
+			{ SceneKeys::RetrieveSound,      currency->retrieveSound      }
+		};
+	}
+
+	if (auto* reward = entityManager.GetComponent<CurrencyRewardComponent>(i))
+	{
+		entityJson[SceneKeys::CurrencyRewardComponent] =
+		{
+			{ SceneKeys::CurrencyAmount, reward->amount }
+		};
+	}
+
+	if (auto* levelUp = entityManager.GetComponent<LevelUpComponent>(i))
+	{
+		entityJson[SceneKeys::LevelUpComponent] =
+		{
+			{ SceneKeys::DisplayName,            levelUp->displayName            },
+			{ SceneKeys::Level,                  levelUp->level                  },
+			{ SceneKeys::FirstLevelCost,         levelUp->firstLevelCost         },
+			{ SceneKeys::CostGrowth,             levelUp->costGrowth             },
+			{ SceneKeys::StartingAttributeValue, levelUp->startingAttributeValue },
+			{ SceneKeys::HealthAttribute,        levelUp->healthAttribute        },
+			{ SceneKeys::HealthPerPoint,         levelUp->healthPerPoint         },
+			{ SceneKeys::HealthPoints,           levelUp->healthPoints           },
+			{ SceneKeys::StaminaAttribute,       levelUp->staminaAttribute       },
+			{ SceneKeys::StaminaPerPoint,        levelUp->staminaPerPoint        },
+			{ SceneKeys::StaminaPoints,          levelUp->staminaPoints          },
+			{ SceneKeys::DamageAttribute,        levelUp->damageAttribute        },
+			{ SceneKeys::DamagePerPoint,         levelUp->damagePerPoint         },
+			{ SceneKeys::DamagePoints,           levelUp->damagePoints           },
+			{ SceneKeys::LevelUpSound,           levelUp->levelUpSound           },
+			{ SceneKeys::LevelUpEffect,          levelUp->levelUpEffect          }
+		};
+	}
+
+	if (auto* audioSource = entityManager.GetComponent<AudioSourceComponent>(i))
+	{
+		entityJson[SceneKeys::AudioSourceComponent] =
+		{
+			{ SceneKeys::Sound,       audioSource->sound       },
+			{ SceneKeys::SoundVolume, audioSource->volume      },
+			{ SceneKeys::IsLooping,   audioSource->isLooping   },
+			{ SceneKeys::PlayOnStart, audioSource->playOnStart },
+			{ SceneKeys::IsSpatial,   audioSource->isSpatial   },
+			{ SceneKeys::MinDistance, audioSource->minDistance },
+			{ SceneKeys::MaxDistance, audioSource->maxDistance }
+		};
+	}
+
+	if (auto* sounds = entityManager.GetComponent<CharacterSoundsComponent>(i))
+	{
+		entityJson[SceneKeys::CharacterSoundsComponent] =
+		{
+			{ SceneKeys::AttackSound,    sounds->attackSound    },
+			{ SceneKeys::HurtSound,      sounds->hurtSound      },
+			{ SceneKeys::BlockSound,     sounds->blockSound     },
+			{ SceneKeys::ParrySound,     sounds->parrySound     },
+			{ SceneKeys::DeathSound,     sounds->deathSound     },
+			{ SceneKeys::RollSound,      sounds->rollSound      },
+			{ SceneKeys::FootstepSound,  sounds->footstepSound  },
+			{ SceneKeys::ShockwaveSound, sounds->shockwaveSound },
+			{ SceneKeys::AttackSoundLeadSeconds, sounds->attackSoundLeadSeconds },
+			{ SceneKeys::LeftFootBone,   sounds->leftFootBone   },
+			{ SceneKeys::RightFootBone,  sounds->rightFootBone  },
+			{ SceneKeys::FootstepMeters, sounds->footstepMeters },
+			{ SceneKeys::FootstepCameraShake, sounds->footstepCameraShake },
+			{ SceneKeys::FootstepShakeRadius, sounds->footstepShakeRadius },
+			{ SceneKeys::SoundVolume,    sounds->volume         },
+			{ SceneKeys::PainVoice,      sounds->painVoice      },
+			{ SceneKeys::AttackVoice,    sounds->attackVoice    },
+			{ SceneKeys::DeathVoice,     sounds->deathVoice     },
+			{ SceneKeys::AlertVoice,     sounds->alertVoice     },
+			{ SceneKeys::PainVoiceChance,   sounds->painVoiceChance   },
+			{ SceneKeys::AttackVoiceChance, sounds->attackVoiceChance }
+		};
+	}
+
+	if (auto* poise = entityManager.GetComponent<PoiseComponent>(i))
+	{
+		entityJson[SceneKeys::PoiseComponent] =
+		{
+			{ SceneKeys::MaxPoise,            poise->maxPoise            },
+			{ SceneKeys::RecoverAfterSeconds, poise->recoverAfterSeconds },
+			{ SceneKeys::StaggerImmunitySeconds, poise->staggerImmunitySeconds }
+		};
+	}
+
+	if (auto* enemy = entityManager.GetComponent<EnemyComponent>(i))
+	{
+		entityJson[SceneKeys::EnemyComponent] =
+		{
+			{ SceneKeys::SightDistance,     enemy->sightDistance     },
+			{ SceneKeys::SightAngleDegrees, enemy->sightAngleDegrees },
+			{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
+			{ SceneKeys::EyeHeight,         enemy->eyeHeight         },
+			{ SceneKeys::StartsDormant,     enemy->startsDormant     }
+		};
+	}
+
+	if (auto* bonfire = entityManager.GetComponent<BonfireComponent>(i))
+	{
+		entityJson[SceneKeys::BonfireComponent] =
+		{
+			{ SceneKeys::InteractDistance,               bonfire->interactDistance },
+			{ SceneKeys::RespawnOffset,    SerializeVec3(bonfire->respawnOffset)    }
+		};
+	}
+
+	if (auto* respawn = entityManager.GetComponent<RespawnComponent>(i))
+	{
+		entityJson[SceneKeys::RespawnComponent] = { { SceneKeys::RespawnDelaySeconds, respawn->respawnDelaySeconds } };
+	}
+
+	if (auto* hud = entityManager.GetComponent<PlayerHUDComponent>(i))
+	{
+		entityJson[SceneKeys::PlayerHUDComponent] =
+		{
+			{ SceneKeys::PixelsPerHealthPoint,  hud->pixelsPerHealthPoint  },
+			{ SceneKeys::PixelsPerStaminaPoint, hud->pixelsPerStaminaPoint },
+			{ SceneKeys::ShowLockOnMarker,      hud->showLockOnMarker      },
+			{ SceneKeys::DeathMessage,          hud->deathMessage          },
+			{ SceneKeys::HUDStyleFile,          hud->style                 }
+		};
+	}
+
+	if (auto* healthBar = entityManager.GetComponent<EnemyHealthBarComponent>(i))
+	{
+		entityJson[SceneKeys::EnemyHealthBarComponent] =
+		{
+			{ SceneKeys::IsBoss,              healthBar->isBoss              },
+			{ SceneKeys::DisplayName,         healthBar->displayName         },
+			{ SceneKeys::ShowSecondsAfterHit, healthBar->showSecondsAfterHit },
+			{ SceneKeys::HeightAboveFeet,     healthBar->heightAboveFeet     }
+		};
+	}
+
+	if (auto* meleeEnemy = entityManager.GetComponent<MeleeEnemyComponent>(i))
+	{
+		entityJson[SceneKeys::MeleeEnemyComponent] =
+		{
+			{ SceneKeys::AttackDistance,        meleeEnemy->attackDistance        },
+			{ SceneKeys::RunDistance,           meleeEnemy->runDistance           },
+			{ SceneKeys::GiveUpDistance,        meleeEnemy->giveUpDistance        },
+			{ SceneKeys::AttackCooldownSeconds, meleeEnemy->attackCooldownSeconds },
+			{ SceneKeys::HeavyAttackChance,     meleeEnemy->heavyAttackChance     },
+			{ SceneKeys::MaxLightCombo,         meleeEnemy->maxLightCombo         },
+			{ SceneKeys::FinisherChance,        meleeEnemy->finisherChance        },
+			{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        },
+			{ SceneKeys::DodgeChance,           meleeEnemy->dodgeChance           },
+			{ SceneKeys::DodgeDistance,         meleeEnemy->dodgeDistance         },
+			{ SceneKeys::DodgeCooldownSeconds,  meleeEnemy->dodgeCooldownSeconds  },
+			{ SceneKeys::LeapAttackDistance,    meleeEnemy->leapAttackDistance    }
+		};
+	}
+
+	if (auto* spell = entityManager.GetComponent<SpellCasterComponent>(i))
+	{
+		entityJson[SceneKeys::SpellCasterComponent] =
+		{
+			{ SceneKeys::CastAnimation,            spell->castAnimation            },
+			{ SceneKeys::ProjectileName,           spell->projectile               },
+			{ SceneKeys::ProjectileCount,          spell->projectileCount          },
+			{ SceneKeys::SpreadDegrees,            spell->spreadDegrees            },
+			{ SceneKeys::ReleaseAt,                spell->releaseAt                },
+			{ SceneKeys::AtTargetsFeet,            spell->atTargetsFeet            },
+			{ SceneKeys::DropHeight,               spell->dropHeight               },
+			{ SceneKeys::MinDistance,              spell->minDistance              },
+			{ SceneKeys::MaxDistance,              spell->maxDistance              },
+			{ SceneKeys::SpellCooldownSeconds,     spell->cooldownSeconds          },
+			{ SceneKeys::ChargeEffect,             spell->chargeEffect             },
+			{ SceneKeys::ChargeParticlesPerSecond, spell->chargeParticlesPerSecond },
+			{ SceneKeys::CastSound,                spell->castSound                },
+			{ SceneKeys::CastKey,                  spell->castKey                  },
+			{ SceneKeys::DisplayName,              spell->displayName              },
+			{ SceneKeys::IsCastOnRequestOnly,      spell->isCastOnRequestOnly      },
+			{ SceneKeys::IsUninterruptible,        spell->isUninterruptible        }
+		};
+	}
+
+	if (auto* projectile = entityManager.GetComponent<ProjectileComponent>(i))
+	{
+		entityJson[SceneKeys::ProjectileComponent] =
+		{
+			{ SceneKeys::ProjectileSpeed,         projectile->speed                   },
+			{ SceneKeys::Damage,                  projectile->damage                  },
+			{ SceneKeys::PoiseDamage,             projectile->poiseDamage             },
+			{ SceneKeys::ProjectileRadius,        projectile->radius                  },
+			{ SceneKeys::HomingDegreesPerSecond,  projectile->homingDegreesPerSecond  },
+			{ SceneKeys::LifetimeSeconds,         projectile->lifetimeSeconds         },
+			{ SceneKeys::FuseSeconds,             projectile->fuseSeconds             },
+			{ SceneKeys::TrailEffect,             projectile->trailEffect             },
+			{ SceneKeys::TrailParticlesPerSecond, projectile->trailParticlesPerSecond },
+			{ SceneKeys::SpinDegreesPerSecond,    projectile->spinDegreesPerSecond    },
+			{ SceneKeys::LaunchDelaySeconds,      projectile->launchDelaySeconds      },
+			{ SceneKeys::BodyFacesFlight,         projectile->bodyFacesFlight         },
+			{ SceneKeys::SpinsAroundFlight,       projectile->spinsAroundFlight       },
+			{ SceneKeys::FormSeconds,             projectile->formSeconds             },
+			{ SceneKeys::AimsAfterForming,        projectile->aimsAfterForming        },
+			{ SceneKeys::HitEffect,               projectile->hitEffect               },
+			{ SceneKeys::HitBurst,                projectile->hitBurst                },
+			{ SceneKeys::HitSound,                projectile->hitSound                },
+			{ SceneKeys::HitStopSeconds,          projectile->hitStopSeconds          },
+			{ SceneKeys::CameraShake,             projectile->cameraShake             }
+		};
+	}
+
+	return entityJson;
+}
+
+// Gives a new entity the components saved for it
+static void DeserializeEntity(EntityManager& entityManager, unsigned int entity, const json& entityJson)
+{
+
+	if (entityJson.contains(SceneKeys::TagComponent))
+	{
+		const auto& tagData = entityJson[SceneKeys::TagComponent];
+		auto& tag = entityManager.AddComponent<TagComponent>(entity);
+		tag.name = tagData.value(SceneKeys::Name, "Entity");
+	}
+
+	if (entityJson.contains(SceneKeys::TransformComponent))
+	{
+		const auto& transformData = entityJson[SceneKeys::TransformComponent];
+		auto& transform = entityManager.AddComponent<TransformComponent>(entity);
+
+		if(transformData.contains(SceneKeys::Position))
+			transform.position = DeserializeVec3(transformData[SceneKeys::Position]);
+
+		if (transformData.contains(SceneKeys::Rotation))
+			transform.rotation = DeserializeVec3(transformData[SceneKeys::Rotation]);
+		
+		if (transformData.contains(SceneKeys::Scale))
+			transform.scale    = DeserializeVec3(transformData[SceneKeys::Scale], glm::vec3(1.0f));
+
+		if (transformData.contains(SceneKeys::RotationQuaternion))
+			transform.rotationQuaternion = DeserializeQuaternion(transformData[SceneKeys::RotationQuaternion]);
+		else
+			transform.SyncQuaternionFromEuler();
+
+
+		transform.isDirty  = true;
+	}
+
+	entityManager.AddComponent<WorldMatrixComponent>(entity);
+
+	if (entityJson.contains(SceneKeys::ScriptComponent))
+	{
+		const auto& scriptData = entityJson[SceneKeys::ScriptComponent];
+
+		if (scriptData.is_array())
+		{
+			auto& scriptComponent = entityManager.AddComponent<ScriptComponent>(entity);
+			
+			for (const auto& scriptJson : scriptData)
+			{
+				std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
+				if (!path.empty())
+				{
+					scriptComponent.AddScript(VirtualFileSystem::Resolve(path));
+				}
+			}
+		}
+	}
+
+	if (entityJson.contains(SceneKeys::MeshComponent))
+	{
+		const auto& meshData = entityJson[SceneKeys::MeshComponent];
+		auto& meshComponent = entityManager.AddComponent<MeshComponent>(entity);
+
+		meshComponent.isVisible    = meshData.value(SceneKeys::IsVisible,    true);
+		meshComponent.meshName     = meshData.value(SceneKeys::MeshName,     MeshComponent::NULL_ASSET_NAME);
+		meshComponent.materialName = meshData.value(SceneKeys::MaterialName, MeshComponent::NULL_ASSET_NAME);
+		meshComponent.isDirty      = true;
+	}
+
+	if (entityJson.contains(SceneKeys::ModelComponent))
+	{
+		const auto& modelData = entityJson[SceneKeys::ModelComponent];
+		auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity);
+
+		modelComponent.isVisible = modelData.value(SceneKeys::IsVisible, true);
+		modelComponent.modelName = modelData.value(SceneKeys::ModelName, ModelComponent::NULL_ASSET_NAME);
+		modelComponent.emissiveStrength = modelData.value(SceneKeys::EmissiveStrength, modelComponent.emissiveStrength);
+		modelComponent.isDirty = true;
+	}
+
+	if (entityJson.contains(SceneKeys::AnimatorComponent))
+	{
+		const auto& animatorData = entityJson[SceneKeys::AnimatorComponent];
+		auto& animatorComponent = entityManager.AddComponent<AnimatorComponent>(entity);
+
+		animatorComponent.currentAnimationName = animatorData.value(SceneKeys::CurrentAnimationName, "");
+	}
+
+	if (entityJson.contains(SceneKeys::BoxColliderComponent))
+	{
+		const auto& boxColliderData = entityJson[SceneKeys::BoxColliderComponent];
+		auto& boxColliderComponent = entityManager.AddComponent<BoxColliderComponent>(entity);
+
+		if (boxColliderData.contains(SceneKeys::LocalOffset))
+			boxColliderComponent.localOffset = DeserializeVec3(boxColliderData[SceneKeys::LocalOffset]);
+
+		if (boxColliderData.contains(SceneKeys::HalfExtents))
+			boxColliderComponent.halfExtents = DeserializeVec3(boxColliderData[SceneKeys::HalfExtents], glm::vec3(0.5f));
+
+		boxColliderComponent.showGizmos   = boxColliderData.value(SceneKeys::ShowGizmos, false);
+		boxColliderComponent.isTrigger    = boxColliderData.value(SceneKeys::IsTrigger, false);
+		boxColliderComponent.blocksCamera = boxColliderData.value(SceneKeys::BlocksCamera, true);
+		boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(DefaultCollisionLayer)));
+	}
+
+	if (entityJson.contains(SceneKeys::PhysicsBodyComponent))
+	{
+		const auto& physicsBodyData = entityJson[SceneKeys::PhysicsBodyComponent];
+		auto& physicsBodyComponent = entityManager.AddComponent<PhysicsBodyComponent>(entity);
+
+		physicsBodyComponent.isKinematic = physicsBodyData.value(SceneKeys::IsKinematic, false);
+		physicsBodyComponent.useGravity  = physicsBodyData.value(SceneKeys::UseGravity,  true);
+
+		if (physicsBodyData.contains(SceneKeys::Velocity))
+			physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
+
+		if (physicsBodyData.contains(SceneKeys::AngularVelocity))
+			physicsBodyComponent.angularVelocity = DeserializeVec3(physicsBodyData[SceneKeys::AngularVelocity]);
+
+		physicsBodyComponent.freezeRotationX = physicsBodyData.value(SceneKeys::FreezeRotationX, false);
+		physicsBodyComponent.freezeRotationY = physicsBodyData.value(SceneKeys::FreezeRotationY, false);
+		physicsBodyComponent.freezeRotationZ = physicsBodyData.value(SceneKeys::FreezeRotationZ, false);
+
+		// The fallback is the component's own default, so the default values live in ONE place (Component.h)
+		physicsBodyComponent.mass           = physicsBodyData.value(SceneKeys::Mass,		   physicsBodyComponent.mass);
+		physicsBodyComponent.restitution    = physicsBodyData.value(SceneKeys::Restitution,	   physicsBodyComponent.restitution);
+		physicsBodyComponent.friction       = physicsBodyData.value(SceneKeys::Friction,	   physicsBodyComponent.friction);
+		physicsBodyComponent.linearDamping  = physicsBodyData.value(SceneKeys::LinearDamping,  physicsBodyComponent.linearDamping);
+		physicsBodyComponent.angularDamping = physicsBodyData.value(SceneKeys::AngularDamping, physicsBodyComponent.angularDamping);
+
+		if (physicsBodyData.contains(SceneKeys::Velocity))
+			physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
+	}
+
+	if (entityJson.contains(SceneKeys::DirectionalLightComponent))
+	{
+		const auto& lightData = entityJson[SceneKeys::DirectionalLightComponent];
+		auto& directionalLight = entityManager.AddComponent<DirectionalLightComponent>(entity);
+		DeserializeLightColor(lightData, directionalLight.color);
+
+		directionalLight.castsShadows     = lightData.value(SceneKeys::CastsShadows,     directionalLight.castsShadows);
+		directionalLight.shadowDistance   = lightData.value(SceneKeys::ShadowDistance,   directionalLight.shadowDistance);
+		directionalLight.shadowStrength   = lightData.value(SceneKeys::ShadowStrength,   directionalLight.shadowStrength);
+		directionalLight.shadowSoftness   = lightData.value(SceneKeys::ShadowSoftness,   directionalLight.shadowSoftness);
+		directionalLight.shadowResolution = lightData.value(SceneKeys::ShadowResolution, directionalLight.shadowResolution);
+	}
+
+	if (entityJson.contains(SceneKeys::PointLightComponent))
+	{
+		const auto& lightData = entityJson[SceneKeys::PointLightComponent];
+		auto& pointLight = entityManager.AddComponent<PointLightComponent>(entity);
+
+		if (lightData.contains(SceneKeys::Color))
+			DeserializeLightColor(lightData[SceneKeys::Color], pointLight.color);
+
+		if (lightData.contains(SceneKeys::Attenuation))
+			DeserializeAttenuation(lightData[SceneKeys::Attenuation], pointLight.attenuation);
+	}
+
+	if (entityJson.contains(SceneKeys::SpotLightComponent))
+	{
+		const auto& lightData = entityJson[SceneKeys::SpotLightComponent];
+		auto& spotLight = entityManager.AddComponent<SpotLightComponent>(entity);
+
+		if (lightData.contains(SceneKeys::Color))
+			DeserializeLightColor(lightData[SceneKeys::Color], spotLight.color);
+
+		if (lightData.contains(SceneKeys::Attenuation))
+			DeserializeAttenuation(lightData[SceneKeys::Attenuation], spotLight.attenuation);
+
+		spotLight.innerCutOffAngle = lightData.value(SceneKeys::InnerCutOff, spotLight.innerCutOffAngle);
+		spotLight.outerCutOffAngle = lightData.value(SceneKeys::OuterCutOff, spotLight.outerCutOffAngle);
+	}
+
+	if (entityJson.contains(SceneKeys::CameraComponent))
+	{
+		const auto& cameraData = entityJson[SceneKeys::CameraComponent];
+		auto& camera = entityManager.AddComponent<CameraComponent>(entity);
+
+		camera.fieldOfView = cameraData.value(SceneKeys::FieldOfView, camera.fieldOfView);
+		camera.nearPlane   = cameraData.value(SceneKeys::NearPlane,   camera.nearPlane);
+		camera.farPlane    = cameraData.value(SceneKeys::FarPlane,    camera.farPlane);
+		camera.isActive    = cameraData.value(SceneKeys::IsActive,    camera.isActive);
+	}
+
+	if (entityJson.contains(SceneKeys::CharacterControllerComponent))
+	{
+		const auto& controllerData = entityJson[SceneKeys::CharacterControllerComponent];
+		auto& controller = entityManager.AddComponent<CharacterControllerComponent>(entity);
+
+		// A missing key keeps the default written in CharacterControllerComponent.h
+		controller.walkSpeed            = controllerData.value(SceneKeys::WalkSpeed,           controller.walkSpeed);
+		controller.runSpeed             = controllerData.value(SceneKeys::RunSpeed,            controller.runSpeed);
+		controller.acceleration         = controllerData.value(SceneKeys::Acceleration,        controller.acceleration);
+		controller.turnSpeed            = controllerData.value(SceneKeys::TurnSpeed,           controller.turnSpeed);
+		controller.facingOffsetDegrees  = controllerData.value(SceneKeys::FacingOffsetDegrees, controller.facingOffsetDegrees);
+		controller.isPlayerControlled   = controllerData.value(SceneKeys::IsPlayerControlled,  controller.isPlayerControlled);
+	}
+
+	if (entityJson.contains(SceneKeys::CharacterAnimationComponent))
+	{
+		const auto& animationData = entityJson[SceneKeys::CharacterAnimationComponent];
+		auto& characterAnimation = entityManager.AddComponent<CharacterAnimationComponent>(entity);
+
+		// A missing key keeps the default written in CharacterAnimationComponent.h
+		characterAnimation.idleAnimation = animationData.value(SceneKeys::IdleAnimation, characterAnimation.idleAnimation);
+		characterAnimation.walkAnimation = animationData.value(SceneKeys::WalkAnimation, characterAnimation.walkAnimation);
+		characterAnimation.runAnimation  = animationData.value(SceneKeys::RunAnimation,  characterAnimation.runAnimation);
+		characterAnimation.walkBackAnimation    = animationData.value(SceneKeys::WalkBackAnimation,    characterAnimation.walkBackAnimation);
+		characterAnimation.strafeLeftAnimation  = animationData.value(SceneKeys::StrafeLeftAnimation,  characterAnimation.strafeLeftAnimation);
+		characterAnimation.strafeRightAnimation = animationData.value(SceneKeys::StrafeRightAnimation, characterAnimation.strafeRightAnimation);
+		characterAnimation.lockedOnIdleAnimation = animationData.value(SceneKeys::LockedOnIdleAnimation, characterAnimation.lockedOnIdleAnimation);
+		characterAnimation.blendSeconds  = animationData.value(SceneKeys::BlendSeconds,  characterAnimation.blendSeconds);
+		characterAnimation.walkAnimationSpeed = animationData.value(SceneKeys::WalkAnimationSpeed, characterAnimation.walkAnimationSpeed);
+		characterAnimation.runAnimationSpeed  = animationData.value(SceneKeys::RunAnimationSpeed,  characterAnimation.runAnimationSpeed);
+	}
+
+	if (entityJson.contains(SceneKeys::FollowCameraComponent))
+	{
+		const auto& followData = entityJson[SceneKeys::FollowCameraComponent];
+		auto& followCamera = entityManager.AddComponent<FollowCameraComponent>(entity);
+
+		// A missing key keeps the default written in FollowCameraComponent.h
+		followCamera.distance            = followData.value(SceneKeys::Distance,           followCamera.distance);
+		followCamera.pivotHeight         = followData.value(SceneKeys::PivotHeight,        followCamera.pivotHeight);
+		followCamera.shoulderOffset      = followData.value(SceneKeys::ShoulderOffset,     followCamera.shoulderOffset);
+		followCamera.viewYawOffsetDegrees   = followData.value(SceneKeys::ViewYawOffsetDegrees,   followCamera.viewYawOffsetDegrees);
+		followCamera.viewPitchOffsetDegrees = followData.value(SceneKeys::ViewPitchOffsetDegrees, followCamera.viewPitchOffsetDegrees);
+		followCamera.mouseSensitivity    = followData.value(SceneKeys::MouseSensitivity,   followCamera.mouseSensitivity);
+		followCamera.invertY             = followData.value(SceneKeys::InvertY,            followCamera.invertY);
+		followCamera.minPitchDegrees     = followData.value(SceneKeys::MinPitchDegrees,    followCamera.minPitchDegrees);
+		followCamera.maxPitchDegrees     = followData.value(SceneKeys::MaxPitchDegrees,    followCamera.maxPitchDegrees);
+		followCamera.followSharpness     = followData.value(SceneKeys::FollowSharpness,    followCamera.followSharpness);
+		followCamera.lockOnPitchDegrees  = followData.value(SceneKeys::LockOnPitchDegrees, followCamera.lockOnPitchDegrees);
+		followCamera.lockOnSideDegrees   = followData.value(SceneKeys::LockOnSideDegrees, followCamera.lockOnSideDegrees);
+		followCamera.lockOnSharpness     = followData.value(SceneKeys::LockOnSharpness,    followCamera.lockOnSharpness);
+		followCamera.shakeDegrees        = followData.value(SceneKeys::ShakeDegrees,       followCamera.shakeDegrees);
+		followCamera.shakeFrequency      = followData.value(SceneKeys::ShakeFrequency,     followCamera.shakeFrequency);
+		followCamera.shakeFadePerSecond  = followData.value(SceneKeys::ShakeFadePerSecond, followCamera.shakeFadePerSecond);
+	}
+
+	if (entityJson.contains(SceneKeys::LockOnComponent))
+	{
+		const auto& lockOnData = entityJson[SceneKeys::LockOnComponent];
+		auto& lockOn = entityManager.AddComponent<LockOnComponent>(entity);
+
+		// A missing key keeps the default written in LockOnComponent.h
+		lockOn.maxDistance         = lockOnData.value(SceneKeys::MaxDistance,         lockOn.maxDistance);
+		lockOn.searchAngleDegrees  = lockOnData.value(SceneKeys::SearchAngleDegrees,  lockOn.searchAngleDegrees);
+		lockOn.eyeHeight           = lockOnData.value(SceneKeys::EyeHeight,           lockOn.eyeHeight);
+		lockOn.switchMouseDistance = lockOnData.value(SceneKeys::SwitchMouseDistance, lockOn.switchMouseDistance);
+		lockOn.requireLineOfSight  = lockOnData.value(SceneKeys::RequireLineOfSight,  lockOn.requireLineOfSight);
+		lockOn.isPlayerControlled  = lockOnData.value(SceneKeys::IsPlayerControlled,  lockOn.isPlayerControlled);
+		lockOn.showSightRays       = lockOnData.value(SceneKeys::ShowSightRays,       lockOn.showSightRays);
+	}
+
+	if (entityJson.contains(SceneKeys::StrikeAimComponent))
+	{
+		const auto& aimData = entityJson[SceneKeys::StrikeAimComponent];
+		auto& aim = entityManager.AddComponent<StrikeAimComponent>(entity);
+
+		// A missing key keeps the default written in StrikeAimComponent.h
+		aim.spineBones       = aimData.value(SceneKeys::StrikeAimSpineBones,     aim.spineBones);
+		aim.clipStrikeHeight = aimData.value(SceneKeys::StrikeAimClipHeight,     aim.clipStrikeHeight);
+		aim.targetHeight     = aimData.value(SceneKeys::StrikeAimTargetHeight,   aim.targetHeight);
+		aim.maxPitchDegrees  = aimData.value(SceneKeys::StrikeAimMaxPitch,       aim.maxPitchDegrees);
+		aim.maxYawDegrees    = aimData.value(SceneKeys::StrikeAimMaxYaw,         aim.maxYawDegrees);
+		aim.fadeSeconds      = aimData.value(SceneKeys::StrikeAimFadeSeconds,    aim.fadeSeconds);
+		aim.searchDistance   = aimData.value(SceneKeys::StrikeAimSearchDistance, aim.searchDistance);
+	}
+
+	if (entityJson.contains(SceneKeys::LockOnTargetComponent))
+	{
+		const auto& targetData = entityJson[SceneKeys::LockOnTargetComponent];
+		auto& lockOnTarget = entityManager.AddComponent<LockOnTargetComponent>(entity);
+
+		lockOnTarget.isLockable = targetData.value(SceneKeys::IsLockable, lockOnTarget.isLockable);
+		lockOnTarget.aimHeight  = targetData.value(SceneKeys::AimHeight,  lockOnTarget.aimHeight);
+		lockOnTarget.aimBone    = targetData.value(SceneKeys::AimBone,    lockOnTarget.aimBone);
+	}
+
+	if (entityJson.contains(SceneKeys::CharacterActionsComponent))
+	{
+		const auto& actionsData = entityJson[SceneKeys::CharacterActionsComponent];
+		auto& actions = entityManager.AddComponent<CharacterActionsComponent>(entity);
+
+		// A missing key keeps the default written in CharacterActionsComponent.h
+		actions.rollAnimation         = actionsData.value(SceneKeys::RollAnimation,         actions.rollAnimation);
+		actions.backstepAnimation     = actionsData.value(SceneKeys::BackstepAnimation,     actions.backstepAnimation);
+		actions.lightAttack1Animation = actionsData.value(SceneKeys::LightAttack1Animation, actions.lightAttack1Animation);
+		actions.lightAttack2Animation = actionsData.value(SceneKeys::LightAttack2Animation, actions.lightAttack2Animation);
+		actions.lightAttack3Animation = actionsData.value(SceneKeys::LightAttack3Animation, actions.lightAttack3Animation);
+		actions.heavyAttackAnimation  = actionsData.value(SceneKeys::HeavyAttackAnimation,  actions.heavyAttackAnimation);
+		actions.leapAttackAnimation   = actionsData.value(SceneKeys::LeapAttackAnimation,   actions.leapAttackAnimation);
+		actions.leapSpeed             = actionsData.value(SceneKeys::LeapSpeed,             actions.leapSpeed);
+		actions.leapHitFrom           = actionsData.value(SceneKeys::LeapHitFrom,           actions.leapHitFrom);
+		actions.leapHitTo             = actionsData.value(SceneKeys::LeapHitTo,             actions.leapHitTo);
+		actions.rollSpeed             = actionsData.value(SceneKeys::RollSpeed,             actions.rollSpeed);
+		actions.backstepSpeed         = actionsData.value(SceneKeys::BackstepSpeed,         actions.backstepSpeed);
+		actions.attackStepSpeed       = actionsData.value(SceneKeys::AttackStepSpeed,       actions.attackStepSpeed);
+		actions.invulnerableFrom      = actionsData.value(SceneKeys::InvulnerableFrom,      actions.invulnerableFrom);
+		actions.invulnerableTo        = actionsData.value(SceneKeys::InvulnerableTo,        actions.invulnerableTo);
+		actions.inputBufferFrom       = actionsData.value(SceneKeys::InputBufferFrom,       actions.inputBufferFrom);
+		actions.cancelFrom            = actionsData.value(SceneKeys::CancelFrom,            actions.cancelFrom);
+		actions.blendSeconds          = actionsData.value(SceneKeys::BlendSeconds,          actions.blendSeconds);
+		actions.hitReactionAnimation  = actionsData.value(SceneKeys::HitReactionAnimation,  actions.hitReactionAnimation);
+		actions.deathAnimation        = actionsData.value(SceneKeys::DeathAnimation,        actions.deathAnimation);
+		actions.restAnimation         = actionsData.value(SceneKeys::RestAnimation,         actions.restAnimation);
+		actions.standUpAnimation      = actionsData.value(SceneKeys::StandUpAnimation,      actions.standUpAnimation);
+		actions.blockAnimation        = actionsData.value(SceneKeys::BlockAnimation,        actions.blockAnimation);
+		actions.blockImpactAnimation  = actionsData.value(SceneKeys::BlockImpactAnimation,  actions.blockImpactAnimation);
+		actions.parryAnimation        = actionsData.value(SceneKeys::ParryAnimation,        actions.parryAnimation);
+		actions.parriedAnimation      = actionsData.value(SceneKeys::ParriedAnimation,      actions.parriedAnimation);
+		actions.jumpAnimation         = actionsData.value(SceneKeys::JumpAnimation,         actions.jumpAnimation);
+		actions.jumpAttackAnimation   = actionsData.value(SceneKeys::JumpAttackAnimation,   actions.jumpAttackAnimation);
+		actions.jumpHeavyAttackAnimation = actionsData.value(SceneKeys::JumpHeavyAttackAnimation, actions.jumpHeavyAttackAnimation);
+		actions.jumpSpeed             = actionsData.value(SceneKeys::JumpSpeed,             actions.jumpSpeed);
+		actions.jumpMoveSpeed         = actionsData.value(SceneKeys::JumpMoveSpeed,         actions.jumpMoveSpeed);
+		actions.jumpPlungeSpeed       = actionsData.value(SceneKeys::JumpPlungeSpeed,       actions.jumpPlungeSpeed);
+		actions.jumpPlungeFrom        = actionsData.value(SceneKeys::JumpPlungeFrom,        actions.jumpPlungeFrom);
+		actions.jumpAttackDamageMultiplier = actionsData.value(SceneKeys::JumpAttackDamageMultiplier, actions.jumpAttackDamageMultiplier);
+		actions.jumpPlungeShockwaveRadius = actionsData.value(SceneKeys::JumpPlungeShockwaveRadius, actions.jumpPlungeShockwaveRadius);
+		actions.jumpPlungeShockwaveDamage = actionsData.value(SceneKeys::JumpPlungeShockwaveDamage, actions.jumpPlungeShockwaveDamage);
+		actions.jumpPlungeEffect      = actionsData.value(SceneKeys::JumpPlungeEffect,      actions.jumpPlungeEffect);
+		actions.upperBodyBone         = actionsData.value(SceneKeys::UpperBodyBone,         actions.upperBodyBone);
+		actions.shockwaveRadius       = actionsData.value(SceneKeys::ShockwaveRadius,       actions.shockwaveRadius);
+		actions.shockwaveDamage       = actionsData.value(SceneKeys::ShockwaveDamage,       actions.shockwaveDamage);
+		actions.shockwaveDistance     = actionsData.value(SceneKeys::ShockwaveDistance,     actions.shockwaveDistance);
+		actions.shockwaveEffect       = actionsData.value(SceneKeys::ShockwaveEffect,       actions.shockwaveEffect);
+		actions.swingEffect           = actionsData.value(SceneKeys::SwingEffect,           actions.swingEffect);
+		actions.hyperArmor            = actionsData.value(SceneKeys::HyperArmor,            actions.hyperArmor);
+		actions.heavySwingEffect      = actionsData.value(SceneKeys::HeavySwingEffect,      actions.heavySwingEffect);
+		actions.swingEffectHeight     = actionsData.value(SceneKeys::SwingEffectHeight,     actions.swingEffectHeight);
+		actions.swingEffectDistance   = actionsData.value(SceneKeys::SwingEffectDistance,   actions.swingEffectDistance);
+		actions.swingEffectAt         = actionsData.value(SceneKeys::SwingEffectAt,         actions.swingEffectAt);
+		actions.shockwaveCameraShake  = actionsData.value(SceneKeys::ShockwaveCameraShake,  actions.shockwaveCameraShake);
+		actions.attackTurnDegreesPerSecond = actionsData.value(SceneKeys::AttackTurnDegreesPerSecond, actions.attackTurnDegreesPerSecond);
+		actions.attackLungeSpeed      = actionsData.value(SceneKeys::AttackLungeSpeed,      actions.attackLungeSpeed);
+		actions.attackReach           = actionsData.value(SceneKeys::AttackReach,           actions.attackReach);
+		actions.finisherKnockback     = actionsData.value(SceneKeys::FinisherKnockback,     actions.finisherKnockback);
+		actions.heavyKnockback        = actionsData.value(SceneKeys::HeavyKnockback,        actions.heavyKnockback);
+		actions.knockdownAnimation    = actionsData.value(SceneKeys::KnockdownAnimation,    actions.knockdownAnimation);
+		actions.heavyKnockbackChance  = actionsData.value(SceneKeys::HeavyKnockbackChance,  actions.heavyKnockbackChance);
+		actions.getUpAnimation        = actionsData.value(SceneKeys::GetUpAnimation,        actions.getUpAnimation);
+		actions.knockdownChance       = actionsData.value(SceneKeys::KnockdownChance,       actions.knockdownChance);
+		actions.knockdownSeconds      = actionsData.value(SceneKeys::KnockdownSeconds,      actions.knockdownSeconds);
+		actions.attackDelayChance     = actionsData.value(SceneKeys::AttackDelayChance,     actions.attackDelayChance);
+		actions.attackDelaySeconds    = actionsData.value(SceneKeys::AttackDelaySeconds,    actions.attackDelaySeconds);
+		actions.attackDelayAt         = actionsData.value(SceneKeys::AttackDelayAt,         actions.attackDelayAt);
+		actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
+		actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
+		actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
+		actions.lightHitFrom          = actionsData.value(SceneKeys::LightHitFrom,          actions.lightHitFrom);
+		actions.lightHitTo            = actionsData.value(SceneKeys::LightHitTo,            actions.lightHitTo);
+		actions.heavyHitFrom          = actionsData.value(SceneKeys::HeavyHitFrom,          actions.heavyHitFrom);
+		actions.heavyHitTo            = actionsData.value(SceneKeys::HeavyHitTo,            actions.heavyHitTo);
+		actions.heavyDamageMultiplier = actionsData.value(SceneKeys::HeavyDamageMultiplier, actions.heavyDamageMultiplier);
+		actions.attackSpeed           = actionsData.value(SceneKeys::AttackSpeed,           actions.attackSpeed);
+		actions.extraLightAttackAnimations = actionsData.value(SceneKeys::ExtraLightAttackAnimations, actions.extraLightAttackAnimations);
+		actions.heavyAttack2Animation  = actionsData.value(SceneKeys::HeavyAttack2Animation,  actions.heavyAttack2Animation);
+		actions.runningAttackAnimation = actionsData.value(SceneKeys::RunningAttackAnimation, actions.runningAttackAnimation);
+		actions.runningAttackSpeed     = actionsData.value(SceneKeys::RunningAttackSpeed,     actions.runningAttackSpeed);
+		actions.dodgeAttackAnimation   = actionsData.value(SceneKeys::DodgeAttackAnimation,   actions.dodgeAttackAnimation);
+		actions.riposteAnimation       = actionsData.value(SceneKeys::RiposteAnimation,       actions.riposteAnimation);
+		actions.riposteReach           = actionsData.value(SceneKeys::RiposteReach,           actions.riposteReach);
+		actions.attackLungeMaxDistance = actionsData.value(SceneKeys::AttackLungeMaxDistance, actions.attackLungeMaxDistance);
+		actions.dodgeCancelFrom        = actionsData.value(SceneKeys::DodgeCancelFrom,        actions.dodgeCancelFrom);
+		actions.hitReactionDodgeFrom   = actionsData.value(SceneKeys::HitReactionDodgeFrom,   actions.hitReactionDodgeFrom);
+		actions.extraHitReactionAnimations = actionsData.value(SceneKeys::ExtraHitReactionAnimations, actions.extraHitReactionAnimations);
+		actions.heavyHitReactionAnimation = actionsData.value(SceneKeys::HeavyHitReactionAnimation, actions.heavyHitReactionAnimation);
+		actions.knockbackAnimation = actionsData.value(SceneKeys::KnockbackAnimation, actions.knockbackAnimation);
+		actions.knockbackSeconds   = actionsData.value(SceneKeys::KnockbackSeconds,   actions.knockbackSeconds);
+		actions.knockbackDust      = actionsData.value(SceneKeys::KnockbackDust,      actions.knockbackDust);
+
+		if (actionsData.contains(SceneKeys::AttackMoves))
+		{
+			for (const auto& moveData : actionsData[SceneKeys::AttackMoves])
+			{
+				AttackMove move;
+				move.animation        = moveData.value(SceneKeys::MoveAnimation,        move.animation);
+				move.hitFrom          = moveData.value(SceneKeys::MoveHitFrom,          move.hitFrom);
+				move.hitTo            = moveData.value(SceneKeys::MoveHitTo,            move.hitTo);
+				move.damageMultiplier = moveData.value(SceneKeys::MoveDamageMultiplier, move.damageMultiplier);
+				move.cancelFrom       = moveData.value(SceneKeys::MoveCancelFrom,       move.cancelFrom);
+				move.strikeHeight     = moveData.value(SceneKeys::MoveStrikeHeight,     move.strikeHeight);
+				actions.attackMoves.push_back(move);
+			}
+		}
+	}
+
+	if (entityJson.contains(SceneKeys::HealthComponent))
+	{
+		const auto& healthData = entityJson[SceneKeys::HealthComponent];
+		auto& health = entityManager.AddComponent<HealthComponent>(entity);
+		health.maxHealth     = healthData.value(SceneKeys::MaxHealth, health.maxHealth);
+		health.hitEffect     = healthData.value(SceneKeys::HitEffect, health.hitEffect);
+		health.deflectEffect = healthData.value(SceneKeys::DeflectEffect, health.deflectEffect);
+		health.deathSlowMotionSeconds = healthData.value(SceneKeys::DeathSlowMotionSeconds, health.deathSlowMotionSeconds);
+		health.deathSlowMotionScale   = healthData.value(SceneKeys::DeathSlowMotionScale,   health.deathSlowMotionScale);
+		health.weaponDamageTaken      = healthData.value(SceneKeys::WeaponDamageTaken,      health.weaponDamageTaken);
+		health.spellDamageTaken       = healthData.value(SceneKeys::SpellDamageTaken,       health.spellDamageTaken);
+		health.spellImmunitySeconds   = healthData.value(SceneKeys::SpellImmunitySeconds,   health.spellImmunitySeconds);
+		health.currentHealth = health.maxHealth;
+	}
+
+	if (entityJson.contains(SceneKeys::StaminaComponent))
+	{
+		const auto& staminaData = entityJson[SceneKeys::StaminaComponent];
+		auto& stamina = entityManager.AddComponent<StaminaComponent>(entity);
+
+		// A missing key keeps the default written in StaminaComponent.h
+		stamina.maxStamina               = staminaData.value(SceneKeys::MaxStamina,               stamina.maxStamina);
+		stamina.regenerationPerSecond    = staminaData.value(SceneKeys::RegenerationPerSecond,    stamina.regenerationPerSecond);
+		stamina.regenerationDelaySeconds = staminaData.value(SceneKeys::RegenerationDelaySeconds, stamina.regenerationDelaySeconds);
+		stamina.rollCost                 = staminaData.value(SceneKeys::RollCost,                 stamina.rollCost);
+		stamina.backstepCost             = staminaData.value(SceneKeys::BackstepCost,             stamina.backstepCost);
+		stamina.lightAttackCost          = staminaData.value(SceneKeys::LightAttackCost,          stamina.lightAttackCost);
+		stamina.heavyAttackCost          = staminaData.value(SceneKeys::HeavyAttackCost,          stamina.heavyAttackCost);
+		stamina.parryCost                = staminaData.value(SceneKeys::ParryCost,                stamina.parryCost);
+		stamina.runCostPerSecond         = staminaData.value(SceneKeys::RunCostPerSecond,         stamina.runCostPerSecond);
+		stamina.currentStamina           = stamina.maxStamina;
+	}
+
+	if (entityJson.contains(SceneKeys::HitboxComponent))
+	{
+		const auto& hitboxData = entityJson[SceneKeys::HitboxComponent];
+		auto& hitbox = entityManager.AddComponent<HitboxComponent>(entity);
+
+		hitbox.damage      = hitboxData.value(SceneKeys::Damage,      hitbox.damage);
+		hitbox.poiseDamage = hitboxData.value(SceneKeys::PoiseDamage, hitbox.poiseDamage);
+		hitbox.hitStopSeconds = hitboxData.value(SceneKeys::HitStopSeconds, hitbox.hitStopSeconds);
+		hitbox.knockback      = hitboxData.value(SceneKeys::Knockback,      hitbox.knockback);
+		hitbox.cameraShake    = hitboxData.value(SceneKeys::CameraShake,    hitbox.cameraShake);
+		hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
+		hitbox.isEnabled  = hitboxData.value(SceneKeys::HitboxIsEnabled, hitbox.isEnabled);
+		hitbox.layer      = static_cast<CollisionLayer>(hitboxData.value(SceneKeys::Layer, static_cast<unsigned int>(hitbox.layer)));
+
+		if (hitboxData.contains(SceneKeys::LocalOffset))
+			hitbox.localOffset = DeserializeVec3(hitboxData[SceneKeys::LocalOffset]);
+
+		if (hitboxData.contains(SceneKeys::HalfExtents))
+			hitbox.halfExtents = DeserializeVec3(hitboxData[SceneKeys::HalfExtents]);
+	}
+
+	if (entityJson.contains(SceneKeys::ShieldComponent))
+	{
+		const auto& shieldData = entityJson[SceneKeys::ShieldComponent];
+		auto& shield = entityManager.AddComponent<ShieldComponent>(entity);
+
+		shield.guardAngleDegrees = shieldData.value(SceneKeys::GuardAngleDegrees, shield.guardAngleDegrees);
+		shield.damageThrough     = shieldData.value(SceneKeys::DamageThrough,     shield.damageThrough);
+		shield.staminaPerDamage  = shieldData.value(SceneKeys::StaminaPerDamage,  shield.staminaPerDamage);
+		shield.blockEffect       = shieldData.value(SceneKeys::BlockEffect,       shield.blockEffect);
+	}
+
+	if (entityJson.contains(SceneKeys::BossComponent))
+	{
+		const auto& bossData = entityJson[SceneKeys::BossComponent];
+		auto& boss = entityManager.AddComponent<BossComponent>(entity);
+
+		boss.phaseTwoHealthFraction   = bossData.value(SceneKeys::PhaseTwoHealthFraction,   boss.phaseTwoHealthFraction);
+		boss.phaseTwoDamageMultiplier = bossData.value(SceneKeys::PhaseTwoDamageMultiplier, boss.phaseTwoDamageMultiplier);
+		boss.phaseTwoAttackSpeedup    = bossData.value(SceneKeys::PhaseTwoAttackSpeedup,    boss.phaseTwoAttackSpeedup);
+		boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
+		boss.phaseTwoSound            = bossData.value(SceneKeys::PhaseTwoSound,            boss.phaseTwoSound);
+		boss.phaseTwoMusic            = bossData.value(SceneKeys::PhaseTwoMusic,            boss.phaseTwoMusic);
+		boss.defeatCutscene           = bossData.value(SceneKeys::DefeatCutscene,           boss.defeatCutscene);
+		boss.defeatCutsceneDelay      = bossData.value(SceneKeys::DefeatCutsceneDelay,      boss.defeatCutsceneDelay);
+		boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
+		boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
+		boss.phaseTwoLight1Animation  = bossData.value(SceneKeys::PhaseTwoLight1Animation,  boss.phaseTwoLight1Animation);
+		boss.phaseTwoLight2Animation  = bossData.value(SceneKeys::PhaseTwoLight2Animation,  boss.phaseTwoLight2Animation);
+		boss.phaseTwoLight3Animation  = bossData.value(SceneKeys::PhaseTwoLight3Animation,  boss.phaseTwoLight3Animation);
+		boss.phaseTwoHeavyAnimation   = bossData.value(SceneKeys::PhaseTwoHeavyAnimation,   boss.phaseTwoHeavyAnimation);
+		boss.phaseTwoLightHitFrom     = bossData.value(SceneKeys::PhaseTwoLightHitFrom,     boss.phaseTwoLightHitFrom);
+		boss.phaseTwoLightHitTo       = bossData.value(SceneKeys::PhaseTwoLightHitTo,       boss.phaseTwoLightHitTo);
+		boss.phaseTwoHeavyHitFrom     = bossData.value(SceneKeys::PhaseTwoHeavyHitFrom,     boss.phaseTwoHeavyHitFrom);
+		boss.phaseTwoHeavyHitTo       = bossData.value(SceneKeys::PhaseTwoHeavyHitTo,       boss.phaseTwoHeavyHitTo);
+		boss.phaseTwoShockwaveRadius  = bossData.value(SceneKeys::PhaseTwoShockwaveRadius,  boss.phaseTwoShockwaveRadius);
+		boss.phaseTwoMaxLightCombo    = bossData.value(SceneKeys::PhaseTwoMaxLightCombo,    boss.phaseTwoMaxLightCombo);
+	}
+
+	if (entityJson.contains(SceneKeys::CutsceneComponent))
+	{
+		const auto& cutsceneData = entityJson[SceneKeys::CutsceneComponent];
+		auto& cutscene = entityManager.AddComponent<CutsceneComponent>(entity);
+
+		cutscene.durationSeconds    = cutsceneData.value(SceneKeys::DurationSeconds,       cutscene.durationSeconds);
+		cutscene.lookAtEntity       = cutsceneData.value(SceneKeys::LookAtEntity,          cutscene.lookAtEntity);
+		cutscene.lookAtHeight       = cutsceneData.value(SceneKeys::LookAtHeight,          cutscene.lookAtHeight);
+		cutscene.lookAlsoAtEntity   = cutsceneData.value(SceneKeys::LookAlsoAtEntity,      cutscene.lookAlsoAtEntity);
+		cutscene.animationEntity    = cutsceneData.value(SceneKeys::AnimationEntity,       cutscene.animationEntity);
+		cutscene.animationName      = cutsceneData.value(SceneKeys::CutsceneAnimationName, cutscene.animationName);
+		cutscene.animationAtSeconds = cutsceneData.value(SceneKeys::AnimationAtSeconds,    cutscene.animationAtSeconds);
+		cutscene.title              = cutsceneData.value(SceneKeys::CutsceneTitle,         cutscene.title);
+		cutscene.titleSeconds       = cutsceneData.value(SceneKeys::TitleSeconds,          cutscene.titleSeconds);
+		cutscene.canBeSkipped       = cutsceneData.value(SceneKeys::CanBeSkipped,          cutscene.canBeSkipped);
+		cutscene.videoFile          = cutsceneData.value(SceneKeys::VideoFile,             cutscene.videoFile);
+		cutscene.waitForKey         = cutsceneData.value(SceneKeys::WaitForKey,            cutscene.waitForKey);
+		cutscene.waitPrompt         = cutsceneData.value(SceneKeys::WaitPrompt,            cutscene.waitPrompt);
+		cutscene.waitPresses        = cutsceneData.value(SceneKeys::WaitPresses,           cutscene.waitPresses);
+		cutscene.pressWindowSeconds = cutsceneData.value(SceneKeys::PressWindowSeconds,    cutscene.pressWindowSeconds);
+		cutscene.pressSound         = cutsceneData.value(SceneKeys::PressSound,            cutscene.pressSound);
+		cutscene.blendInSeconds     = cutsceneData.value(SceneKeys::BlendInSeconds,        cutscene.blendInSeconds);
+		cutscene.fadeSeconds        = cutsceneData.value(SceneKeys::FadeSeconds,           cutscene.fadeSeconds);
+		cutscene.sound              = cutsceneData.value(SceneKeys::CutsceneSound,         cutscene.sound);
+	}
+
+	if (entityJson.contains(SceneKeys::EnvironmentComponent))
+	{
+		const auto& environmentData = entityJson[SceneKeys::EnvironmentComponent];
+		auto& environment = entityManager.AddComponent<EnvironmentComponent>(entity);
+
+		environment.skyboxFolder  = environmentData.value(SceneKeys::SkyboxFolder,  environment.skyboxFolder);
+		environment.skyBrightness = environmentData.value(SceneKeys::SkyBrightness, environment.skyBrightness);
+		environment.isFogEnabled  = environmentData.value(SceneKeys::IsFogEnabled,  environment.isFogEnabled);
+		environment.fogDensity    = environmentData.value(SceneKeys::FogDensity,    environment.fogDensity);
+
+		environment.isPostProcessingEnabled = environmentData.value(SceneKeys::IsPostProcessingEnabled, environment.isPostProcessingEnabled);
+		environment.exposure                = environmentData.value(SceneKeys::Exposure,                environment.exposure);
+		environment.isBloomEnabled          = environmentData.value(SceneKeys::IsBloomEnabled,          environment.isBloomEnabled);
+		environment.bloomThreshold          = environmentData.value(SceneKeys::BloomThreshold,          environment.bloomThreshold);
+		environment.bloomIntensity          = environmentData.value(SceneKeys::BloomIntensity,          environment.bloomIntensity);
+		environment.bloomBlurPasses         = environmentData.value(SceneKeys::BloomBlurPasses,         environment.bloomBlurPasses);
+		environment.hitImpactFrame          = environmentData.value(SceneKeys::HitImpactFrame,          environment.hitImpactFrame);
+
+		if (environmentData.contains(SceneKeys::FogColor))
+			environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);
+	}
+
+	if (entityJson.contains(SceneKeys::WeaponTrailComponent))
+	{
+		const auto& trailData = entityJson[SceneKeys::WeaponTrailComponent];
+		auto& trail = entityManager.AddComponent<WeaponTrailComponent>(entity);
+
+		// A missing key keeps the default written in WeaponTrailComponent.h
+		trail.intensity         = trailData.value(SceneKeys::ParticleIntensity, trail.intensity);
+		trail.lifetimeSeconds   = trailData.value(SceneKeys::LifetimeSeconds,   trail.lifetimeSeconds);
+		trail.onlyWhileStriking = trailData.value(SceneKeys::OnlyWhileStriking, trail.onlyWhileStriking);
+
+		if (trailData.contains(SceneKeys::BaseOffset))
+			trail.baseOffset = DeserializeVec3(trailData[SceneKeys::BaseOffset]);
+		if (trailData.contains(SceneKeys::TipOffset))
+			trail.tipOffset = DeserializeVec3(trailData[SceneKeys::TipOffset]);
+		if (trailData.contains(SceneKeys::Color))
+			trail.color = DeserializeVec3(trailData[SceneKeys::Color]);
+	}
+
+	if (entityJson.contains(SceneKeys::ParticleEmitterComponent))
+	{
+		const auto& emitterData = entityJson[SceneKeys::ParticleEmitterComponent];
+		auto& emitter = entityManager.AddComponent<ParticleEmitterComponent>(entity);
+
+		emitter.isEmitting         = emitterData.value(SceneKeys::IsEmitting,         emitter.isEmitting);
+		emitter.particlesPerSecond = emitterData.value(SceneKeys::ParticlesPerSecond, emitter.particlesPerSecond);
+		emitter.lifetimeSeconds    = emitterData.value(SceneKeys::LifetimeSeconds,    emitter.lifetimeSeconds);
+		emitter.velocityRandomness = emitterData.value(SceneKeys::VelocityRandomness, emitter.velocityRandomness);
+		emitter.startSize          = emitterData.value(SceneKeys::StartSize,          emitter.startSize);
+		emitter.endSize            = emitterData.value(SceneKeys::EndSize,            emitter.endSize);
+		emitter.intensity          = emitterData.value(SceneKeys::ParticleIntensity,  emitter.intensity);
+		emitter.maxParticles       = emitterData.value(SceneKeys::MaxParticles,       emitter.maxParticles);
+		emitter.isDark             = emitterData.value(SceneKeys::IsDark,             emitter.isDark);
+		emitter.style              = emitterData.value(SceneKeys::ParticleStyle,      emitter.style);
+		emitter.spawnShape         = emitterData.value(SceneKeys::SpawnShape,         emitter.spawnShape);
+		emitter.spawnRadius        = emitterData.value(SceneKeys::SpawnRadius,        emitter.spawnRadius);
+		emitter.outwardSpeed       = emitterData.value(SceneKeys::OutwardSpeed,       emitter.outwardSpeed);
+		emitter.sizeRandomness     = emitterData.value(SceneKeys::SizeRandomness,     emitter.sizeRandomness);
+		emitter.spinDegreesPerSecond = emitterData.value(SceneKeys::ParticleSpin,     emitter.spinDegreesPerSecond);
+
+		if (emitterData.contains(SceneKeys::SpawnHalfExtents))
+			emitter.spawnHalfExtents = DeserializeVec3(emitterData[SceneKeys::SpawnHalfExtents]);
+		if (emitterData.contains(SceneKeys::ParticleVelocity))
+			emitter.velocity = DeserializeVec3(emitterData[SceneKeys::ParticleVelocity]);
+		if (emitterData.contains(SceneKeys::ParticleGravity))
+			emitter.gravity = DeserializeVec3(emitterData[SceneKeys::ParticleGravity]);
+		if (emitterData.contains(SceneKeys::StartColor))
+			emitter.startColor = DeserializeVec3(emitterData[SceneKeys::StartColor]);
+		if (emitterData.contains(SceneKeys::EndColor))
+			emitter.endColor = DeserializeVec3(emitterData[SceneKeys::EndColor]);
+
+		emitter.drag           = emitterData.value(SceneKeys::ParticleDrag,    emitter.drag);
+		emitter.stretch        = emitterData.value(SceneKeys::ParticleStretch, emitter.stretch);
+		emitter.hasMiddleColor = emitterData.value(SceneKeys::HasMiddleColor,  emitter.hasMiddleColor);
+		emitter.burstAmount    = emitterData.value(SceneKeys::BurstAmount,     emitter.burstAmount);
+		emitter.flipbookTexture     = emitterData.value(SceneKeys::FlipbookTexture,     emitter.flipbookTexture);
+		emitter.flipbookColumns     = emitterData.value(SceneKeys::FlipbookColumns,     emitter.flipbookColumns);
+		emitter.flipbookRows        = emitterData.value(SceneKeys::FlipbookRows,        emitter.flipbookRows);
+		emitter.flipbookLoops       = emitterData.value(SceneKeys::FlipbookLoops,       emitter.flipbookLoops);
+		emitter.flipbookRandomStart = emitterData.value(SceneKeys::FlipbookRandomStart, emitter.flipbookRandomStart);
+		if (emitterData.contains(SceneKeys::MiddleColor))
+			emitter.middleColor = DeserializeVec3(emitterData[SceneKeys::MiddleColor]);
+
+		emitter.wasEmittingAtStart = emitter.isEmitting;
+	}
+
+	if (entityJson.contains(SceneKeys::EffectShapeComponent))
+	{
+		const auto& shapeData = entityJson[SceneKeys::EffectShapeComponent];
+		auto& shape = entityManager.AddComponent<EffectShapeComponent>(entity);
+
+		shape.kind                 = shapeData.value(SceneKeys::ShapeKind,           shape.kind);
+		shape.lifetimeSeconds      = shapeData.value(SceneKeys::ShapeLifetime,       shape.lifetimeSeconds);
+		shape.startRadius          = shapeData.value(SceneKeys::ShapeStartRadius,    shape.startRadius);
+		shape.endRadius            = shapeData.value(SceneKeys::ShapeEndRadius,      shape.endRadius);
+		shape.thickness            = shapeData.value(SceneKeys::ShapeThickness,      shape.thickness);
+		shape.height               = shapeData.value(SceneKeys::ShapeHeight,         shape.height);
+		shape.arcDegrees           = shapeData.value(SceneKeys::ShapeArcDegrees,     shape.arcDegrees);
+		shape.spinDegreesPerSecond = shapeData.value(SceneKeys::ShapeSpin,           shape.spinDegreesPerSecond);
+		shape.twistDegrees         = shapeData.value(SceneKeys::ShapeTwist,          shape.twistDegrees);
+		shape.intensity            = shapeData.value(SceneKeys::ShapeIntensity,      shape.intensity);
+		shape.noiseScale           = shapeData.value(SceneKeys::ShapeNoiseScale,     shape.noiseScale);
+		shape.scrollSpeed          = shapeData.value(SceneKeys::ShapeScrollSpeed,    shape.scrollSpeed);
+		shape.dissolve             = shapeData.value(SceneKeys::ShapeDissolve,       shape.dissolve);
+		shape.lightIntensity       = shapeData.value(SceneKeys::ShapeLightIntensity, shape.lightIntensity);
+		shape.lightRadius          = shapeData.value(SceneKeys::ShapeLightRadius,    shape.lightRadius);
+
+		if (shapeData.contains(SceneKeys::ShapeRotation))
+			shape.rotationDegrees = DeserializeVec3(shapeData[SceneKeys::ShapeRotation]);
+		if (shapeData.contains(SceneKeys::ShapeRotationRandomness))
+			shape.rotationRandomness = DeserializeVec3(shapeData[SceneKeys::ShapeRotationRandomness]);
+		if (shapeData.contains(SceneKeys::ShapeOffset))
+			shape.offset = DeserializeVec3(shapeData[SceneKeys::ShapeOffset]);
+		if (shapeData.contains(SceneKeys::ShapeCoreColor))
+			shape.coreColor = DeserializeVec3(shapeData[SceneKeys::ShapeCoreColor]);
+		if (shapeData.contains(SceneKeys::ShapeEdgeColor))
+			shape.edgeColor = DeserializeVec3(shapeData[SceneKeys::ShapeEdgeColor]);
+		if (shapeData.contains(SceneKeys::ShapeLightColor))
+			shape.lightColor = DeserializeVec3(shapeData[SceneKeys::ShapeLightColor]);
+	}
+
+	if (entityJson.contains(SceneKeys::GlowSpriteComponent))
+	{
+		const auto& spriteData = entityJson[SceneKeys::GlowSpriteComponent];
+		auto& sprite = entityManager.AddComponent<GlowSpriteComponent>(entity);
+
+		sprite.isVisible = spriteData.value(SceneKeys::IsVisible,         sprite.isVisible);
+		sprite.size      = spriteData.value(SceneKeys::SpriteSize,        sprite.size);
+		sprite.intensity = spriteData.value(SceneKeys::ParticleIntensity, sprite.intensity);
+
+		if (spriteData.contains(SceneKeys::SpriteColor))
+			sprite.color = DeserializeVec3(spriteData[SceneKeys::SpriteColor]);
+	}
+
+	if (entityJson.contains(SceneKeys::LiquidOrbComponent))
+	{
+		const auto& orbData = entityJson[SceneKeys::LiquidOrbComponent];
+		auto& orb = entityManager.AddComponent<LiquidOrbComponent>(entity);
+
+		orb.isVisible   = orbData.value(SceneKeys::IsVisible,      orb.isVisible);
+		orb.brightness  = orbData.value(SceneKeys::OrbBrightness,  orb.brightness);
+		orb.wobble      = orbData.value(SceneKeys::OrbWobble,      orb.wobble);
+		orb.wobbleSpeed = orbData.value(SceneKeys::OrbWobbleSpeed, orb.wobbleSpeed);
+		orb.clearness   = orbData.value(SceneKeys::OrbClearness,   orb.clearness);
+
+		if (orbData.contains(SceneKeys::OrbTint))
+			orb.tint = DeserializeVec3(orbData[SceneKeys::OrbTint]);
+	}
+
+	if (entityJson.contains(SceneKeys::SwarmComponent))
+	{
+		const auto& swarmData = entityJson[SceneKeys::SwarmComponent];
+		auto& swarm = entityManager.AddComponent<SwarmComponent>(entity);
+
+		swarm.isVisible              = swarmData.value(SceneKeys::IsVisible,           swarm.isVisible);
+		swarm.modelName              = swarmData.value(SceneKeys::SwarmModelName,      swarm.modelName);
+		swarm.count                  = swarmData.value(SceneKeys::SwarmCount,          swarm.count);
+		swarm.seed                   = swarmData.value(SceneKeys::SwarmSeed,           swarm.seed);
+		swarm.pieceSize              = swarmData.value(SceneKeys::SwarmPieceSize,      swarm.pieceSize);
+		swarm.sizeVariation          = swarmData.value(SceneKeys::SwarmSizeVariation,  swarm.sizeVariation);
+		swarm.radius                 = swarmData.value(SceneKeys::SwarmRadius,         swarm.radius);
+		swarm.shellThickness         = swarmData.value(SceneKeys::SwarmShellThickness, swarm.shellThickness);
+		swarm.spinDegreesPerSecond   = swarmData.value(SceneKeys::SwarmSpin,           swarm.spinDegreesPerSecond);
+		swarm.tumbleDegreesPerSecond = swarmData.value(SceneKeys::SwarmTumble,         swarm.tumbleDegreesPerSecond);
+		swarm.fallSpeed              = swarmData.value(SceneKeys::SwarmFallSpeed,      swarm.fallSpeed);
+		swarm.fallSpreadSeconds      = swarmData.value(SceneKeys::SwarmFallSpread,     swarm.fallSpreadSeconds);
+		swarm.groundHeight           = swarmData.value(SceneKeys::SwarmGroundHeight,   swarm.groundHeight);
+		swarm.stuckSeconds           = swarmData.value(SceneKeys::SwarmStuckSeconds,   swarm.stuckSeconds);
+		swarm.trailLength            = swarmData.value(SceneKeys::SwarmTrailLength,    swarm.trailLength);
+		swarm.hitEffect              = swarmData.value(SceneKeys::SwarmHitEffect,      swarm.hitEffect);
+		swarm.hitBurst               = swarmData.value(SceneKeys::SwarmHitBurst,       swarm.hitBurst);
+
+		if (swarmData.contains(SceneKeys::SwarmSkyCenter))
+			swarm.skyCenter = DeserializeVec3(swarmData[SceneKeys::SwarmSkyCenter]);
+		if (swarmData.contains(SceneKeys::SwarmSkyHalfExtents))
+			swarm.skyHalfExtents = DeserializeVec3(swarmData[SceneKeys::SwarmSkyHalfExtents]);
+		if (swarmData.contains(SceneKeys::SwarmGlowColor))
+			swarm.glowColor = DeserializeVec3(swarmData[SceneKeys::SwarmGlowColor]);
+	}
+
+	if (entityJson.contains(SceneKeys::FogGateComponent))
+	{
+		const auto& fogData = entityJson[SceneKeys::FogGateComponent];
+		auto& fogGate = entityManager.AddComponent<FogGateComponent>(entity);
+
+		if (fogData.contains(SceneKeys::ArenaCenter))
+			fogGate.arenaCenter = DeserializeVec3(fogData[SceneKeys::ArenaCenter]);
+
+		if (fogData.contains(SceneKeys::ArenaHalfExtents))
+			fogGate.arenaHalfExtents = DeserializeVec3(fogData[SceneKeys::ArenaHalfExtents]);
+
+		fogGate.victoryMessage   = fogData.value(SceneKeys::VictoryMessage,   fogGate.victoryMessage);
+		fogGate.isCrossedWithKey = fogData.value(SceneKeys::IsCrossedWithKey, fogGate.isCrossedWithKey);
+		fogGate.cutscene         = fogData.value(SceneKeys::FogCutscene,      fogGate.cutscene);
+		fogGate.battleMusic       = fogData.value(SceneKeys::BattleMusic,       fogGate.battleMusic);
+		fogGate.battleMusicVolume = fogData.value(SceneKeys::BattleMusicVolume, fogGate.battleMusicVolume);
+		fogGate.victorySound      = fogData.value(SceneKeys::VictorySound,      fogGate.victorySound);
+	}
+
+	if (entityJson.contains(SceneKeys::HealingFlaskComponent))
+	{
+		const auto& flaskData = entityJson[SceneKeys::HealingFlaskComponent];
+		auto& flask = entityManager.AddComponent<HealingFlaskComponent>(entity);
+
+		flask.displayName    = flaskData.value(SceneKeys::DisplayName,    flask.displayName);
+		flask.maxCharges     = flaskData.value(SceneKeys::MaxCharges,     flask.maxCharges);
+		flask.healAmount     = flaskData.value(SceneKeys::HealAmount,     flask.healAmount);
+		flask.drinkAnimation = flaskData.value(SceneKeys::DrinkAnimation, flask.drinkAnimation);
+		flask.healAtProgress = flaskData.value(SceneKeys::HealAtProgress, flask.healAtProgress);
+		flask.hiddenWhileDrinking = flaskData.value(SceneKeys::HiddenWhileDrinking, flask.hiddenWhileDrinking);
+		flask.shownWhileDrinking  = flaskData.value(SceneKeys::ShownWhileDrinking,  flask.shownWhileDrinking);
+		flask.healEffect     = flaskData.value(SceneKeys::HealEffect,     flask.healEffect);
+		flask.drinkSound     = flaskData.value(SceneKeys::DrinkSound,     flask.drinkSound);
+		flask.healSound      = flaskData.value(SceneKeys::HealSound,      flask.healSound);
+		flask.charges        = flask.maxCharges;
+	}
+
+	if (entityJson.contains(SceneKeys::CurrencyComponent))
+	{
+		const auto& currencyData = entityJson[SceneKeys::CurrencyComponent];
+		auto& currency = entityManager.AddComponent<CurrencyComponent>(entity);
+
+		currency.displayName        = currencyData.value(SceneKeys::DisplayName,        currency.displayName);
+		currency.amount             = currencyData.value(SceneKeys::CurrencyAmount,     currency.amount);
+		currency.isDroppedOnDeath   = currencyData.value(SceneKeys::IsDroppedOnDeath,   currency.isDroppedOnDeath);
+		currency.dropMarker         = currencyData.value(SceneKeys::DropMarker,         currency.dropMarker);
+		currency.retrieveDistance   = currencyData.value(SceneKeys::RetrieveDistance,   currency.retrieveDistance);
+		currency.isRetrievedWithKey = currencyData.value(SceneKeys::IsRetrievedWithKey, currency.isRetrievedWithKey);
+		currency.retrievePrompt     = currencyData.value(SceneKeys::RetrievePrompt,     currency.retrievePrompt);
+		currency.gainSound          = currencyData.value(SceneKeys::GainSound,          currency.gainSound);
+		currency.retrieveSound      = currencyData.value(SceneKeys::RetrieveSound,      currency.retrieveSound);
+	}
+
+	if (entityJson.contains(SceneKeys::CurrencyRewardComponent))
+	{
+		const auto& rewardData = entityJson[SceneKeys::CurrencyRewardComponent];
+		auto& reward = entityManager.AddComponent<CurrencyRewardComponent>(entity);
+
+		reward.amount = rewardData.value(SceneKeys::CurrencyAmount, reward.amount);
+	}
+
+	if (entityJson.contains(SceneKeys::LevelUpComponent))
+	{
+		const auto& levelData = entityJson[SceneKeys::LevelUpComponent];
+		auto& levelUp = entityManager.AddComponent<LevelUpComponent>(entity);
+
+		levelUp.displayName            = levelData.value(SceneKeys::DisplayName,            levelUp.displayName);
+		levelUp.level                  = levelData.value(SceneKeys::Level,                  levelUp.level);
+		levelUp.firstLevelCost         = levelData.value(SceneKeys::FirstLevelCost,         levelUp.firstLevelCost);
+		levelUp.costGrowth             = levelData.value(SceneKeys::CostGrowth,             levelUp.costGrowth);
+		levelUp.startingAttributeValue = levelData.value(SceneKeys::StartingAttributeValue, levelUp.startingAttributeValue);
+		levelUp.healthAttribute        = levelData.value(SceneKeys::HealthAttribute,        levelUp.healthAttribute);
+		levelUp.healthPerPoint         = levelData.value(SceneKeys::HealthPerPoint,         levelUp.healthPerPoint);
+		levelUp.healthPoints           = levelData.value(SceneKeys::HealthPoints,           levelUp.healthPoints);
+		levelUp.staminaAttribute       = levelData.value(SceneKeys::StaminaAttribute,       levelUp.staminaAttribute);
+		levelUp.staminaPerPoint        = levelData.value(SceneKeys::StaminaPerPoint,        levelUp.staminaPerPoint);
+		levelUp.staminaPoints          = levelData.value(SceneKeys::StaminaPoints,          levelUp.staminaPoints);
+		levelUp.damageAttribute        = levelData.value(SceneKeys::DamageAttribute,        levelUp.damageAttribute);
+		levelUp.damagePerPoint         = levelData.value(SceneKeys::DamagePerPoint,         levelUp.damagePerPoint);
+		levelUp.damagePoints           = levelData.value(SceneKeys::DamagePoints,           levelUp.damagePoints);
+		levelUp.levelUpSound           = levelData.value(SceneKeys::LevelUpSound,           levelUp.levelUpSound);
+		levelUp.levelUpEffect          = levelData.value(SceneKeys::LevelUpEffect,          levelUp.levelUpEffect);
+	}
+
+	if (entityJson.contains(SceneKeys::AudioSourceComponent))
+	{
+		const auto& sourceData = entityJson[SceneKeys::AudioSourceComponent];
+		auto& audioSource = entityManager.AddComponent<AudioSourceComponent>(entity);
+
+		audioSource.sound       = sourceData.value(SceneKeys::Sound,       audioSource.sound);
+		audioSource.volume      = sourceData.value(SceneKeys::SoundVolume, audioSource.volume);
+		audioSource.isLooping   = sourceData.value(SceneKeys::IsLooping,   audioSource.isLooping);
+		audioSource.playOnStart = sourceData.value(SceneKeys::PlayOnStart, audioSource.playOnStart);
+		audioSource.isSpatial   = sourceData.value(SceneKeys::IsSpatial,   audioSource.isSpatial);
+		audioSource.minDistance = sourceData.value(SceneKeys::MinDistance, audioSource.minDistance);
+		audioSource.maxDistance = sourceData.value(SceneKeys::MaxDistance, audioSource.maxDistance);
+	}
+
+	if (entityJson.contains(SceneKeys::CharacterSoundsComponent))
+	{
+		const auto& soundsData = entityJson[SceneKeys::CharacterSoundsComponent];
+		auto& sounds = entityManager.AddComponent<CharacterSoundsComponent>(entity);
+
+		sounds.attackSound    = soundsData.value(SceneKeys::AttackSound,    sounds.attackSound);
+		sounds.hurtSound      = soundsData.value(SceneKeys::HurtSound,      sounds.hurtSound);
+		sounds.blockSound     = soundsData.value(SceneKeys::BlockSound,     sounds.blockSound);
+		sounds.parrySound     = soundsData.value(SceneKeys::ParrySound,     sounds.parrySound);
+		sounds.deathSound     = soundsData.value(SceneKeys::DeathSound,     sounds.deathSound);
+		sounds.rollSound      = soundsData.value(SceneKeys::RollSound,      sounds.rollSound);
+		sounds.footstepSound  = soundsData.value(SceneKeys::FootstepSound,  sounds.footstepSound);
+		sounds.shockwaveSound = soundsData.value(SceneKeys::ShockwaveSound, sounds.shockwaveSound);
+		sounds.attackSoundLeadSeconds = soundsData.value(SceneKeys::AttackSoundLeadSeconds, sounds.attackSoundLeadSeconds);
+		sounds.leftFootBone   = soundsData.value(SceneKeys::LeftFootBone,   sounds.leftFootBone);
+		sounds.rightFootBone  = soundsData.value(SceneKeys::RightFootBone,  sounds.rightFootBone);
+		sounds.footstepMeters = soundsData.value(SceneKeys::FootstepMeters, sounds.footstepMeters);
+		sounds.footstepCameraShake = soundsData.value(SceneKeys::FootstepCameraShake, sounds.footstepCameraShake);
+		sounds.footstepShakeRadius = soundsData.value(SceneKeys::FootstepShakeRadius, sounds.footstepShakeRadius);
+		sounds.volume         = soundsData.value(SceneKeys::SoundVolume,    sounds.volume);
+		sounds.painVoice      = soundsData.value(SceneKeys::PainVoice,      sounds.painVoice);
+		sounds.attackVoice    = soundsData.value(SceneKeys::AttackVoice,    sounds.attackVoice);
+		sounds.deathVoice     = soundsData.value(SceneKeys::DeathVoice,     sounds.deathVoice);
+		sounds.alertVoice     = soundsData.value(SceneKeys::AlertVoice,     sounds.alertVoice);
+		sounds.painVoiceChance   = soundsData.value(SceneKeys::PainVoiceChance,   sounds.painVoiceChance);
+		sounds.attackVoiceChance = soundsData.value(SceneKeys::AttackVoiceChance, sounds.attackVoiceChance);
+	}
+
+	if (entityJson.contains(SceneKeys::PoiseComponent))
+	{
+		const auto& poiseData = entityJson[SceneKeys::PoiseComponent];
+		auto& poise = entityManager.AddComponent<PoiseComponent>(entity);
+
+		poise.maxPoise            = poiseData.value(SceneKeys::MaxPoise,            poise.maxPoise);
+		poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
+		poise.staggerImmunitySeconds = poiseData.value(SceneKeys::StaggerImmunitySeconds, poise.staggerImmunitySeconds);
+		poise.currentPoise        = poise.maxPoise;
+	}
+
+	if (entityJson.contains(SceneKeys::EnemyComponent))
+	{
+		const auto& enemyData = entityJson[SceneKeys::EnemyComponent];
+		auto& enemy = entityManager.AddComponent<EnemyComponent>(entity);
+
+		// A missing key keeps the default written in EnemyComponent.h
+		enemy.sightDistance     = enemyData.value(SceneKeys::SightDistance,     enemy.sightDistance);
+		enemy.sightAngleDegrees = enemyData.value(SceneKeys::SightAngleDegrees, enemy.sightAngleDegrees);
+		enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
+		enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
+		enemy.startsDormant     = enemyData.value(SceneKeys::StartsDormant,     enemy.startsDormant);
+	}
+
+	if (entityJson.contains(SceneKeys::BonfireComponent))
+	{
+		const auto& bonfireData = entityJson[SceneKeys::BonfireComponent];
+		auto& bonfire = entityManager.AddComponent<BonfireComponent>(entity);
+
+		bonfire.interactDistance = bonfireData.value(SceneKeys::InteractDistance, bonfire.interactDistance);
+
+		if (bonfireData.contains(SceneKeys::RespawnOffset))
+			bonfire.respawnOffset = DeserializeVec3(bonfireData[SceneKeys::RespawnOffset]);
+	}
+
+	if (entityJson.contains(SceneKeys::RespawnComponent))
+	{
+		auto& respawn = entityManager.AddComponent<RespawnComponent>(entity);
+		respawn.respawnDelaySeconds = entityJson[SceneKeys::RespawnComponent].value(SceneKeys::RespawnDelaySeconds, respawn.respawnDelaySeconds);
+	}
+
+	if (entityJson.contains(SceneKeys::PlayerHUDComponent))
+	{
+		const auto& hudData = entityJson[SceneKeys::PlayerHUDComponent];
+		auto& hud = entityManager.AddComponent<PlayerHUDComponent>(entity);
+
+		// A missing key keeps the default written in PlayerHUDComponent.h
+		hud.pixelsPerHealthPoint  = hudData.value(SceneKeys::PixelsPerHealthPoint,  hud.pixelsPerHealthPoint);
+		hud.pixelsPerStaminaPoint = hudData.value(SceneKeys::PixelsPerStaminaPoint, hud.pixelsPerStaminaPoint);
+		hud.showLockOnMarker      = hudData.value(SceneKeys::ShowLockOnMarker,      hud.showLockOnMarker);
+		hud.deathMessage          = hudData.value(SceneKeys::DeathMessage,          hud.deathMessage);
+		hud.style                 = hudData.value(SceneKeys::HUDStyleFile,          hud.style);
+	}
+
+	if (entityJson.contains(SceneKeys::EnemyHealthBarComponent))
+	{
+		const auto& barData = entityJson[SceneKeys::EnemyHealthBarComponent];
+		auto& healthBar = entityManager.AddComponent<EnemyHealthBarComponent>(entity);
+
+		// A missing key keeps the default written in EnemyHealthBarComponent.h
+		healthBar.isBoss              = barData.value(SceneKeys::IsBoss,              healthBar.isBoss);
+		healthBar.displayName         = barData.value(SceneKeys::DisplayName,         healthBar.displayName);
+		healthBar.showSecondsAfterHit = barData.value(SceneKeys::ShowSecondsAfterHit, healthBar.showSecondsAfterHit);
+		healthBar.heightAboveFeet     = barData.value(SceneKeys::HeightAboveFeet,     healthBar.heightAboveFeet);
+	}
+
+	if (entityJson.contains(SceneKeys::MeleeEnemyComponent))
+	{
+		const auto& meleeData = entityJson[SceneKeys::MeleeEnemyComponent];
+		auto& meleeEnemy = entityManager.AddComponent<MeleeEnemyComponent>(entity);
+
+		// A missing key keeps the default written in MeleeEnemyComponent.h
+		meleeEnemy.attackDistance        = meleeData.value(SceneKeys::AttackDistance,        meleeEnemy.attackDistance);
+		meleeEnemy.runDistance           = meleeData.value(SceneKeys::RunDistance,           meleeEnemy.runDistance);
+		meleeEnemy.giveUpDistance        = meleeData.value(SceneKeys::GiveUpDistance,        meleeEnemy.giveUpDistance);
+		meleeEnemy.attackCooldownSeconds = meleeData.value(SceneKeys::AttackCooldownSeconds, meleeEnemy.attackCooldownSeconds);
+		meleeEnemy.heavyAttackChance     = meleeData.value(SceneKeys::HeavyAttackChance,     meleeEnemy.heavyAttackChance);
+		meleeEnemy.maxLightCombo         = meleeData.value(SceneKeys::MaxLightCombo,         meleeEnemy.maxLightCombo);
+		meleeEnemy.finisherChance        = meleeData.value(SceneKeys::FinisherChance,        meleeEnemy.finisherChance);
+		meleeEnemy.recoverSeconds        = meleeData.value(SceneKeys::RecoverSeconds,        meleeEnemy.recoverSeconds);
+		meleeEnemy.dodgeChance           = meleeData.value(SceneKeys::DodgeChance,           meleeEnemy.dodgeChance);
+		meleeEnemy.dodgeDistance         = meleeData.value(SceneKeys::DodgeDistance,         meleeEnemy.dodgeDistance);
+		meleeEnemy.dodgeCooldownSeconds  = meleeData.value(SceneKeys::DodgeCooldownSeconds,  meleeEnemy.dodgeCooldownSeconds);
+		meleeEnemy.leapAttackDistance    = meleeData.value(SceneKeys::LeapAttackDistance,    meleeEnemy.leapAttackDistance);
+	}
+
+	if (entityJson.contains(SceneKeys::SpellCasterComponent))
+	{
+		const auto& spellData = entityJson[SceneKeys::SpellCasterComponent];
+		auto& spell = entityManager.AddComponent<SpellCasterComponent>(entity);
+
+		// A missing key keeps the default written in SpellCasterComponent.h
+		spell.castAnimation            = spellData.value(SceneKeys::CastAnimation,            spell.castAnimation);
+		spell.projectile               = spellData.value(SceneKeys::ProjectileName,           spell.projectile);
+		spell.projectileCount          = spellData.value(SceneKeys::ProjectileCount,          spell.projectileCount);
+		spell.spreadDegrees            = spellData.value(SceneKeys::SpreadDegrees,            spell.spreadDegrees);
+		spell.releaseAt                = spellData.value(SceneKeys::ReleaseAt,                spell.releaseAt);
+		spell.atTargetsFeet            = spellData.value(SceneKeys::AtTargetsFeet,            spell.atTargetsFeet);
+		spell.dropHeight               = spellData.value(SceneKeys::DropHeight,               spell.dropHeight);
+		spell.minDistance              = spellData.value(SceneKeys::MinDistance,              spell.minDistance);
+		spell.maxDistance              = spellData.value(SceneKeys::MaxDistance,              spell.maxDistance);
+		spell.cooldownSeconds          = spellData.value(SceneKeys::SpellCooldownSeconds,     spell.cooldownSeconds);
+		spell.chargeEffect             = spellData.value(SceneKeys::ChargeEffect,             spell.chargeEffect);
+		spell.chargeParticlesPerSecond = spellData.value(SceneKeys::ChargeParticlesPerSecond, spell.chargeParticlesPerSecond);
+		spell.castSound                = spellData.value(SceneKeys::CastSound,                spell.castSound);
+		spell.castKey                  = spellData.value(SceneKeys::CastKey,                  spell.castKey);
+		spell.displayName              = spellData.value(SceneKeys::DisplayName,              spell.displayName);
+		spell.isCastOnRequestOnly      = spellData.value(SceneKeys::IsCastOnRequestOnly,      spell.isCastOnRequestOnly);
+		spell.isUninterruptible        = spellData.value(SceneKeys::IsUninterruptible,        spell.isUninterruptible);
+	}
+
+	if (entityJson.contains(SceneKeys::ProjectileComponent))
+	{
+		const auto& projectileData = entityJson[SceneKeys::ProjectileComponent];
+		auto& projectile = entityManager.AddComponent<ProjectileComponent>(entity);
+
+		// A missing key keeps the default written in ProjectileComponent.h
+		projectile.speed                   = projectileData.value(SceneKeys::ProjectileSpeed,         projectile.speed);
+		projectile.damage                  = projectileData.value(SceneKeys::Damage,                  projectile.damage);
+		projectile.poiseDamage             = projectileData.value(SceneKeys::PoiseDamage,             projectile.poiseDamage);
+		projectile.radius                  = projectileData.value(SceneKeys::ProjectileRadius,        projectile.radius);
+		projectile.homingDegreesPerSecond  = projectileData.value(SceneKeys::HomingDegreesPerSecond,  projectile.homingDegreesPerSecond);
+		projectile.lifetimeSeconds         = projectileData.value(SceneKeys::LifetimeSeconds,         projectile.lifetimeSeconds);
+		projectile.fuseSeconds             = projectileData.value(SceneKeys::FuseSeconds,             projectile.fuseSeconds);
+		projectile.trailEffect             = projectileData.value(SceneKeys::TrailEffect,             projectile.trailEffect);
+		projectile.trailParticlesPerSecond = projectileData.value(SceneKeys::TrailParticlesPerSecond, projectile.trailParticlesPerSecond);
+		projectile.spinDegreesPerSecond    = projectileData.value(SceneKeys::SpinDegreesPerSecond,    projectile.spinDegreesPerSecond);
+		projectile.launchDelaySeconds      = projectileData.value(SceneKeys::LaunchDelaySeconds,      projectile.launchDelaySeconds);
+		projectile.bodyFacesFlight         = projectileData.value(SceneKeys::BodyFacesFlight,         projectile.bodyFacesFlight);
+		projectile.spinsAroundFlight       = projectileData.value(SceneKeys::SpinsAroundFlight,       projectile.spinsAroundFlight);
+		projectile.formSeconds             = projectileData.value(SceneKeys::FormSeconds,             projectile.formSeconds);
+		projectile.aimsAfterForming        = projectileData.value(SceneKeys::AimsAfterForming,        projectile.aimsAfterForming);
+		projectile.hitEffect               = projectileData.value(SceneKeys::HitEffect,               projectile.hitEffect);
+		projectile.hitBurst                = projectileData.value(SceneKeys::HitBurst,                projectile.hitBurst);
+		projectile.hitSound                = projectileData.value(SceneKeys::HitSound,                projectile.hitSound);
+		projectile.hitStopSeconds          = projectileData.value(SceneKeys::HitStopSeconds,          projectile.hitStopSeconds);
+		projectile.cameraShake             = projectileData.value(SceneKeys::CameraShake,             projectile.cameraShake);
+	}
+
+}
+
 std::string SceneSerializer::SerializeToString(Scene& scene)
 {
 	auto& entityManager = scene.GetEntityManager();
@@ -698,852 +2505,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 
 	for (unsigned int i = 0; i < totalEntities; i++)
 	{
-		json entityJson;
-
-		if (auto* tag = entityManager.GetComponent<TagComponent>(i))
-		{
-			entityJson[SceneKeys::TagComponent] = { { SceneKeys::Name, tag->name } };
-		}
-
-		if (auto* transform = entityManager.GetComponent<TransformComponent>(i))
-		{
-			entityJson[SceneKeys::TransformComponent] =
-			{
-				{ SceneKeys::Position, SerializeVec3(transform->position) },
-				{ SceneKeys::Rotation, SerializeVec3(transform->rotation) },
-				{ SceneKeys::Scale,    SerializeVec3(transform->scale)    },
-				{ SceneKeys::RotationQuaternion, SerializeQuaternion(transform->rotationQuaternion) }
-			};
-		}
-
-		if (auto* script = entityManager.GetComponent<ScriptComponent>(i))
-		{
-			if (!script->scripts.empty())
-			{
-				json scriptsArray = json::array();
-				for (const auto& container : script->scripts)
-				{
-					// Saved as a virtual path ("@game/Scripts/a.lua"), because the physical path differs on every machine and in the packaged game
-					scriptsArray.push_back({ { SceneKeys::ScriptPath, VirtualFileSystem::ToVirtualPath(container.scriptPath) } });
-				}
-
-				entityJson[SceneKeys::ScriptComponent] = scriptsArray;
-			}
-		}
-
-		if (auto* mesh = entityManager.GetComponent<MeshComponent>(i))
-		{
-			entityJson[SceneKeys::MeshComponent] =
-			{
-				{ SceneKeys::IsVisible,    mesh->isVisible     },
-				{ SceneKeys::MeshName,     mesh->meshName      },
-				{ SceneKeys::MaterialName, mesh->materialName  }
-			};
-		}
-
-		if (auto* model = entityManager.GetComponent<ModelComponent>(i))
-		{
-			entityJson[SceneKeys::ModelComponent] =
-			{
-				{ SceneKeys::IsVisible,        model->isVisible        },
-				{ SceneKeys::ModelName,        model->modelName        },
-				{ SceneKeys::EmissiveStrength, model->emissiveStrength }
-			};
-		}
-
-		if (auto* animator = entityManager.GetComponent<AnimatorComponent>(i))
-		{
-			entityJson[SceneKeys::AnimatorComponent] =
-			{
-				{ SceneKeys::CurrentAnimationName, animator->currentAnimationName }
-			};
-		}
-
-		if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
-		{
-			entityJson[SceneKeys::BoxColliderComponent] =
-			{
-				{ SceneKeys::ShowGizmos,                      boxCollider->showGizmos   },
-				{ SceneKeys::LocalOffset,       SerializeVec3(boxCollider->localOffset) },
-				{ SceneKeys::HalfExtents,       SerializeVec3(boxCollider->halfExtents) },
-				{ SceneKeys::IsTrigger,                       boxCollider->isTrigger    },
-				{ SceneKeys::BlocksCamera,                    boxCollider->blocksCamera },
-				{ SceneKeys::Layer, static_cast<unsigned int>(boxCollider->layer)       }
-			};
-		}
-
-		if (auto* physicsBody = entityManager.GetComponent<PhysicsBodyComponent>(i))
-		{
-			entityJson[SceneKeys::PhysicsBodyComponent] =
-			{
-				{ SceneKeys::IsKinematic,                    physicsBody->isKinematic     },
-				{ SceneKeys::UseGravity,                     physicsBody->useGravity      },
-				{ SceneKeys::Velocity,         SerializeVec3(physicsBody->velocity)       },
-				{ SceneKeys::AngularVelocity,  SerializeVec3(physicsBody->angularVelocity)},
-
-				{ SceneKeys::FreezeRotationX,                physicsBody->freezeRotationX },
-				{ SceneKeys::FreezeRotationY,                physicsBody->freezeRotationY },
-				{ SceneKeys::FreezeRotationZ,                physicsBody->freezeRotationZ },
-
-				{ SceneKeys::Mass,                           physicsBody->mass            },
-				{ SceneKeys::Restitution,                    physicsBody->restitution     },
-				{ SceneKeys::Friction,                       physicsBody->friction        },
-				{ SceneKeys::LinearDamping,                  physicsBody->linearDamping   },
-				{ SceneKeys::AngularDamping,                 physicsBody->angularDamping  }
-			};
-		}
-
-
-		if (auto* directionalLight = entityManager.GetComponent<DirectionalLightComponent>(i))
-		{
-			json lightJson = SerializeLightColor(directionalLight->color);
-			lightJson[SceneKeys::CastsShadows]     = directionalLight->castsShadows;
-			lightJson[SceneKeys::ShadowDistance]   = directionalLight->shadowDistance;
-			lightJson[SceneKeys::ShadowStrength]   = directionalLight->shadowStrength;
-			lightJson[SceneKeys::ShadowSoftness]   = directionalLight->shadowSoftness;
-			lightJson[SceneKeys::ShadowResolution] = directionalLight->shadowResolution;
-
-			entityJson[SceneKeys::DirectionalLightComponent] = lightJson;
-		}
-
-		if (auto* pointLight = entityManager.GetComponent<PointLightComponent>(i))
-		{
-			entityJson[SceneKeys::PointLightComponent] =
-			{
-				{ SceneKeys::Color,       SerializeLightColor(pointLight->color)        },
-				{ SceneKeys::Attenuation, SerializeAttenuation(pointLight->attenuation) }
-			};
-		}
-
-		if (auto* spotLight = entityManager.GetComponent<SpotLightComponent>(i))
-		{
-			entityJson[SceneKeys::SpotLightComponent] =
-			{
-				{ SceneKeys::Color,       SerializeLightColor(spotLight->color)        },
-				{ SceneKeys::Attenuation, SerializeAttenuation(spotLight->attenuation) },
-				{ SceneKeys::InnerCutOff, spotLight->innerCutOffAngle                  },
-				{ SceneKeys::OuterCutOff, spotLight->outerCutOffAngle                  }
-			};
-		}
-
-		if (auto* camera = entityManager.GetComponent<CameraComponent>(i))
-		{
-			entityJson[SceneKeys::CameraComponent] =
-			{
-				{ SceneKeys::FieldOfView, camera->fieldOfView },
-				{ SceneKeys::NearPlane,   camera->nearPlane   },
-				{ SceneKeys::FarPlane,    camera->farPlane    },
-				{ SceneKeys::IsActive,    camera->isActive    }
-			};
-		}
-
-		if (auto* characterController = entityManager.GetComponent<CharacterControllerComponent>(i))
-		{
-			entityJson[SceneKeys::CharacterControllerComponent] =
-			{
-				{ SceneKeys::WalkSpeed,           characterController->walkSpeed           },
-				{ SceneKeys::RunSpeed,            characterController->runSpeed            },
-				{ SceneKeys::Acceleration,        characterController->acceleration        },
-				{ SceneKeys::TurnSpeed,           characterController->turnSpeed           },
-				{ SceneKeys::FacingOffsetDegrees, characterController->facingOffsetDegrees },
-				{ SceneKeys::IsPlayerControlled,  characterController->isPlayerControlled  }
-			};
-		}
-
-		if (auto* characterAnimation = entityManager.GetComponent<CharacterAnimationComponent>(i))
-		{
-			entityJson[SceneKeys::CharacterAnimationComponent] =
-			{
-				{ SceneKeys::IdleAnimation, characterAnimation->idleAnimation },
-				{ SceneKeys::WalkAnimation, characterAnimation->walkAnimation },
-				{ SceneKeys::RunAnimation,  characterAnimation->runAnimation  },
-				{ SceneKeys::WalkBackAnimation,    characterAnimation->walkBackAnimation    },
-				{ SceneKeys::StrafeLeftAnimation,  characterAnimation->strafeLeftAnimation  },
-				{ SceneKeys::StrafeRightAnimation, characterAnimation->strafeRightAnimation },
-				{ SceneKeys::LockedOnIdleAnimation, characterAnimation->lockedOnIdleAnimation },
-				{ SceneKeys::BlendSeconds,  characterAnimation->blendSeconds  },
-				{ SceneKeys::WalkAnimationSpeed, characterAnimation->walkAnimationSpeed },
-				{ SceneKeys::RunAnimationSpeed,  characterAnimation->runAnimationSpeed  }
-			};
-		}
-
-		if (auto* followCamera = entityManager.GetComponent<FollowCameraComponent>(i))
-		{
-			entityJson[SceneKeys::FollowCameraComponent] =
-			{
-				{ SceneKeys::Distance,         followCamera->distance           },
-				{ SceneKeys::PivotHeight,      followCamera->pivotHeight        },
-				{ SceneKeys::ShoulderOffset,   followCamera->shoulderOffset     },
-				{ SceneKeys::ViewYawOffsetDegrees,   followCamera->viewYawOffsetDegrees   },
-				{ SceneKeys::ViewPitchOffsetDegrees, followCamera->viewPitchOffsetDegrees },
-				{ SceneKeys::MouseSensitivity, followCamera->mouseSensitivity   },
-				{ SceneKeys::InvertY,          followCamera->invertY            },
-				{ SceneKeys::MinPitchDegrees,  followCamera->minPitchDegrees    },
-				{ SceneKeys::MaxPitchDegrees,  followCamera->maxPitchDegrees    },
-				{ SceneKeys::FollowSharpness,  followCamera->followSharpness    },
-				{ SceneKeys::LockOnPitchDegrees, followCamera->lockOnPitchDegrees },
-				{ SceneKeys::LockOnSideDegrees, followCamera->lockOnSideDegrees },
-				{ SceneKeys::LockOnSharpness,  followCamera->lockOnSharpness    },
-				{ SceneKeys::ShakeDegrees,       followCamera->shakeDegrees       },
-				{ SceneKeys::ShakeFrequency,     followCamera->shakeFrequency     },
-				{ SceneKeys::ShakeFadePerSecond, followCamera->shakeFadePerSecond }
-			};
-		}
-
-		if (auto* aim = entityManager.GetComponent<StrikeAimComponent>(i))
-		{
-			entityJson[SceneKeys::StrikeAimComponent] =
-			{
-				{ SceneKeys::StrikeAimSpineBones,     aim->spineBones       },
-				{ SceneKeys::StrikeAimClipHeight,     aim->clipStrikeHeight },
-				{ SceneKeys::StrikeAimTargetHeight,   aim->targetHeight     },
-				{ SceneKeys::StrikeAimMaxPitch,       aim->maxPitchDegrees  },
-				{ SceneKeys::StrikeAimMaxYaw,         aim->maxYawDegrees    },
-				{ SceneKeys::StrikeAimFadeSeconds,    aim->fadeSeconds      },
-				{ SceneKeys::StrikeAimSearchDistance, aim->searchDistance   }
-			};
-		}
-
-		if (auto* lockOn = entityManager.GetComponent<LockOnComponent>(i))
-		{
-			entityJson[SceneKeys::LockOnComponent] =
-			{
-				{ SceneKeys::MaxDistance,         lockOn->maxDistance         },
-				{ SceneKeys::SearchAngleDegrees,  lockOn->searchAngleDegrees  },
-				{ SceneKeys::EyeHeight,           lockOn->eyeHeight           },
-				{ SceneKeys::SwitchMouseDistance, lockOn->switchMouseDistance },
-				{ SceneKeys::RequireLineOfSight,  lockOn->requireLineOfSight  },
-				{ SceneKeys::IsPlayerControlled,  lockOn->isPlayerControlled  },
-				{ SceneKeys::ShowSightRays,       lockOn->showSightRays       }
-			};
-		}
-
-		if (auto* lockOnTarget = entityManager.GetComponent<LockOnTargetComponent>(i))
-		{
-			entityJson[SceneKeys::LockOnTargetComponent] =
-			{
-				{ SceneKeys::IsLockable, lockOnTarget->isLockable },
-				{ SceneKeys::AimHeight,  lockOnTarget->aimHeight  },
-				{ SceneKeys::AimBone,    lockOnTarget->aimBone    }
-			};
-		}
-
-		if (auto* actions = entityManager.GetComponent<CharacterActionsComponent>(i))
-		{
-			entityJson[SceneKeys::CharacterActionsComponent] =
-			{
-				{ SceneKeys::RollAnimation,         actions->rollAnimation         },
-				{ SceneKeys::BackstepAnimation,     actions->backstepAnimation     },
-				{ SceneKeys::LightAttack1Animation, actions->lightAttack1Animation },
-				{ SceneKeys::LightAttack2Animation, actions->lightAttack2Animation },
-				{ SceneKeys::LightAttack3Animation, actions->lightAttack3Animation },
-				{ SceneKeys::HeavyAttackAnimation,  actions->heavyAttackAnimation  },
-				{ SceneKeys::LeapAttackAnimation,   actions->leapAttackAnimation   },
-				{ SceneKeys::LeapSpeed,             actions->leapSpeed             },
-				{ SceneKeys::LeapHitFrom,           actions->leapHitFrom           },
-				{ SceneKeys::LeapHitTo,             actions->leapHitTo             },
-				{ SceneKeys::RollSpeed,             actions->rollSpeed             },
-				{ SceneKeys::BackstepSpeed,         actions->backstepSpeed         },
-				{ SceneKeys::AttackStepSpeed,       actions->attackStepSpeed       },
-				{ SceneKeys::InvulnerableFrom,      actions->invulnerableFrom      },
-				{ SceneKeys::InvulnerableTo,        actions->invulnerableTo        },
-				{ SceneKeys::InputBufferFrom,       actions->inputBufferFrom       },
-				{ SceneKeys::CancelFrom,            actions->cancelFrom            },
-				{ SceneKeys::BlendSeconds,          actions->blendSeconds          },
-				{ SceneKeys::HitReactionAnimation,  actions->hitReactionAnimation  },
-				{ SceneKeys::DeathAnimation,        actions->deathAnimation        },
-				{ SceneKeys::RestAnimation,         actions->restAnimation         },
-				{ SceneKeys::StandUpAnimation,      actions->standUpAnimation      },
-				{ SceneKeys::BlockAnimation,        actions->blockAnimation        },
-				{ SceneKeys::BlockImpactAnimation,  actions->blockImpactAnimation  },
-				{ SceneKeys::ParryAnimation,        actions->parryAnimation        },
-				{ SceneKeys::ParriedAnimation,      actions->parriedAnimation      },
-				{ SceneKeys::JumpAnimation,         actions->jumpAnimation         },
-				{ SceneKeys::JumpAttackAnimation,   actions->jumpAttackAnimation   },
-				{ SceneKeys::JumpHeavyAttackAnimation, actions->jumpHeavyAttackAnimation },
-				{ SceneKeys::JumpSpeed,             actions->jumpSpeed             },
-				{ SceneKeys::JumpMoveSpeed,         actions->jumpMoveSpeed         },
-				{ SceneKeys::JumpPlungeSpeed,       actions->jumpPlungeSpeed       },
-				{ SceneKeys::JumpPlungeFrom,        actions->jumpPlungeFrom        },
-				{ SceneKeys::JumpAttackDamageMultiplier, actions->jumpAttackDamageMultiplier },
-				{ SceneKeys::JumpPlungeShockwaveRadius, actions->jumpPlungeShockwaveRadius },
-				{ SceneKeys::JumpPlungeShockwaveDamage, actions->jumpPlungeShockwaveDamage },
-				{ SceneKeys::JumpPlungeEffect,      actions->jumpPlungeEffect      },
-				{ SceneKeys::UpperBodyBone,         actions->upperBodyBone         },
-				{ SceneKeys::ShockwaveRadius,       actions->shockwaveRadius       },
-				{ SceneKeys::ShockwaveDamage,       actions->shockwaveDamage       },
-				{ SceneKeys::ShockwaveDistance,     actions->shockwaveDistance     },
-				{ SceneKeys::ShockwaveEffect,       actions->shockwaveEffect       },
-				{ SceneKeys::SwingEffect,           actions->swingEffect           },
-				{ SceneKeys::HyperArmor,            actions->hyperArmor            },
-				{ SceneKeys::HeavySwingEffect,      actions->heavySwingEffect      },
-				{ SceneKeys::SwingEffectHeight,     actions->swingEffectHeight     },
-				{ SceneKeys::SwingEffectDistance,   actions->swingEffectDistance   },
-				{ SceneKeys::SwingEffectAt,         actions->swingEffectAt         },
-				{ SceneKeys::ShockwaveCameraShake,  actions->shockwaveCameraShake  },
-				{ SceneKeys::AttackTurnDegreesPerSecond, actions->attackTurnDegreesPerSecond },
-				{ SceneKeys::AttackLungeSpeed,      actions->attackLungeSpeed      },
-				{ SceneKeys::AttackReach,           actions->attackReach           },
-				{ SceneKeys::FinisherKnockback,     actions->finisherKnockback     },
-				{ SceneKeys::HeavyKnockback,        actions->heavyKnockback        },
-				{ SceneKeys::KnockdownAnimation,    actions->knockdownAnimation    },
-				{ SceneKeys::HeavyKnockbackChance,  actions->heavyKnockbackChance  },
-				{ SceneKeys::GetUpAnimation,        actions->getUpAnimation        },
-				{ SceneKeys::KnockdownChance,       actions->knockdownChance       },
-				{ SceneKeys::KnockdownSeconds,      actions->knockdownSeconds      },
-				{ SceneKeys::AttackDelayChance,     actions->attackDelayChance     },
-				{ SceneKeys::AttackDelaySeconds,    actions->attackDelaySeconds    },
-				{ SceneKeys::AttackDelayAt,         actions->attackDelayAt         },
-				{ SceneKeys::ParryFrom,             actions->parryFrom             },
-				{ SceneKeys::ParryTo,               actions->parryTo               },
-				{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
-				{ SceneKeys::LightHitFrom,          actions->lightHitFrom          },
-				{ SceneKeys::LightHitTo,            actions->lightHitTo            },
-				{ SceneKeys::HeavyHitFrom,          actions->heavyHitFrom          },
-				{ SceneKeys::HeavyHitTo,            actions->heavyHitTo            },
-				{ SceneKeys::HeavyDamageMultiplier, actions->heavyDamageMultiplier },
-				{ SceneKeys::AttackSpeed,           actions->attackSpeed           },
-				{ SceneKeys::ExtraLightAttackAnimations, actions->extraLightAttackAnimations },
-				{ SceneKeys::HeavyAttack2Animation,  actions->heavyAttack2Animation  },
-				{ SceneKeys::RunningAttackAnimation, actions->runningAttackAnimation },
-				{ SceneKeys::RunningAttackSpeed,     actions->runningAttackSpeed     },
-				{ SceneKeys::DodgeAttackAnimation,   actions->dodgeAttackAnimation   },
-				{ SceneKeys::RiposteAnimation,       actions->riposteAnimation       },
-				{ SceneKeys::RiposteReach,           actions->riposteReach           },
-				{ SceneKeys::AttackLungeMaxDistance, actions->attackLungeMaxDistance },
-				{ SceneKeys::DodgeCancelFrom,        actions->dodgeCancelFrom        },
-				{ SceneKeys::HitReactionDodgeFrom,   actions->hitReactionDodgeFrom   },
-				{ SceneKeys::ExtraHitReactionAnimations, actions->extraHitReactionAnimations },
-				{ SceneKeys::HeavyHitReactionAnimation, actions->heavyHitReactionAnimation },
-				{ SceneKeys::KnockbackAnimation,     actions->knockbackAnimation     },
-				{ SceneKeys::KnockbackSeconds,       actions->knockbackSeconds       },
-				{ SceneKeys::KnockbackDust,          actions->knockbackDust          }
-			};
-
-			nlohmann::json moves = nlohmann::json::array();
-			for (const AttackMove& move : actions->attackMoves)
-			{
-				moves.push_back({
-					{ SceneKeys::MoveAnimation,        move.animation        },
-					{ SceneKeys::MoveHitFrom,          move.hitFrom          },
-					{ SceneKeys::MoveHitTo,            move.hitTo            },
-					{ SceneKeys::MoveDamageMultiplier, move.damageMultiplier },
-					{ SceneKeys::MoveCancelFrom,       move.cancelFrom       },
-					{ SceneKeys::MoveStrikeHeight,     move.strikeHeight     }
-				});
-			}
-			entityJson[SceneKeys::CharacterActionsComponent][SceneKeys::AttackMoves] = moves;
-		}
-
-		if (auto* health = entityManager.GetComponent<HealthComponent>(i))
-		{
-			entityJson[SceneKeys::HealthComponent] =
-			{
-				{ SceneKeys::MaxHealth,              health->maxHealth              },
-				{ SceneKeys::HitEffect,              health->hitEffect              },
-				{ SceneKeys::DeflectEffect,          health->deflectEffect          },
-				{ SceneKeys::DeathSlowMotionSeconds, health->deathSlowMotionSeconds },
-				{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   },
-				{ SceneKeys::WeaponDamageTaken,      health->weaponDamageTaken      },
-				{ SceneKeys::SpellDamageTaken,       health->spellDamageTaken       },
-				{ SceneKeys::SpellImmunitySeconds,   health->spellImmunitySeconds   }
-			};
-		}
-
-		if (auto* stamina = entityManager.GetComponent<StaminaComponent>(i))
-		{
-			entityJson[SceneKeys::StaminaComponent] =
-			{
-				{ SceneKeys::MaxStamina,               stamina->maxStamina               },
-				{ SceneKeys::RegenerationPerSecond,    stamina->regenerationPerSecond    },
-				{ SceneKeys::RegenerationDelaySeconds, stamina->regenerationDelaySeconds },
-				{ SceneKeys::RollCost,                 stamina->rollCost                 },
-				{ SceneKeys::BackstepCost,             stamina->backstepCost             },
-				{ SceneKeys::LightAttackCost,          stamina->lightAttackCost          },
-				{ SceneKeys::HeavyAttackCost,          stamina->heavyAttackCost          },
-				{ SceneKeys::ParryCost,                stamina->parryCost                },
-				{ SceneKeys::RunCostPerSecond,         stamina->runCostPerSecond         }
-			};
-		}
-
-		if (auto* hitbox = entityManager.GetComponent<HitboxComponent>(i))
-		{
-			entityJson[SceneKeys::HitboxComponent] =
-			{
-				{ SceneKeys::Damage,                     hitbox->damage       },
-				{ SceneKeys::PoiseDamage,                hitbox->poiseDamage  },
-				{ SceneKeys::HitStopSeconds,             hitbox->hitStopSeconds },
-				{ SceneKeys::Knockback,                  hitbox->knockback    },
-				{ SceneKeys::CameraShake,                hitbox->cameraShake  },
-				{ SceneKeys::LocalOffset,  SerializeVec3(hitbox->localOffset) },
-				{ SceneKeys::HalfExtents,  SerializeVec3(hitbox->halfExtents) },
-				{ SceneKeys::Layer, static_cast<unsigned int>(hitbox->layer)  },
-				{ SceneKeys::ShowGizmos,                 hitbox->showGizmos   },
-				{ SceneKeys::HitboxIsEnabled,            hitbox->isEnabled    }
-			};
-		}
-
-		if (auto* shield = entityManager.GetComponent<ShieldComponent>(i))
-		{
-			entityJson[SceneKeys::ShieldComponent] =
-			{
-				{ SceneKeys::GuardAngleDegrees, shield->guardAngleDegrees },
-				{ SceneKeys::DamageThrough,     shield->damageThrough     },
-				{ SceneKeys::StaminaPerDamage,  shield->staminaPerDamage  },
-				{ SceneKeys::BlockEffect,       shield->blockEffect       }
-			};
-		}
-
-		if (auto* boss = entityManager.GetComponent<BossComponent>(i))
-		{
-			entityJson[SceneKeys::BossComponent] =
-			{
-				{ SceneKeys::PhaseTwoHealthFraction,   boss->phaseTwoHealthFraction   },
-				{ SceneKeys::PhaseTwoDamageMultiplier, boss->phaseTwoDamageMultiplier },
-				{ SceneKeys::PhaseTwoAttackSpeedup,    boss->phaseTwoAttackSpeedup    },
-				{ SceneKeys::PhaseTwoAnimation,        boss->phaseTwoAnimation        },
-				{ SceneKeys::PhaseTwoSound,            boss->phaseTwoSound            },
-				{ SceneKeys::PhaseTwoMusic,            boss->phaseTwoMusic            },
-				{ SceneKeys::DefeatCutscene,           boss->defeatCutscene           },
-				{ SceneKeys::DefeatCutsceneDelay,      boss->defeatCutsceneDelay      },
-				{ SceneKeys::PhaseTwoGlow,             boss->phaseTwoGlow             },
-				{ SceneKeys::PhaseTwoGrowth,           boss->phaseTwoGrowth           },
-				{ SceneKeys::PhaseTwoLight1Animation,  boss->phaseTwoLight1Animation  },
-				{ SceneKeys::PhaseTwoLight2Animation,  boss->phaseTwoLight2Animation  },
-				{ SceneKeys::PhaseTwoLight3Animation,  boss->phaseTwoLight3Animation  },
-				{ SceneKeys::PhaseTwoHeavyAnimation,   boss->phaseTwoHeavyAnimation   },
-				{ SceneKeys::PhaseTwoLightHitFrom,     boss->phaseTwoLightHitFrom     },
-				{ SceneKeys::PhaseTwoLightHitTo,       boss->phaseTwoLightHitTo       },
-				{ SceneKeys::PhaseTwoHeavyHitFrom,     boss->phaseTwoHeavyHitFrom     },
-				{ SceneKeys::PhaseTwoHeavyHitTo,       boss->phaseTwoHeavyHitTo       },
-				{ SceneKeys::PhaseTwoShockwaveRadius,  boss->phaseTwoShockwaveRadius  },
-				{ SceneKeys::PhaseTwoMaxLightCombo,    boss->phaseTwoMaxLightCombo    }
-			};
-		}
-
-		if (auto* cutscene = entityManager.GetComponent<CutsceneComponent>(i))
-		{
-			entityJson[SceneKeys::CutsceneComponent] =
-			{
-				{ SceneKeys::DurationSeconds,       cutscene->durationSeconds    },
-				{ SceneKeys::LookAtEntity,          cutscene->lookAtEntity       },
-				{ SceneKeys::LookAtHeight,          cutscene->lookAtHeight       },
-				{ SceneKeys::LookAlsoAtEntity,      cutscene->lookAlsoAtEntity   },
-				{ SceneKeys::AnimationEntity,       cutscene->animationEntity    },
-				{ SceneKeys::CutsceneAnimationName, cutscene->animationName      },
-				{ SceneKeys::AnimationAtSeconds,    cutscene->animationAtSeconds },
-				{ SceneKeys::CutsceneTitle,         cutscene->title              },
-				{ SceneKeys::TitleSeconds,          cutscene->titleSeconds       },
-				{ SceneKeys::CanBeSkipped,          cutscene->canBeSkipped       },
-				{ SceneKeys::VideoFile,             cutscene->videoFile          },
-				{ SceneKeys::WaitForKey,            cutscene->waitForKey         },
-				{ SceneKeys::WaitPrompt,            cutscene->waitPrompt         },
-				{ SceneKeys::WaitPresses,           cutscene->waitPresses        },
-				{ SceneKeys::PressWindowSeconds,    cutscene->pressWindowSeconds },
-				{ SceneKeys::PressSound,            cutscene->pressSound         },
-				{ SceneKeys::BlendInSeconds,        cutscene->blendInSeconds     },
-				{ SceneKeys::FadeSeconds,           cutscene->fadeSeconds        },
-				{ SceneKeys::CutsceneSound,         cutscene->sound              }
-			};
-		}
-
-		if (auto* environment = entityManager.GetComponent<EnvironmentComponent>(i))
-		{
-			entityJson[SceneKeys::EnvironmentComponent] =
-			{
-				{ SceneKeys::SkyboxFolder,  environment->skyboxFolder           },
-				{ SceneKeys::SkyBrightness, environment->skyBrightness          },
-				{ SceneKeys::IsFogEnabled,  environment->isFogEnabled           },
-				{ SceneKeys::FogColor,      SerializeVec3(environment->fogColor) },
-				{ SceneKeys::FogDensity,    environment->fogDensity             },
-				{ SceneKeys::IsPostProcessingEnabled, environment->isPostProcessingEnabled },
-				{ SceneKeys::Exposure,                environment->exposure                },
-				{ SceneKeys::IsBloomEnabled,          environment->isBloomEnabled          },
-				{ SceneKeys::BloomThreshold,          environment->bloomThreshold          },
-				{ SceneKeys::BloomIntensity,          environment->bloomIntensity          },
-				{ SceneKeys::BloomBlurPasses,         environment->bloomBlurPasses         },
-				{ SceneKeys::HitImpactFrame,          environment->hitImpactFrame          }
-			};
-		}
-
-		if (auto* emitter = entityManager.GetComponent<ParticleEmitterComponent>(i))
-		{
-			entityJson[SceneKeys::ParticleEmitterComponent] =
-			{
-				{ SceneKeys::IsEmitting,         emitter->isEmitting                     },
-				{ SceneKeys::ParticlesPerSecond, emitter->particlesPerSecond             },
-				{ SceneKeys::LifetimeSeconds,    emitter->lifetimeSeconds                },
-				{ SceneKeys::SpawnHalfExtents,   SerializeVec3(emitter->spawnHalfExtents) },
-				{ SceneKeys::ParticleVelocity,   SerializeVec3(emitter->velocity)        },
-				{ SceneKeys::VelocityRandomness, emitter->velocityRandomness             },
-				{ SceneKeys::ParticleGravity,    SerializeVec3(emitter->gravity)         },
-				{ SceneKeys::StartSize,          emitter->startSize                      },
-				{ SceneKeys::EndSize,            emitter->endSize                        },
-				{ SceneKeys::StartColor,         SerializeVec3(emitter->startColor)      },
-				{ SceneKeys::EndColor,           SerializeVec3(emitter->endColor)        },
-				{ SceneKeys::ParticleIntensity,  emitter->intensity                      },
-				{ SceneKeys::MaxParticles,       emitter->maxParticles                   },
-				{ SceneKeys::IsDark,             emitter->isDark                         },
-				{ SceneKeys::ParticleStyle,      emitter->style                          },
-				{ SceneKeys::SpawnShape,         emitter->spawnShape                     },
-				{ SceneKeys::SpawnRadius,        emitter->spawnRadius                    },
-				{ SceneKeys::OutwardSpeed,       emitter->outwardSpeed                   },
-				{ SceneKeys::SizeRandomness,     emitter->sizeRandomness                 },
-				{ SceneKeys::ParticleSpin,       emitter->spinDegreesPerSecond           },
-				{ SceneKeys::ParticleDrag,       emitter->drag                           },
-				{ SceneKeys::ParticleStretch,    emitter->stretch                        },
-				{ SceneKeys::HasMiddleColor,     emitter->hasMiddleColor                 },
-				{ SceneKeys::MiddleColor,        SerializeVec3(emitter->middleColor)     },
-				{ SceneKeys::BurstAmount,        emitter->burstAmount                    },
-				{ SceneKeys::FlipbookTexture,    emitter->flipbookTexture                },
-				{ SceneKeys::FlipbookColumns,    emitter->flipbookColumns                },
-				{ SceneKeys::FlipbookRows,       emitter->flipbookRows                   },
-				{ SceneKeys::FlipbookLoops,      emitter->flipbookLoops                  },
-				{ SceneKeys::FlipbookRandomStart, emitter->flipbookRandomStart           }
-			};
-		}
-
-		if (auto* shape = entityManager.GetComponent<EffectShapeComponent>(i))
-		{
-			entityJson[SceneKeys::EffectShapeComponent] =
-			{
-				{ SceneKeys::ShapeKind,               shape->kind                              },
-				{ SceneKeys::ShapeLifetime,           shape->lifetimeSeconds                   },
-				{ SceneKeys::ShapeStartRadius,        shape->startRadius                       },
-				{ SceneKeys::ShapeEndRadius,          shape->endRadius                         },
-				{ SceneKeys::ShapeThickness,          shape->thickness                         },
-				{ SceneKeys::ShapeHeight,             shape->height                            },
-				{ SceneKeys::ShapeArcDegrees,         shape->arcDegrees                        },
-				{ SceneKeys::ShapeRotation,           SerializeVec3(shape->rotationDegrees)    },
-				{ SceneKeys::ShapeRotationRandomness, SerializeVec3(shape->rotationRandomness) },
-				{ SceneKeys::ShapeOffset,             SerializeVec3(shape->offset)             },
-				{ SceneKeys::ShapeSpin,               shape->spinDegreesPerSecond              },
-				{ SceneKeys::ShapeTwist,              shape->twistDegrees                      },
-				{ SceneKeys::ShapeCoreColor,          SerializeVec3(shape->coreColor)          },
-				{ SceneKeys::ShapeEdgeColor,          SerializeVec3(shape->edgeColor)          },
-				{ SceneKeys::ShapeIntensity,          shape->intensity                         },
-				{ SceneKeys::ShapeNoiseScale,         shape->noiseScale                        },
-				{ SceneKeys::ShapeScrollSpeed,        shape->scrollSpeed                       },
-				{ SceneKeys::ShapeDissolve,           shape->dissolve                          },
-				{ SceneKeys::ShapeLightIntensity,     shape->lightIntensity                    },
-				{ SceneKeys::ShapeLightRadius,        shape->lightRadius                       },
-				{ SceneKeys::ShapeLightColor,         SerializeVec3(shape->lightColor)         }
-			};
-		}
-
-		if (auto* sprite = entityManager.GetComponent<GlowSpriteComponent>(i))
-		{
-			entityJson[SceneKeys::GlowSpriteComponent] =
-			{
-				{ SceneKeys::IsVisible,         sprite->isVisible            },
-				{ SceneKeys::SpriteColor,       SerializeVec3(sprite->color) },
-				{ SceneKeys::SpriteSize,        sprite->size                 },
-				{ SceneKeys::ParticleIntensity, sprite->intensity            }
-			};
-		}
-
-		if (auto* orb = entityManager.GetComponent<LiquidOrbComponent>(i))
-		{
-			entityJson[SceneKeys::LiquidOrbComponent] =
-			{
-				{ SceneKeys::IsVisible,      orb->isVisible           },
-				{ SceneKeys::OrbTint,        SerializeVec3(orb->tint) },
-				{ SceneKeys::OrbBrightness,  orb->brightness          },
-				{ SceneKeys::OrbWobble,      orb->wobble              },
-				{ SceneKeys::OrbWobbleSpeed, orb->wobbleSpeed         },
-				{ SceneKeys::OrbClearness,   orb->clearness           }
-			};
-		}
-
-		if (auto* swarm = entityManager.GetComponent<SwarmComponent>(i))
-		{
-			entityJson[SceneKeys::SwarmComponent] =
-			{
-				{ SceneKeys::IsVisible,           swarm->isVisible                      },
-				{ SceneKeys::SwarmModelName,      swarm->modelName                      },
-				{ SceneKeys::SwarmCount,          swarm->count                          },
-				{ SceneKeys::SwarmSeed,           swarm->seed                           },
-				{ SceneKeys::SwarmPieceSize,      swarm->pieceSize                      },
-				{ SceneKeys::SwarmSizeVariation,  swarm->sizeVariation                  },
-				{ SceneKeys::SwarmRadius,         swarm->radius                         },
-				{ SceneKeys::SwarmShellThickness, swarm->shellThickness                 },
-				{ SceneKeys::SwarmSpin,           swarm->spinDegreesPerSecond           },
-				{ SceneKeys::SwarmTumble,         swarm->tumbleDegreesPerSecond         },
-				{ SceneKeys::SwarmSkyCenter,      SerializeVec3(swarm->skyCenter)       },
-				{ SceneKeys::SwarmSkyHalfExtents, SerializeVec3(swarm->skyHalfExtents)  },
-				{ SceneKeys::SwarmFallSpeed,      swarm->fallSpeed                      },
-				{ SceneKeys::SwarmFallSpread,     swarm->fallSpreadSeconds              },
-				{ SceneKeys::SwarmGroundHeight,   swarm->groundHeight                   },
-				{ SceneKeys::SwarmStuckSeconds,   swarm->stuckSeconds                   },
-				{ SceneKeys::SwarmGlowColor,      SerializeVec3(swarm->glowColor)       },
-				{ SceneKeys::SwarmTrailLength,    swarm->trailLength                    },
-				{ SceneKeys::SwarmHitEffect,      swarm->hitEffect                      },
-				{ SceneKeys::SwarmHitBurst,       swarm->hitBurst                       }
-			};
-		}
-
-		if (auto* trail = entityManager.GetComponent<WeaponTrailComponent>(i))
-		{
-			entityJson[SceneKeys::WeaponTrailComponent] =
-			{
-				{ SceneKeys::BaseOffset,        SerializeVec3(trail->baseOffset) },
-				{ SceneKeys::TipOffset,         SerializeVec3(trail->tipOffset)  },
-				{ SceneKeys::Color,        SerializeVec3(trail->color)      },
-				{ SceneKeys::ParticleIntensity, trail->intensity                 },
-				{ SceneKeys::LifetimeSeconds,   trail->lifetimeSeconds           },
-				{ SceneKeys::OnlyWhileStriking, trail->onlyWhileStriking         }
-			};
-		}
-
-		if (auto* fogGate = entityManager.GetComponent<FogGateComponent>(i))
-		{
-			entityJson[SceneKeys::FogGateComponent] =
-			{
-				{ SceneKeys::ArenaCenter,      SerializeVec3(fogGate->arenaCenter)      },
-				{ SceneKeys::ArenaHalfExtents, SerializeVec3(fogGate->arenaHalfExtents) },
-				{ SceneKeys::VictoryMessage,                fogGate->victoryMessage     },
-				{ SceneKeys::IsCrossedWithKey,              fogGate->isCrossedWithKey   },
-				{ SceneKeys::FogCutscene,                   fogGate->cutscene           },
-				{ SceneKeys::BattleMusic,                   fogGate->battleMusic        },
-				{ SceneKeys::BattleMusicVolume,             fogGate->battleMusicVolume  },
-				{ SceneKeys::VictorySound,                  fogGate->victorySound       }
-			};
-		}
-
-		if (auto* flask = entityManager.GetComponent<HealingFlaskComponent>(i))
-		{
-			entityJson[SceneKeys::HealingFlaskComponent] =
-			{
-				{ SceneKeys::DisplayName,    flask->displayName    },
-				{ SceneKeys::MaxCharges,     flask->maxCharges     },
-				{ SceneKeys::HealAmount,     flask->healAmount     },
-				{ SceneKeys::DrinkAnimation, flask->drinkAnimation },
-				{ SceneKeys::HealAtProgress, flask->healAtProgress },
-				{ SceneKeys::HiddenWhileDrinking, flask->hiddenWhileDrinking },
-				{ SceneKeys::ShownWhileDrinking,  flask->shownWhileDrinking  },
-				{ SceneKeys::HealEffect,     flask->healEffect     },
-				{ SceneKeys::DrinkSound,     flask->drinkSound     },
-				{ SceneKeys::HealSound,      flask->healSound      }
-			};
-		}
-
-		if (auto* currency = entityManager.GetComponent<CurrencyComponent>(i))
-		{
-			entityJson[SceneKeys::CurrencyComponent] =
-			{
-				{ SceneKeys::DisplayName,        currency->displayName        },
-				{ SceneKeys::CurrencyAmount,     currency->amount             },
-				{ SceneKeys::IsDroppedOnDeath,   currency->isDroppedOnDeath   },
-				{ SceneKeys::DropMarker,         currency->dropMarker         },
-				{ SceneKeys::RetrieveDistance,   currency->retrieveDistance   },
-				{ SceneKeys::IsRetrievedWithKey, currency->isRetrievedWithKey },
-				{ SceneKeys::RetrievePrompt,     currency->retrievePrompt     },
-				{ SceneKeys::GainSound,          currency->gainSound          },
-				{ SceneKeys::RetrieveSound,      currency->retrieveSound      }
-			};
-		}
-
-		if (auto* reward = entityManager.GetComponent<CurrencyRewardComponent>(i))
-		{
-			entityJson[SceneKeys::CurrencyRewardComponent] =
-			{
-				{ SceneKeys::CurrencyAmount, reward->amount }
-			};
-		}
-
-		if (auto* levelUp = entityManager.GetComponent<LevelUpComponent>(i))
-		{
-			entityJson[SceneKeys::LevelUpComponent] =
-			{
-				{ SceneKeys::DisplayName,            levelUp->displayName            },
-				{ SceneKeys::Level,                  levelUp->level                  },
-				{ SceneKeys::FirstLevelCost,         levelUp->firstLevelCost         },
-				{ SceneKeys::CostGrowth,             levelUp->costGrowth             },
-				{ SceneKeys::StartingAttributeValue, levelUp->startingAttributeValue },
-				{ SceneKeys::HealthAttribute,        levelUp->healthAttribute        },
-				{ SceneKeys::HealthPerPoint,         levelUp->healthPerPoint         },
-				{ SceneKeys::HealthPoints,           levelUp->healthPoints           },
-				{ SceneKeys::StaminaAttribute,       levelUp->staminaAttribute       },
-				{ SceneKeys::StaminaPerPoint,        levelUp->staminaPerPoint        },
-				{ SceneKeys::StaminaPoints,          levelUp->staminaPoints          },
-				{ SceneKeys::DamageAttribute,        levelUp->damageAttribute        },
-				{ SceneKeys::DamagePerPoint,         levelUp->damagePerPoint         },
-				{ SceneKeys::DamagePoints,           levelUp->damagePoints           },
-				{ SceneKeys::LevelUpSound,           levelUp->levelUpSound           },
-				{ SceneKeys::LevelUpEffect,          levelUp->levelUpEffect          }
-			};
-		}
-
-		if (auto* audioSource = entityManager.GetComponent<AudioSourceComponent>(i))
-		{
-			entityJson[SceneKeys::AudioSourceComponent] =
-			{
-				{ SceneKeys::Sound,       audioSource->sound       },
-				{ SceneKeys::SoundVolume, audioSource->volume      },
-				{ SceneKeys::IsLooping,   audioSource->isLooping   },
-				{ SceneKeys::PlayOnStart, audioSource->playOnStart },
-				{ SceneKeys::IsSpatial,   audioSource->isSpatial   },
-				{ SceneKeys::MinDistance, audioSource->minDistance },
-				{ SceneKeys::MaxDistance, audioSource->maxDistance }
-			};
-		}
-
-		if (auto* sounds = entityManager.GetComponent<CharacterSoundsComponent>(i))
-		{
-			entityJson[SceneKeys::CharacterSoundsComponent] =
-			{
-				{ SceneKeys::AttackSound,    sounds->attackSound    },
-				{ SceneKeys::HurtSound,      sounds->hurtSound      },
-				{ SceneKeys::BlockSound,     sounds->blockSound     },
-				{ SceneKeys::ParrySound,     sounds->parrySound     },
-				{ SceneKeys::DeathSound,     sounds->deathSound     },
-				{ SceneKeys::RollSound,      sounds->rollSound      },
-				{ SceneKeys::FootstepSound,  sounds->footstepSound  },
-				{ SceneKeys::ShockwaveSound, sounds->shockwaveSound },
-				{ SceneKeys::AttackSoundLeadSeconds, sounds->attackSoundLeadSeconds },
-				{ SceneKeys::LeftFootBone,   sounds->leftFootBone   },
-				{ SceneKeys::RightFootBone,  sounds->rightFootBone  },
-				{ SceneKeys::FootstepMeters, sounds->footstepMeters },
-				{ SceneKeys::FootstepCameraShake, sounds->footstepCameraShake },
-				{ SceneKeys::FootstepShakeRadius, sounds->footstepShakeRadius },
-				{ SceneKeys::SoundVolume,    sounds->volume         },
-				{ SceneKeys::PainVoice,      sounds->painVoice      },
-				{ SceneKeys::AttackVoice,    sounds->attackVoice    },
-				{ SceneKeys::DeathVoice,     sounds->deathVoice     },
-				{ SceneKeys::AlertVoice,     sounds->alertVoice     },
-				{ SceneKeys::PainVoiceChance,   sounds->painVoiceChance   },
-				{ SceneKeys::AttackVoiceChance, sounds->attackVoiceChance }
-			};
-		}
-
-		if (auto* poise = entityManager.GetComponent<PoiseComponent>(i))
-		{
-			entityJson[SceneKeys::PoiseComponent] =
-			{
-				{ SceneKeys::MaxPoise,            poise->maxPoise            },
-				{ SceneKeys::RecoverAfterSeconds, poise->recoverAfterSeconds },
-				{ SceneKeys::StaggerImmunitySeconds, poise->staggerImmunitySeconds }
-			};
-		}
-
-		if (auto* enemy = entityManager.GetComponent<EnemyComponent>(i))
-		{
-			entityJson[SceneKeys::EnemyComponent] =
-			{
-				{ SceneKeys::SightDistance,     enemy->sightDistance     },
-				{ SceneKeys::SightAngleDegrees, enemy->sightAngleDegrees },
-				{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
-				{ SceneKeys::EyeHeight,         enemy->eyeHeight         },
-				{ SceneKeys::StartsDormant,     enemy->startsDormant     }
-			};
-		}
-
-		if (auto* bonfire = entityManager.GetComponent<BonfireComponent>(i))
-		{
-			entityJson[SceneKeys::BonfireComponent] =
-			{
-				{ SceneKeys::InteractDistance,               bonfire->interactDistance },
-				{ SceneKeys::RespawnOffset,    SerializeVec3(bonfire->respawnOffset)    }
-			};
-		}
-
-		if (auto* respawn = entityManager.GetComponent<RespawnComponent>(i))
-		{
-			entityJson[SceneKeys::RespawnComponent] = { { SceneKeys::RespawnDelaySeconds, respawn->respawnDelaySeconds } };
-		}
-
-		if (auto* hud = entityManager.GetComponent<PlayerHUDComponent>(i))
-		{
-			entityJson[SceneKeys::PlayerHUDComponent] =
-			{
-				{ SceneKeys::PixelsPerHealthPoint,  hud->pixelsPerHealthPoint  },
-				{ SceneKeys::PixelsPerStaminaPoint, hud->pixelsPerStaminaPoint },
-				{ SceneKeys::ShowLockOnMarker,      hud->showLockOnMarker      },
-				{ SceneKeys::DeathMessage,          hud->deathMessage          },
-				{ SceneKeys::HUDStyleFile,          hud->style                 }
-			};
-		}
-
-		if (auto* healthBar = entityManager.GetComponent<EnemyHealthBarComponent>(i))
-		{
-			entityJson[SceneKeys::EnemyHealthBarComponent] =
-			{
-				{ SceneKeys::IsBoss,              healthBar->isBoss              },
-				{ SceneKeys::DisplayName,         healthBar->displayName         },
-				{ SceneKeys::ShowSecondsAfterHit, healthBar->showSecondsAfterHit },
-				{ SceneKeys::HeightAboveFeet,     healthBar->heightAboveFeet     }
-			};
-		}
-
-		if (auto* meleeEnemy = entityManager.GetComponent<MeleeEnemyComponent>(i))
-		{
-			entityJson[SceneKeys::MeleeEnemyComponent] =
-			{
-				{ SceneKeys::AttackDistance,        meleeEnemy->attackDistance        },
-				{ SceneKeys::RunDistance,           meleeEnemy->runDistance           },
-				{ SceneKeys::GiveUpDistance,        meleeEnemy->giveUpDistance        },
-				{ SceneKeys::AttackCooldownSeconds, meleeEnemy->attackCooldownSeconds },
-				{ SceneKeys::HeavyAttackChance,     meleeEnemy->heavyAttackChance     },
-				{ SceneKeys::MaxLightCombo,         meleeEnemy->maxLightCombo         },
-				{ SceneKeys::FinisherChance,        meleeEnemy->finisherChance        },
-				{ SceneKeys::RecoverSeconds,        meleeEnemy->recoverSeconds        },
-				{ SceneKeys::DodgeChance,           meleeEnemy->dodgeChance           },
-				{ SceneKeys::DodgeDistance,         meleeEnemy->dodgeDistance         },
-				{ SceneKeys::DodgeCooldownSeconds,  meleeEnemy->dodgeCooldownSeconds  },
-				{ SceneKeys::LeapAttackDistance,    meleeEnemy->leapAttackDistance    }
-			};
-		}
-
-		if (auto* spell = entityManager.GetComponent<SpellCasterComponent>(i))
-		{
-			entityJson[SceneKeys::SpellCasterComponent] =
-			{
-				{ SceneKeys::CastAnimation,            spell->castAnimation            },
-				{ SceneKeys::ProjectileName,           spell->projectile               },
-				{ SceneKeys::ProjectileCount,          spell->projectileCount          },
-				{ SceneKeys::SpreadDegrees,            spell->spreadDegrees            },
-				{ SceneKeys::ReleaseAt,                spell->releaseAt                },
-				{ SceneKeys::AtTargetsFeet,            spell->atTargetsFeet            },
-				{ SceneKeys::DropHeight,               spell->dropHeight               },
-				{ SceneKeys::MinDistance,              spell->minDistance              },
-				{ SceneKeys::MaxDistance,              spell->maxDistance              },
-				{ SceneKeys::SpellCooldownSeconds,     spell->cooldownSeconds          },
-				{ SceneKeys::ChargeEffect,             spell->chargeEffect             },
-				{ SceneKeys::ChargeParticlesPerSecond, spell->chargeParticlesPerSecond },
-				{ SceneKeys::CastSound,                spell->castSound                },
-				{ SceneKeys::CastKey,                  spell->castKey                  },
-				{ SceneKeys::DisplayName,              spell->displayName              },
-				{ SceneKeys::IsCastOnRequestOnly,      spell->isCastOnRequestOnly      },
-				{ SceneKeys::IsUninterruptible,        spell->isUninterruptible        }
-			};
-		}
-
-		if (auto* projectile = entityManager.GetComponent<ProjectileComponent>(i))
-		{
-			entityJson[SceneKeys::ProjectileComponent] =
-			{
-				{ SceneKeys::ProjectileSpeed,         projectile->speed                   },
-				{ SceneKeys::Damage,                  projectile->damage                  },
-				{ SceneKeys::PoiseDamage,             projectile->poiseDamage             },
-				{ SceneKeys::ProjectileRadius,        projectile->radius                  },
-				{ SceneKeys::HomingDegreesPerSecond,  projectile->homingDegreesPerSecond  },
-				{ SceneKeys::LifetimeSeconds,         projectile->lifetimeSeconds         },
-				{ SceneKeys::FuseSeconds,             projectile->fuseSeconds             },
-				{ SceneKeys::TrailEffect,             projectile->trailEffect             },
-				{ SceneKeys::TrailParticlesPerSecond, projectile->trailParticlesPerSecond },
-				{ SceneKeys::SpinDegreesPerSecond,    projectile->spinDegreesPerSecond    },
-				{ SceneKeys::LaunchDelaySeconds,      projectile->launchDelaySeconds      },
-				{ SceneKeys::BodyFacesFlight,         projectile->bodyFacesFlight         },
-				{ SceneKeys::SpinsAroundFlight,       projectile->spinsAroundFlight       },
-				{ SceneKeys::FormSeconds,             projectile->formSeconds             },
-				{ SceneKeys::AimsAfterForming,        projectile->aimsAfterForming        },
-				{ SceneKeys::HitEffect,               projectile->hitEffect               },
-				{ SceneKeys::HitBurst,                projectile->hitBurst                },
-				{ SceneKeys::HitSound,                projectile->hitSound                },
-				{ SceneKeys::HitStopSeconds,          projectile->hitStopSeconds          },
-				{ SceneKeys::CameraShake,             projectile->cameraShake             }
-			};
-		}
+		json entityJson = SerializeEntity(entityManager, i);
 
 		if (!entityJson.empty())
 		{
@@ -1557,6 +2519,37 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 	sceneJson[SceneKeys::Entities] = entitiesArray;
 
 	return sceneJson.dump(4);
+}
+
+bool SceneSerializer::CloneWithDescendants(EntityManager& entityManager, unsigned int entityID, unsigned int& outCopyID,
+	std::vector<unsigned int>* outAllCopies)
+{
+	if (!entityManager.IsAlive(entityID))
+		return false;
+
+	SavedIndices savedIndices;
+	json entitiesArray = json::array();
+	for (unsigned int originalID : EntityHierarchy::GetWithDescendants(entityManager, entityID))
+	{
+		savedIndices[originalID] = entitiesArray.size();
+		entitiesArray.push_back(SerializeEntity(entityManager, originalID));
+	}
+	// (only the parents inside the copied family: the copy of the first one has none)
+	SerializeParents(entityManager, savedIndices, entitiesArray);
+
+	std::vector<int> copies;
+	for (const json& entityJson : entitiesArray)
+	{
+		const unsigned int copyID = entityManager.CreateEntity();
+		copies.push_back(static_cast<int>(copyID));
+		DeserializeEntity(entityManager, copyID, entityJson);
+		if (outAllCopies)
+			outAllCopies->push_back(copyID);
+	}
+	DeserializeParents(entityManager, entitiesArray, copies);
+
+	outCopyID = static_cast<unsigned int>(copies.front());
+	return true;
 }
 
 bool SceneSerializer::Serialize(const std::string& filepath, Scene& scene)
@@ -1626,953 +2619,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 		unsigned int entity = entityManager.CreateEntity();
 		entityAtSavedIndex.back() = static_cast<int>(entity);
 
-		if (entityJson.contains(SceneKeys::TagComponent))
-		{
-			const auto& tagData = entityJson[SceneKeys::TagComponent];
-			auto& tag = entityManager.AddComponent<TagComponent>(entity);
-			tag.name = tagData.value(SceneKeys::Name, "Entity");
-		}
-
-		if (entityJson.contains(SceneKeys::TransformComponent))
-		{
-			const auto& transformData = entityJson[SceneKeys::TransformComponent];
-			auto& transform = entityManager.AddComponent<TransformComponent>(entity);
-
-			if(transformData.contains(SceneKeys::Position))
-				transform.position = DeserializeVec3(transformData[SceneKeys::Position]);
-
-			if (transformData.contains(SceneKeys::Rotation))
-				transform.rotation = DeserializeVec3(transformData[SceneKeys::Rotation]);
-			
-			if (transformData.contains(SceneKeys::Scale))
-				transform.scale    = DeserializeVec3(transformData[SceneKeys::Scale], glm::vec3(1.0f));
-
-			if (transformData.contains(SceneKeys::RotationQuaternion))
-				transform.rotationQuaternion = DeserializeQuaternion(transformData[SceneKeys::RotationQuaternion]);
-			else
-				transform.SyncQuaternionFromEuler();
-
-
-			transform.isDirty  = true;
-		}
-
-		entityManager.AddComponent<WorldMatrixComponent>(entity);
-
-		if (entityJson.contains(SceneKeys::ScriptComponent))
-		{
-			const auto& scriptData = entityJson[SceneKeys::ScriptComponent];
-
-			if (scriptData.is_array())
-			{
-				auto& scriptComponent = entityManager.AddComponent<ScriptComponent>(entity);
-				
-				for (const auto& scriptJson : scriptData)
-				{
-					std::string path = scriptJson.value(SceneKeys::ScriptPath, "");
-					if (!path.empty())
-					{
-						scriptComponent.AddScript(VirtualFileSystem::Resolve(path));
-					}
-				}
-			}
-		}
-
-		if (entityJson.contains(SceneKeys::MeshComponent))
-		{
-			const auto& meshData = entityJson[SceneKeys::MeshComponent];
-			auto& meshComponent = entityManager.AddComponent<MeshComponent>(entity);
-
-			meshComponent.isVisible    = meshData.value(SceneKeys::IsVisible,    true);
-			meshComponent.meshName     = meshData.value(SceneKeys::MeshName,     MeshComponent::NULL_ASSET_NAME);
-			meshComponent.materialName = meshData.value(SceneKeys::MaterialName, MeshComponent::NULL_ASSET_NAME);
-			meshComponent.isDirty      = true;
-		}
-
-		if (entityJson.contains(SceneKeys::ModelComponent))
-		{
-			const auto& modelData = entityJson[SceneKeys::ModelComponent];
-			auto& modelComponent = entityManager.AddComponent<ModelComponent>(entity);
-
-			modelComponent.isVisible = modelData.value(SceneKeys::IsVisible, true);
-			modelComponent.modelName = modelData.value(SceneKeys::ModelName, ModelComponent::NULL_ASSET_NAME);
-			modelComponent.emissiveStrength = modelData.value(SceneKeys::EmissiveStrength, modelComponent.emissiveStrength);
-			modelComponent.isDirty = true;
-		}
-
-		if (entityJson.contains(SceneKeys::AnimatorComponent))
-		{
-			const auto& animatorData = entityJson[SceneKeys::AnimatorComponent];
-			auto& animatorComponent = entityManager.AddComponent<AnimatorComponent>(entity);
-
-			animatorComponent.currentAnimationName = animatorData.value(SceneKeys::CurrentAnimationName, "");
-		}
-
-		if (entityJson.contains(SceneKeys::BoxColliderComponent))
-		{
-			const auto& boxColliderData = entityJson[SceneKeys::BoxColliderComponent];
-			auto& boxColliderComponent = entityManager.AddComponent<BoxColliderComponent>(entity);
-
-			if (boxColliderData.contains(SceneKeys::LocalOffset))
-				boxColliderComponent.localOffset = DeserializeVec3(boxColliderData[SceneKeys::LocalOffset]);
-
-			if (boxColliderData.contains(SceneKeys::HalfExtents))
-				boxColliderComponent.halfExtents = DeserializeVec3(boxColliderData[SceneKeys::HalfExtents], glm::vec3(0.5f));
-
-			boxColliderComponent.showGizmos   = boxColliderData.value(SceneKeys::ShowGizmos, false);
-			boxColliderComponent.isTrigger    = boxColliderData.value(SceneKeys::IsTrigger, false);
-			boxColliderComponent.blocksCamera = boxColliderData.value(SceneKeys::BlocksCamera, true);
-			boxColliderComponent.layer        = static_cast<CollisionLayer>(boxColliderData.value(SceneKeys::Layer, static_cast<unsigned int>(DefaultCollisionLayer)));
-		}
-
-		if (entityJson.contains(SceneKeys::PhysicsBodyComponent))
-		{
-			const auto& physicsBodyData = entityJson[SceneKeys::PhysicsBodyComponent];
-			auto& physicsBodyComponent = entityManager.AddComponent<PhysicsBodyComponent>(entity);
-
-			physicsBodyComponent.isKinematic = physicsBodyData.value(SceneKeys::IsKinematic, false);
-			physicsBodyComponent.useGravity  = physicsBodyData.value(SceneKeys::UseGravity,  true);
-
-			if (physicsBodyData.contains(SceneKeys::Velocity))
-				physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
-
-			if (physicsBodyData.contains(SceneKeys::AngularVelocity))
-				physicsBodyComponent.angularVelocity = DeserializeVec3(physicsBodyData[SceneKeys::AngularVelocity]);
-
-			physicsBodyComponent.freezeRotationX = physicsBodyData.value(SceneKeys::FreezeRotationX, false);
-			physicsBodyComponent.freezeRotationY = physicsBodyData.value(SceneKeys::FreezeRotationY, false);
-			physicsBodyComponent.freezeRotationZ = physicsBodyData.value(SceneKeys::FreezeRotationZ, false);
-
-			// The fallback is the component's own default, so the default values live in ONE place (Component.h)
-			physicsBodyComponent.mass           = physicsBodyData.value(SceneKeys::Mass,		   physicsBodyComponent.mass);
-			physicsBodyComponent.restitution    = physicsBodyData.value(SceneKeys::Restitution,	   physicsBodyComponent.restitution);
-			physicsBodyComponent.friction       = physicsBodyData.value(SceneKeys::Friction,	   physicsBodyComponent.friction);
-			physicsBodyComponent.linearDamping  = physicsBodyData.value(SceneKeys::LinearDamping,  physicsBodyComponent.linearDamping);
-			physicsBodyComponent.angularDamping = physicsBodyData.value(SceneKeys::AngularDamping, physicsBodyComponent.angularDamping);
-
-			if (physicsBodyData.contains(SceneKeys::Velocity))
-				physicsBodyComponent.velocity = DeserializeVec3(physicsBodyData[SceneKeys::Velocity]);
-		}
-
-		if (entityJson.contains(SceneKeys::DirectionalLightComponent))
-		{
-			const auto& lightData = entityJson[SceneKeys::DirectionalLightComponent];
-			auto& directionalLight = entityManager.AddComponent<DirectionalLightComponent>(entity);
-			DeserializeLightColor(lightData, directionalLight.color);
-
-			directionalLight.castsShadows     = lightData.value(SceneKeys::CastsShadows,     directionalLight.castsShadows);
-			directionalLight.shadowDistance   = lightData.value(SceneKeys::ShadowDistance,   directionalLight.shadowDistance);
-			directionalLight.shadowStrength   = lightData.value(SceneKeys::ShadowStrength,   directionalLight.shadowStrength);
-			directionalLight.shadowSoftness   = lightData.value(SceneKeys::ShadowSoftness,   directionalLight.shadowSoftness);
-			directionalLight.shadowResolution = lightData.value(SceneKeys::ShadowResolution, directionalLight.shadowResolution);
-		}
-
-		if (entityJson.contains(SceneKeys::PointLightComponent))
-		{
-			const auto& lightData = entityJson[SceneKeys::PointLightComponent];
-			auto& pointLight = entityManager.AddComponent<PointLightComponent>(entity);
-
-			if (lightData.contains(SceneKeys::Color))
-				DeserializeLightColor(lightData[SceneKeys::Color], pointLight.color);
-
-			if (lightData.contains(SceneKeys::Attenuation))
-				DeserializeAttenuation(lightData[SceneKeys::Attenuation], pointLight.attenuation);
-		}
-
-		if (entityJson.contains(SceneKeys::SpotLightComponent))
-		{
-			const auto& lightData = entityJson[SceneKeys::SpotLightComponent];
-			auto& spotLight = entityManager.AddComponent<SpotLightComponent>(entity);
-
-			if (lightData.contains(SceneKeys::Color))
-				DeserializeLightColor(lightData[SceneKeys::Color], spotLight.color);
-
-			if (lightData.contains(SceneKeys::Attenuation))
-				DeserializeAttenuation(lightData[SceneKeys::Attenuation], spotLight.attenuation);
-
-			spotLight.innerCutOffAngle = lightData.value(SceneKeys::InnerCutOff, spotLight.innerCutOffAngle);
-			spotLight.outerCutOffAngle = lightData.value(SceneKeys::OuterCutOff, spotLight.outerCutOffAngle);
-		}
-
-		if (entityJson.contains(SceneKeys::CameraComponent))
-		{
-			const auto& cameraData = entityJson[SceneKeys::CameraComponent];
-			auto& camera = entityManager.AddComponent<CameraComponent>(entity);
-
-			camera.fieldOfView = cameraData.value(SceneKeys::FieldOfView, camera.fieldOfView);
-			camera.nearPlane   = cameraData.value(SceneKeys::NearPlane,   camera.nearPlane);
-			camera.farPlane    = cameraData.value(SceneKeys::FarPlane,    camera.farPlane);
-			camera.isActive    = cameraData.value(SceneKeys::IsActive,    camera.isActive);
-		}
-
-		if (entityJson.contains(SceneKeys::CharacterControllerComponent))
-		{
-			const auto& controllerData = entityJson[SceneKeys::CharacterControllerComponent];
-			auto& controller = entityManager.AddComponent<CharacterControllerComponent>(entity);
-
-			// A missing key keeps the default written in CharacterControllerComponent.h
-			controller.walkSpeed            = controllerData.value(SceneKeys::WalkSpeed,           controller.walkSpeed);
-			controller.runSpeed             = controllerData.value(SceneKeys::RunSpeed,            controller.runSpeed);
-			controller.acceleration         = controllerData.value(SceneKeys::Acceleration,        controller.acceleration);
-			controller.turnSpeed            = controllerData.value(SceneKeys::TurnSpeed,           controller.turnSpeed);
-			controller.facingOffsetDegrees  = controllerData.value(SceneKeys::FacingOffsetDegrees, controller.facingOffsetDegrees);
-			controller.isPlayerControlled   = controllerData.value(SceneKeys::IsPlayerControlled,  controller.isPlayerControlled);
-		}
-
-		if (entityJson.contains(SceneKeys::CharacterAnimationComponent))
-		{
-			const auto& animationData = entityJson[SceneKeys::CharacterAnimationComponent];
-			auto& characterAnimation = entityManager.AddComponent<CharacterAnimationComponent>(entity);
-
-			// A missing key keeps the default written in CharacterAnimationComponent.h
-			characterAnimation.idleAnimation = animationData.value(SceneKeys::IdleAnimation, characterAnimation.idleAnimation);
-			characterAnimation.walkAnimation = animationData.value(SceneKeys::WalkAnimation, characterAnimation.walkAnimation);
-			characterAnimation.runAnimation  = animationData.value(SceneKeys::RunAnimation,  characterAnimation.runAnimation);
-			characterAnimation.walkBackAnimation    = animationData.value(SceneKeys::WalkBackAnimation,    characterAnimation.walkBackAnimation);
-			characterAnimation.strafeLeftAnimation  = animationData.value(SceneKeys::StrafeLeftAnimation,  characterAnimation.strafeLeftAnimation);
-			characterAnimation.strafeRightAnimation = animationData.value(SceneKeys::StrafeRightAnimation, characterAnimation.strafeRightAnimation);
-			characterAnimation.lockedOnIdleAnimation = animationData.value(SceneKeys::LockedOnIdleAnimation, characterAnimation.lockedOnIdleAnimation);
-			characterAnimation.blendSeconds  = animationData.value(SceneKeys::BlendSeconds,  characterAnimation.blendSeconds);
-			characterAnimation.walkAnimationSpeed = animationData.value(SceneKeys::WalkAnimationSpeed, characterAnimation.walkAnimationSpeed);
-			characterAnimation.runAnimationSpeed  = animationData.value(SceneKeys::RunAnimationSpeed,  characterAnimation.runAnimationSpeed);
-		}
-
-		if (entityJson.contains(SceneKeys::FollowCameraComponent))
-		{
-			const auto& followData = entityJson[SceneKeys::FollowCameraComponent];
-			auto& followCamera = entityManager.AddComponent<FollowCameraComponent>(entity);
-
-			// A missing key keeps the default written in FollowCameraComponent.h
-			followCamera.distance            = followData.value(SceneKeys::Distance,           followCamera.distance);
-			followCamera.pivotHeight         = followData.value(SceneKeys::PivotHeight,        followCamera.pivotHeight);
-			followCamera.shoulderOffset      = followData.value(SceneKeys::ShoulderOffset,     followCamera.shoulderOffset);
-			followCamera.viewYawOffsetDegrees   = followData.value(SceneKeys::ViewYawOffsetDegrees,   followCamera.viewYawOffsetDegrees);
-			followCamera.viewPitchOffsetDegrees = followData.value(SceneKeys::ViewPitchOffsetDegrees, followCamera.viewPitchOffsetDegrees);
-			followCamera.mouseSensitivity    = followData.value(SceneKeys::MouseSensitivity,   followCamera.mouseSensitivity);
-			followCamera.invertY             = followData.value(SceneKeys::InvertY,            followCamera.invertY);
-			followCamera.minPitchDegrees     = followData.value(SceneKeys::MinPitchDegrees,    followCamera.minPitchDegrees);
-			followCamera.maxPitchDegrees     = followData.value(SceneKeys::MaxPitchDegrees,    followCamera.maxPitchDegrees);
-			followCamera.followSharpness     = followData.value(SceneKeys::FollowSharpness,    followCamera.followSharpness);
-			followCamera.lockOnPitchDegrees  = followData.value(SceneKeys::LockOnPitchDegrees, followCamera.lockOnPitchDegrees);
-			followCamera.lockOnSideDegrees   = followData.value(SceneKeys::LockOnSideDegrees, followCamera.lockOnSideDegrees);
-			followCamera.lockOnSharpness     = followData.value(SceneKeys::LockOnSharpness,    followCamera.lockOnSharpness);
-			followCamera.shakeDegrees        = followData.value(SceneKeys::ShakeDegrees,       followCamera.shakeDegrees);
-			followCamera.shakeFrequency      = followData.value(SceneKeys::ShakeFrequency,     followCamera.shakeFrequency);
-			followCamera.shakeFadePerSecond  = followData.value(SceneKeys::ShakeFadePerSecond, followCamera.shakeFadePerSecond);
-		}
-
-		if (entityJson.contains(SceneKeys::LockOnComponent))
-		{
-			const auto& lockOnData = entityJson[SceneKeys::LockOnComponent];
-			auto& lockOn = entityManager.AddComponent<LockOnComponent>(entity);
-
-			// A missing key keeps the default written in LockOnComponent.h
-			lockOn.maxDistance         = lockOnData.value(SceneKeys::MaxDistance,         lockOn.maxDistance);
-			lockOn.searchAngleDegrees  = lockOnData.value(SceneKeys::SearchAngleDegrees,  lockOn.searchAngleDegrees);
-			lockOn.eyeHeight           = lockOnData.value(SceneKeys::EyeHeight,           lockOn.eyeHeight);
-			lockOn.switchMouseDistance = lockOnData.value(SceneKeys::SwitchMouseDistance, lockOn.switchMouseDistance);
-			lockOn.requireLineOfSight  = lockOnData.value(SceneKeys::RequireLineOfSight,  lockOn.requireLineOfSight);
-			lockOn.isPlayerControlled  = lockOnData.value(SceneKeys::IsPlayerControlled,  lockOn.isPlayerControlled);
-			lockOn.showSightRays       = lockOnData.value(SceneKeys::ShowSightRays,       lockOn.showSightRays);
-		}
-
-		if (entityJson.contains(SceneKeys::StrikeAimComponent))
-		{
-			const auto& aimData = entityJson[SceneKeys::StrikeAimComponent];
-			auto& aim = entityManager.AddComponent<StrikeAimComponent>(entity);
-
-			// A missing key keeps the default written in StrikeAimComponent.h
-			aim.spineBones       = aimData.value(SceneKeys::StrikeAimSpineBones,     aim.spineBones);
-			aim.clipStrikeHeight = aimData.value(SceneKeys::StrikeAimClipHeight,     aim.clipStrikeHeight);
-			aim.targetHeight     = aimData.value(SceneKeys::StrikeAimTargetHeight,   aim.targetHeight);
-			aim.maxPitchDegrees  = aimData.value(SceneKeys::StrikeAimMaxPitch,       aim.maxPitchDegrees);
-			aim.maxYawDegrees    = aimData.value(SceneKeys::StrikeAimMaxYaw,         aim.maxYawDegrees);
-			aim.fadeSeconds      = aimData.value(SceneKeys::StrikeAimFadeSeconds,    aim.fadeSeconds);
-			aim.searchDistance   = aimData.value(SceneKeys::StrikeAimSearchDistance, aim.searchDistance);
-		}
-
-		if (entityJson.contains(SceneKeys::LockOnTargetComponent))
-		{
-			const auto& targetData = entityJson[SceneKeys::LockOnTargetComponent];
-			auto& lockOnTarget = entityManager.AddComponent<LockOnTargetComponent>(entity);
-
-			lockOnTarget.isLockable = targetData.value(SceneKeys::IsLockable, lockOnTarget.isLockable);
-			lockOnTarget.aimHeight  = targetData.value(SceneKeys::AimHeight,  lockOnTarget.aimHeight);
-			lockOnTarget.aimBone    = targetData.value(SceneKeys::AimBone,    lockOnTarget.aimBone);
-		}
-
-		if (entityJson.contains(SceneKeys::CharacterActionsComponent))
-		{
-			const auto& actionsData = entityJson[SceneKeys::CharacterActionsComponent];
-			auto& actions = entityManager.AddComponent<CharacterActionsComponent>(entity);
-
-			// A missing key keeps the default written in CharacterActionsComponent.h
-			actions.rollAnimation         = actionsData.value(SceneKeys::RollAnimation,         actions.rollAnimation);
-			actions.backstepAnimation     = actionsData.value(SceneKeys::BackstepAnimation,     actions.backstepAnimation);
-			actions.lightAttack1Animation = actionsData.value(SceneKeys::LightAttack1Animation, actions.lightAttack1Animation);
-			actions.lightAttack2Animation = actionsData.value(SceneKeys::LightAttack2Animation, actions.lightAttack2Animation);
-			actions.lightAttack3Animation = actionsData.value(SceneKeys::LightAttack3Animation, actions.lightAttack3Animation);
-			actions.heavyAttackAnimation  = actionsData.value(SceneKeys::HeavyAttackAnimation,  actions.heavyAttackAnimation);
-			actions.leapAttackAnimation   = actionsData.value(SceneKeys::LeapAttackAnimation,   actions.leapAttackAnimation);
-			actions.leapSpeed             = actionsData.value(SceneKeys::LeapSpeed,             actions.leapSpeed);
-			actions.leapHitFrom           = actionsData.value(SceneKeys::LeapHitFrom,           actions.leapHitFrom);
-			actions.leapHitTo             = actionsData.value(SceneKeys::LeapHitTo,             actions.leapHitTo);
-			actions.rollSpeed             = actionsData.value(SceneKeys::RollSpeed,             actions.rollSpeed);
-			actions.backstepSpeed         = actionsData.value(SceneKeys::BackstepSpeed,         actions.backstepSpeed);
-			actions.attackStepSpeed       = actionsData.value(SceneKeys::AttackStepSpeed,       actions.attackStepSpeed);
-			actions.invulnerableFrom      = actionsData.value(SceneKeys::InvulnerableFrom,      actions.invulnerableFrom);
-			actions.invulnerableTo        = actionsData.value(SceneKeys::InvulnerableTo,        actions.invulnerableTo);
-			actions.inputBufferFrom       = actionsData.value(SceneKeys::InputBufferFrom,       actions.inputBufferFrom);
-			actions.cancelFrom            = actionsData.value(SceneKeys::CancelFrom,            actions.cancelFrom);
-			actions.blendSeconds          = actionsData.value(SceneKeys::BlendSeconds,          actions.blendSeconds);
-			actions.hitReactionAnimation  = actionsData.value(SceneKeys::HitReactionAnimation,  actions.hitReactionAnimation);
-			actions.deathAnimation        = actionsData.value(SceneKeys::DeathAnimation,        actions.deathAnimation);
-			actions.restAnimation         = actionsData.value(SceneKeys::RestAnimation,         actions.restAnimation);
-			actions.standUpAnimation      = actionsData.value(SceneKeys::StandUpAnimation,      actions.standUpAnimation);
-			actions.blockAnimation        = actionsData.value(SceneKeys::BlockAnimation,        actions.blockAnimation);
-			actions.blockImpactAnimation  = actionsData.value(SceneKeys::BlockImpactAnimation,  actions.blockImpactAnimation);
-			actions.parryAnimation        = actionsData.value(SceneKeys::ParryAnimation,        actions.parryAnimation);
-			actions.parriedAnimation      = actionsData.value(SceneKeys::ParriedAnimation,      actions.parriedAnimation);
-			actions.jumpAnimation         = actionsData.value(SceneKeys::JumpAnimation,         actions.jumpAnimation);
-			actions.jumpAttackAnimation   = actionsData.value(SceneKeys::JumpAttackAnimation,   actions.jumpAttackAnimation);
-			actions.jumpHeavyAttackAnimation = actionsData.value(SceneKeys::JumpHeavyAttackAnimation, actions.jumpHeavyAttackAnimation);
-			actions.jumpSpeed             = actionsData.value(SceneKeys::JumpSpeed,             actions.jumpSpeed);
-			actions.jumpMoveSpeed         = actionsData.value(SceneKeys::JumpMoveSpeed,         actions.jumpMoveSpeed);
-			actions.jumpPlungeSpeed       = actionsData.value(SceneKeys::JumpPlungeSpeed,       actions.jumpPlungeSpeed);
-			actions.jumpPlungeFrom        = actionsData.value(SceneKeys::JumpPlungeFrom,        actions.jumpPlungeFrom);
-			actions.jumpAttackDamageMultiplier = actionsData.value(SceneKeys::JumpAttackDamageMultiplier, actions.jumpAttackDamageMultiplier);
-			actions.jumpPlungeShockwaveRadius = actionsData.value(SceneKeys::JumpPlungeShockwaveRadius, actions.jumpPlungeShockwaveRadius);
-			actions.jumpPlungeShockwaveDamage = actionsData.value(SceneKeys::JumpPlungeShockwaveDamage, actions.jumpPlungeShockwaveDamage);
-			actions.jumpPlungeEffect      = actionsData.value(SceneKeys::JumpPlungeEffect,      actions.jumpPlungeEffect);
-			actions.upperBodyBone         = actionsData.value(SceneKeys::UpperBodyBone,         actions.upperBodyBone);
-			actions.shockwaveRadius       = actionsData.value(SceneKeys::ShockwaveRadius,       actions.shockwaveRadius);
-			actions.shockwaveDamage       = actionsData.value(SceneKeys::ShockwaveDamage,       actions.shockwaveDamage);
-			actions.shockwaveDistance     = actionsData.value(SceneKeys::ShockwaveDistance,     actions.shockwaveDistance);
-			actions.shockwaveEffect       = actionsData.value(SceneKeys::ShockwaveEffect,       actions.shockwaveEffect);
-			actions.swingEffect           = actionsData.value(SceneKeys::SwingEffect,           actions.swingEffect);
-			actions.hyperArmor            = actionsData.value(SceneKeys::HyperArmor,            actions.hyperArmor);
-			actions.heavySwingEffect      = actionsData.value(SceneKeys::HeavySwingEffect,      actions.heavySwingEffect);
-			actions.swingEffectHeight     = actionsData.value(SceneKeys::SwingEffectHeight,     actions.swingEffectHeight);
-			actions.swingEffectDistance   = actionsData.value(SceneKeys::SwingEffectDistance,   actions.swingEffectDistance);
-			actions.swingEffectAt         = actionsData.value(SceneKeys::SwingEffectAt,         actions.swingEffectAt);
-			actions.shockwaveCameraShake  = actionsData.value(SceneKeys::ShockwaveCameraShake,  actions.shockwaveCameraShake);
-			actions.attackTurnDegreesPerSecond = actionsData.value(SceneKeys::AttackTurnDegreesPerSecond, actions.attackTurnDegreesPerSecond);
-			actions.attackLungeSpeed      = actionsData.value(SceneKeys::AttackLungeSpeed,      actions.attackLungeSpeed);
-			actions.attackReach           = actionsData.value(SceneKeys::AttackReach,           actions.attackReach);
-			actions.finisherKnockback     = actionsData.value(SceneKeys::FinisherKnockback,     actions.finisherKnockback);
-			actions.heavyKnockback        = actionsData.value(SceneKeys::HeavyKnockback,        actions.heavyKnockback);
-			actions.knockdownAnimation    = actionsData.value(SceneKeys::KnockdownAnimation,    actions.knockdownAnimation);
-			actions.heavyKnockbackChance  = actionsData.value(SceneKeys::HeavyKnockbackChance,  actions.heavyKnockbackChance);
-			actions.getUpAnimation        = actionsData.value(SceneKeys::GetUpAnimation,        actions.getUpAnimation);
-			actions.knockdownChance       = actionsData.value(SceneKeys::KnockdownChance,       actions.knockdownChance);
-			actions.knockdownSeconds      = actionsData.value(SceneKeys::KnockdownSeconds,      actions.knockdownSeconds);
-			actions.attackDelayChance     = actionsData.value(SceneKeys::AttackDelayChance,     actions.attackDelayChance);
-			actions.attackDelaySeconds    = actionsData.value(SceneKeys::AttackDelaySeconds,    actions.attackDelaySeconds);
-			actions.attackDelayAt         = actionsData.value(SceneKeys::AttackDelayAt,         actions.attackDelayAt);
-			actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
-			actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
-			actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
-			actions.lightHitFrom          = actionsData.value(SceneKeys::LightHitFrom,          actions.lightHitFrom);
-			actions.lightHitTo            = actionsData.value(SceneKeys::LightHitTo,            actions.lightHitTo);
-			actions.heavyHitFrom          = actionsData.value(SceneKeys::HeavyHitFrom,          actions.heavyHitFrom);
-			actions.heavyHitTo            = actionsData.value(SceneKeys::HeavyHitTo,            actions.heavyHitTo);
-			actions.heavyDamageMultiplier = actionsData.value(SceneKeys::HeavyDamageMultiplier, actions.heavyDamageMultiplier);
-			actions.attackSpeed           = actionsData.value(SceneKeys::AttackSpeed,           actions.attackSpeed);
-			actions.extraLightAttackAnimations = actionsData.value(SceneKeys::ExtraLightAttackAnimations, actions.extraLightAttackAnimations);
-			actions.heavyAttack2Animation  = actionsData.value(SceneKeys::HeavyAttack2Animation,  actions.heavyAttack2Animation);
-			actions.runningAttackAnimation = actionsData.value(SceneKeys::RunningAttackAnimation, actions.runningAttackAnimation);
-			actions.runningAttackSpeed     = actionsData.value(SceneKeys::RunningAttackSpeed,     actions.runningAttackSpeed);
-			actions.dodgeAttackAnimation   = actionsData.value(SceneKeys::DodgeAttackAnimation,   actions.dodgeAttackAnimation);
-			actions.riposteAnimation       = actionsData.value(SceneKeys::RiposteAnimation,       actions.riposteAnimation);
-			actions.riposteReach           = actionsData.value(SceneKeys::RiposteReach,           actions.riposteReach);
-			actions.attackLungeMaxDistance = actionsData.value(SceneKeys::AttackLungeMaxDistance, actions.attackLungeMaxDistance);
-			actions.dodgeCancelFrom        = actionsData.value(SceneKeys::DodgeCancelFrom,        actions.dodgeCancelFrom);
-			actions.hitReactionDodgeFrom   = actionsData.value(SceneKeys::HitReactionDodgeFrom,   actions.hitReactionDodgeFrom);
-			actions.extraHitReactionAnimations = actionsData.value(SceneKeys::ExtraHitReactionAnimations, actions.extraHitReactionAnimations);
-			actions.heavyHitReactionAnimation = actionsData.value(SceneKeys::HeavyHitReactionAnimation, actions.heavyHitReactionAnimation);
-			actions.knockbackAnimation = actionsData.value(SceneKeys::KnockbackAnimation, actions.knockbackAnimation);
-			actions.knockbackSeconds   = actionsData.value(SceneKeys::KnockbackSeconds,   actions.knockbackSeconds);
-			actions.knockbackDust      = actionsData.value(SceneKeys::KnockbackDust,      actions.knockbackDust);
-
-			if (actionsData.contains(SceneKeys::AttackMoves))
-			{
-				for (const auto& moveData : actionsData[SceneKeys::AttackMoves])
-				{
-					AttackMove move;
-					move.animation        = moveData.value(SceneKeys::MoveAnimation,        move.animation);
-					move.hitFrom          = moveData.value(SceneKeys::MoveHitFrom,          move.hitFrom);
-					move.hitTo            = moveData.value(SceneKeys::MoveHitTo,            move.hitTo);
-					move.damageMultiplier = moveData.value(SceneKeys::MoveDamageMultiplier, move.damageMultiplier);
-					move.cancelFrom       = moveData.value(SceneKeys::MoveCancelFrom,       move.cancelFrom);
-					move.strikeHeight     = moveData.value(SceneKeys::MoveStrikeHeight,     move.strikeHeight);
-					actions.attackMoves.push_back(move);
-				}
-			}
-		}
-
-		if (entityJson.contains(SceneKeys::HealthComponent))
-		{
-			const auto& healthData = entityJson[SceneKeys::HealthComponent];
-			auto& health = entityManager.AddComponent<HealthComponent>(entity);
-			health.maxHealth     = healthData.value(SceneKeys::MaxHealth, health.maxHealth);
-			health.hitEffect     = healthData.value(SceneKeys::HitEffect, health.hitEffect);
-			health.deflectEffect = healthData.value(SceneKeys::DeflectEffect, health.deflectEffect);
-			health.deathSlowMotionSeconds = healthData.value(SceneKeys::DeathSlowMotionSeconds, health.deathSlowMotionSeconds);
-			health.deathSlowMotionScale   = healthData.value(SceneKeys::DeathSlowMotionScale,   health.deathSlowMotionScale);
-			health.weaponDamageTaken      = healthData.value(SceneKeys::WeaponDamageTaken,      health.weaponDamageTaken);
-			health.spellDamageTaken       = healthData.value(SceneKeys::SpellDamageTaken,       health.spellDamageTaken);
-			health.spellImmunitySeconds   = healthData.value(SceneKeys::SpellImmunitySeconds,   health.spellImmunitySeconds);
-			health.currentHealth = health.maxHealth;
-		}
-
-		if (entityJson.contains(SceneKeys::StaminaComponent))
-		{
-			const auto& staminaData = entityJson[SceneKeys::StaminaComponent];
-			auto& stamina = entityManager.AddComponent<StaminaComponent>(entity);
-
-			// A missing key keeps the default written in StaminaComponent.h
-			stamina.maxStamina               = staminaData.value(SceneKeys::MaxStamina,               stamina.maxStamina);
-			stamina.regenerationPerSecond    = staminaData.value(SceneKeys::RegenerationPerSecond,    stamina.regenerationPerSecond);
-			stamina.regenerationDelaySeconds = staminaData.value(SceneKeys::RegenerationDelaySeconds, stamina.regenerationDelaySeconds);
-			stamina.rollCost                 = staminaData.value(SceneKeys::RollCost,                 stamina.rollCost);
-			stamina.backstepCost             = staminaData.value(SceneKeys::BackstepCost,             stamina.backstepCost);
-			stamina.lightAttackCost          = staminaData.value(SceneKeys::LightAttackCost,          stamina.lightAttackCost);
-			stamina.heavyAttackCost          = staminaData.value(SceneKeys::HeavyAttackCost,          stamina.heavyAttackCost);
-			stamina.parryCost                = staminaData.value(SceneKeys::ParryCost,                stamina.parryCost);
-			stamina.runCostPerSecond         = staminaData.value(SceneKeys::RunCostPerSecond,         stamina.runCostPerSecond);
-			stamina.currentStamina           = stamina.maxStamina;
-		}
-
-		if (entityJson.contains(SceneKeys::HitboxComponent))
-		{
-			const auto& hitboxData = entityJson[SceneKeys::HitboxComponent];
-			auto& hitbox = entityManager.AddComponent<HitboxComponent>(entity);
-
-			hitbox.damage      = hitboxData.value(SceneKeys::Damage,      hitbox.damage);
-			hitbox.poiseDamage = hitboxData.value(SceneKeys::PoiseDamage, hitbox.poiseDamage);
-			hitbox.hitStopSeconds = hitboxData.value(SceneKeys::HitStopSeconds, hitbox.hitStopSeconds);
-			hitbox.knockback      = hitboxData.value(SceneKeys::Knockback,      hitbox.knockback);
-			hitbox.cameraShake    = hitboxData.value(SceneKeys::CameraShake,    hitbox.cameraShake);
-			hitbox.showGizmos = hitboxData.value(SceneKeys::ShowGizmos, hitbox.showGizmos);
-			hitbox.isEnabled  = hitboxData.value(SceneKeys::HitboxIsEnabled, hitbox.isEnabled);
-			hitbox.layer      = static_cast<CollisionLayer>(hitboxData.value(SceneKeys::Layer, static_cast<unsigned int>(hitbox.layer)));
-
-			if (hitboxData.contains(SceneKeys::LocalOffset))
-				hitbox.localOffset = DeserializeVec3(hitboxData[SceneKeys::LocalOffset]);
-
-			if (hitboxData.contains(SceneKeys::HalfExtents))
-				hitbox.halfExtents = DeserializeVec3(hitboxData[SceneKeys::HalfExtents]);
-		}
-
-		if (entityJson.contains(SceneKeys::ShieldComponent))
-		{
-			const auto& shieldData = entityJson[SceneKeys::ShieldComponent];
-			auto& shield = entityManager.AddComponent<ShieldComponent>(entity);
-
-			shield.guardAngleDegrees = shieldData.value(SceneKeys::GuardAngleDegrees, shield.guardAngleDegrees);
-			shield.damageThrough     = shieldData.value(SceneKeys::DamageThrough,     shield.damageThrough);
-			shield.staminaPerDamage  = shieldData.value(SceneKeys::StaminaPerDamage,  shield.staminaPerDamage);
-			shield.blockEffect       = shieldData.value(SceneKeys::BlockEffect,       shield.blockEffect);
-		}
-
-		if (entityJson.contains(SceneKeys::BossComponent))
-		{
-			const auto& bossData = entityJson[SceneKeys::BossComponent];
-			auto& boss = entityManager.AddComponent<BossComponent>(entity);
-
-			boss.phaseTwoHealthFraction   = bossData.value(SceneKeys::PhaseTwoHealthFraction,   boss.phaseTwoHealthFraction);
-			boss.phaseTwoDamageMultiplier = bossData.value(SceneKeys::PhaseTwoDamageMultiplier, boss.phaseTwoDamageMultiplier);
-			boss.phaseTwoAttackSpeedup    = bossData.value(SceneKeys::PhaseTwoAttackSpeedup,    boss.phaseTwoAttackSpeedup);
-			boss.phaseTwoAnimation        = bossData.value(SceneKeys::PhaseTwoAnimation,        boss.phaseTwoAnimation);
-			boss.phaseTwoSound            = bossData.value(SceneKeys::PhaseTwoSound,            boss.phaseTwoSound);
-			boss.phaseTwoMusic            = bossData.value(SceneKeys::PhaseTwoMusic,            boss.phaseTwoMusic);
-			boss.defeatCutscene           = bossData.value(SceneKeys::DefeatCutscene,           boss.defeatCutscene);
-			boss.defeatCutsceneDelay      = bossData.value(SceneKeys::DefeatCutsceneDelay,      boss.defeatCutsceneDelay);
-			boss.phaseTwoGlow             = bossData.value(SceneKeys::PhaseTwoGlow,             boss.phaseTwoGlow);
-			boss.phaseTwoGrowth           = bossData.value(SceneKeys::PhaseTwoGrowth,           boss.phaseTwoGrowth);
-			boss.phaseTwoLight1Animation  = bossData.value(SceneKeys::PhaseTwoLight1Animation,  boss.phaseTwoLight1Animation);
-			boss.phaseTwoLight2Animation  = bossData.value(SceneKeys::PhaseTwoLight2Animation,  boss.phaseTwoLight2Animation);
-			boss.phaseTwoLight3Animation  = bossData.value(SceneKeys::PhaseTwoLight3Animation,  boss.phaseTwoLight3Animation);
-			boss.phaseTwoHeavyAnimation   = bossData.value(SceneKeys::PhaseTwoHeavyAnimation,   boss.phaseTwoHeavyAnimation);
-			boss.phaseTwoLightHitFrom     = bossData.value(SceneKeys::PhaseTwoLightHitFrom,     boss.phaseTwoLightHitFrom);
-			boss.phaseTwoLightHitTo       = bossData.value(SceneKeys::PhaseTwoLightHitTo,       boss.phaseTwoLightHitTo);
-			boss.phaseTwoHeavyHitFrom     = bossData.value(SceneKeys::PhaseTwoHeavyHitFrom,     boss.phaseTwoHeavyHitFrom);
-			boss.phaseTwoHeavyHitTo       = bossData.value(SceneKeys::PhaseTwoHeavyHitTo,       boss.phaseTwoHeavyHitTo);
-			boss.phaseTwoShockwaveRadius  = bossData.value(SceneKeys::PhaseTwoShockwaveRadius,  boss.phaseTwoShockwaveRadius);
-			boss.phaseTwoMaxLightCombo    = bossData.value(SceneKeys::PhaseTwoMaxLightCombo,    boss.phaseTwoMaxLightCombo);
-		}
-
-		if (entityJson.contains(SceneKeys::CutsceneComponent))
-		{
-			const auto& cutsceneData = entityJson[SceneKeys::CutsceneComponent];
-			auto& cutscene = entityManager.AddComponent<CutsceneComponent>(entity);
-
-			cutscene.durationSeconds    = cutsceneData.value(SceneKeys::DurationSeconds,       cutscene.durationSeconds);
-			cutscene.lookAtEntity       = cutsceneData.value(SceneKeys::LookAtEntity,          cutscene.lookAtEntity);
-			cutscene.lookAtHeight       = cutsceneData.value(SceneKeys::LookAtHeight,          cutscene.lookAtHeight);
-			cutscene.lookAlsoAtEntity   = cutsceneData.value(SceneKeys::LookAlsoAtEntity,      cutscene.lookAlsoAtEntity);
-			cutscene.animationEntity    = cutsceneData.value(SceneKeys::AnimationEntity,       cutscene.animationEntity);
-			cutscene.animationName      = cutsceneData.value(SceneKeys::CutsceneAnimationName, cutscene.animationName);
-			cutscene.animationAtSeconds = cutsceneData.value(SceneKeys::AnimationAtSeconds,    cutscene.animationAtSeconds);
-			cutscene.title              = cutsceneData.value(SceneKeys::CutsceneTitle,         cutscene.title);
-			cutscene.titleSeconds       = cutsceneData.value(SceneKeys::TitleSeconds,          cutscene.titleSeconds);
-			cutscene.canBeSkipped       = cutsceneData.value(SceneKeys::CanBeSkipped,          cutscene.canBeSkipped);
-			cutscene.videoFile          = cutsceneData.value(SceneKeys::VideoFile,             cutscene.videoFile);
-			cutscene.waitForKey         = cutsceneData.value(SceneKeys::WaitForKey,            cutscene.waitForKey);
-			cutscene.waitPrompt         = cutsceneData.value(SceneKeys::WaitPrompt,            cutscene.waitPrompt);
-			cutscene.waitPresses        = cutsceneData.value(SceneKeys::WaitPresses,           cutscene.waitPresses);
-			cutscene.pressWindowSeconds = cutsceneData.value(SceneKeys::PressWindowSeconds,    cutscene.pressWindowSeconds);
-			cutscene.pressSound         = cutsceneData.value(SceneKeys::PressSound,            cutscene.pressSound);
-			cutscene.blendInSeconds     = cutsceneData.value(SceneKeys::BlendInSeconds,        cutscene.blendInSeconds);
-			cutscene.fadeSeconds        = cutsceneData.value(SceneKeys::FadeSeconds,           cutscene.fadeSeconds);
-			cutscene.sound              = cutsceneData.value(SceneKeys::CutsceneSound,         cutscene.sound);
-		}
-
-		if (entityJson.contains(SceneKeys::EnvironmentComponent))
-		{
-			const auto& environmentData = entityJson[SceneKeys::EnvironmentComponent];
-			auto& environment = entityManager.AddComponent<EnvironmentComponent>(entity);
-
-			environment.skyboxFolder  = environmentData.value(SceneKeys::SkyboxFolder,  environment.skyboxFolder);
-			environment.skyBrightness = environmentData.value(SceneKeys::SkyBrightness, environment.skyBrightness);
-			environment.isFogEnabled  = environmentData.value(SceneKeys::IsFogEnabled,  environment.isFogEnabled);
-			environment.fogDensity    = environmentData.value(SceneKeys::FogDensity,    environment.fogDensity);
-
-			environment.isPostProcessingEnabled = environmentData.value(SceneKeys::IsPostProcessingEnabled, environment.isPostProcessingEnabled);
-			environment.exposure                = environmentData.value(SceneKeys::Exposure,                environment.exposure);
-			environment.isBloomEnabled          = environmentData.value(SceneKeys::IsBloomEnabled,          environment.isBloomEnabled);
-			environment.bloomThreshold          = environmentData.value(SceneKeys::BloomThreshold,          environment.bloomThreshold);
-			environment.bloomIntensity          = environmentData.value(SceneKeys::BloomIntensity,          environment.bloomIntensity);
-			environment.bloomBlurPasses         = environmentData.value(SceneKeys::BloomBlurPasses,         environment.bloomBlurPasses);
-			environment.hitImpactFrame          = environmentData.value(SceneKeys::HitImpactFrame,          environment.hitImpactFrame);
-
-			if (environmentData.contains(SceneKeys::FogColor))
-				environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);
-		}
-
-		if (entityJson.contains(SceneKeys::WeaponTrailComponent))
-		{
-			const auto& trailData = entityJson[SceneKeys::WeaponTrailComponent];
-			auto& trail = entityManager.AddComponent<WeaponTrailComponent>(entity);
-
-			// A missing key keeps the default written in WeaponTrailComponent.h
-			trail.intensity         = trailData.value(SceneKeys::ParticleIntensity, trail.intensity);
-			trail.lifetimeSeconds   = trailData.value(SceneKeys::LifetimeSeconds,   trail.lifetimeSeconds);
-			trail.onlyWhileStriking = trailData.value(SceneKeys::OnlyWhileStriking, trail.onlyWhileStriking);
-
-			if (trailData.contains(SceneKeys::BaseOffset))
-				trail.baseOffset = DeserializeVec3(trailData[SceneKeys::BaseOffset]);
-			if (trailData.contains(SceneKeys::TipOffset))
-				trail.tipOffset = DeserializeVec3(trailData[SceneKeys::TipOffset]);
-			if (trailData.contains(SceneKeys::Color))
-				trail.color = DeserializeVec3(trailData[SceneKeys::Color]);
-		}
-
-		if (entityJson.contains(SceneKeys::ParticleEmitterComponent))
-		{
-			const auto& emitterData = entityJson[SceneKeys::ParticleEmitterComponent];
-			auto& emitter = entityManager.AddComponent<ParticleEmitterComponent>(entity);
-
-			emitter.isEmitting         = emitterData.value(SceneKeys::IsEmitting,         emitter.isEmitting);
-			emitter.particlesPerSecond = emitterData.value(SceneKeys::ParticlesPerSecond, emitter.particlesPerSecond);
-			emitter.lifetimeSeconds    = emitterData.value(SceneKeys::LifetimeSeconds,    emitter.lifetimeSeconds);
-			emitter.velocityRandomness = emitterData.value(SceneKeys::VelocityRandomness, emitter.velocityRandomness);
-			emitter.startSize          = emitterData.value(SceneKeys::StartSize,          emitter.startSize);
-			emitter.endSize            = emitterData.value(SceneKeys::EndSize,            emitter.endSize);
-			emitter.intensity          = emitterData.value(SceneKeys::ParticleIntensity,  emitter.intensity);
-			emitter.maxParticles       = emitterData.value(SceneKeys::MaxParticles,       emitter.maxParticles);
-			emitter.isDark             = emitterData.value(SceneKeys::IsDark,             emitter.isDark);
-			emitter.style              = emitterData.value(SceneKeys::ParticleStyle,      emitter.style);
-			emitter.spawnShape         = emitterData.value(SceneKeys::SpawnShape,         emitter.spawnShape);
-			emitter.spawnRadius        = emitterData.value(SceneKeys::SpawnRadius,        emitter.spawnRadius);
-			emitter.outwardSpeed       = emitterData.value(SceneKeys::OutwardSpeed,       emitter.outwardSpeed);
-			emitter.sizeRandomness     = emitterData.value(SceneKeys::SizeRandomness,     emitter.sizeRandomness);
-			emitter.spinDegreesPerSecond = emitterData.value(SceneKeys::ParticleSpin,     emitter.spinDegreesPerSecond);
-
-			if (emitterData.contains(SceneKeys::SpawnHalfExtents))
-				emitter.spawnHalfExtents = DeserializeVec3(emitterData[SceneKeys::SpawnHalfExtents]);
-			if (emitterData.contains(SceneKeys::ParticleVelocity))
-				emitter.velocity = DeserializeVec3(emitterData[SceneKeys::ParticleVelocity]);
-			if (emitterData.contains(SceneKeys::ParticleGravity))
-				emitter.gravity = DeserializeVec3(emitterData[SceneKeys::ParticleGravity]);
-			if (emitterData.contains(SceneKeys::StartColor))
-				emitter.startColor = DeserializeVec3(emitterData[SceneKeys::StartColor]);
-			if (emitterData.contains(SceneKeys::EndColor))
-				emitter.endColor = DeserializeVec3(emitterData[SceneKeys::EndColor]);
-
-			emitter.drag           = emitterData.value(SceneKeys::ParticleDrag,    emitter.drag);
-			emitter.stretch        = emitterData.value(SceneKeys::ParticleStretch, emitter.stretch);
-			emitter.hasMiddleColor = emitterData.value(SceneKeys::HasMiddleColor,  emitter.hasMiddleColor);
-			emitter.burstAmount    = emitterData.value(SceneKeys::BurstAmount,     emitter.burstAmount);
-			emitter.flipbookTexture     = emitterData.value(SceneKeys::FlipbookTexture,     emitter.flipbookTexture);
-			emitter.flipbookColumns     = emitterData.value(SceneKeys::FlipbookColumns,     emitter.flipbookColumns);
-			emitter.flipbookRows        = emitterData.value(SceneKeys::FlipbookRows,        emitter.flipbookRows);
-			emitter.flipbookLoops       = emitterData.value(SceneKeys::FlipbookLoops,       emitter.flipbookLoops);
-			emitter.flipbookRandomStart = emitterData.value(SceneKeys::FlipbookRandomStart, emitter.flipbookRandomStart);
-			if (emitterData.contains(SceneKeys::MiddleColor))
-				emitter.middleColor = DeserializeVec3(emitterData[SceneKeys::MiddleColor]);
-
-			emitter.wasEmittingAtStart = emitter.isEmitting;
-		}
-
-		if (entityJson.contains(SceneKeys::EffectShapeComponent))
-		{
-			const auto& shapeData = entityJson[SceneKeys::EffectShapeComponent];
-			auto& shape = entityManager.AddComponent<EffectShapeComponent>(entity);
-
-			shape.kind                 = shapeData.value(SceneKeys::ShapeKind,           shape.kind);
-			shape.lifetimeSeconds      = shapeData.value(SceneKeys::ShapeLifetime,       shape.lifetimeSeconds);
-			shape.startRadius          = shapeData.value(SceneKeys::ShapeStartRadius,    shape.startRadius);
-			shape.endRadius            = shapeData.value(SceneKeys::ShapeEndRadius,      shape.endRadius);
-			shape.thickness            = shapeData.value(SceneKeys::ShapeThickness,      shape.thickness);
-			shape.height               = shapeData.value(SceneKeys::ShapeHeight,         shape.height);
-			shape.arcDegrees           = shapeData.value(SceneKeys::ShapeArcDegrees,     shape.arcDegrees);
-			shape.spinDegreesPerSecond = shapeData.value(SceneKeys::ShapeSpin,           shape.spinDegreesPerSecond);
-			shape.twistDegrees         = shapeData.value(SceneKeys::ShapeTwist,          shape.twistDegrees);
-			shape.intensity            = shapeData.value(SceneKeys::ShapeIntensity,      shape.intensity);
-			shape.noiseScale           = shapeData.value(SceneKeys::ShapeNoiseScale,     shape.noiseScale);
-			shape.scrollSpeed          = shapeData.value(SceneKeys::ShapeScrollSpeed,    shape.scrollSpeed);
-			shape.dissolve             = shapeData.value(SceneKeys::ShapeDissolve,       shape.dissolve);
-			shape.lightIntensity       = shapeData.value(SceneKeys::ShapeLightIntensity, shape.lightIntensity);
-			shape.lightRadius          = shapeData.value(SceneKeys::ShapeLightRadius,    shape.lightRadius);
-
-			if (shapeData.contains(SceneKeys::ShapeRotation))
-				shape.rotationDegrees = DeserializeVec3(shapeData[SceneKeys::ShapeRotation]);
-			if (shapeData.contains(SceneKeys::ShapeRotationRandomness))
-				shape.rotationRandomness = DeserializeVec3(shapeData[SceneKeys::ShapeRotationRandomness]);
-			if (shapeData.contains(SceneKeys::ShapeOffset))
-				shape.offset = DeserializeVec3(shapeData[SceneKeys::ShapeOffset]);
-			if (shapeData.contains(SceneKeys::ShapeCoreColor))
-				shape.coreColor = DeserializeVec3(shapeData[SceneKeys::ShapeCoreColor]);
-			if (shapeData.contains(SceneKeys::ShapeEdgeColor))
-				shape.edgeColor = DeserializeVec3(shapeData[SceneKeys::ShapeEdgeColor]);
-			if (shapeData.contains(SceneKeys::ShapeLightColor))
-				shape.lightColor = DeserializeVec3(shapeData[SceneKeys::ShapeLightColor]);
-		}
-
-		if (entityJson.contains(SceneKeys::GlowSpriteComponent))
-		{
-			const auto& spriteData = entityJson[SceneKeys::GlowSpriteComponent];
-			auto& sprite = entityManager.AddComponent<GlowSpriteComponent>(entity);
-
-			sprite.isVisible = spriteData.value(SceneKeys::IsVisible,         sprite.isVisible);
-			sprite.size      = spriteData.value(SceneKeys::SpriteSize,        sprite.size);
-			sprite.intensity = spriteData.value(SceneKeys::ParticleIntensity, sprite.intensity);
-
-			if (spriteData.contains(SceneKeys::SpriteColor))
-				sprite.color = DeserializeVec3(spriteData[SceneKeys::SpriteColor]);
-		}
-
-		if (entityJson.contains(SceneKeys::LiquidOrbComponent))
-		{
-			const auto& orbData = entityJson[SceneKeys::LiquidOrbComponent];
-			auto& orb = entityManager.AddComponent<LiquidOrbComponent>(entity);
-
-			orb.isVisible   = orbData.value(SceneKeys::IsVisible,      orb.isVisible);
-			orb.brightness  = orbData.value(SceneKeys::OrbBrightness,  orb.brightness);
-			orb.wobble      = orbData.value(SceneKeys::OrbWobble,      orb.wobble);
-			orb.wobbleSpeed = orbData.value(SceneKeys::OrbWobbleSpeed, orb.wobbleSpeed);
-			orb.clearness   = orbData.value(SceneKeys::OrbClearness,   orb.clearness);
-
-			if (orbData.contains(SceneKeys::OrbTint))
-				orb.tint = DeserializeVec3(orbData[SceneKeys::OrbTint]);
-		}
-
-		if (entityJson.contains(SceneKeys::SwarmComponent))
-		{
-			const auto& swarmData = entityJson[SceneKeys::SwarmComponent];
-			auto& swarm = entityManager.AddComponent<SwarmComponent>(entity);
-
-			swarm.isVisible              = swarmData.value(SceneKeys::IsVisible,           swarm.isVisible);
-			swarm.modelName              = swarmData.value(SceneKeys::SwarmModelName,      swarm.modelName);
-			swarm.count                  = swarmData.value(SceneKeys::SwarmCount,          swarm.count);
-			swarm.seed                   = swarmData.value(SceneKeys::SwarmSeed,           swarm.seed);
-			swarm.pieceSize              = swarmData.value(SceneKeys::SwarmPieceSize,      swarm.pieceSize);
-			swarm.sizeVariation          = swarmData.value(SceneKeys::SwarmSizeVariation,  swarm.sizeVariation);
-			swarm.radius                 = swarmData.value(SceneKeys::SwarmRadius,         swarm.radius);
-			swarm.shellThickness         = swarmData.value(SceneKeys::SwarmShellThickness, swarm.shellThickness);
-			swarm.spinDegreesPerSecond   = swarmData.value(SceneKeys::SwarmSpin,           swarm.spinDegreesPerSecond);
-			swarm.tumbleDegreesPerSecond = swarmData.value(SceneKeys::SwarmTumble,         swarm.tumbleDegreesPerSecond);
-			swarm.fallSpeed              = swarmData.value(SceneKeys::SwarmFallSpeed,      swarm.fallSpeed);
-			swarm.fallSpreadSeconds      = swarmData.value(SceneKeys::SwarmFallSpread,     swarm.fallSpreadSeconds);
-			swarm.groundHeight           = swarmData.value(SceneKeys::SwarmGroundHeight,   swarm.groundHeight);
-			swarm.stuckSeconds           = swarmData.value(SceneKeys::SwarmStuckSeconds,   swarm.stuckSeconds);
-			swarm.trailLength            = swarmData.value(SceneKeys::SwarmTrailLength,    swarm.trailLength);
-			swarm.hitEffect              = swarmData.value(SceneKeys::SwarmHitEffect,      swarm.hitEffect);
-			swarm.hitBurst               = swarmData.value(SceneKeys::SwarmHitBurst,       swarm.hitBurst);
-
-			if (swarmData.contains(SceneKeys::SwarmSkyCenter))
-				swarm.skyCenter = DeserializeVec3(swarmData[SceneKeys::SwarmSkyCenter]);
-			if (swarmData.contains(SceneKeys::SwarmSkyHalfExtents))
-				swarm.skyHalfExtents = DeserializeVec3(swarmData[SceneKeys::SwarmSkyHalfExtents]);
-			if (swarmData.contains(SceneKeys::SwarmGlowColor))
-				swarm.glowColor = DeserializeVec3(swarmData[SceneKeys::SwarmGlowColor]);
-		}
-
-		if (entityJson.contains(SceneKeys::FogGateComponent))
-		{
-			const auto& fogData = entityJson[SceneKeys::FogGateComponent];
-			auto& fogGate = entityManager.AddComponent<FogGateComponent>(entity);
-
-			if (fogData.contains(SceneKeys::ArenaCenter))
-				fogGate.arenaCenter = DeserializeVec3(fogData[SceneKeys::ArenaCenter]);
-
-			if (fogData.contains(SceneKeys::ArenaHalfExtents))
-				fogGate.arenaHalfExtents = DeserializeVec3(fogData[SceneKeys::ArenaHalfExtents]);
-
-			fogGate.victoryMessage   = fogData.value(SceneKeys::VictoryMessage,   fogGate.victoryMessage);
-			fogGate.isCrossedWithKey = fogData.value(SceneKeys::IsCrossedWithKey, fogGate.isCrossedWithKey);
-			fogGate.cutscene         = fogData.value(SceneKeys::FogCutscene,      fogGate.cutscene);
-			fogGate.battleMusic       = fogData.value(SceneKeys::BattleMusic,       fogGate.battleMusic);
-			fogGate.battleMusicVolume = fogData.value(SceneKeys::BattleMusicVolume, fogGate.battleMusicVolume);
-			fogGate.victorySound      = fogData.value(SceneKeys::VictorySound,      fogGate.victorySound);
-		}
-
-		if (entityJson.contains(SceneKeys::HealingFlaskComponent))
-		{
-			const auto& flaskData = entityJson[SceneKeys::HealingFlaskComponent];
-			auto& flask = entityManager.AddComponent<HealingFlaskComponent>(entity);
-
-			flask.displayName    = flaskData.value(SceneKeys::DisplayName,    flask.displayName);
-			flask.maxCharges     = flaskData.value(SceneKeys::MaxCharges,     flask.maxCharges);
-			flask.healAmount     = flaskData.value(SceneKeys::HealAmount,     flask.healAmount);
-			flask.drinkAnimation = flaskData.value(SceneKeys::DrinkAnimation, flask.drinkAnimation);
-			flask.healAtProgress = flaskData.value(SceneKeys::HealAtProgress, flask.healAtProgress);
-			flask.hiddenWhileDrinking = flaskData.value(SceneKeys::HiddenWhileDrinking, flask.hiddenWhileDrinking);
-			flask.shownWhileDrinking  = flaskData.value(SceneKeys::ShownWhileDrinking,  flask.shownWhileDrinking);
-			flask.healEffect     = flaskData.value(SceneKeys::HealEffect,     flask.healEffect);
-			flask.drinkSound     = flaskData.value(SceneKeys::DrinkSound,     flask.drinkSound);
-			flask.healSound      = flaskData.value(SceneKeys::HealSound,      flask.healSound);
-			flask.charges        = flask.maxCharges;
-		}
-
-		if (entityJson.contains(SceneKeys::CurrencyComponent))
-		{
-			const auto& currencyData = entityJson[SceneKeys::CurrencyComponent];
-			auto& currency = entityManager.AddComponent<CurrencyComponent>(entity);
-
-			currency.displayName        = currencyData.value(SceneKeys::DisplayName,        currency.displayName);
-			currency.amount             = currencyData.value(SceneKeys::CurrencyAmount,     currency.amount);
-			currency.isDroppedOnDeath   = currencyData.value(SceneKeys::IsDroppedOnDeath,   currency.isDroppedOnDeath);
-			currency.dropMarker         = currencyData.value(SceneKeys::DropMarker,         currency.dropMarker);
-			currency.retrieveDistance   = currencyData.value(SceneKeys::RetrieveDistance,   currency.retrieveDistance);
-			currency.isRetrievedWithKey = currencyData.value(SceneKeys::IsRetrievedWithKey, currency.isRetrievedWithKey);
-			currency.retrievePrompt     = currencyData.value(SceneKeys::RetrievePrompt,     currency.retrievePrompt);
-			currency.gainSound          = currencyData.value(SceneKeys::GainSound,          currency.gainSound);
-			currency.retrieveSound      = currencyData.value(SceneKeys::RetrieveSound,      currency.retrieveSound);
-		}
-
-		if (entityJson.contains(SceneKeys::CurrencyRewardComponent))
-		{
-			const auto& rewardData = entityJson[SceneKeys::CurrencyRewardComponent];
-			auto& reward = entityManager.AddComponent<CurrencyRewardComponent>(entity);
-
-			reward.amount = rewardData.value(SceneKeys::CurrencyAmount, reward.amount);
-		}
-
-		if (entityJson.contains(SceneKeys::LevelUpComponent))
-		{
-			const auto& levelData = entityJson[SceneKeys::LevelUpComponent];
-			auto& levelUp = entityManager.AddComponent<LevelUpComponent>(entity);
-
-			levelUp.displayName            = levelData.value(SceneKeys::DisplayName,            levelUp.displayName);
-			levelUp.level                  = levelData.value(SceneKeys::Level,                  levelUp.level);
-			levelUp.firstLevelCost         = levelData.value(SceneKeys::FirstLevelCost,         levelUp.firstLevelCost);
-			levelUp.costGrowth             = levelData.value(SceneKeys::CostGrowth,             levelUp.costGrowth);
-			levelUp.startingAttributeValue = levelData.value(SceneKeys::StartingAttributeValue, levelUp.startingAttributeValue);
-			levelUp.healthAttribute        = levelData.value(SceneKeys::HealthAttribute,        levelUp.healthAttribute);
-			levelUp.healthPerPoint         = levelData.value(SceneKeys::HealthPerPoint,         levelUp.healthPerPoint);
-			levelUp.healthPoints           = levelData.value(SceneKeys::HealthPoints,           levelUp.healthPoints);
-			levelUp.staminaAttribute       = levelData.value(SceneKeys::StaminaAttribute,       levelUp.staminaAttribute);
-			levelUp.staminaPerPoint        = levelData.value(SceneKeys::StaminaPerPoint,        levelUp.staminaPerPoint);
-			levelUp.staminaPoints          = levelData.value(SceneKeys::StaminaPoints,          levelUp.staminaPoints);
-			levelUp.damageAttribute        = levelData.value(SceneKeys::DamageAttribute,        levelUp.damageAttribute);
-			levelUp.damagePerPoint         = levelData.value(SceneKeys::DamagePerPoint,         levelUp.damagePerPoint);
-			levelUp.damagePoints           = levelData.value(SceneKeys::DamagePoints,           levelUp.damagePoints);
-			levelUp.levelUpSound           = levelData.value(SceneKeys::LevelUpSound,           levelUp.levelUpSound);
-			levelUp.levelUpEffect          = levelData.value(SceneKeys::LevelUpEffect,          levelUp.levelUpEffect);
-		}
-
-		if (entityJson.contains(SceneKeys::AudioSourceComponent))
-		{
-			const auto& sourceData = entityJson[SceneKeys::AudioSourceComponent];
-			auto& audioSource = entityManager.AddComponent<AudioSourceComponent>(entity);
-
-			audioSource.sound       = sourceData.value(SceneKeys::Sound,       audioSource.sound);
-			audioSource.volume      = sourceData.value(SceneKeys::SoundVolume, audioSource.volume);
-			audioSource.isLooping   = sourceData.value(SceneKeys::IsLooping,   audioSource.isLooping);
-			audioSource.playOnStart = sourceData.value(SceneKeys::PlayOnStart, audioSource.playOnStart);
-			audioSource.isSpatial   = sourceData.value(SceneKeys::IsSpatial,   audioSource.isSpatial);
-			audioSource.minDistance = sourceData.value(SceneKeys::MinDistance, audioSource.minDistance);
-			audioSource.maxDistance = sourceData.value(SceneKeys::MaxDistance, audioSource.maxDistance);
-		}
-
-		if (entityJson.contains(SceneKeys::CharacterSoundsComponent))
-		{
-			const auto& soundsData = entityJson[SceneKeys::CharacterSoundsComponent];
-			auto& sounds = entityManager.AddComponent<CharacterSoundsComponent>(entity);
-
-			sounds.attackSound    = soundsData.value(SceneKeys::AttackSound,    sounds.attackSound);
-			sounds.hurtSound      = soundsData.value(SceneKeys::HurtSound,      sounds.hurtSound);
-			sounds.blockSound     = soundsData.value(SceneKeys::BlockSound,     sounds.blockSound);
-			sounds.parrySound     = soundsData.value(SceneKeys::ParrySound,     sounds.parrySound);
-			sounds.deathSound     = soundsData.value(SceneKeys::DeathSound,     sounds.deathSound);
-			sounds.rollSound      = soundsData.value(SceneKeys::RollSound,      sounds.rollSound);
-			sounds.footstepSound  = soundsData.value(SceneKeys::FootstepSound,  sounds.footstepSound);
-			sounds.shockwaveSound = soundsData.value(SceneKeys::ShockwaveSound, sounds.shockwaveSound);
-			sounds.attackSoundLeadSeconds = soundsData.value(SceneKeys::AttackSoundLeadSeconds, sounds.attackSoundLeadSeconds);
-			sounds.leftFootBone   = soundsData.value(SceneKeys::LeftFootBone,   sounds.leftFootBone);
-			sounds.rightFootBone  = soundsData.value(SceneKeys::RightFootBone,  sounds.rightFootBone);
-			sounds.footstepMeters = soundsData.value(SceneKeys::FootstepMeters, sounds.footstepMeters);
-			sounds.footstepCameraShake = soundsData.value(SceneKeys::FootstepCameraShake, sounds.footstepCameraShake);
-			sounds.footstepShakeRadius = soundsData.value(SceneKeys::FootstepShakeRadius, sounds.footstepShakeRadius);
-			sounds.volume         = soundsData.value(SceneKeys::SoundVolume,    sounds.volume);
-			sounds.painVoice      = soundsData.value(SceneKeys::PainVoice,      sounds.painVoice);
-			sounds.attackVoice    = soundsData.value(SceneKeys::AttackVoice,    sounds.attackVoice);
-			sounds.deathVoice     = soundsData.value(SceneKeys::DeathVoice,     sounds.deathVoice);
-			sounds.alertVoice     = soundsData.value(SceneKeys::AlertVoice,     sounds.alertVoice);
-			sounds.painVoiceChance   = soundsData.value(SceneKeys::PainVoiceChance,   sounds.painVoiceChance);
-			sounds.attackVoiceChance = soundsData.value(SceneKeys::AttackVoiceChance, sounds.attackVoiceChance);
-		}
-
-		if (entityJson.contains(SceneKeys::PoiseComponent))
-		{
-			const auto& poiseData = entityJson[SceneKeys::PoiseComponent];
-			auto& poise = entityManager.AddComponent<PoiseComponent>(entity);
-
-			poise.maxPoise            = poiseData.value(SceneKeys::MaxPoise,            poise.maxPoise);
-			poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
-			poise.staggerImmunitySeconds = poiseData.value(SceneKeys::StaggerImmunitySeconds, poise.staggerImmunitySeconds);
-			poise.currentPoise        = poise.maxPoise;
-		}
-
-		if (entityJson.contains(SceneKeys::EnemyComponent))
-		{
-			const auto& enemyData = entityJson[SceneKeys::EnemyComponent];
-			auto& enemy = entityManager.AddComponent<EnemyComponent>(entity);
-
-			// A missing key keeps the default written in EnemyComponent.h
-			enemy.sightDistance     = enemyData.value(SceneKeys::SightDistance,     enemy.sightDistance);
-			enemy.sightAngleDegrees = enemyData.value(SceneKeys::SightAngleDegrees, enemy.sightAngleDegrees);
-			enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
-			enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
-			enemy.startsDormant     = enemyData.value(SceneKeys::StartsDormant,     enemy.startsDormant);
-		}
-
-		if (entityJson.contains(SceneKeys::BonfireComponent))
-		{
-			const auto& bonfireData = entityJson[SceneKeys::BonfireComponent];
-			auto& bonfire = entityManager.AddComponent<BonfireComponent>(entity);
-
-			bonfire.interactDistance = bonfireData.value(SceneKeys::InteractDistance, bonfire.interactDistance);
-
-			if (bonfireData.contains(SceneKeys::RespawnOffset))
-				bonfire.respawnOffset = DeserializeVec3(bonfireData[SceneKeys::RespawnOffset]);
-		}
-
-		if (entityJson.contains(SceneKeys::RespawnComponent))
-		{
-			auto& respawn = entityManager.AddComponent<RespawnComponent>(entity);
-			respawn.respawnDelaySeconds = entityJson[SceneKeys::RespawnComponent].value(SceneKeys::RespawnDelaySeconds, respawn.respawnDelaySeconds);
-		}
-
-		if (entityJson.contains(SceneKeys::PlayerHUDComponent))
-		{
-			const auto& hudData = entityJson[SceneKeys::PlayerHUDComponent];
-			auto& hud = entityManager.AddComponent<PlayerHUDComponent>(entity);
-
-			// A missing key keeps the default written in PlayerHUDComponent.h
-			hud.pixelsPerHealthPoint  = hudData.value(SceneKeys::PixelsPerHealthPoint,  hud.pixelsPerHealthPoint);
-			hud.pixelsPerStaminaPoint = hudData.value(SceneKeys::PixelsPerStaminaPoint, hud.pixelsPerStaminaPoint);
-			hud.showLockOnMarker      = hudData.value(SceneKeys::ShowLockOnMarker,      hud.showLockOnMarker);
-			hud.deathMessage          = hudData.value(SceneKeys::DeathMessage,          hud.deathMessage);
-			hud.style                 = hudData.value(SceneKeys::HUDStyleFile,          hud.style);
-		}
-
-		if (entityJson.contains(SceneKeys::EnemyHealthBarComponent))
-		{
-			const auto& barData = entityJson[SceneKeys::EnemyHealthBarComponent];
-			auto& healthBar = entityManager.AddComponent<EnemyHealthBarComponent>(entity);
-
-			// A missing key keeps the default written in EnemyHealthBarComponent.h
-			healthBar.isBoss              = barData.value(SceneKeys::IsBoss,              healthBar.isBoss);
-			healthBar.displayName         = barData.value(SceneKeys::DisplayName,         healthBar.displayName);
-			healthBar.showSecondsAfterHit = barData.value(SceneKeys::ShowSecondsAfterHit, healthBar.showSecondsAfterHit);
-			healthBar.heightAboveFeet     = barData.value(SceneKeys::HeightAboveFeet,     healthBar.heightAboveFeet);
-		}
-
-		if (entityJson.contains(SceneKeys::MeleeEnemyComponent))
-		{
-			const auto& meleeData = entityJson[SceneKeys::MeleeEnemyComponent];
-			auto& meleeEnemy = entityManager.AddComponent<MeleeEnemyComponent>(entity);
-
-			// A missing key keeps the default written in MeleeEnemyComponent.h
-			meleeEnemy.attackDistance        = meleeData.value(SceneKeys::AttackDistance,        meleeEnemy.attackDistance);
-			meleeEnemy.runDistance           = meleeData.value(SceneKeys::RunDistance,           meleeEnemy.runDistance);
-			meleeEnemy.giveUpDistance        = meleeData.value(SceneKeys::GiveUpDistance,        meleeEnemy.giveUpDistance);
-			meleeEnemy.attackCooldownSeconds = meleeData.value(SceneKeys::AttackCooldownSeconds, meleeEnemy.attackCooldownSeconds);
-			meleeEnemy.heavyAttackChance     = meleeData.value(SceneKeys::HeavyAttackChance,     meleeEnemy.heavyAttackChance);
-			meleeEnemy.maxLightCombo         = meleeData.value(SceneKeys::MaxLightCombo,         meleeEnemy.maxLightCombo);
-			meleeEnemy.finisherChance        = meleeData.value(SceneKeys::FinisherChance,        meleeEnemy.finisherChance);
-			meleeEnemy.recoverSeconds        = meleeData.value(SceneKeys::RecoverSeconds,        meleeEnemy.recoverSeconds);
-			meleeEnemy.dodgeChance           = meleeData.value(SceneKeys::DodgeChance,           meleeEnemy.dodgeChance);
-			meleeEnemy.dodgeDistance         = meleeData.value(SceneKeys::DodgeDistance,         meleeEnemy.dodgeDistance);
-			meleeEnemy.dodgeCooldownSeconds  = meleeData.value(SceneKeys::DodgeCooldownSeconds,  meleeEnemy.dodgeCooldownSeconds);
-			meleeEnemy.leapAttackDistance    = meleeData.value(SceneKeys::LeapAttackDistance,    meleeEnemy.leapAttackDistance);
-		}
-
-		if (entityJson.contains(SceneKeys::SpellCasterComponent))
-		{
-			const auto& spellData = entityJson[SceneKeys::SpellCasterComponent];
-			auto& spell = entityManager.AddComponent<SpellCasterComponent>(entity);
-
-			// A missing key keeps the default written in SpellCasterComponent.h
-			spell.castAnimation            = spellData.value(SceneKeys::CastAnimation,            spell.castAnimation);
-			spell.projectile               = spellData.value(SceneKeys::ProjectileName,           spell.projectile);
-			spell.projectileCount          = spellData.value(SceneKeys::ProjectileCount,          spell.projectileCount);
-			spell.spreadDegrees            = spellData.value(SceneKeys::SpreadDegrees,            spell.spreadDegrees);
-			spell.releaseAt                = spellData.value(SceneKeys::ReleaseAt,                spell.releaseAt);
-			spell.atTargetsFeet            = spellData.value(SceneKeys::AtTargetsFeet,            spell.atTargetsFeet);
-			spell.dropHeight               = spellData.value(SceneKeys::DropHeight,               spell.dropHeight);
-			spell.minDistance              = spellData.value(SceneKeys::MinDistance,              spell.minDistance);
-			spell.maxDistance              = spellData.value(SceneKeys::MaxDistance,              spell.maxDistance);
-			spell.cooldownSeconds          = spellData.value(SceneKeys::SpellCooldownSeconds,     spell.cooldownSeconds);
-			spell.chargeEffect             = spellData.value(SceneKeys::ChargeEffect,             spell.chargeEffect);
-			spell.chargeParticlesPerSecond = spellData.value(SceneKeys::ChargeParticlesPerSecond, spell.chargeParticlesPerSecond);
-			spell.castSound                = spellData.value(SceneKeys::CastSound,                spell.castSound);
-			spell.castKey                  = spellData.value(SceneKeys::CastKey,                  spell.castKey);
-			spell.displayName              = spellData.value(SceneKeys::DisplayName,              spell.displayName);
-			spell.isCastOnRequestOnly      = spellData.value(SceneKeys::IsCastOnRequestOnly,      spell.isCastOnRequestOnly);
-			spell.isUninterruptible        = spellData.value(SceneKeys::IsUninterruptible,        spell.isUninterruptible);
-		}
-
-		if (entityJson.contains(SceneKeys::ProjectileComponent))
-		{
-			const auto& projectileData = entityJson[SceneKeys::ProjectileComponent];
-			auto& projectile = entityManager.AddComponent<ProjectileComponent>(entity);
-
-			// A missing key keeps the default written in ProjectileComponent.h
-			projectile.speed                   = projectileData.value(SceneKeys::ProjectileSpeed,         projectile.speed);
-			projectile.damage                  = projectileData.value(SceneKeys::Damage,                  projectile.damage);
-			projectile.poiseDamage             = projectileData.value(SceneKeys::PoiseDamage,             projectile.poiseDamage);
-			projectile.radius                  = projectileData.value(SceneKeys::ProjectileRadius,        projectile.radius);
-			projectile.homingDegreesPerSecond  = projectileData.value(SceneKeys::HomingDegreesPerSecond,  projectile.homingDegreesPerSecond);
-			projectile.lifetimeSeconds         = projectileData.value(SceneKeys::LifetimeSeconds,         projectile.lifetimeSeconds);
-			projectile.fuseSeconds             = projectileData.value(SceneKeys::FuseSeconds,             projectile.fuseSeconds);
-			projectile.trailEffect             = projectileData.value(SceneKeys::TrailEffect,             projectile.trailEffect);
-			projectile.trailParticlesPerSecond = projectileData.value(SceneKeys::TrailParticlesPerSecond, projectile.trailParticlesPerSecond);
-			projectile.spinDegreesPerSecond    = projectileData.value(SceneKeys::SpinDegreesPerSecond,    projectile.spinDegreesPerSecond);
-			projectile.launchDelaySeconds      = projectileData.value(SceneKeys::LaunchDelaySeconds,      projectile.launchDelaySeconds);
-			projectile.bodyFacesFlight         = projectileData.value(SceneKeys::BodyFacesFlight,         projectile.bodyFacesFlight);
-			projectile.spinsAroundFlight       = projectileData.value(SceneKeys::SpinsAroundFlight,       projectile.spinsAroundFlight);
-			projectile.formSeconds             = projectileData.value(SceneKeys::FormSeconds,             projectile.formSeconds);
-			projectile.aimsAfterForming        = projectileData.value(SceneKeys::AimsAfterForming,        projectile.aimsAfterForming);
-			projectile.hitEffect               = projectileData.value(SceneKeys::HitEffect,               projectile.hitEffect);
-			projectile.hitBurst                = projectileData.value(SceneKeys::HitBurst,                projectile.hitBurst);
-			projectile.hitSound                = projectileData.value(SceneKeys::HitSound,                projectile.hitSound);
-			projectile.hitStopSeconds          = projectileData.value(SceneKeys::HitStopSeconds,          projectile.hitStopSeconds);
-			projectile.cameraShake             = projectileData.value(SceneKeys::CameraShake,             projectile.cameraShake);
-		}
-
+		DeserializeEntity(entityManager, entity, entityJson);
 	}
 
 	DeserializeParents(entityManager, entitiesJson, entityAtSavedIndex);

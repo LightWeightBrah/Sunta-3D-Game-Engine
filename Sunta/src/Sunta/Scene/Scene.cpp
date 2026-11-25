@@ -8,6 +8,7 @@
 #include "Renderer/ElementBuffer.h"
 
 #include "Scene.h"
+#include "WorldSpawner.h"
 #include "Core/EngineTime.h"
 #include "Core/InputManager.h"
 #include "Scene/Camera.h"
@@ -418,6 +419,10 @@ void Scene::Update()
 	// After the camera: the game is heard from where it is seen
 	if (isPlaying)
 		AudioSystem::Update(entityManager, activeCameraData.viewMatrix);
+
+	// Last: the entities scripts removed this frame (no system is in the middle of one now)
+	if (isPlaying)
+		WorldSpawner::DestroyRequested(entityManager);
 }
 	
 void Scene::Render(Renderer& renderer)

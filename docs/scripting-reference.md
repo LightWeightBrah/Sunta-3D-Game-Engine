@@ -324,6 +324,8 @@ if this.world.isCutscenePlaying then return end
 | Name | Note |
 |---|---|
 | `find` |  |
+| `spawn` | A copy of an entity of the scene used as a template (with its children) where it is wanted, turned 'yaw' degrees: local guard = this.world:spawn("Bodyguard Template", position, 180) (nil without the template). Keep the template itself out of the fight (far away, an enemy asleep). Its scripts start next frame |
+| `destroy` | Removes an entity and everything under it at the end of the frame: this.world:destroy(guard) |
 | `notify` |  |
 | `prompt` |  |
 | `shakeCamera` |  |
