@@ -93,7 +93,7 @@ struct ProjectileComponent
 	float cameraShake    = 0.3f;
 
 	// Filled while the game plays (not saved): how many of its projectiles burst so far, and where the last one did
-	// (a script answers a landing with its own show: the bottle from the sky turning into the oil)
+	// (a script answers a landing with its own show, e.g. a falling flask bursting into a pool)
 	mutable int       timesBurst        = 0;
 	mutable glm::vec3 lastBurstPosition = glm::vec3(0.0f);
 

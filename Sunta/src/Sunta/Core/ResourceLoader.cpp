@@ -160,8 +160,6 @@ void ResourceLoader::LoadModels()
 		}
 	}
 
-	ResourceManager::LoadModel(Models::Solaire,  "@engine/Models/Solaire/Solaire All Animations.fbx", 0.05f);
-	ReportModel("Solaire");
 	ResourceManager::LoadModel(Models::Backpack, "@engine/Models/backpack/backpack.obj", 0.5f);
 	ReportModel("Backpack");
 	ResourceManager::LoadModel(Models::Knight,      "@engine/Models/Knight/knight.gltf");

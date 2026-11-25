@@ -23,7 +23,7 @@ struct LiquidOrbComponent
 
 	bool isVisible = true;
 
-	// The color of the liquid (white = clear water; baby oil is almost clear, a little warm)
+	// The color of the liquid (white = clear water; an oil is almost clear, a little warm)
 	glm::vec3 tint = glm::vec3(1.0f);
 
 	// How bright the sky inside it is (1 = as the sky itself)

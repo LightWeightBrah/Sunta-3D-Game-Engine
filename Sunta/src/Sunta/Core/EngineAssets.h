@@ -51,7 +51,6 @@ namespace Sunta::EngineAssets
 
 	namespace Models
 	{
-		constexpr const char* Solaire = "solaire";
 		constexpr const char* Backpack = "backpack";
 
 		// The ready player character (Souls Player) and its sword, made by Tools/Blender/knight_generator.py

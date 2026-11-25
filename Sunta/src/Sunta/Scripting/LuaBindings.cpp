@@ -987,8 +987,8 @@ void LuaBindings::RegisterWorld(sol::state& lua)
 {
 	// What a script does to the game as a whole. Usage in Lua:
 	//     local boss = this.world:find("Boss")                 (nil when there is no entity with that name)
-	//     this.world:notify("DOMAIN EXPANSION")                (a big message in the middle of the screen, fading away)
-	//     this.world:prompt("R: answer with your own domain")  (at the bottom, only in the frames it is asked for)
+	//     this.world:notify("THE GREAT RITE")                   (a big message in the middle of the screen, fading away)
+	//     this.world:prompt("R: answer with your own spell")   (at the bottom, only in the frames it is asked for)
 	//     this.world:shakeCamera(0.6)                          (0..1)
 	//     this.world:burst("Fireball Burst", position, 80)     (specks of the Particle Emitter with that name)
 	//     this.world:slowMotion(1.5, 0.3)                      (real seconds, the speed of the game meanwhile)
@@ -1121,7 +1121,7 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 			})
 	);
 
-	// Usage in Lua: this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss renamed by its phase)
+	// Usage in Lua: this.enemyHealthBar.displayName = "The Hollow King, Unbound" (a boss renamed by its phase)
 	lua.new_usertype<EnemyHealthBarHandle>("EnemyHealthBar", sol::no_constructor,
 		"displayName", MemberProperty(&EnemyHealthBarComponent::displayName, std::string())
 	);

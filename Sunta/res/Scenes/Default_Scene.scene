@@ -305,11 +305,11 @@
         },
         {
             "animator": {
-                "current_animation_name": "Armature|Praise the Sun Gesture"
+                "current_animation_name": "Idle"
             },
             "model": {
                 "is_visible": true,
-                "model_name": "solaire"
+                "model_name": "knight"
             },
             "tag": {
                 "name": "Player"
