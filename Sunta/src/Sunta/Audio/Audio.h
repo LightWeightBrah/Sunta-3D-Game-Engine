@@ -6,6 +6,24 @@
 namespace Sunta
 {
 
+// How one sound is played (Audio::Play)
+struct AudioPlayOptions
+{
+	float volume         = 1.0f;
+	float pitch          = 1.0f;
+	float pitchVariation = 0.0f;  // the pitch of each play is random in pitch +- this (0.05: no two swings are the same)
+	bool  isLooping      = false;
+
+	bool      isSpatial   = false;
+	glm::vec3 position    = glm::vec3(0.0f);
+	float     minDistance = 2.0f;   // full volume closer than this (meters)
+	float     maxDistance = 40.0f;  // it gets no quieter further than this
+
+	float fadeInSeconds = 0.0f;
+	bool  isStreamed    = false;    // long files (music): read while playing instead of decoded whole in advance
+	bool  ducksMusic    = false;    // a line spoken: the music goes quieter while it plays (it is heard over it)
+};
+
 // The sound of the engine: short sounds played once (a sword's swing), looping sounds (a fire crackling) and music
 //
 // The playing and mixing is done by miniaudio (Dependencies/miniaudio_wrapper, public domain or MIT-0), it reads
@@ -20,22 +38,9 @@ public:
 	using VoiceID = unsigned int;
 	static constexpr VoiceID NoVoice = 0;
 
-	struct PlayOptions
-	{
-		float volume         = 1.0f;
-		float pitch          = 1.0f;
-		float pitchVariation = 0.0f;  // the pitch of each play is random in pitch +- this (0.05: no two swings are the same)
-		bool  isLooping      = false;
-
-		bool      isSpatial   = false;
-		glm::vec3 position    = glm::vec3(0.0f);
-		float     minDistance = 2.0f;   // full volume closer than this (meters)
-		float     maxDistance = 40.0f;  // it gets no quieter further than this
-
-		float fadeInSeconds = 0.0f;
-		bool  isStreamed    = false;    // long files (music): read while playing instead of decoded whole in advance
-		bool  ducksMusic    = false;    // a line spoken: the music goes quieter while it plays (it is heard over it)
-	};
+	// (defined outside the class: GCC and Clang can't use a nested struct's member defaults in a default argument
+	// of the class that encloses it)
+	using PlayOptions = AudioPlayOptions;
 
 	static void Init();
 	static void Shutdown();
