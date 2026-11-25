@@ -2460,7 +2460,7 @@ function O.updateFinale(deltaTime)
     if at(F.StrikeAt - 0.35) then O.playPlayer("Attack_Heavy") end
     if at(F.StrikeAt) then
         local chest = this.transform.position + vec3(0, 1.3, 0)
-        this.world:flash(vec3(1, 0.95, 0.85), 0.2, 0.05)
+        -- (no white screen: the impact frame and the burst sell the cut - the user wants no white screens of ours)
         this.world:impactFrame(1.0, 0.5)
         this.world:slowMotion(0.7, 0.2)
         this.world:shakeCamera(1.0)
@@ -2473,6 +2473,8 @@ function O.updateFinale(deltaTime)
 
     -- his armor bursts off him, his sword is torn out of his hands
     if at(F.ShatterAt) then
+        -- (his seal breaks with his armor: left until his eyes went out it hung over his face in the close-up)
+        O.hideSeal()
         if this.model then this.model.modelName = O.PlainModel end
         O.setHeldSword(false)
         this.characterActions:play("Hit")
@@ -2521,7 +2523,6 @@ function O.updateFinale(deltaTime)
     -- the fire leaves his eyes
     if at(F.EyesOutAt) then
         O.tween(function(v) setEyes(v) end, 8, 0, 1.0)
-        O.hideSeal()
         changeLook(Dawn, 4)
     end
 
