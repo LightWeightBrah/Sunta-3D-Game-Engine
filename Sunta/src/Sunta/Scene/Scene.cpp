@@ -652,6 +652,12 @@ void Scene::Render(Renderer& renderer)
 		postProcessSettings.bloomIntensity  = environment->bloomIntensity;
 		postProcessSettings.bloomBlurPasses = environment->bloomBlurPasses;
 		PostProcessing::hitKickPerShake     = environment->hitImpactFrame;
+		postProcessSettings.pixelSize       = environment->pixelSize;
+		postProcessSettings.paletteLevels   = environment->paletteLevels;
+		postProcessSettings.ditherStrength  = environment->ditherStrength;
+		postProcessSettings.outlineStrength = environment->outlineStrength;
+		postProcessSettings.outlineColor    = environment->outlineColor;
+		postProcessSettings.depthFromProjection = glm::vec2(sceneData.projectionMatrix[2][2], sceneData.projectionMatrix[3][2]);
 	}
 
 	const glm::vec4 background = Renderer::GetClearColor();

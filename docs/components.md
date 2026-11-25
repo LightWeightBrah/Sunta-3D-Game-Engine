@@ -119,6 +119,11 @@ How to use it: Add Component > Environment on one entity of the scene (e.g. the 
 | `bloomIntensity` | Float |
 | `bloomBlurPasses` | Int |
 | `hitImpactFrame` | Float |
+| `pixelSize` | Int |
+| `paletteLevels` | Int |
+| `ditherStrength` | Float |
+| `outlineStrength` | Float |
+| `outlineColor` | Color |
 
 <sub>Defined in `Sunta/src/Sunta/Effects/EnvironmentComponent.h`</sub>
 

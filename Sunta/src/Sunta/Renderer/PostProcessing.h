@@ -23,6 +23,15 @@ struct PostProcessSettings
 	float bloomThreshold  = 0.7f;
 	float bloomIntensity  = 1.2f;
 	int   bloomBlurPasses = 6;
+
+	// Pixel art (see EnvironmentComponent): the size of one pixel of the picture, colors per channel, the dither,
+	// the outlines; 'depthFromProjection' = the camera projection's [2][2] and [3][2], to turn depth into meters
+	int       pixelSize           = 1;
+	int       paletteLevels       = 0;
+	float     ditherStrength      = 0.5f;
+	float     outlineStrength     = 0.0f;
+	glm::vec3 outlineColor        = glm::vec3(0.0f);
+	glm::vec2 depthFromProjection = glm::vec2(-1.0f, -0.2f);
 };
 
 // HDR and bloom (see learnopengl.com: HDR, Bloom)

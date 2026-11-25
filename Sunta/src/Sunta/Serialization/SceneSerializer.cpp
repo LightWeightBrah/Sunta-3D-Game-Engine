@@ -113,6 +113,11 @@ namespace SceneKeys
 	constexpr const char* BloomIntensity            = "bloom_intensity";
 	constexpr const char* BloomBlurPasses           = "bloom_blur_passes";
 	constexpr const char* HitImpactFrame            = "hit_impact_frame";
+	constexpr const char* PixelSize                 = "pixel_size";
+	constexpr const char* PaletteLevels             = "palette_levels";
+	constexpr const char* DitherStrength            = "dither_strength";
+	constexpr const char* OutlineStrength           = "outline_strength";
+	constexpr const char* OutlineColor              = "outline_color";
 	constexpr const char* ParticleDrag              = "drag";
 	constexpr const char* ParticleStretch           = "stretch";
 	constexpr const char* HasMiddleColor            = "has_middle_color";
@@ -1153,7 +1158,12 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::BloomThreshold,          environment->bloomThreshold          },
 			{ SceneKeys::BloomIntensity,          environment->bloomIntensity          },
 			{ SceneKeys::BloomBlurPasses,         environment->bloomBlurPasses         },
-			{ SceneKeys::HitImpactFrame,          environment->hitImpactFrame          }
+			{ SceneKeys::HitImpactFrame,          environment->hitImpactFrame          },
+			{ SceneKeys::PixelSize,               environment->pixelSize               },
+			{ SceneKeys::PaletteLevels,           environment->paletteLevels           },
+			{ SceneKeys::DitherStrength,          environment->ditherStrength          },
+			{ SceneKeys::OutlineStrength,         environment->outlineStrength         },
+			{ SceneKeys::OutlineColor,            SerializeVec3(environment->outlineColor) }
 		};
 	}
 
@@ -2061,6 +2071,12 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		environment.bloomIntensity          = environmentData.value(SceneKeys::BloomIntensity,          environment.bloomIntensity);
 		environment.bloomBlurPasses         = environmentData.value(SceneKeys::BloomBlurPasses,         environment.bloomBlurPasses);
 		environment.hitImpactFrame          = environmentData.value(SceneKeys::HitImpactFrame,          environment.hitImpactFrame);
+		environment.pixelSize               = environmentData.value(SceneKeys::PixelSize,               environment.pixelSize);
+		environment.paletteLevels           = environmentData.value(SceneKeys::PaletteLevels,           environment.paletteLevels);
+		environment.ditherStrength          = environmentData.value(SceneKeys::DitherStrength,          environment.ditherStrength);
+		environment.outlineStrength         = environmentData.value(SceneKeys::OutlineStrength,         environment.outlineStrength);
+		if (environmentData.contains(SceneKeys::OutlineColor))
+			environment.outlineColor = DeserializeVec3(environmentData[SceneKeys::OutlineColor], environment.outlineColor);
 
 		if (environmentData.contains(SceneKeys::FogColor))
 			environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);

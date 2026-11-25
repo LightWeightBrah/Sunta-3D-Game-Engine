@@ -33,6 +33,7 @@ constexpr int MaxBlurPasses = 20;
 // Texture slots of the composite shader
 constexpr unsigned int SceneSlot = 0;
 constexpr unsigned int BloomSlot = 1;
+constexpr unsigned int DepthSlot = 2; // the scene's depth, for the outlines of pixel art
 
 // The corners of the screen in clip space (-1..1); the shaders make the texture coordinates from them
 const glm::vec3 QuadCorners[] =
@@ -250,6 +251,18 @@ void PostProcessing::End(const PostProcessSettings& settings)
 
 	compositeShader->SetUniform1f("exposure", settings.exposure);
 	compositeShader->SetUniform1f("impact", CurrentImpact());
+
+	compositeShader->TrySetUniform1f("pixelSize", (float)glm::max(settings.pixelSize, 1));
+	compositeShader->TrySetUniform1f("paletteLevels", (float)glm::max(settings.paletteLevels, 0));
+	compositeShader->TrySetUniform1f("ditherStrength", settings.ditherStrength);
+	compositeShader->TrySetUniform1f("outlineStrength", settings.outlineStrength);
+	compositeShader->TrySetUniform3f("outlineColor", settings.outlineColor);
+	compositeShader->TrySetUniform4f("depthFromProjection", settings.depthFromProjection.x, settings.depthFromProjection.y, 0.0f, 0.0f);
+	if (settings.outlineStrength > 0.0f)
+	{
+		sceneTarget->BindDepthTexture(DepthSlot);
+		compositeShader->TrySetUniform1i("sceneDepth", DepthSlot);
+	}
 	DrawScreenQuad();
 
 	rendererDevice.SetDepthTest(true);

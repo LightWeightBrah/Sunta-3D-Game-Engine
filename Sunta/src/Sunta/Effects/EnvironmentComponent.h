@@ -25,6 +25,7 @@ struct EnvironmentComponent
 	static constexpr float MaxExposure       = 4.0f;
 	static constexpr float MaxBloomThreshold = 5.0f;
 	static constexpr float MaxBloomIntensity = 3.0f;
+	static constexpr int   MaxPixelSize      = 16;
 
 	std::string skyboxFolder;
 	float       skyBrightness = 1.0f;
@@ -47,6 +48,17 @@ struct EnvironmentComponent
 	// of the blow's camera shake times this. 0: never
 	float hitImpactFrame          = 0.0f;
 
+	// Pixel art made of 3D (the look of games drawn in low resolution with few colors): every 'pixelSize' x
+	// 'pixelSize' screen pixels show one pixel of the picture (1 = off); 'paletteLevels' colors per channel
+	// (0 = off), mixed in a fixed pattern ('ditherStrength' 0..1, the checkered blend of old games where two colors
+	// meet); 'outlineStrength' 0..1 darkens the edges of things against what is behind them (from the depth),
+	// 'outlineColor' is that dark ink
+	int       pixelSize       = 1;
+	int       paletteLevels   = 0;
+	float     ditherStrength  = 0.5f;
+	float     outlineStrength = 0.0f;
+	glm::vec3 outlineColor    = glm::vec3(0.05f, 0.04f, 0.06f);
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<EnvironmentComponent>("Environment", EngineAssets::Icons::Bonfire,
@@ -62,7 +74,12 @@ struct EnvironmentComponent
 				ADD_PROPERTY_RANGED(EnvironmentComponent, bloomThreshold, PropertyDataType::Float, 0.0f, MaxBloomThreshold),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, bloomIntensity, PropertyDataType::Float, 0.0f, MaxBloomIntensity),
 				ADD_PROPERTY(EnvironmentComponent, bloomBlurPasses, PropertyDataType::Int),
-				ADD_PROPERTY_RANGED(EnvironmentComponent, hitImpactFrame, PropertyDataType::Float, 0.0f, 2.0f)
+				ADD_PROPERTY_RANGED(EnvironmentComponent, hitImpactFrame, PropertyDataType::Float, 0.0f, 2.0f),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, pixelSize, PropertyDataType::Int, 1, MaxPixelSize),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, paletteLevels, PropertyDataType::Int, 0, 64),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, ditherStrength, PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, outlineStrength, PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY(EnvironmentComponent, outlineColor, PropertyDataType::Color)
 			});
 	}
 };
