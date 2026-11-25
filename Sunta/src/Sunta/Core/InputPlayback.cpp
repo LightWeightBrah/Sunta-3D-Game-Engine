@@ -54,6 +54,10 @@ std::vector<PendingLook>	looks;
 std::vector<std::string>	shotsToSave;
 float						lastTime = 0.0f;
 InputPlayback::CommandHandler customHandler;
+
+// Commands for the custom handler that came before it was set (the bot's 'lockon' while the game still loaded):
+// handed to it the moment it is set, instead of being lost
+std::vector<TimedCommand> waitingForHandler;
 std::vector<int>			heldKeys;
 std::unordered_set<std::string> sameFrameShots; // names already shot this frame
 
@@ -218,7 +222,9 @@ void Run(const TimedCommand& c, float now)
 	}
 	else if (c.command == "quit")
 		wantsQuit = true;
-	else if (!customHandler || !customHandler(c.command, c.argument, c.argument2, c.argument3, now))
+	else if (!customHandler)
+		waitingForHandler.push_back(c);
+	else if (!customHandler(c.command, c.argument, c.argument2, c.argument3, now))
 		SUNTA_ENGINE_LOG_WARNING("InputPlayback: unknown command '{0}'", c.command);
 }
 
@@ -410,6 +416,11 @@ bool InputPlayback::WantsQuit()
 void InputPlayback::SetCommandHandler(CommandHandler handler)
 {
 	customHandler = std::move(handler);
+
+	for (const TimedCommand& c : waitingForHandler)
+		if (!customHandler(c.command, c.argument, c.argument2, c.argument3, c.time))
+			SUNTA_ENGINE_LOG_WARNING("InputPlayback: unknown command '{0}'", c.command);
+	waitingForHandler.clear();
 }
 
 void InputPlayback::PressKey(const std::string& name)
