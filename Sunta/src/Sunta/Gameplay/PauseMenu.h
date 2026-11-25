@@ -13,7 +13,9 @@ class PauseMenu
 {
 public:
 	// Call once per frame while the game plays, before the game updates: Escape and the menu's keys
-	static void Update();
+	// 'isEscapeTaken': something else answers Escape this frame (a player resting at a bonfire stands up with it,
+	// as a menu of the bonfire is left), so it doesn't pause
+	static void Update(bool isEscapeTaken = false);
 
 	static bool IsPaused() { return isPaused; }
 

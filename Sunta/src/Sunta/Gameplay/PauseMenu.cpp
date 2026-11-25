@@ -49,9 +49,9 @@ void PauseMenu::SetPaused(bool paused)
 	Audio::SetPaused(paused);
 }
 
-void PauseMenu::Update()
+void PauseMenu::Update(bool isEscapeTaken)
 {
-	if (InputManager::IsKeyDown(SUNTA_KEY_ESCAPE))
+	if (InputManager::IsKeyDown(SUNTA_KEY_ESCAPE) && (isPaused || !isEscapeTaken))
 	{
 		SetPaused(!isPaused);
 		return;

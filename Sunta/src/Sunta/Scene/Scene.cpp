@@ -334,7 +334,7 @@ void Scene::Update()
 	// Escape pauses the game: while its menu is open nothing in the world moves
 	if (isPlaying)
 	{
-		PauseMenu::Update();
+		PauseMenu::Update(BonfireSystem::IsPlayerResting(entityManager));
 		if (PauseMenu::IsPaused())
 		{
 			UpdateActiveCameraData();

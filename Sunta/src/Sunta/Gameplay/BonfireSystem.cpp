@@ -116,7 +116,7 @@ void OfferToStandUp(EntityManager& entityManager, unsigned int playerID)
 {
 	HUDSystem::ShowPrompt(entityManager, StandUpPrompt);
 
-	if (InputManager::IsKeyDown(RestKey))
+	if (InputManager::IsKeyDown(RestKey) || InputManager::IsKeyDown(SUNTA_KEY_ESCAPE))
 		CharacterActionsSystem::StandUp(entityManager, playerID);
 }
 
@@ -143,6 +143,12 @@ void BonfireSystem::PrepareForPlay(EntityManager& entityManager)
 {
 	for (BonfireComponent& bonfire : entityManager.GetAllComponents<BonfireComponent>())
 		bonfire.isLit = false;
+}
+
+bool BonfireSystem::IsPlayerResting(EntityManager& entityManager)
+{
+	unsigned int playerID = 0;
+	return CharacterControllerSystem::TryFindPlayer(entityManager, playerID) && IsResting(entityManager, playerID);
 }
 
 void BonfireSystem::Update(EntityManager& entityManager)
