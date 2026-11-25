@@ -227,7 +227,7 @@ local function growBlade()
     this.characterActions.attackSpeed = BladeOfLight.AttackSpeed
     this.characterActions:play("Taunt")
     this.world:burst(AdaptEffect, this.transform.position + vec3(0, 2.0, 0), 400)
-    this.world:flash(vec3(1.0, 0.9, 0.6), 0.15, 0.05)
+    this.world:flash(vec3(1.0, 0.9, 0.6), 0.15, 0.05, 0.4)
     this.world:shakeCamera(0.7)
     this.world:notify("IT GROWS A BLADE OF LIGHT")
     Audio.playAt(AdaptSound, this.transform.position, 1.0)
