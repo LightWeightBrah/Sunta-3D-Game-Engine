@@ -38,7 +38,9 @@ public:
 
 	// The whole screen turns to a color and fades back in 'seconds' (a blinding explosion, a blackout).
 	// 'holdSeconds' keeps it full before it starts to fade. Drawn over everything, also over a cutscene
-	static void FlashScreen(const glm::vec3& color, float seconds, float holdSeconds = 0.0f);
+	// 'strength' is how much it covers at its fullest: 1 = the color alone (a white screen), 0.35 = a blink of light
+	// over the picture that is still seen through it
+	static void FlashScreen(const glm::vec3& color, float seconds, float holdSeconds = 0.0f, float strength = 1.0f);
 	static void DrawScreenFlash(const glm::vec2& screenSize);
 
 	// Call after the scene is drawn. 'viewProjection' is the camera the scene was drawn with, 'screenSize' the whole window

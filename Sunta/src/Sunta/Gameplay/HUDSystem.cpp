@@ -645,6 +645,7 @@ struct ScreenFlash
 	float     holdLeft    = 0.0f;
 	float     fadeSeconds = 0.0f;
 	float     fadeLeft    = 0.0f;
+	float     strength    = 1.0f;
 };
 
 ScreenFlash& GetScreenFlash()
@@ -695,13 +696,14 @@ void HUDSystem::Update(EntityManager& entityManager, float deltaTime)
 		UpdateEnemyBar(entityManager, bar, deltaTime);
 }
 
-void HUDSystem::FlashScreen(const glm::vec3& color, float seconds, float holdSeconds)
+void HUDSystem::FlashScreen(const glm::vec3& color, float seconds, float holdSeconds, float strength)
 {
 	ScreenFlash& flash = GetScreenFlash();
 	flash.color       = color;
 	flash.holdLeft    = glm::max(holdSeconds, 0.0f);
 	flash.fadeSeconds = glm::max(seconds, 0.01f);
 	flash.fadeLeft    = flash.fadeSeconds;
+	flash.strength    = glm::clamp(strength, 0.0f, 1.0f);
 }
 
 void HUDSystem::DrawScreenFlash(const glm::vec2& screenSize)
@@ -710,7 +712,7 @@ void HUDSystem::DrawScreenFlash(const glm::vec2& screenSize)
 	if (flash.fadeLeft <= 0.0f)
 		return;
 
-	const float alpha = flash.holdLeft > 0.0f ? 1.0f : glm::clamp(flash.fadeLeft / flash.fadeSeconds, 0.0f, 1.0f);
+	const float alpha = flash.strength * (flash.holdLeft > 0.0f ? 1.0f : glm::clamp(flash.fadeLeft / flash.fadeSeconds, 0.0f, 1.0f));
 
 	UIRenderer::Begin(screenSize);
 	UIRenderer::DrawRectangle(glm::vec2(0.0f), screenSize, glm::vec4(flash.color, alpha));

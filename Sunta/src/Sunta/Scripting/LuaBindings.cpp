@@ -1056,10 +1056,11 @@ void LuaBindings::RegisterWorld(sol::state& lua)
 			},
 
 		// The whole screen turns to a color and fades back: this.world:flash(vec3(1, 1, 1), 1.5)
-		// (a third number keeps it full for that long first)
-		"flash", [](const WorldHandle&, const glm::vec3& color, float seconds, sol::optional<float> holdSeconds)
+		// (a third number keeps it full for that long first; a fourth is how much it covers at its fullest:
+		// this.world:flash(vec3(1, 0.9, 0.7), 0.3, 0, 0.35) is a blink of light, not a white screen)
+		"flash", [](const WorldHandle&, const glm::vec3& color, float seconds, sol::optional<float> holdSeconds, sol::optional<float> strength)
 			{
-				HUDSystem::FlashScreen(color, seconds, holdSeconds.value_or(0.0f));
+				HUDSystem::FlashScreen(color, seconds, holdSeconds.value_or(0.0f), strength.value_or(1.0f));
 			},
 
 		// Throws one projectile without a cast: the Projectile template with that name, on the side of 'caster',

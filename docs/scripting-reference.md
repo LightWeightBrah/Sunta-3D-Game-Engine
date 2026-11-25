@@ -332,7 +332,7 @@ if this.world.isCutscenePlaying then return end
 | `impactFrame` | An impact frame: the picture blurred out from its middle, colors split, contrast punched for a blink this.world:impactFrame(0.8)   (strength 0..1, optional seconds of real time, 0.3 by default) |
 | `holdLetterbox` | Keeps the black bars of the cutscenes on through a sequence of shots (true), lets them go (false) |
 | `slowMotion` |  |
-| `flash` | The whole screen turns to a color and fades back: this.world:flash(vec3(1, 1, 1), 1.5) (a third number keeps it full for that long first) |
+| `flash` | The whole screen turns to a color and fades back: this.world:flash(vec3(1, 1, 1), 1.5) (a third number keeps it full for that long first; a fourth is how much it covers at its fullest: this.world:flash(vec3(1, 0.9, 0.7), 0.3, 0, 0.35) is a blink of light, not a white screen) |
 | `launch` | Throws one projectile without a cast: the Projectile template with that name, on the side of 'caster', from a point of the world in a direction (a script's own patterns: rings, rains, walls of fire). this.world:launch("Boss Orb", this, this.transform.position + vec3(0, 1.4, 0), this.transform.forward) |
 | `isSpellIncoming` | True when a flying spell of the other side reaches the entity within that many seconds |
 | `isCutscenePlaying` |  |
