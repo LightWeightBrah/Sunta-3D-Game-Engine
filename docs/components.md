@@ -124,6 +124,11 @@ How to use it: Add Component > Environment on one entity of the scene (e.g. the 
 | `ditherStrength` | Float |
 | `outlineStrength` | Float |
 | `outlineColor` | Color |
+| `paintRadius` | Int |
+| `saturation` | Float |
+| `contrast` | Float |
+| `colorTint` | Color |
+| `vignette` | Float |
 
 <sub>Defined in `Sunta/src/Sunta/Effects/EnvironmentComponent.h`</sub>
 

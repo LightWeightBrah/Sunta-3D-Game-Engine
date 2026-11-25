@@ -38,6 +38,13 @@ uniform vec3      outlineColor;
 uniform vec4      depthFromProjection; // xy: the projection's [2][2] and [3][2]
 uniform sampler2D sceneDepth;
 
+// The painted look and the grade of the colors (see EnvironmentComponent)
+uniform int   paintRadius;
+uniform float saturation;
+uniform float contrast;
+uniform vec3  colorTint;
+uniform float vignette;
+
 float MetersAt(vec2 coordinate)
 {
 	float ndc = texture(sceneDepth, coordinate).r * 2.0 - 1.0;
@@ -60,6 +67,37 @@ vec3 SceneWithGlow(vec2 coordinate)
 	if (hasBloom)
 		color += texture(bloom, coordinate).rgb * bloomIntensity;
 	return color;
+}
+
+// Kuwahara filter: of the four squares around the point (each 'paintRadius' pixels wide) the one with the least
+// change of color gives its mean - flat strokes of paint with sharp edges where the colors change
+vec3 Painted(vec2 coordinate, vec2 texel)
+{
+	vec3  bestMean     = vec3(0.0);
+	float bestVariance = 1e20;
+	for (int quadrant = 0; quadrant < 4; quadrant++)
+	{
+		vec2 direction = vec2(quadrant == 1 || quadrant == 3 ? 1.0 : -1.0, quadrant >= 2 ? 1.0 : -1.0);
+		vec3 sum = vec3(0.0), sumOfSquares = vec3(0.0);
+		float count = 0.0;
+		for (int y = 0; y <= 8; y++)
+		{
+			if (y > paintRadius) break;
+			for (int x = 0; x <= 8; x++)
+			{
+				if (x > paintRadius) break;
+				vec3 c = SceneWithGlow(coordinate + direction * vec2(float(x), float(y)) * texel);
+				// (in the tone mapped range: a fire's huge values would win every square otherwise)
+				c = c / (1.0 + c);
+				sum += c; sumOfSquares += c * c; count += 1.0;
+			}
+		}
+		vec3  mean     = sum / count;
+		vec3  spread   = abs(sumOfSquares / count - mean * mean);
+		float variance = spread.r + spread.g + spread.b;
+		if (variance < bestVariance) { bestVariance = variance; bestMean = mean; }
+	}
+	return bestMean / max(vec3(1.0) - bestMean, vec3(0.001));
 }
 
 vec3 ToneMapACES(vec3 color)
@@ -99,7 +137,7 @@ void main()
 	}
 	else
 	{
-		color = SceneWithGlow(sampleAt);
+		color = paintRadius > 0 ? Painted(sampleAt, 1.0 / screenSize) : SceneWithGlow(sampleAt);
 	}
 
 	vec3 mapped = ToneMapACES(color * exposure * (1.0 + impact * 0.35));
@@ -108,6 +146,14 @@ void main()
 	mapped = mix(mapped, smoothstep(0.0, 1.0, mapped), impact * 0.8);
 	vec2 rim = TexCoord - vec2(0.5);
 	mapped *= 1.0 - impact * 0.5 * smoothstep(0.15, 0.55, dot(rim, rim) * 2.0);
+
+	// The grade: tint, saturation around the gray of each color, contrast around the middle, darker corners
+	mapped *= colorTint;
+	float gray = dot(mapped, vec3(0.2126, 0.7152, 0.0722));
+	mapped = clamp(mix(vec3(gray), mapped, saturation), 0.0, 1.0);
+	mapped = clamp((mapped - 0.5) * contrast + 0.5, 0.0, 1.0);
+	vec2 corner = TexCoord - vec2(0.5);
+	mapped *= 1.0 - vignette * smoothstep(0.2, 0.75, length(corner) * 1.4);
 
 	// Ink on the edges: where a neighbouring block is clearly farther away, this block is the outline of a thing
 	if (outlineStrength > 0.0)

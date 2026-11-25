@@ -118,6 +118,11 @@ namespace SceneKeys
 	constexpr const char* DitherStrength            = "dither_strength";
 	constexpr const char* OutlineStrength           = "outline_strength";
 	constexpr const char* OutlineColor              = "outline_color";
+	constexpr const char* PaintRadius               = "paint_radius";
+	constexpr const char* Saturation                = "saturation";
+	constexpr const char* Contrast                  = "contrast";
+	constexpr const char* ColorTint                 = "color_tint";
+	constexpr const char* Vignette                  = "vignette";
 	constexpr const char* ParticleDrag              = "drag";
 	constexpr const char* ParticleStretch           = "stretch";
 	constexpr const char* HasMiddleColor            = "has_middle_color";
@@ -1163,7 +1168,12 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::PaletteLevels,           environment->paletteLevels           },
 			{ SceneKeys::DitherStrength,          environment->ditherStrength          },
 			{ SceneKeys::OutlineStrength,         environment->outlineStrength         },
-			{ SceneKeys::OutlineColor,            SerializeVec3(environment->outlineColor) }
+			{ SceneKeys::OutlineColor,            SerializeVec3(environment->outlineColor) },
+			{ SceneKeys::PaintRadius,             environment->paintRadius             },
+			{ SceneKeys::Saturation,              environment->saturation              },
+			{ SceneKeys::Contrast,                environment->contrast                },
+			{ SceneKeys::ColorTint,               SerializeVec3(environment->colorTint) },
+			{ SceneKeys::Vignette,                environment->vignette                }
 		};
 	}
 
@@ -2077,6 +2087,12 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		environment.outlineStrength         = environmentData.value(SceneKeys::OutlineStrength,         environment.outlineStrength);
 		if (environmentData.contains(SceneKeys::OutlineColor))
 			environment.outlineColor = DeserializeVec3(environmentData[SceneKeys::OutlineColor], environment.outlineColor);
+		environment.paintRadius             = environmentData.value(SceneKeys::PaintRadius,             environment.paintRadius);
+		environment.saturation              = environmentData.value(SceneKeys::Saturation,              environment.saturation);
+		environment.contrast                = environmentData.value(SceneKeys::Contrast,                environment.contrast);
+		environment.vignette                = environmentData.value(SceneKeys::Vignette,                environment.vignette);
+		if (environmentData.contains(SceneKeys::ColorTint))
+			environment.colorTint = DeserializeVec3(environmentData[SceneKeys::ColorTint], environment.colorTint);
 
 		if (environmentData.contains(SceneKeys::FogColor))
 			environment.fogColor = DeserializeVec3(environmentData[SceneKeys::FogColor]);

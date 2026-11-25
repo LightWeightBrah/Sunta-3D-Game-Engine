@@ -59,6 +59,16 @@ struct EnvironmentComponent
 	float     outlineStrength = 0.0f;
 	glm::vec3 outlineColor    = glm::vec3(0.05f, 0.04f, 0.06f);
 
+	// A painted look (the picture as an oil painting: flat strokes of color with sharp edges between them, which
+	// hides how simple the models and their textures are): 'paintRadius' is the size of a stroke in screen pixels
+	// (a Kuwahara filter; 0 = off). The grade of the colors: 'saturation' (1 = as lit), 'contrast' (1 = as lit),
+	// 'colorTint' multiplies the picture (a warm gold of an evening), 'vignette' 0..1 darkens its corners
+	int       paintRadius     = 0;
+	float     saturation      = 1.0f;
+	float     contrast        = 1.0f;
+	glm::vec3 colorTint       = glm::vec3(1.0f);
+	float     vignette        = 0.0f;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<EnvironmentComponent>("Environment", EngineAssets::Icons::Bonfire,
@@ -79,7 +89,12 @@ struct EnvironmentComponent
 				ADD_PROPERTY_RANGED(EnvironmentComponent, paletteLevels, PropertyDataType::Int, 0, 64),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, ditherStrength, PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, outlineStrength, PropertyDataType::Float, 0.0f, 1.0f),
-				ADD_PROPERTY(EnvironmentComponent, outlineColor, PropertyDataType::Color)
+				ADD_PROPERTY(EnvironmentComponent, outlineColor, PropertyDataType::Color),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, paintRadius, PropertyDataType::Int, 0, 8),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, saturation, PropertyDataType::Float, 0.0f, 3.0f),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, contrast, PropertyDataType::Float, 0.0f, 3.0f),
+				ADD_PROPERTY(EnvironmentComponent, colorTint, PropertyDataType::Color),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, vignette, PropertyDataType::Float, 0.0f, 1.0f)
 			});
 	}
 };

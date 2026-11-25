@@ -258,6 +258,11 @@ void PostProcessing::End(const PostProcessSettings& settings)
 	compositeShader->TrySetUniform1f("outlineStrength", settings.outlineStrength);
 	compositeShader->TrySetUniform3f("outlineColor", settings.outlineColor);
 	compositeShader->TrySetUniform4f("depthFromProjection", settings.depthFromProjection.x, settings.depthFromProjection.y, 0.0f, 0.0f);
+	compositeShader->TrySetUniform1i("paintRadius", glm::clamp(settings.paintRadius, 0, 8));
+	compositeShader->TrySetUniform1f("saturation", settings.saturation);
+	compositeShader->TrySetUniform1f("contrast", settings.contrast);
+	compositeShader->TrySetUniform3f("colorTint", settings.colorTint);
+	compositeShader->TrySetUniform1f("vignette", settings.vignette);
 	if (settings.outlineStrength > 0.0f)
 	{
 		sceneTarget->BindDepthTexture(DepthSlot);

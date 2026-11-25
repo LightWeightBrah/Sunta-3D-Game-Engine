@@ -32,6 +32,13 @@ struct PostProcessSettings
 	float     outlineStrength     = 0.0f;
 	glm::vec3 outlineColor        = glm::vec3(0.0f);
 	glm::vec2 depthFromProjection = glm::vec2(-1.0f, -0.2f);
+
+	// The painted look and the grade of the colors (see EnvironmentComponent)
+	int       paintRadius = 0;
+	float     saturation  = 1.0f;
+	float     contrast    = 1.0f;
+	glm::vec3 colorTint   = glm::vec3(1.0f);
+	float     vignette    = 0.0f;
 };
 
 // HDR and bloom (see learnopengl.com: HDR, Bloom)

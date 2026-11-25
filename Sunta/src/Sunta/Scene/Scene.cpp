@@ -658,6 +658,11 @@ void Scene::Render(Renderer& renderer)
 		postProcessSettings.outlineStrength = environment->outlineStrength;
 		postProcessSettings.outlineColor    = environment->outlineColor;
 		postProcessSettings.depthFromProjection = glm::vec2(sceneData.projectionMatrix[2][2], sceneData.projectionMatrix[3][2]);
+		postProcessSettings.paintRadius     = environment->paintRadius;
+		postProcessSettings.saturation      = environment->saturation;
+		postProcessSettings.contrast        = environment->contrast;
+		postProcessSettings.colorTint       = environment->colorTint;
+		postProcessSettings.vignette        = environment->vignette;
 	}
 
 	const glm::vec4 background = Renderer::GetClearColor();
