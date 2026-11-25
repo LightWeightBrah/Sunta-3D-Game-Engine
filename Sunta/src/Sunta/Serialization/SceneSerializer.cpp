@@ -526,6 +526,7 @@ namespace SceneKeys
 	constexpr const char* DurationSeconds           = "duration_seconds";
 	constexpr const char* LookAtEntity              = "look_at_entity";
 	constexpr const char* LookAtHeight              = "look_at_height";
+	constexpr const char* LookAlsoAtEntity          = "look_also_at_entity";
 	constexpr const char* AnimationEntity           = "animation_entity";
 	constexpr const char* CutsceneAnimationName     = "animation_name";
 	constexpr const char* AnimationAtSeconds        = "animation_at_seconds";
@@ -1127,6 +1128,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::DurationSeconds,       cutscene->durationSeconds    },
 				{ SceneKeys::LookAtEntity,          cutscene->lookAtEntity       },
 				{ SceneKeys::LookAtHeight,          cutscene->lookAtHeight       },
+				{ SceneKeys::LookAlsoAtEntity,      cutscene->lookAlsoAtEntity   },
 				{ SceneKeys::AnimationEntity,       cutscene->animationEntity    },
 				{ SceneKeys::CutsceneAnimationName, cutscene->animationName      },
 				{ SceneKeys::AnimationAtSeconds,    cutscene->animationAtSeconds },
@@ -2107,6 +2109,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			cutscene.durationSeconds    = cutsceneData.value(SceneKeys::DurationSeconds,       cutscene.durationSeconds);
 			cutscene.lookAtEntity       = cutsceneData.value(SceneKeys::LookAtEntity,          cutscene.lookAtEntity);
 			cutscene.lookAtHeight       = cutsceneData.value(SceneKeys::LookAtHeight,          cutscene.lookAtHeight);
+			cutscene.lookAlsoAtEntity   = cutsceneData.value(SceneKeys::LookAlsoAtEntity,      cutscene.lookAlsoAtEntity);
 			cutscene.animationEntity    = cutsceneData.value(SceneKeys::AnimationEntity,       cutscene.animationEntity);
 			cutscene.animationName      = cutsceneData.value(SceneKeys::CutsceneAnimationName, cutscene.animationName);
 			cutscene.animationAtSeconds = cutsceneData.value(SceneKeys::AnimationAtSeconds,    cutscene.animationAtSeconds);

@@ -782,6 +782,7 @@ How to use it: Add Component > Cutscene on an empty entity, then give it childre
 | `durationSeconds` | Float |
 | `lookAtEntity` | String |
 | `lookAtHeight` | Float |
+| `lookAlsoAtEntity` | String |
 | `animationEntity` | String |
 | `animationName` | String |
 | `animationAtSeconds` | Float |

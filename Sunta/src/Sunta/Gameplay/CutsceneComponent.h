@@ -42,6 +42,9 @@ struct CutsceneComponent
 	float       durationSeconds = 8.0f;
 	std::string lookAtEntity;
 	float       lookAtHeight    = 1.5f;
+	// A two-shot: with a second entity named here the camera looks at the middle between the two (a face-off seen
+	// from aside keeps both in the picture); empty = only 'lookAtEntity'
+	std::string lookAlsoAtEntity;
 
 	std::string animationEntity;
 	std::string animationName;
@@ -97,6 +100,7 @@ struct CutsceneComponent
 				ADD_PROPERTY_RANGED(CutsceneComponent, durationSeconds, PropertyDataType::Float, 0.5f, MaxSeconds),
 				ADD_PROPERTY(CutsceneComponent, lookAtEntity, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(CutsceneComponent, lookAtHeight, PropertyDataType::Float, 0.0f, MaxHeight),
+				ADD_PROPERTY(CutsceneComponent, lookAlsoAtEntity, PropertyDataType::String),
 				ADD_PROPERTY(CutsceneComponent, animationEntity, PropertyDataType::String),
 				ADD_PROPERTY(CutsceneComponent, animationName, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(CutsceneComponent, animationAtSeconds, PropertyDataType::Float, 0.0f, MaxSeconds),

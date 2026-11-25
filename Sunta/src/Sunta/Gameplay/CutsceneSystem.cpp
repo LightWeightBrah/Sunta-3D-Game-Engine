@@ -156,6 +156,20 @@ bool IsProjectileBody(EntityManager& entityManager, unsigned int entityID)
 // How far from 'target' towards 'camera' the view is free of scenery: the closest triangle of a visible model without
 // bones (ruins, rubble, walls) on the line between them. A model the target is inside (a temple whose heart the camera
 // looks at: the line leaves it instead of entering it) doesn't count, nor small things and the bodies of projectiles
+// Where the camera of a cutscene looks: its entity, or the middle between it and 'lookAlsoAtEntity' (a two-shot)
+bool TryGetLookAtPoint(EntityManager& entityManager, const CutsceneComponent& cutscene, glm::vec3& outPoint)
+{
+	unsigned int targetID = 0;
+	if (!TryFindEntityByName(entityManager, cutscene.lookAtEntity, targetID))
+		return false;
+	glm::vec3 point = GetWorldPosition(entityManager, targetID);
+	unsigned int secondID = 0;
+	if (!cutscene.lookAlsoAtEntity.empty() && TryFindEntityByName(entityManager, cutscene.lookAlsoAtEntity, secondID))
+		point = (point + GetWorldPosition(entityManager, secondID)) * 0.5f;
+	outPoint = point + glm::vec3(0.0f, 1.0f, 0.0f) * cutscene.lookAtHeight;
+	return true;
+}
+
 float GetClearDistance(EntityManager& entityManager, const glm::vec3& target, const glm::vec3& camera)
 {
 	const glm::vec3 toCamera = camera - target;
@@ -221,10 +235,9 @@ void PlaceCamera(EntityManager& entityManager, unsigned int cutsceneID, Cutscene
 	glm::vec3 position = PointOnPath(points, along);
 
 	glm::vec3 lookDirection = PointOnPath(points, glm::min(along + 0.02f, 1.0f)) - position;
-	unsigned int targetID = 0;
-	if (TryFindEntityByName(entityManager, cutscene.lookAtEntity, targetID))
+	glm::vec3 target;
+	if (TryGetLookAtPoint(entityManager, cutscene, target))
 	{
-		const glm::vec3 target = GetWorldPosition(entityManager, targetID) + WorldUp * cutscene.lookAtHeight;
 		const float wanted = glm::length(position - target);
 
 		// Scenery in the way: the camera comes in front of it at once, and back out gently
@@ -352,12 +365,8 @@ std::vector<CutsceneSystem::ShotPath> CutsceneSystem::GetShotPaths(EntityManager
 		for (int step = 0; step <= Steps; step++)
 			path.curve.push_back(PointOnPath(path.points, static_cast<float>(step) / Steps));
 
-		unsigned int targetID = 0;
-		if (TryFindEntityByName(entityManager, cutscene.lookAtEntity, targetID))
-		{
-			path.lookAt    = GetWorldPosition(entityManager, targetID) + WorldUp * cutscene.lookAtHeight;
+		if (TryGetLookAtPoint(entityManager, cutscene, path.lookAt))
 			path.hasLookAt = true;
-		}
 		paths.push_back(std::move(path));
 	}
 	return paths;
