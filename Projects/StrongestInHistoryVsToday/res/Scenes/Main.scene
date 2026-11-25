@@ -37566,9 +37566,9 @@
    },
    "transform": {
     "position": [
-     0.75,
-     1.9,
-     1.5
+     1.8,
+     2.25,
+     2.4
     ],
     "rotation": [
      0.0,
@@ -37598,9 +37598,9 @@
    },
    "transform": {
     "position": [
-     0.6,
-     1.85,
-     1.15
+     1.65,
+     2.2,
+     2.05
     ],
     "rotation": [
      0.0,
@@ -37764,6 +37764,7 @@
     "duration_seconds": 2.0,
     "look_at_entity": "Boss",
     "look_at_height": 1.5,
+    "look_also_at_entity": "Player",
     "animation_entity": "",
     "animation_name": "",
     "animation_at_seconds": 0.0,
@@ -37784,9 +37785,9 @@
    },
    "transform": {
     "position": [
-     -0.7,
-     1.9,
-     -3.0
+     -2.7,
+     3.6,
+     -4.8
     ],
     "rotation": [
      0.0,
@@ -37816,9 +37817,9 @@
    },
    "transform": {
     "position": [
-     -0.55,
-     1.85,
-     -2.6
+     -2.5,
+     3.5,
+     -4.3
     ],
     "rotation": [
      0.0,
