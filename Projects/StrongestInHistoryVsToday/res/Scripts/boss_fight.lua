@@ -602,9 +602,10 @@ end
 
 -- ========== Staged moments ==========
 
+-- (replay: each moment plays again on the next try after the player died - play() plays a cutscene only once)
 local function playCutscene(name)
     local entity = find(name)
-    if entity and entity.cutscene then entity.cutscene:play() end
+    if entity and entity.cutscene then entity.cutscene:replay() end
 end
 
 -- The steps run one after another; a step that starts a cutscene holds the next one until it is over

@@ -174,7 +174,7 @@ local Domain = {
 
 local function playShot(name)
     local shot = find(name)
-    if shot and shot.cutscene then shot.cutscene:play() end
+    if shot and shot.cutscene then shot.cutscene:replay() end
 end
 
 local function setPools(grown)
@@ -612,6 +612,6 @@ function OnUpdate(deltaTime)
     -- answers its hit with the white blast)
     if hasJustReleased(GreatSpell) then
         local fall = find(BottleFall)
-        if fall and fall.cutscene then fall.cutscene:play() end
+        if fall and fall.cutscene then fall.cutscene:replay() end
     end
 end
