@@ -3157,7 +3157,7 @@
    "particle_emitter": {
     "is_emitting": false,
     "particles_per_second": 16000.0,
-    "lifetime_seconds": 1.0,
+    "lifetime_seconds": 1.1,
     "spawn_half_extents": [
      0.1,
      0.1,
@@ -3174,26 +3174,31 @@
      2.5,
      0.0
     ],
-    "start_size": 2.4,
-    "end_size": 1.1,
+    "start_size": 3.2,
+    "end_size": 1.6,
     "start_color": [
      1.0,
-     0.3,
-     0.02
+     0.55,
+     0.2
     ],
     "end_color": [
-     0.55,
-     0.05,
-     0.0
+     0.6,
+     0.12,
+     0.02
     ],
-    "intensity": 0.07,
-    "max_particles": 30000,
+    "intensity": 0.55,
+    "max_particles": 6000,
     "style": 1,
     "spawn_shape": 2,
     "spawn_radius": 3.0,
     "outward_speed": 2.0,
-    "size_randomness": 0.5,
-    "spin_degrees_per_second": 50.0
+    "size_randomness": 0.45,
+    "spin_degrees_per_second": 50.0,
+    "flipbook_texture": "@engine/Textures/Flipbooks/fireball_6x4.png",
+    "flipbook_columns": 6,
+    "flipbook_rows": 4,
+    "flipbook_loops": 1.0,
+    "flipbook_random_start": true
    }
   },
   {

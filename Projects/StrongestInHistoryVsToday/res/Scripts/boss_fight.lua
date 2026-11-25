@@ -690,7 +690,8 @@ local O = {
     StarFlightFocus = "Star Flight Focus",
     -- How big the fire grows (meters) and how many tongues of it a second
     SunRadius      = 7,
-    SunRate        = 22000,
+    -- (flames of a fire flipbook, few and big: 22000 soft specks summed up to a white bubble for 4 s)
+    SunRate        = 1600,
     -- The player's last blow before the domain (film 1:14.8 = this second of the soundtrack): he is hurled back
     -- this far through the air, skids on, gets up with the sign
     KnockCutscene  = "Knockback Flight",
