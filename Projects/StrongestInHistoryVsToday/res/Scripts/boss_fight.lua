@@ -3468,7 +3468,7 @@ end
 O.SwordFightCameraDistance = 5.6
 -- (a little over the right shoulder; the scene's camera also swings 32 degrees off the line to him - lockOnSideDegrees:
 -- right behind the player he hid the boss in the fist fight)
-O.SwordCamera = { Shoulder = 0.3, Pitch = 13 }
+O.SwordCamera = { Shoulder = 0.3, Pitch = 13, Side = 44 }
 -- (the sword fight was long and dull to the user: his health in armor comes back to a bit over half, not all of
 -- it, his blazing blade at a quarter)
 O.ArmoredHealthFraction, O.PhaseSixAt = 0.55, 0.28
@@ -3740,13 +3740,16 @@ function O.updateSwordCamera(deltaTime)
         local step = CameraZoomPerSecond * deltaTime
         follow.distance = follow.distance + math.max(-step, math.min(step, O.SwordFightCameraDistance - follow.distance))
     end
-    if not O.cameraHome then O.cameraHome = { follow.shoulderOffset, follow.lockOnPitchDegrees } end
+    if not O.cameraHome then O.cameraHome = { follow.shoulderOffset, follow.lockOnPitchDegrees, follow.lockOnSideDegrees } end
     local isSwordFight = phase >= 5
     local shoulder = isSwordFight and O.SwordCamera.Shoulder or O.cameraHome[1]
     local pitch = isSwordFight and O.SwordCamera.Pitch or O.cameraHome[2]
+    -- (farther off the line in the sword fight: two tall armored figures and a camera farther back hid him again)
+    local side = isSwordFight and O.SwordCamera.Side or O.cameraHome[3]
     local glide = math.min(deltaTime * 1.5, 1)
     follow.shoulderOffset = follow.shoulderOffset + (shoulder - follow.shoulderOffset) * glide
     follow.lockOnPitchDegrees = follow.lockOnPitchDegrees + (pitch - follow.lockOnPitchDegrees) * glide
+    follow.lockOnSideDegrees = follow.lockOnSideDegrees + (side - follow.lockOnSideDegrees) * glide
 end
 
 function OnUpdate(deltaTime)
