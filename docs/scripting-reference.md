@@ -313,8 +313,8 @@ What a script does to the game as a whole.
 
 ```lua
 local boss = this.world:find("Boss")                 -- nil when there is no entity with that name
-this.world:notify("DOMAIN EXPANSION")                -- a big message in the middle of the screen, fading away
-this.world:prompt("R: answer with your own domain")  -- at the bottom, only in the frames it is asked for
+this.world:notify("THE GREAT RITE")                   -- a big message in the middle of the screen, fading away
+this.world:prompt("R: answer with your own spell")   -- at the bottom, only in the frames it is asked for
 this.world:shakeCamera(0.6)                          -- 0..1
 this.world:burst("Fireball Burst", position, 80)     -- specks of the Particle Emitter with that name
 this.world:slowMotion(1.5, 0.3)                      -- real seconds, the speed of the game meanwhile
@@ -371,7 +371,7 @@ Usage in Lua (on a projectile template): if bottle.projectile.timesBurst > seen 
 ## EnemyHealthBar
 
 ```lua
-this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin" (a boss renamed by its phase)
+this.enemyHealthBar.displayName = "The Hollow King, Unbound" (a boss renamed by its phase)
 ```
 
 | Name | Note |
@@ -426,7 +426,7 @@ orb.liquidOrb.isVisible = true, orb.liquidOrb.brightness = 2
 
 ## Swarm
 
-Usage in Lua (see SwarmComponent): s = find("Domain Swarm").swarm; s.isVisible = true; s.gathered = 1; s.radius = 40; s.spread = 1; s:fall(); s:reset(); if s.isFalling then ... end
+Usage in Lua (see SwarmComponent): s = find("Ember Swarm").swarm; s.isVisible = true; s.gathered = 1; s.radius = 40; s.spread = 1; s:fall(); s:reset(); if s.isFalling then ... end
 
 | Name | Note |
 |---|---|
@@ -452,6 +452,7 @@ Usage in Lua (on the cutscene's entity): this.cutscene:play(), this.cutscene:rep
 | Name | Note |
 |---|---|
 | `play` |  |
+| `replay` | Plays it even if it was already played (a shot cut back to again and again: angles taken in turn) |
 | `wasAnswered` | The player pressed its 'waitForKey' (a moment the player answers) |
 | `isPlaying` |  |
 

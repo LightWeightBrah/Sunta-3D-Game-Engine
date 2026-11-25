@@ -51,7 +51,7 @@ end
 ## The world
 
 ```lua
-this.world:notify("DOMAIN EXPANSION")                         -- a big message in the middle of the screen
+this.world:notify("THE GREAT RITE")                            -- a big message in the middle of the screen
 this.world:effect("Heavy Impact", position, this.transform.forward)   -- an effect of the scene, by name
 this.world:launch("Boss Orb", this, from, direction)           -- a projectile without a cast
 this.world:slowMotion(1.5, 0.3)                               -- 1.5 real seconds at 30% speed
@@ -111,7 +111,7 @@ this.model.darkness = 1
 -- Another model on the same skeleton (armor put on): the animations go on by their names
 this.model.modelName = "sih_boss_armored"
 -- His boss bar shows his new name
-this.enemyHealthBar.displayName = "Jeffrey Epstein, Armored in Sin"
+this.enemyHealthBar.displayName = "The Hollow King, Unbound"
 ```
 
 ## Sound, music and spoken lines

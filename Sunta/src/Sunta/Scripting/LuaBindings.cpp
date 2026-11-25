@@ -1159,7 +1159,7 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 		"wobble",     MemberProperty(&LiquidOrbComponent::wobble,     0.0f)
 	);
 
-	// Usage in Lua (see SwarmComponent): s = find("Domain Swarm").swarm; s.isVisible = true; s.gathered = 1;
+	// Usage in Lua (see SwarmComponent): s = find("Ember Swarm").swarm; s.isVisible = true; s.gathered = 1;
 	// s.radius = 40; s.spread = 1; s:fall(); s:reset(); if s.isFalling then ... end
 	lua.new_usertype<SwarmHandle>("Swarm", sol::no_constructor,
 		"isVisible",            MemberProperty(&SwarmComponent::isVisible,            false),
@@ -1202,7 +1202,7 @@ void LuaBindings::RegisterLookComponents(sol::state& lua)
 			}
 	);
 
-	// Usage in Lua (on the cutscene's entity): this.cutscene:play(), if this.cutscene.isPlaying then ... end
+	// Usage in Lua (on the cutscene's entity): this.cutscene:play(), this.cutscene:replay() (again, even if it was played), if this.cutscene.isPlaying then ... end
 	lua.new_usertype<CutsceneHandle>("Cutscene", sol::no_constructor,
 		"play", [](const CutsceneHandle& handle)
 			{
