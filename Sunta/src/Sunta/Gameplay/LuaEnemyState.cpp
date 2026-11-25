@@ -55,7 +55,7 @@ template<typename... Args>
 sol::object LuaEnemyState::Call(sol::protected_function& function, const char* name, Args&&... args)
 {
 	if (!function.valid())
-		return sol::nil;
+		return sol::lua_nil;
 
 	sol::protected_function_result result = function(std::forward<Args>(args)...);
 	if (result.valid())
@@ -65,7 +65,7 @@ sol::object LuaEnemyState::Call(sol::protected_function& function, const char* n
 	SUNTA_ENGINE_LOG_ERROR("Lua error in the '{0}' function of an enemy state: {1}. That function is turned off", name, error.what());
 
 	function = sol::protected_function();
-	return sol::nil;
+	return sol::lua_nil;
 }
 
 }
