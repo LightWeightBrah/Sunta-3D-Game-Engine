@@ -109,7 +109,8 @@ void TurnTowardsLockedTarget(FollowCameraComponent& follow, const glm::vec3& tar
 	if (glm::length(horizontalToTarget) < SmallestUsableLength)
 		return;
 
-	const float wantedYaw   = GetYawToFace(horizontalToTarget);
+	// (swung around the player by lockOnSideDegrees: the enemy is seen beside him, not behind his back)
+	const float wantedYaw   = WrapDegrees(GetYawToFace(horizontalToTarget) + follow.lockOnSideDegrees);
 	const float wantedPitch = GetClampedPitch(follow, follow.lockOnPitchDegrees);
 
 	follow.yawDegrees   = SmoothAngle(follow.yawDegrees,   wantedYaw,   follow.lockOnSharpness, deltaTime);

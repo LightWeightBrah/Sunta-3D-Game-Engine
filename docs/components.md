@@ -956,6 +956,7 @@ Every number below shows up in the Inspector, so the feel of the camera is tuned
 | `followSharpness` | Float |
 | `lockOnPitchDegrees` | Float |
 | `lockOnSharpness` | Float |
+| `lockOnSideDegrees` | Float |
 | `shakeDegrees` | Float |
 | `shakeFrequency` | Float |
 | `shakeFadePerSecond` | Float |

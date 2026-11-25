@@ -388,7 +388,7 @@ this.enemyHealthBar.displayName = "The Hollow King, Unbound" (a boss renamed by 
 
 ## FollowCamera
 
-Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant), .shoulderOffset = 0.7 (over the right shoulder: a tall enemy isn't hidden behind the player), .lockOnPitchDegrees = 10 (how far down it looks while locked on)
+Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer in a fist fight, farther for a giant), .shoulderOffset = 0.7 (over the right shoulder: a tall enemy isn't hidden behind the player), .lockOnPitchDegrees = 10 (how far down it looks while locked on), .lockOnSideDegrees = 35 (swung off the line to the enemy: a fist fight seen side by side)
 
 | Name | Note |
 |---|---|
@@ -396,6 +396,7 @@ Usage in Lua (on the camera's entity): camera.followCamera.distance = 4 (closer 
 | `pivotHeight` |  |
 | `shoulderOffset` |  |
 | `lockOnPitchDegrees` |  |
+| `lockOnSideDegrees` |  |
 
 ## GlowSprite
 

@@ -300,8 +300,16 @@ void CharacterControllerSystem::Update(EntityManager& entityManager, float delta
 		if (!transform || !body || body->isKinematic)
 			continue;
 
+		// Locked on, the keys move the player towards and around the enemy (as in souls-likes), whatever angle the
+		// camera watches the fight from (see FollowCameraComponent::lockOnSideDegrees)
 		if (controller.isPlayerControlled && !controller.isHeldByCutscene)
-			ReadPlayerInput(controller, cameraForward, deltaTime);
+		{
+			glm::vec3 lockedPoint;
+			const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(entityID);
+			const bool isLocked = lockOn && LockOnSystem::TryGetTargetAimPoint(entityManager, *lockOn, lockedPoint);
+			const glm::vec3 toLocked = isLocked ? KeepOnlyHorizontalPart(lockedPoint - transform->position) : glm::vec3(0.0f);
+			ReadPlayerInput(controller, glm::length(toLocked) > SmallestUsableLength ? toLocked : cameraForward, deltaTime);
+		}
 
 		// An empty stamina bar stops running (walking is free)
 		if (controller.wantsToRun && !StaminaSystem::HasStaminaLeft(entityManager, entityID))

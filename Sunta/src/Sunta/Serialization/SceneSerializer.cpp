@@ -252,6 +252,7 @@ namespace SceneKeys
 	constexpr const char* MaxPitchDegrees           = "max_pitch_degrees";
 	constexpr const char* FollowSharpness           = "follow_sharpness";
 	constexpr const char* LockOnPitchDegrees        = "lock_on_pitch_degrees";
+	constexpr const char* LockOnSideDegrees         = "lock_on_side_degrees";
 	constexpr const char* LockOnSharpness           = "lock_on_sharpness";
 	constexpr const char* ShakeDegrees              = "shake_degrees";
 	constexpr const char* ShakeFrequency            = "shake_frequency";
@@ -880,6 +881,7 @@ std::string SceneSerializer::SerializeToString(Scene& scene)
 				{ SceneKeys::MaxPitchDegrees,  followCamera->maxPitchDegrees    },
 				{ SceneKeys::FollowSharpness,  followCamera->followSharpness    },
 				{ SceneKeys::LockOnPitchDegrees, followCamera->lockOnPitchDegrees },
+				{ SceneKeys::LockOnSideDegrees, followCamera->lockOnSideDegrees },
 				{ SceneKeys::LockOnSharpness,  followCamera->lockOnSharpness    },
 				{ SceneKeys::ShakeDegrees,       followCamera->shakeDegrees       },
 				{ SceneKeys::ShakeFrequency,     followCamera->shakeFrequency     },
@@ -1849,6 +1851,7 @@ bool SceneSerializer::Deserialize(const std::string& filepath, Scene& scene)
 			followCamera.maxPitchDegrees     = followData.value(SceneKeys::MaxPitchDegrees,    followCamera.maxPitchDegrees);
 			followCamera.followSharpness     = followData.value(SceneKeys::FollowSharpness,    followCamera.followSharpness);
 			followCamera.lockOnPitchDegrees  = followData.value(SceneKeys::LockOnPitchDegrees, followCamera.lockOnPitchDegrees);
+			followCamera.lockOnSideDegrees   = followData.value(SceneKeys::LockOnSideDegrees, followCamera.lockOnSideDegrees);
 			followCamera.lockOnSharpness     = followData.value(SceneKeys::LockOnSharpness,    followCamera.lockOnSharpness);
 			followCamera.shakeDegrees        = followData.value(SceneKeys::ShakeDegrees,       followCamera.shakeDegrees);
 			followCamera.shakeFrequency      = followData.value(SceneKeys::ShakeFrequency,     followCamera.shakeFrequency);
