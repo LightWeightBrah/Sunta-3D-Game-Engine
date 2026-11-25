@@ -23,7 +23,7 @@ namespace
 constexpr const char* BuildGameArgument   = "--build-game";
 constexpr const char* DevelopmentArgument = "--development";
 
-constexpr const char* PackagedSampleProjectFolder = "Projects/MyGame";
+constexpr const char* PackagedSampleProjectFolder = "Projects/ScrapSouls";
 
 constexpr unsigned int LauncherWindowWidth  = 1100;
 constexpr unsigned int LauncherWindowHeight = 680;

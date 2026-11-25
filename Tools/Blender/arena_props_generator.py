@@ -1,9 +1,9 @@
 """
-Generates the props of the boss arena of the example game (MyGame): a ruined throne, an iron brazier, a wall module with
+Generates the props of the boss arena of the example game (Scrap Souls): a ruined throne, an iron brazier, a wall module with
 a gothic arch, a headless kneeling knight statue, swords stuck in rubble and a ruined corner tower
 
 Run (from the repository root):
-    blender --background --factory-startup --python Tools/Blender/arena_props_generator.py -- --out Projects/MyGame/res/Models/Arena
+    blender --background --factory-startup --python Tools/Blender/arena_props_generator.py -- --out Projects/ScrapSouls/res/Models/Arena
 
 Writes <out>/<Folder>/<name>.gltf (+ .bin, _diffuse.png, _specular.png). They are the game's models: a scene uses them
 with "model_name": "<name>". Prints each prop's box collider (half extents and offset, in the engine's axes)

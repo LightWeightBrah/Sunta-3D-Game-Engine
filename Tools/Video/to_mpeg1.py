@@ -7,7 +7,7 @@ Run (from the repository root):
 
 Blender's path on this machine: C:\\Program Files (x86)\\Steam\\steamapps\\common\\Blender\\blender.exe
 The picture keeps its proportions ('--width' sets its width, the height follows), the sound is left out (the engine
-has no sound yet). Put the result in the game's folder, e.g. Projects/MyGame/res/Videos/intro.mpg, and set the
+has no sound yet). Put the result in the game's folder, e.g. Projects/ScrapSouls/res/Videos/intro.mpg, and set the
 Cutscene's 'videoFile' to @game/Videos/intro.mpg
 """
 

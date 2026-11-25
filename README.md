@@ -208,7 +208,7 @@ How big the engine and each game made with it are, counted automatically:
 | **Engine in all** | **49,447** | **451** | |
 | Game: [`StrongestInHistoryVsToday`](Projects/StrongestInHistoryVsToday) | 6,786 | 11 | Python 3,590, Lua 3,196 |
 | Game: [`Showcase`](Projects/Showcase) | 98 | 2 | Python 88, Lua 10 |
-| Game: [`MyGame`](Projects/MyGame) | 60 | 3 | Lua 45, GLSL 15 |
+| Game: [`Scrap Souls`](Projects/ScrapSouls) | 60 | 3 | Lua 45, GLSL 15 |
 | **Games in all** | **6,944** | **16** | |
 | **Everything** | **56,391** | **467** | |
 
@@ -296,9 +296,9 @@ The results go to `bin/<Configuration>-<System>-<Processor>/` and contain `Sunta
 ## Projects and Game Builds
 
 ### Projects
-A project is a folder with a `res` folder inside. Create one in the launcher or open an existing one (the sample project is `Projects/MyGame`):
+A project is a folder with a `res` folder inside. Create one in the launcher or open an existing one (the sample project is `Projects/ScrapSouls`):
 ```text
-MyGame/
+ScrapSouls/
   res/
     game.config      game settings (edited in Project Settings)
     Scenes/          scenes (.scene)
@@ -324,8 +324,8 @@ Build/<GameName>_Release/
 * **Game icon:** choose one PNG in Project Settings and the editor makes the icon for the system it runs on (an `.exe` icon on Windows, an `.icns` inside the `.app` on macOS, the PNG itself and a `.desktop` file on Linux). Build the game on the system you want to run it on.
 * **From the command line:** the same build runs without a window, for scripts and CI:
   ```bash
-  SuntaEditor --build-game Projects/MyGame
-  SuntaEditor --build-game Projects/MyGame --development
+  SuntaEditor --build-game Projects/ScrapSouls
+  SuntaEditor --build-game Projects/ScrapSouls --development
   ```
 * The game is a copy of the Release `SuntaRuntime` program, so the Release configuration has to be compiled. A Release editor already has it.
 
@@ -352,7 +352,7 @@ Apps/
   Editor/                 SuntaEditor, the editor program
   Runtime/                SuntaRuntime, the game template
 Projects/
-  MyGame/                 the sample souls-like (what the launcher opens as the sample project)
+  ScrapSouls/              the sample souls-like (what the launcher opens as the sample project)
   StrongestInHistoryVsToday/  the second sample: one boss fight in phases, built by its own Tools/ scripts
   Showcase/               small scenes recorded for this README (physics, animation)
 Tools/
@@ -385,5 +385,5 @@ The following resources were used to study and implement the core systems of Sun
 * [**DLBmaths**](https://www.youtube.com/watch?v=HC5YikQxwZA) - shortest distance between two skew lines in 3D space (closest points of two segments).
 
 **Sounds and music of the sample game**
-* Sound effects from [**Freesound**](https://freesound.org), all CC0 (authors listed in `Projects/MyGame/res/Sounds/CREDITS.md`).
+* Sound effects from [**Freesound**](https://freesound.org), all CC0 (authors listed in `Projects/ScrapSouls/res/Sounds/CREDITS.md`).
 * Boss music: *Colossal Boss Battle* and *Heroic Demise* by [**Matthew Pablo**](http://www.matthewpablo.com), CC-BY 3.0, from [OpenGameArt](https://opengameart.org/users/matthew-pablo).

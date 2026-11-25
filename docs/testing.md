@@ -20,7 +20,7 @@ is not affected.
 ```powershell
 $env:SUNTA_MUTE = "1"; $env:SUNTA_BACKGROUND = "1"
 $env:SUNTA_INPUT_SCRIPT = "tests\fight.txt"; $env:SUNTA_TEST_OUT = "test_out"
-.\Build\MyGame_Development\MyGame.exe
+.\Build\"Scrap Souls_Development"\"Scrap Souls.exe"
 ```
 
 ## The input script

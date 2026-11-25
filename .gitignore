@@ -60,7 +60,7 @@ __pycache__/
 !**/res/Models/**/*.obj
 !**/res/Models/**/*.mtl
 
-# Intermediate pictures of Tools/UI (the finished ones are copied into Projects/MyGame/res/UI)
+# Intermediate pictures of Tools/UI (the finished ones are copied into Projects/ScrapSouls/res/UI)
 Tools/UI/Generated/
 
 # Working notes for the AI assistant (local only)

@@ -97,7 +97,7 @@ end
 ```
 
 `"Cultist Fireball"` is the name of an entity with a **Projectile** component - copy one from the sample project
-`MyGame` or make your own (Add Component > Projectile: speed, damage, homing, hit effect). Everything a script can
+`Scrap Souls` or make your own (Add Component > Projectile: speed, damage, homing, hit effect). Everything a script can
 use is in the [Scripting reference](scripting-reference.md).
 
 ## 8. Sounds and effects
@@ -115,4 +115,4 @@ and send it. Players get a loading screen, the game, and **Escape** for the paus
 
 ---
 
-Next: open `Projects/MyGame` and `Projects/StrongestInHistoryVsToday` - every system above, used at full size.
+Next: open `Projects/ScrapSouls` and `Projects/StrongestInHistoryVsToday` - every system above, used at full size.

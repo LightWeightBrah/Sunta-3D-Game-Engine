@@ -13,7 +13,7 @@ void RunGame()
 	specification.assetSource    = Sunta::AssetSource::PackagedNextToExecutable;
 	specification.loadGameConfig = true;
 
-	// A Release game has no console window, so its log goes to a file next to it ("MyGame.log")
+	// A Release game has no console window, so its log goes to a file next to it ("Scrap Souls.log")
 	specification.logFilePath = Sunta::VirtualFileSystem::GetExecutablePath().replace_extension(".log");
 
 #if defined(SUNTA_DEVELOPMENT)

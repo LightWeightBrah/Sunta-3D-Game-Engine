@@ -33,7 +33,7 @@ public:
 
 	static std::filesystem::path GetExecutableDirectory();
 
-	// Physical folder of a mount e.g. "@game" => "C:/Dev/Sunta/Projects/MyGame/res" (empty if not mounted)
+	// Physical folder of a mount e.g. "@game" => "C:/Dev/Sunta/Projects/ScrapSouls/res" (empty if not mounted)
 	static std::filesystem::path GetMountPath(const std::string& virtualPrefix);
 
 private:

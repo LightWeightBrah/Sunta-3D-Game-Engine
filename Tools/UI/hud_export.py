@@ -9,7 +9,7 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCE = os.path.join(HERE, 'Generated')
-GAME = os.path.join(HERE, '..', '..', 'Projects', 'MyGame', 'res', 'UI', 'HUD')
+GAME = os.path.join(HERE, '..', '..', 'Projects', 'ScrapSouls', 'res', 'UI', 'HUD')
 os.makedirs(GAME, exist_ok=True)
 
 # The layout of every bar piece (see hud_bars.py): 180 rows, the channel between rows 56 and 124

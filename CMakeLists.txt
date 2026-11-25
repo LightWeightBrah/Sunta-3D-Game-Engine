@@ -9,7 +9,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Project the editor shows as the sample and SuntaRuntime opens when started straight from the IDE
 # A project is a folder with "res/" inside (and "res/game.config"), see Projects/
-set(SUNTA_PROJECT_DIR "${CMAKE_SOURCE_DIR}/Projects/MyGame")
+set(SUNTA_PROJECT_DIR "${CMAKE_SOURCE_DIR}/Projects/ScrapSouls")
 
 # Lua version
 add_compile_definitions(SOL_LUA_VERSION=50400)

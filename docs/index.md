@@ -23,7 +23,7 @@ and circle, bosses behind fog gates, bonfires, healing flasks, souls lost on dea
 
 ## Two sample games
 
-- **MyGame** (`Projects/MyGame`) - a classic dark fantasy souls-like: a knight, ghouls, cultists, a boss arena.
+- **Scrap Souls** (`Projects/ScrapSouls`) - a classic dark fantasy souls-like: a knight, ghouls, cultists, a boss arena.
 - **Strongest in History Vs Today** (`Projects/StrongestInHistoryVsToday`) - a four-phase boss fight with domains,
   summons, transformations and cutscenes, built entirely from the engine's general parts and Lua scripts.
 

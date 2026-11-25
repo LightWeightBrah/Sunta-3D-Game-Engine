@@ -1,9 +1,9 @@
 """
-Generates the enemies of the example game (MyGame) from their generated, rigged models: the hollow ghoul, the ash cultist,
+Generates the enemies of the example game (Scrap Souls) from their generated, rigged models: the hollow ghoul, the ash cultist,
 the executioner and the skeleton spearman, each with its weapons as separate models
 
 Run (from the repository root, the Mixamo files of knight_generator.py must be downloaded):
-    blender --background --factory-startup --python Tools/Blender/enemies_generator.py -- --out Projects/MyGame/res/Models/Enemies
+    blender --background --factory-startup --python Tools/Blender/enemies_generator.py -- --out Projects/ScrapSouls/res/Models/Enemies
 
 Writes <out>/<Folder>/<name>.gltf for every enemy and weapon (+ .bin, _diffuse.png, _specular.png). They are the game's
 models, not the engine's: the engine loads every model in the game's folder by its file name, so a scene uses them

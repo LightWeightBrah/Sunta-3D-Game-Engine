@@ -2,7 +2,7 @@
 Generates a small kit of ruined castle pieces for building levels: floor, walls, pillars, a gate, stairs and rubble
 
 Run (from the repository root):
-    blender --background --factory-startup --python Tools/Blender/level_kit_generator.py -- --out Projects/MyGame/res/Models/Level
+    blender --background --factory-startup --python Tools/Blender/level_kit_generator.py -- --out Projects/ScrapSouls/res/Models/Level
 
 Writes one glTF per piece into <out> (castle_floor.gltf, castle_wall.gltf, ...), each with its baked textures
 Optional: --preview <folder> renders a picture of every piece

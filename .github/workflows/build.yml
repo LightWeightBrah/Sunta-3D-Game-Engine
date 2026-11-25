@@ -57,7 +57,7 @@ jobs:
             - name: "Compilation: Build Editor & Runtime"
               run: cmake --build --preset ${{ matrix.preset }}
 
-            # The engine package: the editor needs "res/Sunta" (engine resources) and "Projects/MyGame" next to itself, so it works without the repository
+            # The engine package: the editor needs "res/Sunta" (engine resources) and "Projects/ScrapSouls" next to itself, so it works without the repository
             # It is made before the sample game is built, so the package has no "Build" folder inside the project
             - name: "Package: Assemble the engine"
               shell: bash
@@ -66,25 +66,25 @@ jobs:
                   find bin/Release-* -maxdepth 1 -type f \( -name 'SuntaEditor' -o -name 'SuntaEditor.exe' -o -name 'SuntaEditor.desktop' \
                                                          -o -name 'SuntaRuntime' -o -name 'SuntaRuntime.exe' \) -exec cp {} SuntaEngine/ \;
                   cp -r Sunta/res SuntaEngine/res/Sunta
-                  cp -r Projects/MyGame SuntaEngine/Projects/MyGame
-                  rm -rf SuntaEngine/Projects/MyGame/Build
+                  cp -r Projects/ScrapSouls SuntaEngine/Projects/ScrapSouls
+                  rm -rf SuntaEngine/Projects/ScrapSouls/Build
 
-            - name: "Game: Build the sample project (MyGame)"
+            - name: "Game: Build the sample project (Scrap Souls)"
               shell: bash
-              run: ./bin/Release-*/${{ matrix.editor }} --build-game Projects/MyGame
+              run: ./bin/Release-*/${{ matrix.editor }} --build-game Projects/ScrapSouls
 
             # Zip files keep no "executable" flag, a tar archive does, so Linux and macOS players can just start the game
             - name: "Game: Pack for Linux and macOS"
               if: runner.os != 'Windows'
               shell: bash
-              run: tar -czf MyGame-${{ matrix.os }}.tar.gz -C Projects/MyGame/Build .
+              run: tar -czf ScrapSouls-${{ matrix.os }}.tar.gz -C Projects/ScrapSouls/Build .
 
             - name: "Distribution: Upload the game (Linux, macOS)"
               if: runner.os != 'Windows'
               uses: actions/upload-artifact@v4
               with:
-                  name: MyGame-${{ matrix.os }}
-                  path: MyGame-${{ matrix.os }}.tar.gz
+                  name: ScrapSouls-${{ matrix.os }}
+                  path: ScrapSouls-${{ matrix.os }}.tar.gz
                   if-no-files-found: error
                   retention-days: 5
 
@@ -92,8 +92,8 @@ jobs:
               if: runner.os == 'Windows'
               uses: actions/upload-artifact@v4
               with:
-                  name: MyGame-${{ matrix.os }}
-                  path: Projects/MyGame/Build/
+                  name: ScrapSouls-${{ matrix.os }}
+                  path: Projects/ScrapSouls/Build/
                   if-no-files-found: error
                   retention-days: 5
 

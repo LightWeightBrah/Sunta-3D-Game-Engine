@@ -1,9 +1,9 @@
 """
-Generates the modular castle kit of the example game (MyGame): walls, a wall with a doorway, a ruined wall, a ruined corner,
+Generates the modular castle kit of the example game (Scrap Souls): walls, a wall with a doorway, a ruined wall, a ruined corner,
 a pillar, a floor slab and stairs, every piece made to snap together on a 4 m grid
 
 Run (from the repository root):
-    blender --background --factory-startup --python Tools/Blender/kit_generator.py -- --out Projects/MyGame/res/Models/Kit
+    blender --background --factory-startup --python Tools/Blender/kit_generator.py -- --out Projects/ScrapSouls/res/Models/Kit
 
 Writes <out>/<Folder>/<name>.gltf (+ .bin, _diffuse.png, _specular.png) and prints each piece's box collider
 

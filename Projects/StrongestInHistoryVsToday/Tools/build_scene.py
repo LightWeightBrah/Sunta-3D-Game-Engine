@@ -1,13 +1,13 @@
 """
 Builds res/Scenes/Main.scene of the sample project 'Strongest in History Vs Today': one boss fight in several phases.
 
-The arena, the effects and (for now) the characters are taken from the sample project MyGame, so the scene is made
+The arena, the effects and (for now) the characters are taken from the sample project Scrap Souls, so the scene is made
 by a script instead of by hand: run it again after changing the numbers below.
 
     python Projects/StrongestInHistoryVsToday/Tools/build_scene.py
 
 The characters are the project's own models (Tools/characters_generator.py): they fight with bare hands and spells.
-Their components start as copies of MyGame's player and enemies, then the model, the limbs that hurt and the spells
+Their components start as copies of Scrap Souls's player and enemies, then the model, the limbs that hurt and the spells
 are set here.
 """
 
@@ -18,16 +18,16 @@ from pathlib import Path
 import scene_effects
 
 PROJECT = Path(__file__).resolve().parents[1]
-SOURCE_SCENE = PROJECT.parent / "MyGame" / "res" / "Scenes" / "Main.scene"
+SOURCE_SCENE = PROJECT.parent / "ScrapSouls" / "res" / "Scenes" / "Main.scene"
 TARGET_SCENE = PROJECT / "res" / "Scenes" / "Main.scene"
 
-# ========== Who plays whom (the components come from these characters of MyGame) ==========
+# ========== Who plays whom (the components come from these characters of Scrap Souls) ==========
 
 PLAYER_MODEL = "sih_player"
 BOSS_MODEL = "sih_boss"
 SUMMON_MODEL = "sih_summon"
 
-# The collision layers of the limbs that hurt (bit masks, as MyGame's weapons have them)
+# The collision layers of the limbs that hurt (bit masks, as Scrap Souls's weapons have them)
 PLAYER_HITBOX_LAYER = 8
 ENEMY_HITBOX_LAYER = 16
 
@@ -71,7 +71,7 @@ BOSS_START = [0.0, 0.0, -38.0]
 # A dormant enemy still has a body: it waits on its own piece of floor far outside the arena
 SUMMON_WAITING_PLACE = [0.0, 0.0, -160.0]
 
-# What is taken from MyGame's arena: only what can't be seen as a castle. Its floor's colliders, its walls as
+# What is taken from Scrap Souls's arena: only what can't be seen as a castle. Its floor's colliders, its walls as
 # unseen borders, its fires and their light. The street, the heaps of rubble and the ruins are this project's own
 ARENA_PIECES = {"Floor Arena", "Wall", "Arena Light", "Arena Cinders", "Arena Fire", "Outer Ground", "Floor Slab"}
 
@@ -331,7 +331,7 @@ def add_sky_and_camera(builder):
     camera = builder.copy_one(builder.find_source("Camera"))
     builder.get(camera)["transform"]["position"] = [PLAYER_START[0], 2.2, PLAYER_START[2] + 4.5]
     builder.get(camera)["camera"]["far_plane"] = 220.0
-    # Further back than in MyGame: one of the enemies is three meters tall
+    # Further back than in Scrap Souls: one of the enemies is three meters tall
     builder.get(camera)["follow_camera"]["distance"] = 5.6
 
 
@@ -353,7 +353,7 @@ def rubble_heap(position, turned_by, size, name="Rubble Heap"):
 
 def add_arena(builder):
     """A street of a city in ruins, as in the film: broken ground, heaps of rubble around the place of the fight
-    (the unseen walls of MyGame's arena behind them keep everyone inside), burnt out towers all around"""
+    (the unseen walls of Scrap Souls's arena behind them keep everyone inside), burnt out towers all around"""
     for index, entity in enumerate(builder.source):
         if "parent" in entity or entity["tag"]["name"] not in ARENA_PIECES:
             continue
@@ -407,7 +407,7 @@ def add_arena(builder):
 
 
 def add_approach(builder):
-    """The street to the arena (MyGame's courtyard before its boss): the ground of the ruined city, unseen walls on
+    """The street to the arena (Scrap Souls's courtyard before its boss): the ground of the ruined city, unseen walls on
     both sides hidden behind heaps of rubble, burnt out towers over it, and the fog of the arena at its end"""
     for index, entity in enumerate(builder.source):
         name = entity["tag"]["name"]
@@ -487,7 +487,7 @@ def add_effects(builder):
     builder.add(emitter("Adapt Burst", [1.0, 0.9, 0.5], [0.4, 0.25, 0.0], lifetime_seconds=1.0, start_size=0.45,
                         spawn_half_extents=[0.9, 1.6, 0.9], velocity=[0.0, 1.5, 0.0], velocity_randomness=2.5, intensity=4.0))
 
-    # The fire borrowed from MyGame burns softer here: overlapping, its specks added up to white blobs
+    # The fire borrowed from Scrap Souls burns softer here: overlapping, its specks added up to white blobs
     for index, entity in enumerate(builder.entities):
         name = entity["tag"]["name"]
         if name in ("Pillar Warning", "Pillar Burst", "Fireball Trail", "Fireball Burst") and "particle_emitter" in entity:
@@ -1165,7 +1165,7 @@ def add_seal(builder, boss):
 # ========== The street before the arena: a walk through the ruined city, his men in the way ==========
 
 # The street runs from behind the player's start to the fog of the arena; its floor, its unseen walls and its rubble
-# go on past the part copied from MyGame's courtyard
+# go on past the part copied from Scrap Souls's courtyard
 STREET_FAR_Z = 74.0
 STREET_FLOORS_Z = (20.0, 36.0, 52.0, 68.0)
 
@@ -1408,7 +1408,7 @@ def add_boss(builder):
     for index, point in enumerate(((5.5, 1.6, -3.5), (6.5, 1.3, 0.5), (6.0, 1.0, 3.0), (4.0, 1.0, 0.2), (1.7, 1.45, -2.5))):
         builder.add(named(f"Camera Point {index + 1}", point), parent=knock)
 
-    # The camera circles the fallen boss (the points come from MyGame's cutscene, moved to this boss)
+    # The camera circles the fallen boss (the points come from Scrap Souls's cutscene, moved to this boss)
     defeat = builder.copy_tree(builder.find_source("Warden Defeat"), parent=boss)
     builder.get(defeat)["tag"]["name"] = "Boss Defeat"
     builder.get(defeat)["cutscene"].update({"look_at_entity": BOSS_NAME, "title": ""})
@@ -1487,7 +1487,7 @@ def add_fight(builder):
         "cutscene": "Film Intro", "battle_music": "", "victory_message": "STRONGEST OF TODAY",
         "victory_sound": "@game/Sounds/Boss/victory.ogg"})
     builder.get(fog)["transform"]["position"] = [0.0, 0.0, -20.6]
-    # The gateway between the unseen borders is 6 m wide (the borders at x = +-5 reach in to +-3): MyGame's fog was
+    # The gateway between the unseen borders is 6 m wide (the borders at x = +-5 reach in to +-3): Scrap Souls's fog was
     # 3.5 m, so the player could walk out of the arena beside it. It fills the gateway now, and so does its mist
     builder.get(fog)["box_collider"]["half_extents"][0] = FOG_GATE_HALF_WIDTH
     # (a wall for the player, mist for the camera: closed behind a player standing at it, it pushed the camera into his head)
