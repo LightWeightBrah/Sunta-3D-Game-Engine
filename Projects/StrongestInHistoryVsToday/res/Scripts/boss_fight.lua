@@ -2074,10 +2074,27 @@ end
 O.Vessel = { { "Vessel Answer", "answer" }, { "Vessel Bottle", "bottle" }, { "Vessel Gesture", "gesture" }, { "Vessel Armor", "armor" },
              { "Vessel Draw", "draw" }, { "Vessel Face-off", "faceoff" } }
 
+-- How far apart they stand for the answer: its shots look at the player from 1.5-2.7 m before him, so the boss
+-- closer than that (in his bulky armor) filled them with the back of his armor
+O.VesselApart = 4.2
+
 function O.startVessel()
     O.vessel = { step = 0, shot = nil }
     isChanneling = true
     this.enemy:startAttackCooldown(10)
+    local player = O.playerEntity()
+    if player then
+        local p, b = player.transform.position, this.transform.position
+        local away = vec3(b.x - p.x, 0, b.z - p.z)
+        if away:length() < 0.1 then away = vec3(0, 0, -1) end
+        away = away:normalized()
+        if (b - p):length() < O.VesselApart then
+            this.transform.position = vec3(p.x + away.x * O.VesselApart, b.y, p.z + away.z * O.VesselApart)
+        end
+        -- face to face: the shots hang on the player and look the way he faces
+        this.transform.rotation = vec3(0, O.yawToward(this.transform.position, p) + 180, 0)
+        player.transform.rotation = vec3(0, O.yawToward(p, this.transform.position) + 180, 0)
+    end
 end
 
 function O.vesselBeat(beat)
