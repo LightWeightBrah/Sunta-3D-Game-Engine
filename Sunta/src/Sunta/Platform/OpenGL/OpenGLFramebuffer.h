@@ -19,6 +19,7 @@ public:
 	virtual void Resize(int width, int height) override;
 
 	virtual void BindColorTexture(unsigned int index, unsigned int slot) const override;
+	virtual void BlitColorTo(Framebuffer& target) const override;
 	virtual void BindDepthTexture(unsigned int slot) const override;
 
 	virtual const FramebufferSpecification& GetSpecification() const override { return specification; }

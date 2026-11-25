@@ -47,6 +47,9 @@ public:
 
 	// For the shaders that read it: the color picture 'index' (in the order of the specification), or the depth
 	virtual void BindColorTexture(unsigned int index, unsigned int slot) const = 0;
+
+	// Copies the first color picture into 'target' (of the same size); the framebuffer bound before stays bound
+	virtual void BlitColorTo(Framebuffer& target) const = 0;
 	virtual void BindDepthTexture(unsigned int slot) const = 0;
 
 	virtual const FramebufferSpecification& GetSpecification() const = 0;

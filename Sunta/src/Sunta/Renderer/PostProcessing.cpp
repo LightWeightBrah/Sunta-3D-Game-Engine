@@ -150,8 +150,38 @@ bool PostProcessing::Begin(int width, int height, float clearR, float clearG, fl
 
 	// Ended in End: the scene is drawn into it until then
 	sceneTarget->Bind();
+	isDrawingScene = true;
 	sceneTarget->Clear(clearR, clearG, clearB, 1.0f);
 	return true;
+}
+
+bool PostProcessing::CopySceneForSeeThrough()
+{
+	if (!isDrawingScene || !sceneTarget)
+		return false;
+
+	const FramebufferSpecification& scene = sceneTarget->GetSpecification();
+	ResizeOrCreate(sceneCopy, scene.width, scene.height, false);
+	if (!sceneCopy->IsComplete())
+		return false;
+
+	sceneTarget->BlitColorTo(*sceneCopy);
+	hasSceneCopy = true;
+	return true;
+}
+
+void PostProcessing::BindSceneCopy(unsigned int slot)
+{
+	if (sceneCopy)
+		sceneCopy->BindColorTexture(0, slot);
+}
+
+glm::vec2 PostProcessing::GetSceneCopySize()
+{
+	if (!sceneCopy)
+		return glm::vec2(1.0f);
+	const FramebufferSpecification& copy = sceneCopy->GetSpecification();
+	return glm::vec2((float)copy.width, (float)copy.height);
 }
 
 int PostProcessing::MakeBloom(const PostProcessSettings& settings)
@@ -194,6 +224,8 @@ int PostProcessing::MakeBloom(const PostProcessSettings& settings)
 void PostProcessing::End(const PostProcessSettings& settings)
 {
 	sceneTarget->Unbind();
+	isDrawingScene = false;
+	hasSceneCopy   = false;
 
 	RendererDevice& rendererDevice = Renderer::GetDevice();
 

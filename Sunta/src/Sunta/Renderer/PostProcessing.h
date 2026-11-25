@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <memory>
 
 namespace Sunta
@@ -40,6 +42,15 @@ public:
 	// Puts the finished picture on the screen (the framebuffer used before Begin)
 	static void End(const PostProcessSettings& settings);
 
+	// See-through things (crystal, ice): between Begin and End, copies what is drawn so far, so they can show it
+	// through themselves, bent (see Lit.shader, CalculateCrystal). False when there is nothing to copy from
+	static bool CopySceneForSeeThrough();
+	// Binds that copy to a texture slot; its size in pixels
+	static void BindSceneCopy(unsigned int slot);
+	// True between a successful copy and the end of the scene
+	static bool HasSceneCopy() { return hasSceneCopy; }
+	static glm::vec2 GetSceneCopySize();
+
 	// An impact frame: for a blink the picture is blurred out from its middle, its colors split at the edges and its
 	// contrast punched up (the way fighting games and action films sell a heavy blow). 'strength' 0..1, fading
 	// over 'seconds' of real time; a stronger kick replaces a weaker one still fading
@@ -51,6 +62,9 @@ public:
 
 private:
 	static inline std::shared_ptr<Framebuffer> sceneTarget;
+	static inline std::shared_ptr<Framebuffer> sceneCopy;
+	static inline bool isDrawingScene = false;
+	static inline bool hasSceneCopy   = false;
 	static inline std::shared_ptr<Framebuffer> bloomTargets[2];
 
 	static inline std::shared_ptr<Shader> brightPassShader;

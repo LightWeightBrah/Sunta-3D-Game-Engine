@@ -164,6 +164,12 @@ float CalculateShadowVisibility(vec3 normal);
 vec3 CalculateDirectionalLights(DirectionalLight light, vec3 normal, 			  vec3 viewerDirection, float lightVisibility);
 vec3 CalculatePointLights(      PointLight       light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
 vec3 CalculateSpotLights(       SpotLight        light, vec3 normal, vec3 fragPos, vec3 viewerDirection);
+// What is behind a see-through part (see Renderer::DrawModel, Scene::Render): a copy of the scene drawn so far
+uniform sampler2D sceneCopy;
+uniform bool      hasSceneCopy;
+uniform vec4      sceneCopySize;  // xy: its size in pixels
+uniform mat4      view;
+
 vec3 CalculateCrystal(vec3 lit, vec3 normal, vec3 viewerDirection);
 
 void main()
@@ -346,6 +352,24 @@ vec3 CalculateCrystal(vec3 lit, vec3 normal, vec3 viewerDirection)
 	// (a milky body of its own under the clear surface: crystal of oil, not a mirror of chrome)
 	vec3 through = air * 1.2f + vec3(0.2f, 0.17f, 0.11f) + baseColor * 0.15f + lit * 0.12f;
 
+	// With the scene behind it at hand it is truly clear: what is behind shows through, bent by the surface (more
+	// where it turns away, as a thick edge of glass does), split a little into colors like a prism, tinted by its
+	// own color and a breath of milk
+	if(hasSceneCopy)
+	{
+		vec3  viewNormal = normalize(mat3(view) * normal);
+		vec2  screen     = gl_FragCoord.xy / max(sceneCopySize.xy, vec2(1.0f));
+		vec2  bend       = viewNormal.xy * (0.02f + 0.06f * (1.0f - facing));
+		vec3  behind;
+		behind.r = texture(sceneCopy, clamp(screen - bend * 1.1f, vec2(0.001f), vec2(0.999f))).r;
+		behind.g = texture(sceneCopy, clamp(screen - bend,        vec2(0.001f), vec2(0.999f))).g;
+		behind.b = texture(sceneCopy, clamp(screen - bend * 0.9f, vec2(0.001f), vec2(0.999f))).b;
+		vec3 tint = mix(vec3(1.0f), baseColor, 0.5f);
+		// (a body of pinkish milk mixed in: over a dark thing behind it, clear glass alone read as chrome)
+		vec3 milk = vec3(0.62f, 0.5f, 0.55f) * (0.6f + 0.4f * dot(lit, vec3(0.333f)));
+		through   = mix(behind * tint, milk, 0.42f) + lit * 0.05f;
+	}
+
 	float bands = 0.5f + 0.5f * sin(dot(reflected, vec3(9.1f, 6.3f, 7.7f)) + dot(FragPos, vec3(3.3f, 2.1f, 3.9f)));
 	bands = pow(bands, 8.0f);
 
@@ -357,5 +381,7 @@ vec3 CalculateCrystal(vec3 lit, vec3 normal, vec3 viewerDirection)
 		glints += directionalLights[i].color.diffuseIntensity * glint * 3.0f;
 	}
 
-	return mix(through, mirrored * 1.2f, fresnel) + vec3(1.0f, 0.96f, 0.86f) * bands * 0.55f + glints;
+	// (seen through, it mirrors less: a strong mirror over the scene behind made it chrome)
+	float mirrorStrength = hasSceneCopy ? 0.75f : 1.2f;
+	return mix(through, mirrored * mirrorStrength, fresnel * (hasSceneCopy ? 0.8f : 1.0f)) + vec3(1.0f, 0.96f, 0.86f) * bands * (hasSceneCopy ? 0.18f : 0.55f) + glints;
 }

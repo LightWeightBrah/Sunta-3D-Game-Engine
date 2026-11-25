@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "Renderer.h"
+#include "PostProcessing.h"
 
 #include "ElementBuffer.h"
 #include "VertexArray.h"
@@ -30,6 +31,7 @@ namespace
 
 // The shadow map's texture slot: above the slots the materials use for their maps
 constexpr unsigned int ShadowMapSlot = 10;
+constexpr unsigned int SceneCopySlot = 11; // the scene behind a see-through part (see DrawModel)
 
 }
 	
@@ -74,12 +76,24 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	rendererDevice->DrawElements(mesh.GetVertexArray());
 }
 	
+bool Renderer::HasSeeThroughParts(const Model& model)
+{
+	for (const auto& subMesh : model.GetSubMeshes())
+		if (subMesh.material && subMesh.material->GetData().crystal > 0.0f)
+			return true;
+	return false;
+}
+
 void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
-	float emissiveStrength, float darkness, const glm::vec3& glowColor, const glm::vec3& rimGlow, float expression) const
+	float emissiveStrength, float darkness, const glm::vec3& glowColor, const glm::vec3& rimGlow, float expression, ModelParts parts) const
 {
 	for (const auto& subMesh : model.GetSubMeshes())
 	{
 		if (!subMesh.mesh || !subMesh.material)
+			continue;
+
+		const bool isSeeThrough = subMesh.material->GetData().crystal > 0.0f;
+		if ((parts == ModelParts::Solid && isSeeThrough) || (parts == ModelParts::SeeThrough && !isSeeThrough))
 			continue;
 
 		auto shader = subMesh.material->GetShader();
@@ -92,6 +106,17 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 		shader->TrySetUniform3f("modelGlow", glowColor);
 		shader->TrySetUniform3f("modelRimGlow", rimGlow);
 		shader->TrySetUniform1f("expressionWeight", expression);
+
+		// What is behind a see-through part: the copy of the scene drawn so far (none: it is milky, as without it)
+		const bool showsSceneThrough = parts == ModelParts::SeeThrough && isSeeThrough && PostProcessing::HasSceneCopy();
+		shader->TrySetUniformBool("hasSceneCopy", showsSceneThrough);
+		if (showsSceneThrough)
+		{
+			PostProcessing::BindSceneCopy(SceneCopySlot);
+			shader->TrySetUniform1i("sceneCopy", SceneCopySlot);
+			const glm::vec2 copySize = PostProcessing::GetSceneCopySize();
+			shader->TrySetUniform4f("sceneCopySize", copySize.x, copySize.y, 0.0f, 0.0f);
+		}
 			
 		bool supportsSkinning = shader->HasFeature(ShaderFeature::Skinning);
 		bool isSkinnedMesh = supportsSkinning && model.HasBones();

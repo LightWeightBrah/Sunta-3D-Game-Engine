@@ -674,9 +674,24 @@ void Scene::Render(Renderer& renderer)
 	for (const auto& item : unlitQueue)
 		renderer.DrawMesh(*item.mesh, *item.material, item.matrix, sceneData);
 
+	// The solid parts first; the see-through (crystal) ones once all of it is drawn, showing it through themselves
+	bool hasSeeThrough = false;
 	for (const auto& item : modelQueue)
+	{
+		const bool seeThrough = isPostProcessing && Renderer::HasSeeThroughParts(*item.model);
+		hasSeeThrough = hasSeeThrough || seeThrough;
 		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength, item.darkness, item.glowColor,
-			item.rimGlow, item.expression);
+			item.rimGlow, item.expression, seeThrough ? Renderer::ModelParts::Solid : Renderer::ModelParts::All);
+	}
+	if (hasSeeThrough)
+	{
+		// (without a copy they are drawn milky, as before)
+		PostProcessing::CopySceneForSeeThrough();
+		for (const auto& item : modelQueue)
+			if (Renderer::HasSeeThroughParts(*item.model))
+				renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength, item.darkness,
+					item.glowColor, item.rimGlow, item.expression, Renderer::ModelParts::SeeThrough);
+	}
 
 	// The auras around the figures that have one: light, after everything solid
 	for (const auto& item : modelQueue)

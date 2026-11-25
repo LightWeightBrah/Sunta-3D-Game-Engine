@@ -162,6 +162,23 @@ void OpenGLFramebuffer::BindColorTexture(unsigned int index, unsigned int slot) 
 	GLCall(glBindTexture(GL_TEXTURE_2D, colorTextures[index]));
 }
 
+void OpenGLFramebuffer::BlitColorTo(Framebuffer& target) const
+{
+	const OpenGLFramebuffer& destination = static_cast<const OpenGLFramebuffer&>(target);
+
+	GLint drawnTo = 0, readFrom = 0;
+	GLCall(glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &drawnTo));
+	GLCall(glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &readFrom));
+
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, id));
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, destination.id));
+	GLCall(glBlitFramebuffer(0, 0, specification.width, specification.height,
+		0, 0, destination.specification.width, destination.specification.height, GL_COLOR_BUFFER_BIT, GL_LINEAR));
+
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, (GLuint)drawnTo));
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, (GLuint)readFrom));
+}
+
 void OpenGLFramebuffer::BindDepthTexture(unsigned int slot) const
 {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
