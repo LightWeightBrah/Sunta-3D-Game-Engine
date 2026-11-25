@@ -84,11 +84,12 @@
     "invert_y": false,
     "lock_on_pitch_degrees": 17.756999969482422,
     "lock_on_sharpness": 6.0,
+    "lock_on_side_degrees": 32.0,
     "max_pitch_degrees": 60.0,
     "min_pitch_degrees": -15.0,
     "mouse_sensitivity": 0.15000000596046448,
     "pivot_height": 1.5950000286102295,
-    "shoulder_offset": 0.0,
+    "shoulder_offset": 0.3,
     "view_pitch_offset_degrees": 0.0,
     "view_yaw_offset_degrees": 0.0
    },

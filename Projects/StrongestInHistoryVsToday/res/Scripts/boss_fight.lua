@@ -3465,7 +3465,9 @@ end
 -- The bottle from the sky become oil (film 2:28-2:30): a capsule of oil the shape of the bottle for a moment, swelling
 -- into a ball, and the ball bursting like a liquid - seconds after it landed; sizes in meters (the bottle is ~5 m tall)
 O.SwordFightCameraDistance = 5.6
-O.SwordCamera = { Shoulder = 0.0, Pitch = 13 }
+-- (a little over the right shoulder; the scene's camera also swings 32 degrees off the line to him - lockOnSideDegrees:
+-- right behind the player he hid the boss in the fist fight)
+O.SwordCamera = { Shoulder = 0.3, Pitch = 13 }
 -- (the sword fight was long and dull to the user: his health in armor comes back to a bit over half, not all of
 -- it, his blazing blade at a quarter)
 O.ArmoredHealthFraction, O.PhaseSixAt = 0.55, 0.28
