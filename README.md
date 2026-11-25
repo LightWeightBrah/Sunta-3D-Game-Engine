@@ -109,7 +109,8 @@ engine's code by `Tools/Docs/`), and [Testing a game automatically](docs/testing
   <img src="docs/media/sih-crystal-vessel.webp" width="720" alt="The player's answer: a bottle of baby oil, the sign, crystal armor and a crystal sword" />
   <p><i>The player's answer to the armor, shot by shot from the user's scenario: a bottle of baby oil gathers beside his
   open hand, bursts as he makes the sign, the oil crystallizes into armor on him and a sword of frozen oil comes out of
-  a burst - rendered with the engine's crystal material.</i></p>
+  a burst - rendered with the engine's see-through crystal material: what is behind it shows through, bent by its
+  surface (the scene is copied after the solid parts and the crystal ones sample it).</i></p>
   <img src="docs/media/sih-armored.jpg" width="356" alt="The armored boss with his burning sword and the seal behind his back" />
   <img src="docs/media/sih-jump-plunge.webp" width="356" alt="A jump and a plunge into the ground with a shockwave" />
   <p><i>A hexagonal seal burns behind the boss from the summoning on. The player can jump, kick from the air or plunge
