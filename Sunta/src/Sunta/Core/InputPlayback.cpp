@@ -12,6 +12,8 @@
 #include <stb/stb_image_write.h>
 
 #include <algorithm>
+#include <atomic>
+#include <thread>
 
 namespace Sunta
 {
@@ -20,6 +22,10 @@ namespace
 {
 
 constexpr int MouseCodeOffset = 10000; // key codes from this up are mouse buttons
+constexpr float SlowFrameSeconds = 0.1f; // a frame this long is a hitch the player feels
+
+// Pictures still being written by their own threads (the game quits only when every one is on the disk)
+std::atomic<int> picturesBeingWritten{ 0 };
 
 struct TimedCommand
 {
@@ -308,7 +314,12 @@ void InputPlayback::Update(float now)
 		return;
 
 	if (lastFrameAt >= 0.0f && now > lastFrameAt)
+	{
 		frameSeconds.push_back(now - lastFrameAt);
+		// A hitch is written where it happened: the lines of the log around it tell what was loaded or started then
+		if (now - lastFrameAt > SlowFrameSeconds)
+			SUNTA_ENGINE_LOG_WARNING("InputPlayback [{0}s]: slow frame {1} ms", static_cast<int>(now), static_cast<int>((now - lastFrameAt) * 1000.0f));
+	}
 	lastFrameAt = now;
 
 	for (auto it = releases.begin(); it != releases.end();)
@@ -398,19 +409,32 @@ void InputPlayback::AfterRender(unsigned int width, unsigned int height)
 	glReadBuffer(GL_BACK);
 	glReadPixels(0, 0, (GLsizei)width, (GLsizei)height, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
-	stbi_flip_vertically_on_write(1);
+	// Written by a thread of its own: encoding a PNG takes ~180 ms, which made every picture a hitch of the game
+	// (and the test's 'fps' measured the pictures instead of the game)
+	std::vector<std::string> paths;
 	for (const std::string& name : shotsToSave)
-	{
-		const std::string path = (std::filesystem::path(outputFolder) / (name + ".png")).string();
-		if (!stbi_write_png(path.c_str(), (int)width, (int)height, 3, pixels.data(), (int)width * 3))
-			SUNTA_ENGINE_LOG_ERROR("InputPlayback: can't save '{0}'", path);
-	}
+		paths.push_back((std::filesystem::path(outputFolder) / (name + ".png")).string());
 	shotsToSave.clear();
+
+	++picturesBeingWritten;
+	std::thread([pixels = std::move(pixels), paths = std::move(paths), width, height]() mutable
+	{
+		// OpenGL's rows go from the bottom up: turned here, not with stb's flag (shared by every thread)
+		const size_t row = (size_t)width * 3;
+		std::vector<unsigned char> upright(pixels.size());
+		for (unsigned int y = 0; y < height; ++y)
+			std::copy_n(pixels.data() + (size_t)(height - 1 - y) * row, row, upright.data() + (size_t)y * row);
+		for (const std::string& path : paths)
+			if (!stbi_write_png(path.c_str(), (int)width, (int)height, 3, upright.data(), (int)row))
+				SUNTA_ENGINE_LOG_ERROR("InputPlayback: can't save '{0}'", path);
+		--picturesBeingWritten;
+	}).detach();
 }
 
 bool InputPlayback::WantsQuit()
 {
-	return wantsQuit;
+	// (not before the last pictures are on the disk)
+	return wantsQuit && picturesBeingWritten.load() == 0;
 }
 
 void InputPlayback::SetCommandHandler(CommandHandler handler)
