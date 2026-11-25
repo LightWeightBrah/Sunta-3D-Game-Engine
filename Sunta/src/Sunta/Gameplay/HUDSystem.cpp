@@ -70,7 +70,11 @@ constexpr float PromptHeight        = 28.0f;
 constexpr float PromptBottomMargin  = 250.0f;
 constexpr float PromptPadding       = 14.0f;
 const glm::vec4 PromptColor         = glm::vec4(0.92f, 0.88f, 0.8f, 1.0f);
-const glm::vec4 PromptBackground    = glm::vec4(0.0f, 0.0f, 0.0f, 0.55f);
+const glm::vec4 PromptBackground    = glm::vec4(0.0f, 0.0f, 0.0f, 0.62f);
+const glm::vec4 PromptLineColor     = glm::vec4(0.85f, 0.68f, 0.36f, 0.75f);
+const glm::vec4 BarSheenColor       = glm::vec4(1.0f, 0.95f, 0.85f, 0.14f);
+const glm::vec4 BarShadeColor       = glm::vec4(0.0f, 0.0f, 0.0f, 0.28f);
+const glm::vec4 BarEdgeColor        = glm::vec4(1.0f, 0.9f, 0.7f, 0.35f);
 
 constexpr float NotificationSeconds = 3.5f;
 constexpr float NotificationFadeOut = 1.2f;
@@ -99,8 +103,9 @@ constexpr float SpellTextHeight      = 18.0f;
 constexpr float SpellKeyBoxWidth     = 26.0f;
 constexpr float SpellCooldownHeight  = 4.0f;
 constexpr float SpellRowBelowBars    = 16.0f; // from the bottom of the player's bars to the top of the row
-const glm::vec4 SpellKeyBackground   = glm::vec4(0.45f, 0.39f, 0.28f, 0.9f);
-const glm::vec4 SpellKeyColor        = glm::vec4(0.05f, 0.04f, 0.04f, 1.0f);
+const glm::vec4 SpellKeyBackground   = glm::vec4(0.0f, 0.0f, 0.0f, 0.5f);
+const glm::vec4 SpellSlotBackground  = glm::vec4(0.03f, 0.025f, 0.02f, 0.62f);
+const glm::vec4 SpellSlotFrame       = glm::vec4(0.55f, 0.45f, 0.28f, 0.45f);
 const glm::vec4 SpellReadyColor      = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
 const glm::vec4 SpellWaitingColor    = glm::vec4(0.5f, 0.47f, 0.42f, 1.0f);
 
@@ -161,8 +166,20 @@ glm::vec2 DrawStyledBar(const HUDStyle& style, const HUDBarStyle& bar, const glm
 			UIRenderer::DrawRectangle(channelTopLeft, size, color);
 	};
 
+	// The light on the filled part: a sheen along its top, a shade along its bottom, a bright edge where it ends
+	const auto drawSheen = [&](float part)
+	{
+		const float width = channelLength * glm::clamp(part, 0.0f, 1.0f);
+		if (width <= 1.0f)
+			return;
+		UIRenderer::DrawRectangle(channelTopLeft, glm::vec2(width, channelHeight * 0.3f), BarSheenColor);
+		UIRenderer::DrawRectangle(channelTopLeft + glm::vec2(0.0f, channelHeight * 0.72f), glm::vec2(width, channelHeight * 0.28f), BarShadeColor);
+		UIRenderer::DrawRectangle(channelTopLeft + glm::vec2(width - 2.0f, 0.0f), glm::vec2(2.0f, channelHeight), BarEdgeColor);
+	};
+
 	drawFill(trailFraction, style.trailColor);
 	drawFill(fraction, fillColor);
+	drawSheen(fraction);
 
 	UIRenderer::DrawNineSlice(topLeft, frameSize, *bar.frame, glm::vec4(bar.capLeft, 0.0f, bar.capRight, 0.0f), scale);
 
@@ -337,9 +354,13 @@ void DrawPrompt(const HUDArea& area, const PlayerHUDComponent& hud)
 		return;
 
 	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y - PromptBottomMargin);
-	const glm::vec2 size   = glm::vec2(UIRenderer::MeasureText(hud.promptText, PromptHeight) + PromptPadding * 2.0f, PromptHeight + PromptPadding);
+	const float     width  = UIRenderer::MeasureText(hud.promptText, PromptHeight) + PromptPadding * 8.0f;
+	const float     height = PromptHeight + PromptPadding * 1.4f;
 
-	UIRenderer::DrawRectangle(center - size * 0.5f, size, PromptBackground);
+	// A dark band fading out to the sides, between two thin gold lines (no hard box)
+	UIRenderer::DrawFadeBand(center, glm::vec2(width, height), PromptBackground);
+	UIRenderer::DrawFadeLine(center - glm::vec2(0.0f, height * 0.5f), width * 0.8f, 1.5f, PromptLineColor);
+	UIRenderer::DrawFadeLine(center + glm::vec2(0.0f, height * 0.5f), width * 0.8f, 1.5f, PromptLineColor);
 	UIRenderer::DrawTextCentered(hud.promptText, center, PromptHeight, PromptColor);
 }
 
@@ -351,6 +372,11 @@ void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
 	const float alpha  = glm::clamp(hud.notificationSecondsLeft / NotificationFadeOut, 0.0f, 1.0f);
 	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y * NotificationAreaY);
 
+	// (a faint dark band behind it and gold lines above and below, as the great messages of souls-likes)
+	const float width = UIRenderer::MeasureText(hud.notificationText, NotificationHeight) + NotificationHeight * 3.0f;
+	UIRenderer::DrawFadeBand(center, glm::vec2(width, NotificationHeight * 1.5f), WithAlpha(PromptBackground, alpha * 0.8f));
+	UIRenderer::DrawFadeLine(center - glm::vec2(0.0f, NotificationHeight * 0.75f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
+	UIRenderer::DrawFadeLine(center + glm::vec2(0.0f, NotificationHeight * 0.75f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
 	UIRenderer::DrawTextCentered(hud.notificationText, center, NotificationHeight, WithAlpha(NotificationColor, alpha));
 }
 
@@ -450,14 +476,20 @@ void DrawSpells(EntityManager& entityManager, unsigned int playerID, const HUDAr
 		const glm::vec2 slot  = glm::vec2(x, top);
 		const float textTop   = top + (SpellSlotHeight - SpellCooldownHeight - SpellTextHeight) * 0.5f;
 
-		UIRenderer::DrawRectangle(slot, size, CornerBackground);
-		UIRenderer::DrawRectangle(slot, glm::vec2(SpellKeyBoxWidth, SpellSlotHeight - SpellCooldownHeight), isReady ? SpellReadyColor : SpellKeyBackground);
-		UIRenderer::DrawTextCentered(key, slot + glm::vec2(SpellKeyBoxWidth, SpellSlotHeight - SpellCooldownHeight) * 0.5f, SpellTextHeight, SpellKeyColor);
-		UIRenderer::DrawTextAt(name, glm::vec2(x + SpellKeyBoxWidth + CornerPadding, textTop), SpellTextHeight, isReady ? CornerTextColor : SpellWaitingColor);
+		// A dark slot with a thin frame; the key in a small square framed in gold when the spell is ready
+		const glm::vec2 keySize = glm::vec2(SpellKeyBoxWidth, SpellSlotHeight - SpellCooldownHeight);
+		UIRenderer::DrawRectangle(slot, size, SpellSlotBackground);
+		UIRenderer::DrawRectangleOutline(slot, size, 1.0f, SpellSlotFrame);
+		UIRenderer::DrawRectangle(slot + glm::vec2(3.0f), keySize - glm::vec2(6.0f), SpellKeyBackground);
+		UIRenderer::DrawRectangleOutline(slot + glm::vec2(3.0f), keySize - glm::vec2(6.0f), 1.5f, isReady ? SpellReadyColor : SpellWaitingColor);
+		UIRenderer::DrawTextCentered(key, slot + keySize * 0.5f, SpellTextHeight, isReady ? SpellReadyColor : SpellWaitingColor);
+		UIRenderer::DrawTextAt(name, glm::vec2(x + SpellKeyBoxWidth + CornerPadding * 0.6f, textTop), SpellTextHeight, isReady ? CornerTextColor : SpellWaitingColor);
 
+		// While it comes back: a thin line filling along its bottom
 		const float ready = 1.0f - GetFraction(spell->cooldownLeft, spell->cooldownSeconds);
-		UIRenderer::DrawRectangle(glm::vec2(x, top + SpellSlotHeight - SpellCooldownHeight), glm::vec2(size.x * ready, SpellCooldownHeight),
-			isReady ? SpellReadyColor : SpellWaitingColor);
+		if (!isReady)
+			UIRenderer::DrawRectangle(glm::vec2(x, top + SpellSlotHeight - SpellCooldownHeight * 0.5f),
+				glm::vec2(size.x * ready, SpellCooldownHeight * 0.5f), SpellWaitingColor);
 
 		x += size.x + SpellSlotGap;
 	}

@@ -51,6 +51,12 @@ public:
 	static void DrawRing(const glm::vec2& center, float radius, float thickness, float fraction, const glm::vec4& color);
 
 	// Letters 'pixelHeight' tall with a soft dark shadow, so the text can be read over a bright scene
+	// A band of color that fades out to its left and right ends (behind a line of text: no hard box)
+	static void DrawFadeBand(const glm::vec2& center, const glm::vec2& size, const glm::vec4& color);
+	// A thin line that fades out to its ends (an ornament above and below a message)
+	static void DrawFadeLine(const glm::vec2& center, float width, float thickness, const glm::vec4& color);
+
+	// Text with a soft dark edge around its letters (readable over a bright sky as over a dark wall)
 	static void DrawTextAt(const std::string& text, const glm::vec2& topLeft, float pixelHeight, const glm::vec4& color);
 	static void DrawTextCentered(const std::string& text, const glm::vec2& center, float pixelHeight, const glm::vec4& color);
 	static float MeasureText(const std::string& text, float pixelHeight);

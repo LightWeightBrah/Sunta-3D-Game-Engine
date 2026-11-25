@@ -30,6 +30,9 @@ constexpr float FontBakedPixelHeight = 72.0f;
 // The shadow under text: how far down and right it is (part of the letter height) and how dark
 constexpr float TextShadowOffset = 0.06f;
 const glm::vec4 TextShadowColor  = glm::vec4(0.0f, 0.0f, 0.0f, 0.75f);
+constexpr float TextEdgeSize     = 0.045f; // the soft edge around letters, a part of their height
+constexpr float TextEdgeAlpha    = 0.45f;
+constexpr int   FadeSlices       = 24;     // a fading band is drawn as this many strips
 
 const glm::vec4 WholeTexture = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -231,6 +234,11 @@ void UIRenderer::DrawTextAt(const std::string& text, const glm::vec2& topLeft, f
 	const glm::vec2 shadowOffset = glm::vec2(pixelHeight * TextShadowOffset);
 	const glm::vec4 shadowColor  = glm::vec4(glm::vec3(TextShadowColor), TextShadowColor.a * color.a);
 
+	// A soft edge all around (four faint copies a hair off each side), then the drop shadow, then the letters
+	const float edge = glm::max(1.0f, pixelHeight * TextEdgeSize);
+	const glm::vec4 edgeColor = glm::vec4(glm::vec3(TextShadowColor), TextEdgeAlpha * color.a);
+	for (const glm::vec2 direction : { glm::vec2(-1.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(0.0f, -1.0f), glm::vec2(0.0f, 1.0f) })
+		DrawLetters(text, topLeft + direction * edge, pixelHeight, edgeColor);
 	DrawLetters(text, topLeft + shadowOffset, pixelHeight, shadowColor);
 	DrawLetters(text, topLeft, pixelHeight, color);
 }
@@ -239,6 +247,26 @@ void UIRenderer::DrawTextCentered(const std::string& text, const glm::vec2& cent
 {
 	const glm::vec2 topLeft = center - glm::vec2(MeasureText(text, pixelHeight), pixelHeight) * 0.5f;
 	DrawTextAt(text, topLeft, pixelHeight, color);
+}
+
+void UIRenderer::DrawFadeBand(const glm::vec2& center, const glm::vec2& size, const glm::vec4& color)
+{
+	// Strips from the middle out to both ends, each fainter (smooth: the square of the distance)
+	const float half  = size.x * 0.5f;
+	const float strip = half / (float)FadeSlices;
+	const float top   = center.y - size.y * 0.5f;
+	for (int i = 0; i < FadeSlices; i++)
+	{
+		const float k     = ((float)i + 0.5f) / (float)FadeSlices;
+		const glm::vec4 c = glm::vec4(glm::vec3(color), color.a * (1.0f - k * k));
+		DrawRectangle(glm::vec2(center.x + i * strip, top), glm::vec2(strip + 0.5f, size.y), c);
+		DrawRectangle(glm::vec2(center.x - (i + 1) * strip, top), glm::vec2(strip + 0.5f, size.y), c);
+	}
+}
+
+void UIRenderer::DrawFadeLine(const glm::vec2& center, float width, float thickness, const glm::vec4& color)
+{
+	DrawFadeBand(center, glm::vec2(width, thickness), color);
 }
 
 float UIRenderer::MeasureText(const std::string& text, float pixelHeight)
