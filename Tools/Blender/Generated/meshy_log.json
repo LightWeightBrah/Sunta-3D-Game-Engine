@@ -2068,5 +2068,137 @@
     },
     "output": "Generated/StrongestInHistory/diddy_armor_chest.glb",
     "date": "2026-11-21T11:56:27"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a2151d-cabb-73fc-a9c5-a47e220668c7",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Anime isekai hero character design sheet, cel shaded anime style, a young adventurer swordsman with a long coat, light leather and steel armor, a glowing magic sword, a small glowing familiar spirit floating beside him, front and side view, standing next to his white horse with blue saddle cloth, clean white background, vivid colors, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/isekai_hero.png",
+    "date": "2026-11-26T00:51:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a2151d-cab8-734f-882e-6ec86a7ea7d4",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Anime isekai final boss key visual, cel shaded anime style, an enormous ancient dragon king with crystal horns and glowing runic scales coiled around a ruined floating sky temple, magic circles and lightning, a tiny adventurer with a glowing sword facing it, dramatic sunset sky, vivid colors, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/isekai_boss.png",
+    "date": "2026-11-26T00:51:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a2151d-cabd-7233-9c97-f19c57a42e0d",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Anime isekai fantasy monster designs lineup, cel shaded anime style, vivid colors: a goblin warrior with a crude axe, an armored orc knight, a crystal golem, a dark elf mage with floating spellbooks, and a huge wyvern boss with glowing magic runes, side by side on clean white background, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/isekai_enemies.png",
+    "date": "2026-11-26T00:51:09"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a2151d-cab9-77c3-888f-d052e5596f33",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Anime isekai fantasy world key visual, bright vivid colors, cel shaded anime art style, a young adventurer on horseback on a hill overlooking a vast open fantasy kingdom: floating islands with waterfalls, a white castle town with an adventurers guild, a giant glowing world tree, a dragon flying over green meadows, magic circles in the sky, blue sky with big white clouds, Japanese anime background art, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/isekai_world.png",
+    "date": "2026-11-26T00:51:51"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21520-f154-75e9-baa1-cbf08cc5e2c8",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The final boss: the Demon Lord, a colossal titan chained by glowing runic chains to two mountains, breaking one chain, molten cracks in his black stone body, crown of spires, a tiny lone rider on horseback facing him on a ruined causeway, volcano erupting, purple lightning, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/dark_titan_boss.png",
+    "date": "2026-11-26T00:54:36"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21520-f157-7709-b5fe-1a35b22db860",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Enemy designs lineup side by side on plain dark background: a hollow knight of the cursed kingdom in rusted black armor with a tattered red cloak, a rune-cultist with a burning chain flail, a corrupted wolf-beast with glowing cracks, a giant obsidian golem with lava veins, and a demon general on a skeletal horse, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/dark_enemies.png",
+    "date": "2026-11-26T00:54:46"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21520-f157-7707-95c8-c4382168270e",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A fortified frontier town at dusk on the edge of a cursed land, the adventurers guild hall with a big wooden quest board and banners, timber houses, torches, a stone wall and gate, mercenaries and a stable with horses, a chained titan silhouette and a volcano far on the horizon under lightning, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/dark_town.png",
+    "date": "2026-11-26T00:54:46"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21520-f155-720e-abc3-72aaea5fd04f",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Character concept sheet: a summoned hero from another world, a young man in a dark hooded travelling cloak over worn steel and leather armor, a longsword with faint glowing violet runes, a summoning brand glowing on his left hand, front and side view, next to his black warhorse with scarred barding and a red saddle cloth, plain dark grey background, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/dark_hero_horse.png",
+    "date": "2026-11-26T00:54:46"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21524-4ec1-7686-b2e3-2eb758f289c6",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The Sovereign's crypt citadel, a vast gothic throne hall carved into a mountain, a bone throne under a broken stained glass window, loyal undead servants: a skeletal butler, a hooded lich advisor with floating books, knight guards with violet flames, candles and violet fire braziers, a war map table, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/sovereign_crypt.png",
+    "date": "2026-11-26T00:58:18"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21524-4ec1-7686-859d-e9a949aaeca5",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Character concept sheet: the Ashen Sovereign, an undead king risen from his tomb, tall armored warrior in blackened ornate plate armor with a tattered royal cape, a cracked iron crown fused to a helm, pale violet fire burning in the eye slits and in cracks of the armor, a huge greatsword and a chain hanging from one wrist, front and side view, plain dark grey background, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/sovereign_hero.png",
+    "date": "2026-11-26T00:58:27"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21524-4f4a-7554-ba68-7a9847bdd4d3",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Epic boss fight concept: a colossal stone titan the size of a mountain walking through a burning valley, a tiny armored warrior climbing the chains and ledges on its back, a temple of the gods carved into its shoulders, glowing golden runes on its body, huge scale like a living landscape, storm sky, dark fantasy painterly digital concept art, dramatic lighting, purple and crimson storm sky with glowing orange fire accents, realistic proportions, not anime, no text",
+      "remove_background": false,
+      "aspect_ratio": "16:9"
+    },
+    "output": "Tools/Blender/Concepts/ThirdGame/sovereign_titan_climb.png",
+    "date": "2026-11-26T00:58:37"
   }
 ]
