@@ -631,6 +631,19 @@ def add_crypt(builder):
         candles(builder, (side * 2.0, 0.6, THRONE_Z - 1.4), light=False)
         piece(builder, "Knight Statue", "arena_knight_statue", (side * 7.3, 0.0, 37.0), -90.0 * side, (1.22, 1.9, 1.33))
         violet_flame(builder, (side * 6.5, 0.0, 3.0))
+    # The game opens on the king's awakening (Scripts/awakening.lua plays it): from high behind the throne down the nave
+    # to the king rising from his knees, the game's name over the last seconds, then the camera settles behind him
+    awakening = builder.add(named("Awakening", cutscene={
+        "duration_seconds": 8.0, "look_at_entity": "Player", "look_at_height": 1.5, "animation_entity": "Player",
+        "animation_name": "Stand_Up", "animation_at_seconds": 3.2, "title": "GRAVE CROWN", "title_seconds": 3.0,
+        "can_be_skipped": True, "video_file": "", "fade_seconds": 1.0},
+        script=[{"script_path": "@game/Scripts/awakening.lua"}]))
+    # (the king faces the throne, north: from high behind the throne the camera comes down the nave to his face as he
+    # rises, around his right side, never through him, and ends behind him, the throne and its window before him)
+    px, _, pz = PLAYER_START
+    for i, point in enumerate(((px, 6.5, THRONE_Z + 1.5), (px + 1.5, 3.6, pz + 5.5), (px + 0.7, 1.8, pz + 2.4),
+                               (px + 2.7, 2.1, pz - 0.2), (px + 1.2, 2.6, pz - 4.5), (px, 2.8, pz - 5.5))):
+        builder.add(named("Camera Point {}".format(i + 1), point), parent=awakening)
     bonfire = builder.copy_named("Shrine Bonfire")
     builder.get(bonfire)["tag"]["name"] = "Crypt Bonfire"
     builder.get(bonfire)["transform"] = transform(CRYPT_BONFIRE)

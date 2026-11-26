@@ -6743,6 +6743,244 @@
    }
   },
   {
+   "tag": {
+    "name": "Awakening"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 8.0,
+    "look_at_entity": "Player",
+    "look_at_height": 1.5,
+    "animation_entity": "Player",
+    "animation_name": "Stand_Up",
+    "animation_at_seconds": 3.2,
+    "title": "GRAVE CROWN",
+    "title_seconds": 3.0,
+    "can_be_skipped": true,
+    "video_file": "",
+    "fade_seconds": 1.0
+   },
+   "script": [
+    {
+     "script_path": "@game/Scripts/awakening.lua"
+    }
+   ]
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     6.5,
+     38.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 139,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     1.5,
+     3.6,
+     31.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 139,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     0.7,
+     1.8,
+     28.4
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 139,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 4"
+   },
+   "transform": {
+    "position": [
+     2.7,
+     2.1,
+     25.8
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 139,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 5"
+   },
+   "transform": {
+    "position": [
+     1.2,
+     2.6,
+     21.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 139,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 6"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     2.8,
+     20.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 139,
+    "bone_name": ""
+   }
+  },
+  {
    "audio_source": {
     "sound": "@game/Sounds/Ambience/fire.ogg",
     "volume": 1.0,
@@ -6844,7 +7082,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 139
+    "index": 146
    },
    "point_light": {
     "attenuation": {
@@ -12120,7 +12358,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 263
+    "index": 270
    },
    "point_light": {
     "attenuation": {
@@ -12422,7 +12660,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 265,
+    "index": 272,
     "bone_name": "Weapon_R"
    }
   },
@@ -12460,7 +12698,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 265,
+    "index": 272,
     "bone_name": "Hand_L"
    }
   },
@@ -12713,7 +12951,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 268,
+    "index": 275,
     "bone_name": "Weapon_R"
    }
   },
@@ -12751,7 +12989,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 268,
+    "index": 275,
     "bone_name": "Hand_L"
    }
   },
@@ -13015,7 +13253,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 271,
+    "index": 278,
     "bone_name": "Weapon_L"
    }
   },
@@ -13268,7 +13506,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 273,
+    "index": 280,
     "bone_name": "Weapon_R"
    }
   },
@@ -13306,7 +13544,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 273,
+    "index": 280,
     "bone_name": "Hand_L"
    }
   },
@@ -13565,7 +13803,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 276,
+    "index": 283,
     "bone_name": "Weapon_L"
    }
   },
@@ -13823,7 +14061,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 278,
+    "index": 285,
     "bone_name": "Weapon_R"
    }
   },
@@ -13861,7 +14099,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 278,
+    "index": 285,
     "bone_name": "Hand_L"
    }
   },
@@ -14114,7 +14352,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 281,
+    "index": 288,
     "bone_name": "Weapon_R"
    }
   },
@@ -14152,7 +14390,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 281,
+    "index": 288,
     "bone_name": "Hand_L"
    }
   },
@@ -14411,7 +14649,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 284,
+    "index": 291,
     "bone_name": "Weapon_L"
    }
   },
@@ -14657,7 +14895,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 286,
+    "index": 293,
     "bone_name": "head"
    }
   },
@@ -14903,7 +15141,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 288,
+    "index": 295,
     "bone_name": "head"
    }
   },
@@ -15149,7 +15387,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 290,
+    "index": 297,
     "bone_name": "head"
    }
   },
@@ -15425,7 +15663,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 292,
+    "index": 299,
     "bone_name": "Weapon_R"
    }
   },
@@ -17971,7 +18209,7 @@
     ]
    },
    "parent": {
-    "index": 358
+    "index": 365
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -18078,7 +18316,7 @@
     ]
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": ""
    }
   },
@@ -18110,7 +18348,7 @@
     ]
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": ""
    }
   },
@@ -18142,7 +18380,7 @@
     ]
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": ""
    }
   },
@@ -18174,7 +18412,7 @@
     ]
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": ""
    }
   },
@@ -18206,7 +18444,7 @@
     ]
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": ""
    }
   },
@@ -18238,7 +18476,7 @@
     ]
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": ""
    }
   },
@@ -18548,7 +18786,7 @@
     ]
    },
    "parent": {
-    "index": 367
+    "index": 374
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -18620,7 +18858,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 367,
+    "index": 374,
     "bone_name": "Hand_L"
    }
   },
@@ -18674,7 +18912,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 367,
+    "index": 374,
     "bone_name": "Weapon_R"
    }
   },
