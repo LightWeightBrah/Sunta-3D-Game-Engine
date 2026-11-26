@@ -458,6 +458,24 @@ def build_graves(parts, generator):
     parts.box(None, "stone_light", (3.47, 0.3, 1.4), (0.85, 0.18, 0.18), rotation=(0, 8, 0), bevel=0.03)
 
 
+def build_banner(parts, generator):
+    """A standard of the gods' church over its camps: an iron pole, a pale cloth with torn tails, the chain's ring sewn
+    on it in dark thread"""
+    parts.cylinder(None, "ash", make_matrix((0.0, 0.0, 0.1)), 0.45, 0.35, 0.2, segments=10)
+    parts.cylinder(None, "iron", make_matrix((0.0, 0.0, 2.2)), 0.05, 0.04, 4.4, segments=8)
+    parts.box(None, "iron", (0.0, 0.0, 4.2), (1.3, 0.06, 0.06), bevel=0.0)
+    parts.sphere(None, "iron", (0.0, 0.0, 4.45), (0.08, 0.08, 0.12))
+    # the cloth hangs in a few slightly turned strips, the lower ones torn shorter
+    for index in range(5):
+        x = -0.48 + index * 0.24
+        length = 2.2 - abs(index - 2) * 0.15 - generator.uniform(0.0, 0.35)
+        parts.box(None, "bone", (x, 0.03 + generator.uniform(-0.02, 0.02), 4.15 - length * 0.5), (0.25, 0.025, length),
+                  rotation=(generator.uniform(-3, 3), 0, generator.uniform(-2, 2)), bevel=0.0)
+    ring(parts, "mortar", (0.0, -0.02, 3.3), 0.3, 0.04, axis="y", segments=14)
+    for z in (2.7, 2.45):
+        ring(parts, "mortar", (0.0, -0.02, z), 0.12, 0.03, axis="y", segments=10)
+
+
 # Every piece: its builder and the size of its texture
 PIECES = {
     "gc_crypt_floor":   (build_floor, BIG_TEXTURE_PIXELS),
@@ -469,6 +487,7 @@ PIECES = {
     "gc_candles":       (build_candles, TEXTURE_PIXELS),
     "gc_throne_dais":   (build_throne_dais, TEXTURE_PIXELS),
     "gc_portal":        (build_portal, TEXTURE_PIXELS),
+    "gc_banner":        (build_banner, TEXTURE_PIXELS),
     "gc_arch_ruin":     (build_arch_ruin, TEXTURE_PIXELS),
     "gc_runestone":     (build_runestone, TEXTURE_PIXELS),
     "gc_chain_anchor":  (build_chain_anchor, TEXTURE_PIXELS),

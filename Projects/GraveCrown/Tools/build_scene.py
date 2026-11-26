@@ -678,6 +678,11 @@ def dress_plains(builder, rng):
                   (0.0, collider_half[1], 0.0) if half else None, scale=size)
     for x, z, _ in camps[:3]:
         piece(builder, "Graves", "gc_graves", (x + rng.uniform(-6, 6), 0.0, z + 5.0), rng.uniform(0, 360))
+        # the gods' standards over the camp
+        for k in range(2):
+            angle = rng.uniform(0, 2 * math.pi)
+            piece(builder, "Standard of the Gods", "gc_banner", (x + math.cos(angle) * 4.5, 0.0, z + math.sin(angle) * 4.5),
+                  rng.uniform(0, 360), (0.3, 2.2, 0.3), (0.0, 2.2, 0.0))
     for x, z in ((-20.0, -60.0), (26.0, -76.0)):
         piece(builder, "Sword Graves", "arena_sword_graves", (x, 0.0, z), rng.uniform(0, 360), (0.99, 0.75, 0.95))
     # Cliffs along the edges of the world
