@@ -48,9 +48,11 @@ void TogglePixelLook(EntityManager& entityManager)
 	{
 		saved = { true, environment.pixelSize, environment.paletteLevels, environment.ditherStrength,
 		          environment.outlineStrength, environment.paintRadius };
+		// 16 levels a channel and no dither: clean flat areas of color (a dither pattern read as a checkered noise
+		// and, fixed to the screen, crawled over the world whenever the camera moved; 7 levels without it banded)
 		environment.pixelSize       = 4;
-		environment.paletteLevels   = 7;
-		environment.ditherStrength  = 0.45f;
+		environment.paletteLevels   = 16;
+		environment.ditherStrength  = 0.0f;
 		environment.outlineStrength = 0.7f;
 		environment.paintRadius     = 0;
 	}
