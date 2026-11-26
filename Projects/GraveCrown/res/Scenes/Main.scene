@@ -11662,7 +11662,9 @@
     "max_light_combo": 3,
     "recover_seconds": 1.0,
     "run_distance": 6.0,
-    "finisher_chance": 0.0
+    "finisher_chance": 0.0,
+    "guard_chance": 0.35,
+    "guard_seconds": 0.8
    },
    "model": {
     "is_visible": true,
@@ -11783,6 +11785,44 @@
    "parent": {
     "index": 252,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Hollow Knight Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 252,
+    "bone_name": "Hand_L"
    }
   },
   {
@@ -11913,7 +11953,9 @@
     "max_light_combo": 3,
     "recover_seconds": 1.0,
     "run_distance": 6.0,
-    "finisher_chance": 0.0
+    "finisher_chance": 0.0,
+    "guard_chance": 0.35,
+    "guard_seconds": 0.8
    },
    "model": {
     "is_visible": true,
@@ -12032,8 +12074,46 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 254,
+    "index": 255,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Hollow Knight 2 Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 255,
+    "bone_name": "Hand_L"
    }
   },
   {
@@ -12296,7 +12376,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 256,
+    "index": 258,
     "bone_name": "Weapon_L"
    }
   },
@@ -12428,7 +12508,9 @@
     "max_light_combo": 3,
     "recover_seconds": 1.0,
     "run_distance": 6.0,
-    "finisher_chance": 0.0
+    "finisher_chance": 0.0,
+    "guard_chance": 0.35,
+    "guard_seconds": 0.8
    },
    "model": {
     "is_visible": true,
@@ -12547,8 +12629,46 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 258,
+    "index": 260,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Hollow Knight 3 Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 260,
+    "bone_name": "Hand_L"
    }
   },
   {
@@ -12806,7 +12926,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 260,
+    "index": 263,
     "bone_name": "Weapon_L"
    }
   },
@@ -12938,7 +13058,9 @@
     "max_light_combo": 3,
     "recover_seconds": 1.0,
     "run_distance": 6.0,
-    "finisher_chance": 0.0
+    "finisher_chance": 0.0,
+    "guard_chance": 0.35,
+    "guard_seconds": 0.8
    },
    "model": {
     "is_visible": true,
@@ -13062,8 +13184,46 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 262,
+    "index": 265,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Knight Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 265,
+    "bone_name": "Hand_L"
    }
   },
   {
@@ -13194,7 +13354,9 @@
     "max_light_combo": 3,
     "recover_seconds": 1.0,
     "run_distance": 6.0,
-    "finisher_chance": 0.0
+    "finisher_chance": 0.0,
+    "guard_chance": 0.35,
+    "guard_seconds": 0.8
    },
    "model": {
     "is_visible": true,
@@ -13313,8 +13475,46 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 264,
+    "index": 268,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Hollow Knight 4 Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 268,
+    "bone_name": "Hand_L"
    }
   },
   {
@@ -13572,7 +13772,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 266,
+    "index": 271,
     "bone_name": "Weapon_L"
    }
   },
@@ -13818,7 +14018,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 268,
+    "index": 273,
     "bone_name": "head"
    }
   },
@@ -14064,7 +14264,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 270,
+    "index": 275,
     "bone_name": "head"
    }
   },
@@ -14310,7 +14510,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 272,
+    "index": 277,
     "bone_name": "head"
    }
   },
@@ -16856,7 +17056,7 @@
     ]
    },
    "parent": {
-    "index": 338
+    "index": 343
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -16940,7 +17140,7 @@
     "backstep_animation": "",
     "backstep_speed": 4.0,
     "blend_seconds": 0.18,
-    "block_animation": "",
+    "block_animation": "Block",
     "block_impact_animation": "",
     "cancel_from": 0.75,
     "death_animation": "Death",
@@ -17057,7 +17257,9 @@
     "max_light_combo": 2,
     "recover_seconds": 1.0,
     "run_distance": 12.0,
-    "finisher_chance": 0.35
+    "finisher_chance": 0.35,
+    "guard_chance": 0.3,
+    "guard_seconds": 0.9
    },
    "model": {
     "is_visible": true,
@@ -17165,7 +17367,7 @@
     ]
    },
    "parent": {
-    "index": 340
+    "index": 345
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -17201,6 +17403,44 @@
     ],
     "intensity": 2.6,
     "max_particles": 320
+   }
+  },
+  {
+   "tag": {
+    "name": "Chain Warden Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 345,
+    "bone_name": "Hand_L"
    }
   },
   {
@@ -17253,7 +17493,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 340,
+    "index": 345,
     "bone_name": "Weapon_R"
    }
   },

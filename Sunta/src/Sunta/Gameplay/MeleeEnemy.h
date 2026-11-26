@@ -14,6 +14,7 @@ namespace MeleeEnemyStateNames
 	constexpr const char* Leap       = "Leap";       // a jump at a player who keeps a distance
 	constexpr const char* Cast       = "Cast";       // a spell at a player who keeps a distance (a Spell Caster child)
 	constexpr const char* Evade      = "Evade";      // a backstep or a roll out of the way of a blow or a spell
+	constexpr const char* Guard      = "Guard";      // the block raised against a blow, then a blow back
 	constexpr const char* Recover    = "Recover";    // circles the player for a moment after attacking
 	constexpr const char* ReturnHome = "ReturnHome"; // lost the player: walks back to where it started
 }

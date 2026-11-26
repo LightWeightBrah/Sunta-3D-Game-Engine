@@ -9,6 +9,7 @@
 #include "EnemySystem.h"
 #include "GameplayMath.h"
 #include "SpellSystem.h"
+#include "CharacterActionsComponent.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
 
@@ -105,6 +106,25 @@ bool WantsToDodge(EnemyContext& context, bool& outIsFromSpell)
 	return isThreatened && context.IsDodgeReady() && EnemyContext::GetRandomFraction() < settings->dodgeChance;
 }
 
+// True when the enemy raises its guard against a blow the player just started close by (one throw of the dice for
+// each blow, see MeleeEnemyComponent::guardChance)
+bool WantsToGuard(EnemyContext& context)
+{
+	MeleeEnemyComponent* settings = context.TryGet<MeleeEnemyComponent>();
+	const CharacterActionsComponent* actions = context.TryGet<CharacterActionsComponent>();
+	if (!settings || settings->guardChance <= 0.0f || !actions || actions->blockAnimation.empty() || !context.HasTarget()
+		|| context.IsBusy())
+		return false;
+
+	const unsigned int attackNumber = context.GetTargetAttackNumber();
+	if (!context.IsTargetAttacking() || attackNumber == settings->judgedGuardAttackNumber
+		|| context.GetDistanceToTarget() > settings->dodgeDistance)
+		return false;
+
+	settings->judgedGuardAttackNumber = attackNumber;
+	return EnemyContext::GetRandomFraction() < settings->guardChance;
+}
+
 // ========== The states ==========
 
 class WatchState : public EnemyState
@@ -173,6 +193,30 @@ private:
 	bool hasAsked = false;
 };
 
+// The block held up against the player's blows, the enemy facing it; then straight back in with a blow of its own
+class GuardState : public EnemyState
+{
+public:
+	void Enter(EnemyContext& context) override
+	{
+		context.Stop();
+		context.LookAtTarget(true);
+	}
+
+	std::string Update(EnemyContext& context) override
+	{
+		context.Stop();
+		if (context.GetSecondsInState() < GetSettings(context).guardSeconds)
+		{
+			context.RequestAction(CharacterAction::Block);
+			return "";
+		}
+		if (context.IsBusy())
+			return "";
+		return Chase;
+	}
+};
+
 class ChaseState : public EnemyState
 {
 public:
@@ -188,6 +232,8 @@ public:
 
 		if (WantsToDodge(context, EvadeState::isNextFromSpell))
 			return Evade;
+		if (WantsToGuard(context))
+			return Guard;
 
 		const MeleeEnemyComponent& settings = GetSettings(context);
 		const float distance = context.GetDistanceToTarget();
@@ -342,6 +388,8 @@ public:
 
 		if (WantsToDodge(context, EvadeState::isNextFromSpell))
 			return Evade;
+		if (WantsToGuard(context))
+			return Guard;
 
 		context.CircleTarget(side);
 
@@ -385,6 +433,7 @@ void MeleeEnemy::AddStates(EnemyStateMachine& stateMachine)
 	stateMachine.SetState(Leap,                  std::make_unique<LeapState>());
 	stateMachine.SetState(Cast,                  std::make_unique<CastState>());
 	stateMachine.SetState(Evade,                 std::make_unique<EvadeState>());
+	stateMachine.SetState(Guard,                 std::make_unique<GuardState>());
 	stateMachine.SetState(Recover,               std::make_unique<RecoverState>());
 	stateMachine.SetState(ReturnHome,            std::make_unique<ReturnHomeState>());
 }

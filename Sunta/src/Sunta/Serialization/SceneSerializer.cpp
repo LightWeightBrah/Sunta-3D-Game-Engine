@@ -386,6 +386,8 @@ namespace SceneKeys
 	constexpr const char* DodgeChance               = "dodge_chance";
 	constexpr const char* DodgeDistance             = "dodge_distance";
 	constexpr const char* DodgeCooldownSeconds      = "dodge_cooldown_seconds";
+	constexpr const char* GuardChance               = "guard_chance";
+	constexpr const char* GuardSeconds              = "guard_seconds";
 	constexpr const char* WeaponDamageTaken         = "weapon_damage_taken";
 	constexpr const char* SpellDamageTaken          = "spell_damage_taken";
 	constexpr const char* SpellImmunitySeconds      = "spell_immunity_seconds";
@@ -1632,6 +1634,8 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::DodgeChance,           meleeEnemy->dodgeChance           },
 			{ SceneKeys::DodgeDistance,         meleeEnemy->dodgeDistance         },
 			{ SceneKeys::DodgeCooldownSeconds,  meleeEnemy->dodgeCooldownSeconds  },
+			{ SceneKeys::GuardChance,           meleeEnemy->guardChance           },
+			{ SceneKeys::GuardSeconds,          meleeEnemy->guardSeconds          },
 			{ SceneKeys::LeapAttackDistance,    meleeEnemy->leapAttackDistance    }
 		};
 	}
@@ -2677,6 +2681,8 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		meleeEnemy.dodgeChance           = meleeData.value(SceneKeys::DodgeChance,           meleeEnemy.dodgeChance);
 		meleeEnemy.dodgeDistance         = meleeData.value(SceneKeys::DodgeDistance,         meleeEnemy.dodgeDistance);
 		meleeEnemy.dodgeCooldownSeconds  = meleeData.value(SceneKeys::DodgeCooldownSeconds,  meleeEnemy.dodgeCooldownSeconds);
+		meleeEnemy.guardChance           = meleeData.value(SceneKeys::GuardChance,           meleeEnemy.guardChance);
+		meleeEnemy.guardSeconds          = meleeData.value(SceneKeys::GuardSeconds,          meleeEnemy.guardSeconds);
 		meleeEnemy.leapAttackDistance    = meleeData.value(SceneKeys::LeapAttackDistance,    meleeEnemy.leapAttackDistance);
 	}
 

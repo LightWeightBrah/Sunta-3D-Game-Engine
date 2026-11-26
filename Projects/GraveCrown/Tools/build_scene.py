@@ -304,11 +304,20 @@ def enemy_from(builder, source, name, model, position, yaw, display, health, rew
     return index
 
 
+def unseen_guard(builder, index, name):
+    """A guard on the weapon hand (no shield model): what lets a swordsman block, as the king does (see 'guard_chance')"""
+    builder.add(named(name + " Guard", shield={"damage_through": 0.0, "guard_angle_degrees": 110.0, "stamina_per_damage": 0.0,
+                                               "block_effect": "Hit Sparks"}), parent=index, bone="Hand_L")
+
+
 def hollow_knight(builder, position, yaw, name="Hollow Knight"):
     index = enemy_from(builder, "Hollow Ghoul", name, "hollow_knight", position, yaw, "Hollow Knight of the Gods", 150.0, 120,
                        ("hollow_knight_sword", KNIGHT_SWORD_HITBOX, 22.0, 22.0))
     entity = builder.get(index)
     entity["character_actions"].update(KNIGHT_WINDOWS)
+    # A Sekiro swordsman: it guards about one blow in three and answers at once; blocked blows wear its posture down
+    entity["melee_enemy"].update({"guard_chance": 0.35, "guard_seconds": 0.8})
+    unseen_guard(builder, index, name)
     entity["character_animation"].update({"walk_animation_speed": 1.37, "run_animation_speed": 3.2})
     entity["box_collider"].update({"half_extents": [0.32, 0.97, 0.32], "local_offset": [0.0, 0.97, 0.0]})
     entity["posture"] = {"max_posture": 70.0, "from_hits": 1.0, "from_being_parried": 25.0, "recover_per_second": 10.0,
@@ -386,9 +395,10 @@ def add_boss(builder):
     entity["currency_reward"]["amount"] = 6000
     entity["character_actions"].update(KNIGHT_WINDOWS)
     # His heavy blows can't be blocked or parried: a red glint warns of them, only a dodge is safe
-    entity["character_actions"].update({"heavy_attacks_are_perilous": True, "perilous_warning_effect": "Perilous Glint",
+    entity["character_actions"].update({"heavy_attacks_are_perilous": True, "perilous_warning_effect": "Perilous Glint", "block_animation": "Block",
                                         "leap_attack_animation": ""})
-    entity["melee_enemy"].update({"leap_attack_distance": 0.0, "attack_distance": 3.2})
+    entity["melee_enemy"].update({"leap_attack_distance": 0.0, "attack_distance": 3.2, "guard_chance": 0.3, "guard_seconds": 0.9})
+    unseen_guard(builder, boss, "Chain Warden")
     entity["boss"].update({"phase_two_animation": "", "phase_two_light_attack_1_animation": "Attack_Light_1",
                            "phase_two_light_attack_2_animation": "Attack_Light_2",
                            "phase_two_light_attack_3_animation": "Attack_Light_3",

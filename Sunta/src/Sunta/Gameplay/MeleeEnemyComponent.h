@@ -44,11 +44,18 @@ struct MeleeEnemyComponent
 	float dodgeDistance        = 3.5f;
 	float dodgeCooldownSeconds = 2.5f;
 
+	// Holding its guard (Sekiro): with this chance (0..1) it raises its block against a blow the player starts within
+	// 'dodgeDistance' (when it doesn't dodge it), holds it for 'guardSeconds', then strikes back. It needs a Block
+	// animation and a Shield child (it may be unseen: a guard on the weapon hand). Blocked blows fill its posture
+	float guardChance  = 0.0f;
+	float guardSeconds = 0.9f;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	// The player's attack and the projectile it already made up its mind about (one throw of the dice for each)
 	unsigned int judgedTargetAttackNumber = 0;
 	unsigned int judgedProjectileNumber   = 0;
+	unsigned int judgedGuardAttackNumber  = 0;
 
 	static void RegisterToInspector()
 	{
@@ -65,7 +72,9 @@ struct MeleeEnemyComponent
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, recoverSeconds,        PropertyDataType::Float, 0.0f, MaxSeconds),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeChance,           PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeDistance,         PropertyDataType::Float, 0.0f, MaxDistance),
-				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeCooldownSeconds,  PropertyDataType::Float, 0.0f, MaxSeconds)
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, dodgeCooldownSeconds,  PropertyDataType::Float, 0.0f, MaxSeconds),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, guardChance,           PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(MeleeEnemyComponent, guardSeconds,          PropertyDataType::Float, 0.0f, MaxSeconds)
 			});
 	}
 };
