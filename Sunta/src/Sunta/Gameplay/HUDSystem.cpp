@@ -97,6 +97,7 @@ constexpr float NotificationSeconds = 3.5f;
 constexpr float NotificationFadeOut = 1.2f;
 constexpr float NotificationHeight  = 72.0f;
 constexpr float NotificationAreaY   = 0.3f; // part of the HUD area from the top
+constexpr float NotificationUnderReadingY = 0.72f;
 const glm::vec4 NotificationColor   = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
 
 // The flask in the bottom left corner, the currency in the bottom right one (margins from those corners)
@@ -395,7 +396,9 @@ void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
 		return;
 
 	const float alpha  = glm::clamp(hud.notificationSecondsLeft / NotificationFadeOut, 0.0f, 1.0f);
-	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y * NotificationAreaY);
+	// While a text is read (a book's panel in the upper part of the screen) the message goes low, under it
+	const float areaY = hud.readingSecondsLeft > 0.0f ? NotificationUnderReadingY : NotificationAreaY;
+	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y * areaY);
 
 	// (a faint dark band behind it and gold lines above and below, as the great messages of souls-likes)
 	const float width = UIRenderer::MeasureText(hud.notificationText, NotificationHeight) + NotificationHeight * 3.0f;
