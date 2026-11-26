@@ -59,7 +59,7 @@ ENVIRONMENT = {
     "outline_strength": 0.45, "outline_color": [0.06, 0.03, 0.07],
     "paint_radius": 3, "saturation": 0.85, "contrast": 1.18, "color_tint": [1.04, 0.96, 0.93], "vignette": 0.38, "exposure": 1.0,
 }
-MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specular": [0.35, 0.32, 0.42],
+MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specular": [0.14, 0.12, 0.18],
              "casts_shadows": True, "shadow_distance": 45.0, "shadow_strength": 1.0, "shadow_softness": 1,
              "shadow_resolution": 2048}
 

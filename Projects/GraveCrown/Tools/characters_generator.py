@@ -94,7 +94,7 @@ GOLEM = {
 CHARACTERS = [
     Enemy("player_rigged.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
-          is_left_fist=True, is_two_handed=True, brightness=1.15, one_hand_actions=RIDING, straight_spine=True, cape=True),
+          is_left_fist=True, is_two_handed=True, brightness=0.9, one_hand_actions=RIDING, straight_spine=True, cape=True),
     # (smooth_weights tried: it tore the cape into spikes instead of easing the shoulders)
     # The hollow knight of the gods: a long sword of the same forge as the king's (the great sword's model, shorter)
     Enemy("enemy_knight_rigged.glb", "HollowKnight", "hollow_knight", 1.95, ONE_HANDED,
