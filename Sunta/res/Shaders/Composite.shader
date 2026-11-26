@@ -69,6 +69,18 @@ vec3 SceneWithGlow(vec2 coordinate)
 	return color;
 }
 
+// The whole block's average (a 4 x 4 grid of filtered reads, each blending 2 x 2 screen pixels) instead of the one
+// screen pixel in its middle: when the camera moves, a thin bright edge sliding through a block brightens it a little
+// instead of turning it on and off, so the big pixels stop flickering
+vec3 BlockAverage(vec2 blockCorner, float size, vec2 texel)
+{
+	vec3 sum = vec3(0.0);
+	for (int y = 0; y < 4; y++)
+		for (int x = 0; x < 4; x++)
+			sum += SceneWithGlow((blockCorner + (vec2(x, y) + 0.5) * size * 0.25) * texel);
+	return sum / 16.0;
+}
+
 // Kuwahara filter: of the four squares around the point (each 'paintRadius' pixels wide) the one with the least
 // change of color gives its mean - flat strokes of paint with sharp edges where the colors change
 vec3 Painted(vec2 coordinate, vec2 texel)
@@ -137,7 +149,12 @@ void main()
 	}
 	else
 	{
-		color = paintRadius > 0 ? Painted(sampleAt, 1.0 / screenSize) : SceneWithGlow(sampleAt);
+		if (paintRadius > 0)
+			color = Painted(sampleAt, 1.0 / screenSize);
+		else if (pixelSize > 1.0)
+			color = BlockAverage(block * pixelSize, pixelSize, 1.0 / screenSize);
+		else
+			color = SceneWithGlow(sampleAt);
 	}
 
 	vec3 mapped = ToneMapACES(color * exposure * (1.0 + impact * 0.35));
