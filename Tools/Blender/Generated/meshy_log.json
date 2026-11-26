@@ -2631,5 +2631,295 @@
     },
     "output": "Generated/GraveCrown/enemy_cultist_rigged.glb",
     "date": "2026-11-26T01:23:36"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a2153f-cef2-75be-befd-81ea5c9e422f",
+    "input": "Concepts/ThirdGame/Variants/weapon_greatsword.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 8000
+    },
+    "output": "Generated/GraveCrown/weapon_greatsword.glb",
+    "date": "2026-11-26T01:29:01"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21542-168e-7605-955d-d36d46a009ce",
+    "input": "Concepts/ThirdGame/Variants/enemy_golem_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep this exact obsidian golem with glowing lava cracks and one burning eye, same pose and colors, but add heavy rusted iron chains wrapped around both forearms and upper arms, with short broken chain ends hanging from the wrists. Plain flat light grey background, full body, front view, A-pose."
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_golem_c.png",
+    "date": "2026-11-26T01:30:49"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21542-1824-7009-a5c0-e072dd809737",
+    "input": "Concepts/ThirdGame/Variants/court_butler_d.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep this exact skeleton majordomo, same livery, pose and colors, but the ring of iron keys hangs neatly from a small hook on the left side of the belt at the hip, the keys resting against the coat, not floating or in front of the body. Plain flat light grey background, full body, front view, A-pose."
+    },
+    "output": "Concepts/ThirdGame/Variants/court_butler_e.png",
+    "date": "2026-11-26T01:30:50"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21542-02ec-75b9-b1e2-803a3b63d7ef",
+    "input": "Concepts/ThirdGame/Variants/enemy_knight_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/enemy_knight.glb",
+    "date": "2026-11-26T01:32:17"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21542-058f-72b2-8988-5f0ed5403244",
+    "input": "Concepts/ThirdGame/Variants/enemy_wolf_b.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 25000
+    },
+    "output": "Generated/GraveCrown/enemy_wolf.glb",
+    "date": "2026-11-26T01:32:18"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21542-04e8-759f-8920-0d9f8f4e64bd",
+    "input": "Concepts/ThirdGame/Variants/enemy_rider_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/enemy_rider.glb",
+    "date": "2026-11-26T01:32:19"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21542-00f3-7026-b5b1-51b626c7bf15",
+    "input": "Concepts/ThirdGame/Variants/enemy_cultist_b.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/enemy_cultist_b.glb",
+    "date": "2026-11-26T01:32:28"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21542-05e4-7196-9a06-9b27cd609dc0",
+    "input": "Concepts/ThirdGame/Variants/court_knight_b.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/court_knight.glb",
+    "date": "2026-11-26T01:32:29"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21543-c907-717a-a6ef-46e6ee1744ab",
+    "settings": {
+      "input_task_id": "01a21542-02ec-75b9-b1e2-803a3b63d7ef",
+      "height_meters": 1.95
+    },
+    "output": "Generated/GraveCrown/enemy_knight_rigged.glb",
+    "date": "2026-11-26T01:32:45"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21543-cf29-73ae-a27f-ed21b473843a",
+    "settings": {
+      "input_task_id": "01a21542-04e8-759f-8920-0d9f8f4e64bd",
+      "height_meters": 1.95
+    },
+    "output": "Generated/GraveCrown/enemy_rider_rigged.glb",
+    "date": "2026-11-26T01:32:46"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21543-f436-7571-ae42-6b9e78868d7f",
+    "settings": {
+      "input_task_id": "01a21542-05e4-7196-9a06-9b27cd609dc0",
+      "height_meters": 1.95
+    },
+    "output": "Generated/GraveCrown/court_knight_rigged.glb",
+    "date": "2026-11-26T01:32:55"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21543-f189-7471-ad1b-56fc447c2796",
+    "settings": {
+      "input_task_id": "01a21542-00f3-7026-b5b1-51b626c7bf15",
+      "height_meters": 1.8
+    },
+    "output": "Generated/GraveCrown/enemy_cultist_b_rigged.glb",
+    "date": "2026-11-26T01:33:05"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a2154f-aaa4-70aa-8179-e16fe1463d11",
+    "input": "Concepts/ThirdGame/Variants/court_lich_g1.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep this exact skeletal lich sage with the iron crown and tall collar, same robes, colors and painterly style, but far fewer books: only two small closed books hanging from a chain at the belt, no other books, no notebook, no pages on the chest; the chains across the chest stay. Full body, front view, neutral A-pose with arms out at 30 degrees, empty hands, plain flat light grey background."
+    },
+    "output": "Concepts/ThirdGame/Variants/court_lich_g1b.png",
+    "date": "2026-11-26T01:45:39"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a2154f-ad60-7654-8dba-5d564b704c17",
+    "input": "Concepts/ThirdGame/Variants/court_butler_e.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Keep this exact skeleton majordomo with the glowing violet eyes, same livery, pose and colors, but replace the ring of keys with a single small ornate brass key on a short thin chain clipped to the belt at the left hip, lying flat against the coat. Nothing else hangs from the belt. Full body, front view, A-pose, plain flat light grey background."
+    },
+    "output": "Concepts/ThirdGame/Variants/court_butler_f.png",
+    "date": "2026-11-26T01:45:40"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a2154f-ab91-7286-8857-b40cebe2fa4b",
+    "input": "Concepts/ThirdGame/Variants/enemy_golem_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/enemy_golem.glb",
+    "date": "2026-11-26T01:47:23"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21551-9a55-77e1-a53f-c6b6ca745d16",
+    "settings": {
+      "input_task_id": "01a2154f-ab91-7286-8857-b40cebe2fa4b",
+      "height_meters": 2.6
+    },
+    "output": "Generated/GraveCrown/enemy_golem_rigged.glb",
+    "date": "2026-11-26T01:47:59"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21552-27fe-734f-b941-021f7f8d288c",
+    "input": "Concepts/ThirdGame/Variants/titan_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/titan.glb",
+    "date": "2026-11-26T01:50:58"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21554-e044-73e2-8435-0d02ed6a444e",
+    "settings": {
+      "input_task_id": "01a21552-27fe-734f-b941-021f7f8d288c",
+      "height_meters": 2.0
+    },
+    "output": "Generated/GraveCrown/titan_rigged.glb",
+    "date": "2026-11-26T01:51:33"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21555-6f39-718e-a260-658847c5fbb0",
+    "input": "Concepts/ThirdGame/Variants/enemy_skeleton_horse_g1.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 25000
+    },
+    "output": "Generated/GraveCrown/enemy_skeleton_horse.glb",
+    "date": "2026-11-26T01:53:20"
   }
 ]
