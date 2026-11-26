@@ -98,6 +98,7 @@ constexpr float NotificationFadeOut = 1.2f;
 constexpr float NotificationHeight  = 72.0f;
 constexpr float NotificationAreaY   = 0.3f; // part of the HUD area from the top
 constexpr float NotificationUnderReadingY = 0.72f;
+constexpr float NotificationWidestPart   = 0.8f; // of the HUD area: a longer message is broken into lines
 const glm::vec4 NotificationColor   = glm::vec4(0.95f, 0.78f, 0.38f, 1.0f);
 
 // The flask in the bottom left corner, the currency in the bottom right one (margins from those corners)
@@ -390,6 +391,8 @@ void DrawPrompt(const HUDArea& area, const PlayerHUDComponent& hud)
 	UIRenderer::DrawTextCentered(hud.promptText, center, PromptHeight, PromptColor);
 }
 
+std::vector<std::string> WrapText(const std::string& text, float width, float pixelHeight);
+
 void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
 {
 	if (hud.notificationSecondsLeft <= 0.0f)
@@ -400,12 +403,30 @@ void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
 	const float areaY = hud.readingSecondsLeft > 0.0f ? NotificationUnderReadingY : NotificationAreaY;
 	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y * areaY);
 
+	// A long message is broken into lines (and a smaller text) so it never runs off the screen
+	const float widest = area.size.x * NotificationWidestPart;
+	float height = NotificationHeight;
+	std::vector<std::string> lines = { hud.notificationText };
+	if (UIRenderer::MeasureText(hud.notificationText, height) > widest)
+	{
+		height = NotificationHeight * 0.75f;
+		lines  = WrapText(hud.notificationText, widest, height);
+	}
+	float lineWidth = 0.0f;
+	for (const std::string& line : lines)
+		lineWidth = glm::max(lineWidth, UIRenderer::MeasureText(line, height));
+	const float bandHeight = height * (1.5f + 1.15f * (float)(lines.size() - 1));
+
 	// (a faint dark band behind it and gold lines above and below, as the great messages of souls-likes)
-	const float width = UIRenderer::MeasureText(hud.notificationText, NotificationHeight) + NotificationHeight * 3.0f;
-	UIRenderer::DrawFadeBand(center, glm::vec2(width, NotificationHeight * 1.5f), WithAlpha(PromptBackground, alpha * 0.8f));
-	UIRenderer::DrawFadeLine(center - glm::vec2(0.0f, NotificationHeight * 0.75f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
-	UIRenderer::DrawFadeLine(center + glm::vec2(0.0f, NotificationHeight * 0.75f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
-	UIRenderer::DrawTextCentered(hud.notificationText, center, NotificationHeight, WithAlpha(NotificationColor, alpha));
+	const float width = lineWidth + height * 3.0f;
+	UIRenderer::DrawFadeBand(center, glm::vec2(width, bandHeight), WithAlpha(PromptBackground, alpha * 0.8f));
+	UIRenderer::DrawFadeLine(center - glm::vec2(0.0f, bandHeight * 0.5f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
+	UIRenderer::DrawFadeLine(center + glm::vec2(0.0f, bandHeight * 0.5f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
+	for (size_t i = 0; i < lines.size(); ++i)
+	{
+		const float y = center.y + ((float)i - (float)(lines.size() - 1) * 0.5f) * height * 1.15f;
+		UIRenderer::DrawTextCentered(lines[i], glm::vec2(center.x, y), height, WithAlpha(NotificationColor, alpha));
+	}
 }
 
 // ========== A text read aloud (a book, a letter) ==========

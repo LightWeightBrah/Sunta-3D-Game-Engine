@@ -275,6 +275,8 @@ def add_player(builder):
     entity["box_collider"]["local_offset"] = [0.0, 1.0, 0.0]
     entity["lock_on"]["max_distance"] = 20.0
     entity["inventory"] = {}
+    # The bestiary: the first lock on to each kind of enemy tells its name and one thing worth knowing
+    entity["script"] = [{"script_path": "@game/Scripts/bestiary.lua"}]
     # The court called to his side (G): two knights for fifty seconds, once between rests at a bonfire
     entity["summon"] = {"allies": "Court Knight Ally, Court Knight Ally", "max_charges": 1, "lifetime_seconds": 50.0,
                         "summon_effect": "Wrath Burst", "called_text": "Your court answers"}
