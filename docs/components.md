@@ -52,6 +52,7 @@ In the editor: drag an entity onto another one in the Hierarchy to make it its c
 |---|---|
 | `isVisible` | Bool |
 | `emissiveStrength` | Float |
+| `fogAmount` | Float |
 
 <sub>Defined in `Sunta/src/Sunta/ECS/Component.h`</sub>
 
@@ -328,6 +329,8 @@ How to use it: Add Component > Health on the player or an enemy. Weapons (Hitbox
 | `weaponDamageTaken` | Float |
 | `spellDamageTaken` | Float |
 | `spellImmunitySeconds` | Float |
+| `rallyWindowSeconds` | Float |
+| `rallyPerDamage` | Float |
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/HealthComponent.h`</sub>
 
@@ -602,6 +605,8 @@ How to use it: Add Component > Melee Enemy (it adds the Enemy it is built on). I
 | `dodgeChance` | Float |
 | `dodgeDistance` | Float |
 | `dodgeCooldownSeconds` | Float |
+| `guardChance` | Float |
+| `guardSeconds` | Float |
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/MeleeEnemyComponent.h`</sub>
 
