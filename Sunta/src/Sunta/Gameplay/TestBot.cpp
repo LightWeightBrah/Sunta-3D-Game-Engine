@@ -9,6 +9,7 @@
 #include "EnemyComponent.h"
 #include "EntityName.h"
 #include "CharacterControllerComponent.h"
+#include "CharacterActionsComponent.h"
 #include "FollowCameraComponent.h"
 #include "Core/InputPlayback.h"
 #include "Core/Log.h"
@@ -31,6 +32,8 @@ float now			 = 0.0f;
 float approachUntil	 = -1.0f;
 float approachDistance = 1.2f;
 float fightUntil	 = -1.0f;
+float deflectUntil	 = -1.0f; // "deflect": the block raised just before each enemy blow that is coming
+float blockReleaseAt = -1.0f;
 float nextAttackAt	 = 0.0f;
 bool  isWalking		 = false;
 bool  unlockRequested = false;
@@ -71,6 +74,8 @@ bool Handle(const std::string& command, const std::string& a, const std::string&
 		approachDistance = ToFloat(a, 1.2f);
 		approachUntil	 = now + ToFloat(b, 5.0f);
 	}
+	else if (command == "deflect")
+		deflectUntil = now + ToFloat(a, 10.0f);
 	else if (command == "fight")
 	{
 		keepsLock		 = c != "free"; // "free": attack without locking on (the camera can look from aside)
@@ -161,6 +166,26 @@ void SetWalking(bool walk)
 		InputPlayback::PressKey("W");
 	else
 		InputPlayback::ReleaseKey("W");
+}
+
+// An enemy near the player whose blow is about to land: its swing is this close to the part that hurts
+constexpr float DeflectLeadProgress = 0.07f;
+constexpr float DeflectNear         = 4.0f;
+constexpr float DeflectHoldSeconds  = 0.3f;
+
+bool IsBlowComing(EntityManager& entityManager, unsigned int playerID)
+{
+	const glm::vec3 player = PositionOf(entityManager, playerID);
+	for (CharacterActionsComponent& actions : entityManager.GetAllComponents<CharacterActionsComponent>())
+	{
+		const unsigned int id = entityManager.GetEntityIDForComponent(actions);
+		if (id == playerID || !actions.IsAttacking() || glm::length(PositionOf(entityManager, id) - player) > DeflectNear)
+			continue;
+		const float hitFrom = actions.GetHitFrom();
+		if (actions.actionProgress >= hitFrom - DeflectLeadProgress && actions.actionProgress < hitFrom)
+			return true;
+	}
+	return false;
 }
 
 }
@@ -257,6 +282,18 @@ void TestBot::Update(EntityManager& entityManager, float deltaTime)
 
 	// Locked on, W walks towards the enemy (the character faces it)
 	SetWalking(now < approachUntil && hasEnemy && distance > approachDistance);
+
+	// Deflecting: the block goes up when a blow is coming and down a moment later (each blow gets a fresh raise)
+	if (blockReleaseAt > 0.0f && now >= blockReleaseAt)
+	{
+		InputPlayback::ReleaseKey("Mouse2");
+		blockReleaseAt = -1.0f;
+	}
+	else if (now < deflectUntil && blockReleaseAt < 0.0f && IsBlowComing(entityManager, playerID))
+	{
+		InputPlayback::PressKey("Mouse2");
+		blockReleaseAt = now + DeflectHoldSeconds;
+	}
 
 	if (now < fightUntil && distance < approachDistance + AttackReachExtra && now >= nextAttackAt)
 	{

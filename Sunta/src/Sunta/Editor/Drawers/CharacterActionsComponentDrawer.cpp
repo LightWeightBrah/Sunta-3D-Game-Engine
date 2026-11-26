@@ -164,6 +164,7 @@ bool DrawTiming(CharacterActionsComponent& actions)
 	edited |= ImGui::SliderFloat("Leap Hit To",       &actions.leapHitTo,        0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Parry From",        &actions.parryFrom,        0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Parry To",          &actions.parryTo,          0.0f, 1.0f);
+	edited |= ImGui::SliderFloat("Deflect Seconds",   &actions.deflectSeconds,   0.0f, 0.5f);
 	edited |= ImGui::SliderFloat("Invulnerable From", &actions.invulnerableFrom, 0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Invulnerable To",   &actions.invulnerableTo,   0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Input Buffer From", &actions.inputBufferFrom,  0.0f, 1.0f);

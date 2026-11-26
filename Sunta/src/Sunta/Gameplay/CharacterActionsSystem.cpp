@@ -1064,6 +1064,14 @@ void CharacterActionsSystem::Update(EntityManager& entityManager, bool canUseMou
 			UpdateCurrentAction(entityManager, character, request, deltaTime);
 		else if (request != CharacterAction::None && TryStartAction(entityManager, character, request))
 			MoveBody(character, 0.0f);
+
+		// The deflect's clock: from the moment the block key went down (holding the block through a combo deflects
+		// only its first blow - each blow wants its own press, as in Sekiro)
+		if (actions.isBlockHeld && !actions.wasBlockHeld)
+			actions.guardSeconds = 0.0f;
+		else
+			actions.guardSeconds += deltaTime;
+		actions.wasBlockHeld = actions.isBlockHeld;
 	}
 }
 

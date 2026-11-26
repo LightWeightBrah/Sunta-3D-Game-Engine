@@ -242,6 +242,8 @@ def add_player(builder):
     actions.update({"attack_moves": KING_MOVES, "running_attack_animation": "Attack_Running",
                     "heavy_attack_2_animation": "Attack_Heavy_2", "attack_speed": 1.05,
                     "heavy_damage_multiplier": 1.7, "riposte_damage_multiplier": 3.0, "parry_from": 0.0, "parry_to": 0.35,
+                    # the deflect: the block raised just before a blow turns it away (Sekiro's main defence)
+                    "deflect_seconds": 0.22,
                     "swing_effect": "", "heavy_swing_effect": ""})
     entity["character_animation"].update({"walk_animation_speed": 0.95, "run_animation_speed": 3.3})
     entity["healing_flask"].update({"display_name": "Grave Draught", "hidden_while_drinking": "", "max_charges": 4,

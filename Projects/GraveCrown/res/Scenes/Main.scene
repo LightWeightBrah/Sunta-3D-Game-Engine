@@ -220,6 +220,7 @@
     "heavy_attack_2_animation": "Attack_Heavy_2",
     "attack_speed": 1.05,
     "riposte_damage_multiplier": 3.0,
+    "deflect_seconds": 0.22,
     "swing_effect": "",
     "heavy_swing_effect": ""
    },

@@ -252,6 +252,11 @@ struct CharacterActionsComponent
 	float parryFrom = 0.0f;
 	float parryTo   = 0.4f;
 
+	// The deflect (Sekiro): a weapon blow that lands within this many seconds after the block went up is turned away
+	// - no stamina, no damage, bright sparks and the parry sound, the attacker's posture takes its 'fromBeingParried'
+	// (the attacker is not staggered: it may go on with its combo, each blow deflected again). 0 = blocks only block
+	float deflectSeconds = 0.0f;
+
 	// How much more an attack hurts a character that was just parried (a riposte)
 	float riposteDamageMultiplier = 3.0f;
 
@@ -339,6 +344,11 @@ struct CharacterActionsComponent
 	// True during the invulnerable part of a roll or a backstep
 	bool isInvulnerable = false;
 
+	// How long since the block key went down (the deflect's window, see deflectSeconds), and whether it was down
+	// in the last frame (every new press opens the window again, also while still reeling from a blocked blow)
+	float guardSeconds   = 0.0f;
+	bool  wasBlockHeld   = false;
+
 	// The block was asked for in this frame (the key is held, or a script keeps asking)
 	bool isBlockHeld = false;
 
@@ -372,6 +382,9 @@ struct CharacterActionsComponent
 
 	// True during the part of a parry that turns attacks away
 	bool IsParrying() const { return currentAction == CharacterAction::Parry && actionProgress >= parryFrom && actionProgress <= parryTo; }
+
+	// The block went up just now: a blow landing on it is deflected
+	bool IsDeflecting() const { return deflectSeconds > 0.0f && IsGuarding() && guardSeconds <= deflectSeconds; }
 
 	// Staggering after its attack was parried: the next hit it takes is a riposte
 	bool IsOpenToRiposte() const { return currentAction == CharacterAction::Parried; }

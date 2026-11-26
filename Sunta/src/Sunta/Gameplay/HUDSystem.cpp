@@ -81,6 +81,8 @@ const glm::vec4 BarEdgeColor        = glm::vec4(1.0f, 0.9f, 0.7f, 0.35f);
 constexpr float PostureBarHeight     = 5.0f;
 constexpr float PostureBarGap        = 5.0f;
 constexpr float BossPostureWidth     = 0.36f; // of the boss bar's length
+constexpr float PlayerPostureWidth   = 0.26f; // of the screen's width
+constexpr float PlayerPostureFromBottom = 64.0f;
 const glm::vec4 PostureLowColor      = glm::vec4(0.85f, 0.66f, 0.28f, 1.0f);
 const glm::vec4 PostureHighColor     = glm::vec4(1.0f, 0.36f, 0.08f, 1.0f);
 const glm::vec4 PostureBrokenColor   = glm::vec4(1.0f, 0.96f, 0.86f, 1.0f);
@@ -569,6 +571,8 @@ void DrawSpells(EntityManager& entityManager, unsigned int playerID, const HUDAr
 	}
 }
 
+void DrawPostureBar(EntityManager& entityManager, unsigned int entityID, const glm::vec2& center, float width);
+
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	unsigned int playerID = 0;
@@ -589,6 +593,10 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 		barsBottom = DrawStyledPlayerBars(*style, area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
 	else
 		DrawPlayerBars(area, *hud, health, entityManager.GetComponent<StaminaComponent>(playerID));
+
+	// The player's own posture (Sekiro): low in the middle of the screen, where the eyes are during a duel
+	DrawPostureBar(entityManager, playerID, glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y - PlayerPostureFromBottom),
+		area.size.x * PlayerPostureWidth);
 
 	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(playerID);
 	if (hud->showLockOnMarker && lockOn)

@@ -61,6 +61,10 @@ constexpr int   DeflectEffectBurst      = 10;
 constexpr float ParryHitStopSeconds   = 0.16f;
 constexpr float ParryCameraShake      = 0.35f;
 constexpr float RiposteHitStopSeconds = 0.2f;
+// A deflect is the beat of a Sekiro duel: sparks and a clang on every one, a freeze short enough to keep the rhythm
+constexpr int   DeflectSparksBurst    = 40;
+constexpr float DeflectHitStopSeconds = 0.07f;
+constexpr float DeflectCameraShake    = 0.15f;
 constexpr float RiposteCameraShake    = 0.5f;
 
 // What a weapon's hit came to
@@ -68,6 +72,7 @@ enum class HitResult
 {
 	Missed,   // the target couldn't be hurt (dead, rolling)
 	Parried,  // turned away by a parry: nobody is hurt, the attacker staggers
+	Deflected,// turned away by a block raised just in time: nobody is hurt, the attacker's posture fills
 	Blocked,  // the shield took it (or the guard broke)
 	Hurt,     // it landed on the body
 	Riposte   // it landed on a parried attacker: a critical blow
@@ -213,7 +218,7 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 		const glm::vec3 contactPoint = GetContactPoint(box, targetBody->worldOBB);
 		if (CombatLog::IsOn())
 		{
-			const char* names[] = { "missed", "parried", "blocked", "hurt", "riposte" };
+			const char* names[] = { "missed", "parried", "deflected", "blocked", "hurt", "riposte" };
 			CombatLog::RecordHit(entityManager, ownerID, owner.attackNumber, targetID, names[(int)result], damage, contactPoint, targetBody->worldOBB);
 		}
 
@@ -450,6 +455,9 @@ bool TryParry(EntityManager& entityManager, unsigned int defenderID, unsigned in
 	return true;
 }
 
+// The blow lands just after the defender raised the block, from the front: deflected (Sekiro)
+bool TryDeflect(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID);
+
 // The shield of the character: a child entity with a Shield component (on the left hand)
 const ShieldComponent* FindShield(EntityManager& entityManager, unsigned int characterID)
 {
@@ -510,6 +518,22 @@ BlockResult TryBlock(EntityManager& entityManager, unsigned int defenderID, unsi
 	return BlockResult::Blocked;
 }
 
+bool TryDeflect(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID)
+{
+	const CharacterActionsComponent* defender = GetActions(entityManager, defenderID);
+	const ShieldComponent*           shield   = FindShield(entityManager, defenderID);
+	if (!defender || !defender->IsDeflecting() || !shield || !IsInFrontOfShield(entityManager, defenderID, attackerID, *shield))
+		return false;
+
+	CharacterSoundsSystem::Play(entityManager, defenderID, &CharacterSoundsComponent::parrySound);
+	CharacterActionsSystem::PlayBlockImpact(entityManager, defenderID);
+	if (const PostureComponent* attackerPosture = entityManager.GetComponent<PostureComponent>(attackerID))
+		FillPosture(entityManager, attackerID, attackerPosture->fromBeingParried);
+
+	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' deflected '{1}'", GetEntityName(entityManager, defenderID), GetEntityName(entityManager, attackerID));
+	return true;
+}
+
 // A character staggering after its attack was parried takes a riposte: much more damage
 float GetRiposteMultiplier(EntityManager& entityManager, unsigned int defenderID, unsigned int attackerID)
 {
@@ -538,6 +562,9 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 			FillPosture(entityManager, attackerID, attackerPosture->fromBeingParried);
 		return HitResult::Parried;
 	}
+
+	if (kind == DamageKind::Weapon && !isPerilous && TryDeflect(entityManager, targetID, attackerID))
+		return HitResult::Deflected;
 
 	// One projectile of a volley has just hurt it: the rest of the volley passes
 	HealthComponent* targetHealth = entityManager.GetComponent<HealthComponent>(targetID);
@@ -676,6 +703,12 @@ void FeelTheHit(EntityManager& entityManager, HitResult result, const HitboxComp
 		BurstShieldEffect(entityManager, targetID, contactPoint, ParryEffectBurst, direction);
 		hitStopSeconds = ParryHitStopSeconds;
 		cameraShake    = ParryCameraShake;
+		break;
+	case HitResult::Deflected:
+		// Between a block and a parry: a bright burst of sparks, a short freeze
+		BurstShieldEffect(entityManager, targetID, contactPoint, DeflectSparksBurst, direction);
+		hitStopSeconds = DeflectHitStopSeconds;
+		cameraShake    = DeflectCameraShake;
 		break;
 	case HitResult::Blocked:
 		BurstShieldEffect(entityManager, targetID, contactPoint, BlockEffectBurst, direction);

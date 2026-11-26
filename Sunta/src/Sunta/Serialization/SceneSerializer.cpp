@@ -405,6 +405,7 @@ namespace SceneKeys
 	constexpr const char* PhaseTwoMaxLightCombo     = "phase_two_max_light_combo";
 	constexpr const char* ParryFrom                 = "parry_from";
 	constexpr const char* ParryTo                   = "parry_to";
+	constexpr const char* DeflectSeconds            = "deflect_seconds";
 	constexpr const char* RiposteDamageMultiplier   = "riposte_damage_multiplier";
 	constexpr const char* ExtraLightAttackAnimations = "extra_light_attack_animations";
 	constexpr const char* HeavyAttack2Animation     = "heavy_attack_2_animation";
@@ -1043,6 +1044,7 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::AttackDelayAt,         actions->attackDelayAt         },
 			{ SceneKeys::ParryFrom,             actions->parryFrom             },
 			{ SceneKeys::ParryTo,               actions->parryTo               },
+			{ SceneKeys::DeflectSeconds,        actions->deflectSeconds        },
 			{ SceneKeys::RiposteDamageMultiplier, actions->riposteDamageMultiplier },
 			{ SceneKeys::LightHitFrom,          actions->lightHitFrom          },
 			{ SceneKeys::LightHitTo,            actions->lightHitTo            },
@@ -2032,6 +2034,7 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		actions.attackDelayAt         = actionsData.value(SceneKeys::AttackDelayAt,         actions.attackDelayAt);
 		actions.parryFrom             = actionsData.value(SceneKeys::ParryFrom,             actions.parryFrom);
 		actions.parryTo               = actionsData.value(SceneKeys::ParryTo,               actions.parryTo);
+		actions.deflectSeconds        = actionsData.value(SceneKeys::DeflectSeconds,        actions.deflectSeconds);
 		actions.riposteDamageMultiplier = actionsData.value(SceneKeys::RiposteDamageMultiplier, actions.riposteDamageMultiplier);
 		actions.lightHitFrom          = actionsData.value(SceneKeys::LightHitFrom,          actions.lightHitFrom);
 		actions.lightHitTo            = actionsData.value(SceneKeys::LightHitTo,            actions.lightHitTo);
