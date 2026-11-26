@@ -1062,3 +1062,18 @@ It drains by itself 'recoverDelaySeconds' after the last fill, faster while the 
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/PostureComponent.h`</sub>
 
+### Terrain
+
+The ground of an open world: hills, valleys and roads from a heightmap (a grey picture: black is the lowest, white the highest). Bodies (the player, enemies, a horse) stand on it and walk up and down its slopes
+
+How to use it: Add Component > Terrain on an entity whose Model is the terrain's mesh made from the same picture (e.g. Tools/Blender: a grid displaced by the heightmap). 'heightmap' is a .png (16-bit for smooth slopes), 'sizeX' / 'sizeZ' its width and depth in meters, centered on the entity's position; 'heightScale' the height of white above the entity. Outside the picture there is no ground from it (box colliders still are)
+
+| Field | Type |
+|---|---|
+| `heightmap` | String |
+| `sizeX` | Float |
+| `sizeZ` | Float |
+| `heightScale` | Float |
+
+<sub>Defined in `Sunta/src/Sunta/Gameplay/TerrainComponent.h`</sub>
+

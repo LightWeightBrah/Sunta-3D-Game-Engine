@@ -241,6 +241,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	PickupComponent::RegisterToInspector();
 	InventoryComponent::RegisterToInspector();
 	LootDropComponent::RegisterToInspector();
+	TerrainComponent::RegisterToInspector();
 	ParticleEmitterComponent::RegisterToInspector();
 	WeaponTrailComponent::RegisterToInspector();
 	ProjectileComponent::RegisterToInspector();

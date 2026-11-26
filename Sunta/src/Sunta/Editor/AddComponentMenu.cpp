@@ -143,6 +143,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<MountComponent>           ("Mount",             Character, "A horse or beast the player rides (E)"),
 		Plain<InventoryComponent>       ("Inventory",         Character, "The items the player carries"),
 		Plain<LootDropComponent>        ("Loot Drop",         Character, "Leaves an item or a book where it dies"),
+		Plain<TerrainComponent>         ("Terrain",           Character, "Hills and valleys from a heightmap: bodies stand on it"),
 		Plain<LockOnComponent>          ("Lock On",           Character, "Locks the view on an enemy"),
 		Plain<StrikeAimComponent>       ("Strike Aim",        Character, "Bends the spine so attacks meet the enemy's head or chest"),
 		Plain<LockOnTargetComponent>    ("Lock On Target",    Character, "Can be locked on"),

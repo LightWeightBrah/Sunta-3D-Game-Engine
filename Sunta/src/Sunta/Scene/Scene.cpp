@@ -34,6 +34,7 @@
 #include "Gameplay/BonfireSystem.h"
 #include "Gameplay/MountSystem.h"
 #include "Gameplay/PickupSystem.h"
+#include "Gameplay/TerrainSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/TestBot.h"
@@ -367,6 +368,8 @@ void Scene::Update()
 		HealingFlaskSystem::Update(entityManager);
 		StaminaSystem::Update(entityManager, gameDeltaTime);
 		PhysicsSystem::UpdatePhysics(entityManager, gameDeltaTime);
+		// The ground of open worlds holds up whatever the physics let sink into it
+		TerrainSystem::KeepBodiesOnGround(entityManager);
 		// After the physics moved the mounts: their riders sit in the saddles
 		MountSystem::PlaceRiders(entityManager);
 	}
@@ -911,6 +914,7 @@ void Scene::BeginPlay()
 	BonfireSystem::PrepareForPlay(entityManager);
 	MountSystem::PrepareForPlay(entityManager);
 	PickupSystem::PrepareForPlay(entityManager);
+	TerrainSystem::PrepareForPlay(entityManager);
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);

@@ -57,6 +57,11 @@ namespace SceneKeys
 	constexpr const char* PostureComponent          = "posture";
 	constexpr const char* MountComponent            = "mount";
 	constexpr const char* PickupComponent           = "pickup";
+	constexpr const char* TerrainComponent          = "terrain";
+	constexpr const char* Heightmap                 = "heightmap";
+	constexpr const char* TerrainSizeX              = "size_x";
+	constexpr const char* TerrainSizeZ              = "size_z";
+	constexpr const char* HeightScale               = "height_scale";
 	constexpr const char* InventoryComponent        = "inventory";
 	constexpr const char* LootDropComponent         = "loot_drop";
 	constexpr const char* ItemId                    = "item_id";
@@ -1481,6 +1486,17 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		};
 	}
 
+	if (auto* terrain = entityManager.GetComponent<TerrainComponent>(i))
+	{
+		entityJson[SceneKeys::TerrainComponent] =
+		{
+			{ SceneKeys::Heightmap,    terrain->heightmap   },
+			{ SceneKeys::TerrainSizeX, terrain->sizeX       },
+			{ SceneKeys::TerrainSizeZ, terrain->sizeZ       },
+			{ SceneKeys::HeightScale,  terrain->heightScale }
+		};
+	}
+
 	if (auto* pickup = entityManager.GetComponent<PickupComponent>(i))
 	{
 		entityJson[SceneKeys::PickupComponent] =
@@ -2504,6 +2520,16 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
 		poise.staggerImmunitySeconds = poiseData.value(SceneKeys::StaggerImmunitySeconds, poise.staggerImmunitySeconds);
 		poise.currentPoise        = poise.maxPoise;
+	}
+
+	if (entityJson.contains(SceneKeys::TerrainComponent))
+	{
+		const auto& data = entityJson[SceneKeys::TerrainComponent];
+		auto& terrain = entityManager.AddComponent<TerrainComponent>(entity);
+		terrain.heightmap   = data.value(SceneKeys::Heightmap,    terrain.heightmap);
+		terrain.sizeX       = data.value(SceneKeys::TerrainSizeX, terrain.sizeX);
+		terrain.sizeZ       = data.value(SceneKeys::TerrainSizeZ, terrain.sizeZ);
+		terrain.heightScale = data.value(SceneKeys::HeightScale,  terrain.heightScale);
 	}
 
 	if (entityJson.contains(SceneKeys::PickupComponent))

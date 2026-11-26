@@ -14,12 +14,15 @@ game loads only its own models.
 
 import copy
 import json
+import sys
 import math
 import random
 import shutil
 from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import terrain_map  # noqa: E402
 SOURCE_PROJECT = PROJECT.parent / "ScrapSouls"
 SOURCE_SCENE = SOURCE_PROJECT / "res" / "Scenes" / "Main.scene"
 TARGET_SCENE = PROJECT / "res" / "Scenes" / "Main.scene"
@@ -472,9 +475,11 @@ def add_crypt(builder):
 
 
 def add_plains(builder, rng):
-    size = 2 * PLAINS_HALF_WIDTH
-    builder.add(named("Plains Ground", (0.0, -0.3, -60.0), 0.0, (size / 8.0, 1.0, 140.0 / 8.0),
-                      model={"is_visible": True, "model_name": "kit_floor"}))
+    # The ground: hills, the old road, mountains at the edges (Tools/terrain_map.py, terrain_generator.py)
+    builder.add(named("Ash Plains", (terrain_map.CENTER_X, 0.0, terrain_map.CENTER_Z),
+                      model={"is_visible": True, "model_name": "ash_plains"},
+                      terrain={"heightmap": "@game/Terrain/plains_height.png", "size_x": terrain_map.SIZE_X,
+                               "size_z": terrain_map.SIZE_Z, "height_scale": terrain_map.HEIGHT_SCALE}))
     builder.add(named("Floor Plains", (0.0, 0.0, -60.0), box_collider=collider((PLAINS_HALF_WIDTH, 0.3, 70.0), (0.0, -0.3, 0.0))))
     # The map's edges: unseen walls (the open world comes with the terrain component)
     invisible_wall(builder, (-PLAINS_HALF_WIDTH, 5.0, -60.0), (0.5, 10.0, 70.0))
@@ -538,6 +543,20 @@ def add_arena(builder):
     add_boss(builder)
 
 
+def stand_on_terrain(builder):
+    """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
+    templates far below the world stay where they are)"""
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Crypt Gate")
+    half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
+    for entity in builder.entities:
+        if "parent" in entity or entity["tag"]["name"].startswith(keep):
+            continue
+        x, y, z = entity["transform"]["position"]
+        if z > -0.5 or y < -10.0 or abs(x - terrain_map.CENTER_X) > half_x or abs(z - terrain_map.CENTER_Z) > half_z:
+            continue
+        entity["transform"]["position"][1] = y + terrain_map.height(x, z)
+
+
 def copy_shared_assets():
     source = SOURCE_PROJECT / "res"
     target = PROJECT / "res"
@@ -562,6 +581,7 @@ def main():
     add_horse(builder)
     add_court_npcs(builder)
     add_books(builder)
+    stand_on_terrain(builder)
     TARGET_SCENE.parent.mkdir(parents=True, exist_ok=True)
     TARGET_SCENE.write_text(json.dumps({"entities": builder.entities, "scene_name": "Main"}, indent=1), encoding="utf-8")
     print(f"{len(builder.entities)} entities -> {TARGET_SCENE}")
