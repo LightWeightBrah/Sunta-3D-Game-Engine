@@ -329,6 +329,51 @@ def build_throne_dais(parts, generator):
     parts.box(None, "cloth", (0.0, -1.2, 0.62), (1.3, 2.4, 0.02), bevel=0.0)
 
 
+def build_portal(parts, generator):
+    """The crypt's gate seen from the plains: buttressed piers, three pointed arches stepping in around a 4 m opening,
+    a gable with a dark rose over it, the iron gate's two leaves swung open"""
+    opening, depth = 4.0, 1.8
+    for side in (-1.0, 1.0):
+        # the buttresses: stepped back twice on the way up
+        for course in range(20):
+            z = course * 0.5
+            setback = 0.0 if z < 4.0 else (0.25 if z < 7.0 else 0.45)
+            parts.box(None, pick_stone(generator), (side * (opening * 0.5 + 1.2), -setback * 0.5, z + 0.25),
+                      (1.5 - setback * 0.4, depth - setback, 0.47), bevel=0.03)
+        parts.box(None, "stone_dark", (side * (opening * 0.5 + 1.2), -0.4, 10.2), (1.0, 0.9, 0.5), rotation=(0, side * 30, 0), bevel=0.04)
+        # the jambs: three steps of shafts
+        for step in range(3):
+            x = side * (opening * 0.5 + 0.15 + step * 0.22)
+            parts.cylinder(None, "stone_light", make_matrix((x, -depth * 0.5 + 0.2 + step * 0.25, 2.4)), 0.1, 0.09, 4.4, segments=10)
+    for step in range(3):
+        span = opening + 0.3 + step * 0.44
+        pointed_arch(parts, generator, 0.0, 4.6, span, 0.3, y=-depth * 0.5 + 0.2 + step * 0.25, stones_per_side=7,
+                     stone_size=0.3, color="stone_light" if step % 2 == 0 else "stone")
+    # the tympanum's dark stone above the opening, the gable and its rose
+    parts.box(None, "stone_dark", (0.0, 0.2, 7.6), (opening + 1.6, 1.0, 3.4), bevel=0.02)
+    for row in range(8):
+        width = (opening + 3.2) * (1.0 - row / 8.0)
+        parts.box(None, pick_stone(generator), (0.0, 0.0, 9.5 + row * 0.42), (width, depth * 0.7, 0.4), bevel=0.03)
+    ring(parts, "stone_light", (0.0, -depth * 0.35 - 0.05, 10.7), 0.9, 0.09, axis="y", segments=18)
+    parts.cylinder(None, "mortar", make_matrix((0.0, -depth * 0.35, 10.7), (90, 0, 0)), 0.85, 0.85, 0.1, segments=18)
+    for index in range(6):
+        angle = 2.0 * math.pi * index / 6
+        parts.limb(None, "stone_light", (0.0, -depth * 0.35 - 0.06, 10.7),
+                   (math.cos(angle) * 0.85, -depth * 0.35 - 0.06, 10.7 + math.sin(angle) * 0.85), 0.05, 0.05, segments=6)
+    # the gate's leaves, swung in: iron bars in a frame
+    for side in (-1.0, 1.0):
+        hinge = (side * opening * 0.5, depth * 0.5)
+        angle = math.radians(70.0) * side
+        for bar in range(6):
+            t = (bar + 0.5) / 6
+            x = hinge[0] - side * math.cos(angle * side) * t * opening * 0.5
+            y = hinge[1] + math.sin(abs(angle)) * t * opening * 0.5
+            parts.box(None, "iron", (x, y, 2.1), (0.07, 0.07, 4.2), bevel=0.0)
+        for z in (0.4, 2.0, 3.8):
+            mid = (hinge[0] - side * math.cos(abs(angle)) * opening * 0.25, hinge[1] + math.sin(abs(angle)) * opening * 0.25)
+            parts.box(None, "iron", (mid[0], mid[1], z), (opening * 0.5, 0.06, 0.1), rotation=(0, 0, -side * 70.0), bevel=0.0)
+
+
 # ========== The plains: the marks of the gods' chains ==========
 
 
@@ -423,6 +468,7 @@ PIECES = {
     "gc_sarcophagus":   (build_sarcophagus, TEXTURE_PIXELS),
     "gc_candles":       (build_candles, TEXTURE_PIXELS),
     "gc_throne_dais":   (build_throne_dais, TEXTURE_PIXELS),
+    "gc_portal":        (build_portal, TEXTURE_PIXELS),
     "gc_arch_ruin":     (build_arch_ruin, TEXTURE_PIXELS),
     "gc_runestone":     (build_runestone, TEXTURE_PIXELS),
     "gc_chain_anchor":  (build_chain_anchor, TEXTURE_PIXELS),

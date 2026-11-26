@@ -557,6 +557,10 @@ def add_crypt(builder):
     for x in (-7.0, -4.0, 4.0, 7.0):
         piece(builder, "Crypt Wall", "gc_crypt_wall", (x, 0.0, z0), 180.0, (2.0, 4.0, 0.5), (0.0, 4.0, 0.0))
     builder.add(named("Gate Lintel", (0.0, 4.6, z0), 180.0, (1.0, 0.45, 1.0), model={"is_visible": True, "model_name": "gc_crypt_wall"}))
+    # The portal the plains see: buttresses, stepped pointed arches, a gable with a dark rose, the gate swung in
+    builder.add(named("Gate Portal", (0.0, 0.0, z0 - 1.3), 180.0, model={"is_visible": True, "model_name": "gc_portal"}))
+    for side in (-1.0, 1.0):
+        violet_flame(builder, (side * 4.8, 0.0, z0 - 3.4), "Gate Flame")
     for side in (-1.0, 1.0):
         builder.add(named("Gate Pier", (side * 3.0, 0.0, z0), box_collider=collider((1.0, 4.0, 0.5))))
     # The nave: clustered columns and the ribbed vault over the nave and the aisles
@@ -734,7 +738,7 @@ def add_arena(builder):
 def stand_on_terrain(builder):
     """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
     templates far below the world stay where they are)"""
-    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Arena")
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena")
     half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
     for entity in builder.entities:
         if "parent" in entity or entity["tag"]["name"].startswith(keep):
