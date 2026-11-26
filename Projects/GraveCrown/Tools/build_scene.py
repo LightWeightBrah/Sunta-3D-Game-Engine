@@ -460,7 +460,7 @@ def add_boss(builder):
     entity["melee_enemy"].update({"leap_attack_distance": 0.0, "attack_distance": 3.2, "guard_chance": 0.3, "guard_seconds": 0.9})
     unseen_guard(builder, boss, "Chain Warden")
     # Phase two: he raises the great sword (the power-up) and fights with the spinning cleave as his heavy blow
-    entity["boss"].update({"phase_two_animation": "Taunt", "phase_two_light_attack_1_animation": "Attack_Light_1",
+    entity["boss"].update({"phase_two_glow": 5.0, "phase_two_animation": "Taunt", "phase_two_light_attack_1_animation": "Attack_Light_1",
                            "phase_two_light_attack_2_animation": "Attack_Light_2",
                            "phase_two_light_attack_3_animation": "Attack_Light_3",
                            "phase_two_heavy_attack_animation": "Attack_Heavy_2", "defeat_cutscene": "",
