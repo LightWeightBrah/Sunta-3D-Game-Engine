@@ -20,6 +20,7 @@ GLOWS = {
     "Gothic/gc_stained_window": [VIOLET, RED, GOLD, (0.0, 12.0)],
     "Gothic/gc_runestone": [VIOLET],
     "Gothic/gc_candles": [GOLD],
+    "Gothic/gc_king_banner": [VIOLET, GOLD],
 }
 
 

@@ -599,6 +599,15 @@ def add_crypt(builder):
     for x in (-7.0, -3.5, 3.5, 7.0):
         piece(builder, "Crypt Wall", "gc_crypt_wall", (x, 0.0, z1), 0.0, (2.0, 4.0, 0.5), (0.0, 4.0, 0.0))
     piece(builder, "Stained Glass Window", "gc_stained_window", (0.0, 0.0, z1 - 0.1), 0.0)
+    # The king's banners down the nave's walls, his crown on crimson, and dust drifting in the window's light
+    for z in (10.0, 18.0, 26.0, 34.0):
+        for side, yaw in ((-1.0, 90.0), (1.0, -90.0)):
+            builder.add(named("King's Banner", (side * (w - 0.65), 7.2, z), yaw,
+                              model={"is_visible": True, "model_name": "gc_king_banner", "emissive_strength": 0.8}))
+    builder.add(named("Window Dust", (0.0, 4.0, z1 - 3.0), particle_emitter={
+        "is_emitting": True, "particles_per_second": 14.0, "lifetime_seconds": 7.0, "spawn_half_extents": [2.6, 3.0, 2.2],
+        "velocity": [0.05, -0.04, 0.0], "velocity_randomness": 0.08, "gravity": [0.0, 0.0, 0.0], "start_size": 0.025,
+        "end_size": 0.02, "start_color": [1.0, 0.78, 0.9], "end_color": [0.4, 0.2, 0.4], "intensity": 1.6, "max_particles": 120}))
     # The window's colored light on the throne and the dais
     builder.add(named("Window Light", (0.0, 5.0, z1 - 3.0), point_light={
         "attenuation": {"attenuation_constant": 1.0, "attenuation_linear": 0.05, "attenuation_quadratic": 0.012},

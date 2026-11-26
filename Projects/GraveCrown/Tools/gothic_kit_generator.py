@@ -476,6 +476,26 @@ def build_banner(parts, generator):
         ring(parts, "mortar", (0.0, -0.02, z), 0.12, 0.03, axis="y", segments=10)
 
 
+def build_king_banner(parts, generator):
+    """The dead king's banner hung on a column or a wall (its origin is the hook, the cloth hangs down from it): an iron
+    bar, a long crimson cloth with a gold edge, his crown sewn in violet, the end cut into two tails"""
+    parts.box(None, "iron", (0.0, 0.0, 0.0), (1.3, 0.08, 0.08), bevel=0.0)
+    for side in (-1.0, 1.0):
+        parts.sphere(None, "iron", (side * 0.68, 0.0, 0.0), (0.07, 0.07, 0.07))
+    length = 4.2
+    parts.box(None, "cloth", (0.0, -0.06, -length * 0.5), (1.1, 0.03, length), bevel=0.0)
+    for side in (-1.0, 1.0):
+        parts.box(None, "glass_gold", (side * 0.53, -0.08, -length * 0.5), (0.05, 0.02, length), bevel=0.0)
+        # the two tails
+        parts.box(None, "cloth", (side * 0.28, -0.06, -length - 0.35), (0.5, 0.03, 0.7), rotation=(0, side * 6.0, 0), bevel=0.0)
+    # the crown: a band and five points
+    parts.box(None, "rune", (0.0, -0.09, -1.5), (0.6, 0.02, 0.14), bevel=0.0)
+    for index in range(5):
+        x = -0.26 + index * 0.13
+        height = 0.32 if index % 2 == 0 else 0.22
+        parts.box(None, "rune", (x, -0.09, -1.43 + height * 0.5), (0.07, 0.02, height), bevel=0.0)
+
+
 # Every piece: its builder and the size of its texture
 PIECES = {
     "gc_crypt_floor":   (build_floor, BIG_TEXTURE_PIXELS),
@@ -488,6 +508,7 @@ PIECES = {
     "gc_throne_dais":   (build_throne_dais, TEXTURE_PIXELS),
     "gc_portal":        (build_portal, TEXTURE_PIXELS),
     "gc_banner":        (build_banner, TEXTURE_PIXELS),
+    "gc_king_banner":   (build_king_banner, TEXTURE_PIXELS),
     "gc_arch_ruin":     (build_arch_ruin, TEXTURE_PIXELS),
     "gc_runestone":     (build_runestone, TEXTURE_PIXELS),
     "gc_chain_anchor":  (build_chain_anchor, TEXTURE_PIXELS),
