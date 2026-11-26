@@ -238,6 +238,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	PoiseComponent::RegisterToInspector();
 	PostureComponent::RegisterToInspector();
 	WrathComponent::RegisterToInspector();
+	SummonComponent::RegisterToInspector();
 	MountComponent::RegisterToInspector();
 	PickupComponent::RegisterToInspector();
 	InventoryComponent::RegisterToInspector();

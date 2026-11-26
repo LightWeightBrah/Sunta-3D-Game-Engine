@@ -274,6 +274,9 @@ def add_player(builder):
     entity["box_collider"]["local_offset"] = [0.0, 1.0, 0.0]
     entity["lock_on"]["max_distance"] = 20.0
     entity["inventory"] = {}
+    # The court called to his side (G): two knights for fifty seconds, once between rests at a bonfire
+    entity["summon"] = {"allies": "Court Knight Ally, Court Knight Ally", "max_charges": 1, "lifetime_seconds": 50.0,
+                        "summon_effect": "Wrath Burst", "called_text": "Your court answers"}
     # The king's wrath (God of War's rage): it fills as he fights, V sets it loose - eight seconds of violet fire, harder
     # blows that break guards faster
     entity["wrath"] = {"max_wrath": 100.0, "from_damage_dealt": 0.45, "from_damage_taken": 0.3, "from_deflects": 9.0,
@@ -373,6 +376,28 @@ def obsidian_golem(builder, position, yaw):
     for child in builder.entities:
         if child.get("tag", {}).get("name") == "Obsidian Golem Weapon":
             child["model"]["is_visible"] = False
+    return index
+
+
+def court_knight_ally(builder):
+    """The knights of the king's court, called to his side with G (the player's Summon): a hollow knight's fighting
+    with the court knight's body, on the player's side - its body on the player's layer, its blade on his hitbox layer.
+    The template waits dormant behind the crypt's west wall"""
+    index = hollow_knight(builder, (-11.0, 0.0, 38.0), 90.0, "Court Knight Ally")
+    entity = builder.get(index)
+    entity["model"]["model_name"] = "court_knight"
+    entity["model"]["emissive_strength"] = 1.0
+    entity["enemy"].update({"starts_dormant": True, "is_ally": True, "sight_distance": 18.0, "sight_angle_degrees": 120.0})
+    entity["enemy_health_bar"]["display_name"] = "Knight of the Court"
+    entity["box_collider"]["layer"] = 2  # the player's layer (a bit mask: Player = 1 << 1)
+    entity["health"]["max_health"] = 160.0
+    entity.pop("currency_reward", None)
+    entity.pop("loot_drop", None)
+    entity["melee_enemy"].update({"give_up_distance": 30.0, "guard_chance": 0.25})
+    for child in builder.entities:
+        if child.get("parent", {}).get("index") == index and "hitbox" in child:
+            child["hitbox"]["layer"] = PLAYER_HITBOX_LAYER
+            child["hitbox"]["damage"] = 18.0
     return index
 
 
@@ -668,6 +693,7 @@ def add_crypt(builder):
     builder.get(bonfire)["transform"] = transform(CRYPT_BONFIRE)
     builder.get(bonfire)["bonfire"]["respawn_offset"] = [0.0, 0.0, 1.6]
     add_court(builder)
+    court_knight_ally(builder)
 
 
 def scatter(rng, count, x_range, z_range, clear_road=7.0, avoid=()):

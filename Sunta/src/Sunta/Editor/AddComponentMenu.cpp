@@ -140,6 +140,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<StaminaComponent>         ("Stamina",           Character, "Spent by rolls, attacks and blocking"),
 		Plain<PoiseComponent>           ("Poise",             Character, "How many hits it takes before staggering"),
 		Plain<PostureComponent>         ("Posture",           Character, "Guard that breaks under pressure, then a finisher (Sekiro)"),
+		Plain<SummonComponent>          ("Summon",            Character, "Allies called to the player's side with G (spirit ashes)"),
 		Plain<WrathComponent>           ("Wrath",             Character, "A rage filled by the fight, set loose with V (God of War)"),
 		Plain<MountComponent>           ("Mount",             Character, "A horse or beast the player rides (E)"),
 		Plain<InventoryComponent>       ("Inventory",         Character, "The items the player carries"),

@@ -408,6 +408,13 @@
     ]
    },
    "inventory": {},
+   "summon": {
+    "allies": "Court Knight Ally, Court Knight Ally",
+    "max_charges": 1,
+    "lifetime_seconds": 50.0,
+    "summon_effect": "Wrath Burst",
+    "called_text": "Your court answers"
+   },
    "wrath": {
     "max_wrath": 100.0,
     "from_damage_dealt": 0.45,
@@ -7685,6 +7692,297 @@
    }
   },
   {
+   "animator": {
+    "current_animation_name": "Idle"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.32,
+     0.97,
+     0.32
+    ],
+    "is_trigger": false,
+    "layer": 2,
+    "local_offset": [
+     0.0,
+     0.97,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "character_actions": {
+    "attack_step_speed": 1.5,
+    "backstep_animation": "Backstep",
+    "backstep_speed": 4.0,
+    "blend_seconds": 0.08,
+    "block_animation": "Block",
+    "block_impact_animation": "Block_Impact",
+    "cancel_from": 0.75,
+    "death_animation": "Death",
+    "heavy_attack_animation": "Attack_Heavy",
+    "heavy_damage_multiplier": 1.8,
+    "heavy_hit_from": 0.46,
+    "heavy_hit_to": 0.78,
+    "hit_reaction_animation": "Hit",
+    "input_buffer_from": 0.3,
+    "invulnerable_from": 0.1,
+    "invulnerable_to": 0.55,
+    "light_attack_1_animation": "Attack_Light_1",
+    "light_attack_2_animation": "Attack_Light_2",
+    "light_attack_3_animation": "Attack_Light_3",
+    "light_hit_from": 0.33,
+    "light_hit_to": 0.56,
+    "parried_animation": "Parried",
+    "parry_animation": "Parry",
+    "rest_animation": "Rest",
+    "roll_animation": "Roll",
+    "roll_speed": 5.5,
+    "stand_up_animation": "Stand_Up",
+    "attack_turn_degrees_per_second": 140.0,
+    "attack_lunge_speed": 0.0,
+    "attack_reach": 1.2,
+    "attack_delay_chance": 0.0,
+    "attack_delay_seconds": 0.3,
+    "attack_delay_at": 0.7
+   },
+   "character_animation": {
+    "blend_seconds": 0.2,
+    "idle_animation": "Idle",
+    "run_animation": "Run",
+    "strafe_left_animation": "Strafe_Left",
+    "strafe_right_animation": "Strafe_Right",
+    "walk_animation": "Walk",
+    "walk_back_animation": "Walk_Back",
+    "walk_animation_speed": 1.37,
+    "run_animation_speed": 3.2
+   },
+   "character_controller": {
+    "acceleration": 30.0,
+    "facing_offset_degrees": 0.0,
+    "is_player_controlled": false,
+    "run_speed": 4.8,
+    "turn_speed": 720.0,
+    "walk_speed": 1.9
+   },
+   "character_sounds": {
+    "attack_sound": "@game/Sounds/Combat/Swing",
+    "hurt_sound": "@game/Sounds/Combat/Hit",
+    "block_sound": "@game/Sounds/Combat/Block",
+    "parry_sound": "@game/Sounds/Combat/Parry",
+    "death_sound": "@game/Sounds/Combat/BodyFall",
+    "roll_sound": "@game/Sounds/Movement/Roll",
+    "footstep_sound": "@game/Sounds/Movement/Footsteps",
+    "shockwave_sound": "",
+    "footstep_meters": 1.4,
+    "volume": 1.0,
+    "footstep_camera_shake": 0.0,
+    "footstep_shake_radius": 10.0
+   },
+   "enemy": {
+    "eye_height": 1.5,
+    "hearing_distance": 3.0,
+    "sight_angle_degrees": 120.0,
+    "sight_distance": 18.0,
+    "starts_dormant": true,
+    "is_ally": true
+   },
+   "enemy_health_bar": {
+    "display_name": "Knight of the Court",
+    "height_above_feet": 2.15,
+    "is_boss": false,
+    "show_seconds_after_hit": 5.0
+   },
+   "health": {
+    "max_health": 160.0,
+    "hit_effect": "Hit Embers",
+    "death_slow_motion_seconds": 0.0,
+    "death_slow_motion_scale": 0.3
+   },
+   "lock_on": {
+    "eye_height": 1.5,
+    "is_player_controlled": false,
+    "max_distance": 18.0,
+    "require_line_of_sight": true,
+    "search_angle_degrees": 60.0,
+    "switch_mouse_distance": 120.0
+   },
+   "lock_on_target": {
+    "aim_height": 1.2,
+    "is_lockable": true
+   },
+   "melee_enemy": {
+    "attack_cooldown_seconds": 0.9,
+    "attack_distance": 2.0,
+    "give_up_distance": 30.0,
+    "heavy_attack_chance": 0.15,
+    "max_light_combo": 3,
+    "recover_seconds": 1.0,
+    "run_distance": 6.0,
+    "finisher_chance": 0.0,
+    "guard_chance": 0.25,
+    "guard_seconds": 0.8
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "court_knight",
+    "emissive_strength": 1.0
+   },
+   "physics_body": {
+    "angular_damping": 0.05000000074505806,
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "freeze_rotation_x": true,
+    "freeze_rotation_y": true,
+    "freeze_rotation_z": true,
+    "friction": 0.0,
+    "is_kinematic": false,
+    "linear_damping": 0.05000000074505806,
+    "mass": 80.0,
+    "restitution": 0.0,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "poise": {
+    "max_poise": 20,
+    "recover_after_seconds": 4.0
+   },
+   "tag": {
+    "name": "Court Knight Ally"
+   },
+   "transform": {
+    "position": [
+     -11.0,
+     0.0,
+     38.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "posture": {
+    "max_posture": 70.0,
+    "from_hits": 1.0,
+    "from_being_parried": 25.0,
+    "recover_per_second": 10.0,
+    "broken_seconds": 2.5,
+    "finisher_damage": 1.0,
+    "break_effect": "Posture Break",
+    "finisher_effect": "Finisher Burst"
+   }
+  },
+  {
+   "tag": {
+    "name": "Court Knight Ally Weapon"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "hollow_knight_sword"
+   },
+   "hitbox": {
+    "local_offset": [
+     0.0,
+     0.52,
+     0.0
+    ],
+    "half_extents": [
+     0.12,
+     0.53,
+     0.05
+    ],
+    "damage": 18.0,
+    "poise_damage": 22.0,
+    "layer": 8,
+    "show_gizmos": false,
+    "hit_stop_seconds": 0.07,
+    "camera_shake": 0.25
+   },
+   "parent": {
+    "index": 162,
+    "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Court Knight Ally Guard"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "shield": {
+    "damage_through": 0.0,
+    "guard_angle_degrees": 110.0,
+    "stamina_per_damage": 0.0,
+    "block_effect": "Hit Sparks"
+   },
+   "parent": {
+    "index": 162,
+    "bone_name": "Hand_L"
+   }
+  },
+  {
    "tag": {
     "name": "Ash Plains"
    },
@@ -12763,7 +13061,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 280
+    "index": 283
    },
    "point_light": {
     "attenuation": {
@@ -13065,7 +13363,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 282,
+    "index": 285,
     "bone_name": "Weapon_R"
    }
   },
@@ -13103,7 +13401,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 282,
+    "index": 285,
     "bone_name": "Hand_L"
    }
   },
@@ -13356,7 +13654,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 285,
+    "index": 288,
     "bone_name": "Weapon_R"
    }
   },
@@ -13394,7 +13692,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 285,
+    "index": 288,
     "bone_name": "Hand_L"
    }
   },
@@ -13658,7 +13956,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 288,
+    "index": 291,
     "bone_name": "Weapon_L"
    }
   },
@@ -13911,7 +14209,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 290,
+    "index": 293,
     "bone_name": "Weapon_R"
    }
   },
@@ -13949,7 +14247,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 290,
+    "index": 293,
     "bone_name": "Hand_L"
    }
   },
@@ -14208,7 +14506,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 293,
+    "index": 296,
     "bone_name": "Weapon_L"
    }
   },
@@ -14466,7 +14764,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 295,
+    "index": 298,
     "bone_name": "Weapon_R"
    }
   },
@@ -14504,7 +14802,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 295,
+    "index": 298,
     "bone_name": "Hand_L"
    }
   },
@@ -14757,7 +15055,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 298,
+    "index": 301,
     "bone_name": "Weapon_R"
    }
   },
@@ -14795,7 +15093,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 298,
+    "index": 301,
     "bone_name": "Hand_L"
    }
   },
@@ -15054,7 +15352,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 301,
+    "index": 304,
     "bone_name": "Weapon_L"
    }
   },
@@ -15300,7 +15598,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 303,
+    "index": 306,
     "bone_name": "head"
    }
   },
@@ -15546,7 +15844,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 305,
+    "index": 308,
     "bone_name": "head"
    }
   },
@@ -15792,7 +16090,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 307,
+    "index": 310,
     "bone_name": "head"
    }
   },
@@ -16068,7 +16366,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 309,
+    "index": 312,
     "bone_name": "Weapon_R"
    }
   },
@@ -18614,7 +18912,7 @@
     ]
    },
    "parent": {
-    "index": 375
+    "index": 378
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -18721,7 +19019,7 @@
     ]
    },
    "parent": {
-    "index": 377,
+    "index": 380,
     "bone_name": ""
    }
   },
@@ -18753,7 +19051,7 @@
     ]
    },
    "parent": {
-    "index": 377,
+    "index": 380,
     "bone_name": ""
    }
   },
@@ -18785,7 +19083,7 @@
     ]
    },
    "parent": {
-    "index": 377,
+    "index": 380,
     "bone_name": ""
    }
   },
@@ -18817,7 +19115,7 @@
     ]
    },
    "parent": {
-    "index": 377,
+    "index": 380,
     "bone_name": ""
    }
   },
@@ -18849,7 +19147,7 @@
     ]
    },
    "parent": {
-    "index": 377,
+    "index": 380,
     "bone_name": ""
    }
   },
@@ -18881,7 +19179,7 @@
     ]
    },
    "parent": {
-    "index": 377,
+    "index": 380,
     "bone_name": ""
    }
   },
@@ -19191,7 +19489,7 @@
     ]
    },
    "parent": {
-    "index": 384
+    "index": 387
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -19263,7 +19561,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 384,
+    "index": 387,
     "bone_name": "Hand_L"
    }
   },
@@ -19317,7 +19615,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 384,
+    "index": 387,
     "bone_name": "Weapon_R"
    }
   },

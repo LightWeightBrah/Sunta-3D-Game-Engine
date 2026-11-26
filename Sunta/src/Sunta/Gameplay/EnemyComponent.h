@@ -41,6 +41,11 @@ struct EnemyComponent
 
 	bool startsDormant = false;
 
+	// On the player's side (a summoned ally, as Elden Ring's spirit ashes): it fights the nearest enemy it sees and,
+	// with none about, keeps near the player; the enemies fight it too, the nearest of it and the player. Its body
+	// should be on the player's collision layer and its weapon on the player's hitbox layer (see SummonComponent)
+	bool isAlly = false;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	std::shared_ptr<EnemyStateMachine> stateMachine;
@@ -66,7 +71,8 @@ struct EnemyComponent
 				ADD_PROPERTY_RANGED(EnemyComponent, sightAngleDegrees, PropertyDataType::Float, 0.0f, 180.0f),
 				ADD_PROPERTY_RANGED(EnemyComponent, hearingDistance,   PropertyDataType::Float, 0.0f, MaxDistance),
 				ADD_PROPERTY_RANGED(EnemyComponent, eyeHeight,         PropertyDataType::Float, 0.0f, 5.0f),
-				ADD_PROPERTY(EnemyComponent, startsDormant, PropertyDataType::Bool)
+				ADD_PROPERTY(EnemyComponent, startsDormant, PropertyDataType::Bool),
+				ADD_PROPERTY(EnemyComponent, isAlly, PropertyDataType::Bool)
 			});
 	}
 };

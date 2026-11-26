@@ -56,6 +56,12 @@ namespace SceneKeys
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* PostureComponent          = "posture";
 	constexpr const char* WrathComponent            = "wrath";
+	constexpr const char* SummonComponent           = "summon";
+	constexpr const char* SummonAllies              = "allies";
+	constexpr const char* SummonMaxCharges          = "max_charges";
+	constexpr const char* SummonLifetime            = "lifetime_seconds";
+	constexpr const char* SummonEffect              = "summon_effect";
+	constexpr const char* SummonCalledText          = "called_text";
 	constexpr const char* MaxWrath                  = "max_wrath";
 	constexpr const char* WrathFromDamageDealt      = "from_damage_dealt";
 	constexpr const char* WrathFromDamageTaken      = "from_damage_taken";
@@ -223,6 +229,7 @@ namespace SceneKeys
 	constexpr const char* IsCastOnRequestOnly       = "cast_on_request_only";
 	constexpr const char* IsUninterruptible         = "is_uninterruptible";
 	constexpr const char* StartsDormant             = "starts_dormant";
+	constexpr const char* IsAlly                    = "is_ally";
 	constexpr const char* ProjectileSpeed           = "speed";
 	constexpr const char* ProjectileRadius          = "radius";
 	constexpr const char* HomingDegreesPerSecond    = "homing_degrees_per_second";
@@ -1564,6 +1571,18 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		};
 	}
 
+	if (auto* summon = entityManager.GetComponent<SummonComponent>(i))
+	{
+		entityJson[SceneKeys::SummonComponent] =
+		{
+			{ SceneKeys::SummonAllies,     summon->allies          },
+			{ SceneKeys::SummonMaxCharges, summon->maxCharges      },
+			{ SceneKeys::SummonLifetime,   summon->lifetimeSeconds },
+			{ SceneKeys::SummonEffect,     summon->summonEffect    },
+			{ SceneKeys::SummonCalledText, summon->calledText      }
+		};
+	}
+
 	if (auto* wrath = entityManager.GetComponent<WrathComponent>(i))
 	{
 		entityJson[SceneKeys::WrathComponent] =
@@ -1610,7 +1629,8 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::SightAngleDegrees, enemy->sightAngleDegrees },
 			{ SceneKeys::HearingDistance,   enemy->hearingDistance   },
 			{ SceneKeys::EyeHeight,         enemy->eyeHeight         },
-			{ SceneKeys::StartsDormant,     enemy->startsDormant     }
+			{ SceneKeys::StartsDormant,     enemy->startsDormant     },
+			{ SceneKeys::IsAlly,            enemy->isAlly            }
 		};
 	}
 
@@ -2622,6 +2642,17 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		mount.cameraPullBack        = data.value(SceneKeys::CameraPullBack,        mount.cameraPullBack);
 	}
 
+	if (entityJson.contains(SceneKeys::SummonComponent))
+	{
+		const auto& data = entityJson[SceneKeys::SummonComponent];
+		auto& summon = entityManager.AddComponent<SummonComponent>(entity);
+		summon.allies          = data.value(SceneKeys::SummonAllies,     summon.allies);
+		summon.maxCharges      = data.value(SceneKeys::SummonMaxCharges, summon.maxCharges);
+		summon.lifetimeSeconds = data.value(SceneKeys::SummonLifetime,   summon.lifetimeSeconds);
+		summon.summonEffect    = data.value(SceneKeys::SummonEffect,     summon.summonEffect);
+		summon.calledText      = data.value(SceneKeys::SummonCalledText, summon.calledText);
+	}
+
 	if (entityJson.contains(SceneKeys::WrathComponent))
 	{
 		const auto& data = entityJson[SceneKeys::WrathComponent];
@@ -2671,6 +2702,7 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		enemy.hearingDistance   = enemyData.value(SceneKeys::HearingDistance,   enemy.hearingDistance);
 		enemy.eyeHeight         = enemyData.value(SceneKeys::EyeHeight,         enemy.eyeHeight);
 		enemy.startsDormant     = enemyData.value(SceneKeys::StartsDormant,     enemy.startsDormant);
+		enemy.isAlly            = enemyData.value(SceneKeys::IsAlly,            enemy.isAlly);
 	}
 
 	if (entityJson.contains(SceneKeys::BonfireComponent))

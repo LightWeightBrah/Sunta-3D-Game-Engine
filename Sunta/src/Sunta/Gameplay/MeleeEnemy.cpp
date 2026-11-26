@@ -25,6 +25,10 @@ using namespace MeleeEnemyStateNames;
 
 // Closer to home than this counts as home
 constexpr float ArrivedHomeDistance = 0.5f;
+// An ally keeps near the player: it walks after him past this distance, runs past the second, stops within the first
+constexpr float AllyFollowDistance  = 3.5f;
+constexpr float AllyRunDistance     = 7.0f;
+constexpr float AllyArrivedDistance = 2.0f;
 
 // The next light attack of a combo is asked for only while the player is still about this close (times the attack distance)
 constexpr float ComboReachFactor = 1.3f;
@@ -139,6 +143,9 @@ public:
 	std::string Update(EnemyContext& context) override
 	{
 		context.Stop();
+		// An ally with nobody to fight follows the player (its home moves with him, see EnemySystem)
+		if (context.GetEnemy().isAlly && !context.HasTarget() && context.GetDistanceToHome() > AllyFollowDistance)
+			return ReturnHome;
 		if (!context.CanSeeTarget())
 			return "";
 
@@ -415,10 +422,11 @@ public:
 		if (context.CanSeeTarget() && isTargetCloseAgain)
 			return Chase;
 
-		if (context.GetDistanceToHome() <= ArrivedHomeDistance)
+		const bool isAlly = context.GetEnemy().isAlly;
+		if (context.GetDistanceToHome() <= (isAlly ? AllyArrivedDistance : ArrivedHomeDistance))
 			return EnemyStateNames::Idle;
 
-		context.MoveTowards(context.GetEnemy().homePosition, false);
+		context.MoveTowards(context.GetEnemy().homePosition, isAlly && context.GetDistanceToHome() > AllyRunDistance);
 		return "";
 	}
 };

@@ -10,6 +10,15 @@
 #include "LockOnSystem.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "Core/Log.h"
+#include <unordered_map>
+
+namespace
+{
+// How far an ally looks for enemies to fight, and how much nearer than the player an ally must be to be fought first
+constexpr float AllyTargetRange      = 22.0f;
+constexpr float AllyPreferenceMeters = 1.5f;
+}
 
 namespace Sunta
 {
@@ -51,19 +60,65 @@ bool EnemyContext::IsValid() const
 	return enemy && controller && transform;
 }
 
+// The nearest living, awake fighter of the given side within 'range' of 'from' (0 when there is none)
+static unsigned int FindNearestFighter(EntityManager& entityManager, const glm::vec3& from, bool allies, float range, unsigned int self)
+{
+	unsigned int nearest = 0;
+	float nearestDistance = range;
+	for (EnemyComponent& other : entityManager.GetAllComponents<EnemyComponent>())
+	{
+		const unsigned int otherID = entityManager.GetEntityIDForComponent(other);
+		if (otherID == self || other.isAlly != allies || other.isDormant || !IsAlive(entityManager, otherID))
+			continue;
+		const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(otherID);
+		if (!transform)
+			continue;
+		const float distance = glm::length(KeepOnlyHorizontalPart(transform->position - from));
+		if (distance < nearestDistance)
+		{
+			nearestDistance = distance;
+			nearest = otherID;
+		}
+	}
+	return nearest;
+}
+
 void EnemyContext::FindTarget()
 {
 	unsigned int playerID = 0;
-	if (!CharacterControllerSystem::TryFindPlayer(entityManager, playerID) || playerID == entityID || !IsAlive(entityManager, playerID))
+	const bool hasPlayer = CharacterControllerSystem::TryFindPlayer(entityManager, playerID) && playerID != entityID
+	                       && IsAlive(entityManager, playerID);
+
+	// An ally fights the nearest enemy (none about: no target, it keeps near the player, see EnemySystem)
+	unsigned int chosen = 0;
+	if (enemy->isAlly)
+		chosen = FindNearestFighter(entityManager, transform->position, false, AllyTargetRange, entityID);
+	else
+	{
+		// An enemy goes for the player, or for an ally of his that stands clearly nearer
+		chosen = hasPlayer ? playerID : 0;
+		const unsigned int ally = FindNearestFighter(entityManager, transform->position, true, AllyTargetRange, entityID);
+		if (ally != 0)
+		{
+			const TransformComponent* allyTransform   = entityManager.GetComponent<TransformComponent>(ally);
+			const TransformComponent* playerTransform = hasPlayer ? entityManager.GetComponent<TransformComponent>(playerID) : nullptr;
+			const float toAlly   = glm::length(KeepOnlyHorizontalPart(allyTransform->position - transform->position));
+			const float toPlayer = playerTransform ? glm::length(KeepOnlyHorizontalPart(playerTransform->position - transform->position))
+			                                       : std::numeric_limits<float>::max();
+			if (toAlly + AllyPreferenceMeters < toPlayer)
+				chosen = ally;
+		}
+	}
+	if (chosen == 0)
 		return;
 
-	const TransformComponent* playerTransform = entityManager.GetComponent<TransformComponent>(playerID);
-	if (!playerTransform)
+	const TransformComponent* targetTransform = entityManager.GetComponent<TransformComponent>(chosen);
+	if (!targetTransform)
 		return;
 
 	hasTarget      = true;
-	targetID       = playerID;
-	targetPosition = playerTransform->position;
+	targetID       = chosen;
+	targetPosition = targetTransform->position;
 }
 
 // ========== What the enemy knows ==========
@@ -114,6 +169,10 @@ bool EnemyContext::CanSeeTarget() const
 
 	if (distance <= enemy->hearingDistance)
 		return true;
+
+	// A summoned ally knows where the enemies about it are (it was called to fight them)
+	if (enemy->isAlly)
+		return distance <= enemy->sightDistance;
 
 	return distance <= enemy->sightDistance && IsTargetInFront() && !IsTargetBehindWall();
 }

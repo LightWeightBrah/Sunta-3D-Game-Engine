@@ -66,6 +66,25 @@ void SwitchToDeadWhenDying(EnemyContext& context, EnemyStateMachine& stateMachin
 		stateMachine.RequestState(EnemyStateNames::Dead);
 }
 
+// Allies stand a little behind the player, one to his left, the next to his right
+constexpr float AllySideMeters   = 1.8f;
+constexpr float AllyBehindMeters = 1.2f;
+
+void KeepBesidePlayer(EntityManager& entityManager, EnemyComponent& enemy, unsigned int entityID)
+{
+	unsigned int playerID = 0;
+	if (!CharacterControllerSystem::TryFindPlayer(entityManager, playerID))
+		return;
+	const TransformComponent* player = entityManager.GetComponent<TransformComponent>(playerID);
+	if (!player)
+		return;
+	const float yaw = glm::radians(player->rotation.y);
+	const glm::vec3 forward = glm::vec3(std::sin(yaw), 0.0f, std::cos(yaw));
+	const glm::vec3 right   = glm::vec3(forward.z, 0.0f, -forward.x);
+	const float side = (entityID % 2 == 0) ? 1.0f : -1.0f;
+	enemy.homePosition = player->position + right * (side * AllySideMeters) - forward * AllyBehindMeters;
+}
+
 void UpdateEnemy(EntityManager& entityManager, EnemyComponent& enemy, float deltaTime)
 {
 	if (enemy.isDormant)
@@ -87,6 +106,10 @@ void UpdateEnemy(EntityManager& entityManager, EnemyComponent& enemy, float delt
 		context.Stop();
 		return;
 	}
+
+	// An ally's home is a place at the player's side (it walks back there when there is nobody to fight)
+	if (enemy.isAlly)
+		KeepBesidePlayer(entityManager, enemy, entityID);
 
 	enemy.attackCooldownLeft = glm::max(enemy.attackCooldownLeft - deltaTime, 0.0f);
 	enemy.dodgeCooldownLeft  = glm::max(enemy.dodgeCooldownLeft  - deltaTime, 0.0f);

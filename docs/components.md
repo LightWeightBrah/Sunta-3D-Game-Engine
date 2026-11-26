@@ -582,6 +582,7 @@ Needs a Character Controller that is not player controlled (the enemy walks with
 | `hearingDistance` | Float |
 | `eyeHeight` | Float |
 | `startsDormant` | Bool |
+| `isAlly` | Bool |
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/EnemyComponent.h`</sub>
 
@@ -1066,6 +1067,22 @@ It drains by itself 'recoverDelaySeconds' after the last fill, faster while the 
 | `finisherEffect` | String |
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/PostureComponent.h`</sub>
+
+### Summon
+
+Calling allies into a fight (as Elden Ring's spirit ashes, Overlord's minions): G sets the entities named in 'allies' (comma separated, e.g. "Court Knight Ally, Court Knight Ally") down at the player's side; they fight the enemies until they fall or 'lifetimeSeconds' pass, then fade away. 'maxCharges' calls between two rests at a bonfire (a rest also sends the allies away)
+
+How to use it: Add Component > Summon on the player. Each ally is an enemy of the scene used as a template: an Enemy with 'isAlly' and 'startsDormant' (it waits hidden, out of the way), its body on the player's collision layer and its weapon's Hitbox on the player's hitbox layer. 'summonEffect' bursts where each one appears (a Particle Emitter)
+
+| Field | Type |
+|---|---|
+| `allies` | String |
+| `maxCharges` | Int |
+| `lifetimeSeconds` | Float |
+| `summonEffect` | String |
+| `calledText` | String |
+
+<sub>Defined in `Sunta/src/Sunta/Gameplay/SummonComponent.h`</sub>
 
 ### Terrain
 
