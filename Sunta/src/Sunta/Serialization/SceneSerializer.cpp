@@ -84,6 +84,7 @@ namespace SceneKeys
 	constexpr const char* LootDropComponent         = "loot_drop";
 	constexpr const char* ItemId                    = "item_id";
 	constexpr const char* PickupPrompt              = "prompt";
+	constexpr const char* PickupObtainedText        = "obtained_text";
 	constexpr const char* InteractDistancePickup    = "interact_distance";
 	constexpr const char* ReadText                  = "read_text";
 	constexpr const char* VoiceSound                = "voice_sound";
@@ -1536,6 +1537,7 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::ItemId,                 pickup->itemId           },
 			{ SceneKeys::DisplayName,            pickup->displayName      },
 			{ SceneKeys::PickupPrompt,           pickup->prompt           },
+			{ SceneKeys::PickupObtainedText,     pickup->obtainedText     },
 			{ SceneKeys::InteractDistancePickup, pickup->interactDistance },
 			{ SceneKeys::ReadText,               pickup->readText         },
 			{ SceneKeys::VoiceSound,             pickup->voiceSound       },
@@ -2611,6 +2613,7 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		pickup.itemId           = data.value(SceneKeys::ItemId,                 pickup.itemId);
 		pickup.displayName      = data.value(SceneKeys::DisplayName,            pickup.displayName);
 		pickup.prompt           = data.value(SceneKeys::PickupPrompt,           pickup.prompt);
+		pickup.obtainedText     = data.value(SceneKeys::PickupObtainedText,     pickup.obtainedText);
 		pickup.interactDistance = data.value(SceneKeys::InteractDistancePickup, pickup.interactDistance);
 		pickup.readText         = data.value(SceneKeys::ReadText,               pickup.readText);
 		pickup.voiceSound       = data.value(SceneKeys::VoiceSound,             pickup.voiceSound);

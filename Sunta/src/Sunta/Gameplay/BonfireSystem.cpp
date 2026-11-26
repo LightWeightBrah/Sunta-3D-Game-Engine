@@ -146,6 +146,7 @@ void OfferToRest(EntityManager& entityManager, unsigned int playerID)
 
 void BonfireSystem::PrepareForPlay(EntityManager& entityManager)
 {
+	restingBonfireID = 0;
 	for (BonfireComponent& bonfire : entityManager.GetAllComponents<BonfireComponent>())
 		bonfire.isLit = false;
 }

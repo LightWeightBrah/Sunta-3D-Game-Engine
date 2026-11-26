@@ -81,7 +81,7 @@ void KeepBesidePlayer(EntityManager& entityManager, EnemyComponent& enemy, unsig
 	const float yaw = glm::radians(player->rotation.y);
 	const glm::vec3 forward = glm::vec3(std::sin(yaw), 0.0f, std::cos(yaw));
 	const glm::vec3 right   = glm::vec3(forward.z, 0.0f, -forward.x);
-	const float side = (entityID % 2 == 0) ? 1.0f : -1.0f;
+	const float side = enemy.allySide;
 	enemy.homePosition = player->position + right * (side * AllySideMeters) - forward * AllyBehindMeters;
 }
 

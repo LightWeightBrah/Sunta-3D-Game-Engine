@@ -347,6 +347,8 @@ void UpdateRally(HealthComponent& health, float deltaTime)
 		health.rallyHealth = 0.0f;
 		return;
 	}
+	// (a flask or a rest may have healed some of it already)
+	health.rallyHealth = glm::min(health.rallyHealth, glm::max(health.maxHealth - health.currentHealth, 0.0f));
 	health.rallySecondsLeft -= deltaTime;
 	if (health.rallySecondsLeft < 0.0f)
 		health.rallyHealth = glm::max(health.rallyHealth - health.maxHealth * RallyDrainPerSecond * deltaTime, 0.0f);

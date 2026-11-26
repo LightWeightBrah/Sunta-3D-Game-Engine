@@ -32,7 +32,8 @@ constexpr float ShowGainSeconds  = 2.5f;
 bool IsOnPlayersSide(EntityManager& entityManager, unsigned int entityID)
 {
 	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
-	return controller && controller->isPlayerControlled;
+	const EnemyComponent* enemy = entityManager.GetComponent<EnemyComponent>(entityID);
+	return (controller && controller->isPlayerControlled) || (enemy && enemy->isAlly);
 }
 
 bool IsAlive(EntityManager& entityManager, unsigned int entityID)

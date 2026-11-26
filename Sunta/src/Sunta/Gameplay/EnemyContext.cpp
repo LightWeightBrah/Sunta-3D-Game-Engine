@@ -18,6 +18,7 @@ namespace
 // How far an ally looks for enemies to fight, and how much nearer than the player an ally must be to be fought first
 constexpr float AllyTargetRange      = 22.0f;
 constexpr float AllyPreferenceMeters = 1.5f;
+constexpr unsigned int NoFighter     = 0xFFFFFFFFu;
 }
 
 namespace Sunta
@@ -60,10 +61,11 @@ bool EnemyContext::IsValid() const
 	return enemy && controller && transform;
 }
 
-// The nearest living, awake fighter of the given side within 'range' of 'from' (0 when there is none)
+// The nearest living, awake fighter of the given side within 'range' of 'from' (NoFighter when there is none;
+// 0 is a real entity)
 static unsigned int FindNearestFighter(EntityManager& entityManager, const glm::vec3& from, bool allies, float range, unsigned int self)
 {
-	unsigned int nearest = 0;
+	unsigned int nearest = NoFighter;
 	float nearestDistance = range;
 	for (EnemyComponent& other : entityManager.GetAllComponents<EnemyComponent>())
 	{
@@ -90,15 +92,15 @@ void EnemyContext::FindTarget()
 	                       && IsAlive(entityManager, playerID);
 
 	// An ally fights the nearest enemy (none about: no target, it keeps near the player, see EnemySystem)
-	unsigned int chosen = 0;
+	unsigned int chosen = NoFighter;
 	if (enemy->isAlly)
 		chosen = FindNearestFighter(entityManager, transform->position, false, AllyTargetRange, entityID);
 	else
 	{
 		// An enemy goes for the player, or for an ally of his that stands clearly nearer
-		chosen = hasPlayer ? playerID : 0;
+		chosen = hasPlayer ? playerID : NoFighter;
 		const unsigned int ally = FindNearestFighter(entityManager, transform->position, true, AllyTargetRange, entityID);
-		if (ally != 0)
+		if (ally != NoFighter)
 		{
 			const TransformComponent* allyTransform   = entityManager.GetComponent<TransformComponent>(ally);
 			const TransformComponent* playerTransform = hasPlayer ? entityManager.GetComponent<TransformComponent>(playerID) : nullptr;
@@ -109,7 +111,7 @@ void EnemyContext::FindTarget()
 				chosen = ally;
 		}
 	}
-	if (chosen == 0)
+	if (chosen == NoFighter)
 		return;
 
 	const TransformComponent* targetTransform = entityManager.GetComponent<TransformComponent>(chosen);

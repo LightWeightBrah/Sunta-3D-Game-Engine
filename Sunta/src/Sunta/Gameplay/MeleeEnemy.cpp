@@ -144,7 +144,7 @@ public:
 	{
 		context.Stop();
 		// An ally with nobody to fight follows the player (its home moves with him, see EnemySystem)
-		if (context.GetEnemy().isAlly && !context.HasTarget() && context.GetDistanceToHome() > AllyFollowDistance)
+		if (context.GetEnemy().isAlly && (!context.HasTarget() || !context.CanSeeTarget()) && context.GetDistanceToHome() > AllyFollowDistance)
 			return ReturnHome;
 		if (!context.CanSeeTarget())
 			return "";

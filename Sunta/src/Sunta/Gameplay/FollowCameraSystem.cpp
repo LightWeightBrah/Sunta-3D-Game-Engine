@@ -225,8 +225,10 @@ void UpdateDistance(FollowCameraComponent& follow, float freeDistance, float del
 	{
 		follow.punchInLeft -= deltaTime;
 		const float wanted = glm::min(freeDistance, follow.distance * (1.0f - follow.punchInAmount));
-		follow.currentDistance = freeDistance < follow.currentDistance && freeDistance < wanted
-			? freeDistance : SmoothValue(follow.currentDistance, wanted, PunchInSharpness, deltaTime);
+		if (freeDistance < follow.currentDistance)
+			follow.currentDistance = freeDistance;
+		else
+			follow.currentDistance = SmoothValue(follow.currentDistance, wanted, PunchInSharpness, deltaTime);
 		return;
 	}
 

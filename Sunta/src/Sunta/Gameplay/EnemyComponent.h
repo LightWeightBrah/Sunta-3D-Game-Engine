@@ -46,6 +46,9 @@ struct EnemyComponent
 	// should be on the player's collision layer and its weapon on the player's hitbox layer (see SummonComponent)
 	bool isAlly = false;
 
+	// Which side of the player an ally keeps (-1 left, 1 right; set when it is called). Not saved with the scene
+	float allySide = 1.0f;
+
 	// ========== Filled while the game plays, not saved with the scene ==========
 
 	std::shared_ptr<EnemyStateMachine> stateMachine;

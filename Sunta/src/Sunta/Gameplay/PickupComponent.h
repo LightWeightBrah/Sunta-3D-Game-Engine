@@ -25,6 +25,8 @@ struct PickupComponent
 	std::string itemId;
 	std::string displayName;
 	std::string prompt = "Pick up   [E]";
+	// Shown when it is taken, before its name ("Obtained: Testament of the Dead King"); empty = only the name
+	std::string obtainedText = "Obtained: ";
 	float       interactDistance = 1.8f;
 
 	// A book or a letter: its words (\n starts a new line), the voice reading them, how long they stay
@@ -45,6 +47,7 @@ struct PickupComponent
 				ADD_PROPERTY(PickupComponent, itemId,      PropertyDataType::String),
 				ADD_PROPERTY(PickupComponent, displayName, PropertyDataType::String),
 				ADD_PROPERTY(PickupComponent, prompt,      PropertyDataType::String),
+				ADD_PROPERTY(PickupComponent, obtainedText, PropertyDataType::String),
 				ADD_PROPERTY_RANGED(PickupComponent, interactDistance, PropertyDataType::Float, 0.0f, MaxDistance),
 				ADD_PROPERTY(PickupComponent, readText,    PropertyDataType::String),
 				ADD_PROPERTY(PickupComponent, voiceSound,  PropertyDataType::String),

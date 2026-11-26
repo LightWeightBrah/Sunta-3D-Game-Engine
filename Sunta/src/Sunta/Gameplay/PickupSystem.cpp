@@ -59,7 +59,7 @@ void Take(EntityManager& entityManager, PickupComponent& pickup, unsigned int pi
 		PickupSystem::AddItem(entityManager, playerID, pickup.itemId);
 
 	const std::string name = pickup.displayName.empty() ? pickup.itemId : pickup.displayName;
-	HUDSystem::ShowNotification(entityManager, "Obtained: " + name);
+	HUDSystem::ShowNotification(entityManager, pickup.obtainedText + name);
 	if (!pickup.pickupSound.empty())
 		Audio::Play(pickup.pickupSound);
 

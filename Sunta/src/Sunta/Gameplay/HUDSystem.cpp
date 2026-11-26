@@ -839,6 +839,10 @@ void DrawEnemies(EntityManager& entityManager, const glm::mat4& viewProjection, 
 namespace
 {
 
+// The perilous sign on the screen now (see HUDSystem::ShowPerilousSign)
+constexpr float PerilousSignSeconds = 0.9f;
+float perilousSignLeft = 0.0f;
+
 // The flash of the screen going on now (see HUDSystem::FlashScreen)
 struct ScreenFlash
 {
@@ -860,6 +864,7 @@ ScreenFlash& GetScreenFlash()
 void HUDSystem::PrepareForPlay(EntityManager& entityManager)
 {
 	GetScreenFlash() = ScreenFlash();
+	perilousSignLeft = 0.0f;
 
 	for (PlayerHUDComponent& hud : entityManager.GetAllComponents<PlayerHUDComponent>())
 	{
@@ -905,12 +910,6 @@ void HUDSystem::FlashScreen(const glm::vec3& color, float seconds, float holdSec
 	flash.fadeSeconds = glm::max(seconds, 0.01f);
 	flash.fadeLeft    = flash.fadeSeconds;
 	flash.strength    = glm::clamp(strength, 0.0f, 1.0f);
-}
-
-namespace
-{
-constexpr float PerilousSignSeconds = 0.9f;
-float perilousSignLeft = 0.0f;
 }
 
 void HUDSystem::ShowPerilousSign()

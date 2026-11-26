@@ -61,20 +61,23 @@ void SendAway(EntityManager& entityManager, SummonComponent& summon)
 
 void Call(EntityManager& entityManager, unsigned int playerID, SummonComponent& summon)
 {
+	// (copied: spawning adds Transforms, which may move every Transform in memory)
 	const TransformComponent* player = entityManager.GetComponent<TransformComponent>(playerID);
 	if (!player)
 		return;
+	const glm::vec3 playerPosition = player->position;
+	const float     playerYaw      = player->rotation.y;
 
 	const std::vector<std::string> names = SplitNames(summon.allies);
-	const float yaw = glm::radians(player->rotation.y);
+	const float yaw = glm::radians(playerYaw);
 	const glm::vec3 right = glm::vec3(std::cos(yaw), 0.0f, -std::sin(yaw));
 	for (size_t i = 0; i < names.size(); ++i)
 	{
 		const float side = names.size() == 1 ? 1.0f : (i % 2 == 0 ? -1.0f : 1.0f) * (1.0f + 0.6f * (float)(i / 2));
-		const glm::vec3 place = player->position + right * (side * SideMeters);
+		const glm::vec3 place = playerPosition + right * (side * SideMeters);
 
 		unsigned int allyID = 0;
-		if (!WorldSpawner::Spawn(entityManager, names[i], place, player->rotation.y, allyID))
+		if (!WorldSpawner::Spawn(entityManager, names[i], place, playerYaw, allyID))
 		{
 			SUNTA_ENGINE_LOG_WARNING("Summon: no ally named '{0}' in the scene", names[i]);
 			continue;
@@ -84,7 +87,11 @@ void Call(EntityManager& entityManager, unsigned int playerID, SummonComponent& 
 		{
 			enemy->isAlly        = true;
 			enemy->startsDormant = false;
+			enemy->allySide      = side < 0.0f ? -1.0f : 1.0f;
 		}
+		// The called one gets a name of its own: the next call must find the waiting template, never a living copy
+		if (TagComponent* tag = entityManager.GetComponent<TagComponent>(allyID))
+			tag->name += " (called)";
 		// The player never locks on to his own
 		if (LockOnTargetComponent* lockOnTarget = entityManager.GetComponent<LockOnTargetComponent>(allyID))
 			lockOnTarget->isLockable = false;

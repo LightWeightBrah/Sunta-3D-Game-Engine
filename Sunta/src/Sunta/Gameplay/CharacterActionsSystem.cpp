@@ -650,7 +650,8 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	character.controller->isDrivenByAction = !isUpperBody;
 
 	// A perilous blow warns as it starts: a burst over the head, a red glint of the screen (not for the player's own)
-	if (actions.IsPerilousAttack() && !character.controller->isPlayerControlled)
+	const EnemyComponent* attackerEnemy = entityManager.GetComponent<EnemyComponent>(character.entityID);
+	if (actions.IsPerilousAttack() && !character.controller->isPlayerControlled && !(attackerEnemy && attackerEnemy->isAlly))
 	{
 		if (!actions.perilousWarningEffect.empty())
 			ParticleSystem::BurstAt(entityManager, actions.perilousWarningEffect, character.transform->position + glm::vec3(0.0f, 2.0f, 0.0f), 40);
