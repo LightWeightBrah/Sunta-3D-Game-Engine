@@ -13,6 +13,7 @@
 
 #include "CharacterActionsSystem.h"
 #include "CombatLog.h"
+#include "WrathSystem.h"
 #include "CharacterSoundsSystem.h"
 #include "CurrencySystem.h"
 #include "EntityName.h"
@@ -221,7 +222,10 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 		if (result == HitResult::Blocked || result == HitResult::Hurt || result == HitResult::Riposte)
 			hitbox.hitFlashSecondsLeft = HitFlashSeconds;
 		if (result == HitResult::Hurt || result == HitResult::Riposte)
+		{
 			Rally(entityManager, ownerID, damage);
+			WrathSystem::OnDamageDealt(entityManager, ownerID, damage);
+		}
 
 		const glm::vec3 contactPoint = GetContactPoint(box, targetBody->worldOBB);
 		if (CombatLog::IsOn())
@@ -291,6 +295,8 @@ bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damag
 	const float floor = glm::clamp(minimum, 0.0f, health.currentHealth);
 	const float before = health.currentHealth;
 	health.currentHealth = glm::max(health.currentHealth - damage, floor);
+
+	WrathSystem::OnDamageTaken(entityManager, entityID, before - health.currentHealth);
 
 	// The rally: what this blow took can be won back for a while
 	if (health.rallyWindowSeconds > 0.0f)
@@ -576,6 +582,7 @@ bool TryDeflect(EntityManager& entityManager, unsigned int defenderID, unsigned 
 	if (!defender || !defender->IsDeflecting() || !shield || !IsInFrontOfShield(entityManager, defenderID, attackerID, *shield))
 		return false;
 
+	WrathSystem::OnDeflect(entityManager, defenderID);
 	// No block impact: a deflect leaves the defender free at once (to deflect the next blow, or to strike the opening)
 	CharacterSoundsSystem::Play(entityManager, defenderID, &CharacterSoundsComponent::parrySound);
 	if (const PostureComponent* attackerPosture = entityManager.GetComponent<PostureComponent>(attackerID))
@@ -606,6 +613,11 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 
 	const bool isPerilous = kind == DamageKind::Weapon && IsPerilousBlow(entityManager, attackerID);
 
+	// A burning Wrath: the blows land harder and break a guard faster
+	const float posturePush = kind == DamageKind::Weapon ? WrathSystem::GetPostureMultiplier(entityManager, attackerID) : 1.0f;
+	if (kind == DamageKind::Weapon)
+		damage *= WrathSystem::GetDamageMultiplier(entityManager, attackerID);
+
 	if (kind == DamageKind::Weapon && !isPerilous && TryParry(entityManager, targetID, attackerID))
 	{
 		// The deflect: the posture of the parried attacker takes it
@@ -633,7 +645,7 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	{
 		// Blocking wears the guard down: too many blocks in a row break the posture
 		if (const PostureComponent* targetPosture = entityManager.GetComponent<PostureComponent>(targetID);
-		    targetPosture && FillPosture(entityManager, targetID, damageBeforeShield * targetPosture->fromBlocks))
+		    targetPosture && FillPosture(entityManager, targetID, damageBeforeShield * targetPosture->fromBlocks * posturePush))
 			return HitResult::Blocked;
 		if (damage <= 0.0f || LoseHealth(entityManager, targetID, damage, attackerID, kind))
 			CharacterActionsSystem::PlayBlockImpact(entityManager, targetID);
@@ -647,7 +659,7 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	// The blow fills the posture too (a broken one was just finished)
 	bool breaksPosture = false;
 	if (const PostureComponent* targetPosture = entityManager.GetComponent<PostureComponent>(targetID); targetPosture && !isFinisher)
-		breaksPosture = FillPosture(entityManager, targetID, poiseDamage * targetPosture->fromHits);
+		breaksPosture = FillPosture(entityManager, targetID, poiseDamage * targetPosture->fromHits * posturePush);
 
 	const CharacterActionsComponent* targetActions = entityManager.GetComponent<CharacterActionsComponent>(targetID);
 	const bool hasHyperArmor = targetActions && targetActions->HasHyperArmor();

@@ -228,6 +228,11 @@ def add_effects(builder):
         "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.65, "spawn_half_extents": [0.15, 0.3, 0.15],
         "velocity": [0.0, 1.0, 0.0], "velocity_randomness": 7.0, "gravity": [0.0, -4.0, 0.0], "start_size": 0.09,
         "end_size": 0.01, "start_color": [0.85, 0.5, 1.0], "end_color": [0.35, 0.02, 0.08], "intensity": 2.4, "max_particles": 600}))
+    # The wrath set loose: a column of violet fire bursting up and out around the king
+    builder.add(named("Wrath Burst", (0.0, -100.0, 0.0), particle_emitter={
+        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.9, "spawn_half_extents": [0.35, 0.9, 0.35],
+        "velocity": [0.0, 3.0, 0.0], "velocity_randomness": 3.5, "gravity": [0.0, 2.0, 0.0], "start_size": 0.22,
+        "end_size": 0.02, "start_color": [0.8, 0.45, 1.0], "end_color": [0.25, 0.02, 0.4], "intensity": 3.0, "max_particles": 300}))
     builder.add(named("Perilous Glint", (0.0, -100.0, 0.0), particle_emitter={
         "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.45, "spawn_half_extents": [0.05, 0.05, 0.05],
         "velocity": [0.0, 0.0, 0.0], "velocity_randomness": 2.5, "gravity": [0.0, 0.0, 0.0], "start_size": 0.5,
@@ -269,6 +274,11 @@ def add_player(builder):
     entity["box_collider"]["local_offset"] = [0.0, 1.0, 0.0]
     entity["lock_on"]["max_distance"] = 20.0
     entity["inventory"] = {}
+    # The king's wrath (God of War's rage): it fills as he fights, V sets it loose - eight seconds of violet fire, harder
+    # blows that break guards faster
+    entity["wrath"] = {"max_wrath": 100.0, "from_damage_dealt": 0.45, "from_damage_taken": 0.3, "from_deflects": 9.0,
+                       "duration_seconds": 8.0, "damage_multiplier": 1.4, "posture_multiplier": 1.6,
+                       "glow_color": [0.72, 0.3, 1.0], "release_effect": "Wrath Burst"}
     # A king's guard holds a long time, but a reckless one breaks: blocks wear his posture, a broken guard is a
     # quarter of his life to a finisher
     entity["posture"] = {"max_posture": 120.0, "from_hits": 0.4, "from_blocks": 0.7, "from_being_parried": 30.0,

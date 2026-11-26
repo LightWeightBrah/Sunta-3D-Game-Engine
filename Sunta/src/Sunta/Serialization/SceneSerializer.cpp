@@ -55,6 +55,18 @@ namespace SceneKeys
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* PostureComponent          = "posture";
+	constexpr const char* WrathComponent            = "wrath";
+	constexpr const char* MaxWrath                  = "max_wrath";
+	constexpr const char* WrathFromDamageDealt      = "from_damage_dealt";
+	constexpr const char* WrathFromDamageTaken      = "from_damage_taken";
+	constexpr const char* WrathFromDeflects         = "from_deflects";
+	constexpr const char* WrathDrainPerSecond       = "drain_per_second";
+	constexpr const char* WrathDrainDelay           = "drain_delay_seconds";
+	constexpr const char* WrathDuration             = "duration_seconds";
+	constexpr const char* WrathDamageMultiplier     = "damage_multiplier";
+	constexpr const char* WrathPostureMultiplier    = "posture_multiplier";
+	constexpr const char* WrathGlowColor            = "glow_color";
+	constexpr const char* WrathReleaseEffect        = "release_effect";
 	constexpr const char* MountComponent            = "mount";
 	constexpr const char* PickupComponent           = "pickup";
 	constexpr const char* TerrainComponent          = "terrain";
@@ -1552,6 +1564,24 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		};
 	}
 
+	if (auto* wrath = entityManager.GetComponent<WrathComponent>(i))
+	{
+		entityJson[SceneKeys::WrathComponent] =
+		{
+			{ SceneKeys::MaxWrath,               wrath->maxWrath          },
+			{ SceneKeys::WrathFromDamageDealt,   wrath->fromDamageDealt   },
+			{ SceneKeys::WrathFromDamageTaken,   wrath->fromDamageTaken   },
+			{ SceneKeys::WrathFromDeflects,      wrath->fromDeflects      },
+			{ SceneKeys::WrathDrainPerSecond,    wrath->drainPerSecond    },
+			{ SceneKeys::WrathDrainDelay,        wrath->drainDelaySeconds },
+			{ SceneKeys::WrathDuration,          wrath->durationSeconds   },
+			{ SceneKeys::WrathDamageMultiplier,  wrath->damageMultiplier  },
+			{ SceneKeys::WrathPostureMultiplier, wrath->postureMultiplier },
+			{ SceneKeys::WrathGlowColor,         { wrath->glowColor.x, wrath->glowColor.y, wrath->glowColor.z } },
+			{ SceneKeys::WrathReleaseEffect,     wrath->releaseEffect     }
+		};
+	}
+
 	if (auto* posture = entityManager.GetComponent<PostureComponent>(i))
 	{
 		entityJson[SceneKeys::PostureComponent] =
@@ -2590,6 +2620,24 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		mount.runAnimationFromSpeed = data.value(SceneKeys::RunAnimationFromSpeed, mount.runAnimationFromSpeed);
 		mount.cameraRise            = data.value(SceneKeys::CameraRise,            mount.cameraRise);
 		mount.cameraPullBack        = data.value(SceneKeys::CameraPullBack,        mount.cameraPullBack);
+	}
+
+	if (entityJson.contains(SceneKeys::WrathComponent))
+	{
+		const auto& data = entityJson[SceneKeys::WrathComponent];
+		auto& wrath = entityManager.AddComponent<WrathComponent>(entity);
+		wrath.maxWrath          = data.value(SceneKeys::MaxWrath,               wrath.maxWrath);
+		wrath.fromDamageDealt   = data.value(SceneKeys::WrathFromDamageDealt,   wrath.fromDamageDealt);
+		wrath.fromDamageTaken   = data.value(SceneKeys::WrathFromDamageTaken,   wrath.fromDamageTaken);
+		wrath.fromDeflects      = data.value(SceneKeys::WrathFromDeflects,      wrath.fromDeflects);
+		wrath.drainPerSecond    = data.value(SceneKeys::WrathDrainPerSecond,    wrath.drainPerSecond);
+		wrath.drainDelaySeconds = data.value(SceneKeys::WrathDrainDelay,        wrath.drainDelaySeconds);
+		wrath.durationSeconds   = data.value(SceneKeys::WrathDuration,          wrath.durationSeconds);
+		wrath.damageMultiplier  = data.value(SceneKeys::WrathDamageMultiplier,  wrath.damageMultiplier);
+		wrath.postureMultiplier = data.value(SceneKeys::WrathPostureMultiplier, wrath.postureMultiplier);
+		if (data.contains(SceneKeys::WrathGlowColor) && data[SceneKeys::WrathGlowColor].size() == 3)
+			wrath.glowColor = glm::vec3(data[SceneKeys::WrathGlowColor][0], data[SceneKeys::WrathGlowColor][1], data[SceneKeys::WrathGlowColor][2]);
+		wrath.releaseEffect     = data.value(SceneKeys::WrathReleaseEffect,     wrath.releaseEffect);
 	}
 
 	if (entityJson.contains(SceneKeys::PostureComponent))

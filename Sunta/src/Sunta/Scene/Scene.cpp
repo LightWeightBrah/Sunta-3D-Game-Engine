@@ -57,6 +57,7 @@
 #include "Gameplay/CharacterSoundsSystem.h"
 #include "Gameplay/CurrencySystem.h"
 #include "Gameplay/HealingFlaskSystem.h"
+#include "Gameplay/WrathSystem.h"
 #include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CutsceneSystem.h"
 #include "Renderer/PostProcessing.h"
@@ -366,6 +367,7 @@ void Scene::Update()
 		CharacterControllerSystem::Update(entityManager, gameDeltaTime, cameraForward);
 		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame, gameDeltaTime);
 		HealingFlaskSystem::Update(entityManager);
+		WrathSystem::Update(entityManager, gameDeltaTime);
 		StaminaSystem::Update(entityManager, gameDeltaTime);
 		PhysicsSystem::UpdatePhysics(entityManager, gameDeltaTime);
 		// The ground of open worlds holds up whatever the physics let sink into it

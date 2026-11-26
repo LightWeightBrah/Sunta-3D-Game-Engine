@@ -38,6 +38,7 @@
 #include "Gameplay/HitboxComponent.h"
 #include "Gameplay/PoiseComponent.h"
 #include "Gameplay/PostureComponent.h"
+#include "Gameplay/WrathComponent.h"
 #include "Gameplay/MountComponent.h"
 #include "Gameplay/PickupComponent.h"
 #include "Gameplay/TerrainComponent.h"

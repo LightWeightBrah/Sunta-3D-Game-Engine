@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "HUDSystem.h"
+#include "Core/EngineTime.h"
 #include "BossComponent.h"
 
 #include "BaseEnemyStates.h"
@@ -82,6 +83,9 @@ constexpr float PostureBarHeight     = 5.0f;
 constexpr float PostureBarGap        = 5.0f;
 constexpr float BossPostureWidth     = 0.36f; // of the boss bar's length
 const glm::vec3 RallyTint            = glm::vec3(1.0f, 0.62f, 0.25f); // the rally's part of the health bar: an ember orange
+constexpr float WrathBarWidth        = 220.0f;
+constexpr float WrathBarHeight       = 4.0f;
+constexpr float WrathBarGap          = 7.0f;
 constexpr float PlayerPostureWidth   = 0.26f; // of the screen's width
 constexpr float PlayerPostureFromBottom = 128.0f; // above the boss bar and its name
 const glm::vec4 PostureLowColor      = glm::vec4(0.85f, 0.66f, 0.28f, 1.0f);
@@ -581,6 +585,26 @@ void DrawSpells(EntityManager& entityManager, unsigned int playerID, const HUDAr
 
 void DrawPostureBar(EntityManager& entityManager, unsigned int entityID, const glm::vec2& center, float width);
 
+// The Wrath (see WrathComponent): a thin bar in its color under the player's bars, pulsing once full ("V" beside it),
+// burning down while it is set loose. Returns where it ends (nothing drawn while it is empty)
+float DrawWrathBar(const WrathComponent& wrath, float left, float top)
+{
+	if (wrath.currentWrath <= 0.0f && !wrath.IsActive())
+		return top;
+
+	static float pulseSeconds = 0.0f;
+	pulseSeconds += EngineTime::deltaTime;
+	const float pulse = wrath.IsFull() && !wrath.IsActive() ? 0.65f + 0.35f * std::sin(pulseSeconds * 6.0f) : 1.0f;
+
+	const glm::vec2 topLeft = glm::vec2(left, top + WrathBarGap);
+	UIRenderer::DrawRectangle(topLeft - glm::vec2(1.0f), glm::vec2(WrathBarWidth + 2.0f, WrathBarHeight + 2.0f), PostureBackground);
+	UIRenderer::DrawRectangle(topLeft, glm::vec2(WrathBarWidth * glm::clamp(wrath.GetFraction(), 0.0f, 1.0f), WrathBarHeight),
+		glm::vec4(wrath.glowColor * pulse, 1.0f));
+	if (wrath.IsFull() && !wrath.IsActive())
+		UIRenderer::DrawTextAt("V", glm::vec2(topLeft.x + WrathBarWidth + 8.0f, topLeft.y - 5.0f), 14.0f, glm::vec4(wrath.glowColor, pulse));
+	return topLeft.y + WrathBarHeight;
+}
+
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	unsigned int playerID = 0;
@@ -605,6 +629,9 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	// The player's own posture (Sekiro): low in the middle of the screen, where the eyes are during a duel
 	DrawPostureBar(entityManager, playerID, glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y - PlayerPostureFromBottom),
 		area.size.x * PlayerPostureWidth);
+
+	if (const WrathComponent* wrath = entityManager.GetComponent<WrathComponent>(playerID))
+		barsBottom = DrawWrathBar(*wrath, area.topLeft.x + PlayerBarsOffset.x, barsBottom);
 
 	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(playerID);
 	if (hud->showLockOnMarker && lockOn)

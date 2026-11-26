@@ -408,6 +408,21 @@
     ]
    },
    "inventory": {},
+   "wrath": {
+    "max_wrath": 100.0,
+    "from_damage_dealt": 0.45,
+    "from_damage_taken": 0.3,
+    "from_deflects": 9.0,
+    "duration_seconds": 8.0,
+    "damage_multiplier": 1.4,
+    "posture_multiplier": 1.6,
+    "glow_color": [
+     0.72,
+     0.3,
+     1.0
+    ],
+    "release_effect": "Wrath Burst"
+   },
    "posture": {
     "max_posture": 120.0,
     "from_hits": 0.4,
@@ -1575,6 +1590,69 @@
     ],
     "intensity": 2.4,
     "max_particles": 600
+   }
+  },
+  {
+   "tag": {
+    "name": "Wrath Burst"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": false,
+    "particles_per_second": 0.0,
+    "lifetime_seconds": 0.9,
+    "spawn_half_extents": [
+     0.35,
+     0.9,
+     0.35
+    ],
+    "velocity": [
+     0.0,
+     3.0,
+     0.0
+    ],
+    "velocity_randomness": 3.5,
+    "gravity": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "start_size": 0.22,
+    "end_size": 0.02,
+    "start_color": [
+     0.8,
+     0.45,
+     1.0
+    ],
+    "end_color": [
+     0.25,
+     0.02,
+     0.4
+    ],
+    "intensity": 3.0,
+    "max_particles": 300
    }
   },
   {
@@ -6816,7 +6894,7 @@
     ]
    },
    "parent": {
-    "index": 139,
+    "index": 140,
     "bone_name": ""
    }
   },
@@ -6848,7 +6926,7 @@
     ]
    },
    "parent": {
-    "index": 139,
+    "index": 140,
     "bone_name": ""
    }
   },
@@ -6880,7 +6958,7 @@
     ]
    },
    "parent": {
-    "index": 139,
+    "index": 140,
     "bone_name": ""
    }
   },
@@ -6912,7 +6990,7 @@
     ]
    },
    "parent": {
-    "index": 139,
+    "index": 140,
     "bone_name": ""
    }
   },
@@ -6944,7 +7022,7 @@
     ]
    },
    "parent": {
-    "index": 139,
+    "index": 140,
     "bone_name": ""
    }
   },
@@ -6976,7 +7054,7 @@
     ]
    },
    "parent": {
-    "index": 139,
+    "index": 140,
     "bone_name": ""
    }
   },
@@ -7082,7 +7160,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 146
+    "index": 147
    },
    "point_light": {
     "attenuation": {
@@ -12358,7 +12436,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 270
+    "index": 271
    },
    "point_light": {
     "attenuation": {
@@ -12660,7 +12738,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 272,
+    "index": 273,
     "bone_name": "Weapon_R"
    }
   },
@@ -12698,7 +12776,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 272,
+    "index": 273,
     "bone_name": "Hand_L"
    }
   },
@@ -12951,7 +13029,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 275,
+    "index": 276,
     "bone_name": "Weapon_R"
    }
   },
@@ -12989,7 +13067,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 275,
+    "index": 276,
     "bone_name": "Hand_L"
    }
   },
@@ -13253,7 +13331,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 278,
+    "index": 279,
     "bone_name": "Weapon_L"
    }
   },
@@ -13506,7 +13584,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 280,
+    "index": 281,
     "bone_name": "Weapon_R"
    }
   },
@@ -13544,7 +13622,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 280,
+    "index": 281,
     "bone_name": "Hand_L"
    }
   },
@@ -13803,7 +13881,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 283,
+    "index": 284,
     "bone_name": "Weapon_L"
    }
   },
@@ -14061,7 +14139,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 285,
+    "index": 286,
     "bone_name": "Weapon_R"
    }
   },
@@ -14099,7 +14177,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 285,
+    "index": 286,
     "bone_name": "Hand_L"
    }
   },
@@ -14352,7 +14430,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 288,
+    "index": 289,
     "bone_name": "Weapon_R"
    }
   },
@@ -14390,7 +14468,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 288,
+    "index": 289,
     "bone_name": "Hand_L"
    }
   },
@@ -14649,7 +14727,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 291,
+    "index": 292,
     "bone_name": "Weapon_L"
    }
   },
@@ -14895,7 +14973,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 293,
+    "index": 294,
     "bone_name": "head"
    }
   },
@@ -15141,7 +15219,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 295,
+    "index": 296,
     "bone_name": "head"
    }
   },
@@ -15387,7 +15465,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 297,
+    "index": 298,
     "bone_name": "head"
    }
   },
@@ -15663,7 +15741,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 299,
+    "index": 300,
     "bone_name": "Weapon_R"
    }
   },
@@ -18209,7 +18287,7 @@
     ]
    },
    "parent": {
-    "index": 365
+    "index": 366
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -18316,7 +18394,7 @@
     ]
    },
    "parent": {
-    "index": 367,
+    "index": 368,
     "bone_name": ""
    }
   },
@@ -18348,7 +18426,7 @@
     ]
    },
    "parent": {
-    "index": 367,
+    "index": 368,
     "bone_name": ""
    }
   },
@@ -18380,7 +18458,7 @@
     ]
    },
    "parent": {
-    "index": 367,
+    "index": 368,
     "bone_name": ""
    }
   },
@@ -18412,7 +18490,7 @@
     ]
    },
    "parent": {
-    "index": 367,
+    "index": 368,
     "bone_name": ""
    }
   },
@@ -18444,7 +18522,7 @@
     ]
    },
    "parent": {
-    "index": 367,
+    "index": 368,
     "bone_name": ""
    }
   },
@@ -18476,7 +18554,7 @@
     ]
    },
    "parent": {
-    "index": 367,
+    "index": 368,
     "bone_name": ""
    }
   },
@@ -18786,7 +18864,7 @@
     ]
    },
    "parent": {
-    "index": 374
+    "index": 375
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -18858,7 +18936,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 374,
+    "index": 375,
     "bone_name": "Hand_L"
    }
   },
@@ -18912,7 +18990,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 374,
+    "index": 375,
     "bone_name": "Weapon_R"
    }
   },

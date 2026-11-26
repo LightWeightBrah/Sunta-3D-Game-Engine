@@ -1082,3 +1082,25 @@ How to use it: Add Component > Terrain on an entity whose Model is the terrain's
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/TerrainComponent.h`</sub>
 
+### Wrath
+
+Wrath, a rage that grows in a fight (as the Spartan Rage of God of War): it fills from the damage the character deals and takes and from the blows it deflects; once full, the player sets it loose (V) - for 'durationSeconds' its blows hurt 'damageMultiplier' times more and fill the enemies' posture 'postureMultiplier' times faster, the figure burns in 'glowColor' (its outline and an aura). It drains away slowly when the fighting stops
+
+How to use it: Add Component > Wrath on the player (with Health and Character Actions). The HUD shows a thin bar under the stamina while it fills, pulsing when full. A script reads it: this.wrath.current, this.wrath.isActive
+
+| Field | Type |
+|---|---|
+| `maxWrath` | Float |
+| `fromDamageDealt` | Float |
+| `fromDamageTaken` | Float |
+| `fromDeflects` | Float |
+| `drainPerSecond` | Float |
+| `drainDelaySeconds` | Float |
+| `durationSeconds` | Float |
+| `damageMultiplier` | Float |
+| `postureMultiplier` | Float |
+| `glowColor` | Color |
+| `releaseEffect` | String |
+
+<sub>Defined in `Sunta/src/Sunta/Gameplay/WrathComponent.h`</sub>
+
