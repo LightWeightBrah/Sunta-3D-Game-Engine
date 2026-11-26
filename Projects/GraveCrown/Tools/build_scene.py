@@ -783,8 +783,11 @@ def add_plains(builder, rng):
     invisible_wall(builder, (38.0, 5.0, 0.0), (26.0, 10.0, 0.5))
     dress_plains(builder, rng)
     # Camps of the faithful: fires and their guards
-    for camp in ((14.0, 0.0, -28.0), (-18.0, 0.0, -78.0), (16.0, 0.0, -96.0)):
-        brazier(builder, camp)
+    # (two fires at the edge of each camp, away from where its guards fight: one in the middle filled the screen
+    # with flame whenever the camera came close in a fight)
+    for cx_, _, cz_ in ((14.0, 0.0, -28.0), (-18.0, 0.0, -78.0), (16.0, 0.0, -96.0)):
+        for dx, dz in ((6.5, 3.0), (-5.5, -5.0)):
+            brazier(builder, (cx_ + dx, 0.0, cz_ + dz))
     bonfire = builder.copy_named("Gate Bonfire")
     builder.get(bonfire)["tag"]["name"] = "Plains Bonfire"
     grave_shrine(builder, bonfire)

@@ -58,7 +58,7 @@ void main()
 	// starts fading further away, it would fill the picture long before the camera is inside it
 	float toCamera_ = length(cameraPosition - center);
 	float size_     = iCenterSize.w;
-	visibility = exp(-pow(fogDensity * toCamera_, 2.0)) * smoothstep(0.6 + size_ * 0.35, 2.5 + size_ * 0.6, toCamera_);
+	visibility = exp(-pow(fogDensity * toCamera_, 2.0)) * smoothstep(0.9 + size_ * 0.5, 2.8 + size_ * 0.8, toCamera_);
 }
 
 #shader fragment
