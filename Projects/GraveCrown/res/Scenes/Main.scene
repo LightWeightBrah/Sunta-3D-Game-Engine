@@ -214,6 +214,12 @@
       "hit_from": 0.44,
       "hit_to": 0.63,
       "damage_multiplier": 1.2
+     },
+     {
+      "animation": "Riposte",
+      "hit_from": 0.42,
+      "hit_to": 0.72,
+      "damage_multiplier": 1.0
      }
     ],
     "running_attack_animation": "Attack_Running",
@@ -221,6 +227,7 @@
     "attack_speed": 1.05,
     "riposte_damage_multiplier": 3.0,
     "deflect_seconds": 0.22,
+    "riposte_animation": "Riposte",
     "swing_effect": "",
     "heavy_swing_effect": ""
    },
@@ -7290,7 +7297,7 @@
    "posture": {
     "max_posture": 70.0,
     "from_hits": 1.0,
-    "from_being_parried": 35.0,
+    "from_being_parried": 25.0,
     "recover_per_second": 10.0,
     "broken_seconds": 2.5,
     "finisher_damage": 1.0,
@@ -7541,7 +7548,7 @@
    "posture": {
     "max_posture": 70.0,
     "from_hits": 1.0,
-    "from_being_parried": 35.0,
+    "from_being_parried": 25.0,
     "recover_per_second": 10.0,
     "broken_seconds": 2.5,
     "finisher_damage": 1.0,
@@ -8056,7 +8063,7 @@
    "posture": {
     "max_posture": 70.0,
     "from_hits": 1.0,
-    "from_being_parried": 35.0,
+    "from_being_parried": 25.0,
     "recover_per_second": 10.0,
     "broken_seconds": 2.5,
     "finisher_damage": 1.0,
@@ -8566,7 +8573,7 @@
    "posture": {
     "max_posture": 70.0,
     "from_hits": 1.0,
-    "from_being_parried": 35.0,
+    "from_being_parried": 25.0,
     "recover_per_second": 10.0,
     "broken_seconds": 2.5,
     "finisher_damage": 1.0,
@@ -8822,7 +8829,7 @@
    "posture": {
     "max_posture": 70.0,
     "from_hits": 1.0,
-    "from_being_parried": 35.0,
+    "from_being_parried": 25.0,
     "recover_per_second": 10.0,
     "broken_seconds": 2.5,
     "finisher_damage": 1.0,

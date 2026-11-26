@@ -569,8 +569,8 @@ bool TryDeflect(EntityManager& entityManager, unsigned int defenderID, unsigned 
 	if (!defender || !defender->IsDeflecting() || !shield || !IsInFrontOfShield(entityManager, defenderID, attackerID, *shield))
 		return false;
 
+	// No block impact: a deflect leaves the defender free at once (to deflect the next blow, or to strike the opening)
 	CharacterSoundsSystem::Play(entityManager, defenderID, &CharacterSoundsComponent::parrySound);
-	CharacterActionsSystem::PlayBlockImpact(entityManager, defenderID);
 	if (const PostureComponent* attackerPosture = entityManager.GetComponent<PostureComponent>(attackerID))
 		FillPosture(entityManager, attackerID, attackerPosture->fromBeingParried);
 

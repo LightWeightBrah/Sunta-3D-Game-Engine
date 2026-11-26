@@ -172,6 +172,7 @@ void SetWalking(bool walk)
 constexpr float DeflectLeadProgress = 0.07f;
 constexpr float DeflectNear         = 4.0f;
 constexpr float DeflectHoldSeconds  = 0.3f;
+constexpr float FinisherReach       = 2.5f;
 
 bool IsBlowComing(EntityManager& entityManager, unsigned int playerID)
 {
@@ -295,7 +296,34 @@ void TestBot::Update(EntityManager& entityManager, float deltaTime)
 		blockReleaseAt = now + DeflectHoldSeconds;
 	}
 
-	if (now < fightUntil && distance < approachDistance + AttackReachExtra && now >= nextAttackAt)
+	// While deflecting, a target whose guard broke gets the finisher at once
+	// (any enemy near enough, locked on or not)
+	bool finishes = false;
+	if (now < deflectUntil)
+		for (CharacterActionsComponent& other : entityManager.GetAllComponents<CharacterActionsComponent>())
+		{
+			const unsigned int otherID = entityManager.GetEntityIDForComponent(other);
+			if (otherID != playerID && other.IsOpenToRiposte() && glm::length(PositionOf(entityManager, otherID) - PositionOf(entityManager, playerID)) < FinisherReach)
+				finishes = true;
+		}
+	if (finishes && now >= nextAttackAt)
+		CombatLog::Event("bot,finisher");
+	// The actions of the player and its target as they change (a test can tell what each did and when)
+	static int lastPlayerAction = -1;
+	if (const CharacterActionsComponent* p = entityManager.GetComponent<CharacterActionsComponent>(playerID); p && (int)p->currentAction != lastPlayerAction)
+	{
+		lastPlayerAction = (int)p->currentAction;
+		CombatLog::Event("bot,player action " + std::to_string(lastPlayerAction) + " " + p->currentAnimation);
+	}
+	static int lastTargetAction = -1;
+	if (hasEnemy)
+		if (const CharacterActionsComponent* t = entityManager.GetComponent<CharacterActionsComponent>(lockOn->targetEntityID); t && (int)t->currentAction != lastTargetAction)
+		{
+			lastTargetAction = (int)t->currentAction;
+			CombatLog::Event("bot,target action " + std::to_string(lastTargetAction));
+		}
+
+	if (((finishes) || (now < fightUntil && distance < approachDistance + AttackReachExtra)) && now >= nextAttackAt)
 	{
 		InputPlayback::PressKey("Mouse1");
 		InputPlayback::ReleaseKey("Mouse1"); // a click within one frame still counts (IsMouseButtonDown)

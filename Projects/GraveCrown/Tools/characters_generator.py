@@ -50,6 +50,8 @@ KING.update({
     "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
     "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
     "Taunt":          MotionClip(GREAT_SWORD + "power up.fbx"),
+    # The finisher on a broken guard: the pack's great overhead cleave, the whole body thrown into it
+    "Riposte":        MotionClip(GREAT_SWORD + "slash (2).fbx", 0, 42, speed=0.9),
     # In the saddle (Mesh2Motion's riding clips, CC0; baked by bake_mount_clips.py): the sword in the right fist, the
     # left hand on the reins
     "Ride_Idle":      MotionClip("Mesh2Motion/human/Mount_Idle.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Idle"),

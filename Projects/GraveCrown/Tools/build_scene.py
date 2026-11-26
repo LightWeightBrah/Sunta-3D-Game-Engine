@@ -69,6 +69,8 @@ KING_MOVES = [
     {"animation": "Attack_Heavy", "hit_from": 0.43, "hit_to": 0.58, "damage_multiplier": 1.0},
     {"animation": "Attack_Heavy_2", "hit_from": 0.12, "hit_to": 0.32, "damage_multiplier": 1.0},
     {"animation": "Attack_Running", "hit_from": 0.44, "hit_to": 0.63, "damage_multiplier": 1.2},
+    # the finisher: the first cleave of the pack's "slash (2)" (frames 0-42), the blade comes down at 0.48-0.71
+    {"animation": "Riposte", "hit_from": 0.42, "hit_to": 0.72, "damage_multiplier": 1.0},
 ]
 KING_SWORD_HITBOX = {"local_offset": [0.0, 0.79, 0.0], "half_extents": [0.17, 0.8, 0.07]}
 KNIGHT_SWORD_HITBOX = {"local_offset": [0.0, 0.52, 0.0], "half_extents": [0.12, 0.53, 0.05]}
@@ -243,7 +245,7 @@ def add_player(builder):
                     "heavy_attack_2_animation": "Attack_Heavy_2", "attack_speed": 1.05,
                     "heavy_damage_multiplier": 1.7, "riposte_damage_multiplier": 3.0, "parry_from": 0.0, "parry_to": 0.35,
                     # the deflect: the block raised just before a blow turns it away (Sekiro's main defence)
-                    "deflect_seconds": 0.22,
+                    "deflect_seconds": 0.22, "riposte_animation": "Riposte",
                     "swing_effect": "", "heavy_swing_effect": ""})
     entity["character_animation"].update({"walk_animation_speed": 0.95, "run_animation_speed": 3.3})
     entity["healing_flask"].update({"display_name": "Grave Draught", "hidden_while_drinking": "", "max_charges": 4,
@@ -306,7 +308,7 @@ def hollow_knight(builder, position, yaw, name="Hollow Knight"):
     entity["character_actions"].update(KNIGHT_WINDOWS)
     entity["character_animation"].update({"walk_animation_speed": 1.37, "run_animation_speed": 3.2})
     entity["box_collider"].update({"half_extents": [0.32, 0.97, 0.32], "local_offset": [0.0, 0.97, 0.0]})
-    entity["posture"] = {"max_posture": 70.0, "from_hits": 1.0, "from_being_parried": 35.0, "recover_per_second": 10.0,
+    entity["posture"] = {"max_posture": 70.0, "from_hits": 1.0, "from_being_parried": 25.0, "recover_per_second": 10.0,
                          "broken_seconds": 2.5, "finisher_damage": 1.0, "break_effect": "Posture Break",
                          "finisher_effect": "Finisher Burst"}
     return index
