@@ -778,7 +778,16 @@ def add_arena(builder):
     fog = builder.copy_named("Arena Fog")
     builder.get(fog)["transform"] = transform((cx, 0.0, cz + h))
     builder.get(fog)["fog_gate"].update({"arena_center": list(ARENA_CENTER), "arena_half_extents": [h, 8.0, h],
-                                         "cutscene": ""})
+                                         "cutscene": "Chain Warden Intro"})
+    # Through the fog: the camera flies across the court to the Warden, low before him as he raises the great sword;
+    # his name over the last seconds, then back behind the king
+    intro = builder.add(named("Chain Warden Intro", cutscene={
+        "duration_seconds": 7.5, "look_at_entity": "Chain Warden", "look_at_height": 2.4, "animation_entity": "Chain Warden",
+        "animation_name": "Taunt", "animation_at_seconds": 1.8, "title": "Chain Warden, Hand of the Gods",
+        "title_seconds": 3.0, "can_be_skipped": True, "video_file": "", "blend_in_seconds": 0.6}))
+    for i, point in enumerate(((cx, 2.4, cz + h + 3.0), (cx + 4.5, 3.4, cz + 13.0), (cx + 3.5, 2.4, cz - 1.0),
+                               (cx + 1.2, 1.5, cz - 5.5), (cx - 1.6, 1.8, cz - 6.0), (cx, 2.6, cz + h + 2.0))):
+        builder.add(named("Camera Point {}".format(i + 1), point), parent=intro)
     add_boss(builder)
     # Beyond the court, over the southern mountains: the chained titan the gods built on (scenery_models.py), every
     # chain of the plains pulling towards him; the fog lies only lightly over him, a silhouette in the haze
@@ -789,7 +798,7 @@ def add_arena(builder):
 def stand_on_terrain(builder):
     """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
     templates far below the world stay where they are)"""
-    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena", "Chained Titan")
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena", "Chained Titan", "Camera Point", "Chain Warden Intro")
     half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
     for entity in builder.entities:
         if "parent" in entity or entity["tag"]["name"].startswith(keep):

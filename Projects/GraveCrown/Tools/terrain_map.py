@@ -10,10 +10,11 @@ the Chain Warden's arena, mountains rising at the edges (the world's natural wal
 import math
 import os
 
-CENTER_X, CENTER_Z = 0.0, -85.0
-SIZE_X, SIZE_Z = 200.0, 180.0
+# (reaching 40 m south of the Warden's court, so its mountains rise behind the court's walls, not inside it)
+CENTER_X, CENTER_Z = 0.0, -105.0
+SIZE_X, SIZE_Z = 200.0, 220.0
 HEIGHT_SCALE = 26.0
-PIXELS_X, PIXELS_Z = 401, 361
+PIXELS_X, PIXELS_Z = 401, 441
 
 # Flat places: (x, z, radius of the flat middle, radius where the hills are back)
 FLAT = [(0.0, -146.0, 30.0, 40.0),     # the arena

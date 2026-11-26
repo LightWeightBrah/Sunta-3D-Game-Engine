@@ -7049,7 +7049,7 @@
     "position": [
      0.0,
      0.0,
-     -85.0
+     -105.0
     ],
     "rotation": [
      0.0,
@@ -7075,7 +7075,7 @@
    "terrain": {
     "heightmap": "@game/Terrain/plains_height.png",
     "size_x": 200.0,
-    "size_z": 180.0,
+    "size_z": 220.0,
     "height_scale": 26.0
    }
   },
@@ -17226,7 +17226,7 @@
    "transform": {
     "position": [
      -12.0,
-     1.6056634788350224,
+     0.0,
      -158.0
     ],
     "rotation": [
@@ -17652,7 +17652,7 @@
    "transform": {
     "position": [
      12.0,
-     1.3967151073726092,
+     0.0,
      -158.0
     ],
     "rotation": [
@@ -17911,7 +17911,7 @@
      22.0
     ],
     "is_crossed_with_key": true,
-    "cutscene": "",
+    "cutscene": "Chain Warden Intro",
     "battle_music": "@game/Sounds/Music/boss_phase_one.ogg",
     "battle_music_volume": 0.6,
     "victory_sound": "@game/Sounds/Boss/victory.ogg"
@@ -18007,6 +18007,239 @@
     ],
     "intensity": 0.35,
     "max_particles": 220
+   }
+  },
+  {
+   "tag": {
+    "name": "Chain Warden Intro"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "cutscene": {
+    "duration_seconds": 7.5,
+    "look_at_entity": "Chain Warden",
+    "look_at_height": 2.4,
+    "animation_entity": "Chain Warden",
+    "animation_name": "Taunt",
+    "animation_at_seconds": 1.8,
+    "title": "Chain Warden, Hand of the Gods",
+    "title_seconds": 3.0,
+    "can_be_skipped": true,
+    "video_file": "",
+    "blend_in_seconds": 0.6
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 1"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     2.4,
+     -121.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 360,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 2"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     3.4,
+     -133.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 360,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 3"
+   },
+   "transform": {
+    "position": [
+     3.5,
+     2.4,
+     -147.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 360,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 4"
+   },
+   "transform": {
+    "position": [
+     1.2,
+     1.5,
+     -151.5
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 360,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 5"
+   },
+   "transform": {
+    "position": [
+     -1.6,
+     1.8,
+     -152.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 360,
+    "bone_name": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Camera Point 6"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     2.6,
+     -122.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "parent": {
+    "index": 360,
+    "bone_name": ""
    }
   },
   {
@@ -18246,7 +18479,7 @@
    "transform": {
     "position": [
      0.0,
-     1.2127648264317337,
+     0.0,
      -156.0
     ],
     "rotation": [
@@ -18315,7 +18548,7 @@
     ]
    },
    "parent": {
-    "index": 360
+    "index": 367
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -18387,7 +18620,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": "Hand_L"
    }
   },
@@ -18441,7 +18674,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 360,
+    "index": 367,
     "bone_name": "Weapon_R"
    }
   },
