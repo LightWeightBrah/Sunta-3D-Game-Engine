@@ -21,6 +21,7 @@ GLOWS = {
     "Gothic/gc_runestone": [VIOLET],
     "Gothic/gc_candles": [GOLD],
     "Gothic/gc_king_banner": [VIOLET, GOLD],
+    "Gothic/gc_grave_shrine": [GOLD],
 }
 
 

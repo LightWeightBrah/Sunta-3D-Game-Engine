@@ -7427,7 +7427,8 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "bonfire"
+    "model_name": "gc_grave_shrine",
+    "emissive_strength": 1.5
    },
    "tag": {
     "name": "Crypt Bonfire"
@@ -7478,16 +7479,16 @@
     "start_size": 0.32,
     "end_size": 0.04,
     "start_color": [
-     1.0,
-     0.55,
-     0.15
+     0.78,
+     0.42,
+     1.0
     ],
     "end_color": [
-     0.45,
-     0.05,
-     0.0
+     0.18,
+     0.02,
+     0.32
     ],
-    "intensity": 1.6,
+    "intensity": 1.9,
     "max_particles": 150
    }
   },
@@ -7504,19 +7505,19 @@
     },
     "color": {
      "ambient": [
-      0.05,
-      0.025,
-      0.01
+      0.03,
+      0.015,
+      0.05
      ],
      "diffuse": [
-      1.0,
-      0.55,
-      0.22
+      0.68,
+      0.38,
+      1.0
      ],
      "specular": [
-      0.8,
       0.5,
-      0.25
+      0.3,
+      0.8
      ]
     }
    },
@@ -12994,7 +12995,8 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "bonfire"
+    "model_name": "gc_grave_shrine",
+    "emissive_strength": 1.5
    },
    "tag": {
     "name": "Plains Bonfire"
@@ -13045,16 +13047,16 @@
     "start_size": 0.32,
     "end_size": 0.04,
     "start_color": [
-     1.0,
-     0.55,
-     0.15
+     0.78,
+     0.42,
+     1.0
     ],
     "end_color": [
-     0.45,
-     0.05,
-     0.0
+     0.18,
+     0.02,
+     0.32
     ],
-    "intensity": 1.6,
+    "intensity": 1.9,
     "max_particles": 150
    }
   },
@@ -13071,19 +13073,19 @@
     },
     "color": {
      "ambient": [
-      0.05,
-      0.025,
-      0.01
+      0.03,
+      0.015,
+      0.05
      ],
      "diffuse": [
-      1.0,
-      0.55,
-      0.22
+      0.68,
+      0.38,
+      1.0
      ],
      "specular": [
-      0.8,
       0.5,
-      0.25
+      0.3,
+      0.8
      ]
     }
    },

@@ -496,6 +496,38 @@ def build_king_banner(parts, generator):
         parts.box(None, "rune", (x, -0.09, -1.43 + height * 0.5), (0.07, 0.02, height), bevel=0.0)
 
 
+def build_grave_shrine(parts, generator):
+    """The dead king's bonfire: a ring of stones on a mound of ash, a cracked grave slab behind it, his old sword driven
+    into the ash and a small crown hung on its guard; the violet fire burns at the sword's foot (a particle emitter)"""
+    parts.cylinder(None, "ash", make_matrix((0.0, 0.0, 0.06)), 0.95, 0.7, 0.12, segments=14)
+    for index in range(9):
+        angle = 2.0 * math.pi * index / 9 + generator.uniform(-0.1, 0.1)
+        size = generator.uniform(0.16, 0.24)
+        parts.box(None, pick_stone(generator), (math.cos(angle) * 0.62, math.sin(angle) * 0.62, size * 0.4),
+                  (size * 1.3, size, size * 0.8), rotation=(generator.uniform(-12, 12), generator.uniform(-12, 12), math.degrees(angle)), bevel=0.03)
+    # charred bones in the ash
+    for index in range(4):
+        angle = generator.uniform(0.0, 2.0 * math.pi)
+        head = (math.cos(angle) * 0.2, math.sin(angle) * 0.2, 0.1)
+        tail = (math.cos(angle) * 0.45, math.sin(angle) * 0.45 + generator.uniform(-0.1, 0.1), 0.09)
+        parts.limb(None, "bone", head, tail, 0.025, 0.02, segments=6)
+    # the grave slab behind, cracked and leaning
+    parts.box(None, "stone_dark", (0.0, 0.85, 0.55), (0.75, 0.16, 1.1), rotation=(-8, 4, 0), bevel=0.04)
+    parts.box(None, "stone_dark", (0.0, 0.88, 1.17), (0.5, 0.15, 0.5), rotation=(-8, 49, 0), bevel=0.03)
+    # the sword, driven slanting into the ash
+    tilt = (8, -6, 0)
+    parts.box(None, "iron", (0.02, 0.0, 0.55), (0.09, 0.025, 1.0), rotation=tilt, bevel=0.0)
+    parts.box(None, "iron", (0.04, -0.01, 1.08), (0.42, 0.06, 0.06), rotation=tilt, bevel=0.0)
+    parts.cylinder(None, "cloth", make_matrix((0.05, -0.02, 1.28), tilt), 0.035, 0.03, 0.32, segments=8)
+    parts.sphere(None, "iron", (0.06, -0.03, 1.46), (0.05, 0.05, 0.05))
+    # the crown hung on the guard, gold
+    ring(parts, "glass_gold", (0.2, -0.01, 0.98), 0.09, 0.018, axis="y", segments=10, scale=(1.0, 0.55))
+    for index in range(5):
+        angle = math.pi * (index / 4.0)
+        x = 0.2 + math.cos(angle) * 0.09
+        parts.limb(None, "glass_gold", (x, -0.01, 0.98 + 0.03), (x, -0.01, 0.98 + 0.08 + 0.02 * (index % 2)), 0.012, 0.004, segments=5)
+
+
 # Every piece: its builder and the size of its texture
 PIECES = {
     "gc_crypt_floor":   (build_floor, BIG_TEXTURE_PIXELS),
@@ -509,6 +541,7 @@ PIECES = {
     "gc_portal":        (build_portal, TEXTURE_PIXELS),
     "gc_banner":        (build_banner, TEXTURE_PIXELS),
     "gc_king_banner":   (build_king_banner, TEXTURE_PIXELS),
+    "gc_grave_shrine":  (build_grave_shrine, TEXTURE_PIXELS),
     "gc_arch_ruin":     (build_arch_ruin, TEXTURE_PIXELS),
     "gc_runestone":     (build_runestone, TEXTURE_PIXELS),
     "gc_chain_anchor":  (build_chain_anchor, TEXTURE_PIXELS),

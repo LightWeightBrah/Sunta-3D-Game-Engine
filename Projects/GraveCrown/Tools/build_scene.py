@@ -379,6 +379,17 @@ def obsidian_golem(builder, position, yaw):
     return index
 
 
+def grave_shrine(builder, index):
+    """A bonfire of Grave Crown: the king's grave shrine (gothic_kit_generator gc_grave_shrine), its fire his violet one"""
+    entity = builder.get(index)
+    entity["model"]["model_name"] = "gc_grave_shrine"
+    entity["model"]["emissive_strength"] = 1.5
+    entity["particle_emitter"].update({"start_color": [0.78, 0.42, 1.0], "end_color": [0.18, 0.02, 0.32], "intensity": 1.9})
+    for child in builder.entities:
+        if child.get("parent", {}).get("index") == index and "point_light" in child:
+            child["point_light"]["color"] = {"ambient": [0.03, 0.015, 0.05], "diffuse": [0.68, 0.38, 1.0], "specular": [0.5, 0.3, 0.8]}
+
+
 def court_knight_ally(builder):
     """The knights of the king's court, called to his side with G (the player's Summon): a hollow knight's fighting
     with the court knight's body, on the player's side - its body on the player's layer, its blade on his hitbox layer.
@@ -690,6 +701,7 @@ def add_crypt(builder):
         builder.add(named("Camera Point {}".format(i + 1), point), parent=awakening)
     bonfire = builder.copy_named("Shrine Bonfire")
     builder.get(bonfire)["tag"]["name"] = "Crypt Bonfire"
+    grave_shrine(builder, bonfire)
     builder.get(bonfire)["transform"] = transform(CRYPT_BONFIRE)
     builder.get(bonfire)["bonfire"]["respawn_offset"] = [0.0, 0.0, 1.6]
     add_court(builder)
@@ -775,6 +787,7 @@ def add_plains(builder, rng):
         brazier(builder, camp)
     bonfire = builder.copy_named("Gate Bonfire")
     builder.get(bonfire)["tag"]["name"] = "Plains Bonfire"
+    grave_shrine(builder, bonfire)
     builder.get(bonfire)["transform"] = transform(PLAINS_BONFIRE)
     hollow_knight(builder, (12.0, 0.0, -24.0), 180.0)
     hollow_knight(builder, (17.0, 0.0, -31.0), 220.0, "Hollow Knight 2")
