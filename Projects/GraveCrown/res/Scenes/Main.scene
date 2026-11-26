@@ -7795,7 +7795,7 @@
    },
    "health": {
     "max_health": 160.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -13577,7 +13577,7 @@
    },
    "health": {
     "max_health": 150.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -13868,7 +13868,7 @@
    },
    "health": {
     "max_health": 150.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -14168,7 +14168,7 @@
    },
    "health": {
     "max_health": 100,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Blood",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -14423,7 +14423,7 @@
    },
    "health": {
     "max_health": 150.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -14723,7 +14723,7 @@
    },
    "health": {
     "max_health": 100,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Blood",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -14973,7 +14973,7 @@
    },
    "health": {
     "max_health": 150.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -15269,7 +15269,7 @@
    },
    "health": {
     "max_health": 150.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -15569,7 +15569,7 @@
    },
    "health": {
     "max_health": 100,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Blood",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -15819,7 +15819,7 @@
    },
    "health": {
     "max_health": 70.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Blood",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -16065,7 +16065,7 @@
    },
    "health": {
     "max_health": 70.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Blood",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -16311,7 +16311,7 @@
    },
    "health": {
     "max_health": 70.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Blood",
     "death_slow_motion_seconds": 0.0,
     "death_slow_motion_scale": 0.3
    },
@@ -19712,7 +19712,7 @@
    },
    "health": {
     "max_health": 1400.0,
-    "hit_effect": "Hit Embers",
+    "hit_effect": "Hit Sparks",
     "death_slow_motion_seconds": 3.0,
     "death_slow_motion_scale": 0.25
    },

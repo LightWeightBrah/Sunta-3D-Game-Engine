@@ -338,6 +338,7 @@ def hollow_knight(builder, position, yaw, name="Hollow Knight"):
     # A Sekiro swordsman: it guards about one blow in three and answers at once; blocked blows wear its posture down
     entity["melee_enemy"].update({"guard_chance": 0.35, "guard_seconds": 0.8})
     unseen_guard(builder, index, name)
+    entity["health"]["hit_effect"] = "Hit Sparks"  # (hollow armor: metal sparks, no blood)
     entity["character_animation"].update({"walk_animation_speed": 1.37, "run_animation_speed": 3.2})
     entity["box_collider"].update({"half_extents": [0.32, 0.97, 0.32], "local_offset": [0.0, 0.97, 0.0]})
     entity["posture"] = {"max_posture": 70.0, "from_hits": 1.0, "from_being_parried": 25.0, "recover_per_second": 10.0,
@@ -417,6 +418,7 @@ def ash_wolf(builder, position, yaw, name="Ash Wolf"):
     """A gaunt wolf of the ash (the fox's clips of Mesh2Motion): quick bites, a leap from afar, no guard"""
     index = enemy_from(builder, "Hollow Ghoul", name, "ash_wolf", position, yaw, "Ash Wolf", 70.0, 50)
     entity = builder.get(index)
+    entity["health"]["hit_effect"] = "Hit Blood"
     actions = entity["character_actions"]
     actions.update({"light_attack_1_animation": "Attack_Light_1", "light_attack_2_animation": "Attack_Light_1",
                     "light_attack_3_animation": "Attack_Light_1", "heavy_attack_animation": "Attack_Heavy",
@@ -451,6 +453,7 @@ def gods_cultist(builder, position, yaw):
     entity["model"]["model_name"] = "gods_cultist"
     entity["transform"] = transform(position, yaw)
     entity["enemy_health_bar"]["display_name"] = "Masked Cultist"
+    entity["health"]["hit_effect"] = "Hit Blood"
     entity["character_actions"].update(CULTIST_WINDOWS)
     entity["character_animation"].update({"walk_animation_speed": 1.38, "run_animation_speed": 2.56})
     staff = named("Cultist Staff", model={"is_visible": True, "model_name": "gods_cultist_staff"})
@@ -496,6 +499,7 @@ def add_boss(builder):
                                         "leap_attack_animation": ""})
     entity["melee_enemy"].update({"leap_attack_distance": 0.0, "attack_distance": 3.2, "guard_chance": 0.3, "guard_seconds": 0.9})
     unseen_guard(builder, boss, "Chain Warden")
+    entity["health"]["hit_effect"] = "Hit Sparks"
     # Phase two: he raises the great sword (the power-up) and fights with the spinning cleave as his heavy blow
     entity["boss"].update({"phase_two_glow": 5.0, "phase_two_animation": "Taunt", "phase_two_light_attack_1_animation": "Attack_Light_1",
                            "phase_two_light_attack_2_animation": "Attack_Light_2",
