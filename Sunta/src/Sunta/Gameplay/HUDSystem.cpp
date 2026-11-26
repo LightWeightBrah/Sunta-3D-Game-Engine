@@ -76,6 +76,16 @@ const glm::vec4 BarSheenColor       = glm::vec4(1.0f, 0.95f, 0.85f, 0.14f);
 const glm::vec4 BarShadeColor       = glm::vec4(0.0f, 0.0f, 0.0f, 0.28f);
 const glm::vec4 BarEdgeColor        = glm::vec4(1.0f, 0.9f, 0.7f, 0.35f);
 
+// The posture bar (Sekiro): a thin bar over the health bar that fills from its middle to both ends, gold turning to a
+// hot orange as it nears full, white while the posture is broken; hidden while empty
+constexpr float PostureBarHeight     = 5.0f;
+constexpr float PostureBarGap        = 5.0f;
+constexpr float BossPostureWidth     = 0.36f; // of the boss bar's length
+const glm::vec4 PostureLowColor      = glm::vec4(0.85f, 0.66f, 0.28f, 1.0f);
+const glm::vec4 PostureHighColor     = glm::vec4(1.0f, 0.36f, 0.08f, 1.0f);
+const glm::vec4 PostureBrokenColor   = glm::vec4(1.0f, 0.96f, 0.86f, 1.0f);
+const glm::vec4 PostureBackground    = glm::vec4(0.0f, 0.0f, 0.0f, 0.55f);
+
 constexpr float NotificationSeconds = 3.5f;
 constexpr float NotificationFadeOut = 1.2f;
 constexpr float NotificationHeight  = 72.0f;
@@ -592,6 +602,28 @@ bool IsLockedOnByPlayer(EntityManager& entityManager, unsigned int enemyID)
 	return lockOn && lockOn->hasTarget && lockOn->targetEntityID == enemyID;
 }
 
+// The posture bar centered on 'center' (its middle), 'width' long; nothing for a character without posture or at 0
+void DrawPostureBar(EntityManager& entityManager, unsigned int entityID, const glm::vec2& center, float width)
+{
+	const PostureComponent* posture = entityManager.GetComponent<PostureComponent>(entityID);
+	if (!posture || (posture->currentPosture <= 0.0f && !posture->IsBroken()))
+		return;
+
+	const float fraction = posture->IsBroken() ? 1.0f : glm::clamp(posture->GetFraction(), 0.0f, 1.0f);
+	const glm::vec4 color = posture->IsBroken() ? PostureBrokenColor : glm::mix(PostureLowColor, PostureHighColor, fraction * fraction);
+
+	const glm::vec2 size = glm::vec2(width, PostureBarHeight);
+	UIRenderer::DrawRectangle(center - size * 0.5f - glm::vec2(1.0f), size + glm::vec2(2.0f), PostureBackground);
+	const glm::vec2 filled = glm::vec2(width * fraction, PostureBarHeight);
+	UIRenderer::DrawRectangle(center - filled * 0.5f, filled, color);
+	// The two ends of the fill burn brighter
+	if (filled.x > 4.0f)
+	{
+		UIRenderer::DrawRectangle(glm::vec2(center.x - filled.x * 0.5f, center.y - filled.y * 0.5f), glm::vec2(2.0f, filled.y), PostureBrokenColor);
+		UIRenderer::DrawRectangle(glm::vec2(center.x + filled.x * 0.5f - 2.0f, center.y - filled.y * 0.5f), glm::vec2(2.0f, filled.y), PostureBrokenColor);
+	}
+}
+
 void DrawFloatingBar(EntityManager& entityManager, const EnemyHealthBarComponent& bar, unsigned int enemyID,
 	const HealthComponent& health, const glm::mat4& viewProjection)
 {
@@ -604,6 +636,7 @@ void DrawFloatingBar(EntityManager& entityManager, const EnemyHealthBarComponent
 
 	const glm::vec2 topLeft = pixel - glm::vec2(EnemyBarSize.x * 0.5f, EnemyBarSize.y);
 	DrawBar(topLeft, EnemyBarSize, GetFraction(health.currentHealth, health.maxHealth), GetFraction(bar.trailingHealth, health.maxHealth), HealthColor);
+	DrawPostureBar(entityManager, enemyID, glm::vec2(pixel.x, topLeft.y - PostureBarGap - PostureBarHeight * 0.5f), EnemyBarSize.x);
 }
 
 // 'row' 0 is the bar at the bottom, every next boss gets the row above. False when the bar is not shown yet
@@ -633,6 +666,8 @@ bool DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 
 		const glm::vec2 nameTopLeft = glm::vec2(topLeft.x + boss.inner.x * scale, topLeft.y + boss.inner.y * scale - BossNameHeight - BossNameGap);
 		UIRenderer::DrawTextAt(name, nameTopLeft, BossNameHeight, BossNameColor);
+		DrawPostureBar(entityManager, enemyID, glm::vec2(topLeft.x + frameWidth * 0.5f, nameTopLeft.y - PostureBarGap - PostureBarHeight),
+			channelLength * BossPostureWidth);
 		return true;
 	}
 
@@ -641,6 +676,8 @@ bool DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 
 	UIRenderer::DrawTextAt(name, topLeft - glm::vec2(0.0f, BossNameHeight + BossNameGap), BossNameHeight, BossNameColor);
 	DrawBar(topLeft, size, GetFraction(health.currentHealth, health.maxHealth), GetFraction(bar.trailingHealth, health.maxHealth), HealthColor);
+	DrawPostureBar(entityManager, enemyID, glm::vec2(topLeft.x + size.x * 0.5f, topLeft.y - BossNameHeight - BossNameGap - PostureBarGap - PostureBarHeight),
+		size.x * BossPostureWidth);
 	return true;
 }
 

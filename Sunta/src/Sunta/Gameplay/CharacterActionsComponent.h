@@ -51,6 +51,8 @@ struct AttackMove
 	float cancelFrom       = -1.0f;
 	// Where this animation strikes by itself (meters above the feet), for the Strike Aim; 0 = the Strike Aim's own height
 	float strikeHeight     = 0.0f;
+	// A perilous blow (Sekiro): it can't be blocked or parried, only dodged; a warning shows as it starts
+	bool  isPerilous       = false;
 };
 
 // Rolls and attacks of a character, no script needed (the Dark Souls style of combat)
@@ -178,6 +180,12 @@ struct CharacterActionsComponent
 	// Hits don't stagger the character while it attacks (hyper armor, as a souls boss's blows): 0 never, 1 during
 	// heavy attacks and leaps, 2 during every attack. Its health still drops: trading blows with it costs the attacker
 	int hyperArmor = 0;
+
+	// Perilous blows (Sekiro): can't be blocked or parried, only dodged. Every heavy attack and leap of the character
+	// when 'areHeavyAttacksPerilous', or single moves marked in 'attackMoves'. As one starts, 'perilousWarningEffect'
+	// (an effect of the scene) bursts over its head and the screen glints red, so the player knows to get away
+	bool        areHeavyAttacksPerilous = false;
+	std::string perilousWarningEffect;
 
 	// An effect of the scene (see EffectSystem) played the moment each attack starts to hit, in front of the
 	// character at chest height, facing where it strikes: the arc of a slash, the blur of a fist, a gust
@@ -392,6 +400,17 @@ struct CharacterActionsComponent
 		case CharacterAction::JumpAttack:  return leapHitFrom;
 		default:                           return -1.0f;
 		}
+	}
+
+	// The attack playing now is perilous (see areHeavyAttacksPerilous)
+	bool IsPerilousAttack() const
+	{
+		if (!IsAttacking())
+			return false;
+		if (const AttackMove* move = FindCurrentMove(); move && move->isPerilous)
+			return true;
+		return areHeavyAttacksPerilous
+			&& (currentAction == CharacterAction::HeavyAttack || currentAction == CharacterAction::LeapAttack);
 	}
 
 	// Hyper armor now (see hyperArmor)

@@ -12,6 +12,7 @@
 #include "GameplayMath.h"
 #include "LockOnSystem.h"
 #include "StaminaSystem.h"
+#include "HUDSystem.h"
 #include "Effects/ParticleSystem.h"
 #include "Core/InputManager.h"
 #include "Core/KeyCodes.h"
@@ -647,6 +648,14 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	actions.actionProgress                 = 0.0f;
 	actions.isInvulnerable                 = false;
 	character.controller->isDrivenByAction = !isUpperBody;
+
+	// A perilous blow warns as it starts: a burst over the head, a red glint of the screen (not for the player's own)
+	if (actions.IsPerilousAttack() && !character.controller->isPlayerControlled)
+	{
+		if (!actions.perilousWarningEffect.empty())
+			ParticleSystem::BurstAt(entityManager, actions.perilousWarningEffect, character.transform->position + glm::vec3(0.0f, 2.0f, 0.0f), 40);
+		HUDSystem::FlashScreen(glm::vec3(0.9f, 0.08f, 0.04f), 0.35f, 0.05f, 0.22f);
+	}
 }
 
 struct SpecialAttack

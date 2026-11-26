@@ -17,8 +17,16 @@ namespace fs = std::filesystem;
 
 constexpr const char* ResourcesFolderName = "res";
 constexpr const char* ConfigFileName      = "game.config";
-// The same folders as the resources of the engine (Sunta/res). The "App" folder (game icon) is created when an icon is chosen
-const std::vector<const char*> NewProjectFolders = { "Fonts", "Materials", "Models", "Scenes", "Scripts", "Shaders", "Textures" };
+// Every folder a game usually needs, made with a new project so its files have a place from the start (the same layout
+// as the sample games): models and their animations, scenes, Lua scripts, shaders, textures and materials, sounds with
+// music, combat, ambience and voice (read-aloud books, narration), skyboxes, the HUD and menus, fonts, videos (cutscenes)
+// and the game's icon ("App"). Next to "res" a "Tools" folder is made for the project's own scripts (model generators,
+// scene builders) that are not part of the game
+const std::vector<const char*> NewProjectFolders = {
+	"App", "Fonts", "Materials", "Models", "Models/Characters", "Models/Enemies", "Models/Props", "Models/Weapons",
+	"Scenes", "Scripts", "Shaders", "Skyboxes", "Sounds", "Sounds/Ambience", "Sounds/Combat", "Sounds/Music",
+	"Sounds/Voice", "Textures", "UI", "UI/HUD", "Videos"
+};
 
 bool isSwitchProjectRequested = false;
 
@@ -86,6 +94,8 @@ bool ProjectManager::CreateProject(const fs::path& parentDirectory, const std::s
 			return false;
 		}
 	}
+
+	fs::create_directories(projectDirectory / "Tools", error);
 
 	GameConfig gameConfig;
 	gameConfig.name = projectName;

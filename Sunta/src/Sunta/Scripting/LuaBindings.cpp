@@ -60,6 +60,7 @@ using CharacterControllerHandle = ComponentHandle<CharacterControllerComponent>;
 using LockOnHandle        = ComponentHandle<LockOnComponent>;
 using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
 using HealthHandle        = ComponentHandle<HealthComponent>;
+using PostureHandle       = ComponentHandle<PostureComponent>;
 using CharacterActionsHandle = ComponentHandle<CharacterActionsComponent>;
 using CharacterAnimationHandle = ComponentHandle<CharacterAnimationComponent>;
 using EnemyHandle         = ComponentHandle<EnemyComponent>;
@@ -560,7 +561,33 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 		"finisherKnockback",     MemberProperty(&CharacterActionsComponent::finisherKnockback,     0.0f),
 		"heavyKnockback",        MemberProperty(&CharacterActionsComponent::heavyKnockback,        0.0f),
 		// .knockdownChance = 0.3: now and then a heavy throw knocks it off its feet (0 = never: a model without the clips)
-		"knockdownChance",       MemberProperty(&CharacterActionsComponent::knockdownChance,       0.0f)
+		"knockdownChance",       MemberProperty(&CharacterActionsComponent::knockdownChance,       0.0f),
+		// .heavyAttacksArePerilous = true: its heavy blows and leaps can only be dodged (a boss's second phase)
+		"heavyAttacksArePerilous", MemberProperty(&CharacterActionsComponent::areHeavyAttacksPerilous, false),
+		"isPerilous", sol::readonly_property([](const CharacterActionsHandle& handle)
+			{
+				const CharacterActionsComponent* actions = handle.TryGetComponent();
+				return actions && actions->IsPerilousAttack();
+			})
+	);
+
+	// Usage in Lua: this.posture.fraction (0..1, the bar), this.posture.isBroken (open to a finisher),
+	// this.posture.finishers (how many it took: a boss with three lives counts them), this.posture:fill(20)
+	// (a script's own blow to the guard), this.posture.max = 300 (a tougher second phase)
+	lua.new_usertype<PostureHandle>("Posture", sol::no_constructor,
+		"max",              MemberProperty(&PostureComponent::maxPosture,       0.0f),
+		"current",          MemberProperty(&PostureComponent::currentPosture,   0.0f),
+		"finisherDamage",   MemberProperty(&PostureComponent::finisherDamage,   0.0f),
+		"recoverPerSecond", MemberProperty(&PostureComponent::recoverPerSecond, 0.0f),
+		"breaks",    sol::readonly_property([](const PostureHandle& handle) { const PostureComponent* p = handle.TryGetComponent(); return p ? p->breaks : 0; }),
+		"finishers", sol::readonly_property([](const PostureHandle& handle) { const PostureComponent* p = handle.TryGetComponent(); return p ? p->finishers : 0; }),
+		"isBroken",  sol::readonly_property([](const PostureHandle& handle) { const PostureComponent* p = handle.TryGetComponent(); return p && p->IsBroken(); }),
+		"fraction",  sol::readonly_property([](const PostureHandle& handle) { const PostureComponent* p = handle.TryGetComponent(); return p ? p->GetFraction() : 0.0f; }),
+		"fill", [](const PostureHandle& handle, float amount)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && CombatSystem::FillPosture(*entityManager, handle.owner.GetID(), amount);
+			}
 	);
 
 	// Usage in Lua: this.characterAnimation.idleAnimation = "Float" (hanging in the air: standing is floating now),
@@ -881,6 +908,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"lockOn",              ComponentHandleProperty<LockOnComponent>(),
 		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>(),
 		"health",              ComponentHandleProperty<HealthComponent>(),
+		"posture",             ComponentHandleProperty<PostureComponent>(),
 		"characterActions",    ComponentHandleProperty<CharacterActionsComponent>(),
 		"characterAnimation",  ComponentHandleProperty<CharacterAnimationComponent>(),
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),

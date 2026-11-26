@@ -37,6 +37,7 @@
 #include "Gameplay/HealthComponent.h"
 #include "Gameplay/HitboxComponent.h"
 #include "Gameplay/PoiseComponent.h"
+#include "Gameplay/PostureComponent.h"
 #include "Gameplay/ShieldComponent.h"
 #include "Gameplay/StaminaComponent.h"
 #include "Gameplay/CharacterAnimationComponent.h"

@@ -25,6 +25,9 @@ struct DamageEvent
 class CombatSystem
 {
 public:
+	// Fills the posture of a character that has a Posture component (see PostureComponent); true when it broke
+	static bool FillPosture(EntityManager& entityManager, unsigned int entityID, float amount);
+
 	// Call when the game starts: everyone is alive with full health
 	static void PrepareForPlay(EntityManager& entityManager);
 

@@ -2,6 +2,7 @@
 #include "CharacterActionsComponentDrawer.h"
 
 #include <imgui/imgui.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 #include "NameCombo.h"
 #include "ECS/Component.h"
@@ -57,6 +58,8 @@ bool DrawSpeeds(CharacterActionsComponent& actions)
 		ImGui::SetTooltip("A heavy attack or a leap hurts everyone around where it lands (0 radius = no shockwave)");
 	edited |= ImGui::SliderFloat("Shockwave Camera Shake", &actions.shockwaveCameraShake, 0.0f, 1.0f);
 	edited |= ImGui::SliderFloat("Attack Turn Speed", &actions.attackTurnDegreesPerSecond, 0.0f, 720.0f);
+	edited |= ImGui::Checkbox("Heavy Attacks Are Perilous", &actions.areHeavyAttacksPerilous);
+	edited |= ImGui::InputText("Perilous Warning Effect", &actions.perilousWarningEffect);
 	if (ImGui::IsItemHovered())
 		ImGui::SetTooltip("Degrees per second an attack keeps turning towards its target until it starts to hit (0 = commits at once)");
 	edited |= ImGui::SliderFloat("Attack Lunge Speed", &actions.attackLungeSpeed, 0.0f, CharacterActionsComponent::MaxSpeed);
@@ -129,6 +132,7 @@ bool DrawMoreAttacks(CharacterActionsComponent& actions, const std::map<std::str
 		edited |= ImGui::SliderFloat("Damage",   &move.damageMultiplier, 0.0f, CharacterActionsComponent::MaxDamageMultiplier);
 		edited |= ImGui::SliderFloat("Cancel From", &move.cancelFrom, -1.0f, 1.0f);
 		edited |= ImGui::SliderFloat("Strike Height", &move.strikeHeight, 0.0f, 3.0f);
+		edited |= ImGui::Checkbox("Perilous", &move.isPerilous);
 		if (ImGui::SmallButton("Remove Move"))
 		{
 			actions.attackMoves.erase(actions.attackMoves.begin() + i);

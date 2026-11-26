@@ -974,3 +974,33 @@ Every number below shows up in the Inspector, so the feel of the camera is tuned
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/FollowCameraComponent.h`</sub>
 
+### Posture
+
+The posture of a character, as in Sekiro: how long it can keep its guard against pressure before it breaks
+
+How to use it: Add Component > Posture on a character with Health (an enemy, a boss, the player). Its posture fills:
+
+- from every weapon blow that hurts it ('fromHits' x the blow's poise damage),
+- from blows it blocks ('fromBlocks' x the blocked damage, on top of the stamina the shield takes),
+- when its own blow is parried ('fromBeingParried', the deflect: the parrying one's whole point).
+
+It drains by itself 'recoverDelaySeconds' after the last fill, faster while the character is healthy (as in Sekiro: a hurt enemy keeps its posture broken longer). Full posture breaks: the character staggers for 'brokenSeconds' (the parried animation), and the first weapon blow from the front in that time is a finisher - 'finisherDamage' of its full health (1 kills it) - with slow motion, the finisher's effect and an event scripts see ("FINISHER") A character with Posture and no hits taken shows a posture bar over its health bar (the HUD) while it fills
+
+| Field | Type |
+|---|---|
+| `maxPosture` | Float |
+| `fromHits` | Float |
+| `fromBlocks` | Float |
+| `fromBeingParried` | Float |
+| `recoverPerSecond` | Float |
+| `recoverDelaySeconds` | Float |
+| `lowHealthRecoverFactor` | Float |
+| `brokenSeconds` | Float |
+| `finisherDamage` | Float |
+| `finisherSlowMotion` | Float |
+| `finisherSlowSeconds` | Float |
+| `breakEffect` | String |
+| `finisherEffect` | String |
+
+<sub>Defined in `Sunta/src/Sunta/Gameplay/PostureComponent.h`</sub>
+

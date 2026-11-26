@@ -236,6 +236,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	HealthComponent::RegisterToInspector();
 	StaminaComponent::RegisterToInspector();
 	PoiseComponent::RegisterToInspector();
+	PostureComponent::RegisterToInspector();
 	ParticleEmitterComponent::RegisterToInspector();
 	WeaponTrailComponent::RegisterToInspector();
 	ProjectileComponent::RegisterToInspector();

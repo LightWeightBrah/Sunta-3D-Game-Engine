@@ -329,6 +329,106 @@ void RecoverPoise(PoiseComponent& poise, float deltaTime)
 		poise.currentPoise = poise.maxPoise;
 }
 
+// ========== Posture (Sekiro) ==========
+
+// The posture breaks: the character reels (the long stagger of a parried attack) and is open to a finisher
+void BreakPosture(EntityManager& entityManager, unsigned int entityID, PostureComponent& posture)
+{
+	posture.currentPosture = posture.maxPosture;
+	posture.brokenLeft     = glm::max(posture.brokenSeconds, 0.01f);
+	posture.breaks++;
+
+	CharacterActionsSystem::PlayParried(entityManager, entityID);
+
+	if (const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(entityID); transform && !posture.breakEffect.empty())
+		ParticleSystem::BurstAt(entityManager, posture.breakEffect, transform->position + glm::vec3(0.0f, 1.4f, 0.0f), ParryEffectBurst);
+
+	SUNTA_ENGINE_LOG_INFO("Combat: the posture of '{0}' broke", GetEntityName(entityManager, entityID));
+}
+
+// Fills the posture of a character that has one; true when this broke it
+bool FillPosture(EntityManager& entityManager, unsigned int entityID, float amount)
+{
+	PostureComponent* posture = entityManager.GetComponent<PostureComponent>(entityID);
+	if (!posture || amount <= 0.0f || posture->IsBroken())
+		return false;
+
+	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityID);
+	if (health && health->isDead)
+		return false;
+
+	posture->currentPosture   = glm::min(posture->currentPosture + amount, posture->maxPosture);
+	posture->secondsSinceFill = 0.0f;
+
+	if (posture->currentPosture < posture->maxPosture)
+		return false;
+
+	BreakPosture(entityManager, entityID, *posture);
+	return true;
+}
+
+void RecoverPosture(EntityManager& entityManager, PostureComponent& posture, float deltaTime)
+{
+	if (posture.brokenLeft > 0.0f)
+	{
+		// The moment for the finisher passed: the guard comes back, the posture starts from the middle
+		posture.brokenLeft -= deltaTime;
+		if (posture.brokenLeft <= 0.0f)
+		{
+			posture.brokenLeft       = 0.0f;
+			posture.currentPosture   = posture.maxPosture * 0.5f;
+			posture.secondsSinceFill = 0.0f;
+		}
+		return;
+	}
+
+	posture.secondsSinceFill += deltaTime;
+	if (posture.secondsSinceFill < posture.recoverDelaySeconds)
+		return;
+
+	// A hurt character keeps its posture longer (as in Sekiro)
+	float healthFactor = 1.0f;
+	if (const HealthComponent* health = entityManager.GetComponent<HealthComponent>(entityManager.GetEntityIDForComponent(posture));
+	    health && health->maxHealth > 0.0f)
+	{
+		const float healthFraction = glm::clamp(health->currentHealth / health->maxHealth, 0.0f, 1.0f);
+		healthFactor = glm::mix(posture.lowHealthRecoverFactor, 1.0f, healthFraction);
+	}
+
+	posture.currentPosture = glm::max(posture.currentPosture - posture.recoverPerSecond * healthFactor * deltaTime, 0.0f);
+}
+
+// A blow on a character whose posture is broken is the finisher: a part of its full health in one blow
+bool TryFinisher(EntityManager& entityManager, unsigned int targetID, unsigned int attackerID, float& inOutDamage)
+{
+	PostureComponent* posture = entityManager.GetComponent<PostureComponent>(targetID);
+	const HealthComponent* health = entityManager.GetComponent<HealthComponent>(targetID);
+	if (!posture || !posture->IsBroken() || !health)
+		return false;
+
+	inOutDamage = glm::max(inOutDamage, health->maxHealth * posture->finisherDamage);
+	posture->brokenLeft       = 0.0f;
+	posture->currentPosture   = 0.0f;
+	posture->secondsSinceFill = 0.0f;
+	posture->finishers++;
+
+	if (posture->finisherSlowMotion > 0.0f && posture->finisherSlowSeconds > 0.0f)
+		TimeScaleSystem::SlowMotion(posture->finisherSlowSeconds, posture->finisherSlowMotion);
+
+	if (const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(targetID); transform && !posture->finisherEffect.empty())
+		ParticleSystem::BurstAt(entityManager, posture->finisherEffect, transform->position + glm::vec3(0.0f, 1.3f, 0.0f), ParryEffectBurst * 2);
+
+	SUNTA_ENGINE_LOG_INFO("Combat: '{0}' landed a finisher on '{1}'", GetEntityName(entityManager, attackerID), GetEntityName(entityManager, targetID));
+	return true;
+}
+
+// The blow playing now can not be blocked or parried (the perilous attacks of Sekiro): only a dodge gets out of it
+bool IsPerilousBlow(EntityManager& entityManager, unsigned int attackerID)
+{
+	const CharacterActionsComponent* attacker = entityManager.GetComponent<CharacterActionsComponent>(attackerID);
+	return attacker && attacker->IsPerilousAttack();
+}
+
 // ========== Parrying and blocking ==========
 
 const CharacterActionsComponent* GetActions(EntityManager& entityManager, unsigned int entityID)
@@ -429,8 +529,15 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	if (!CanBeHurt(entityManager, targetID))
 		return HitResult::Missed;
 
-	if (kind == DamageKind::Weapon && TryParry(entityManager, targetID, attackerID))
+	const bool isPerilous = kind == DamageKind::Weapon && IsPerilousBlow(entityManager, attackerID);
+
+	if (kind == DamageKind::Weapon && !isPerilous && TryParry(entityManager, targetID, attackerID))
+	{
+		// The deflect: the posture of the parried attacker takes it
+		if (const PostureComponent* attackerPosture = entityManager.GetComponent<PostureComponent>(attackerID))
+			FillPosture(entityManager, attackerID, attackerPosture->fromBeingParried);
 		return HitResult::Parried;
+	}
 
 	// One projectile of a volley has just hurt it: the rest of the volley passes
 	HealthComponent* targetHealth = entityManager.GetComponent<HealthComponent>(targetID);
@@ -441,17 +548,28 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 		targetHealth->secondsSinceSpellHit = 0.0f;
 	}
 
-	const BlockResult block = TryBlock(entityManager, targetID, attackerID, damage);
+	const float damageBeforeShield = damage;
+	const BlockResult block = isPerilous ? BlockResult::NotBlocked : TryBlock(entityManager, targetID, attackerID, damage);
 
 	if (block == BlockResult::Blocked)
 	{
+		// Blocking wears the guard down: too many blocks in a row break the posture
+		if (const PostureComponent* targetPosture = entityManager.GetComponent<PostureComponent>(targetID);
+		    targetPosture && FillPosture(entityManager, targetID, damageBeforeShield * targetPosture->fromBlocks))
+			return HitResult::Blocked;
 		if (damage <= 0.0f || LoseHealth(entityManager, targetID, damage, attackerID, kind))
 			CharacterActionsSystem::PlayBlockImpact(entityManager, targetID);
 		return HitResult::Blocked;
 	}
 
-	const float riposteMultiplier = GetRiposteMultiplier(entityManager, targetID, attackerID);
+	const bool isFinisher = kind == DamageKind::Weapon && TryFinisher(entityManager, targetID, attackerID, damage);
+	const float riposteMultiplier = isFinisher ? 1.0f : GetRiposteMultiplier(entityManager, targetID, attackerID);
 	damage *= riposteMultiplier;
+
+	// The blow fills the posture too (a broken one was just finished)
+	bool breaksPosture = false;
+	if (const PostureComponent* targetPosture = entityManager.GetComponent<PostureComponent>(targetID); targetPosture && !isFinisher)
+		breaksPosture = FillPosture(entityManager, targetID, poiseDamage * targetPosture->fromHits);
 
 	const CharacterActionsComponent* targetActions = entityManager.GetComponent<CharacterActionsComponent>(targetID);
 	const bool hasHyperArmor = targetActions && targetActions->HasHyperArmor();
@@ -478,7 +596,7 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	}
 	knockback = glm::max(knockback, ownKnockback);
 
-	if (LoseHealth(entityManager, targetID, damage, attackerID, kind) && (staggers || ownKnockback > 0.0f))
+	if (LoseHealth(entityManager, targetID, damage, attackerID, kind) && !breaksPosture && (staggers || ownKnockback > 0.0f))
 	{
 		// A blow that throws: away from the attacker, along the ground
 		const TransformComponent* target   = entityManager.GetComponent<TransformComponent>(targetID);
@@ -493,7 +611,7 @@ HitResult HitWithWeapon(EntityManager& entityManager, unsigned int targetID, flo
 	if (block == BlockResult::GuardBroken)
 		return HitResult::Blocked;
 
-	return riposteMultiplier > 1.0f ? HitResult::Riposte : HitResult::Hurt;
+	return (isFinisher || riposteMultiplier > 1.0f) ? HitResult::Riposte : HitResult::Hurt;
 }
 
 // ========== How a hit feels ==========
@@ -602,6 +720,15 @@ void CombatSystem::PrepareForPlay(EntityManager& entityManager)
 		poise.currentPoise        = poise.maxPoise;
 		poise.secondsSinceHit     = 0.0f;
 		poise.secondsSinceStagger = 1000.0f;
+	}
+
+	for (PostureComponent& posture : entityManager.GetAllComponents<PostureComponent>())
+	{
+		posture.currentPosture   = 0.0f;
+		posture.secondsSinceFill = 1000.0f;
+		posture.brokenLeft       = 0.0f;
+		posture.breaks           = 0;
+		posture.finishers        = 0;
 	}
 }
 
@@ -722,6 +849,9 @@ void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 	for (PoiseComponent& poise : entityManager.GetAllComponents<PoiseComponent>())
 		RecoverPoise(poise, deltaTime);
 
+	for (PostureComponent& posture : entityManager.GetAllComponents<PostureComponent>())
+		RecoverPosture(entityManager, posture, deltaTime);
+
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
 		health.secondsSinceSpellHit += deltaTime;
 
@@ -747,6 +877,11 @@ void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 		StartNewSwingIfNeeded(hitbox, *owner);
 		HitTargetsInReach(entityManager, hitbox, weaponEntityID, ownerID, *owner);
 	}
+}
+
+bool CombatSystem::FillPosture(EntityManager& entityManager, unsigned int entityID, float amount)
+{
+	return Sunta::FillPosture(entityManager, entityID, amount);
 }
 
 bool CombatSystem::ApplyDamage(EntityManager& entityManager, unsigned int targetEntityID, float damage, unsigned int attackerEntityID)

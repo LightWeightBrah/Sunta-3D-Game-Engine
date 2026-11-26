@@ -54,6 +54,7 @@ namespace SceneKeys
 	constexpr const char* HitboxComponent           = "hitbox";
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
+	constexpr const char* PostureComponent          = "posture";
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
 	constexpr const char* GlowSpriteComponent       = "glow_sprite";
 	constexpr const char* LiquidOrbComponent        = "liquid_orb";
@@ -555,6 +556,22 @@ namespace SceneKeys
 	constexpr const char* CutsceneSound             = "cutscene_sound";
 
 	constexpr const char* MaxPoise                  = "max_poise";
+	constexpr const char* MaxPosture                = "max_posture";
+	constexpr const char* PostureFromHits           = "from_hits";
+	constexpr const char* PostureFromBlocks         = "from_blocks";
+	constexpr const char* PostureFromBeingParried   = "from_being_parried";
+	constexpr const char* PostureRecoverPerSecond   = "recover_per_second";
+	constexpr const char* PostureRecoverDelay       = "recover_delay_seconds";
+	constexpr const char* PostureLowHealthRecover   = "low_health_recover_factor";
+	constexpr const char* PostureBrokenSeconds      = "broken_seconds";
+	constexpr const char* FinisherDamage            = "finisher_damage";
+	constexpr const char* FinisherSlowMotion        = "finisher_slow_motion";
+	constexpr const char* FinisherSlowSeconds       = "finisher_slow_seconds";
+	constexpr const char* PostureBreakEffect        = "break_effect";
+	constexpr const char* FinisherEffect            = "finisher_effect";
+	constexpr const char* MoveIsPerilous            = "is_perilous";
+	constexpr const char* HeavyAttacksArePerilous   = "heavy_attacks_are_perilous";
+	constexpr const char* PerilousWarningEffect     = "perilous_warning_effect";
 	constexpr const char* RecoverAfterSeconds       = "recover_after_seconds";
 	constexpr const char* StaggerImmunitySeconds    = "stagger_immunity_seconds";
 
@@ -1018,7 +1035,9 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::HeavyHitReactionAnimation, actions->heavyHitReactionAnimation },
 			{ SceneKeys::KnockbackAnimation,     actions->knockbackAnimation     },
 			{ SceneKeys::KnockbackSeconds,       actions->knockbackSeconds       },
-			{ SceneKeys::KnockbackDust,          actions->knockbackDust          }
+			{ SceneKeys::KnockbackDust,          actions->knockbackDust          },
+			{ SceneKeys::HeavyAttacksArePerilous, actions->areHeavyAttacksPerilous },
+			{ SceneKeys::PerilousWarningEffect,   actions->perilousWarningEffect   }
 		};
 
 		nlohmann::json moves = nlohmann::json::array();
@@ -1030,7 +1049,8 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 				{ SceneKeys::MoveHitTo,            move.hitTo            },
 				{ SceneKeys::MoveDamageMultiplier, move.damageMultiplier },
 				{ SceneKeys::MoveCancelFrom,       move.cancelFrom       },
-				{ SceneKeys::MoveStrikeHeight,     move.strikeHeight     }
+				{ SceneKeys::MoveStrikeHeight,     move.strikeHeight     },
+				{ SceneKeys::MoveIsPerilous,       move.isPerilous       }
 			});
 		}
 		entityJson[SceneKeys::CharacterActionsComponent][SceneKeys::AttackMoves] = moves;
@@ -1434,6 +1454,26 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::MaxPoise,            poise->maxPoise            },
 			{ SceneKeys::RecoverAfterSeconds, poise->recoverAfterSeconds },
 			{ SceneKeys::StaggerImmunitySeconds, poise->staggerImmunitySeconds }
+		};
+	}
+
+	if (auto* posture = entityManager.GetComponent<PostureComponent>(i))
+	{
+		entityJson[SceneKeys::PostureComponent] =
+		{
+			{ SceneKeys::MaxPosture,              posture->maxPosture             },
+			{ SceneKeys::PostureFromHits,         posture->fromHits               },
+			{ SceneKeys::PostureFromBlocks,       posture->fromBlocks             },
+			{ SceneKeys::PostureFromBeingParried, posture->fromBeingParried       },
+			{ SceneKeys::PostureRecoverPerSecond, posture->recoverPerSecond       },
+			{ SceneKeys::PostureRecoverDelay,     posture->recoverDelaySeconds    },
+			{ SceneKeys::PostureLowHealthRecover, posture->lowHealthRecoverFactor },
+			{ SceneKeys::PostureBrokenSeconds,    posture->brokenSeconds          },
+			{ SceneKeys::FinisherDamage,          posture->finisherDamage         },
+			{ SceneKeys::FinisherSlowMotion,      posture->finisherSlowMotion     },
+			{ SceneKeys::FinisherSlowSeconds,     posture->finisherSlowSeconds    },
+			{ SceneKeys::PostureBreakEffect,      posture->breakEffect            },
+			{ SceneKeys::FinisherEffect,          posture->finisherEffect         }
 		};
 	}
 
@@ -1929,6 +1969,8 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		actions.knockbackAnimation = actionsData.value(SceneKeys::KnockbackAnimation, actions.knockbackAnimation);
 		actions.knockbackSeconds   = actionsData.value(SceneKeys::KnockbackSeconds,   actions.knockbackSeconds);
 		actions.knockbackDust      = actionsData.value(SceneKeys::KnockbackDust,      actions.knockbackDust);
+		actions.areHeavyAttacksPerilous = actionsData.value(SceneKeys::HeavyAttacksArePerilous, actions.areHeavyAttacksPerilous);
+		actions.perilousWarningEffect   = actionsData.value(SceneKeys::PerilousWarningEffect,   actions.perilousWarningEffect);
 
 		if (actionsData.contains(SceneKeys::AttackMoves))
 		{
@@ -1941,6 +1983,7 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 				move.damageMultiplier = moveData.value(SceneKeys::MoveDamageMultiplier, move.damageMultiplier);
 				move.cancelFrom       = moveData.value(SceneKeys::MoveCancelFrom,       move.cancelFrom);
 				move.strikeHeight     = moveData.value(SceneKeys::MoveStrikeHeight,     move.strikeHeight);
+				move.isPerilous       = moveData.value(SceneKeys::MoveIsPerilous,       move.isPerilous);
 				actions.attackMoves.push_back(move);
 			}
 		}
@@ -2392,6 +2435,26 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
 		poise.staggerImmunitySeconds = poiseData.value(SceneKeys::StaggerImmunitySeconds, poise.staggerImmunitySeconds);
 		poise.currentPoise        = poise.maxPoise;
+	}
+
+	if (entityJson.contains(SceneKeys::PostureComponent))
+	{
+		const auto& data = entityJson[SceneKeys::PostureComponent];
+		auto& posture = entityManager.AddComponent<PostureComponent>(entity);
+
+		posture.maxPosture             = data.value(SceneKeys::MaxPosture,              posture.maxPosture);
+		posture.fromHits               = data.value(SceneKeys::PostureFromHits,         posture.fromHits);
+		posture.fromBlocks             = data.value(SceneKeys::PostureFromBlocks,       posture.fromBlocks);
+		posture.fromBeingParried       = data.value(SceneKeys::PostureFromBeingParried, posture.fromBeingParried);
+		posture.recoverPerSecond       = data.value(SceneKeys::PostureRecoverPerSecond, posture.recoverPerSecond);
+		posture.recoverDelaySeconds    = data.value(SceneKeys::PostureRecoverDelay,     posture.recoverDelaySeconds);
+		posture.lowHealthRecoverFactor = data.value(SceneKeys::PostureLowHealthRecover, posture.lowHealthRecoverFactor);
+		posture.brokenSeconds          = data.value(SceneKeys::PostureBrokenSeconds,    posture.brokenSeconds);
+		posture.finisherDamage         = data.value(SceneKeys::FinisherDamage,          posture.finisherDamage);
+		posture.finisherSlowMotion     = data.value(SceneKeys::FinisherSlowMotion,      posture.finisherSlowMotion);
+		posture.finisherSlowSeconds    = data.value(SceneKeys::FinisherSlowSeconds,     posture.finisherSlowSeconds);
+		posture.breakEffect            = data.value(SceneKeys::PostureBreakEffect,      posture.breakEffect);
+		posture.finisherEffect         = data.value(SceneKeys::FinisherEffect,          posture.finisherEffect);
 	}
 
 	if (entityJson.contains(SceneKeys::EnemyComponent))
