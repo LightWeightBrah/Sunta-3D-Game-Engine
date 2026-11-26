@@ -57,7 +57,8 @@ ENVIRONMENT = {
     # ink on the near edges fading with it, colors a little drained and warm: one look for the whole world
     "fog_color": [0.22, 0.13, 0.19], "fog_density": 0.022,
     "outline_strength": 0.45, "outline_color": [0.06, 0.03, 0.07],
-    "paint_radius": 3, "saturation": 0.85, "contrast": 1.18, "color_tint": [1.04, 0.96, 0.93], "vignette": 0.38, "exposure": 1.0,
+    # (no paint filter: its strokes turned the black armor into grey patches and blurred every figure)
+    "paint_radius": 0, "saturation": 0.85, "contrast": 1.18, "color_tint": [1.04, 0.96, 0.93], "vignette": 0.38, "exposure": 1.0,
 }
 MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specular": [0.14, 0.12, 0.18],
              "casts_shadows": True, "shadow_distance": 45.0, "shadow_strength": 1.0, "shadow_softness": 1,
