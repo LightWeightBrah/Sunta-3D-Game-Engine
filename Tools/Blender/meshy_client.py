@@ -17,6 +17,7 @@ import base64
 import datetime
 import json
 import os
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -100,7 +101,15 @@ def as_data_uri(path):
     return "data:image/{};base64,{}".format(kind, base64.b64encode(open(path, "rb").read()).decode("ascii"))
 
 
+_log_lock = threading.Lock()  # several tasks may finish at once when a tool runs them in threads
+
+
 def write_log(entry):
+    with _log_lock:
+        _write_log(entry)
+
+
+def _write_log(entry):
     os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
     log = json.load(open(LOG_PATH, encoding="utf-8")) if os.path.isfile(LOG_PATH) else []
     entry["date"] = datetime.datetime.now().isoformat(timespec="seconds")

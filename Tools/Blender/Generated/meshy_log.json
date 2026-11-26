@@ -2200,5 +2200,436 @@
     },
     "output": "Tools/Blender/Concepts/ThirdGame/sovereign_titan_climb.png",
     "date": "2026-11-26T00:58:37"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-2032-7269-89db-134bae4615db",
+    "input": "Concepts/ThirdGame/Variants/crops/player_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Exactly the same undead king, keep every detail of the design: black cracked plate armor with violet fire glowing in the cracks, horned spiked crown fused to the helmet with glowing violet eyes, round pauldrons, chain across the chest, crimson and gold tabard, tattered dark crimson cape hanging straight down behind, no sword, no chain in the hand. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/player_a.png",
+    "date": "2026-11-26T01:14:29"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-934d-76ef-9b42-adbf8615c453",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_knight_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same hollow knight but a gothic church guard: dark plate with a white tabard bearing a chain sigil, tall pointed helm, no sword. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_knight_b.png",
+    "date": "2026-11-26T01:14:47"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-9111-727d-9c31-16117592eb13",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_cultist_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same hooded cultist with a golden mask and a long dark robe with glowing orange runes, no flail. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_cultist_a.png",
+    "date": "2026-11-26T01:14:57"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-92a6-72ff-abb0-03cb73721c11",
+    "input": "Concepts/ThirdGame/Variants/crops/horse_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same black war horse but undead: gaunt, dark ragged mane, faint violet fire in the eyes and between the plates of the barding, black iron barding, dark saddle, no rider. standing on all four legs in a neutral side view, whole body visible from nose to tail, legs straight. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/horse_b.png",
+    "date": "2026-11-26T01:14:58"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-94b1-7120-9592-36d01be00962",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_knight_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same hollow knight of the gods in dented dark plate armor with a closed bucket helm and a torn red cloth, no sword. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_knight_a.png",
+    "date": "2026-11-26T01:14:58"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-9462-74ea-bcd7-81e28c52fcc7",
+    "input": "Concepts/ThirdGame/Variants/crops/player_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same undead king, but a leaner gothic silhouette: long tattered black coat over the cracked black plate, tall thin crown of iron spikes on a closed helmet, violet fire in the cracks, iron manacle on the left wrist, no weapon. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/player_b.png",
+    "date": "2026-11-26T01:14:59"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-95e1-7591-b503-ccb3968d7741",
+    "input": "Concepts/ThirdGame/Variants/crops/horse_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same black war horse with a scratched iron head plate and chest plate, dark leather saddle and red saddle cloth, no rider. standing on all four legs in a neutral side view, whole body visible from nose to tail, legs straight. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/horse_a.png",
+    "date": "2026-11-26T01:15:09"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-c32b-7520-b911-1cbdc321b1b7",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_cultist_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same cultist as a gothic street zealot: wide-brimmed hat over the hood, ragged long coat, beaked iron mask, lantern on the belt, no weapon. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_cultist_b.png",
+    "date": "2026-11-26T01:15:10"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-ef5c-771b-93ed-a0a40ea23520",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_golem_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same golem but a chained cathedral idol: grey-black stone with iron chains wrapped around its arms, cracks glowing orange. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_golem_b.png",
+    "date": "2026-11-26T01:15:11"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-ea5e-763a-bc02-1487512f03bc",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_wolf_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same corrupted wolf with dark brown fur and glowing orange cracks in its skin. standing on all four legs in a neutral side view, whole body visible from nose to tail, legs straight. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_wolf_a.png",
+    "date": "2026-11-26T01:15:20"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-ecaf-771c-ade6-5e812de35661",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_wolf_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same wolf as a gaunt gothic beast: huge, long-limbed, matted black fur, exposed ribs, ember-orange eyes. standing on all four legs in a neutral side view, whole body visible from nose to tail, legs straight. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_wolf_b.png",
+    "date": "2026-11-26T01:15:21"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21533-ed88-7420-ba78-4d5c54176f4a",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_golem_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "The same obsidian golem of black stone plates with glowing lava cracks and one burning eye. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_golem_a.png",
+    "date": "2026-11-26T01:15:21"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-172c-7068-a39b-680f10ae6773",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_rider_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the horned armored rider, standing on the ground without the horse: spiked black armor, horned helm, no spear. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_rider_a.png",
+    "date": "2026-11-26T01:15:21"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-1d7c-7186-a661-6900c90f2474",
+    "input": "Concepts/ThirdGame/Variants/crops/enemy_skeleton_horse_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the skeletal horse without its rider: bone horse with a fire glowing orange inside the rib cage, horse skull with burning eyes. standing on all four legs in a neutral side view, whole body visible from nose to tail, legs straight. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/enemy_skeleton_horse_a.png",
+    "date": "2026-11-26T01:15:23"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-45ff-708b-a224-528c7120b8b6",
+    "input": "Concepts/ThirdGame/Variants/crops/court_lich_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the lich advisor from the picture: a skeletal sorcerer in a dark hooded robe with blue ghostly light, an open book hanging at the belt. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_lich_a.png",
+    "date": "2026-11-26T01:15:33"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-4798-766b-8024-c1e2bb14b158",
+    "input": "Concepts/ThirdGame/Variants/crops/court_knight_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only one of the undead court knights from the picture: dark plate armor with violet fire burning from the helmet, no weapon. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_knight_a.png",
+    "date": "2026-11-26T01:15:34"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-2070-7100-8a7c-69f85cd4124c",
+    "input": "Concepts/ThirdGame/Variants/crops/court_butler_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the skeleton butler from the picture: a dignified skeleton in a black tailcoat and white shirt with a cravat, white gloves. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_butler_a.png",
+    "date": "2026-11-26T01:15:34"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21534-4199-7022-9db5-d35c86d08767",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A skeleton butler of a dead king's crypt: a tall skeleton in an old black tailcoat with tarnished silver buttons, a waistcoat, a monocle in an eye socket, a ring of keys on the belt. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_butler_b.png",
+    "date": "2026-11-26T01:15:41"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21534-457a-708b-9a60-950a1380dee4",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A lich advisor and court scholar: a gaunt skeletal sage in layered black and deep blue robes embroidered with silver runes, a tall collar, a small tarnished circlet, pale blue light in the eye sockets, scroll cases at the belt. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_lich_b.png",
+    "date": "2026-11-26T01:15:43"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-9ad6-7040-9acf-54cbc46706e2",
+    "input": "Concepts/ThirdGame/Variants/crops/titan_b.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the colossal chained titan, a dark armored giant wrapped in heavy iron chains, spikes on the shoulders, red eyes, whole body visible, no background landscape. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/titan_b.png",
+    "date": "2026-11-26T01:15:55"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21534-7643-70f9-b671-7c692363abd8",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A freed slave warrior woman: lean and scarred, short dark hair, a broken iron collar still on her neck, mismatched leather armor and a chainmail shirt, wrapped forearms, a ragged hooded cloak hanging behind. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/companion_a.png",
+    "date": "2026-11-26T01:15:55"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21534-4f97-7798-940f-ce4c1aa149c6",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "An undead royal guard knight: blackened plate armor with a violet flame burning in the eye slit of a tall helm, a faded royal crest on the breastplate, a short torn cape. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_knight_b.png",
+    "date": "2026-11-26T01:15:55"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21534-79b3-75e7-b2ab-82f3fc1fcea0",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A former gladiator slave woman, now a knight of a dead king: dark violet-black leather and plate pieces, broken shackles on the wrists, long braid, a pale scar across the face, determined look. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/companion_b.png",
+    "date": "2026-11-26T01:15:56"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21534-7a09-76be-9930-085afefc4887",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A young beast-hunter woman freed from chains, gothic style: long dark coat with a short cape, tricorn hat, leather gloves, an iron collar broken open around her neck, belts and vials. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/companion_c.png",
+    "date": "2026-11-26T01:15:56"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-96ce-7104-8916-1d04d6eaad38",
+    "input": "Concepts/ThirdGame/Variants/crops/titan_a.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the colossal stone titan, a ruined temple city on its back, mossy rock skin with golden runes, chains hanging from its arms, no background landscape. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/titan_a.png",
+    "date": "2026-11-26T01:16:04"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-ce82-778b-992c-8cf9c9b4819d",
+    "input": "Concepts/ThirdGame/Variants/crops/weapon_spear.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the long barbed iron spear, isolated, lying horizontally across the picture, whole spear visible. dark fantasy painterly realistic, plain flat light grey background, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/weapon_spear.png",
+    "date": "2026-11-26T01:16:08"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-ca3e-75e5-9815-90f9c4665fac",
+    "input": "Concepts/ThirdGame/Variants/crops/weapon_greatsword.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the huge dark iron greatsword with runes on the blade, isolated, lying horizontally across the picture, whole sword visible. dark fantasy painterly realistic, plain flat light grey background, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/weapon_greatsword.png",
+    "date": "2026-11-26T01:16:17"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-cb48-77fb-812d-3d9ebbc3e87b",
+    "input": "Concepts/ThirdGame/Variants/crops/weapon_flail.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the flail: a wooden handle, an iron chain and a spiked iron ball, isolated, lying horizontally, whole weapon visible. dark fantasy painterly realistic, plain flat light grey background, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/weapon_flail.png",
+    "date": "2026-11-26T01:16:17"
+  },
+  {
+    "task": "image-to-image",
+    "task_id": "01a21534-cc9d-73fa-b10a-9ce0dbcd5973",
+    "input": "Concepts/ThirdGame/Variants/crops/weapon_knight_sword.png",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "Only the rusty longsword, isolated, lying horizontally across the picture, whole sword visible. dark fantasy painterly realistic, plain flat light grey background, no text"
+    },
+    "output": "Concepts/ThirdGame/Variants/weapon_knight_sword.png",
+    "date": "2026-11-26T01:16:18"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21533-a9e3-7281-927b-22240c11dd54",
+    "input": "Concepts/ThirdGame/Variants/player_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/player.glb",
+    "date": "2026-11-26T01:16:58"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21535-c147-70a7-99e4-b1bb65d3cb41",
+    "settings": {
+      "input_task_id": "01a21533-a9e3-7281-927b-22240c11dd54",
+      "height_meters": 2.0
+    },
+    "output": "Generated/GraveCrown/player_rigged.glb",
+    "date": "2026-11-26T01:17:34"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21538-eb1e-7559-bbb3-0ecc0e4fd2cd",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "A skeleton butler of a dead king's crypt, FULLY DRESSED: only the skull and the bony hands are visible, everything else covered - a long black tailcoat, a dark waistcoat, a high white collar and cravat, long black trousers down to polished black shoes, white gloves held in one hand, upright dignified posture. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_butler_c.png",
+    "date": "2026-11-26T01:20:47"
+  },
+  {
+    "task": "text-to-image",
+    "task_id": "01a21538-eb1c-75d7-b6af-c6b7e2777a08",
+    "settings": {
+      "ai_model": "nano-banana-2",
+      "prompt": "An old skeleton majordomo, FULLY DRESSED in heavy dark velvet livery of a fallen royal house: a long coat with tarnished gold trim down to the knees, a waistcoat, black breeches and long boots, a chain of keys at the belt, only the skull and bony hands visible, a faint violet light in the eye sockets. standing in a neutral A-pose with arms held straight down and out at 30 degrees from the body, legs slightly apart, empty open hands holding nothing. dark fantasy, painterly realistic concept art, NOT anime, muted colors, game character model reference sheet, single character, full body, front view, plain flat light grey background, even soft lighting, no text",
+      "remove_background": true,
+      "aspect_ratio": "3:4"
+    },
+    "output": "Concepts/ThirdGame/Variants/court_butler_d.png",
+    "date": "2026-11-26T01:20:47"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21538-ebd4-7679-9668-67345d6d4c47",
+    "input": "Concepts/ThirdGame/Variants/enemy_cultist_a.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/enemy_cultist.glb",
+    "date": "2026-11-26T01:22:12"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21538-edcd-70eb-8c9b-7ce4b83e3a42",
+    "input": "Concepts/ThirdGame/Variants/horse_b.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000
+    },
+    "output": "Generated/GraveCrown/horse.glb",
+    "date": "2026-11-26T01:22:33"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a2153b-7005-7686-a7a1-d5beab3e3af1",
+    "settings": {
+      "input_task_id": "01a21538-ebd4-7679-9668-67345d6d4c47",
+      "height_meters": 1.8
+    },
+    "output": "Generated/GraveCrown/enemy_cultist_rigged.glb",
+    "date": "2026-11-26T01:23:36"
   }
 ]
