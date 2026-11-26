@@ -1,0 +1,153 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "Mesh_0"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "Material_0",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    }
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "Mesh_0",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "normal",
+   "uri": "normal.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "Image_0",
+   "uri": "Image_0.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "Image_1",
+   "uri": "Image_1.jpg"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 60920,
+   "max": [
+    44.57181930541992,
+    90,
+    15.760563850402832
+   ],
+   "min": [
+    -44.93820571899414,
+    0,
+    -16.24959373474121
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 60920,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 60920,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 91071,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 731040,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 731040,
+   "byteOffset": 731040,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 487360,
+   "byteOffset": 1462080,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 182142,
+   "byteOffset": 1949440,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 2131584,
+   "uri": "chained_titan.bin"
+  }
+ ]
+}

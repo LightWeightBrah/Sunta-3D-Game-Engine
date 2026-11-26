@@ -142,6 +142,7 @@ uniform		float				emissiveStrength;
 
 // A model darkened to a silhouette (1 = black) and light it gives off all over (see ModelComponent)
 uniform		float				modelDarkness;
+uniform		float				modelFogAmount;     // 1 = the scene's fog as over everything, less = scenery showing through
 uniform		vec3				modelGlow;
 uniform		vec3				modelRimGlow;		// light along the outline only
 uniform		vec3				modelAura;			// the color of the aura while it is drawn (see auraInflate)
@@ -220,7 +221,7 @@ void main()
 
 	float distanceToViewer = length(viewerPosition - FragPos);
 	float visibility       = exp(-pow(fogDensity * distanceToViewer, 2.0));
-	result = mix(fogColor, result, clamp(visibility, 0.0, 1.0));
+	result = mix(fogColor, result, mix(1.0, clamp(visibility, 0.0, 1.0), clamp(modelFogAmount, 0.0, 1.0)));
 
 	// After the fog: a silhouette is black however far it stands, an aura shines through the haze
 	result = result * (1.0f - clamp(modelDarkness, 0.0f, 1.0f)) + modelGlow;

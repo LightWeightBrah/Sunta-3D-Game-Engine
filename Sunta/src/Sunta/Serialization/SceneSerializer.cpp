@@ -234,6 +234,7 @@ namespace SceneKeys
 	constexpr const char* ScriptPath                = "script_path";
 	constexpr const char* IsVisible                 = "is_visible";
 	constexpr const char* EmissiveStrength          = "emissive_strength";
+	constexpr const char* FogAmount                 = "fog_amount";
 	constexpr const char* MeshName                  = "mesh_name";
 	constexpr const char* MaterialName              = "material_name";
 	constexpr const char* ModelName                 = "model_name";
@@ -799,7 +800,8 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		{
 			{ SceneKeys::IsVisible,        model->isVisible        },
 			{ SceneKeys::ModelName,        model->modelName        },
-			{ SceneKeys::EmissiveStrength, model->emissiveStrength }
+			{ SceneKeys::EmissiveStrength, model->emissiveStrength },
+			{ SceneKeys::FogAmount, model->fogAmount }
 		};
 	}
 
@@ -1768,6 +1770,7 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		modelComponent.isVisible = modelData.value(SceneKeys::IsVisible, true);
 		modelComponent.modelName = modelData.value(SceneKeys::ModelName, ModelComponent::NULL_ASSET_NAME);
 		modelComponent.emissiveStrength = modelData.value(SceneKeys::EmissiveStrength, modelComponent.emissiveStrength);
+		modelComponent.fogAmount        = modelData.value(SceneKeys::FogAmount, modelComponent.fogAmount);
 		modelComponent.isDirty = true;
 	}
 

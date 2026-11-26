@@ -43,7 +43,7 @@ public:
 	enum class ModelParts { All, Solid, SeeThrough };
 	void DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
 		float emissiveStrength = 1.0f, float darkness = 0.0f, const glm::vec3& glowColor = glm::vec3(0.0f),
-		const glm::vec3& rimGlow = glm::vec3(0.0f), float expression = 0.0f, ModelParts parts = ModelParts::All) const;
+		const glm::vec3& rimGlow = glm::vec3(0.0f), float expression = 0.0f, ModelParts parts = ModelParts::All, float fogAmount = 1.0f) const;
 
 	// True when a model has a see-through (crystal) mesh
 	static bool HasSeeThroughParts(const Model& model);

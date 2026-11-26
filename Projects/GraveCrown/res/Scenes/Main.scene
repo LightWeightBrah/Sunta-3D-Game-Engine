@@ -88,7 +88,7 @@
   },
   {
    "camera": {
-    "far_plane": 160.0,
+    "far_plane": 420.0,
     "field_of_view": 45.0,
     "is_active": true,
     "near_plane": 0.10000000149011612
@@ -18442,6 +18442,40 @@
    "parent": {
     "index": 360,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Chained Titan"
+   },
+   "transform": {
+    "position": [
+     18.0,
+     -6.0,
+     -256.0
+    ],
+    "rotation": [
+     0.0,
+     200.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.1736481776669303,
+     0.0,
+     0.984807753012208,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "chained_titan",
+    "fog_amount": 0.55,
+    "emissive_strength": 0.0
    }
   },
   {

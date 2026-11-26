@@ -461,6 +461,10 @@ struct ModelComponent
 	// A script or the Boss can change it during the game, e.g. this.model.emissiveStrength = 2
 	float emissiveStrength = 1.0f;
 
+	// How much of the scene's fog lies over the model (1 = as over everything, 0.3 = it shows through a thick haze):
+	// scenery far away on the horizon - a giant, a mountain, a tower - stays a silhouette instead of fading out
+	float fogAmount = 1.0f;
+
 	// Set by a script, not saved with the scene: 'darkness' takes the model's colors away (1 = a black silhouette),
 	// 'glowColor' is light it gives off all over (an aura; white and strong = a figure of pure light).
 	// this.model.darkness = 1, this.model.glow = vec3(1.2, 0.6, 0.1)
@@ -488,7 +492,8 @@ struct ModelComponent
 			{
 				ADD_PROPERTY(ModelComponent, isVisible, PropertyDataType::Bool),
 				ADD_ASSET(ModelComponent, modelName, AssetType::Model),
-				ADD_PROPERTY_RANGED(ModelComponent, emissiveStrength, PropertyDataType::Float, 0.0f, MaxEmissiveStrength)
+				ADD_PROPERTY_RANGED(ModelComponent, emissiveStrength, PropertyDataType::Float, 0.0f, MaxEmissiveStrength),
+				ADD_PROPERTY_RANGED(ModelComponent, fogAmount, PropertyDataType::Float, 0.0f, 1.0f)
 			},
 			[](void* data)
 			{

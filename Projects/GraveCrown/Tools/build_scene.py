@@ -199,7 +199,8 @@ def add_sky_and_camera(builder):
     builder.get(moon)["environment"].update(ENVIRONMENT)
     builder.get(moon)["directional_light"].update(MOONLIGHT)
     camera = builder.copy_named("Camera")
-    builder.get(camera)["camera"]["far_plane"] = 160.0
+    # far enough for the chained titan on the horizon (scenery fades with the fog anyway)
+    builder.get(camera)["camera"]["far_plane"] = 420.0
     builder.get(camera)["transform"] = transform((PLAYER_START[0], 2.4, PLAYER_START[2] + 4.5), 0.0)
     builder.get(camera)["follow_camera"].update({"distance": 5.2, "pivot_height": 1.75})
 
@@ -774,12 +775,16 @@ def add_arena(builder):
     builder.get(fog)["fog_gate"].update({"arena_center": list(ARENA_CENTER), "arena_half_extents": [h, 8.0, h],
                                          "cutscene": ""})
     add_boss(builder)
+    # Beyond the court, over the southern mountains: the chained titan the gods built on (scenery_models.py), every
+    # chain of the plains pulling towards him; the fog lies only lightly over him, a silhouette in the haze
+    builder.add(named("Chained Titan", (cx + 18.0, -6.0, cz - 110.0), 200.0,
+                      model={"is_visible": True, "model_name": "chained_titan", "fog_amount": 0.55, "emissive_strength": 0.0}))
 
 
 def stand_on_terrain(builder):
     """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
     templates far below the world stay where they are)"""
-    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena")
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena", "Chained Titan")
     half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
     for entity in builder.entities:
         if "parent" in entity or entity["tag"]["name"].startswith(keep):

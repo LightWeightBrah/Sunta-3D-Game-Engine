@@ -469,6 +469,7 @@ void Scene::Render(Renderer& renderer)
 		float expression;
 		glm::vec3 aura;
 		float auraSize;
+		float fogAmount;
 	};
 
 	struct GizmosDrawItem
@@ -571,7 +572,7 @@ void Scene::Render(Renderer& renderer)
 
 				modelQueue.push_back({ modelComponent->modelData->model.get(), animator, matrixComponent->matrix, modelComponent->emissiveStrength,
 					modelComponent->darkness, modelComponent->glowColor, modelComponent->rimGlow, modelComponent->expression,
-					modelComponent->aura, modelComponent->auraSize });
+					modelComponent->aura, modelComponent->auraSize, modelComponent->fogAmount });
 			}
 		}
 
@@ -715,7 +716,7 @@ void Scene::Render(Renderer& renderer)
 		const bool seeThrough = isPostProcessing && Renderer::HasSeeThroughParts(*item.model);
 		hasSeeThrough = hasSeeThrough || seeThrough;
 		renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength, item.darkness, item.glowColor,
-			item.rimGlow, item.expression, seeThrough ? Renderer::ModelParts::Solid : Renderer::ModelParts::All);
+			item.rimGlow, item.expression, seeThrough ? Renderer::ModelParts::Solid : Renderer::ModelParts::All, item.fogAmount);
 	}
 	if (hasSeeThrough)
 	{
@@ -724,7 +725,7 @@ void Scene::Render(Renderer& renderer)
 		for (const auto& item : modelQueue)
 			if (Renderer::HasSeeThroughParts(*item.model))
 				renderer.DrawModel(*item.model, item.matrix, sceneData, item.animator, item.emissiveStrength, item.darkness,
-					item.glowColor, item.rimGlow, item.expression, Renderer::ModelParts::SeeThrough);
+					item.glowColor, item.rimGlow, item.expression, Renderer::ModelParts::SeeThrough, item.fogAmount);
 	}
 
 	// The auras around the figures that have one: light, after everything solid

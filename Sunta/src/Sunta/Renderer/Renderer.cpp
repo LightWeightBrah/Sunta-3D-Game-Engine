@@ -64,6 +64,7 @@ void Renderer::DrawMesh(const Mesh& mesh, Material& material, const glm::mat4& m
 	SetBaseTransform(*shader, modelMatrix, sceneData);
 	SetBaseLighting(*shader, sceneData);
 	shader->TrySetUniform1f("modelDarkness", 0.0f);
+	shader->TrySetUniform1f("modelFogAmount", 1.0f);
 	shader->TrySetUniform3f("modelGlow", glm::vec3(0.0f));
 	shader->TrySetUniform3f("modelRimGlow", glm::vec3(0.0f));
 	shader->TrySetUniform1f("expressionWeight", 0.0f);
@@ -85,7 +86,8 @@ bool Renderer::HasSeeThroughParts(const Model& model)
 }
 
 void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const SceneData& sceneData, const Animator* animator,
-	float emissiveStrength, float darkness, const glm::vec3& glowColor, const glm::vec3& rimGlow, float expression, ModelParts parts) const
+	float emissiveStrength, float darkness, const glm::vec3& glowColor, const glm::vec3& rimGlow, float expression, ModelParts parts,
+	float fogAmount) const
 {
 	for (const auto& subMesh : model.GetSubMeshes())
 	{
@@ -103,6 +105,7 @@ void Renderer::DrawModel(const Model& model, const glm::mat4& modelMatrix, const
 		SetBaseLighting(*shader, sceneData);
 		shader->TrySetUniform1f("emissiveStrength", emissiveStrength);
 		shader->TrySetUniform1f("modelDarkness", darkness);
+		shader->TrySetUniform1f("modelFogAmount", fogAmount);
 		shader->TrySetUniform3f("modelGlow", glowColor);
 		shader->TrySetUniform3f("modelRimGlow", rimGlow);
 		shader->TrySetUniform1f("expressionWeight", expression);
