@@ -55,6 +55,17 @@ struct HealthComponent
 	// many small projectiles costs one hit, not all of them at once (0 = every projectile hurts)
 	float spellImmunitySeconds = 0.0f;
 
+	// The rally (Bloodborne): the health a blow took stays on the bar (a lighter part) for 'rallyWindowSeconds', and
+	// every weapon blow this character lands in that time wins back 'rallyPerDamage' x its damage of it - a hurt
+	// character that strikes back at once regains much of what it lost. After the window the lost part drains away.
+	// 0 = no rally
+	float rallyWindowSeconds = 0.0f;
+	float rallyPerDamage     = 0.6f;
+
+	// The health still to be won back and how long the window still lasts. Not saved with the scene
+	float rallyHealth      = 0.0f;
+	float rallySecondsLeft = 0.0f;
+
 	// Since a spell last hurt the character. Not saved with the scene
 	float secondsSinceSpellHit = 1000.0f;
 
@@ -88,7 +99,9 @@ struct HealthComponent
 				ADD_PROPERTY_RANGED(HealthComponent, deathSlowMotionScale,   PropertyDataType::Float, 0.05f, 1.0f),
 				ADD_PROPERTY_RANGED(HealthComponent, weaponDamageTaken,      PropertyDataType::Float, 0.0f, 3.0f),
 				ADD_PROPERTY_RANGED(HealthComponent, spellDamageTaken,       PropertyDataType::Float, 0.0f, 3.0f),
-				ADD_PROPERTY_RANGED(HealthComponent, spellImmunitySeconds,   PropertyDataType::Float, 0.0f, 5.0f)
+				ADD_PROPERTY_RANGED(HealthComponent, spellImmunitySeconds,   PropertyDataType::Float, 0.0f, 5.0f),
+				ADD_PROPERTY_RANGED(HealthComponent, rallyWindowSeconds,     PropertyDataType::Float, 0.0f, 10.0f),
+				ADD_PROPERTY_RANGED(HealthComponent, rallyPerDamage,         PropertyDataType::Float, 0.0f, 3.0f)
 			});
 	}
 };

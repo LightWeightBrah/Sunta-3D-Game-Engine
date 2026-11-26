@@ -81,6 +81,7 @@ const glm::vec4 BarEdgeColor        = glm::vec4(1.0f, 0.9f, 0.7f, 0.35f);
 constexpr float PostureBarHeight     = 5.0f;
 constexpr float PostureBarGap        = 5.0f;
 constexpr float BossPostureWidth     = 0.36f; // of the boss bar's length
+const glm::vec3 RallyTint            = glm::vec3(1.0f, 0.62f, 0.25f); // the rally's part of the health bar: an ember orange
 constexpr float PlayerPostureWidth   = 0.26f; // of the screen's width
 constexpr float PlayerPostureFromBottom = 64.0f;
 const glm::vec4 PostureLowColor      = glm::vec4(0.85f, 0.66f, 0.28f, 1.0f);
@@ -156,7 +157,7 @@ void DrawBar(const glm::vec2& topLeft, const glm::vec2& size, float fraction, fl
 // A bar of a HUD style: the dark channel, the pale trail, the fill, then the frame over them (its ends keep their shape,
 // only its middle grows with 'channelLength'). Returns the size of the whole frame on the screen
 glm::vec2 DrawStyledBar(const HUDStyle& style, const HUDBarStyle& bar, const glm::vec2& topLeft, float channelLength,
-	float fraction, float trailFraction, const glm::vec4& fillColor)
+	float fraction, float trailFraction, const glm::vec4& fillColor, float rallyFraction = 0.0f)
 {
 	const float scale = bar.height / (float)glm::max(bar.frame->GetHeight(), 1);
 	const glm::vec2 frameSize = glm::vec2(channelLength + (bar.inner.x + bar.inner.z) * scale, bar.height);
@@ -190,6 +191,9 @@ glm::vec2 DrawStyledBar(const HUDStyle& style, const HUDBarStyle& bar, const glm
 	};
 
 	drawFill(trailFraction, style.trailColor);
+	// The health a quick blow back can still win (the rally): the fill's color, paler
+	if (rallyFraction > fraction)
+		drawFill(rallyFraction, glm::vec4(glm::mix(glm::vec3(fillColor), RallyTint, 0.55f), 1.0f));
 	drawFill(fraction, fillColor);
 	drawSheen(fraction);
 
@@ -294,7 +298,8 @@ float DrawStyledPlayerBars(const HUDStyle& style, const HUDArea& area, const Pla
 	{
 		const glm::vec2 topLeft = area.topLeft + style.health.offset;
 		bottom = glm::max(bottom, topLeft.y + DrawStyledBar(style, style.health, topLeft, health->maxHealth * hud.pixelsPerHealthPoint,
-			GetFraction(health->currentHealth, health->maxHealth), GetFraction(hud.trailingHealth, health->maxHealth), style.healthColor).y);
+			GetFraction(health->currentHealth, health->maxHealth), GetFraction(hud.trailingHealth, health->maxHealth), style.healthColor,
+			GetFraction(health->currentHealth + health->rallyHealth, health->maxHealth)).y);
 	}
 
 	return bottom;
@@ -308,6 +313,9 @@ void DrawPlayerBars(const HUDArea& area, const PlayerHUDComponent& hud, const He
 	{
 		const glm::vec2 size = glm::vec2(health->maxHealth * hud.pixelsPerHealthPoint, HealthBarHeight);
 		DrawBar(topLeft, size, GetFraction(health->currentHealth, health->maxHealth), GetFraction(hud.trailingHealth, health->maxHealth), HealthColor);
+		if (health->rallyHealth > 0.0f)
+			UIRenderer::DrawRectangle(topLeft + glm::vec2(size.x * GetFraction(health->currentHealth, health->maxHealth), 0.0f),
+				glm::vec2(size.x * GetFraction(health->rallyHealth, health->maxHealth), size.y), glm::vec4(RallyTint, 0.8f));
 		topLeft.y += HealthBarHeight + GapBetweenBars;
 	}
 

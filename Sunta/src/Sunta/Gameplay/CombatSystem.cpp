@@ -78,6 +78,9 @@ enum class HitResult
 	Riposte   // it landed on a parried attacker: a critical blow
 };
 
+// The attacker's blow hurt: it wins back a part of its own lost health (see HealthComponent: the rally)
+void Rally(EntityManager& entityManager, unsigned int attackerID, float damage);
+
 // ========== The owner of a weapon ==========
 
 // The closest entity with Character Actions, going up from the weapon through its parents (the hand holding it)
@@ -214,6 +217,8 @@ void HitTargetsInReach(EntityManager& entityManager, HitboxComponent& hitbox, un
 		const HitResult result = HitWithWeapon(entityManager, targetID, damage, poiseDamage, ownerID, DamageKind::Weapon, hitbox.knockback);
 		if (result == HitResult::Blocked || result == HitResult::Hurt || result == HitResult::Riposte)
 			hitbox.hitFlashSecondsLeft = HitFlashSeconds;
+		if (result == HitResult::Hurt || result == HitResult::Riposte)
+			Rally(entityManager, ownerID, damage);
 
 		const glm::vec3 contactPoint = GetContactPoint(box, targetBody->worldOBB);
 		if (CombatLog::IsOn())
@@ -281,7 +286,15 @@ bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damag
 	if (IsPlayerCharacter(entityManager, entityID))
 		minimum = glm::max(minimum, DeveloperCheats::GetPlayerHealthFloor(health.maxHealth));
 	const float floor = glm::clamp(minimum, 0.0f, health.currentHealth);
+	const float before = health.currentHealth;
 	health.currentHealth = glm::max(health.currentHealth - damage, floor);
+
+	// The rally: what this blow took can be won back for a while
+	if (health.rallyWindowSeconds > 0.0f)
+	{
+		health.rallyHealth      = glm::min(health.rallyHealth + (before - health.currentHealth), health.maxHealth - health.currentHealth);
+		health.rallySecondsLeft = health.rallyWindowSeconds;
+	}
 	CharacterSoundsSystem::Play(entityManager, entityID, &CharacterSoundsComponent::hurtSound);
 	if (health.currentHealth > 0.0f && damage > 0.0f)
 	{
@@ -297,6 +310,37 @@ bool LoseHealth(EntityManager& entityManager, unsigned int entityID, float damag
 
 	Die(entityManager, entityID, health, attackerEntityID);
 	return false;
+}
+
+// ========== The rally (Bloodborne) ==========
+
+// After the window the part still to be won back drains this fast (a part of the full health a second)
+constexpr float RallyDrainPerSecond = 0.25f;
+
+// The attacker's blow hurt for 'damage': it wins back a part of its own lost health
+void Rally(EntityManager& entityManager, unsigned int attackerID, float damage)
+{
+	HealthComponent* health = entityManager.GetComponent<HealthComponent>(attackerID);
+	if (!health || health->isDead || health->rallyHealth <= 0.0f || damage <= 0.0f)
+		return;
+
+	const float gain = glm::min(health->rallyHealth, damage * health->rallyPerDamage);
+	health->currentHealth = glm::min(health->currentHealth + gain, health->maxHealth);
+	health->rallyHealth  -= gain;
+}
+
+void UpdateRally(HealthComponent& health, float deltaTime)
+{
+	if (health.rallyHealth <= 0.0f)
+		return;
+	if (health.isDead)
+	{
+		health.rallyHealth = 0.0f;
+		return;
+	}
+	health.rallySecondsLeft -= deltaTime;
+	if (health.rallySecondsLeft < 0.0f)
+		health.rallyHealth = glm::max(health.rallyHealth - health.maxHealth * RallyDrainPerSecond * deltaTime, 0.0f);
 }
 
 // ========== Poise ==========
@@ -886,7 +930,10 @@ void CombatSystem::Update(EntityManager& entityManager, float deltaTime)
 		RecoverPosture(entityManager, posture, deltaTime);
 
 	for (HealthComponent& health : entityManager.GetAllComponents<HealthComponent>())
+	{
 		health.secondsSinceSpellHit += deltaTime;
+		UpdateRally(health, deltaTime);
+	}
 
 	for (HitboxComponent& hitbox : entityManager.GetAllComponents<HitboxComponent>())
 	{

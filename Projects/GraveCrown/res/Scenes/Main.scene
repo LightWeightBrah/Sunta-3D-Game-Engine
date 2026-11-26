@@ -300,7 +300,9 @@
     "max_health": 140.0,
     "hit_effect": "Hit Embers",
     "death_slow_motion_seconds": 1.5,
-    "death_slow_motion_scale": 0.35
+    "death_slow_motion_scale": 0.35,
+    "rally_window_seconds": 3.0,
+    "rally_per_damage": 0.5
    },
    "lock_on": {
     "eye_height": 1.5,

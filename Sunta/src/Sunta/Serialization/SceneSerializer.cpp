@@ -389,6 +389,8 @@ namespace SceneKeys
 	constexpr const char* WeaponDamageTaken         = "weapon_damage_taken";
 	constexpr const char* SpellDamageTaken          = "spell_damage_taken";
 	constexpr const char* SpellImmunitySeconds      = "spell_immunity_seconds";
+	constexpr const char* RallyWindowSeconds        = "rally_window_seconds";
+	constexpr const char* RallyPerDamage            = "rally_per_damage";
 	constexpr const char* HitboxIsEnabled           = "is_enabled";
 	constexpr const char* HitReactionDodgeFrom      = "hit_reaction_dodge_from";
 	constexpr const char* FootstepCameraShake       = "footstep_camera_shake";
@@ -1098,7 +1100,9 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::DeathSlowMotionScale,   health->deathSlowMotionScale   },
 			{ SceneKeys::WeaponDamageTaken,      health->weaponDamageTaken      },
 			{ SceneKeys::SpellDamageTaken,       health->spellDamageTaken       },
-			{ SceneKeys::SpellImmunitySeconds,   health->spellImmunitySeconds   }
+			{ SceneKeys::SpellImmunitySeconds,   health->spellImmunitySeconds   },
+			{ SceneKeys::RallyWindowSeconds,     health->rallyWindowSeconds     },
+			{ SceneKeys::RallyPerDamage,         health->rallyPerDamage         }
 		};
 	}
 
@@ -2089,6 +2093,8 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		health.weaponDamageTaken      = healthData.value(SceneKeys::WeaponDamageTaken,      health.weaponDamageTaken);
 		health.spellDamageTaken       = healthData.value(SceneKeys::SpellDamageTaken,       health.spellDamageTaken);
 		health.spellImmunitySeconds   = healthData.value(SceneKeys::SpellImmunitySeconds,   health.spellImmunitySeconds);
+		health.rallyWindowSeconds     = healthData.value(SceneKeys::RallyWindowSeconds,     health.rallyWindowSeconds);
+		health.rallyPerDamage         = healthData.value(SceneKeys::RallyPerDamage,         health.rallyPerDamage);
 		health.currentHealth = health.maxHealth;
 	}
 

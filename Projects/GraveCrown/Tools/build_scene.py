@@ -253,6 +253,8 @@ def add_player(builder):
     entity["player_hud"]["death_message"] = "YOU FELL AGAIN"
     entity["health"]["max_health"] = 140.0
     entity["health"]["hit_effect"] = "Hit Embers"
+    # The rally (Bloodborne): the health a blow took can be won back by striking back within 3 seconds
+    entity["health"].update({"rally_window_seconds": 3.0, "rally_per_damage": 0.5})
     entity["stamina"].update({"max_stamina": 110.0, "light_attack_cost": 18.0, "heavy_attack_cost": 32.0})
     entity["box_collider"]["half_extents"] = [0.34, 1.0, 0.34]
     entity["box_collider"]["local_offset"] = [0.0, 1.0, 0.0]
