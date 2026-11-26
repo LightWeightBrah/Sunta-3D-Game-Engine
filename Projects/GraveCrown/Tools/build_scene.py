@@ -470,7 +470,7 @@ def add_boss(builder):
 
 # ========== The black horse (Tools/beasts_generator.py) ==========
 
-HORSE_START = (3.0, 0.0, -5.0)
+HORSE_START = (6.5, 0.0, -8.0)  # beside the portal, clear of its fires
 
 
 def add_horse(builder):
