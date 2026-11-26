@@ -444,7 +444,7 @@ def add_boss(builder):
     entity["transform"] = transform((ARENA_CENTER[0], 0.0, ARENA_CENTER[2] - 10.0), 0.0)
     entity["box_collider"].update({"half_extents": [0.45, 1.27, 0.45], "local_offset": [0.0, 1.27, 0.0]})
     entity["enemy_health_bar"]["display_name"] = "Chain Warden, Hand of the Gods"
-    entity["health"]["max_health"] = 1100.0
+    entity["health"]["max_health"] = 1400.0  # three deathblows (a third each) or a long fight
     entity["currency_reward"]["amount"] = 6000
     # The STRIKE lines of characters_generator.py's log (the blade's sweep through the space before him)
     entity["character_actions"].update({"attack_moves": [
@@ -469,7 +469,7 @@ def add_boss(builder):
     entity["character_animation"].update({"walk_animation_speed": 0.8, "run_animation_speed": 2.7})
     entity["posture"] = {"max_posture": 260.0, "from_hits": 1.0, "from_blocks": 0.5, "from_being_parried": 45.0,
                          "recover_per_second": 14.0, "recover_delay_seconds": 1.8, "low_health_recover_factor": 0.35,
-                         "broken_seconds": 3.0, "finisher_damage": 0.3, "finisher_slow_motion": 0.25,
+                         "broken_seconds": 3.0, "finisher_damage": 0.34, "finisher_slow_motion": 0.25,
                          "finisher_slow_seconds": 0.7, "break_effect": "Posture Break", "finisher_effect": "Finisher Burst"}
     blade = named("Warden Blade", model={"is_visible": True, "model_name": "chain_warden_blade"})
     blade["hitbox"] = dict({"local_offset": [0.0, 0.9, 0.0], "half_extents": [0.18, 0.9, 0.07]}, damage=34.0, poise_damage=40.0, layer=ENEMY_HITBOX_LAYER, show_gizmos=False,

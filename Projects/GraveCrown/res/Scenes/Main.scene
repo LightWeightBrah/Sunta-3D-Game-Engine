@@ -18727,7 +18727,7 @@
     "show_seconds_after_hit": 5.0
    },
    "health": {
-    "max_health": 1100.0,
+    "max_health": 1400.0,
     "hit_effect": "Hit Embers",
     "death_slow_motion_seconds": 3.0,
     "death_slow_motion_scale": 0.25
@@ -18824,7 +18824,7 @@
     "recover_delay_seconds": 1.8,
     "low_health_recover_factor": 0.35,
     "broken_seconds": 3.0,
-    "finisher_damage": 0.3,
+    "finisher_damage": 0.34,
     "finisher_slow_motion": 0.25,
     "finisher_slow_seconds": 0.7,
     "break_effect": "Posture Break",
