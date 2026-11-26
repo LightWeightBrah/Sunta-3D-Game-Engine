@@ -17,9 +17,9 @@ def make_glow(path, hue_from, hue_to):
     color = numpy.asarray(picture, dtype=numpy.float32) / 255.0
     hsv = numpy.asarray(picture.convert("HSV"), dtype=numpy.float32) / 255.0
     hue, saturation, value = hsv[..., 0] * 360.0, hsv[..., 1], hsv[..., 2]
-    mask = (hue >= hue_from) & (hue <= hue_to) & (saturation > 0.3) & (value > 0.3)
-    strength = numpy.clip((value - 0.3) / 0.4, 0.0, 1.0) * mask
-    glow = numpy.clip(color * (1.8 * strength[..., None]), 0.0, 1.0)
+    mask = (hue >= hue_from) & (hue <= hue_to) & (saturation > 0.3) & (value > 0.22)
+    strength = numpy.clip((value - 0.22) / 0.3, 0.0, 1.0) * mask
+    glow = numpy.clip(color * (2.4 * strength[..., None]), 0.0, 1.0)
     Image.fromarray((glow * 255).astype(numpy.uint8)).save(path + "_emissive.png")
     print("GLOW {}: {:.2%} of the texture shines".format(os.path.basename(path), float(mask.mean())))
 

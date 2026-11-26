@@ -29,8 +29,10 @@ TEXTURE = os.path.join(ROOT, "Tools", "Textures", "ambientCG", "Ground037", "Gro
 TILE_METERS = 7.0
 STEP = 1.0
 # The ground is ash: the soil's colors pulled toward a dark violet grey
-ASH_TINT = numpy.array([0.58, 0.55, 0.6])
-ASH_MIX = 0.55
+ASH_TINT = numpy.array([0.5, 0.48, 0.5])
+ASH_MIX = 0.75
+# and darker: ash and cinders, not sand
+DARKEN = 0.62
 
 
 def ash_texture(folder):
@@ -38,7 +40,7 @@ def ash_texture(folder):
     width, height = image.size
     pixels = numpy.array(image.pixels[:], dtype=numpy.float32).reshape(height, width, 4)
     grey = pixels[..., :3].mean(axis=2, keepdims=True)
-    color = pixels[..., :3] * (1.0 - ASH_MIX) + grey * ASH_TINT * ASH_MIX * 1.25
+    color = (pixels[..., :3] * (1.0 - ASH_MIX) + grey * ASH_TINT * ASH_MIX * 1.25) * DARKEN
     pixels[..., :3] = numpy.clip(color, 0.0, 1.0)
     diffuse = save_image(NAME + "_diffuse", folder, pixels, is_color=True)
     specular = numpy.ones_like(pixels)

@@ -52,11 +52,11 @@ ARENA_HALF = 22.0
 # ========== The look: a dark violet dusk over ash, painted ==========
 
 ENVIRONMENT = {
-    "skybox_folder": "@game/Skyboxes/AshenNight", "sky_brightness": 0.85, "is_fog_enabled": True,
-    "fog_color": [0.16, 0.13, 0.17], "fog_density": 0.016,
-    "paint_radius": 3, "saturation": 0.92, "contrast": 1.08, "color_tint": [1.02, 0.97, 1.04], "vignette": 0.3, "exposure": 1.05,
+    "skybox_folder": "@game/Skyboxes/VioletStorm", "sky_brightness": 1.0, "is_fog_enabled": True,
+    "fog_color": [0.13, 0.1, 0.13], "fog_density": 0.014,
+    "paint_radius": 3, "saturation": 0.95, "contrast": 1.1, "color_tint": [1.0, 0.98, 0.98], "vignette": 0.3, "exposure": 1.0,
 }
-MOONLIGHT = {"ambient": [0.24, 0.21, 0.27], "diffuse": [0.85, 0.8, 0.9], "specular": [0.35, 0.32, 0.42],
+MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specular": [0.35, 0.32, 0.42],
              "casts_shadows": True, "shadow_distance": 45.0, "shadow_strength": 1.0, "shadow_softness": 1,
              "shadow_resolution": 2048}
 

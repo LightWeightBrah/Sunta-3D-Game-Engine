@@ -129,6 +129,8 @@ class Enemy:
     is_two_handed: bool = False  # the left hand stays on the haft in every animation (where the Idle holds it)
     is_staff_in_left: bool = False  # the weapon is a staff held upright in the left fist (the right hand casts spells)
     one_hand_actions: tuple = ()  # two-handed: actions whose left hand stays free (riding: it holds the reins)
+    straight_spine: bool = False  # the rig's spine joints put back on the line from the hips to the head (see straighten_spine)
+    cape: bool = False  # a cape behind the legs follows the hips, not the legs (see cape_follows_hips)
     brightness: float = 1.3
     weapons: list = field(default_factory=list)
 
@@ -240,6 +242,10 @@ def make_enemy(enemy, arguments):
 
     our_names = {theirs: ours for ours, theirs in motion_retarget.MESHY.bone_of.items()}
     armature, body = character_from_mesh.load_rigged_character(os.path.join(ENEMIES_FOLDER, enemy.source), enemy.height, our_names)
+    if enemy.straight_spine:
+        character_from_mesh.straighten_spine(armature)
+    if enemy.cape:
+        character_from_mesh.cape_follows_hips(armature, body)
     body.name = enemy.name
     character_from_mesh.make_engine_textures(body, out_folder, enemy.name, enemy.brightness)
 

@@ -59,7 +59,7 @@ RIDING = ("Ride_Idle", "Ride_Walk", "Ride_Gallop")
 CHARACTERS = [
     Enemy("player_rigged.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
-          is_left_fist=True, is_two_handed=True, brightness=1.6, one_hand_actions=RIDING),
+          is_left_fist=True, is_two_handed=True, brightness=1.15, one_hand_actions=RIDING, straight_spine=True, cape=True),
     # The hollow knight of the gods: a long sword of the same forge as the king's (the great sword's model, shorter)
     Enemy("enemy_knight_rigged.glb", "HollowKnight", "hollow_knight", 1.95, ONE_HANDED,
           Weapon("weapon_greatsword_upright.glb", "hollow_knight_sword", 1.15, 0.1), brightness=1.5),
@@ -76,6 +76,14 @@ CHARACTERS = [
     Enemy("court_knight_rigged.glb", "CourtKnight", "court_knight", 1.95, ONE_HANDED,
           Weapon("weapon_greatsword_upright.glb", "court_knight_sword", 1.2, 0.1), brightness=1.5),
 ]
+
+
+# Every Meshy rig of this game: its head end lies a centimeter from the head (the head tipped forward in every clip),
+# and some spines start just above the hips - straightened before the animations go on
+for _character in CHARACTERS:
+    _character.straight_spine = True
+    # (brighter textures went pink and pale under the game's violet light and painted grade)
+    _character.brightness = min(_character.brightness, 1.2)
 
 
 def main():

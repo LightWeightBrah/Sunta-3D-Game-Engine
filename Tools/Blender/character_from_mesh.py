@@ -82,6 +82,69 @@ def load_mesh(path, height, faces=None):
     return mesh
 
 
+def straighten_spine(armature, chain=("Hips", "Spine02", "Spine", "Chest", "Neck", "Head")):
+    """An automatic rig sometimes puts a spine joint just above the hips and in front of them (Meshy did for a king in a
+    heavy cape): the short bone between them lies nearly flat, and a retarget turns the hips by tens of degrees to stand
+    it up like the actor's - the character stands bent double. The joints of the chain are put back on the straight
+    line from the hips to the head, at their own heights (the lowest at least a fifth of the way up), and each bone
+    points at the next (the mesh in its rest pose doesn't move: only the bones do)"""
+    names = [name for name in chain if name in armature.data.bones]
+    if len(names) < 3:
+        return
+    select_only([armature])
+    bpy.context.view_layer.objects.active = armature
+    bpy.ops.object.mode_set(mode="EDIT")
+    bones = armature.data.edit_bones
+    bottom, top = bones[names[0]].head.copy(), bones[names[-1]].head.copy()
+    span = top.z - bottom.z
+    previous_z = bottom.z
+    for index, name in enumerate(names[1:-1], start=1):
+        bone = bones[name]
+        least = bottom.z + span * index / (len(names) - 1) * 0.6
+        z = max(bone.head.z, least, previous_z + span * 0.08)
+        t = (z - bottom.z) / span
+        bone.head = bottom.lerp(top, t)
+        previous_z = z
+    for name, following in zip(names[:-1], names[1:]):
+        bones[name].tail = bones[following].head.copy()
+    # The head points straight up to the top of the skull (the rig's head end lay a centimeter from the head joint, in
+    # any direction: the retarget then tipped the head forward to point it like the actor's)
+    head = bones[names[-1]]
+    up = Vector((0.0, 0.0, max(span * 0.45, 0.12)))
+    head.tail = head.head + up
+    for child in head.children:
+        if child.name.lower().startswith("head_end"):
+            child.head = head.tail.copy()
+            child.tail = child.head + up * 0.3
+    bpy.ops.object.mode_set(mode="OBJECT")
+    print("SPINE_STRAIGHTENED", [(name, round(armature.data.bones[name].head_local.z, 2)) for name in names])
+
+
+def cape_follows_hips(armature, mesh, behind=0.1, legs=("Thigh_L", "Thigh_R", "Calf_L", "Calf_R", "Foot_L", "Foot_R")):
+    """A cape or a long coat rigged to the legs stretches between them in every stride and blow. The part of the mesh
+    behind the legs (more than 'behind' meters behind the thighs' line, below the hips) moves its leg weights to the
+    hips: the cape swings with the body and the legs move inside it"""
+    bones = armature.data.bones
+    hips = bones["Hips"].head_local
+    thigh_y = sum(bones[name].head_local.y for name in legs[:2] if name in bones) / 2.0
+    leg_groups = {mesh.vertex_groups[name].index for name in legs if name in mesh.vertex_groups}
+    hips_group = mesh.vertex_groups.get("Hips") or mesh.vertex_groups.new(name="Hips")
+    moved = 0
+    for vertex in mesh.data.vertices:
+        # (the character faces +Y: behind is -Y)
+        if vertex.co.z > hips.z or vertex.co.y > thigh_y - behind:
+            continue
+        weight = sum(slot.weight for slot in vertex.groups if slot.group in leg_groups)
+        if weight <= 0.0:
+            continue
+        for slot in list(vertex.groups):
+            if slot.group in leg_groups:
+                mesh.vertex_groups[slot.group].remove([vertex.index])
+        hips_group.add([vertex.index], weight, "ADD")
+        moved += 1
+    print("CAPE_ON_HIPS {} vertices".format(moved))
+
+
 def load_rigged_character(path, height, bone_names):
     """A rigged character (.glb: an armature with the mesh bound to it) standing on the ground at the origin, facing +Y,
     'height' tall, its bones renamed with 'bone_names' (theirs -> ours; the weights follow the names). Returns (armature, mesh)"""
@@ -422,7 +485,16 @@ def save_image(name, folder, rgba, is_color, has_alpha=False):
     image.pixels.foreach_set(rgba.ravel())
     image.filepath_raw = "{}/{}.png".format(folder, name)
     image.file_format = "PNG"
-    image.save()
+    # (a file just written may be held for a moment by another program, e.g. a virus scanner: try again)
+    for attempt in range(6):
+        try:
+            image.save()
+            break
+        except RuntimeError:
+            if attempt == 5:
+                raise
+            import time
+            time.sleep(1.0)
     return image
 
 

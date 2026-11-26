@@ -16,6 +16,56 @@ namespace
 constexpr int   ImmortalKey       = SUNTA_KEY_F1;
 constexpr float ImmortalFloorPart = 0.1f;
 
+// F3 shows the scene as pixel art made of 3D (see EnvironmentComponent: big pixels, few colors, inked edges) and back,
+// to compare the looks while testing
+constexpr int PixelLookKey = SUNTA_KEY_F3;
+
+struct SavedLook
+{
+	bool  isPixel        = false;
+	int   pixelSize      = 1;
+	int   paletteLevels  = 0;
+	float ditherStrength = 0.5f;
+	float outline        = 0.0f;
+	int   paintRadius    = 0;
+};
+
+SavedLook& GetSavedLook()
+{
+	static SavedLook saved;
+	return saved;
+}
+
+void TogglePixelLook(EntityManager& entityManager)
+{
+	auto& environments = entityManager.GetAllComponents<EnvironmentComponent>();
+	if (environments.empty())
+		return;
+
+	EnvironmentComponent& environment = environments.front();
+	SavedLook& saved = GetSavedLook();
+	if (!saved.isPixel)
+	{
+		saved = { true, environment.pixelSize, environment.paletteLevels, environment.ditherStrength,
+		          environment.outlineStrength, environment.paintRadius };
+		environment.pixelSize       = 4;
+		environment.paletteLevels   = 7;
+		environment.ditherStrength  = 0.45f;
+		environment.outlineStrength = 0.7f;
+		environment.paintRadius     = 0;
+	}
+	else
+	{
+		environment.pixelSize       = saved.pixelSize;
+		environment.paletteLevels   = saved.paletteLevels;
+		environment.ditherStrength  = saved.ditherStrength;
+		environment.outlineStrength = saved.outline;
+		environment.paintRadius     = saved.paintRadius;
+		saved.isPixel = false;
+	}
+	HUDSystem::ShowNotification(entityManager, saved.isPixel ? "PIXEL LOOK ON (F3)" : "PIXEL LOOK OFF (F3)");
+}
+
 }
 
 void DeveloperCheats::Update(EntityManager& entityManager)
@@ -28,6 +78,9 @@ void DeveloperCheats::Update(EntityManager& entityManager)
 		isPlayerImmortal = !isPlayerImmortal;
 		HUDSystem::ShowNotification(entityManager, isPlayerImmortal ? "IMMORTAL MODE ON (F1)" : "IMMORTAL MODE OFF (F1)");
 	}
+
+	if (InputManager::IsKeyDown(PixelLookKey))
+		TogglePixelLook(entityManager);
 
 	if (!isPlayerImmortal)
 		return;
