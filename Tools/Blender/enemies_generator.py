@@ -131,6 +131,7 @@ class Enemy:
     one_hand_actions: tuple = ()  # two-handed: actions whose left hand stays free (riding: it holds the reins)
     straight_spine: bool = False  # the rig's spine joints put back on the line from the hips to the head (see straighten_spine)
     cape: bool = False  # a cape behind the legs follows the hips, not the legs (see cape_follows_hips)
+    proxy_heat: bool = False  # skin weights from bone heat on a closed copy of the body (see reskin_by_proxy)
     smooth_weights: int = 0  # times the generated rig's skin weights are blurred (hard patches crush bulky armor; 0 = as rigged)
     brightness: float = 1.3
     weapons: list = field(default_factory=list)
@@ -245,6 +246,8 @@ def make_enemy(enemy, arguments):
     armature, body = character_from_mesh.load_rigged_character(os.path.join(ENEMIES_FOLDER, enemy.source), enemy.height, our_names)
     if enemy.straight_spine:
         character_from_mesh.straighten_spine(armature)
+    if enemy.proxy_heat:
+        print("PROXY_HEAT", character_from_mesh.reskin_by_proxy(body, armature))
     # (blurred first: the cape's own weights are set after)
     if enemy.smooth_weights:
         character_from_mesh.smooth_skin_weights(body, enemy.smooth_weights)

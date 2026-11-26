@@ -888,6 +888,102 @@ def reskin_with_heat(mesh, armature, least_covered=0.97):
     return False
 
 
+def reskin_by_proxy(mesh, armature, voxel_size=0.025, most_bones=4):
+    """Skin weights from bone heat computed on a watertight copy of the body, then carried over to the real mesh.
+    Bone heat (Blender's automatic weights) spreads a shoulder's weights the way skin stretches, but fails on
+    generated meshes full of holes and loose shells; a voxel remesh of the body is closed, the heat solves on it, and
+    each vertex of the real mesh takes the weights of the nearest point of that copy. Returns whether it worked.
+    Not for figures in loose cloth: tried on Grave Crown's king, the heat tied his cape to his hands and arms, and the
+    cloth stretched into long sheets whenever the arms moved"""
+    proxy = mesh.copy()
+    proxy.data = mesh.data.copy()
+    bpy.context.scene.collection.objects.link(proxy)
+    for modifier in list(proxy.modifiers):
+        proxy.modifiers.remove(modifier)
+    proxy.vertex_groups.clear()
+    proxy.parent = None
+    proxy.matrix_world = mesh.matrix_world.copy()
+
+    select_only([proxy])
+    remesh = proxy.modifiers.new("Closed", "REMESH")
+    remesh.mode = "VOXEL"
+    remesh.voxel_size = voxel_size
+    bpy.ops.object.modifier_apply(modifier=remesh.name)
+    # The heat solver fails at a human's size in meters (a known limit of Blender's bone heat): it solves on copies
+    # ten times bigger, and the copy of the body is scaled back before the weights are carried over
+    upscale = 10.0
+    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+    rig = armature.copy()
+    rig.data = armature.data.copy()
+    bpy.context.scene.collection.objects.link(rig)
+    rig.animation_data_clear()
+    for target in (proxy, rig):
+        target.scale = target.scale * upscale
+        target.location = target.location * upscale
+        select_only([target])
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    print("PROXY {} vertices".format(len(proxy.data.vertices)))
+
+    select_only([proxy, rig])
+    bpy.context.view_layer.objects.active = rig
+    bpy.ops.object.parent_set(type="ARMATURE_AUTO")
+    for modifier in list(proxy.modifiers):
+        proxy.modifiers.remove(modifier)
+    proxy.parent = None
+    bpy.data.objects.remove(rig)
+    proxy.scale = (1.0 / upscale,) * 3
+    select_only([proxy])
+    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    covered = sum(1 for vertex in proxy.data.vertices if any(slot.weight > 0.0 for slot in vertex.groups))
+    share = covered / max(len(proxy.data.vertices), 1)
+    print("PROXY heat weights cover {:.1%}".format(share))
+    if share < 0.97:
+        bpy.data.objects.remove(proxy)
+        return False
+
+    # The generated weights are kept aside: a vertex the copy leaves unweighted keeps them (it would stay behind in
+    # its rest pose while the body moves, a long spike)
+    names = {group.index: group.name for group in mesh.vertex_groups}
+    previous = [[(names[slot.group], slot.weight) for slot in vertex.groups] for vertex in mesh.data.vertices]
+
+    # The real mesh takes the copy's weights (its own groups emptied first, the same names made again)
+    mesh.vertex_groups.clear()
+    for group in proxy.vertex_groups:
+        mesh.vertex_groups.new(name=group.name)
+    select_only([mesh])
+    transfer = mesh.modifiers.new("Weights", "DATA_TRANSFER")
+    transfer.object = proxy
+    transfer.use_vert_data = True
+    transfer.data_types_verts = {"VGROUP_WEIGHTS"}
+    transfer.vert_mapping = "POLYINTERP_NEAREST"
+    transfer.layers_vgroup_select_src = "ALL"
+    transfer.layers_vgroup_select_dst = "NAME"
+    # (the transfer must come before the armature)
+    while mesh.modifiers.find(transfer.name) > 0:
+        bpy.ops.object.modifier_move_up(modifier=transfer.name)
+    bpy.ops.object.modifier_apply(modifier=transfer.name)
+    bpy.data.objects.remove(proxy)
+
+    kept = 0
+    for vertex in mesh.data.vertices:
+        if sum(slot.weight for slot in vertex.groups) > 0.05:
+            continue
+        kept += 1
+        for slot in list(vertex.groups):
+            mesh.vertex_groups[slot.group].remove([vertex.index])
+        for name, weight in previous[vertex.index]:
+            group = mesh.vertex_groups.get(name) or mesh.vertex_groups.new(name=name)
+            group.add([vertex.index], weight, "REPLACE")
+    print("PROXY {} vertices kept their generated weights".format(kept))
+
+    select_only([mesh])
+    bpy.ops.object.mode_set(mode="WEIGHT_PAINT")
+    bpy.ops.object.vertex_group_limit_total(group_select_mode="ALL", limit=most_bones)
+    bpy.ops.object.vertex_group_normalize_all(group_select_mode="ALL", lock_active=False)
+    bpy.ops.object.mode_set(mode="OBJECT")
+    return True
+
+
 # ========== Finding the joints ==========
 
 
