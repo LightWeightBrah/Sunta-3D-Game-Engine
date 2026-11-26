@@ -33,6 +33,9 @@ public:
 	// A big message in the middle of the screen that fades away after a few seconds
 	static void ShowNotification(EntityManager& entityManager, const std::string& text);
 
+	// A text read to the player (a book, a letter) on a panel for 'seconds': its title and its words, wrapped
+	static void ShowReading(EntityManager& entityManager, const std::string& title, const std::string& text, float seconds);
+
 	// A won boss fight: a gold banner across the screen, after 'afterSeconds' and once no cutscene plays
 	static void ShowVictory(EntityManager& entityManager, const std::string& text, float afterSeconds);
 

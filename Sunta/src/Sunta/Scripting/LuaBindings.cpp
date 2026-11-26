@@ -25,6 +25,7 @@
 #include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/MountSystem.h"
+#include "Gameplay/PickupSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/EnemyContext.h"
 #include "Gameplay/EnemyStateMachine.h"
@@ -63,6 +64,7 @@ using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
 using HealthHandle        = ComponentHandle<HealthComponent>;
 using PostureHandle       = ComponentHandle<PostureComponent>;
 using MountHandle         = ComponentHandle<MountComponent>;
+using InventoryHandle     = ComponentHandle<InventoryComponent>;
 using CharacterActionsHandle = ComponentHandle<CharacterActionsComponent>;
 using CharacterAnimationHandle = ComponentHandle<CharacterAnimationComponent>;
 using EnemyHandle         = ComponentHandle<EnemyComponent>;
@@ -573,6 +575,30 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 			})
 	);
 
+	// Usage in Lua: if this.inventory:has("crypt_key") then ... end, this.inventory:count("ember"), :add("rune"), :remove("rune")
+	lua.new_usertype<InventoryHandle>("Inventory", sol::no_constructor,
+		"has", [](const InventoryHandle& handle, const std::string& itemId)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && PickupSystem::CountItem(*entityManager, handle.owner.GetID(), itemId) > 0;
+			},
+		"count", [](const InventoryHandle& handle, const std::string& itemId)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager ? PickupSystem::CountItem(*entityManager, handle.owner.GetID(), itemId) : 0;
+			},
+		"add", [](const InventoryHandle& handle, const std::string& itemId)
+			{
+				if (EntityManager* entityManager = handle.owner.GetEntityManager())
+					PickupSystem::AddItem(*entityManager, handle.owner.GetID(), itemId);
+			},
+		"remove", [](const InventoryHandle& handle, const std::string& itemId)
+			{
+				EntityManager* entityManager = handle.owner.GetEntityManager();
+				return entityManager && PickupSystem::RemoveItem(*entityManager, handle.owner.GetID(), itemId);
+			}
+	);
+
 	// Usage in Lua: horse.mount.isRidden, horse.mount:dismount() (a cutscene takes the rider off)
 	lua.new_usertype<MountHandle>("Mount", sol::no_constructor,
 		"isRidden", sol::readonly_property([](const MountHandle& handle) { const MountComponent* m = handle.TryGetComponent(); return m && m->isRidden; }),
@@ -922,6 +948,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"health",              ComponentHandleProperty<HealthComponent>(),
 		"posture",             ComponentHandleProperty<PostureComponent>(),
 		"mount",               ComponentHandleProperty<MountComponent>(),
+		"inventory",           ComponentHandleProperty<InventoryComponent>(),
 		"characterActions",    ComponentHandleProperty<CharacterActionsComponent>(),
 		"characterAnimation",  ComponentHandleProperty<CharacterAnimationComponent>(),
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),

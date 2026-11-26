@@ -390,6 +390,7 @@
      1.0
     ]
    },
+   "inventory": {},
    "posture": {
     "max_posture": 120.0,
     "from_hits": 0.4,
@@ -7796,6 +7797,11 @@
     "finisher_damage": 1.0,
     "break_effect": "Posture Break",
     "finisher_effect": "Finisher Burst"
+   },
+   "loot_drop": {
+    "pickup_template": "Loot Letter of a Masked Cultist",
+    "chance": 1.0,
+    "only_once": true
    }
   },
   {
@@ -8557,6 +8563,11 @@
     "finisher_damage": 1.0,
     "break_effect": "Posture Break",
     "finisher_effect": "Finisher Burst"
+   },
+   "loot_drop": {
+    "pickup_template": "Loot Page of the Chain Codex",
+    "chance": 1.0,
+    "only_once": true
    }
   },
   {
@@ -13365,6 +13376,11 @@
     "finisher_slow_seconds": 0.7,
     "break_effect": "Posture Break",
     "finisher_effect": "Finisher Burst"
+   },
+   "loot_drop": {
+    "pickup_template": "Loot Seal of the Chain Warden",
+    "chance": 1.0,
+    "only_once": true
    }
   },
   {
@@ -13593,6 +13609,368 @@
     "run_animation_from_speed": 5.0,
     "camera_rise": 1.0,
     "camera_pull_back": 2.5
+   }
+  },
+  {
+   "tag": {
+    "name": "Court Lich"
+   },
+   "transform": {
+    "position": [
+     -3.2,
+     0.0,
+     34.0
+    ],
+    "rotation": [
+     0.0,
+     200.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.1736481776669303,
+     0.0,
+     0.984807753012208,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "court_lich"
+   },
+   "animator": {
+    "current_animation_name": "Idle"
+   }
+  },
+  {
+   "tag": {
+    "name": "Court Butler"
+   },
+   "transform": {
+    "position": [
+     3.4,
+     0.0,
+     33.7
+    ],
+    "rotation": [
+     0.0,
+     160.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.17364817766693041,
+     0.0,
+     0.984807753012208,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "court_butler"
+   },
+   "animator": {
+    "current_animation_name": "Idle"
+   }
+  },
+  {
+   "tag": {
+    "name": "Testament of the Dead King"
+   },
+   "transform": {
+    "position": [
+     1.6,
+     0.15,
+     34.3
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": true,
+    "particles_per_second": 28.0,
+    "lifetime_seconds": 1.1,
+    "spawn_half_extents": [
+     0.08,
+     0.05,
+     0.08
+    ],
+    "velocity": [
+     0.0,
+     0.55,
+     0.0
+    ],
+    "velocity_randomness": 0.25,
+    "gravity": [
+     0.0,
+     0.3,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.02,
+    "start_color": [
+     1.0,
+     0.92,
+     0.7
+    ],
+    "end_color": [
+     0.3,
+     0.2,
+     0.5
+    ],
+    "intensity": 2.4,
+    "max_particles": 60
+   },
+   "pickup": {
+    "item_id": "testament_of_the_king",
+    "display_name": "Testament of the Dead King",
+    "prompt": "Pick up   [E]",
+    "interact_distance": 1.8,
+    "read_text": "If you read this, my liege, you have risen. A hundred years ago the gods came down with their church and named you a tyrant. They bound the world in chains and hanged you before your own people. We, your court, kept your body and your crown. Rest by the fire, take up your blade, and go. The gods sleep on the backs of their titans now. Wake them.",
+    "voice_sound": "@game/Sounds/Voice/testament_of_the_king.wav",
+    "read_seconds": 29.014791666666667,
+    "pickup_sound": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Loot Page of the Chain Codex"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": true,
+    "particles_per_second": 28.0,
+    "lifetime_seconds": 1.1,
+    "spawn_half_extents": [
+     0.08,
+     0.05,
+     0.08
+    ],
+    "velocity": [
+     0.0,
+     0.55,
+     0.0
+    ],
+    "velocity_randomness": 0.25,
+    "gravity": [
+     0.0,
+     0.3,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.02,
+    "start_color": [
+     1.0,
+     0.92,
+     0.7
+    ],
+    "end_color": [
+     0.3,
+     0.2,
+     0.5
+    ],
+    "intensity": 2.4,
+    "max_particles": 60
+   },
+   "pickup": {
+    "item_id": "page_of_the_chain_codex",
+    "display_name": "Page of the Chain Codex",
+    "prompt": "Pick up   [E]",
+    "interact_distance": 1.8,
+    "read_text": "Every knight of the gods swears on the Chain: to hold, to bind, never to yield. Yet their guard is a vow and not a wall. Strike again and again, give them no breath, and the vow breaks. A knight who reels is a knight who can be ended.",
+    "voice_sound": "@game/Sounds/Voice/page_of_the_chain_codex.wav",
+    "read_seconds": 22.49625,
+    "pickup_sound": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Loot Letter of a Masked Cultist"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": true,
+    "particles_per_second": 28.0,
+    "lifetime_seconds": 1.1,
+    "spawn_half_extents": [
+     0.08,
+     0.05,
+     0.08
+    ],
+    "velocity": [
+     0.0,
+     0.55,
+     0.0
+    ],
+    "velocity_randomness": 0.25,
+    "gravity": [
+     0.0,
+     0.3,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.02,
+    "start_color": [
+     1.0,
+     0.92,
+     0.7
+    ],
+    "end_color": [
+     0.3,
+     0.2,
+     0.5
+    ],
+    "intensity": 2.4,
+    "max_particles": 60
+   },
+   "pickup": {
+    "item_id": "letter_of_a_cultist",
+    "display_name": "Letter of a Masked Cultist",
+    "prompt": "Pick up   [E]",
+    "interact_distance": 1.8,
+    "read_text": "Brother, the Warden grows restless behind the fog. He swings his blade so hard the earth itself screams, and no shield, no parry, can turn those blows aside. When you see the red glint in his eye, run. Pray it is not you he is looking at.",
+    "voice_sound": "@game/Sounds/Voice/letter_of_a_cultist.wav",
+    "read_seconds": 23.183666666666667,
+    "pickup_sound": ""
+   }
+  },
+  {
+   "tag": {
+    "name": "Loot Seal of the Chain Warden"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     -100.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "particle_emitter": {
+    "is_emitting": true,
+    "particles_per_second": 28.0,
+    "lifetime_seconds": 1.1,
+    "spawn_half_extents": [
+     0.08,
+     0.05,
+     0.08
+    ],
+    "velocity": [
+     0.0,
+     0.55,
+     0.0
+    ],
+    "velocity_randomness": 0.25,
+    "gravity": [
+     0.0,
+     0.3,
+     0.0
+    ],
+    "start_size": 0.12,
+    "end_size": 0.02,
+    "start_color": [
+     1.0,
+     0.92,
+     0.7
+    ],
+    "end_color": [
+     0.3,
+     0.2,
+     0.5
+    ],
+    "intensity": 2.4,
+    "max_particles": 60
+   },
+   "pickup": {
+    "item_id": "seal_of_the_warden",
+    "display_name": "Seal of the Chain Warden",
+    "prompt": "Pick up   [E]",
+    "interact_distance": 1.8,
+    "read_text": "The Warden falls, and the first chain of the world snaps. Far to the east, under a burning sky, something enormous turns in its sleep. The god it carries has heard the chain break. He knows the king is coming.",
+    "voice_sound": "@game/Sounds/Voice/seal_of_the_warden.wav",
+    "read_seconds": 21.050333333333334,
+    "pickup_sound": ""
    }
   }
  ],

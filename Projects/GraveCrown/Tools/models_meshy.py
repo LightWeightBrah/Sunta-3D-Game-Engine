@@ -36,6 +36,8 @@ MODELS = {
     "enemy_golem":    ("enemy_golem_a.png", True, 2.6, 30000),
     "titan":          ("titan_a.png", True, 2.0, 30000),    # rigged at a man's height, scaled up in the scene
     "enemy_skeleton_horse": ("enemy_skeleton_horse_g1.png", False, None, 25000),
+    "court_lich":     ("court_lich_g1b.png", True, 1.95, 30000),
+    "court_butler":   ("court_butler_f.png", True, 1.85, 30000),
 }
 
 

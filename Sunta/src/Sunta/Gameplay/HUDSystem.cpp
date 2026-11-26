@@ -246,6 +246,7 @@ void UpdatePlayer(EntityManager& entityManager, float deltaTime)
 	hud->secondsSinceDeath = health->isDead ? hud->secondsSinceDeath + deltaTime : 0.0f;
 
 	hud->notificationSecondsLeft = glm::max(hud->notificationSecondsLeft - deltaTime, 0.0f);
+	hud->readingSecondsLeft      = glm::max(hud->readingSecondsLeft - deltaTime, 0.0f);
 
 	if (!hud->victoryText.empty())
 	{
@@ -388,6 +389,69 @@ void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
 	UIRenderer::DrawFadeLine(center - glm::vec2(0.0f, NotificationHeight * 0.75f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
 	UIRenderer::DrawFadeLine(center + glm::vec2(0.0f, NotificationHeight * 0.75f), width * 0.7f, 2.0f, WithAlpha(PromptLineColor, alpha));
 	UIRenderer::DrawTextCentered(hud.notificationText, center, NotificationHeight, WithAlpha(NotificationColor, alpha));
+}
+
+// ========== A text read aloud (a book, a letter) ==========
+
+constexpr float ReadingTextHeight  = 22.0f;
+constexpr float ReadingTitleHeight = 30.0f;
+constexpr float ReadingLineGap     = 7.0f;
+constexpr float ReadingWidthOfArea = 0.5f;
+constexpr float ReadingFadeSeconds = 0.8f;
+constexpr float ReadingTopOfArea   = 0.08f;
+const glm::vec4 ReadingBackground  = glm::vec4(0.02f, 0.015f, 0.02f, 0.72f);
+const glm::vec4 ReadingTextColor   = glm::vec4(0.9f, 0.86f, 0.78f, 1.0f);
+
+// The words broken into lines no wider than 'width' (a \n in the text always starts a new line)
+std::vector<std::string> WrapText(const std::string& text, float width, float pixelHeight)
+{
+	std::vector<std::string> lines;
+	std::string paragraph;
+	std::stringstream paragraphs(text);
+	while (std::getline(paragraphs, paragraph, '\n'))
+	{
+		std::stringstream words(paragraph);
+		std::string word, line;
+		while (words >> word)
+		{
+			const std::string longer = line.empty() ? word : line + " " + word;
+			if (!line.empty() && UIRenderer::MeasureText(longer, pixelHeight) > width)
+			{
+				lines.push_back(line);
+				line = word;
+			}
+			else
+				line = longer;
+		}
+		lines.push_back(line);
+	}
+	return lines;
+}
+
+void DrawReading(const HUDArea& area, const PlayerHUDComponent& hud)
+{
+	if (hud.readingSecondsLeft <= 0.0f || hud.readingText.empty())
+		return;
+
+	const float alpha = glm::clamp(hud.readingSecondsLeft / ReadingFadeSeconds, 0.0f, 1.0f);
+	const float width = area.size.x * ReadingWidthOfArea;
+	const std::vector<std::string> lines = WrapText(hud.readingText, width, ReadingTextHeight);
+	const float lineStep = ReadingTextHeight + ReadingLineGap;
+	const float height = ReadingTitleHeight + ReadingLineGap * 3.0f + lineStep * static_cast<float>(lines.size());
+	const glm::vec2 topLeft = glm::vec2(area.topLeft.x + (area.size.x - width) * 0.5f, area.topLeft.y + area.size.y * ReadingTopOfArea);
+	const float padding = 18.0f;
+
+	UIRenderer::DrawRectangle(topLeft - glm::vec2(padding), glm::vec2(width, height) + glm::vec2(padding * 2.0f), WithAlpha(ReadingBackground, ReadingBackground.a * alpha));
+	UIRenderer::DrawFadeLine(glm::vec2(topLeft.x + width * 0.5f, topLeft.y - padding), width, 2.0f, WithAlpha(PromptLineColor, alpha));
+	UIRenderer::DrawFadeLine(glm::vec2(topLeft.x + width * 0.5f, topLeft.y + height + padding), width, 2.0f, WithAlpha(PromptLineColor, alpha));
+	UIRenderer::DrawTextCentered(hud.readingTitle, glm::vec2(topLeft.x + width * 0.5f, topLeft.y + ReadingTitleHeight * 0.5f),
+		ReadingTitleHeight, WithAlpha(NotificationColor, alpha));
+	float y = topLeft.y + ReadingTitleHeight + ReadingLineGap * 3.0f;
+	for (const std::string& line : lines)
+	{
+		UIRenderer::DrawTextAt(line, glm::vec2(topLeft.x, y), ReadingTextHeight, WithAlpha(ReadingTextColor, alpha));
+		y += lineStep;
+	}
 }
 
 // The flask's name and the drinks left, e.g. "Estus Flask  3"
@@ -554,6 +618,7 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 	LevelUpSystem::DrawMenu(entityManager, area);
 	DrawPrompt(area, *hud);
 	DrawNotification(area, *hud);
+	DrawReading(area, *hud);
 	DrawVictoryMessage(area, *hud);
 
 	if (health && health->isDead)
@@ -801,6 +866,16 @@ void HUDSystem::ShowVictory(EntityManager& entityManager, const std::string& tex
 		hud->victoryText     = text;
 		hud->victoryWaitLeft = afterSeconds;
 		hud->victorySeconds  = -1.0f;
+	}
+}
+
+void HUDSystem::ShowReading(EntityManager& entityManager, const std::string& title, const std::string& text, float seconds)
+{
+	if (PlayerHUDComponent* hud = TryGetPlayerHUD(entityManager))
+	{
+		hud->readingTitle       = title;
+		hud->readingText        = text;
+		hud->readingSecondsLeft = seconds;
 	}
 }
 

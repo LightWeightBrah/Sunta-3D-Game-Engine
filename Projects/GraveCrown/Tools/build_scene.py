@@ -252,6 +252,7 @@ def add_player(builder):
     entity["box_collider"]["half_extents"] = [0.34, 1.0, 0.34]
     entity["box_collider"]["local_offset"] = [0.0, 1.0, 0.0]
     entity["lock_on"]["max_distance"] = 20.0
+    entity["inventory"] = {}
     # A king's guard holds a long time, but a reckless one breaks: blocks wear his posture, a broken guard is a
     # quarter of his life to a finisher
     entity["posture"] = {"max_posture": 120.0, "from_hits": 0.4, "from_blocks": 0.7, "from_being_parried": 30.0,
@@ -391,6 +392,54 @@ def add_horse(builder):
     return builder.add(horse)
 
 
+# ========== Books and the court (Tools/books.py, Tools/narrate_books.py) ==========
+
+def wisp(position, color=(1.0, 0.92, 0.7)):
+    """The glow of an item lying on the ground, as in souls-likes: a small rising swirl of light"""
+    return {"is_emitting": True, "particles_per_second": 28.0, "lifetime_seconds": 1.1, "spawn_half_extents": [0.08, 0.05, 0.08],
+            "velocity": [0.0, 0.55, 0.0], "velocity_randomness": 0.25, "gravity": [0.0, 0.3, 0.0], "start_size": 0.12,
+            "end_size": 0.02, "start_color": list(color), "end_color": [0.3, 0.2, 0.5], "intensity": 2.4, "max_particles": 60}
+
+
+def voice_seconds(book_id):
+    import wave
+    path = PROJECT / "res" / "Sounds" / "Voice" / (book_id + ".wav")
+    if not path.exists():
+        return 0.0
+    with wave.open(str(path)) as audio:
+        return audio.getnframes() / audio.getframerate() + 1.0
+
+
+def pickup(name, position, book_id, title, text):
+    return named(name, position, particle_emitter=wisp(position), pickup={
+        "item_id": book_id, "display_name": title, "prompt": "Pick up   [E]", "interact_distance": 1.8,
+        "read_text": text, "voice_sound": "@game/Sounds/Voice/" + book_id + ".wav", "read_seconds": voice_seconds(book_id),
+        "pickup_sound": ""})
+
+
+def add_books(builder):
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from books import BOOKS
+    for book_id, (title, where, text) in BOOKS.items():
+        if where == "throne":
+            builder.add(pickup(title, (1.6, 0.15, THRONE_Z - 2.2), book_id, title, text))
+        elif where.startswith("drop:"):
+            # A template far below the world, copied where its enemy falls (the engine's Loot Drop)
+            template = "Loot " + title
+            builder.add(pickup(template, (0.0, -100.0, 0.0), book_id, title, text))
+            enemy = next(e for e in builder.entities if e["tag"]["name"] == where[5:] and "health" in e)
+            enemy["loot_drop"] = {"pickup_template": template, "chance": 1.0, "only_once": True}
+
+
+def add_court_npcs(builder):
+    """The lich (who reads the found books aloud) and the butler, by the throne"""
+    for name, model, position, yaw in (("Court Lich", "court_lich", (-3.2, 0.0, THRONE_Z - 2.5), 200.0),
+                                       ("Court Butler", "court_butler", (3.4, 0.0, THRONE_Z - 2.8), 160.0)):
+        builder.add(named(name, position, yaw, model={"is_visible": True, "model_name": model},
+                          animator={"current_animation_name": "Idle"}))
+
+
 # ========== The level ==========
 
 def add_crypt(builder):
@@ -511,6 +560,8 @@ def main():
     add_plains(builder, rng)
     add_arena(builder)
     add_horse(builder)
+    add_court_npcs(builder)
+    add_books(builder)
     TARGET_SCENE.parent.mkdir(parents=True, exist_ok=True)
     TARGET_SCENE.write_text(json.dumps({"entities": builder.entities, "scene_name": "Main"}, indent=1), encoding="utf-8")
     print(f"{len(builder.entities)} entities -> {TARGET_SCENE}")

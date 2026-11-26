@@ -39,6 +39,7 @@
 #include "Gameplay/PoiseComponent.h"
 #include "Gameplay/PostureComponent.h"
 #include "Gameplay/MountComponent.h"
+#include "Gameplay/PickupComponent.h"
 #include "Gameplay/ShieldComponent.h"
 #include "Gameplay/StaminaComponent.h"
 #include "Gameplay/CharacterAnimationComponent.h"

@@ -44,6 +44,11 @@ struct PlayerHUDComponent
 	std::string notificationText;
 	float notificationSecondsLeft = 0.0f;
 
+	// A book or a letter read aloud (see PickupComponent): its title and words on a panel while it is read
+	std::string readingTitle;
+	std::string readingText;
+	float readingSecondsLeft = 0.0f;
+
 	// The banner of a won boss fight across the screen (as the death message, in gold): it waits until no cutscene
 	// plays (the boss's fall is seen first), then fades in, stays and fades away
 	std::string victoryText;

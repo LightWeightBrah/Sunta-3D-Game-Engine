@@ -2921,5 +2921,67 @@
     },
     "output": "Generated/GraveCrown/enemy_skeleton_horse.glb",
     "date": "2026-11-26T01:53:20"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21616-466d-72f2-8579-c78f6e3529e6",
+    "input": "Concepts/ThirdGame/Variants/court_butler_f.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/court_butler.glb",
+    "date": "2026-11-26T05:23:48"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21617-be07-7587-bc3a-0fa1e724c07a",
+    "settings": {
+      "input_task_id": "01a21616-466d-72f2-8579-c78f6e3529e6",
+      "height_meters": 1.85
+    },
+    "output": "Generated/GraveCrown/court_butler_rigged.glb",
+    "date": "2026-11-26T05:24:15"
+  },
+  {
+    "task": "image-to-3d",
+    "task_id": "01a21616-466e-73ea-aeb2-ba0549a3e45b",
+    "input": "Concepts/ThirdGame/Variants/court_lich_g1b.png",
+    "settings": {
+      "ai_model": "meshy-7.1",
+      "geometry_resolution": "2k",
+      "should_texture": true,
+      "enable_pbr": true,
+      "texture_resolution": "2k",
+      "should_remesh": true,
+      "topology": "triangle",
+      "target_formats": [
+        "glb"
+      ],
+      "target_polycount": 30000,
+      "pose_mode": "a-pose"
+    },
+    "output": "Generated/GraveCrown/court_lich.glb",
+    "date": "2026-11-26T05:24:31"
+  },
+  {
+    "task": "rigging",
+    "task_id": "01a21618-6517-74a5-ac2f-28134270ada2",
+    "settings": {
+      "input_task_id": "01a21616-466e-73ea-aeb2-ba0549a3e45b",
+      "height_meters": 1.95
+    },
+    "output": "Generated/GraveCrown/court_lich_rigged.glb",
+    "date": "2026-11-26T05:24:58"
   }
 ]

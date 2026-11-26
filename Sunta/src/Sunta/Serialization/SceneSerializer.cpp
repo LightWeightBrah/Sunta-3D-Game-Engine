@@ -56,6 +56,19 @@ namespace SceneKeys
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* PostureComponent          = "posture";
 	constexpr const char* MountComponent            = "mount";
+	constexpr const char* PickupComponent           = "pickup";
+	constexpr const char* InventoryComponent        = "inventory";
+	constexpr const char* LootDropComponent         = "loot_drop";
+	constexpr const char* ItemId                    = "item_id";
+	constexpr const char* PickupPrompt              = "prompt";
+	constexpr const char* InteractDistancePickup    = "interact_distance";
+	constexpr const char* ReadText                  = "read_text";
+	constexpr const char* VoiceSound                = "voice_sound";
+	constexpr const char* ReadSeconds               = "read_seconds";
+	constexpr const char* PickupSound               = "pickup_sound";
+	constexpr const char* PickupTemplate            = "pickup_template";
+	constexpr const char* LootChance                = "chance";
+	constexpr const char* OnlyOnce                  = "only_once";
 	constexpr const char* SeatOffset                = "seat_offset";
 	constexpr const char* MountDistance             = "mount_distance";
 	constexpr const char* MountPrompt               = "mount_prompt";
@@ -1468,6 +1481,34 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		};
 	}
 
+	if (auto* pickup = entityManager.GetComponent<PickupComponent>(i))
+	{
+		entityJson[SceneKeys::PickupComponent] =
+		{
+			{ SceneKeys::ItemId,                 pickup->itemId           },
+			{ SceneKeys::DisplayName,            pickup->displayName      },
+			{ SceneKeys::PickupPrompt,           pickup->prompt           },
+			{ SceneKeys::InteractDistancePickup, pickup->interactDistance },
+			{ SceneKeys::ReadText,               pickup->readText         },
+			{ SceneKeys::VoiceSound,             pickup->voiceSound       },
+			{ SceneKeys::ReadSeconds,            pickup->readSeconds      },
+			{ SceneKeys::PickupSound,            pickup->pickupSound      }
+		};
+	}
+
+	if (entityManager.GetComponent<InventoryComponent>(i))
+		entityJson[SceneKeys::InventoryComponent] = nlohmann::json::object();
+
+	if (auto* loot = entityManager.GetComponent<LootDropComponent>(i))
+	{
+		entityJson[SceneKeys::LootDropComponent] =
+		{
+			{ SceneKeys::PickupTemplate, loot->pickupTemplate },
+			{ SceneKeys::LootChance,     loot->chance         },
+			{ SceneKeys::OnlyOnce,       loot->onlyOnce       }
+		};
+	}
+
 	if (auto* mount = entityManager.GetComponent<MountComponent>(i))
 	{
 		entityJson[SceneKeys::MountComponent] =
@@ -2463,6 +2504,32 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
 		poise.staggerImmunitySeconds = poiseData.value(SceneKeys::StaggerImmunitySeconds, poise.staggerImmunitySeconds);
 		poise.currentPoise        = poise.maxPoise;
+	}
+
+	if (entityJson.contains(SceneKeys::PickupComponent))
+	{
+		const auto& data = entityJson[SceneKeys::PickupComponent];
+		auto& pickup = entityManager.AddComponent<PickupComponent>(entity);
+		pickup.itemId           = data.value(SceneKeys::ItemId,                 pickup.itemId);
+		pickup.displayName      = data.value(SceneKeys::DisplayName,            pickup.displayName);
+		pickup.prompt           = data.value(SceneKeys::PickupPrompt,           pickup.prompt);
+		pickup.interactDistance = data.value(SceneKeys::InteractDistancePickup, pickup.interactDistance);
+		pickup.readText         = data.value(SceneKeys::ReadText,               pickup.readText);
+		pickup.voiceSound       = data.value(SceneKeys::VoiceSound,             pickup.voiceSound);
+		pickup.readSeconds      = data.value(SceneKeys::ReadSeconds,            pickup.readSeconds);
+		pickup.pickupSound      = data.value(SceneKeys::PickupSound,            pickup.pickupSound);
+	}
+
+	if (entityJson.contains(SceneKeys::InventoryComponent))
+		entityManager.AddComponent<InventoryComponent>(entity);
+
+	if (entityJson.contains(SceneKeys::LootDropComponent))
+	{
+		const auto& data = entityJson[SceneKeys::LootDropComponent];
+		auto& loot = entityManager.AddComponent<LootDropComponent>(entity);
+		loot.pickupTemplate = data.value(SceneKeys::PickupTemplate, loot.pickupTemplate);
+		loot.chance         = data.value(SceneKeys::LootChance,     loot.chance);
+		loot.onlyOnce       = data.value(SceneKeys::OnlyOnce,       loot.onlyOnce);
 	}
 
 	if (entityJson.contains(SceneKeys::MountComponent))

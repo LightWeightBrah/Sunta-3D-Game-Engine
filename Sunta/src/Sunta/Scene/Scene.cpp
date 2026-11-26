@@ -33,6 +33,7 @@
 #include "Physics/PhysicsSystem.h"
 #include "Gameplay/BonfireSystem.h"
 #include "Gameplay/MountSystem.h"
+#include "Gameplay/PickupSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/TestBot.h"
@@ -397,6 +398,7 @@ void Scene::Update()
 		EffectSystem::Update(entityManager, gameDeltaTime);
 		WeaponTrailSystem::Update(entityManager, gameDeltaTime);
 		BonfireSystem::Update(entityManager);
+		PickupSystem::Update(entityManager, gameDeltaTime);
 		LevelUpSystem::Update(entityManager, EngineTime::deltaTime);
 		CurrencySystem::Update(entityManager, gameDeltaTime);
 		RespawnSystem::Update(entityManager, gameDeltaTime);
@@ -908,6 +910,7 @@ void Scene::BeginPlay()
 	HUDSystem::PrepareForPlay(entityManager);
 	BonfireSystem::PrepareForPlay(entityManager);
 	MountSystem::PrepareForPlay(entityManager);
+	PickupSystem::PrepareForPlay(entityManager);
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);

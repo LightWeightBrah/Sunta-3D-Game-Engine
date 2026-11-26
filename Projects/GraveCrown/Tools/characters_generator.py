@@ -66,6 +66,12 @@ CHARACTERS = [
     # The masked cultist of the gods: a staff upright in the left hand (Scrap Souls' ash cultist staff), spells from the right
     Enemy("enemy_cultist_b_rigged.glb", "GodsCultist", "gods_cultist", 1.85, enemies_generator.CULTIST,
           Weapon("../Enemies/cultist_staff.glb", "gods_cultist_staff", 1.85, 0.42), is_staff_in_left=True, brightness=1.7),
+    # The court in the crypt (they stand by the throne; the lich reads the books found in the world aloud): the magic
+    # pack's calm idle; the lich keeps a staff in its left hand, the butler's staff is never shown (its hands rest)
+    Enemy("court_lich_rigged.glb", "CourtLich", "court_lich", 1.95, enemies_generator.CULTIST,
+          Weapon("../Enemies/cultist_staff.glb", "court_lich_staff", 1.9, 0.42), is_staff_in_left=True, brightness=1.6),
+    Enemy("court_butler_rigged.glb", "CourtButler", "court_butler", 1.85, enemies_generator.CULTIST,
+          Weapon("../Enemies/cultist_staff.glb", "court_butler_cane", 1.0, 0.5), is_staff_in_left=True, brightness=1.5),
     # A knight of the dead king's court, violet flame in the helm: fights at his side when called
     Enemy("court_knight_rigged.glb", "CourtKnight", "court_knight", 1.95, ONE_HANDED,
           Weapon("weapon_greatsword_upright.glb", "court_knight_sword", 1.2, 0.1), brightness=1.5),

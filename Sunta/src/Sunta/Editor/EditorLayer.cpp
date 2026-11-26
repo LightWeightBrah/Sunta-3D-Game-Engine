@@ -238,6 +238,9 @@ void EditorLayer::RegisterComponentsToInspector()
 	PoiseComponent::RegisterToInspector();
 	PostureComponent::RegisterToInspector();
 	MountComponent::RegisterToInspector();
+	PickupComponent::RegisterToInspector();
+	InventoryComponent::RegisterToInspector();
+	LootDropComponent::RegisterToInspector();
 	ParticleEmitterComponent::RegisterToInspector();
 	WeaponTrailComponent::RegisterToInspector();
 	ProjectileComponent::RegisterToInspector();
