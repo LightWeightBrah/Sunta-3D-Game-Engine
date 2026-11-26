@@ -641,6 +641,9 @@ namespace SceneKeys
 	constexpr const char* RecoverSeconds            = "recover_seconds";
 
 	constexpr const char* InteractDistance          = "interact_distance";
+	constexpr const char* RestPrompt                = "rest_prompt";
+	constexpr const char* LeavePrompt               = "leave_prompt";
+	constexpr const char* LitMessage                = "lit_message";
 	constexpr const char* RespawnOffset             = "respawn_offset";
 	constexpr const char* RespawnDelaySeconds       = "respawn_delay_seconds";
 
@@ -1639,7 +1642,10 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		entityJson[SceneKeys::BonfireComponent] =
 		{
 			{ SceneKeys::InteractDistance,               bonfire->interactDistance },
-			{ SceneKeys::RespawnOffset,    SerializeVec3(bonfire->respawnOffset)    }
+			{ SceneKeys::RespawnOffset,    SerializeVec3(bonfire->respawnOffset)    },
+			{ SceneKeys::RestPrompt,       bonfire->restPrompt                      },
+			{ SceneKeys::LeavePrompt,      bonfire->leavePrompt                     },
+			{ SceneKeys::LitMessage,       bonfire->litMessage                      }
 		};
 	}
 
@@ -2711,6 +2717,9 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		auto& bonfire = entityManager.AddComponent<BonfireComponent>(entity);
 
 		bonfire.interactDistance = bonfireData.value(SceneKeys::InteractDistance, bonfire.interactDistance);
+		bonfire.restPrompt       = bonfireData.value(SceneKeys::RestPrompt,       bonfire.restPrompt);
+		bonfire.leavePrompt      = bonfireData.value(SceneKeys::LeavePrompt,      bonfire.leavePrompt);
+		bonfire.litMessage       = bonfireData.value(SceneKeys::LitMessage,       bonfire.litMessage);
 
 		if (bonfireData.contains(SceneKeys::RespawnOffset))
 			bonfire.respawnOffset = DeserializeVec3(bonfireData[SceneKeys::RespawnOffset]);

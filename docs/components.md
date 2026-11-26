@@ -784,6 +784,9 @@ How to use it: Entity > Create Bonfire (or the toolbar) makes one with the model
 |---|---|
 | `interactDistance` | Float |
 | `respawnOffset` | Float3 |
+| `restPrompt` | String |
+| `leavePrompt` | String |
+| `litMessage` | String |
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/BonfireComponent.h`</sub>
 

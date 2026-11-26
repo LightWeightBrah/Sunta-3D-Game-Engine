@@ -23,9 +23,10 @@ using namespace GameplayMath;
 
 constexpr int RestKey = SUNTA_KEY_E;
 
-constexpr const char* RestPrompt    = "Rest at the bonfire   [E]";
-constexpr const char* StandUpPrompt = "Leave the bonfire   [E]";
-constexpr const char* LitMessage = "BONFIRE LIT";
+constexpr const char* KeyHint = "   [E]";
+
+// The bonfire the player rests at now (its prompts), set when the rest starts
+unsigned int restingBonfireID = 0;
 
 bool IsResting(EntityManager& entityManager, unsigned int playerID)
 {
@@ -104,17 +105,20 @@ void Rest(EntityManager& entityManager, unsigned int playerID, unsigned int bonf
 	RememberAsRespawnPoint(entityManager, playerID, bonfireTransform, bonfire);
 	RespawnSystem::RespawnEnemies(entityManager);
 
+	restingBonfireID = bonfireID;
 	if (!bonfire.isLit)
 	{
 		bonfire.isLit = true;
-		HUDSystem::ShowNotification(entityManager, LitMessage);
+		if (!bonfire.litMessage.empty())
+			HUDSystem::ShowNotification(entityManager, bonfire.litMessage);
 	}
 }
 
 // A resting player stays kneeling until E is pressed again
 void OfferToStandUp(EntityManager& entityManager, unsigned int playerID)
 {
-	HUDSystem::ShowPrompt(entityManager, StandUpPrompt);
+	const BonfireComponent* bonfire = entityManager.GetComponent<BonfireComponent>(restingBonfireID);
+	HUDSystem::ShowPrompt(entityManager, (bonfire ? bonfire->leavePrompt : std::string("Leave the bonfire")) + KeyHint);
 
 	if (InputManager::IsKeyDown(RestKey) || InputManager::IsKeyDown(SUNTA_KEY_ESCAPE))
 		CharacterActionsSystem::StandUp(entityManager, playerID);
@@ -131,7 +135,8 @@ void OfferToRest(EntityManager& entityManager, unsigned int playerID)
 	if (!playerTransform || !TryFindNearestBonfire(entityManager, playerTransform->position, bonfireID))
 		return;
 
-	HUDSystem::ShowPrompt(entityManager, RestPrompt);
+	const BonfireComponent* bonfire = entityManager.GetComponent<BonfireComponent>(bonfireID);
+	HUDSystem::ShowPrompt(entityManager, bonfire->restPrompt + KeyHint);
 
 	if (InputManager::IsKeyDown(RestKey))
 		Rest(entityManager, playerID, bonfireID);

@@ -7413,7 +7413,10 @@
      0.0,
      0.0,
      1.6
-    ]
+    ],
+    "rest_prompt": "Kneel at the grave",
+    "leave_prompt": "Rise",
+    "lit_message": "GRAVE KINDLED"
    },
    "box_collider": {
     "half_extents": [
@@ -13338,7 +13341,10 @@
      0.0,
      0.0,
      1.5
-    ]
+    ],
+    "rest_prompt": "Kneel at the grave",
+    "leave_prompt": "Rise",
+    "lit_message": "GRAVE KINDLED"
    },
    "box_collider": {
     "half_extents": [

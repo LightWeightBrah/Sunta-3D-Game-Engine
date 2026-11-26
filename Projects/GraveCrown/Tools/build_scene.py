@@ -387,6 +387,7 @@ def grave_shrine(builder, index):
     """A bonfire of Grave Crown: the king's grave shrine (gothic_kit_generator gc_grave_shrine), its fire his violet one"""
     entity = builder.get(index)
     entity["model"]["model_name"] = "gc_grave_shrine"
+    entity["bonfire"].update({"rest_prompt": "Kneel at the grave", "leave_prompt": "Rise", "lit_message": "GRAVE KINDLED"})
     entity["model"]["emissive_strength"] = 1.5
     entity["particle_emitter"].update({"start_color": [0.78, 0.42, 1.0], "end_color": [0.18, 0.02, 0.32], "intensity": 1.9})
     for child in builder.entities:
