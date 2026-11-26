@@ -201,6 +201,8 @@ def add_sky_and_camera(builder):
     camera = builder.copy_named("Camera")
     # far enough for the chained titan on the horizon (scenery fades with the fog anyway)
     builder.get(camera)["camera"]["far_plane"] = 420.0
+    # A little over the right shoulder, and when locked on the enemy is seen beside the king, not behind his back
+    builder.get(camera)["follow_camera"].update({"shoulder_offset": 0.45, "lock_on_side_degrees": 18.0})
     builder.get(camera)["transform"] = transform((PLAYER_START[0], 2.4, PLAYER_START[2] + 4.5), 0.0)
     builder.get(camera)["follow_camera"].update({"distance": 5.2, "pivot_height": 1.75})
 
@@ -222,9 +224,10 @@ def add_effects(builder):
         "velocity": [0.0, 0.5, 0.0], "velocity_randomness": 4.0, "gravity": [0.0, -2.0, 0.0], "start_size": 0.16,
         "end_size": 0.02, "start_color": [1.0, 0.95, 0.75], "end_color": [1.0, 0.5, 0.1], "intensity": 3.5, "max_particles": 400}))
     builder.add(named("Finisher Burst", (0.0, -100.0, 0.0), particle_emitter={
-        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.9, "spawn_half_extents": [0.3, 0.5, 0.3],
-        "velocity": [0.0, 1.5, 0.0], "velocity_randomness": 5.0, "gravity": [0.0, 1.0, 0.0], "start_size": 0.4,
-        "end_size": 0.05, "start_color": [0.8, 0.45, 1.0], "end_color": [0.2, 0.02, 0.35], "intensity": 3.0, "max_particles": 600}))
+        # (a spray of small violet sparks and dark embers falling: big soft blobs hid the blow itself)
+        "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.65, "spawn_half_extents": [0.15, 0.3, 0.15],
+        "velocity": [0.0, 1.0, 0.0], "velocity_randomness": 7.0, "gravity": [0.0, -4.0, 0.0], "start_size": 0.09,
+        "end_size": 0.01, "start_color": [0.85, 0.5, 1.0], "end_color": [0.35, 0.02, 0.08], "intensity": 2.4, "max_particles": 600}))
     builder.add(named("Perilous Glint", (0.0, -100.0, 0.0), particle_emitter={
         "is_emitting": False, "particles_per_second": 0.0, "lifetime_seconds": 0.45, "spawn_half_extents": [0.05, 0.05, 0.05],
         "velocity": [0.0, 0.0, 0.0], "velocity_randomness": 2.5, "gravity": [0.0, 0.0, 0.0], "start_size": 0.5,
