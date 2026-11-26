@@ -19225,7 +19225,8 @@
     "cutscene": "Chain Warden Intro",
     "battle_music": "@game/Sounds/Music/boss_phase_one.ogg",
     "battle_music_volume": 0.6,
-    "victory_sound": "@game/Sounds/Boss/victory.ogg"
+    "victory_sound": "@game/Sounds/Boss/victory.ogg",
+    "victory_message": "A GOD'S HAND SEVERED"
    },
    "tag": {
     "name": "Arena Fog"

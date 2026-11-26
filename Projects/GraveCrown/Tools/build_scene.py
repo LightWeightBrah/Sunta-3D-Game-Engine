@@ -864,7 +864,7 @@ def add_arena(builder):
         if child.get("parent", {}).get("index") == fog and "particle_emitter" in child:
             child["particle_emitter"].update({"start_color": [0.5, 0.38, 0.62], "intensity": 0.3})
     builder.get(fog)["fog_gate"].update({"arena_center": list(ARENA_CENTER), "arena_half_extents": [h, 8.0, h],
-                                         "cutscene": "Chain Warden Intro"})
+                                         "cutscene": "Chain Warden Intro", "victory_message": "A GOD'S HAND SEVERED"})
     # Through the fog: the camera flies across the court to the Warden, low before him as he raises the great sword;
     # his name over the last seconds, then back behind the king
     intro = builder.add(named("Chain Warden Intro", cutscene={
