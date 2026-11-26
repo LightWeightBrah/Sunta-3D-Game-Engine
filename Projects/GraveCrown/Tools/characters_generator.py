@@ -21,6 +21,7 @@ sys.path.insert(0, BLENDER)
 
 import enemies_generator  # noqa: E402
 from enemies_generator import Enemy, Weapon, TWO_HANDED, ONE_HANDED  # noqa: E402
+import motion_retarget  # noqa: E402
 from motion_retarget import MotionClip  # noqa: E402
 
 # The models of this game live in their own folder
@@ -47,12 +48,18 @@ KING.update({
     "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
     "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
     "Taunt":          MotionClip(GREAT_SWORD + "power up.fbx"),
+    # In the saddle (Mesh2Motion's riding clips, CC0; baked by bake_mount_clips.py): the sword in the right fist, the
+    # left hand on the reins
+    "Ride_Idle":      MotionClip("Mesh2Motion/human/Mount_Idle.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Idle"),
+    "Ride_Walk":      MotionClip("Mesh2Motion/human/Mount_Walk.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Walk"),
+    "Ride_Gallop":    MotionClip("Mesh2Motion/human/Mount_Gallop.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Gallop"),
 })
+RIDING = ("Ride_Idle", "Ride_Walk", "Ride_Gallop")
 
 CHARACTERS = [
     Enemy("player_rigged.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
-          is_left_fist=True, is_two_handed=True, brightness=1.6),
+          is_left_fist=True, is_two_handed=True, brightness=1.6, one_hand_actions=RIDING),
     # The hollow knight of the gods: a long sword of the same forge as the king's (the great sword's model, shorter)
     Enemy("enemy_knight_rigged.glb", "HollowKnight", "hollow_knight", 1.95, ONE_HANDED,
           Weapon("weapon_greatsword_upright.glb", "hollow_knight_sword", 1.15, 0.1), brightness=1.5),

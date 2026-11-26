@@ -192,7 +192,7 @@ def add_sky_and_camera(builder):
     builder.get(moon)["directional_light"].update(MOONLIGHT)
     camera = builder.copy_named("Camera")
     builder.get(camera)["camera"]["far_plane"] = 160.0
-    builder.get(camera)["transform"] = transform((PLAYER_START[0], 2.4, PLAYER_START[2] - 4.5), 180.0)
+    builder.get(camera)["transform"] = transform((PLAYER_START[0], 2.4, PLAYER_START[2] + 4.5), 0.0)
     builder.get(camera)["follow_camera"].update({"distance": 5.2, "pivot_height": 1.75})
 
 
@@ -363,6 +363,34 @@ def add_boss(builder):
     return boss
 
 
+# ========== The black horse (Tools/beasts_generator.py) ==========
+
+HORSE_START = (3.0, 0.0, -5.0)
+
+
+def add_horse(builder):
+    """The dead king's black horse waiting by the gate of the crypt: E mounts it (the engine's Mount component)"""
+    template = builder.source[builder.find_source("Hollow Ghoul")]
+    horse = named("Black Horse", HORSE_START, 180.0,
+                  model={"is_visible": True, "model_name": "black_horse", "emissive_strength": 0.0},
+                  animator={"current_animation_name": "Idle"},
+                  physics_body=copy.deepcopy(template["physics_body"]),
+                  box_collider={"half_extents": [0.45, 0.85, 1.15], "is_trigger": False, "layer": 4,
+                                "local_offset": [0.0, 0.85, 0.0], "show_gizmos": False},
+                  character_controller={"acceleration": 7.0, "facing_offset_degrees": 0.0, "is_player_controlled": False,
+                                        "run_speed": 11.0, "turn_speed": 150.0, "walk_speed": 3.2},
+                  character_animation={"blend_seconds": 0.3, "idle_animation": "Idle", "run_animation": "Gallop",
+                                       "walk_animation": "Walk", "walk_back_animation": "Walk", "strafe_left_animation": "Walk",
+                                       "strafe_right_animation": "Walk", "walk_animation_speed": 1.7,
+                                       "run_animation_speed": 7.5},
+                  mount={"seat_offset": [0.0, 0.62, 0.05], "mount_distance": 2.8, "mount_prompt": "Ride   [E]",
+                         "dismount_prompt": "Dismount   [E]", "rider_idle_animation": "Ride_Idle",
+                         "rider_walk_animation": "Ride_Walk", "rider_run_animation": "Ride_Gallop",
+                         "run_animation_from_speed": 5.0, "camera_rise": 1.0, "camera_pull_back": 2.5})
+    horse["physics_body"]["mass"] = 450.0
+    return builder.add(horse)
+
+
 # ========== The level ==========
 
 def add_crypt(builder):
@@ -482,6 +510,7 @@ def main():
     add_crypt(builder)
     add_plains(builder, rng)
     add_arena(builder)
+    add_horse(builder)
     TARGET_SCENE.parent.mkdir(parents=True, exist_ok=True)
     TARGET_SCENE.write_text(json.dumps({"entities": builder.entities, "scene_name": "Main"}, indent=1), encoding="utf-8")
     print(f"{len(builder.entities)} entities -> {TARGET_SCENE}")

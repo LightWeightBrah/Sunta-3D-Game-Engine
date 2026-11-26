@@ -974,6 +974,27 @@ Every number below shows up in the Inspector, so the feel of the camera is tuned
 
 <sub>Defined in `Sunta/src/Sunta/Gameplay/FollowCameraComponent.h`</sub>
 
+### Mount
+
+A mount the player can ride (a horse, a beast of burden, a war wolf): the open-world way to travel
+
+How to use it: Add Component > Mount on a character that has a Character Controller (turn its 'isPlayerControlled' off: the mount moves only when ridden), a Model with its gaits and a Character Animation (idle / walk / run are the mount's stand, walk and gallop). Next to it the player sees 'mountPrompt' and mounts with E; while riding W A S D steer it (relative to the camera), Left Shift gallops, E again dismounts beside it The rider sits 'seatOffset' meters from the mount's feet (in the mount's own space: +Y up, -Z its front), turned with it, and plays 'riderIdleAnimation' / 'riderWalkAnimation' / 'riderRunAnimation' by the mount's speed. Its own keys and attacks wait until it dismounts. The camera pivot rises by 'cameraRise' and the camera stands 'cameraPullBack' meters farther while riding
+
+| Field | Type |
+|---|---|
+| `seatOffset` | Float3 |
+| `mountDistance` | Float |
+| `mountPrompt` | String |
+| `dismountPrompt` | String |
+| `riderIdleAnimation` | String |
+| `riderWalkAnimation` | String |
+| `riderRunAnimation` | String |
+| `runAnimationFromSpeed` | Float |
+| `cameraRise` | Float |
+| `cameraPullBack` | Float |
+
+<sub>Defined in `Sunta/src/Sunta/Gameplay/MountComponent.h`</sub>
+
 ### Posture
 
 The posture of a character, as in Sekiro: how long it can keep its guard against pressure before it breaks

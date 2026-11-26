@@ -55,6 +55,17 @@ namespace SceneKeys
 	constexpr const char* ShieldComponent           = "shield";
 	constexpr const char* PoiseComponent            = "poise";
 	constexpr const char* PostureComponent          = "posture";
+	constexpr const char* MountComponent            = "mount";
+	constexpr const char* SeatOffset                = "seat_offset";
+	constexpr const char* MountDistance             = "mount_distance";
+	constexpr const char* MountPrompt               = "mount_prompt";
+	constexpr const char* DismountPrompt            = "dismount_prompt";
+	constexpr const char* RiderIdleAnimation        = "rider_idle_animation";
+	constexpr const char* RiderWalkAnimation        = "rider_walk_animation";
+	constexpr const char* RiderRunAnimation         = "rider_run_animation";
+	constexpr const char* RunAnimationFromSpeed     = "run_animation_from_speed";
+	constexpr const char* CameraRise                = "camera_rise";
+	constexpr const char* CameraPullBack            = "camera_pull_back";
 	constexpr const char* ParticleEmitterComponent  = "particle_emitter";
 	constexpr const char* GlowSpriteComponent       = "glow_sprite";
 	constexpr const char* LiquidOrbComponent        = "liquid_orb";
@@ -1457,6 +1468,23 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		};
 	}
 
+	if (auto* mount = entityManager.GetComponent<MountComponent>(i))
+	{
+		entityJson[SceneKeys::MountComponent] =
+		{
+			{ SceneKeys::SeatOffset,            { mount->seatOffset.x, mount->seatOffset.y, mount->seatOffset.z } },
+			{ SceneKeys::MountDistance,         mount->mountDistance         },
+			{ SceneKeys::MountPrompt,           mount->mountPrompt           },
+			{ SceneKeys::DismountPrompt,        mount->dismountPrompt        },
+			{ SceneKeys::RiderIdleAnimation,    mount->riderIdleAnimation    },
+			{ SceneKeys::RiderWalkAnimation,    mount->riderWalkAnimation    },
+			{ SceneKeys::RiderRunAnimation,     mount->riderRunAnimation     },
+			{ SceneKeys::RunAnimationFromSpeed, mount->runAnimationFromSpeed },
+			{ SceneKeys::CameraRise,            mount->cameraRise            },
+			{ SceneKeys::CameraPullBack,        mount->cameraPullBack        }
+		};
+	}
+
 	if (auto* posture = entityManager.GetComponent<PostureComponent>(i))
 	{
 		entityJson[SceneKeys::PostureComponent] =
@@ -2435,6 +2463,24 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		poise.recoverAfterSeconds = poiseData.value(SceneKeys::RecoverAfterSeconds, poise.recoverAfterSeconds);
 		poise.staggerImmunitySeconds = poiseData.value(SceneKeys::StaggerImmunitySeconds, poise.staggerImmunitySeconds);
 		poise.currentPoise        = poise.maxPoise;
+	}
+
+	if (entityJson.contains(SceneKeys::MountComponent))
+	{
+		const auto& data = entityJson[SceneKeys::MountComponent];
+		auto& mount = entityManager.AddComponent<MountComponent>(entity);
+		if (data.contains(SceneKeys::SeatOffset) && data[SceneKeys::SeatOffset].is_array() && data[SceneKeys::SeatOffset].size() == 3)
+			mount.seatOffset = glm::vec3(data[SceneKeys::SeatOffset][0].get<float>(), data[SceneKeys::SeatOffset][1].get<float>(),
+			                             data[SceneKeys::SeatOffset][2].get<float>());
+		mount.mountDistance         = data.value(SceneKeys::MountDistance,         mount.mountDistance);
+		mount.mountPrompt           = data.value(SceneKeys::MountPrompt,           mount.mountPrompt);
+		mount.dismountPrompt        = data.value(SceneKeys::DismountPrompt,        mount.dismountPrompt);
+		mount.riderIdleAnimation    = data.value(SceneKeys::RiderIdleAnimation,    mount.riderIdleAnimation);
+		mount.riderWalkAnimation    = data.value(SceneKeys::RiderWalkAnimation,    mount.riderWalkAnimation);
+		mount.riderRunAnimation     = data.value(SceneKeys::RiderRunAnimation,     mount.riderRunAnimation);
+		mount.runAnimationFromSpeed = data.value(SceneKeys::RunAnimationFromSpeed, mount.runAnimationFromSpeed);
+		mount.cameraRise            = data.value(SceneKeys::CameraRise,            mount.cameraRise);
+		mount.cameraPullBack        = data.value(SceneKeys::CameraPullBack,        mount.cameraPullBack);
 	}
 
 	if (entityJson.contains(SceneKeys::PostureComponent))

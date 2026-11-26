@@ -140,6 +140,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<StaminaComponent>         ("Stamina",           Character, "Spent by rolls, attacks and blocking"),
 		Plain<PoiseComponent>           ("Poise",             Character, "How many hits it takes before staggering"),
 		Plain<PostureComponent>         ("Posture",           Character, "Guard that breaks under pressure, then a finisher (Sekiro)"),
+		Plain<MountComponent>           ("Mount",             Character, "A horse or beast the player rides (E)"),
 		Plain<LockOnComponent>          ("Lock On",           Character, "Locks the view on an enemy"),
 		Plain<StrikeAimComponent>       ("Strike Aim",        Character, "Bends the spine so attacks meet the enemy's head or chest"),
 		Plain<LockOnTargetComponent>    ("Lock On Target",    Character, "Can be locked on"),

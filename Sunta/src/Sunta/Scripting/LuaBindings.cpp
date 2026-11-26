@@ -24,6 +24,7 @@
 #include "Gameplay/HealingFlaskSystem.h"
 #include "Gameplay/LevelUpSystem.h"
 #include "Gameplay/CombatSystem.h"
+#include "Gameplay/MountSystem.h"
 #include "Gameplay/EnemySystem.h"
 #include "Gameplay/EnemyContext.h"
 #include "Gameplay/EnemyStateMachine.h"
@@ -61,6 +62,7 @@ using LockOnHandle        = ComponentHandle<LockOnComponent>;
 using LockOnTargetHandle  = ComponentHandle<LockOnTargetComponent>;
 using HealthHandle        = ComponentHandle<HealthComponent>;
 using PostureHandle       = ComponentHandle<PostureComponent>;
+using MountHandle         = ComponentHandle<MountComponent>;
 using CharacterActionsHandle = ComponentHandle<CharacterActionsComponent>;
 using CharacterAnimationHandle = ComponentHandle<CharacterAnimationComponent>;
 using EnemyHandle         = ComponentHandle<EnemyComponent>;
@@ -571,6 +573,16 @@ void LuaBindings::RegisterCharacterActionsComponent(sol::state& lua)
 			})
 	);
 
+	// Usage in Lua: horse.mount.isRidden, horse.mount:dismount() (a cutscene takes the rider off)
+	lua.new_usertype<MountHandle>("Mount", sol::no_constructor,
+		"isRidden", sol::readonly_property([](const MountHandle& handle) { const MountComponent* m = handle.TryGetComponent(); return m && m->isRidden; }),
+		"dismount", [](const MountHandle& handle)
+			{
+				if (EntityManager* entityManager = handle.owner.GetEntityManager())
+					MountSystem::Dismount(*entityManager, handle.owner.GetID());
+			}
+	);
+
 	// Usage in Lua: this.posture.fraction (0..1, the bar), this.posture.isBroken (open to a finisher),
 	// this.posture.finishers (how many it took: a boss with three lives counts them), this.posture:fill(20)
 	// (a script's own blow to the guard), this.posture.max = 300 (a tougher second phase)
@@ -909,6 +921,7 @@ void LuaBindings::RegisterEntity(sol::state& lua)
 		"lockOnTarget",        ComponentHandleProperty<LockOnTargetComponent>(),
 		"health",              ComponentHandleProperty<HealthComponent>(),
 		"posture",             ComponentHandleProperty<PostureComponent>(),
+		"mount",               ComponentHandleProperty<MountComponent>(),
 		"characterActions",    ComponentHandleProperty<CharacterActionsComponent>(),
 		"characterAnimation",  ComponentHandleProperty<CharacterAnimationComponent>(),
 		"enemy",               ComponentHandleProperty<EnemyComponent>(),

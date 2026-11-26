@@ -33,7 +33,8 @@ bool IsAlive(EntityManager& entityManager, unsigned int entityID)
 bool WantsToDrink(EntityManager& entityManager, unsigned int entityID)
 {
 	const CharacterControllerComponent* controller = entityManager.GetComponent<CharacterControllerComponent>(entityID);
-	return controller && controller->isPlayerControlled && !controller->isHeldByCutscene && InputManager::IsKeyDown(DrinkKey);
+	return controller && controller->isPlayerControlled && !controller->isHeldByCutscene && !controller->isRiding
+	       && InputManager::IsKeyDown(DrinkKey);
 }
 
 void SetChildModelVisible(EntityManager& entityManager, unsigned int entityID, const std::string& childName, bool isVisible)

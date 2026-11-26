@@ -128,6 +128,7 @@ class Enemy:
     is_left_fist: bool = False  # two-handed weapons: the left hand closes around the haft too
     is_two_handed: bool = False  # the left hand stays on the haft in every animation (where the Idle holds it)
     is_staff_in_left: bool = False  # the weapon is a staff held upright in the left fist (the right hand casts spells)
+    one_hand_actions: tuple = ()  # two-handed: actions whose left hand stays free (riding: it holds the reins)
     brightness: float = 1.3
     weapons: list = field(default_factory=list)
 
@@ -272,7 +273,8 @@ def make_enemy(enemy, arguments):
         spacing = hand_pinning.FIST_SPACING * enemy.height / 1.8
         made_by_text = [name for name, clip in enemy.animations.items() if clip.rig is motion_retarget.SMPL]
         hand_pinning.straight_hands(armature, [action for action in actions if action.name in made_by_text])
-        hand_pinning.hold_with_both_hands(armature, knight_generator.WEAPON_BONE, actions, left, right.along,
+        both_hands = [action for action in actions if action.name not in enemy.one_hand_actions]
+        hand_pinning.hold_with_both_hands(armature, knight_generator.WEAPON_BONE, both_hands, left, right.along,
                                           right.center, spacing, aimed_actions=made_by_text)
     if enemy.is_staff_in_left:
         scale = enemy.height / 1.9

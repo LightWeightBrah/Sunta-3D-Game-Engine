@@ -108,17 +108,17 @@
     "position": [
      0.0,
      2.4,
-     21.5
+     30.5
     ],
     "rotation": [
      0.0,
-     180.0,
+     0.0,
      0.0
     ],
     "rotation_quaternion": [
-     6.123233995736766e-17,
-     0.0,
      1.0,
+     0.0,
+     0.0,
      0.0
     ],
     "scale": [
@@ -13485,6 +13485,114 @@
    "parent": {
     "index": 252,
     "bone_name": "Weapon_R"
+   }
+  },
+  {
+   "tag": {
+    "name": "Black Horse"
+   },
+   "transform": {
+    "position": [
+     3.0,
+     0.0,
+     -5.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "black_horse",
+    "emissive_strength": 0.0
+   },
+   "animator": {
+    "current_animation_name": "Idle"
+   },
+   "physics_body": {
+    "angular_damping": 0.05000000074505806,
+    "angular_velocity": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "freeze_rotation_x": true,
+    "freeze_rotation_y": true,
+    "freeze_rotation_z": true,
+    "friction": 0.0,
+    "is_kinematic": false,
+    "linear_damping": 0.05000000074505806,
+    "mass": 450.0,
+    "restitution": 0.0,
+    "use_gravity": true,
+    "velocity": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "box_collider": {
+    "half_extents": [
+     0.45,
+     0.85,
+     1.15
+    ],
+    "is_trigger": false,
+    "layer": 4,
+    "local_offset": [
+     0.0,
+     0.85,
+     0.0
+    ],
+    "show_gizmos": false
+   },
+   "character_controller": {
+    "acceleration": 7.0,
+    "facing_offset_degrees": 0.0,
+    "is_player_controlled": false,
+    "run_speed": 11.0,
+    "turn_speed": 150.0,
+    "walk_speed": 3.2
+   },
+   "character_animation": {
+    "blend_seconds": 0.3,
+    "idle_animation": "Idle",
+    "run_animation": "Gallop",
+    "walk_animation": "Walk",
+    "walk_back_animation": "Walk",
+    "strafe_left_animation": "Walk",
+    "strafe_right_animation": "Walk",
+    "walk_animation_speed": 1.7,
+    "run_animation_speed": 7.5
+   },
+   "mount": {
+    "seat_offset": [
+     0.0,
+     0.62,
+     0.05
+    ],
+    "mount_distance": 2.8,
+    "mount_prompt": "Ride   [E]",
+    "dismount_prompt": "Dismount   [E]",
+    "rider_idle_animation": "Ride_Idle",
+    "rider_walk_animation": "Ride_Walk",
+    "rider_run_animation": "Ride_Gallop",
+    "run_animation_from_speed": 5.0,
+    "camera_rise": 1.0,
+    "camera_pull_back": 2.5
    }
   }
  ],

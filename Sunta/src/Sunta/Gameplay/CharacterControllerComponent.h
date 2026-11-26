@@ -65,6 +65,9 @@ struct CharacterControllerComponent
 	// The player's keys switched off for a cutscene (switched back on when it ends)
 	bool isHeldByCutscene = false;
 
+	// In the saddle of a mount (see MountComponent): the keys steer the mount, the rider's own actions wait
+	bool isRiding = false;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<CharacterControllerComponent>("Character Controller", EngineAssets::Icons::Skeleton,

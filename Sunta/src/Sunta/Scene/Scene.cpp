@@ -32,6 +32,7 @@
 #include "Physics/CollisionShapes.h"
 #include "Physics/PhysicsSystem.h"
 #include "Gameplay/BonfireSystem.h"
+#include "Gameplay/MountSystem.h"
 #include "Gameplay/CharacterActionsSystem.h"
 #include "Gameplay/CombatSystem.h"
 #include "Gameplay/TestBot.h"
@@ -359,11 +360,14 @@ void Scene::Update()
 		LockOnSystem::Update(entityManager, gameDeltaTime, cameraForward, lookDelta);
 		if (!isCutscene)
 			EnemySystem::Update(entityManager, gameDeltaTime);
+		MountSystem::Update(entityManager, gameDeltaTime, cameraForward);
 		CharacterControllerSystem::Update(entityManager, gameDeltaTime, cameraForward);
 		CharacterActionsSystem::Update(entityManager, isMouseOwnedByGame, gameDeltaTime);
 		HealingFlaskSystem::Update(entityManager);
 		StaminaSystem::Update(entityManager, gameDeltaTime);
 		PhysicsSystem::UpdatePhysics(entityManager, gameDeltaTime);
+		// After the physics moved the mounts: their riders sit in the saddles
+		MountSystem::PlaceRiders(entityManager);
 	}
 
 	Systems::SyncMeshComponents(entityManager);
@@ -903,6 +907,7 @@ void Scene::BeginPlay()
 	EnemySystem::PrepareForPlay(entityManager);
 	HUDSystem::PrepareForPlay(entityManager);
 	BonfireSystem::PrepareForPlay(entityManager);
+	MountSystem::PrepareForPlay(entityManager);
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);
