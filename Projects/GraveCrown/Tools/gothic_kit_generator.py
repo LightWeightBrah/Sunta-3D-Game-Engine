@@ -167,7 +167,8 @@ def build_floor(parts, generator):
             x = -size * 0.5 + (column + 0.5) * slab
             y = -size * 0.5 + (row + 0.5) * slab
             height = 0.12 + generator.uniform(-0.02, 0.02)
-            color = "ash" if generator.random() < 0.08 else generator.choice(("stone", "stone_dark", "stone_dark"))
+            # (mostly one dark stone: light and dark slabs side by side read as a chessboard)
+            color = "ash" if generator.random() < 0.06 else ("stone" if generator.random() < 0.15 else "stone_dark")
             parts.box(None, color, (x, y, -height * 0.5), (slab - 0.05, slab - 0.05, height),
                       rotation=(generator.uniform(-0.8, 0.8), generator.uniform(-0.8, 0.8), generator.uniform(-1.5, 1.5)), bevel=0.025)
 

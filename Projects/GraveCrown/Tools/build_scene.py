@@ -388,30 +388,41 @@ def add_boss(builder):
     boss = builder.copy_named("Boss", skip={"Great Axe", "Armor Embers", "Axe Sparks", "Warden Defeat"})
     entity = builder.get(boss)
     entity["tag"]["name"] = "Chain Warden"
-    entity["model"]["model_name"] = "hollow_knight"
-    entity["transform"] = transform((ARENA_CENTER[0], 0.0, ARENA_CENTER[2] - 10.0), 0.0, 1.45)
+    # The horned black knight (characters_generator.py: the rider's model on foot, 2.55 m, the great sword pack)
+    entity["model"]["model_name"] = "chain_warden"
+    entity["model"]["emissive_strength"] = 2.6
+    entity["transform"] = transform((ARENA_CENTER[0], 0.0, ARENA_CENTER[2] - 10.0), 0.0)
+    entity["box_collider"].update({"half_extents": [0.45, 1.27, 0.45], "local_offset": [0.0, 1.27, 0.0]})
     entity["enemy_health_bar"]["display_name"] = "Chain Warden, Hand of the Gods"
     entity["health"]["max_health"] = 1100.0
     entity["currency_reward"]["amount"] = 6000
-    entity["character_actions"].update(KNIGHT_WINDOWS)
+    # The STRIKE lines of characters_generator.py's log (the blade's sweep through the space before him)
+    entity["character_actions"].update({"attack_moves": [
+        {"animation": "Attack_Light_1", "hit_from": 0.38, "hit_to": 0.58, "damage_multiplier": 1.0},
+        {"animation": "Attack_Light_2", "hit_from": 0.2, "hit_to": 0.42, "damage_multiplier": 1.0},
+        {"animation": "Attack_Light_3", "hit_from": 0.38, "hit_to": 0.58, "damage_multiplier": 1.1},
+        {"animation": "Attack_Heavy", "hit_from": 0.42, "hit_to": 0.57, "damage_multiplier": 1.0},
+        {"animation": "Attack_Heavy_2", "hit_from": 0.13, "hit_to": 0.31, "damage_multiplier": 1.0}],
+        "heavy_attack_2_animation": "Attack_Heavy_2", "block_impact_animation": "Block_Impact"})
     # His heavy blows can't be blocked or parried: a red glint warns of them, only a dodge is safe
     entity["character_actions"].update({"heavy_attacks_are_perilous": True, "perilous_warning_effect": "Perilous Glint", "block_animation": "Block",
                                         "leap_attack_animation": ""})
     entity["melee_enemy"].update({"leap_attack_distance": 0.0, "attack_distance": 3.2, "guard_chance": 0.3, "guard_seconds": 0.9})
     unseen_guard(builder, boss, "Chain Warden")
-    entity["boss"].update({"phase_two_animation": "", "phase_two_light_attack_1_animation": "Attack_Light_1",
+    # Phase two: he raises the great sword (the power-up) and fights with the spinning cleave as his heavy blow
+    entity["boss"].update({"phase_two_animation": "Taunt", "phase_two_light_attack_1_animation": "Attack_Light_1",
                            "phase_two_light_attack_2_animation": "Attack_Light_2",
                            "phase_two_light_attack_3_animation": "Attack_Light_3",
-                           "phase_two_heavy_attack_animation": "Attack_Heavy", "defeat_cutscene": "",
+                           "phase_two_heavy_attack_animation": "Attack_Heavy_2", "defeat_cutscene": "",
                            "phase_two_light_hit_from": 0.33, "phase_two_light_hit_to": 0.56,
-                           "phase_two_heavy_hit_from": 0.46, "phase_two_heavy_hit_to": 0.78})
-    entity["character_animation"].update({"walk_animation_speed": 1.37 * 1.45, "run_animation_speed": 3.2 * 1.45})
+                           "phase_two_heavy_hit_from": 0.13, "phase_two_heavy_hit_to": 0.31})
+    entity["character_animation"].update({"walk_animation_speed": 0.8, "run_animation_speed": 2.7})
     entity["posture"] = {"max_posture": 260.0, "from_hits": 1.0, "from_blocks": 0.5, "from_being_parried": 45.0,
                          "recover_per_second": 14.0, "recover_delay_seconds": 1.8, "low_health_recover_factor": 0.35,
                          "broken_seconds": 3.0, "finisher_damage": 0.3, "finisher_slow_motion": 0.25,
                          "finisher_slow_seconds": 0.7, "break_effect": "Posture Break", "finisher_effect": "Finisher Burst"}
-    blade = named("Warden Blade", model={"is_visible": True, "model_name": "hollow_knight_sword"})
-    blade["hitbox"] = dict(KNIGHT_SWORD_HITBOX, damage=34.0, poise_damage=40.0, layer=ENEMY_HITBOX_LAYER, show_gizmos=False,
+    blade = named("Warden Blade", model={"is_visible": True, "model_name": "chain_warden_blade"})
+    blade["hitbox"] = dict({"local_offset": [0.0, 0.9, 0.0], "half_extents": [0.18, 0.9, 0.07]}, damage=34.0, poise_damage=40.0, layer=ENEMY_HITBOX_LAYER, show_gizmos=False,
                            hit_stop_seconds=0.1, camera_shake=0.45)
     builder.add(blade, parent=boss, bone="Weapon_R")
     return boss

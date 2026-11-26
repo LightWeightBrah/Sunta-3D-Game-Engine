@@ -12,6 +12,8 @@ MODELS = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)
 VIOLET, RED, GOLD = (250.0, 310.0), (340.0, 360.0), (15.0, 55.0)
 GLOWS = {
     "Characters/GraveKing/grave_king": [VIOLET],
+    # the Chain Warden's armor is veined with the gods' gold
+    "Characters/ChainWarden/chain_warden": [GOLD],
     # the gothic kit (gothic_kit_generator.py): the stained glass, the runes, the candle flames
     "Gothic/gc_stained_window": [VIOLET, RED, GOLD, (0.0, 12.0)],
     "Gothic/gc_runestone": [VIOLET],

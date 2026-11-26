@@ -60,6 +60,18 @@ KING.update({
 })
 RIDING = ("Ride_Idle", "Ride_Walk", "Ride_Gallop")
 
+# The Chain Warden, the gods' hand at the edge of the plains: the horned black knight (the rider's model, on foot), half a
+# head taller than the king, with the boss's great sword cuts; he guards (Sekiro) and answers with a great spinning blow
+WARDEN = dict(TWO_HANDED)
+WARDEN.update({
+    "Block":          MotionClip(GREAT_SWORD + "blocking.fbx"),
+    "Block_Impact":   MotionClip(GREAT_SWORD + "impact (2).fbx"),
+    "Attack_Heavy_2": MotionClip(GREAT_SWORD + "high spin attack.fbx", speed=0.9),
+    "Taunt":          MotionClip(GREAT_SWORD + "power up.fbx"),
+    # (the pack's "slash (3)" bends the right wrist 92 degrees, as it did the king's)
+    "Attack_Light_2": MotionClip(GREAT_SWORD + "slash (5).fbx", speed=0.9),
+})
+
 CHARACTERS = [
     Enemy("player_rigged.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
@@ -76,6 +88,8 @@ CHARACTERS = [
           Weapon("../Enemies/cultist_staff.glb", "court_lich_staff", 1.9, 0.42), is_staff_in_left=True, brightness=1.6),
     Enemy("court_butler_rigged.glb", "CourtButler", "court_butler", 1.85, enemies_generator.CULTIST,
           Weapon("../Enemies/cultist_staff.glb", "court_butler_cane", 1.0, 0.5), is_staff_in_left=True, brightness=1.5),
+    Enemy("enemy_rider_rigged.glb", "ChainWarden", "chain_warden", 2.55, WARDEN,
+          Weapon("weapon_greatsword_upright.glb", "chain_warden_blade", 2.0, 0.1), is_left_fist=True, is_two_handed=True),
     # A knight of the dead king's court, violet flame in the helm: fights at his side when called
     Enemy("court_knight_rigged.glb", "CourtKnight", "court_knight", 1.95, ONE_HANDED,
           Weapon("weapon_greatsword_upright.glb", "court_knight_sword", 1.2, 0.1), brightness=1.5),
