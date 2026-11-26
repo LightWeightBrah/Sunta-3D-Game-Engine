@@ -279,8 +279,10 @@ def add_player(builder):
     sword = named("Grave Greatsword", model={"is_visible": True, "model_name": "grave_greatsword"})
     sword["hitbox"] = dict(KING_SWORD_HITBOX, damage=34.0, poise_damage=30.0, layer=PLAYER_HITBOX_LAYER,
                            show_gizmos=False, hit_stop_seconds=0.09, camera_shake=0.25)
-    sword["weapon_trail"] = {"base_offset": [0.0, 0.45, 0.0], "tip_offset": [0.0, 1.55, 0.0], "color": [0.72, 0.45, 1.0],
-                             "intensity": 1.1, "lifetime_seconds": 0.16, "only_while_striking": True}
+    # A thin violet streak along the edge only (from the middle of the blade out): the whole length of a great sword
+    # left a pale sheet over half the screen in the wide cleaves
+    sword["weapon_trail"] = {"base_offset": [0.0, 0.95, 0.0], "tip_offset": [0.0, 1.6, 0.0], "color": [0.5, 0.22, 0.9],
+                             "intensity": 0.75, "lifetime_seconds": 0.1, "only_while_striking": True}
     builder.add(sword, parent=player, bone="Weapon_R")
     builder.add(named("Blade Guard", shield={"damage_through": 0.15, "guard_angle_degrees": 120.0, "stamina_per_damage": 1.2,
                                              "block_effect": "Hit Sparks"}), parent=player, bone="Hand_L")
