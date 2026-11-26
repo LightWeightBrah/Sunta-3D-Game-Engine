@@ -18,7 +18,7 @@ AGENT = {"User-Agent": "SuntaEngineTools/1.0"}
 
 # The world's palette: every photo becomes its own light and dark spots in one tone (ash-grey stone, charred wood), so
 # a golden sandstone or a pale bleached trunk doesn't break the look. (tone RGB, brightness, contrast)
-STONE_TONE = ((0.50, 0.48, 0.52), 0.85, 1.25)
+STONE_TONE = ((0.50, 0.48, 0.52), 0.6, 1.25)  # (0.85 stood out pale against the dark ash)
 CHARRED_TONE = ((0.36, 0.31, 0.30), 0.7, 1.35)
 TONES = {"dead_tree_trunk_02": CHARRED_TONE, "dead_quiver_trunk": CHARRED_TONE, "tree_stump_01": CHARRED_TONE,
          "root_cluster_01": CHARRED_TONE}
