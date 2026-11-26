@@ -14,6 +14,8 @@ GLOWS = {
     "Characters/GraveKing/grave_king": [VIOLET],
     # the Chain Warden's armor is veined with the gods' gold
     "Characters/ChainWarden/chain_warden": [GOLD],
+    # the golem's lava
+    "Characters/ObsidianGolem/obsidian_golem": [(0.0, 45.0)],
     # the gothic kit (gothic_kit_generator.py): the stained glass, the runes, the candle flames
     "Gothic/gc_stained_window": [VIOLET, RED, GOLD, (0.0, 12.0)],
     "Gothic/gc_runestone": [VIOLET],

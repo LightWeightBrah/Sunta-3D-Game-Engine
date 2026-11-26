@@ -72,6 +72,25 @@ WARDEN.update({
     "Attack_Light_2": MotionClip(GREAT_SWORD + "slash (5).fbx", speed=0.9),
 })
 
+# The obsidian golem (an optional giant on the plains): Mixamo's mutant moves - a heavy breathing idle, a lumbering walk,
+# punches, a swipe, a jump that crashes down (his perilous blow), a roar, a fall
+MUTANT = "Mixamo/Brawl/Mutant "
+GOLEM = {
+    "Idle":           MotionClip(MUTANT + "Breathing Idle.fbx"),
+    "Walk":           MotionClip(MUTANT + "Walking.fbx"),
+    "Run":            MotionClip(MUTANT + "Run.fbx"),
+    "Walk_Back":      MotionClip(MUTANT + "Walking.fbx"),
+    "Strafe_Left":    MotionClip(MUTANT + "Walking.fbx"),
+    "Strafe_Right":   MotionClip(MUTANT + "Walking.fbx"),
+    "Attack_Light_1": MotionClip(MUTANT + "Punch.fbx"),
+    "Attack_Light_2": MotionClip(MUTANT + "Swiping.fbx"),
+    "Attack_Heavy":   MotionClip(MUTANT + "Jump Attack.fbx"),
+    "Taunt":          MotionClip(MUTANT + "Roaring.fbx"),
+    "Hit":            MotionClip(GREAT_SWORD + "impact.fbx"),
+    "Parried":        MotionClip(GREAT_SWORD + "impact (3).fbx", speed=0.6),
+    "Death":          MotionClip(MUTANT + "Dying.fbx"),
+}
+
 CHARACTERS = [
     Enemy("player_rigged.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
@@ -91,6 +110,9 @@ CHARACTERS = [
           Weapon("../Enemies/cultist_staff.glb", "court_butler_cane", 1.0, 0.5), is_staff_in_left=True, brightness=1.5),
     Enemy("enemy_rider_rigged.glb", "ChainWarden", "chain_warden", 2.55, WARDEN,
           Weapon("weapon_greatsword_upright.glb", "chain_warden_blade", 2.0, 0.1), is_left_fist=True, is_two_handed=True),
+    # (no weapon: a sliver in the fist stands for it - the scene hangs only a hitbox on the hand)
+    Enemy("enemy_golem_rigged.glb", "ObsidianGolem", "obsidian_golem", 3.3, GOLEM,
+          Weapon("weapon_greatsword_upright.glb", "golem_fist", 0.2, 0.5), brightness=1.0),
     # A knight of the dead king's court, violet flame in the helm: fights at his side when called
     Enemy("court_knight_rigged.glb", "CourtKnight", "court_knight", 1.95, ONE_HANDED,
           Weapon("weapon_greatsword_upright.glb", "court_knight_sword", 1.2, 0.1), brightness=1.5),

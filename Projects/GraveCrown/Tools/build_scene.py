@@ -326,6 +326,40 @@ def hollow_knight(builder, position, yaw, name="Hollow Knight"):
     return index
 
 
+GOLEM_FIST_HITBOX = {"local_offset": [0.0, 0.0, 0.0], "half_extents": [0.55, 0.55, 0.55]}
+
+
+def obsidian_golem(builder, position, yaw):
+    """An optional giant of the eastern plains: lava in the cracks of black stone (characters_generator.py, Mixamo's
+    mutant moves); punches and a swipe, a crashing leap that can't be blocked, a posture that takes long to break"""
+    index = enemy_from(builder, "Hollow Ghoul", "Obsidian Golem", "obsidian_golem", position, yaw, "Obsidian Golem", 650.0, 1800,
+                       ("golem_fist", GOLEM_FIST_HITBOX, 40.0, 60.0))
+    entity = builder.get(index)
+    entity["model"]["emissive_strength"] = 2.2
+    entity["character_actions"].update({
+        "attack_moves": [{"animation": "Attack_Light_1", "hit_from": 0.16, "hit_to": 0.38, "damage_multiplier": 1.0},
+                         {"animation": "Attack_Light_2", "hit_from": 0.38, "hit_to": 0.55, "damage_multiplier": 1.1},
+                         {"animation": "Attack_Heavy", "hit_from": 0.33, "hit_to": 0.47, "damage_multiplier": 1.0}],
+        "heavy_attacks_are_perilous": True, "perilous_warning_effect": "Perilous Glint",
+        "light_attack_3_animation": "", "block_animation": "", "parry_animation": "", "roll_animation": "",
+        "backstep_animation": "", "attack_reach": 1.6})
+    entity["character_controller"].update({"walk_speed": 1.6, "run_speed": 3.4})
+    entity["melee_enemy"].update({"attack_distance": 3.0, "run_distance": 10.0, "max_light_combo": 2, "heavy_attack_chance": 0.35,
+                                  "attack_cooldown_seconds": 1.8, "recover_seconds": 1.4, "give_up_distance": 26.0})
+    entity["box_collider"].update({"half_extents": [0.8, 1.6, 0.8], "local_offset": [0.0, 1.6, 0.0]})
+    entity["lock_on_target"]["aim_height"] = 2.2
+    entity["enemy"]["eye_height"] = 2.8
+    entity["poise"] = dict(entity.get("poise", {}), max_poise=400.0)
+    entity["posture"] = {"max_posture": 200.0, "from_hits": 0.8, "from_being_parried": 40.0, "recover_per_second": 12.0,
+                         "broken_seconds": 3.0, "finisher_damage": 0.5, "finisher_slow_motion": 0.25, "finisher_slow_seconds": 0.6,
+                         "break_effect": "Posture Break", "finisher_effect": "Finisher Burst"}
+    # the fist is only a hitbox on the hand (no model)
+    for child in builder.entities:
+        if child.get("tag", {}).get("name") == "Obsidian Golem Weapon":
+            child["model"]["is_visible"] = False
+    return index
+
+
 def ash_wolf(builder, position, yaw, name="Ash Wolf"):
     """A gaunt wolf of the ash (the fox's clips of Mesh2Motion): quick bites, a leap from afar, no guard"""
     index = enemy_from(builder, "Hollow Ghoul", name, "ash_wolf", position, yaw, "Ash Wolf", 70.0, 50)
@@ -684,6 +718,8 @@ def add_plains(builder, rng):
     # A pack of wolves roaming the west of the plains
     for i, (x, z) in enumerate(((-30.0, -40.0), (-33.0, -44.0), (-27.0, -46.0))):
         ash_wolf(builder, (x, 0.0, z), 90.0, "Ash Wolf" if i == 0 else "Ash Wolf {}".format(i + 1))
+    # The golem keeps the eastern ruins (away from the road: optional)
+    obsidian_golem(builder, (40.0, 0.0, -44.0), 250.0)
 
 
 def add_arena(builder):
