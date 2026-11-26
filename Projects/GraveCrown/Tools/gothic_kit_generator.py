@@ -41,9 +41,10 @@ from sunta_blender import (  # noqa: E402
 
 # A cold violet-grey stone of the dead king's realm; glowing colors saturated (glow_maps.py makes them shine)
 COLORS = {
-    "stone":       ((0.30, 0.285, 0.31), 0.12),
-    "stone_light": ((0.40, 0.38, 0.40), 0.12),
-    "stone_dark":  ((0.17, 0.16, 0.19), 0.08),
+    # (stone barely shines: a shinier slab caught the moon and the floor read as a chessboard)
+    "stone":       ((0.30, 0.285, 0.31), 0.04),
+    "stone_light": ((0.40, 0.38, 0.40), 0.04),
+    "stone_dark":  ((0.17, 0.16, 0.19), 0.03),
     "mortar":      ((0.09, 0.085, 0.10), 0.04),
     "ash":         ((0.36, 0.34, 0.32), 0.04),
     "iron":        ((0.16, 0.15, 0.15), 0.55),
@@ -168,7 +169,7 @@ def build_floor(parts, generator):
             y = -size * 0.5 + (row + 0.5) * slab
             height = 0.12 + generator.uniform(-0.02, 0.02)
             # (mostly one dark stone: light and dark slabs side by side read as a chessboard)
-            color = "ash" if generator.random() < 0.06 else ("stone" if generator.random() < 0.15 else "stone_dark")
+            color = "mortar" if generator.random() < 0.04 else "stone_dark"
             parts.box(None, color, (x, y, -height * 0.5), (slab - 0.05, slab - 0.05, height),
                       rotation=(generator.uniform(-0.8, 0.8), generator.uniform(-0.8, 0.8), generator.uniform(-1.5, 1.5)), bevel=0.025)
 

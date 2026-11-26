@@ -64,29 +64,29 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":2662,
+			"count":2642,
 			"max":[
 				3.899214267730713,
 				1.850496768951416,
-				1.8308775424957275
+				1.8325047492980957
 			],
 			"min":[
-				-2.777125597000122,
-				-0.1398862898349762,
-				-0.4000000059604645
+				-2.728184700012207,
+				-0.1424330323934555,
+				-0.4544101357460022
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":2662,
+			"count":2642,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":2662,
+			"count":2642,
 			"type":"VEC2"
 		},
 		{
@@ -99,26 +99,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":31944,
+			"byteLength":31704,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":31944,
-			"byteOffset":31944,
+			"byteLength":31704,
+			"byteOffset":31704,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":21296,
-			"byteOffset":63888,
+			"byteLength":21136,
+			"byteOffset":63408,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":16368,
-			"byteOffset":85184,
+			"byteOffset":84544,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":101552,
+			"byteLength":100912,
 			"uri":"gc_graves.bin"
 		}
 	]

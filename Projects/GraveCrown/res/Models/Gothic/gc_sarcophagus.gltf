@@ -64,7 +64,7 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":4804,
+			"count":4806,
 			"max":[
 				1.2999999523162842,
 				1.5499999523162842,
@@ -80,13 +80,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":4804,
+			"count":4806,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":4804,
+			"count":4806,
 			"type":"VEC2"
 		},
 		{
@@ -99,26 +99,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":57648,
+			"byteLength":57672,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":57648,
-			"byteOffset":57648,
+			"byteLength":57672,
+			"byteOffset":57672,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":38432,
-			"byteOffset":115296,
+			"byteLength":38448,
+			"byteOffset":115344,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":17280,
-			"byteOffset":153728,
+			"byteOffset":153792,
 			"target":34963
 		}
 	],
@@ -130,7 +130,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":171008,
+			"byteLength":171072,
 			"uri":"gc_sarcophagus.bin"
 		}
 	]
