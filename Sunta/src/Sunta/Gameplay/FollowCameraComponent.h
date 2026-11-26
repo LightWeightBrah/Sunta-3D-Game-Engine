@@ -88,6 +88,8 @@ struct FollowCameraComponent
 	glm::vec3 pivot           = glm::vec3(0.0f);
 	float     shakeTrauma     = 0.0f; // 0..1, the shake is its square (small shakes stay subtle, big ones are wild)
 	float     shakeSeconds    = 0.0f; // runs on while shaking, the noise of the shake follows it
+	float     punchInLeft     = 0.0f; // seconds the camera still stays drawn in (see FollowCameraSystem::PunchIn)
+	float     punchInAmount   = 0.0f; // the part of 'distance' it comes in by
 
 	static void RegisterToInspector()
 	{

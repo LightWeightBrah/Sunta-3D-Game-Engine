@@ -40,6 +40,7 @@ constexpr int   MostPassedThrough    = 8;
 
 // How quickly the camera moves back out after a wall stopped pushing it
 constexpr float DistanceReturnSharpness = 6.0f;
+constexpr float PunchInSharpness        = 9.0f; // how quickly the camera glides in for a finisher
 
 // Something low behind the player (a heap of rubble, a low wall) would push the camera into the player's head: it rises
 // over it instead, looking down at the player, when rising one of these heights clears most of the view. It goes up
@@ -219,6 +220,16 @@ void UpdateRise(FollowCameraComponent& follow, float wantedRise, float deltaTime
 // A wall pushes the camera in at once (the player must never be hidden), the camera moves back out smoothly
 void UpdateDistance(FollowCameraComponent& follow, float freeDistance, float deltaTime)
 {
+	// Drawn in for a big moment: it glides to the nearer distance (a wall still pushes at once)
+	if (follow.punchInLeft > 0.0f)
+	{
+		follow.punchInLeft -= deltaTime;
+		const float wanted = glm::min(freeDistance, follow.distance * (1.0f - follow.punchInAmount));
+		follow.currentDistance = freeDistance < follow.currentDistance && freeDistance < wanted
+			? freeDistance : SmoothValue(follow.currentDistance, wanted, PunchInSharpness, deltaTime);
+		return;
+	}
+
 	if (freeDistance < follow.currentDistance)
 		follow.currentDistance = freeDistance;
 	else
@@ -372,6 +383,15 @@ void FollowCameraSystem::Update(EntityManager& entityManager, float deltaTime, c
 			continue;
 
 		UpdateCamera(frame, follow, *cameraTransform);
+	}
+}
+
+void FollowCameraSystem::PunchIn(EntityManager& entityManager, float amount, float seconds)
+{
+	for (FollowCameraComponent& follow : entityManager.GetAllComponents<FollowCameraComponent>())
+	{
+		follow.punchInAmount = glm::clamp(amount, 0.0f, 0.9f);
+		follow.punchInLeft   = seconds;
 	}
 }
 

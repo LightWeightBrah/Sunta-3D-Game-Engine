@@ -18,6 +18,10 @@ public:
 	// Shakes every follow camera: 'strength' 0..1 is added to the shake going on (0.2 a sword hit, 0.6 a giant's slam)
 	static void Shake(EntityManager& entityManager, float strength);
 
+	// The camera glides in towards the player by 'amount' (0..1) of its distance for 'seconds', then back out:
+	// the big moments of a fight (a finisher) seen closer
+	static void PunchIn(EntityManager& entityManager, float amount, float seconds);
+
 	// A shake from something that happens at 'worldPosition' (a slam into the ground): full next to it, none beyond 'radius'
 	static void ShakeFrom(EntityManager& entityManager, float strength, const glm::vec3& worldPosition, float radius);
 

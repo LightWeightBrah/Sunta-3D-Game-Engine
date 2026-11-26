@@ -66,6 +66,9 @@ constexpr int   DeflectSparksBurst    = 40;
 constexpr float DeflectHitStopSeconds = 0.07f;
 constexpr float DeflectCameraShake    = 0.15f;
 constexpr float RiposteCameraShake    = 0.5f;
+// How far (a part of its distance) and how long the camera comes in for the player's finisher
+constexpr float FinisherPunchIn        = 0.4f;
+constexpr float FinisherPunchInSeconds = 1.1f;
 
 // What a weapon's hit came to
 enum class HitResult
@@ -463,6 +466,10 @@ bool TryFinisher(EntityManager& entityManager, unsigned int targetID, unsigned i
 
 	if (posture->finisherSlowMotion > 0.0f && posture->finisherSlowSeconds > 0.0f)
 		TimeScaleSystem::SlowMotion(posture->finisherSlowSeconds, posture->finisherSlowMotion);
+
+	// The player's finisher is seen closer: the camera glides in for the blow and back out
+	if (IsPlayerCharacter(entityManager, attackerID))
+		FollowCameraSystem::PunchIn(entityManager, FinisherPunchIn, FinisherPunchInSeconds);
 
 	if (const TransformComponent* transform = entityManager.GetComponent<TransformComponent>(targetID); transform && !posture->finisherEffect.empty())
 		ParticleSystem::BurstAt(entityManager, posture->finisherEffect, transform->position + glm::vec3(0.0f, 1.3f, 0.0f), ParryEffectBurst * 2);
