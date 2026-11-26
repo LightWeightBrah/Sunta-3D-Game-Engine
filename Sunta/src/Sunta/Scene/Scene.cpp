@@ -644,9 +644,17 @@ void Scene::Render(Renderer& renderer)
 
 	// HDR: the scene is drawn into floating point colors and put on the screen at the end, with bloom (PostProcessing)
 	// The flashes of light of the effects in the air, as many as the shaders take
-	constexpr size_t MaxPointLights = 32;
-	if (sceneData.pointLights.size() > MaxPointLights)
-		sceneData.pointLights.resize(MaxPointLights);
+	// A big world has more lights than that: the ones nearest the camera are kept (a few places stay free for the
+	// flashes of the effects)
+	constexpr size_t MaxPointLights   = 32;
+	constexpr size_t MaxSceneLights   = 26;
+	if (sceneData.pointLights.size() > MaxSceneLights)
+	{
+		const glm::vec3 eye = sceneData.cameraPosition;
+		std::partial_sort(sceneData.pointLights.begin(), sceneData.pointLights.begin() + MaxSceneLights, sceneData.pointLights.end(),
+			[&eye](const PointLightData& a, const PointLightData& b) { return glm::dot(a.position - eye, a.position - eye) < glm::dot(b.position - eye, b.position - eye); });
+		sceneData.pointLights.resize(MaxSceneLights);
+	}
 	EffectSystem::AddLights(entityManager, sceneData.pointLights, MaxPointLights);
 
 	PostProcessSettings postProcessSettings;

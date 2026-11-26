@@ -1704,486 +1704,6 @@
   },
   {
    "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     4.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     12.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     20.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     28.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     36.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     0.0,
-     0.0,
-     4.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     0.0,
-     0.0,
-     12.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     0.0,
-     0.0,
-     20.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     0.0,
-     0.0,
-     28.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     0.0,
-     0.0,
-     36.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     8.0,
-     0.0,
-     4.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     8.0,
-     0.0,
-     12.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     8.0,
-     0.0,
-     20.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     8.0,
-     0.0,
-     28.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     8.0,
-     0.0,
-     36.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
     "name": "Floor Crypt"
    },
    "transform": {
@@ -2227,11 +1747,75 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Floor"
    },
    "transform": {
     "position": [
-     -10.0,
+     -8.0,
+     0.0,
+     8.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Floor"
+   },
+   "transform": {
+    "position": [
+     -8.0,
+     0.0,
+     24.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Floor"
+   },
+   "transform": {
+    "position": [
+     -8.0,
      0.0,
      40.0
     ],
@@ -2254,31 +1838,80 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Floor"
    },
    "transform": {
     "position": [
-     -6.0,
+     8.0,
+     0.0,
+     8.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Floor"
+   },
+   "transform": {
+    "position": [
+     8.0,
+     0.0,
+     24.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Floor"
+   },
+   "transform": {
+    "position": [
+     8.0,
      0.0,
      40.0
     ],
@@ -2301,219 +1934,16 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -2.0,
-     0.0,
-     40.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     2.0,
-     0.0,
-     40.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     6.0,
-     0.0,
-     40.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     10.0,
-     0.0,
-     40.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -12.0,
+     -9.0,
      0.0,
      2.0
     ],
@@ -2536,19 +1966,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2556,11 +1986,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      6.0
     ],
@@ -2583,19 +2013,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2603,11 +2033,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      10.0
     ],
@@ -2630,19 +2060,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2650,11 +2080,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      14.0
     ],
@@ -2677,19 +2107,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2697,11 +2127,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      18.0
     ],
@@ -2724,19 +2154,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2744,11 +2174,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      22.0
     ],
@@ -2771,19 +2201,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2791,11 +2221,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      26.0
     ],
@@ -2818,19 +2248,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2838,11 +2268,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      30.0
     ],
@@ -2865,19 +2295,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2885,11 +2315,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      34.0
     ],
@@ -2912,19 +2342,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2932,11 +2362,11 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -12.0,
+     -9.0,
      0.0,
      38.0
     ],
@@ -2959,19 +2389,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -2979,23 +2409,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      2.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3006,19 +2436,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3026,23 +2456,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      6.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3053,19 +2483,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3073,23 +2503,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      10.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3100,19 +2530,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3120,23 +2550,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      14.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3147,19 +2577,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3167,23 +2597,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      18.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3194,19 +2624,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3214,23 +2644,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      22.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3241,19 +2671,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3261,23 +2691,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      26.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3288,19 +2718,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3308,23 +2738,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      30.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3335,19 +2765,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3355,23 +2785,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      34.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3382,19 +2812,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3402,23 +2832,23 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     12.0,
+     9.0,
      0.0,
      38.0
     ],
     "rotation": [
      0.0,
-     -90.0,
+     90.0,
      0.0
     ],
     "rotation_quaternion": [
      0.7071067811865476,
      0.0,
-     -0.7071067811865476,
+     0.7071067811865476,
      0.0
     ],
     "scale": [
@@ -3429,19 +2859,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3449,13 +2879,13 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -10.0,
+     -7.0,
      0.0,
-     0.0
+     40.0
     ],
     "rotation": [
      0.0,
@@ -3476,19 +2906,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3496,13 +2926,13 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     -6.0,
+     -3.5,
      0.0,
-     0.0
+     40.0
     ],
     "rotation": [
      0.0,
@@ -3523,19 +2953,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3543,13 +2973,13 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     6.0,
+     3.5,
      0.0,
-     0.0
+     40.0
     ],
     "rotation": [
      0.0,
@@ -3570,19 +3000,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3590,13 +3020,13 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Crypt Wall"
    },
    "transform": {
     "position": [
-     10.0,
+     7.0,
      0.0,
-     0.0
+     40.0
     ],
     "rotation": [
      0.0,
@@ -3617,19 +3047,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
    },
    "box_collider": {
     "half_extents": [
      2.0,
-     3.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3637,13 +3067,13 @@
   },
   {
    "tag": {
-    "name": "Crypt Gate"
+    "name": "Stained Glass Window"
    },
    "transform": {
     "position": [
      0.0,
      0.0,
-     0.0
+     39.9
     ],
     "rotation": [
      0.0,
@@ -3657,14 +3087,286 @@
      0.0
     ],
     "scale": [
-     1.5,
-     1.2,
+     1.0,
+     1.0,
      1.0
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_door"
+    "model_name": "gc_stained_window"
+   }
+  },
+  {
+   "tag": {
+    "name": "Window Light"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     5.0,
+     37.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.05,
+     "attenuation_quadratic": 0.012
+    },
+    "color": {
+     "ambient": [
+      0.03,
+      0.01,
+      0.03
+     ],
+     "diffuse": [
+      0.85,
+      0.35,
+      0.75
+     ],
+     "specular": [
+      0.6,
+      0.3,
+      0.6
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Wall"
+   },
+   "transform": {
+    "position": [
+     -7.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     4.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Wall"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     4.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Wall"
+   },
+   "transform": {
+    "position": [
+     4.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     4.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Wall"
+   },
+   "transform": {
+    "position": [
+     7.0,
+     0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.0,
+     4.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Gate Lintel"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     4.6,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     0.45,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
    }
   },
   {
@@ -3673,7 +3375,7 @@
    },
    "transform": {
     "position": [
-     -2.6,
+     -3.0,
      0.0,
      0.0
     ],
@@ -3696,15 +3398,15 @@
    },
    "box_collider": {
     "half_extents": [
-     1.4,
-     3.6,
+     1.0,
+     4.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.6,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -3712,12 +3414,525 @@
   },
   {
    "tag": {
-    "name": "Pillar"
+    "name": "Gate Pier"
    },
    "transform": {
     "position": [
-     -8.0,
+     3.0,
      0.0,
+     0.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "box_collider": {
+    "half_extents": [
+     1.0,
+     4.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     -4.5,
+     0.0,
+     2.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     0.0,
+     2.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     -4.5,
+     0.0,
+     10.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     0.0,
+     10.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     -4.5,
+     0.0,
+     18.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     0.0,
+     18.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     -4.5,
+     0.0,
+     26.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     0.0,
+     26.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     -4.5,
+     0.0,
+     34.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Column"
+   },
+   "transform": {
+    "position": [
+     4.5,
+     0.0,
+     34.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Vault"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     7.9,
      6.0
     ],
     "rotation": [
@@ -3732,223 +3947,24 @@
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_pillar"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.6,
-     3.5,
-     0.6
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.5,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Pillar"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     14.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
+     1.125,
      1.0,
      1.0
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_pillar"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.6,
-     3.5,
-     0.6
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.5,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_vault"
    }
   },
   {
    "tag": {
-    "name": "Pillar"
+    "name": "Aisle Vault"
    },
    "transform": {
     "position": [
-     -8.0,
-     0.0,
-     22.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_pillar"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.6,
-     3.5,
-     0.6
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.5,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Pillar"
-   },
-   "transform": {
-    "position": [
-     -8.0,
-     0.0,
-     30.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_pillar"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.6,
-     3.5,
-     0.6
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.5,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Gate Pier"
-   },
-   "transform": {
-    "position": [
-     2.6,
-     0.0,
-     0.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "box_collider": {
-    "half_extents": [
-     1.4,
-     3.6,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.6,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Pillar"
-   },
-   "transform": {
-    "position": [
-     8.0,
-     0.0,
+     -6.75,
+     7.9,
      6.0
     ],
     "rotation": [
@@ -3963,39 +3979,56 @@
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
+     0.5625,
+     0.8,
      1.0
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_pillar"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.6,
-     3.5,
-     0.6
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.5,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_vault"
    }
   },
   {
    "tag": {
-    "name": "Pillar"
+    "name": "Aisle Vault"
    },
    "transform": {
     "position": [
-     8.0,
+     6.75,
+     7.9,
+     6.0
+    ],
+    "rotation": [
      0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Vault"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     7.9,
      14.0
     ],
     "rotation": [
@@ -4010,39 +4043,88 @@
      0.0
     ],
     "scale": [
-     1.0,
+     1.125,
      1.0,
      1.0
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_pillar"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.6,
-     3.5,
-     0.6
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.5,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_vault"
    }
   },
   {
    "tag": {
-    "name": "Pillar"
+    "name": "Aisle Vault"
    },
    "transform": {
     "position": [
-     8.0,
+     -6.75,
+     7.9,
+     14.0
+    ],
+    "rotation": [
      0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     6.75,
+     7.9,
+     14.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Vault"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     7.9,
      22.0
     ],
     "rotation": [
@@ -4057,6 +4139,326 @@
      0.0
     ],
     "scale": [
+     1.125,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     -6.75,
+     7.9,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     6.75,
+     7.9,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Vault"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     7.9,
+     30.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.125,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     -6.75,
+     7.9,
+     30.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     6.75,
+     7.9,
+     30.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Crypt Vault"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     7.9,
+     37.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.125,
+     1.0,
+     0.75
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     -6.75,
+     7.9,
+     37.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     0.75
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Aisle Vault"
+   },
+   "transform": {
+    "position": [
+     6.75,
+     7.9,
+     37.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.5625,
+     0.8,
+     0.75
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Gate Vault"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     7.9,
+     1.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     2.25,
+     1.0,
+     0.3
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_vault"
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     6.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
      1.0,
      1.0,
      1.0
@@ -4064,19 +4466,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_pillar"
+    "model_name": "gc_sarcophagus"
    },
    "box_collider": {
     "half_extents": [
+     0.55,
      0.6,
-     3.5,
-     0.6
+     1.25
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.5,
+     0.6,
      0.0
     ],
     "show_gizmos": false
@@ -4084,13 +4486,13 @@
   },
   {
    "tag": {
-    "name": "Pillar"
+    "name": "Candles"
    },
    "transform": {
     "position": [
-     8.0,
+     -6.9,
      0.0,
-     30.0
+     7.75
     ],
     "rotation": [
      0.0,
@@ -4111,19 +4513,1020 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_pillar"
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.9,
+     7.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     14.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
    },
    "box_collider": {
     "half_extents": [
+     0.55,
      0.6,
-     3.5,
-     0.6
+     1.25
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.5,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     15.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.9,
+     15.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     0.6,
+     1.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     23.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.9,
+     23.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     30.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     0.6,
+     1.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.0,
+     31.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     -6.9,
+     0.9,
+     31.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     6.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     0.6,
+     1.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     7.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.9,
+     7.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     14.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     0.6,
+     1.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     15.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.9,
+     15.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     0.6,
+     1.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     23.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.9,
+     23.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Sarcophagus"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     30.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_sarcophagus"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     0.6,
+     1.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.0,
+     31.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
+    "name": "Candle Light"
+   },
+   "transform": {
+    "position": [
+     6.9,
+     0.9,
+     31.75
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.09
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.006,
+      0.003
+     ],
+     "diffuse": [
+      0.75,
+      0.45,
+      0.22
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.1
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Throne Dais"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     36.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_throne_dais"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.4,
+     0.3,
+     1.9
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.3,
      0.0
     ],
     "show_gizmos": false
@@ -4136,8 +5539,8 @@
    "transform": {
     "position": [
      0.0,
-     0.0,
-     36.5
+     0.6,
+     36.9
     ],
     "rotation": [
      0.0,
@@ -4182,9 +5585,9 @@
    },
    "transform": {
     "position": [
-     -3.5,
+     -3.6,
      1.6,
-     35.5
+     35.0
     ],
     "rotation": [
      0.0,
@@ -4245,9 +5648,9 @@
    },
    "transform": {
     "position": [
-     -3.5,
+     -3.6,
      2.0,
-     35.5
+     35.0
     ],
     "rotation": [
      0.0,
@@ -4297,9 +5700,9 @@
    },
    "transform": {
     "position": [
-     -3.5,
+     -3.6,
      0.0,
-     35.5
+     35.0
     ],
     "rotation": [
      0.0,
@@ -4340,13 +5743,45 @@
   },
   {
    "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     -2.0,
+     0.6,
+     35.1
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
     "name": "Knight Statue"
    },
    "transform": {
     "position": [
-     -10.0,
+     -7.3,
      0.0,
-     36.0
+     37.0
     ],
     "rotation": [
      0.0,
@@ -4391,9 +5826,9 @@
    },
    "transform": {
     "position": [
-     -9.5,
+     -6.5,
      1.6,
-     4.0
+     3.0
     ],
     "rotation": [
      0.0,
@@ -4454,9 +5889,9 @@
    },
    "transform": {
     "position": [
-     -9.5,
+     -6.5,
      2.0,
-     4.0
+     3.0
     ],
     "rotation": [
      0.0,
@@ -4506,9 +5941,9 @@
    },
    "transform": {
     "position": [
-     -9.5,
+     -6.5,
      0.0,
-     4.0
+     3.0
     ],
     "rotation": [
      0.0,
@@ -4553,9 +5988,9 @@
    },
    "transform": {
     "position": [
-     3.5,
+     3.6,
      1.6,
-     35.5
+     35.0
     ],
     "rotation": [
      0.0,
@@ -4616,9 +6051,9 @@
    },
    "transform": {
     "position": [
-     3.5,
+     3.6,
      2.0,
-     35.5
+     35.0
     ],
     "rotation": [
      0.0,
@@ -4668,9 +6103,9 @@
    },
    "transform": {
     "position": [
-     3.5,
+     3.6,
      0.0,
-     35.5
+     35.0
     ],
     "rotation": [
      0.0,
@@ -4711,13 +6146,45 @@
   },
   {
    "tag": {
+    "name": "Candles"
+   },
+   "transform": {
+    "position": [
+     2.0,
+     0.6,
+     35.1
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candles"
+   }
+  },
+  {
+   "tag": {
     "name": "Knight Statue"
    },
    "transform": {
     "position": [
-     10.0,
+     7.3,
      0.0,
-     36.0
+     37.0
     ],
     "rotation": [
      0.0,
@@ -4762,9 +6229,9 @@
    },
    "transform": {
     "position": [
-     9.5,
+     6.5,
      1.6,
-     4.0
+     3.0
     ],
     "rotation": [
      0.0,
@@ -4825,9 +6292,9 @@
    },
    "transform": {
     "position": [
-     9.5,
+     6.5,
      2.0,
-     4.0
+     3.0
     ],
     "rotation": [
      0.0,
@@ -4877,9 +6344,9 @@
    },
    "transform": {
     "position": [
-     9.5,
+     6.5,
      0.0,
-     4.0
+     3.0
     ],
     "rotation": [
      0.0,
@@ -5020,7 +6487,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 96
+    "index": 132
    },
    "point_light": {
     "attenuation": {
@@ -5079,9 +6546,9 @@
    },
    "transform": {
     "position": [
-     -6.2,
+     -3.2,
      0.0,
-     14.0
+     6.0
     ],
     "rotation": [
      0.0,
@@ -5115,7 +6582,7 @@
    },
    "transform": {
     "position": [
-     -6.2,
+     -3.2,
      0.0,
      30.0
     ],
@@ -5151,9 +6618,9 @@
    },
    "transform": {
     "position": [
-     6.2,
+     3.2,
      0.0,
-     14.0
+     6.0
     ],
     "rotation": [
      0.0,
@@ -5187,7 +6654,7 @@
    },
    "transform": {
     "position": [
-     6.2,
+     3.2,
      0.0,
      30.0
     ],
@@ -7061,7 +8528,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 140
+    "index": 176
    },
    "point_light": {
     "attenuation": {
@@ -7361,7 +8828,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 142,
+    "index": 178,
     "bone_name": "Weapon_R"
    }
   },
@@ -7612,7 +9079,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 144,
+    "index": 180,
     "bone_name": "Weapon_R"
    }
   },
@@ -7876,7 +9343,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 146,
+    "index": 182,
     "bone_name": "Weapon_L"
    }
   },
@@ -8127,7 +9594,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 148,
+    "index": 184,
     "bone_name": "Weapon_R"
    }
   },
@@ -8386,7 +9853,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 150,
+    "index": 186,
     "bone_name": "Weapon_L"
    }
   },
@@ -8642,7 +10109,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 152,
+    "index": 188,
     "bone_name": "Weapon_R"
    }
   },
@@ -8893,7 +10360,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 154,
+    "index": 190,
     "bone_name": "Weapon_R"
    }
   },
@@ -9152,7 +10619,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 156,
+    "index": 192,
     "bone_name": "Weapon_L"
    }
   },
@@ -9398,7 +10865,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 158,
+    "index": 194,
     "bone_name": "head"
    }
   },
@@ -9644,7 +11111,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 160,
+    "index": 196,
     "bone_name": "head"
    }
   },
@@ -9890,7 +11357,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 162,
+    "index": 198,
     "bone_name": "head"
    }
   },
@@ -13862,7 +15329,7 @@
     ]
    },
    "parent": {
-    "index": 256
+    "index": 292
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -14171,7 +15638,7 @@
     ]
    },
    "parent": {
-    "index": 258
+    "index": 294
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -14259,7 +15726,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 258,
+    "index": 294,
     "bone_name": "Weapon_R"
    }
   },

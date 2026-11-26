@@ -369,8 +369,8 @@ def gods_cultist(builder, position, yaw):
 def add_court(builder):
     """The knights of the court standing guard along the hall (not fighting yet: a model and its idle)"""
     for side in (-1.0, 1.0):
-        for z in (14.0, 30.0):
-            builder.add(named("Court Knight", (side * 6.2, 0.0, z), -90.0 * side,
+        for z in (10.0 - 4.0, 26.0 + 4.0):
+            builder.add(named("Court Knight", (side * 3.2, 0.0, z), -90.0 * side,
                               model={"is_visible": True, "model_name": "court_knight", "emissive_strength": 1.0},
                               animator={"current_animation_name": "Idle"}))
 
@@ -485,28 +485,85 @@ def add_court_npcs(builder):
 
 # ========== The level ==========
 
+NAVE_HALF = 9.0        # the crypt's walls (gothic_kit_generator.py pieces: walls 4 m long, 8 m high)
+COLUMN_X = 4.5
+BAY_ROWS = (2.0, 10.0, 18.0, 26.0, 34.0)
+VAULT_TOP = 7.9        # where the columns' capitals end and the ribs of the vault start
+
+
+def gothic_wall_line(builder, start, end, yaw, name="Crypt Wall", skip=()):
+    """4 m gothic wall pieces from 'start' to 'end' (x, z), their inner face (the blind arches) turned by 'yaw'
+    (0: facing -Z, 180: +Z, -90: +X, 90: -X)"""
+    (x0, z0), (x1, z1) = start, end
+    count = max(1, round(math.hypot(x1 - x0, z1 - z0) / 4.0))
+    for i in range(count):
+        if i in skip:
+            continue
+        t = (i + 0.5) / count
+        half = (2.0, 4.0, 0.5)
+        piece(builder, name, "gc_crypt_wall", (x0 + (x1 - x0) * t, 0.0, z0 + (z1 - z0) * t), yaw, half, (0.0, 4.0, 0.0))
+
+
+def candles(builder, position, light=True):
+    piece(builder, "Candles", "gc_candles", position)
+    if light:
+        builder.add(named("Candle Light", (position[0], position[1] + 0.9, position[2]), point_light={
+            "attenuation": {"attenuation_constant": 1.0, "attenuation_linear": 0.14, "attenuation_quadratic": 0.09},
+            "color": {"ambient": [0.01, 0.006, 0.003], "diffuse": [0.75, 0.45, 0.22], "specular": [0.3, 0.2, 0.1]}}))
+
+
 def add_crypt(builder):
-    floor_slabs(builder, -CRYPT_HALF_WIDTH, CRYPT_HALF_WIDTH, CRYPT_FROM_Z, CRYPT_TO_Z)
+    """The dead king's crypt: a gothic nave of clustered columns under ribbed vaults, aisles of sarcophagi lit by
+    candles, the throne on its dais under a stained glass window, the gate south to the plains"""
     builder.add(named("Floor Crypt", (0.0, 0.0, 20.0), box_collider=collider((CRYPT_HALF_WIDTH, 0.15, 20.0), (0.0, -0.15, 0.0))))
-    w, z0, z1 = CRYPT_HALF_WIDTH, CRYPT_FROM_Z, CRYPT_TO_Z
-    wall_line(builder, (-w, z1), (w, z1))
-    wall_line(builder, (-w, z0), (-w, z1))
-    wall_line(builder, (w, z0), (w, z1))
-    # The south wall with the gate in its middle
-    wall_line(builder, (-w, z0), (-4.0, z0))
-    wall_line(builder, (4.0, z0), (w, z0))
-    gate = named("Crypt Gate", (0.0, 0.0, z0), 0.0, (1.5, 1.2, 1.0), model={"is_visible": True, "model_name": "kit_wall_door"})
-    builder.add(gate)
+    for x in (-8.0, 8.0):
+        for z in (8.0, 24.0, 40.0):
+            piece(builder, "Crypt Floor", "gc_crypt_floor", (x, 0.0, z))
+    w, z0, z1 = NAVE_HALF, CRYPT_FROM_Z, CRYPT_TO_Z
+    gothic_wall_line(builder, (-w, z0), (-w, z1), -90.0)
+    gothic_wall_line(builder, (w, z0), (w, z1), 90.0)
+    # The north wall: the stained glass window in its middle, behind the throne
+    for x in (-7.0, -3.5, 3.5, 7.0):
+        piece(builder, "Crypt Wall", "gc_crypt_wall", (x, 0.0, z1), 0.0, (2.0, 4.0, 0.5), (0.0, 4.0, 0.0))
+    piece(builder, "Stained Glass Window", "gc_stained_window", (0.0, 0.0, z1 - 0.1), 0.0)
+    # The window's colored light on the throne and the dais
+    builder.add(named("Window Light", (0.0, 5.0, z1 - 3.0), point_light={
+        "attenuation": {"attenuation_constant": 1.0, "attenuation_linear": 0.05, "attenuation_quadratic": 0.012},
+        "color": {"ambient": [0.03, 0.01, 0.03], "diffuse": [0.85, 0.35, 0.75], "specular": [0.6, 0.3, 0.6]}}))
+    # The south wall with the gate: a wall piece over the opening
+    for x in (-7.0, -4.0, 4.0, 7.0):
+        piece(builder, "Crypt Wall", "gc_crypt_wall", (x, 0.0, z0), 180.0, (2.0, 4.0, 0.5), (0.0, 4.0, 0.0))
+    builder.add(named("Gate Lintel", (0.0, 4.6, z0), 180.0, (1.0, 0.45, 1.0), model={"is_visible": True, "model_name": "gc_crypt_wall"}))
     for side in (-1.0, 1.0):
-        builder.add(named("Gate Pier", (side * 2.6, 0.0, z0), box_collider=collider((1.4, 3.6, 0.5))))
+        builder.add(named("Gate Pier", (side * 3.0, 0.0, z0), box_collider=collider((1.0, 4.0, 0.5))))
+    # The nave: clustered columns and the ribbed vault over the nave and the aisles
+    for z in BAY_ROWS:
+        for side in (-1.0, 1.0):
+            piece(builder, "Crypt Column", "gc_crypt_column", (side * COLUMN_X, 0.0, z), 0.0, (0.55, 4.0, 0.55), (0.0, 4.0, 0.0))
+    bays = list(zip(BAY_ROWS, BAY_ROWS[1:])) + [(BAY_ROWS[-1], z1)]
+    for z_from, z_to in bays:
+        depth = (z_to - z_from) / 8.0
+        middle = (z_from + z_to) * 0.5
+        builder.add(named("Crypt Vault", (0.0, VAULT_TOP, middle), 0.0, (COLUMN_X * 2.0 / 8.0, 1.0, depth),
+                          model={"is_visible": True, "model_name": "gc_crypt_vault"}))
+        for side in (-1.0, 1.0):
+            builder.add(named("Aisle Vault", (side * (COLUMN_X + w) * 0.5, VAULT_TOP, middle), 0.0, ((w - COLUMN_X) / 8.0, 0.8, depth),
+                              model={"is_visible": True, "model_name": "gc_crypt_vault"}))
+    builder.add(named("Gate Vault", (0.0, VAULT_TOP, (z0 + BAY_ROWS[0]) * 0.5), 0.0, (w * 2.0 / 8.0, 1.0, 0.3),
+                      model={"is_visible": True, "model_name": "gc_crypt_vault"}))
+    # The aisles: the king's fallen knights in their sarcophagi, candles at their heads
+    for side in (-1.0, 1.0):
         for z in (6.0, 14.0, 22.0, 30.0):
-            piece(builder, "Pillar", "kit_pillar", (side * 8.0, 0.0, z), half=(0.6, 3.5, 0.6))
-    # The throne on its dais, braziers of violet fire, statues of kneeling knights
-    piece(builder, "Throne of the Dead King", "arena_throne", (0.0, 0.0, THRONE_Z), 180.0, (1.55, 1.7, 1.53))
+            piece(builder, "Sarcophagus", "gc_sarcophagus", (side * 6.9, 0.0, z), 90.0, (0.55, 0.6, 1.25), (0.0, 0.6, 0.0))
+            candles(builder, (side * 6.9, 0.0, z + 1.75))
+    # The throne on its dais, candles and violet fire at its sides
+    piece(builder, "Throne Dais", "gc_throne_dais", (0.0, 0.0, THRONE_Z), 180.0, (2.4, 0.3, 1.9), (0.0, 0.3, 0.0))
+    piece(builder, "Throne of the Dead King", "arena_throne", (0.0, 0.6, THRONE_Z + 0.4), 180.0, (1.55, 1.7, 1.53))
     for side in (-1.0, 1.0):
-        violet_flame(builder, (side * 3.5, 0.0, THRONE_Z - 1.0))
-        piece(builder, "Knight Statue", "arena_knight_statue", (side * 10.0, 0.0, 36.0), -90.0 * side, (1.22, 1.9, 1.33))
-        violet_flame(builder, (side * 9.5, 0.0, 4.0))
+        violet_flame(builder, (side * 3.6, 0.0, THRONE_Z - 1.5))
+        candles(builder, (side * 2.0, 0.6, THRONE_Z - 1.4), light=False)
+        piece(builder, "Knight Statue", "arena_knight_statue", (side * 7.3, 0.0, 37.0), -90.0 * side, (1.22, 1.9, 1.33))
+        violet_flame(builder, (side * 6.5, 0.0, 3.0))
     bonfire = builder.copy_named("Shrine Bonfire")
     builder.get(bonfire)["tag"]["name"] = "Crypt Bonfire"
     builder.get(bonfire)["transform"] = transform(CRYPT_BONFIRE)
@@ -589,7 +646,7 @@ def add_arena(builder):
 def stand_on_terrain(builder):
     """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
     templates far below the world stay where they are)"""
-    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Crypt Gate")
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel")
     half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
     for entity in builder.entities:
         if "parent" in entity or entity["tag"]["name"].startswith(keep):
