@@ -41,6 +41,24 @@ namespace StyleKeys
 	constexpr const char* IconHeight   = "icon_height";
 	constexpr const char* FlaskIcon    = "flask_icon";
 	constexpr const char* CurrencyIcon = "currency_icon";
+	constexpr const char* Font         = "font";
+	constexpr const char* TitleSpacing = "title_spacing";
+	constexpr const char* Wrath        = "wrath";
+	constexpr const char* WrathColor   = "wrath_color";
+	constexpr const char* Emblem       = "emblem";
+	constexpr const char* EmblemLit    = "emblem_lit";
+	constexpr const char* EmblemSize   = "emblem_size";
+	constexpr const char* EmblemOffset = "emblem_offset";
+	constexpr const char* SlotFrame    = "slot_frame";
+	constexpr const char* SlotSize     = "slot_size";
+	constexpr const char* SlotGap      = "slot_gap";
+	constexpr const char* SummonIcon   = "summon_icon";
+	constexpr const char* CurrencyPlain = "currency_plain";
+	constexpr const char* BossNameCentered = "boss_name_centered";
+	constexpr const char* PostureMark  = "posture_mark";
+	constexpr const char* BossWidth    = "boss_width";
+	constexpr const char* LockOnMark   = "lock_on_mark";
+	constexpr const char* LockOnSize   = "lock_on_size";
 }
 
 std::unordered_map<std::string, std::unique_ptr<HUDStyle>> styles;
@@ -118,6 +136,25 @@ std::unique_ptr<HUDStyle> Load(const std::string& path)
 	style->panelBorder  = data.value(StyleKeys::PanelBorder, style->panelBorder);
 	style->cornerSize   = ReadVec2(data, StyleKeys::CornerSize, style->cornerSize);
 	style->iconHeight   = data.value(StyleKeys::IconHeight, style->iconHeight);
+
+	style->fontPath     = data.value(StyleKeys::Font, std::string());
+	style->titleSpacing = data.value(StyleKeys::TitleSpacing, style->titleSpacing);
+	ReadBar(data, StyleKeys::Wrath, style->wrath, path);
+	style->wrathColor   = ReadVec4(data, StyleKeys::WrathColor, style->wrathColor);
+	style->emblem       = ReadImage(data, StyleKeys::Emblem, path);
+	style->emblemLit    = ReadImage(data, StyleKeys::EmblemLit, path);
+	style->emblemSize   = ReadVec2(data, StyleKeys::EmblemSize, style->emblemSize);
+	style->emblemOffset = ReadVec2(data, StyleKeys::EmblemOffset, style->emblemOffset);
+	style->slotFrame    = ReadImage(data, StyleKeys::SlotFrame, path);
+	style->slotSize     = ReadVec2(data, StyleKeys::SlotSize, style->slotSize);
+	style->slotGap      = data.value(StyleKeys::SlotGap, style->slotGap);
+	style->summonIcon   = ReadImage(data, StyleKeys::SummonIcon, path);
+	style->isCurrencyPlain    = data.value(StyleKeys::CurrencyPlain, false);
+	style->isBossNameCentered = data.value(StyleKeys::BossNameCentered, false);
+	style->hasPostureMark     = data.value(StyleKeys::PostureMark, false);
+	style->bossWidth          = data.value(StyleKeys::BossWidth, 0.0f);
+	style->lockOnMark         = ReadImage(data, StyleKeys::LockOnMark, path);
+	style->lockOnSize         = data.value(StyleKeys::LockOnSize, style->lockOnSize);
 	style->flaskIcon    = ReadImage(data, StyleKeys::FlaskIcon, path);
 	style->currencyIcon = ReadImage(data, StyleKeys::CurrencyIcon, path);
 

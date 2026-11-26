@@ -359,9 +359,9 @@
    },
    "player_hud": {
     "death_message": "YOU FELL AGAIN",
-    "style": "@game/UI/HUD/hud_style.json",
-    "pixels_per_health_point": 3.0,
-    "pixels_per_stamina_point": 2.6,
+    "style": "@game/UI/GraveCrown/hud_style.json",
+    "pixels_per_health_point": 2.0,
+    "pixels_per_stamina_point": 2.2,
     "show_lock_on_marker": true
    },
    "poise": {

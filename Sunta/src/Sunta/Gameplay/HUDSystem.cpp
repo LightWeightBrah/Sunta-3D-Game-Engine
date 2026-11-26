@@ -158,6 +158,9 @@ void DrawBar(const glm::vec2& topLeft, const glm::vec2& size, float fraction, fl
 	UIRenderer::DrawRectangle(topLeft, glm::vec2(size.x * fraction, size.y), fillColor);
 }
 
+// The player's HUD style for this frame (set by HUDSystem::Draw; nullptr = the plain look)
+const HUDStyle* activeStyle = nullptr;
+
 // ========== Bars with pictures (a HUD style) ==========
 
 // A bar of a HUD style: the dark channel, the pale trail, the fill, then the frame over them (its ends keep their shape,
@@ -341,6 +344,13 @@ void DrawLockOnMarker(EntityManager& entityManager, const LockOnComponent& lockO
 	if (!LockOnSystem::TryGetTargetAimPoint(entityManager, lockOn, aimPoint) || !UIRenderer::TryProjectToScreen(aimPoint, viewProjection, pixel))
 		return;
 
+	if (activeStyle && activeStyle->lockOnMark)
+	{
+		const glm::vec2 size = glm::vec2(activeStyle->lockOnSize);
+		UIRenderer::DrawImage(pixel - size * 0.5f, size, *activeStyle->lockOnMark);
+		return;
+	}
+
 	const glm::vec2 outlineSize = glm::vec2(LockOnMarkerSize + LockOnMarkerOutline * 2.0f);
 
 	UIRenderer::DrawRectangle(pixel - outlineSize * 0.5f, outlineSize, MarkerOutlineColor);
@@ -357,7 +367,9 @@ void DrawDeathMessage(const HUDArea& area, const PlayerHUDComponent& hud)
 	const glm::vec2 bandTopLeft = glm::vec2(area.topLeft.x, center.y - DeathBandHeight * 0.5f);
 
 	UIRenderer::DrawRectangle(bandTopLeft, glm::vec2(area.size.x, DeathBandHeight), WithAlpha(DeathBandColor, fadeIn));
+	UIRenderer::SetLetterSpacing(activeStyle ? activeStyle->titleSpacing * 0.6f : 0.0f);
 	UIRenderer::DrawTextCentered(hud.deathMessage, center, DeathMessageHeight, WithAlpha(DeathMessageColor, fadeIn));
+	UIRenderer::SetLetterSpacing(0.0f);
 }
 
 void DrawVictoryMessage(const HUDArea& area, const PlayerHUDComponent& hud)
@@ -372,7 +384,9 @@ void DrawVictoryMessage(const HUDArea& area, const PlayerHUDComponent& hud)
 	const glm::vec2 bandTopLeft = glm::vec2(area.topLeft.x, center.y - DeathBandHeight * 0.5f);
 
 	UIRenderer::DrawRectangle(bandTopLeft, glm::vec2(area.size.x, DeathBandHeight), WithAlpha(DeathBandColor, alpha));
+	UIRenderer::SetLetterSpacing(activeStyle ? activeStyle->titleSpacing * 0.6f : 0.0f);
 	UIRenderer::DrawTextCentered(hud.victoryText, center, DeathMessageHeight * 0.85f, WithAlpha(VictoryMessageColor, alpha));
+	UIRenderer::SetLetterSpacing(0.0f);
 }
 
 void DrawPrompt(const HUDArea& area, const PlayerHUDComponent& hud)
@@ -629,6 +643,109 @@ float DrawWrathBar(const WrathComponent& wrath, float left, float top)
 	return topLeft.y + WrathBarHeight;
 }
 
+// ========== The optional parts of a style ==========
+
+constexpr float SlotCountHeight = 26.0f;
+constexpr float SlotKeyHeight   = 17.0f;
+const glm::vec4 SlotKeyColor    = glm::vec4(0.78f, 0.72f, 0.62f, 0.9f);
+const glm::vec4 SlotEmptyTint   = glm::vec4(0.45f, 0.42f, 0.42f, 0.7f);
+
+float PulseOf(float speed)
+{
+	static float seconds = 0.0f;
+	seconds += EngineTime::deltaTime * 0.5f; // (called twice a frame at most: the pulse is only a look)
+	return 0.5f + 0.5f * std::sin(seconds * speed);
+}
+
+// The Wrath as a third framed bar under the stamina, as long as the stamina's
+float DrawStyledWrath(const HUDStyle& style, const HUDArea& area, const PlayerHUDComponent& hud, const WrathComponent& wrath, float barsBottom)
+{
+	const glm::vec2 topLeft = area.topLeft + style.wrath.offset;
+	const float length = style.stamina.IsUsable() ? 100.0f * hud.pixelsPerStaminaPoint : 220.0f;
+	const float fraction = glm::clamp(wrath.GetFraction(), 0.0f, 1.0f);
+	glm::vec4 color = style.wrathColor;
+	if (wrath.IsFull() && !wrath.IsActive())
+		color = glm::vec4(glm::vec3(color) * (0.8f + 0.5f * PulseOf(6.0f)), 1.0f);
+	const glm::vec2 frame = DrawStyledBar(style, style.wrath, topLeft, length, fraction, fraction, color);
+	return glm::max(barsBottom, topLeft.y + frame.y);
+}
+
+// The emblem beside the bars: dark, its lit picture revealed from the bottom as the Wrath fills; full it breathes,
+// set loose it burns bright
+void DrawEmblem(const HUDStyle& style, const HUDArea& area, const WrathComponent& wrath)
+{
+	const glm::vec2 topLeft = area.topLeft + style.emblemOffset;
+	const glm::vec2 size    = style.emblemSize;
+	UIRenderer::DrawImage(topLeft, size, *style.emblem);
+	if (!style.emblemLit)
+		return;
+
+	const float fraction = glm::clamp(wrath.GetFraction(), 0.0f, 1.0f);
+	if (fraction <= 0.0f)
+		return;
+	float brightness = 1.0f;
+	if (wrath.IsActive())
+		brightness = 1.2f + 0.3f * PulseOf(9.0f);
+	else if (wrath.IsFull())
+		brightness = 0.75f + 0.35f * PulseOf(5.0f);
+	const float shown = size.y * fraction;
+	UIRenderer::DrawImageArea(glm::vec2(topLeft.x, topLeft.y + size.y - shown), glm::vec2(size.x, shown), *style.emblemLit,
+		glm::vec4(0.0f, 1.0f - fraction, 1.0f, fraction), glm::vec4(glm::vec3(brightness), 1.0f));
+}
+
+// One quick slot: the frame, the item's icon (dimmed when there is none left), its count, the key under it
+void DrawSlot(const HUDStyle& style, const glm::vec2& topLeft, const Texture* icon, int count, const std::string& key)
+{
+	const glm::vec2 size = style.slotSize;
+	UIRenderer::DrawImage(topLeft, size, *style.slotFrame);
+	if (icon)
+	{
+		const float iconHeight = size.y * 0.66f;
+		const float iconWidth  = icon->GetWidth() * iconHeight / (float)glm::max(icon->GetHeight(), 1);
+		UIRenderer::DrawImage(topLeft + glm::vec2((size.x - iconWidth) * 0.5f, (size.y - iconHeight) * 0.5f), glm::vec2(iconWidth, iconHeight),
+			*icon, count > 0 ? glm::vec4(1.0f) : SlotEmptyTint);
+	}
+	const std::string number = std::to_string(count);
+	UIRenderer::DrawTextAt(number, glm::vec2(topLeft.x + size.x - UIRenderer::MeasureText(number, SlotCountHeight) - size.x * 0.12f,
+		topLeft.y + size.y - SlotCountHeight - size.y * 0.06f), SlotCountHeight, count > 0 ? CornerTextColor : EmptyFlaskColor);
+	UIRenderer::DrawTextCentered(key, glm::vec2(topLeft.x + size.x * 0.5f, topLeft.y + size.y + SlotKeyHeight * 0.75f), SlotKeyHeight, SlotKeyColor);
+}
+
+// The quick slots in the bottom left: the flask, then the summon
+void DrawSlots(EntityManager& entityManager, unsigned int playerID, const HUDStyle& style, const HUDArea& area)
+{
+	glm::vec2 topLeft = glm::vec2(area.topLeft.x + CornerMargin.x, area.topLeft.y + area.size.y - CornerMargin.y - style.slotSize.y - SlotKeyHeight);
+	if (const HealingFlaskComponent* flask = entityManager.GetComponent<HealingFlaskComponent>(playerID))
+	{
+		DrawSlot(style, topLeft, style.flaskIcon.get(), flask->charges, "R");
+		topLeft.x += style.slotSize.x + style.slotGap;
+	}
+	if (const SummonComponent* summon = entityManager.GetComponent<SummonComponent>(playerID))
+		DrawSlot(style, topLeft, style.summonIcon.get(), glm::max(summon->charges, 0), "G");
+}
+
+// The currency plain in the bottom right: its icon and its number, what was just gained above it
+void DrawPlainCurrency(const HUDStyle& style, const HUDArea& area, const CurrencyComponent& currency)
+{
+	const std::string amount = std::to_string((int)currency.shownAmount);
+	const float numberHeight = CornerTextHeight * 1.15f;
+	const float iconHeight   = style.iconHeight * 0.7f;
+	const Texture* icon      = style.currencyIcon.get();
+	const float iconWidth    = icon ? icon->GetWidth() * iconHeight / (float)glm::max(icon->GetHeight(), 1) : 0.0f;
+	UIRenderer::SetLetterSpacing(style.titleSpacing * 0.5f);
+	const float numberWidth  = UIRenderer::MeasureText(amount, numberHeight);
+	const glm::vec2 bottomRight = area.topLeft + area.size - CornerMargin;
+	const glm::vec2 numberTopLeft = glm::vec2(bottomRight.x - numberWidth, bottomRight.y - numberHeight - 6.0f);
+	UIRenderer::DrawFadeBand(glm::vec2(bottomRight.x - (numberWidth + iconWidth) * 0.5f, numberTopLeft.y + numberHeight * 0.5f),
+		glm::vec2((numberWidth + iconWidth) * 1.9f, numberHeight * 1.3f), WithAlpha(PromptBackground, 0.55f));
+	UIRenderer::DrawTextAt(amount, numberTopLeft, numberHeight, CornerTextColor);
+	UIRenderer::SetLetterSpacing(0.0f);
+	if (icon)
+		UIRenderer::DrawImage(glm::vec2(numberTopLeft.x - iconWidth - 8.0f, numberTopLeft.y + (numberHeight - iconHeight) * 0.5f),
+			glm::vec2(iconWidth, iconHeight), *icon);
+	DrawCurrencyGain(currency, glm::vec2(numberTopLeft.x - iconWidth, numberTopLeft.y), glm::vec2(numberWidth + iconWidth, numberHeight));
+}
+
 void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, const HUDArea& area)
 {
 	unsigned int playerID = 0;
@@ -655,15 +772,25 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 		area.size.x * PlayerPostureWidth);
 
 	if (const WrathComponent* wrath = entityManager.GetComponent<WrathComponent>(playerID))
-		barsBottom = DrawWrathBar(*wrath, area.topLeft.x + PlayerBarsOffset.x, barsBottom);
+	{
+		if (style && style->wrath.IsUsable())
+			barsBottom = DrawStyledWrath(*style, area, *hud, *wrath, barsBottom);
+		else
+			barsBottom = DrawWrathBar(*wrath, area.topLeft.x + PlayerBarsOffset.x, barsBottom);
+		if (style && style->emblem)
+			DrawEmblem(*style, area, *wrath);
+	}
 
 	const LockOnComponent* lockOn = entityManager.GetComponent<LockOnComponent>(playerID);
 	if (hud->showLockOnMarker && lockOn)
 		DrawLockOnMarker(entityManager, *lockOn, viewProjection);
 
 	const bool hasStyledCorners = style && style->panel;
+	const bool hasSlots         = style && style->slotFrame;
 
-	if (const HealingFlaskComponent* flask = entityManager.GetComponent<HealingFlaskComponent>(playerID))
+	if (hasSlots)
+		DrawSlots(entityManager, playerID, *style, area);
+	else if (const HealingFlaskComponent* flask = entityManager.GetComponent<HealingFlaskComponent>(playerID))
 	{
 		if (hasStyledCorners)
 			DrawStyledCorner(*style, area, false, style->flaskIcon.get(), flask->displayName, std::to_string(flask->charges),
@@ -674,7 +801,9 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 
 	if (const CurrencyComponent* currency = entityManager.GetComponent<CurrencyComponent>(playerID))
 	{
-		if (hasStyledCorners)
+		if (style && style->isCurrencyPlain)
+			DrawPlainCurrency(*style, area, *currency);
+		else if (hasStyledCorners)
 			DrawStyledCurrency(*style, area, *currency);
 		else
 			DrawCurrency(area, *currency);
@@ -754,6 +883,20 @@ void DrawPostureBar(EntityManager& entityManager, unsigned int entityID, const g
 		UIRenderer::DrawRectangle(glm::vec2(center.x - filled.x * 0.5f, center.y - filled.y * 0.5f), glm::vec2(2.0f, filled.y), PostureBrokenColor);
 		UIRenderer::DrawRectangle(glm::vec2(center.x + filled.x * 0.5f - 2.0f, center.y - filled.y * 0.5f), glm::vec2(2.0f, filled.y), PostureBrokenColor);
 	}
+	// A small diamond in the middle (the style's posture mark): the eye finds the bar's centre at once
+	if (activeStyle && activeStyle->hasPostureMark)
+	{
+		const float half = PostureBarHeight * 1.6f;
+		const int rows = 9;
+		for (int row = 0; row < rows; ++row)
+		{
+			const float t = (row + 0.5f) / rows * 2.0f - 1.0f;
+			const float w = half * (1.0f - std::abs(t));
+			UIRenderer::DrawRectangle(glm::vec2(center.x - w - 1.0f, center.y + t * half - half / rows - 1.0f), glm::vec2(w * 2.0f + 2.0f, half * 2.0f / rows + 2.0f), PostureBackground);
+			UIRenderer::DrawRectangle(glm::vec2(center.x - w, center.y + t * half - half / rows), glm::vec2(w * 2.0f, half * 2.0f / rows + 0.5f),
+				posture->IsBroken() ? PostureBrokenColor : glm::mix(PostureLowColor, PostureBrokenColor, 0.3f));
+		}
+	}
 }
 
 void DrawFloatingBar(EntityManager& entityManager, const EnemyHealthBarComponent& bar, unsigned int enemyID,
@@ -788,7 +931,7 @@ bool DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 	if (style && style->boss.IsUsable())
 	{
 		const HUDBarStyle& boss = style->boss;
-		const float channelLength = area.size.x * BossBarWidthOfScreen;
+		const float channelLength = area.size.x * (style->bossWidth > 0.0f ? style->bossWidth : BossBarWidthOfScreen);
 		const float scale         = boss.height / (float)glm::max(boss.frame->GetHeight(), 1);
 		const float frameWidth    = channelLength + (boss.inner.x + boss.inner.z) * scale;
 		const glm::vec2 topLeft   = area.topLeft + glm::vec2((area.size.x - frameWidth) * 0.5f, area.size.y - BossBarBottomMargin - boss.height) + boss.offset + rise;
@@ -796,8 +939,12 @@ bool DrawBossBar(EntityManager& entityManager, const HUDArea& area, const EnemyH
 		DrawStyledBar(*style, boss, topLeft, channelLength, GetFraction(health.currentHealth, health.maxHealth),
 			GetFraction(bar.trailingHealth, health.maxHealth), style->healthColor);
 
-		const glm::vec2 nameTopLeft = glm::vec2(topLeft.x + boss.inner.x * scale, topLeft.y + boss.inner.y * scale - BossNameHeight - BossNameGap);
+		glm::vec2 nameTopLeft = glm::vec2(topLeft.x + boss.inner.x * scale, topLeft.y + boss.inner.y * scale - BossNameHeight - BossNameGap);
+		UIRenderer::SetLetterSpacing(style->titleSpacing);
+		if (style->isBossNameCentered)
+			nameTopLeft.x = topLeft.x + (frameWidth - UIRenderer::MeasureText(name, BossNameHeight)) * 0.5f;
 		UIRenderer::DrawTextAt(name, nameTopLeft, BossNameHeight, BossNameColor);
+		UIRenderer::SetLetterSpacing(0.0f);
 		DrawPostureBar(entityManager, enemyID, glm::vec2(topLeft.x + frameWidth * 0.5f, nameTopLeft.y - PostureBarGap - PostureBarHeight),
 			channelLength * BossPostureWidth);
 		return true;
@@ -993,6 +1140,12 @@ void HUDSystem::ShowNotification(EntityManager& entityManager, const std::string
 void HUDSystem::Draw(EntityManager& entityManager, const glm::mat4& viewProjection, const glm::vec2& screenSize, const HUDArea& area)
 {
 	UIRenderer::Begin(screenSize);
+
+	// The game's own font (its style), else the engine's
+	activeStyle = nullptr;
+	if (PlayerHUDComponent* styled = TryGetPlayerHUD(entityManager))
+		activeStyle = HUDStyle::Get(styled->style);
+	UIRenderer::UseFont(activeStyle ? activeStyle->fontPath : std::string());
 
 	// The enemies first: the player's own bars and the death message stay on top
 	DrawEnemies(entityManager, viewProjection, area);

@@ -82,6 +82,8 @@ void UIRenderer::EnsureInitialized()
 
 	font = std::make_shared<Font>();
 	font->TryLoad(rendererDevice, VirtualFileSystem::Resolve(FontPath), FontBakedPixelHeight);
+	fontPath = FontPath;
+	fonts[fontPath] = font;
 }
 
 void UIRenderer::CreateQuad()
@@ -222,8 +224,39 @@ void UIRenderer::DrawRing(const glm::vec2& center, float radius, float thickness
 
 void UIRenderer::DrawLetters(const std::string& text, const glm::vec2& topLeft, float pixelHeight, const glm::vec4& color)
 {
-	for (const Font::LetterQuad& letter : font->LayOut(text, topLeft, pixelHeight))
-		DrawQuad(letter.position, letter.size, color, &font->GetTexture(), letter.textureArea);
+	if (letterSpacing <= 0.0f)
+	{
+		for (const Font::LetterQuad& letter : font->LayOut(text, topLeft, pixelHeight))
+			DrawQuad(letter.position, letter.size, color, &font->GetTexture(), letter.textureArea);
+		return;
+	}
+	// Spaced: letter by letter, each moved on by its own width and the spacing
+	glm::vec2 pen = topLeft;
+	for (char c : text)
+	{
+		const std::string letter(1, c);
+		for (const Font::LetterQuad& quad : font->LayOut(letter, pen, pixelHeight))
+			DrawQuad(quad.position, quad.size, color, &font->GetTexture(), quad.textureArea);
+		pen.x += font->MeasureWidth(letter, pixelHeight) + letterSpacing * pixelHeight;
+	}
+}
+
+void UIRenderer::UseFont(const std::string& path)
+{
+	EnsureInitialized();
+	const std::string wanted = path.empty() ? std::string(FontPath) : path;
+	if (wanted == fontPath)
+		return;
+	auto found = fonts.find(wanted);
+	if (found == fonts.end())
+	{
+		auto loaded = std::make_shared<Font>();
+		if (!loaded->TryLoad(Renderer::GetDevice(), VirtualFileSystem::Resolve(wanted), FontBakedPixelHeight))
+			return;
+		found = fonts.emplace(wanted, loaded).first;
+	}
+	font     = found->second;
+	fontPath = wanted;
 }
 
 void UIRenderer::DrawTextAt(const std::string& text, const glm::vec2& topLeft, float pixelHeight, const glm::vec4& color)
@@ -271,7 +304,10 @@ void UIRenderer::DrawFadeLine(const glm::vec2& center, float width, float thickn
 
 float UIRenderer::MeasureText(const std::string& text, float pixelHeight)
 {
-	return font && font->IsLoaded() ? font->MeasureWidth(text, pixelHeight) : 0.0f;
+	if (!font || !font->IsLoaded())
+		return 0.0f;
+	const float spaced = text.empty() ? 0.0f : letterSpacing * pixelHeight * (float)(text.size() - 1);
+	return font->MeasureWidth(text, pixelHeight) + glm::max(spaced, 0.0f);
 }
 
 bool UIRenderer::TryProjectToScreen(const glm::vec3& worldPoint, const glm::mat4& viewProjection, glm::vec2& outPixel)

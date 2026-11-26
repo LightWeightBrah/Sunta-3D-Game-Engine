@@ -1,0 +1,121 @@
+{
+  "font": "@engine/Fonts/Crimson_Text/CrimsonText-Bold.ttf",
+  "title_spacing": 0.14,
+  "health": {
+    "frame": "@game/UI/GraveCrown/health_frame.png",
+    "cap_left": 70,
+    "cap_right": 26,
+    "inner": [
+      70,
+      18,
+      26,
+      16
+    ],
+    "height": 40,
+    "offset": [
+      102,
+      26
+    ]
+  },
+  "stamina": {
+    "frame": "@game/UI/GraveCrown/stamina_frame.png",
+    "cap_left": 46,
+    "cap_right": 22,
+    "inner": [
+      46,
+      14,
+      22,
+      14
+    ],
+    "height": 30,
+    "offset": [
+      116,
+      64
+    ]
+  },
+  "wrath": {
+    "frame": "@game/UI/GraveCrown/wrath_frame.png",
+    "cap_left": 46,
+    "cap_right": 22,
+    "inner": [
+      46,
+      13,
+      22,
+      13
+    ],
+    "height": 26,
+    "offset": [
+      116,
+      90
+    ]
+  },
+  "boss": {
+    "frame": "@game/UI/GraveCrown/boss_frame.png",
+    "cap_left": 60,
+    "cap_right": 60,
+    "inner": [
+      60,
+      18,
+      60,
+      14
+    ],
+    "height": 38,
+    "offset": [
+      0,
+      0
+    ]
+  },
+  "fill": "@game/UI/GraveCrown/bar_fill.png",
+  "health_color": [
+    0.58,
+    0.05,
+    0.09
+  ],
+  "stamina_color": [
+    0.62,
+    0.58,
+    0.42
+  ],
+  "wrath_color": [
+    0.6,
+    0.28,
+    0.95
+  ],
+  "trail_color": [
+    0.85,
+    0.72,
+    0.55
+  ],
+  "channel_color": [
+    0.02,
+    0.015,
+    0.025,
+    0.92
+  ],
+  "emblem": "@game/UI/GraveCrown/emblem.png",
+  "emblem_lit": "@game/UI/GraveCrown/emblem_lit.png",
+  "emblem_size": [
+    96,
+    96
+  ],
+  "emblem_offset": [
+    22,
+    18
+  ],
+  "slot_frame": "@game/UI/GraveCrown/slot_frame.png",
+  "slot_size": [
+    82,
+    82
+  ],
+  "slot_gap": 12,
+  "flask_icon": "@game/UI/GraveCrown/icon_vial.png",
+  "summon_icon": "@game/UI/GraveCrown/icon_court.png",
+  "currency_icon": "@game/UI/GraveCrown/icon_ash.png",
+  "icon_height": 84,
+  "currency_plain": true,
+  "boss_name_centered": true,
+  "posture_mark": true,
+  "boss_width": 0.46,
+  "lock_on_mark": "@game/UI/GraveCrown/lock_on.png",
+  "lock_on_size": 30
+}

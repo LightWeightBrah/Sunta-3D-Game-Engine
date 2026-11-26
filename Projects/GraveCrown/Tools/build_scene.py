@@ -265,7 +265,9 @@ def add_player(builder):
                                     "heal_amount": 70.0})
     entity["currency"].update({"display_name": "Ash", "retrieve_prompt": "Gather your ash"})
     entity["level_up"].update({"health_attribute": "Vigor", "stamina_attribute": "Endurance", "damage_attribute": "Wrath"})
-    entity["player_hud"]["death_message"] = "YOU FELL AGAIN"
+    # Grave Crown's own HUD (Tools/ui_generator.py): thin iron bars, the crown medallion of the wrath, quick slots
+    entity["player_hud"].update({"death_message": "YOU FELL AGAIN", "style": "@game/UI/GraveCrown/hud_style.json",
+                                 "pixels_per_health_point": 2.0, "pixels_per_stamina_point": 2.2})
     entity["health"]["max_health"] = 140.0
     entity["health"]["hit_effect"] = "Hit Embers"
     # The rally (Bloodborne): the health a blow took can be won back by striking back within 3 seconds

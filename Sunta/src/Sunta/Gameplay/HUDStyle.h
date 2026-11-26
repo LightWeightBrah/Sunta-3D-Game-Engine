@@ -56,6 +56,45 @@ struct HUDStyle
 	std::shared_ptr<Texture> flaskIcon;
 	std::shared_ptr<Texture> currencyIcon;
 
+	// ========== Optional parts (a style without them keeps the plain look) ==========
+
+	// The UI's font (a TTF of the game) and the letter spacing of titles (the boss's name, the corners' labels), a part
+	// of the letter height
+	std::string fontPath;
+	float       titleSpacing = 0.0f;
+
+	// A third bar under the stamina, for the Wrath (see WrathComponent); its fill color
+	HUDBarStyle wrath;
+	glm::vec4   wrathColor = glm::vec4(0.62f, 0.3f, 0.95f, 1.0f);
+
+	// An emblem beside the bars (a crown, a sigil): its picture, and a picture of it lit that is revealed from the
+	// bottom as the Wrath fills (it pulses when full, burns while set loose). 'emblemSize' on the screen
+	std::shared_ptr<Texture> emblem;
+	std::shared_ptr<Texture> emblemLit;
+	glm::vec2 emblemSize   = glm::vec2(0.0f);
+	glm::vec2 emblemOffset = glm::vec2(0.0f);
+
+	// Quick slots in the bottom left (as Elden Ring's): a framed square per item the player can use - the flask (its
+	// charges), the summon (its calls) - with its key under it. 'slotSize' on the screen; without 'slotFrame' the
+	// corner panel shows the flask instead
+	std::shared_ptr<Texture> slotFrame;
+	glm::vec2 slotSize   = glm::vec2(84.0f);
+	float     slotGap    = 14.0f;
+	std::shared_ptr<Texture> summonIcon;
+
+	// The currency drawn plain in the bottom right (its icon and its number, no panel)
+	bool isCurrencyPlain = false;
+
+	// The boss's name centered over its bar (else at its left end), and the posture bars with a mark in their middle
+	// (Sekiro's diamond)
+	bool isBossNameCentered = false;
+	// How long the boss bar's channel is, a part of the screen's width (0 = the engine's)
+	float bossWidth = 0.0f;
+	// The mark on the locked-on enemy (a picture centered on its aim point, 'lockOnSize' pixels); none = a small square
+	std::shared_ptr<Texture> lockOnMark;
+	float lockOnSize = 28.0f;
+	bool hasPostureMark     = false;
+
 	// The style read from the file, kept after the first time. nullptr for an empty path or a file that can't be read
 	// (the reason is logged once)
 	static const HUDStyle* Get(const std::string& path);

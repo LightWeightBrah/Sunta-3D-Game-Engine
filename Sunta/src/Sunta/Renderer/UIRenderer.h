@@ -61,6 +61,14 @@ public:
 	static void DrawTextCentered(const std::string& text, const glm::vec2& center, float pixelHeight, const glm::vec4& color);
 	static float MeasureText(const std::string& text, float pixelHeight);
 
+	// The font of the UI from now on (a game's own, e.g. @game/UI/Fonts/...ttf); an empty path or a file that can't be
+	// read keeps the engine's. Loaded once per path
+	static void UseFont(const std::string& path);
+
+	// Space added between letters, a part of the letter height (0 = as the font sets them): spaced capitals read as
+	// carved titles. Stays until changed back: set it around the text that wants it
+	static void SetLetterSpacing(float partOfHeight) { letterSpacing = partOfHeight; }
+
 	// Where a point of the world is on the screen (pixels). False when it is behind the camera
 	static bool TryProjectToScreen(const glm::vec3& worldPoint, const glm::mat4& viewProjection, glm::vec2& outPixel);
 
@@ -69,6 +77,9 @@ private:
 	static inline std::shared_ptr<Shader>      shader;
 	static inline std::shared_ptr<Font>        font;
 	static inline glm::vec2                    screenSize = glm::vec2(0.0f);
+	static inline float                        letterSpacing = 0.0f;
+	static inline std::string                  fontPath;
+	static inline std::unordered_map<std::string, std::shared_ptr<Font>> fonts;
 	static inline std::unordered_map<std::string, std::shared_ptr<Texture>> images;
 
 	static void EnsureInitialized();
