@@ -42,8 +42,15 @@ HORSE_NAMES = {"Idle": "Idle", "Walk": "Walk", "Trot": "Trot", "Run": "Gallop", 
                "Death": "Death", "Head_But": "Head_Butt", "Eating": "Eat", "Turn_Left": "Turn_Left",
                "Turn_Right": "Turn_Right"}
 
+# The wolf: the fox's skeleton and clips (one file per clip), named as a melee enemy's moves
+FOX = os.path.join(MESH2MOTION, "fox")
+WOLF_CLIPS = {"idle": "Idle", "walk": "Walk", "run": "Run", "bite": "Attack_Light_1", "jump": "Attack_Heavy",
+              "death": "Death", "shake-off": "Hit", "howl": "Howl", "idle-alert": "Alert"}
+
 BEASTS = [
     Beast("horse.glb", "BlackHorse", "black_horse", 2.25, HORSE_CLIPS, HORSE_NAMES, HORSE_NAMES),
+    Beast("enemy_wolf.glb", "AshWolf", "ash_wolf", 1.25, os.path.join(FOX, "skeleton.glb"),
+          {os.path.join(FOX, "animations", name + ".glb"): ours for name, ours in WOLF_CLIPS.items()}, None),
 ]
 
 
@@ -91,6 +98,20 @@ def load_skeleton(beast):
         if obj is not armature:
             bpy.data.objects.remove(obj)
     actions = [a for a in bpy.data.actions if a not in before_actions]
+    if isinstance(beast.clips, dict):
+        # One file per clip: each brings its own copy of the skeleton, only its action is kept (renamed to ours)
+        actions = []
+        for path, name in beast.clips.items():
+            objects, known = set(bpy.data.objects), set(bpy.data.actions)
+            bpy.ops.import_scene.gltf(filepath=path)
+            for obj in [o for o in bpy.data.objects if o not in objects]:
+                bpy.data.objects.remove(obj)
+            new = [a for a in bpy.data.actions if a not in known]
+            if new:
+                new[0].name = name
+                actions.append(new[0])
+                for extra in new[1:]:
+                    bpy.data.actions.remove(extra)
     head = armature.data.bones["head"].head_local
     tail = armature.data.bones["tail_1"].head_local if "tail_1" in armature.data.bones else Vector((0, 0, 0))
     turn = 0.0 if (armature.matrix_world @ head).y > (armature.matrix_world @ tail).y else math.pi
@@ -98,7 +119,7 @@ def load_skeleton(beast):
 
 
 def hooves(points, height):
-    """The middle (y) of the front and of the hind hooves: the lowest vertices, split at their middle along the body"""
+    """The middle (y) of the front and of the hind feet: the lowest vertices, split at their middle along the body"""
     low = sorted(p.y for p in points if p.z < height * 0.06)
     middle = (low[0] + low[-1]) * 0.5
     back = [y for y in low if y < middle]
@@ -133,7 +154,7 @@ def fit_skeleton(armature, turn, mesh):
 
     # The tail: the mesh behind the hind legs and off the ground, from its highest point down to its end
     tail = [p for p in points if p.y < mesh_back - 0.12 * (mesh_front - mesh_back) and p.z > height * 0.12]
-    chain = [b for b in ("tail_1", "tail_2", "tail_3", "tail_4", "tail_leaf") if b in bones]
+    chain = [b for b in ("tail_1", "tail_2", "tail_3", "tail_4", "tail_leaf", "tail_tip") if b in bones]
     if tail and chain:
         root = max(tail, key=lambda p: p.z)
         end = min(tail, key=lambda p: p.z - (root.y - p.y) * 0.3)
@@ -209,6 +230,8 @@ def make_beast(beast, arguments):
     character_from_mesh.make_engine_textures(mesh, out_folder, beast.name, beast.brightness)
     for action in actions:
         base = action.name.split(".")[0]
+        if beast.renames is None:
+            continue
         if base in beast.renames:
             action.name = beast.renames[base]
         else:
@@ -228,7 +251,7 @@ def render_previews(folder, armature, mesh, beast):
     show_only([mesh])
     camera = setup_preview_render(520, 400)
     scene = bpy.context.scene
-    for name in ("Idle", "Walk", "Gallop", "Rear"):
+    for name in ("Idle", "Walk", "Gallop", "Rear", "Run", "Attack_Light_1", "Attack_Heavy"):
         action = bpy.data.actions.get(name)
         if not action:
             continue

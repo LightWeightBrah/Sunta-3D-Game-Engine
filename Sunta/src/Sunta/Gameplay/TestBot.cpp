@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "TestBot.h"
+#include "TerrainSystem.h"
 
 #include "CombatLog.h"
 #include "LockOnComponent.h"
@@ -200,6 +201,10 @@ void TestBot::Update(EntityManager& entityManager, float deltaTime)
 		if (TransformComponent* transform = entityManager.GetComponent<TransformComponent>(playerID))
 		{
 			transform->position = teleportTo;
+			// On a terrain's hill the player lands on its ground, not inside it
+			float ground = 0.0f;
+			if (TerrainSystem::TryGetHeight(entityManager, teleportTo.x, teleportTo.z, ground) && ground > transform->position.y)
+				transform->position.y = ground;
 			transform->isDirty	= true;
 		}
 	}

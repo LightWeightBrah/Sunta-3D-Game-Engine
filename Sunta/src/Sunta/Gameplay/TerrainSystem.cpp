@@ -28,6 +28,8 @@ void LoadHeightmap(TerrainComponent& terrain)
 
 	const std::string path = VirtualFileSystem::Resolve(terrain.heightmap);
 	int width = 0, height = 0, channels = 0;
+	// (the textures turn stb's pictures upside down for OpenGL; a heightmap is read as it is drawn: its top row is -Z)
+	stbi_set_flip_vertically_on_load(false);
 	stbi_us* pixels = stbi_load_16(path.c_str(), &width, &height, &channels, 1);
 	if (!pixels)
 	{

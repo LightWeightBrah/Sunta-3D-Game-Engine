@@ -1,5 +1,6 @@
 #include "Core/SuntaPreCompiled.h"
 #include "FollowCameraSystem.h"
+#include "TerrainSystem.h"
 
 #include <cmath>
 #include <optional>
@@ -270,6 +271,9 @@ glm::vec3 UpdateShake(FollowCameraComponent& follow, float deltaTime)
 
 // ========== Placing the camera ==========
 
+// How far above a terrain's ground the camera stays (meters)
+constexpr float CameraAboveGround = 0.5f;
+
 void PlaceCamera(TransformComponent& cameraTransform, const FollowCameraComponent& follow, const glm::vec3& cameraOffset,
 	const glm::vec3& shakeDegrees)
 {
@@ -315,6 +319,22 @@ void UpdateCamera(const FrameInfo& frame, FollowCameraComponent& follow, Transfo
 	else
 		UpdateDistance(follow, glm::min(freeDistance, GetFreeDistance(frame, follow, cameraOffset + WorldUp * follow.currentRise)), frame.deltaTime);
 	PlaceCamera(cameraTransform, follow, cameraOffset, UpdateShake(follow, frame.deltaTime));
+
+	// Over the hills of a terrain the camera stays above the ground (walls push it in, ground lifts it up) and
+	// looks at the pivot from there
+	float ground = 0.0f;
+	if (TerrainSystem::TryGetHeight(frame.entityManager, cameraTransform.position.x, cameraTransform.position.z, ground)
+	    && cameraTransform.position.y < ground + CameraAboveGround)
+	{
+		cameraTransform.position.y = ground + CameraAboveGround;
+		const glm::vec3 toPivot = follow.pivot - cameraTransform.position;
+		if (glm::length(toPivot) > SmallestUsableLength)
+		{
+			cameraTransform.rotationQuaternion = MakeRotationLookingAlong(glm::normalize(toPivot));
+			cameraTransform.SyncEulerFromQuaternion();
+		}
+		cameraTransform.isDirty = true;
+	}
 }
 
 }

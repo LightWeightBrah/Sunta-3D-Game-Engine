@@ -308,6 +308,37 @@ def hollow_knight(builder, position, yaw, name="Hollow Knight"):
     return index
 
 
+def ash_wolf(builder, position, yaw, name="Ash Wolf"):
+    """A gaunt wolf of the ash (the fox's clips of Mesh2Motion): quick bites, a leap from afar, no guard"""
+    index = enemy_from(builder, "Hollow Ghoul", name, "ash_wolf", position, yaw, "Ash Wolf", 70.0, 50)
+    entity = builder.get(index)
+    actions = entity["character_actions"]
+    actions.update({"light_attack_1_animation": "Attack_Light_1", "light_attack_2_animation": "Attack_Light_1",
+                    "light_attack_3_animation": "Attack_Light_1", "heavy_attack_animation": "Attack_Heavy",
+                    "roll_animation": "", "backstep_animation": "", "block_animation": "", "block_impact_animation": "",
+                    "parry_animation": "", "parried_animation": "Hit", "hit_reaction_animation": "Hit",
+                    "death_animation": "Death", "rest_animation": "", "stand_up_animation": "",
+                    "light_hit_from": 0.3, "light_hit_to": 0.62, "heavy_hit_from": 0.35, "heavy_hit_to": 0.65,
+                    "attack_reach": 1.3, "attack_lunge_speed": 6.0})
+    entity["character_animation"].update({"idle_animation": "Idle", "walk_animation": "Walk", "run_animation": "Run",
+                                          "walk_back_animation": "Walk", "strafe_left_animation": "Walk",
+                                          "strafe_right_animation": "Walk", "walk_animation_speed": 1.2,
+                                          "run_animation_speed": 6.5})
+    entity["character_controller"].update({"run_speed": 7.5, "walk_speed": 2.2})
+    entity["melee_enemy"].update({"attack_distance": 1.7, "run_distance": 12.0, "max_light_combo": 1,
+                                  "heavy_attack_chance": 0.35, "attack_cooldown_seconds": 1.2})
+    entity["box_collider"].update({"half_extents": [0.3, 0.55, 0.75], "local_offset": [0.0, 0.55, 0.0]})
+    entity["lock_on_target"]["aim_height"] = 0.7
+    entity["enemy"]["eye_height"] = 0.9
+    entity["posture"] = {"max_posture": 35.0, "from_hits": 1.5, "recover_per_second": 10.0, "broken_seconds": 2.0,
+                         "finisher_damage": 1.0, "break_effect": "Posture Break", "finisher_effect": "Finisher Burst"}
+    jaws = named(name + " Jaws")
+    jaws["hitbox"] = {"damage": 14.0, "poise_damage": 12.0, "local_offset": [0.0, 0.1, 0.0], "half_extents": [0.18, 0.2, 0.25],
+                      "layer": ENEMY_HITBOX_LAYER, "show_gizmos": False, "hit_stop_seconds": 0.05, "camera_shake": 0.15}
+    builder.add(jaws, parent=index, bone="head")
+    return index
+
+
 def gods_cultist(builder, position, yaw):
     index = builder.copy_named("Ash Cultist", skip={"Staff", "Staff Fire Burst"})
     entity = builder.get(index)
@@ -518,6 +549,9 @@ def add_plains(builder, rng):
     hollow_knight(builder, (2.0, 0.0, -60.0), 0.0, "Road Knight")
     hollow_knight(builder, (14.0, 0.0, -100.0), 300.0, "Hollow Knight 4")
     gods_cultist(builder, (19.0, 0.0, -93.0), 250.0)
+    # A pack of wolves roaming the west of the plains
+    for i, (x, z) in enumerate(((-30.0, -40.0), (-33.0, -44.0), (-27.0, -46.0))):
+        ash_wolf(builder, (x, 0.0, z), 90.0, "Ash Wolf" if i == 0 else "Ash Wolf {}".format(i + 1))
 
 
 def add_arena(builder):
