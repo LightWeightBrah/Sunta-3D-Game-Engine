@@ -63,20 +63,26 @@
     "sky_brightness": 1.0,
     "is_fog_enabled": true,
     "fog_color": [
+     0.22,
      0.13,
-     0.1,
-     0.13
+     0.19
     ],
-    "fog_density": 0.014,
+    "fog_density": 0.022,
+    "outline_strength": 0.45,
+    "outline_color": [
+     0.06,
+     0.03,
+     0.07
+    ],
     "paint_radius": 3,
-    "saturation": 0.95,
-    "contrast": 1.1,
+    "saturation": 0.85,
+    "contrast": 1.18,
     "color_tint": [
-     1.0,
-     0.98,
-     0.98
+     1.04,
+     0.96,
+     0.93
     ],
-    "vignette": 0.3,
+    "vignette": 0.38,
     "exposure": 1.0
    }
   },

@@ -31,6 +31,7 @@ struct PostProcessSettings
 	float     ditherStrength      = 0.5f;
 	float     outlineStrength     = 0.0f;
 	glm::vec3 outlineColor        = glm::vec3(0.0f);
+	float     outlineFog          = 0.0f; // the scene's fog density: the outlines fade with distance as the fog thickens
 	glm::vec2 depthFromProjection = glm::vec2(-1.0f, -0.2f);
 
 	// The painted look and the grade of the colors (see EnvironmentComponent)

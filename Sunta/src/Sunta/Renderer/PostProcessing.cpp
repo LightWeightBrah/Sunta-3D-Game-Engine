@@ -257,6 +257,7 @@ void PostProcessing::End(const PostProcessSettings& settings)
 	compositeShader->TrySetUniform1f("ditherStrength", settings.ditherStrength);
 	compositeShader->TrySetUniform1f("outlineStrength", settings.outlineStrength);
 	compositeShader->TrySetUniform3f("outlineColor", settings.outlineColor);
+	compositeShader->TrySetUniform1f("outlineFog", settings.outlineFog);
 	compositeShader->TrySetUniform4f("depthFromProjection", settings.depthFromProjection.x, settings.depthFromProjection.y, 0.0f, 0.0f);
 	compositeShader->TrySetUniform1i("paintRadius", glm::clamp(settings.paintRadius, 0, 8));
 	compositeShader->TrySetUniform1f("saturation", settings.saturation);

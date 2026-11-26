@@ -35,6 +35,7 @@ uniform float     paletteLevels;
 uniform float     ditherStrength;
 uniform float     outlineStrength;
 uniform vec3      outlineColor;
+uniform float     outlineFog;          // the scene's fog density: ink fades into the haze as the things do
 uniform vec4      depthFromProjection; // xy: the projection's [2][2] and [3][2]
 uniform sampler2D sceneDepth;
 
@@ -180,6 +181,8 @@ void main()
 		float behind = max(max(MetersAt(sampleAt + vec2(step.x, 0.0)), MetersAt(sampleAt - vec2(step.x, 0.0))),
 		                   max(MetersAt(sampleAt + vec2(0.0, step.y)), MetersAt(sampleAt - vec2(0.0, step.y))));
 		float edge   = smoothstep(0.06, 0.16, (behind - here) / max(here, 0.001));
+		// (a mountain half lost in the fog gets half the ink: no hard lines drawn over the haze)
+		edge *= exp(-pow(outlineFog * here, 2.0));
 		mapped = mix(mapped, outlineColor, edge * outlineStrength);
 	}
 
