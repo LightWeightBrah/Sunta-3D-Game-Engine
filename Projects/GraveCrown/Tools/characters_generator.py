@@ -38,6 +38,8 @@ KING.update({
     "Roll":           MotionClip("Mixamo/Sprinting Forward Roll.fbx", 4, 36, speed=1.1),
     "Backstep":       MotionClip("Mixamo/Standing Dodge Backward.fbx", 4, 40, speed=1.2),
     "Attack_Running": MotionClip(GREAT_SWORD + "jump attack.fbx", speed=1.1),
+    # (the pack's "slash (3)" bent the right wrist 94 degrees mid-blow)
+    "Attack_Light_2": MotionClip(GREAT_SWORD + "slash (5).fbx", speed=0.95),
     "Attack_Heavy_2": MotionClip(GREAT_SWORD + "high spin attack.fbx"),
     "Block":          MotionClip(GREAT_SWORD + "blocking.fbx"),
     "Block_Impact":   MotionClip(GREAT_SWORD + "impact (2).fbx"),

@@ -64,7 +64,7 @@ MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specula
 
 KING_MOVES = [
     {"animation": "Attack_Light_1", "hit_from": 0.38, "hit_to": 0.58, "damage_multiplier": 1.0},
-    {"animation": "Attack_Light_2", "hit_from": 0.37, "hit_to": 0.6, "damage_multiplier": 1.0},
+    {"animation": "Attack_Light_2", "hit_from": 0.2, "hit_to": 0.42, "damage_multiplier": 1.0},
     {"animation": "Attack_Light_3", "hit_from": 0.38, "hit_to": 0.58, "damage_multiplier": 1.15},
     {"animation": "Attack_Heavy", "hit_from": 0.43, "hit_to": 0.58, "damage_multiplier": 1.0},
     {"animation": "Attack_Heavy_2", "hit_from": 0.12, "hit_to": 0.32, "damage_multiplier": 1.0},
