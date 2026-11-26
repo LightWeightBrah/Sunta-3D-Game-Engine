@@ -485,6 +485,8 @@ def add_court_npcs(builder):
 
 # ========== The level ==========
 
+# The slabs lie a little above the terrain's flattened ground (both at 0 flickered through each other)
+FLOOR_LIFT = 0.06
 NAVE_HALF = 9.0        # the crypt's walls (gothic_kit_generator.py pieces: walls 4 m long, 8 m high)
 COLUMN_X = 4.5
 BAY_ROWS = (2.0, 10.0, 18.0, 26.0, 34.0)
@@ -518,7 +520,7 @@ def add_crypt(builder):
     builder.add(named("Floor Crypt", (0.0, 0.0, 20.0), box_collider=collider((CRYPT_HALF_WIDTH, 0.15, 20.0), (0.0, -0.15, 0.0))))
     for x in (-8.0, 8.0):
         for z in (8.0, 24.0, 40.0):
-            piece(builder, "Crypt Floor", "gc_crypt_floor", (x, 0.0, z))
+            piece(builder, "Crypt Floor", "gc_crypt_floor", (x, FLOOR_LIFT, z))
     w, z0, z1 = NAVE_HALF, CRYPT_FROM_Z, CRYPT_TO_Z
     gothic_wall_line(builder, (-w, z0), (-w, z1), -90.0)
     gothic_wall_line(builder, (w, z0), (w, z1), 90.0)
@@ -571,6 +573,62 @@ def add_crypt(builder):
     add_court(builder)
 
 
+def scatter(rng, count, x_range, z_range, clear_road=7.0, avoid=()):
+    """'count' places on the plains, off the old road (|x| < clear_road) and away from the 'avoid' points (x, z, r)"""
+    places = []
+    tries = 0
+    while len(places) < count and tries < count * 40:
+        tries += 1
+        x, z = rng.uniform(*x_range), rng.uniform(*z_range)
+        if abs(x) < clear_road or any(math.hypot(x - ax, z - az) < r for ax, az, r in avoid):
+            continue
+        if any(math.hypot(x - px, z - pz) < 4.0 for px, pz in places):
+            continue
+        places.append((x, z))
+    return places
+
+
+def dress_plains(builder, rng):
+    """The ash plains of the fallen realm: the old road marked by rune stones, ruined arches of its churches, the
+    gods' chains staked into the ground all pulling south (towards the god beyond the fog), dead trees, boulders, roots,
+    graves by the camps, cliffs closing the world (gothic_kit_generator.py, and Poly Haven's CC0 models in Nature/)"""
+    camps = [(14.0, -28.0, 9.0), (-18.0, -78.0, 9.0), (16.0, -96.0, 9.0), (-10.0, -48.0, 6.0), (-30.0, -43.0, 8.0)]
+    x_range, z_range = (-PLAINS_HALF_WIDTH + 6, PLAINS_HALF_WIDTH - 6), (PLAINS_TO_Z + 6, -8.0)
+    # The old road: pairs of rune stones every 22 m, leaning a little
+    for z in (-14.0, -36.0, -58.0, -80.0, -102.0):
+        for side in (-1.0, 1.0):
+            piece(builder, "Rune Stone", "gc_runestone", (side * 5.2, 0.0, z + rng.uniform(-1.5, 1.5)), 90.0 * side + rng.uniform(-12, 12),
+                  (0.5, 1.4, 0.25), (0.0, 1.4, 0.0))
+    for x, z in scatter(rng, 7, x_range, z_range, 10.0, camps):
+        piece(builder, "Ruined Arch", "gc_arch_ruin", (x, 0.0, z), rng.uniform(0, 360), scale=rng.uniform(0.9, 1.25))
+    for x, z in ((-24.0, -20.0), (30.0, -58.0), (-40.0, -92.0), (40.0, -110.0), (-50.0, -60.0)):
+        piece(builder, "Chain of the Gods", "gc_chain_anchor", (x, 0.0, z), 90.0 + rng.uniform(-15, 15),
+              (0.6, 1.0, 0.6), (0.0, 1.0, 0.0), scale=rng.uniform(1.4, 2.0))
+    for x, z in scatter(rng, 26, x_range, z_range, 8.0, camps):
+        piece(builder, "Dead Tree", "dead_quiver_trunk", (x, 0.0, z), rng.uniform(0, 360), (0.3, 2.0, 0.3), (0.0, 2.0, 0.0),
+              scale=rng.uniform(2.0, 3.2))
+    for model, count, sizes, half in (("namaqualand_boulder_02", 8, (1.0, 2.2), (1.1, 0.7, 0.6)),
+                                      ("namaqualand_boulder_04", 8, (0.8, 1.6), (1.1, 0.9, 1.1)),
+                                      ("dead_tree_trunk_02", 6, (1.0, 1.4), None),
+                                      ("tree_stump_01", 8, (1.2, 1.8), None),
+                                      ("root_cluster_01", 5, (1.0, 1.5), None)):
+        for x, z in scatter(rng, count, x_range, z_range, 8.0, camps):
+            size = rng.uniform(*sizes)
+            collider_half = tuple(h * size for h in half) if half else None
+            piece(builder, model.replace("_", " ").title(), model, (x, 0.0, z), rng.uniform(0, 360), collider_half,
+                  (0.0, collider_half[1], 0.0) if half else None, scale=size)
+    for x, z, _ in camps[:3]:
+        piece(builder, "Graves", "gc_graves", (x + rng.uniform(-6, 6), 0.0, z + 5.0), rng.uniform(0, 360))
+    for x, z in ((-20.0, -60.0), (26.0, -76.0)):
+        piece(builder, "Sword Graves", "arena_sword_graves", (x, 0.0, z), rng.uniform(0, 360), (0.99, 0.75, 0.95))
+    # Cliffs along the edges of the world
+    for i in range(12):
+        side = -1.0 if i % 2 == 0 else 1.0
+        z = -10.0 - (i // 2) * 20.0 + rng.uniform(-4, 4)
+        piece(builder, "Cliff", "namaqualand_cliff_01", (side * (PLAINS_HALF_WIDTH - 2.0), 0.0, z), 90.0 * side + rng.uniform(-20, 20),
+              scale=rng.uniform(2.2, 3.2))
+
+
 def add_plains(builder, rng):
     # The ground: hills, the old road, mountains at the edges (Tools/terrain_map.py, terrain_generator.py)
     builder.add(named("Ash Plains", (terrain_map.CENTER_X, 0.0, terrain_map.CENTER_Z),
@@ -583,24 +641,7 @@ def add_plains(builder, rng):
     invisible_wall(builder, (PLAINS_HALF_WIDTH, 5.0, -60.0), (0.5, 10.0, 70.0))
     invisible_wall(builder, (-38.0, 5.0, 0.0), (26.0, 10.0, 0.5))
     invisible_wall(builder, (38.0, 5.0, 0.0), (26.0, 10.0, 0.5))
-    # Ruins of the king's old realm: broken walls and pillars, heaps of rubble, graves of swords
-    for _ in range(26):
-        x = rng.uniform(-PLAINS_HALF_WIDTH + 6, PLAINS_HALF_WIDTH - 6)
-        z = rng.uniform(PLAINS_TO_Z + 8, -8.0)
-        if abs(x) < 7.0:  # the old road from the gate south stays clear
-            continue
-        kind = rng.random()
-        yaw = rng.uniform(0.0, 360.0)
-        if kind < 0.35:
-            piece(builder, "Ruined Wall", "kit_wall_ruined", (x, 0.0, z), yaw, (2.0, 1.3, 0.5))
-        elif kind < 0.6:
-            piece(builder, "Broken Pillar", "castle_pillar_broken", (x, 0.0, z), yaw, (0.5, 0.9, 0.5))
-        elif kind < 0.8:
-            piece(builder, "Rubble", "castle_rubble", (x, 0.0, z), yaw)
-        else:
-            piece(builder, "Sword Graves", "arena_sword_graves", (x, 0.0, z), yaw, (0.99, 0.75, 0.95))
-    for x, z, yaw in ((-46.0, -30.0, 30.0), (48.0, -70.0, 200.0), (-40.0, -100.0, 120.0), (52.0, -12.0, 300.0)):
-        piece(builder, "Ruined Tower", "arena_corner_tower", (x, 0.0, z), yaw, (3.05, 4.5, 3.64))
+    dress_plains(builder, rng)
     # Camps of the faithful: fires and their guards
     for camp in ((14.0, 0.0, -28.0), (-18.0, 0.0, -78.0), (16.0, 0.0, -96.0)):
         brazier(builder, camp)
@@ -621,19 +662,45 @@ def add_plains(builder, rng):
 
 
 def add_arena(builder):
+    """The Chain Warden's court: the floor of a roofless gothic church, its broken walls and arches around, the gods'
+    chains staked at its corners, braziers; the borders are unseen walls, the fog in the north gap"""
     cx, _, cz = ARENA_CENTER
-    builder.add(named("Floor Arena", (cx, 0.0, cz), box_collider=collider((ARENA_HALF, 0.15, ARENA_HALF), (0.0, -0.15, 0.0))))
-    floor_slabs(builder, cx - 24.0, cx + 24.0, cz - 24.0, cz + 24.0)
     h = ARENA_HALF
-    wall_line(builder, (cx - h, cz - h), (cx + h, cz - h))
-    wall_line(builder, (cx - h, cz - h), (cx - h, cz + h))
-    wall_line(builder, (cx + h, cz - h), (cx + h, cz + h))
-    wall_line(builder, (cx - h, cz + h), (cx - 3.6, cz + h))
-    wall_line(builder, (cx + 3.6, cz + h), (cx + h, cz + h))
+    builder.add(named("Floor Arena", (cx, 0.0, cz), box_collider=collider((h, 0.15, h), (0.0, -0.15, 0.0))))
+    for x in (-16.0, 0.0, 16.0):
+        for z in (-16.0, 0.0, 16.0):
+            piece(builder, "Arena Floor", "gc_crypt_floor", (cx + x, FLOOR_LIFT, cz + z))
+    for center, half in (((cx, 4.0, cz - h), (h, 8.0, 0.5)), ((cx - h, 4.0, cz), (0.5, 8.0, h)),
+                         ((cx + h, 4.0, cz), (0.5, 8.0, h)), ((cx - h * 0.55, 4.0, cz + h), (h * 0.45, 8.0, 0.5)),
+                         ((cx + h * 0.55, 4.0, cz + h), (h * 0.45, 8.0, 0.5))):
+        invisible_wall(builder, center, half)
+    # The church's walls: whole stretches and gaps, its arches standing alone where the walls fell
+    rng = random.Random(31)
+    for side, yaw in ((-1.0, -90.0), (1.0, 90.0)):
+        for i in range(11):
+            z = cz - h + 2.0 + i * 4.0
+            if i in (3, 7):
+                piece(builder, "Arena Arch", "gc_arch_ruin", (cx + side * (h + 0.5), 0.0, z), yaw)
+            elif rng.random() < 0.8:
+                piece(builder, "Arena Wall", "gc_crypt_wall", (cx + side * (h + 0.5), 0.0, z), yaw)
+    for i in range(11):
+        x = cx - h + 2.0 + i * 4.0
+        if i == 5:
+            piece(builder, "Arena Window", "gc_stained_window", (x, 0.0, cz - h - 0.6), 0.0)
+        elif rng.random() < 0.85:
+            piece(builder, "Arena Wall", "gc_crypt_wall", (x, 0.0, cz - h - 0.5), 180.0)
+    for i in range(11):
+        x = cx - h + 2.0 + i * 4.0
+        if abs(x - cx) > 4.0 and rng.random() < 0.7:
+            piece(builder, "Arena Wall", "gc_crypt_wall", (x, 0.0, cz + h + 0.5), 0.0)
     for sx in (-1.0, 1.0):
         for sz in (-1.0, 1.0):
-            piece(builder, "Corner Tower", "arena_corner_tower", (cx + sx * (h + 1.0), 0.0, cz + sz * (h + 1.0)),
-                  45.0 + 90.0 * (sx > 0) + 180.0 * (sz > 0), (3.05, 4.5, 3.64))
+            # the chains rise towards the middle of the court, over the Warden
+            yaw = math.degrees(math.atan2(sz, -sx))
+            piece(builder, "Arena Chain", "gc_chain_anchor", (cx + sx * (h - 3.0), 0.0, cz + sz * (h - 3.0)), yaw,
+                  (0.6, 1.0, 0.6), (0.0, 1.0, 0.0), scale=1.6)
+            piece(builder, "Arena Column", "gc_crypt_column", (cx + sx * 9.0, 0.0, cz + sz * 9.0), 0.0, (0.55, 4.0, 0.55), (0.0, 4.0, 0.0),
+                  scale=0.9)
         brazier(builder, (cx + sx * 12.0, 0.0, cz - 12.0))
         brazier(builder, (cx + sx * 12.0, 0.0, cz + 12.0))
     fog = builder.copy_named("Arena Fog")
@@ -646,7 +713,7 @@ def add_arena(builder):
 def stand_on_terrain(builder):
     """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
     templates far below the world stay where they are)"""
-    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel")
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Arena")
     half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
     for entity in builder.entities:
         if "parent" in entity or entity["tag"]["name"].startswith(keep):

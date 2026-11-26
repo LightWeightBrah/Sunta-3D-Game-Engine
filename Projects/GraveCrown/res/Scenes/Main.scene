@@ -1752,7 +1752,7 @@
    "transform": {
     "position": [
      -8.0,
-     0.0,
+     0.06,
      8.0
     ],
     "rotation": [
@@ -1784,7 +1784,7 @@
    "transform": {
     "position": [
      -8.0,
-     0.0,
+     0.06,
      24.0
     ],
     "rotation": [
@@ -1816,7 +1816,7 @@
    "transform": {
     "position": [
      -8.0,
-     0.0,
+     0.06,
      40.0
     ],
     "rotation": [
@@ -1848,7 +1848,7 @@
    "transform": {
     "position": [
      8.0,
-     0.0,
+     0.06,
      8.0
     ],
     "rotation": [
@@ -1880,7 +1880,7 @@
    "transform": {
     "position": [
      8.0,
-     0.0,
+     0.06,
      24.0
     ],
     "rotation": [
@@ -1912,7 +1912,7 @@
    "transform": {
     "position": [
      8.0,
-     0.0,
+     0.06,
      40.0
     ],
     "rotation": [
@@ -6939,23 +6939,23 @@
   },
   {
    "tag": {
-    "name": "Rubble"
+    "name": "Rune Stone"
    },
    "transform": {
     "position": [
-     -20.435399279353163,
-     0.8170928393241753,
-     -96.3116859118518
+     -5.2,
+     0.0,
+     -14.528501705500513
     ],
     "rotation": [
      0.0,
-     26.077063200315393,
+     -98.37961982581196,
      0.0
     ],
     "rotation_quaternion": [
-     0.9742185641381473,
+     0.6535552256580617,
      0.0,
-     0.2256062704993071,
+     -0.7568788324527513,
      0.0
     ],
     "scale": [
@@ -6966,98 +6966,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_rubble"
-   }
-  },
-  {
-   "tag": {
-    "name": "Ruined Wall"
-   },
-   "transform": {
-    "position": [
-     -51.27212472613401,
-     0.0,
-     -59.226683748300296
-    ],
-    "rotation": [
-     0.0,
-     156.1124461184589,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.20695175664075072,
-     0.0,
-     0.9783511488332334,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall_ruined"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     1.3,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     1.3,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Broken Pillar"
-   },
-   "transform": {
-    "position": [
-     -49.8967708653442,
-     1.5878112027198448,
-     -102.56584661223803
-    ],
-    "rotation": [
-     0.0,
-     297.6667648819337,
-     0.0
-    ],
-    "rotation_quaternion": [
-     -0.8556659348549953,
-     0.0,
-     0.5175285575972857,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "castle_pillar_broken"
+    "model_name": "gc_runestone"
    },
    "box_collider": {
     "half_extents": [
      0.5,
-     0.9,
-     0.5
+     1.4,
+     0.25
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.9,
+     1.4,
      0.0
     ],
     "show_gizmos": false
@@ -7065,23 +6986,23 @@
   },
   {
    "tag": {
-    "name": "Rubble"
+    "name": "Rune Stone"
    },
    "transform": {
     "position": [
-     -43.63897250664111,
-     2.5583746185117358,
-     -88.78314768087048
+     5.2,
+     0.0011718912418938851,
+     -13.547196580880438
     ],
     "rotation": [
      0.0,
-     341.17521928452203,
+     79.73847088002103,
      0.0
     ],
     "rotation_quaternion": [
-     -0.9865368188847787,
+     0.7675094630117287,
      0.0,
-     0.1635393071548893,
+     0.6410376152671915,
      0.0
     ],
     "scale": [
@@ -7092,51 +7013,19 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_rubble"
-   }
-  },
-  {
-   "tag": {
-    "name": "Sword Graves"
-   },
-   "transform": {
-    "position": [
-     8.943942039629846,
-     1.7153713493829774,
-     -70.74523063631887
-    ],
-    "rotation": [
-     0.0,
-     16.76976502239226,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.9893108425279595,
-     0.0,
-     0.14582200402071996,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "arena_sword_graves"
+    "model_name": "gc_runestone"
    },
    "box_collider": {
     "half_extents": [
-     0.99,
-     0.75,
-     0.95
+     0.5,
+     1.4,
+     0.25
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.75,
+     1.4,
      0.0
     ],
     "show_gizmos": false
@@ -7144,219 +7033,646 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     -5.2,
+     0.0029807200162033907,
+     -35.89235398707993
+    ],
+    "rotation": [
+     0.0,
+     -93.22346599409795,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6869387088523818,
+     0.0,
+     -0.7267153571242475,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     5.2,
+     0.0028360698232682622,
+     -37.326003225675876
+    ],
+    "rotation": [
+     0.0,
+     90.17845759654608,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7060047210894116,
+     0.0,
+     0.7082071263404953,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     -5.2,
+     0.004416426493285708,
+     -59.38751302467404
+    ],
+    "rotation": [
+     0.0,
+     -91.59250359210274,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6972120005792876,
+     0.0,
+     -0.716864998621238,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     5.2,
+     0.00664670408509794,
+     -59.290433729276145
+    ],
+    "rotation": [
+     0.0,
+     80.17711232025276,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7650500382019738,
+     0.0,
+     0.6439708371092269,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     -5.2,
+     0.00020430378521088308,
+     -80.22644243257245
+    ],
+    "rotation": [
+     0.0,
+     -82.15554900787109,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7538183367720968,
+     0.0,
+     -0.6570828830110778,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     5.2,
+     0.005302547857836807,
+     -81.12859411655106
+    ],
+    "rotation": [
+     0.0,
+     83.35773515056835,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7468834886663407,
+     0.0,
+     0.6649549265608882,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     -5.2,
+     0.0,
+     -101.61770033278323
+    ],
+    "rotation": [
+     0.0,
+     -79.25498538103187,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7702072938512173,
+     0.0,
+     -0.6377936378628941,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rune Stone"
+   },
+   "transform": {
+    "position": [
+     5.2,
+     0.004755161028320532,
+     -101.7686911541475
+    ],
+    "rotation": [
+     0.0,
+     87.52033139161873,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7222412590816129,
+     0.0,
+     0.6916412102240631,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_runestone"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     1.4,
+     0.25
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Ruined Arch"
+   },
+   "transform": {
+    "position": [
+     55.24559224877872,
+     1.206384530635154,
+     -109.06223585451784
+    ],
+    "rotation": [
+     0.0,
+     244.94399034544293,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.536887314311665,
+     0.0,
+     0.8436539644494107,
+     0.0
+    ],
+    "scale": [
+     1.049657306984291,
+     1.049657306984291,
+     1.049657306984291
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Ruined Arch"
    },
    "transform": {
     "position": [
      41.58234124964683,
-     0.263607725755,
-     -81.88063422150567
+     0.3287339067386632,
+     -83.30141564884232
     ],
     "rotation": [
      0.0,
-     42.40520570821261,
+     113.09298133564495,
      0.0
     ],
     "rotation_quaternion": [
-     0.9323073722372273,
+     0.5512601760382344,
      0.0,
-     0.3616669236633565,
+     0.8343333975781473,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.1049466522276736,
+     1.1049466522276736,
+     1.1049466522276736
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     1.3,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     1.3,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_arch_ruin"
    }
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Ruined Arch"
+   },
+   "transform": {
+    "position": [
+     -41.26641033053725,
+     3.1583454727521683,
+     -101.51402276369295
+    ],
+    "rotation": [
+     0.0,
+     163.14637549347913,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.14654595450794808,
+     0.0,
+     0.9892038633251259,
+     0.0
+    ],
+    "scale": [
+     1.0049184489022889,
+     1.0049184489022889,
+     1.0049184489022889
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Ruined Arch"
    },
    "transform": {
     "position": [
      -22.216108404175614,
-     2.6796805342246897,
-     -27.122858651516736
+     2.661612522109274,
+     -27.49060593327667
     ],
     "rotation": [
      0.0,
-     209.37605891848784,
+     285.9766133480968,
      0.0
     ],
     "rotation_quaternion": [
-     -0.2535558522947853,
+     -0.798512670770236,
      0.0,
-     0.9673207481322134,
+     0.6019780017736401,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.14464805180535,
+     1.14464805180535,
+     1.14464805180535
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     1.3,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     1.3,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_arch_ruin"
    }
   },
   {
    "tag": {
-    "name": "Broken Pillar"
+    "name": "Ruined Arch"
+   },
+   "transform": {
+    "position": [
+     -37.035739928823254,
+     1.762947596575433,
+     -52.350382651778574
+    ],
+    "rotation": [
+     0.0,
+     87.87474385997504,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7200986779206381,
+     0.0,
+     0.6938716697321985,
+     0.0
+    ],
+    "scale": [
+     1.1010482985905348,
+     1.1010482985905348,
+     1.1010482985905348
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Ruined Arch"
    },
    "transform": {
     "position": [
      16.113962395437355,
-     2.2690213360617397,
-     -73.27065555652396
+     2.3722736044788713,
+     -74.52586047107249
     ],
     "rotation": [
      0.0,
-     22.604030990396332,
+     189.0707413721225,
      0.0
     ],
     "rotation_quaternion": [
-     0.9806077651370381,
+     -0.07907451263117209,
      0.0,
-     0.19598063922985767,
+     0.9968687082320031,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.2062981234507002,
+     1.2062981234507002,
+     1.2062981234507002
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_pillar_broken"
-   },
-   "box_collider": {
-    "half_extents": [
-     0.5,
-     0.9,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     0.9,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_arch_ruin"
    }
   },
   {
    "tag": {
-    "name": "Rubble"
+    "name": "Ruined Arch"
    },
    "transform": {
     "position": [
      -51.08626428391701,
-     1.7360591858560865,
-     -90.58029386679004
+     2.114977436041189,
+     -92.1683764411514
     ],
     "rotation": [
      0.0,
-     153.93323004098502,
+     262.60030419811835,
      0.0
     ],
     "rotation_quaternion": [
-     0.22551875994330278,
+     -0.660003662286446,
      0.0,
-     0.9742388253983901,
+     0.7512623814410508,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.0007782177115654,
+     1.0007782177115654,
+     1.0007782177115654
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_rubble"
+    "model_name": "gc_arch_ruin"
    }
   },
   {
    "tag": {
-    "name": "Broken Pillar"
+    "name": "Chain of the Gods"
    },
    "transform": {
     "position": [
-     -21.558928236292182,
-     1.7265968311096533,
-     -51.10156619520557
+     -24.0,
+     3.1001508000158555,
+     -20.0
     ],
     "rotation": [
      0.0,
-     107.91611887092564,
+     104.40524542477746,
      0.0
     ],
     "rotation_quaternion": [
-     0.588377295965892,
+     0.6128708836916283,
      0.0,
-     0.8085865183094911,
+     0.7901830673477144,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.4708394669529772,
+     1.4708394669529772,
+     1.4708394669529772
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_pillar_broken"
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     0.5,
-     0.9,
-     0.5
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.9,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -7364,46 +7680,46 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Chain of the Gods"
    },
    "transform": {
     "position": [
-     34.14801985660897,
-     2.1261178096363236,
-     -39.304578892124596
+     30.0,
+     1.110429108449667,
+     -58.0
     ],
     "rotation": [
      0.0,
-     206.79253569312155,
+     87.54368465355682,
      0.0
     ],
     "rotation_quaternion": [
-     -0.23168453797164518,
+     0.7221002906101651,
      0.0,
-     0.9727909718253276,
+     0.6917883854913403,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.8542845577391496,
+     1.8542845577391496,
+     1.8542845577391496
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     2.0,
-     1.3,
-     0.5
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     1.3,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -7411,46 +7727,46 @@
   },
   {
    "tag": {
-    "name": "Sword Graves"
+    "name": "Chain of the Gods"
    },
    "transform": {
     "position": [
-     26.61565357494925,
-     1.3442174126849662,
-     -82.0544724514206
+     -40.0,
+     2.592549371571826,
+     -92.0
     ],
     "rotation": [
      0.0,
-     42.503680171786364,
+     79.55953603981514,
      0.0
     ],
     "rotation_quaternion": [
-     0.9319962289025535,
+     0.7685095078134586,
      0.0,
-     0.3624679700489673,
+     0.6398383674025149,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.6933778602854832,
+     1.6933778602854832,
+     1.6933778602854832
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_sword_graves"
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     0.99,
-     0.75,
-     0.95
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.75,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -7458,46 +7774,46 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Chain of the Gods"
    },
    "transform": {
     "position": [
-     -9.497752672913649,
-     0.6572077388553296,
-     -33.257343325214066
+     40.0,
+     1.850782655520093,
+     -110.0
     ],
     "rotation": [
      0.0,
-     176.02671617129002,
+     76.17621771142313,
      0.0
     ],
     "rotation_quaternion": [
-     0.034666495204012,
+     0.7870630644035576,
      0.0,
-     0.9993989364164193,
+     0.6168725416580653,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.8009295139206372,
+     1.8009295139206372,
+     1.8009295139206372
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     2.0,
-     1.3,
-     0.5
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     1.3,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -7505,110 +7821,93 @@
   },
   {
    "tag": {
-    "name": "Rubble"
+    "name": "Chain of the Gods"
    },
    "transform": {
     "position": [
-     -53.45195818249723,
-     0.45361959292189247,
-     -42.505550920422905
+     -50.0,
+     0.0,
+     -60.0
     ],
     "rotation": [
      0.0,
-     206.28933849985822,
+     97.93712598638439,
      0.0
     ],
     "rotation_quaternion": [
-     -0.22741057496531217,
+     0.6564730237226845,
      0.0,
-     0.9737989681622928,
+     0.754349500645686,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.7438155641664304,
+     1.7438155641664304,
+     1.7438155641664304
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_rubble"
+    "model_name": "gc_chain_anchor"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.6,
+     1.0,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "show_gizmos": false
    }
   },
   {
    "tag": {
-    "name": "Rubble"
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      43.55542617238304,
-     0.5655761263905594,
-     -79.37025866379793
+     0.5537622259955284,
+     -80.74276363810174
     ],
     "rotation": [
      0.0,
-     213.97315575780664,
+     75.1547467606192,
      0.0
     ],
     "rotation_quaternion": [
-     -0.2921476725535408,
+     0.7925305333928758,
      0.0,
-     0.956373220778138,
+     0.6098322340119483,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     2.194763825326517,
+     2.194763825326517,
+     2.194763825326517
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_rubble"
-   }
-  },
-  {
-   "tag": {
-    "name": "Sword Graves"
-   },
-   "transform": {
-    "position": [
-     9.267843696769091,
-     1.9223899518754777,
-     -64.55464554465304
-    ],
-    "rotation": [
-     0.0,
-     340.08519423885747,
-     0.0
-    ],
-    "rotation_quaternion": [
-     -0.9849365813042977,
-     0.0,
-     0.1729159645856985,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "arena_sword_graves"
+    "model_name": "dead_quiver_trunk"
    },
    "box_collider": {
     "half_extents": [
-     0.99,
-     0.75,
-     0.95
+     0.3,
+     2.0,
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.75,
+     2.0,
      0.0
     ],
     "show_gizmos": false
@@ -7616,78 +7915,281 @@
   },
   {
    "tag": {
-    "name": "Rubble"
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     22.654262487744475,
+     0.8120914498726813,
+     -50.99679302686805
+    ],
+    "rotation": [
+     0.0,
+     122.41931480364363,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.48160596273699147,
+     0.0,
+     0.8763878688435707,
+     0.0
+    ],
+    "scale": [
+     2.0630907246683203,
+     2.0630907246683203,
+     2.0630907246683203
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     9.267843696769091,
+     1.9715570162738107,
+     -65.64223488205022
+    ],
+    "rotation": [
+     0.0,
+     0.08398148448838683,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9999997314458778,
+     0.0,
+     0.0007328766419117598,
+     0.0
+    ],
+    "scale": [
+     2.1815179187353135,
+     2.1815179187353135,
+     2.1815179187353135
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     39.4362625394548,
+     4.4450066450233425,
+     -13.86380391855863
+    ],
+    "rotation": [
+     0.0,
+     36.527172488134745,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9496248406315311,
+     0.0,
+     0.313388994790084,
+     0.0
+    ],
+    "scale": [
+     2.4363319064414855,
+     2.4363319064414855,
+     2.4363319064414855
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      -50.96234639872252,
      0.0,
-     -39.04482978433991
+     -39.64184574173106
     ],
     "rotation": [
      0.0,
-     357.51453820798827,
+     9.18031919981245,
      0.0
     ],
     "rotation_quaternion": [
-     -0.9997647866839098,
+     0.9967926377103455,
      0.0,
-     0.02168804525254487,
+     0.0800277289847204,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     3.0491988528485834,
+     3.0491988528485834,
+     3.0491988528485834
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_rubble"
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
    }
   },
   {
    "tag": {
-    "name": "Broken Pillar"
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     17.06694712520958,
+     0.3261214952770014,
+     -8.73183041653678
+    ],
+    "rotation": [
+     0.0,
+     221.06483560385234,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.3507372918463054,
+     0.0,
+     0.9364738929133687,
+     0.0
+    ],
+    "scale": [
+     2.1782605823970695,
+     2.1782605823970695,
+     2.1782605823970695
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      37.34327524672693,
-     0.08658383032852779,
-     -82.40206466220849
+     0.31021633488082445,
+     -83.83287359802019
     ],
     "rotation": [
      0.0,
-     240.71497771830775,
+     90.81279236054782,
      0.0
     ],
     "rotation_quaternion": [
-     -0.5053936747888865,
+     0.7020735620159032,
      0.0,
-     0.8628888882604673,
+     0.7121044259926361,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     2.416867455264442,
+     2.416867455264442,
+     2.416867455264442
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "castle_pillar_broken"
+    "model_name": "dead_quiver_trunk"
    },
    "box_collider": {
     "half_extents": [
-     0.5,
-     0.9,
-     0.5
+     0.3,
+     2.0,
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.9,
+     2.0,
      0.0
     ],
     "show_gizmos": false
@@ -7695,46 +8197,46 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      -55.382700345551726,
-     0.01089109293424495,
-     -63.98369022482435
+     0.3152450841427772,
+     -65.06029965222481
     ],
     "rotation": [
      0.0,
-     42.15448601342349,
+     131.09883823018168,
      0.0
     ],
     "rotation_quaternion": [
-     0.9330964463705561,
+     0.4139082229953087,
      0.0,
-     0.3596262250874371,
+     0.9103186161651676,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     2.147410676914634,
+     2.147410676914634,
+     2.147410676914634
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
+    "model_name": "dead_quiver_trunk"
    },
    "box_collider": {
     "half_extents": [
+     0.3,
      2.0,
-     1.3,
-     0.5
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     1.3,
+     2.0,
      0.0
     ],
     "show_gizmos": false
@@ -7742,46 +8244,93 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -38.50638804684083,
+     3.44966747021342,
+     -101.58784578493642
+    ],
+    "rotation": [
+     0.0,
+     305.6172935344614,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8894853458942629,
+     0.0,
+     0.4569636959752531,
+     0.0
+    ],
+    "scale": [
+     3.191723266045657,
+     3.191723266045657,
+     3.191723266045657
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      -51.16128735756799,
-     0.807908313629601,
-     -32.10376919885785
+     0.721916197430107,
+     -32.567303221912795
     ],
     "rotation": [
      0.0,
-     89.14134013088915,
+     167.75620529757614,
      0.0
     ],
     "rotation_quaternion": [
-     0.7123853875890981,
+     0.10664408051304115,
      0.0,
-     0.7017884720836689,
+     0.9942972594207067,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     2.5806015876995234,
+     2.5806015876995234,
+     2.5806015876995234
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
+    "model_name": "dead_quiver_trunk"
    },
    "box_collider": {
     "half_extents": [
+     0.3,
      2.0,
-     1.3,
-     0.5
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     1.3,
+     2.0,
      0.0
     ],
     "show_gizmos": false
@@ -7789,46 +8338,93 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -42.99653424583263,
+     2.451598958593076,
+     -87.75282762812708
+    ],
+    "rotation": [
+     0.0,
+     30.91847816021961,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9638203259989548,
+     0.0,
+     0.2665527699936137,
+     0.0
+    ],
+    "scale": [
+     2.122625140097802,
+     2.122625140097802,
+     2.122625140097802
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      -12.64983443654566,
-     1.085065054912358,
-     -21.372114690864862
+     1.0980905621498418,
+     -21.629270742612263
     ],
     "rotation": [
      0.0,
-     161.70746434175913,
+     123.34890176748065,
      0.0
     ],
     "rotation_quaternion": [
-     0.15895537787870057,
+     0.4744807810153619,
      0.0,
-     0.9872857680749983,
+     0.8802658623660536,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     2.317708270060616,
+     2.317708270060616,
+     2.317708270060616
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
+    "model_name": "dead_quiver_trunk"
    },
    "box_collider": {
     "half_extents": [
+     0.3,
      2.0,
-     1.3,
-     0.5
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     1.3,
+     2.0,
      0.0
     ],
     "show_gizmos": false
@@ -7836,46 +8432,93 @@
   },
   {
    "tag": {
-    "name": "Ruined Wall"
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -48.65256906078392,
+     0.8912187854121641,
+     -66.38613549937091
+    ],
+    "rotation": [
+     0.0,
+     298.3879361237618,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8589059857416297,
+     0.0,
+     0.5121332909089189,
+     0.0
+    ],
+    "scale": [
+     2.193726332631718,
+     2.193726332631718,
+     2.193726332631718
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
      37.03646118894599,
-     1.2890395738943685,
-     -22.14561515135442
+     1.224424552340554,
+     -22.41764621195739
     ],
     "rotation": [
      0.0,
-     149.50674619621148,
+     8.314459576289334,
      0.0
     ],
     "rotation_quaternion": [
-     0.2629744153632319,
+     0.9973688702746661,
      0.0,
-     0.9648028072432037,
+     0.07249370046449638,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     3.1411826874496427,
+     3.1411826874496427,
+     3.1411826874496427
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall_ruined"
+    "model_name": "dead_quiver_trunk"
    },
    "box_collider": {
     "half_extents": [
+     0.3,
      2.0,
-     1.3,
-     0.5
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     1.3,
+     2.0,
      0.0
     ],
     "show_gizmos": false
@@ -7883,23 +8526,1947 @@
   },
   {
    "tag": {
-    "name": "Ruined Tower"
+    "name": "Dead Tree"
    },
    "transform": {
     "position": [
-     -46.0,
-     2.1643021840602046,
-     -30.0
+     -25.703156516387935,
+     0.17425586403811658,
+     -69.97856917555995
     ],
     "rotation": [
      0.0,
-     30.0,
+     190.1726622151649,
      0.0
     ],
     "rotation_quaternion": [
-     0.9659258262890683,
+     -0.0886566716330821,
      0.0,
-     0.25881904510252074,
+     0.9960622443276042,
+     0.0
+    ],
+    "scale": [
+     2.175923046678909,
+     2.175923046678909,
+     2.175923046678909
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     53.096819659822984,
+     1.4064314277660577,
+     -98.00238398614245
+    ],
+    "rotation": [
+     0.0,
+     195.54207331756118,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.13521472646794208,
+     0.0,
+     0.9908163188735839,
+     0.0
+    ],
+    "scale": [
+     2.0324509897066023,
+     2.0324509897066023,
+     2.0324509897066023
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -37.55874349511704,
+     2.557365844885651,
+     -89.4125721171292
+    ],
+    "rotation": [
+     0.0,
+     190.11939873779033,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.08819368086122516,
+     0.0,
+     0.9961033453694191,
+     0.0
+    ],
+    "scale": [
+     3.1742014912627674,
+     3.1742014912627674,
+     3.1742014912627674
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -30.93301429302011,
+     0.9065763941152648,
+     -62.593950583816195
+    ],
+    "rotation": [
+     0.0,
+     310.7970109042808,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9092252501444487,
+     0.0,
+     0.416304509343539,
+     0.0
+    ],
+    "scale": [
+     2.835436143089362,
+     2.835436143089362,
+     2.835436143089362
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     10.338326432941656,
+     1.1734928506910947,
+     -86.14885835435499
+    ],
+    "rotation": [
+     0.0,
+     94.0014710025703,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6819889716780212,
+     0.0,
+     0.7313624563166714,
+     0.0
+    ],
+    "scale": [
+     2.4400397501134146,
+     2.4400397501134146,
+     2.4400397501134146
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -57.52514200733258,
+     1.56724056811197,
+     -69.59167088071524
+    ],
+    "rotation": [
+     0.0,
+     60.13513243236107,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8654351752897405,
+     0.0,
+     0.5010209151035674,
+     0.0
+    ],
+    "scale": [
+     2.9263254900824376,
+     2.9263254900824376,
+     2.9263254900824376
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -15.166585544211856,
+     0.19294650268087946,
+     -53.96783028712245
+    ],
+    "rotation": [
+     0.0,
+     191.73326309743643,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.10221321506923586,
+     0.0,
+     0.9947625137012402,
+     0.0
+    ],
+    "scale": [
+     2.9348658696058125,
+     2.9348658696058125,
+     2.9348658696058125
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     52.55935936091106,
+     2.323178114092744,
+     -40.80767234358635
+    ],
+    "rotation": [
+     0.0,
+     118.67939821719445,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5099470208324848,
+     0.0,
+     0.8602058102245493,
+     0.0
+    ],
+    "scale": [
+     2.267650007723822,
+     2.267650007723822,
+     2.267650007723822
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     20.43920956414216,
+     2.270304125372009,
+     -108.27675331827824
+    ],
+    "rotation": [
+     0.0,
+     292.1440488384942,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8297398581969984,
+     0.0,
+     0.5581503092530049,
+     0.0
+    ],
+    "scale": [
+     3.181911260709069,
+     3.181911260709069,
+     3.181911260709069
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     46.34582916672245,
+     1.0684657675722624,
+     -31.32323398515628
+    ],
+    "rotation": [
+     0.0,
+     306.9463675487978,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8947254289900378,
+     0.0,
+     0.4466166216326849,
+     0.0
+    ],
+    "scale": [
+     2.9672943017428013,
+     2.9672943017428013,
+     2.9672943017428013
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -45.98969712960238,
+     1.4196206967451028,
+     -46.76530603731484
+    ],
+    "rotation": [
+     0.0,
+     294.59985959713435,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8415101200173059,
+     0.0,
+     0.5402413515350889,
+     0.0
+    ],
+    "scale": [
+     2.887847624450857,
+     2.887847624450857,
+     2.887847624450857
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree"
+   },
+   "transform": {
+    "position": [
+     -50.77925269223224,
+     1.0632596774689556,
+     -106.86115272063937
+    ],
+    "rotation": [
+     0.0,
+     81.62621641137056,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7568455453954108,
+     0.0,
+     0.6535937732377223,
+     0.0
+    ],
+    "scale": [
+     2.6211664690922065,
+     2.6211664690922065,
+     2.6211664690922065
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_quiver_trunk"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     2.0,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     2.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     -16.754744970824852,
+     2.2742469227172144,
+     -110.92810402141527
+    ],
+    "rotation": [
+     0.0,
+     287.87174814587763,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.808358633526113,
+     0.0,
+     0.5886903427132089,
+     0.0
+    ],
+    "scale": [
+     1.783573651409211,
+     1.783573651409211,
+     1.783573651409211
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.9619310165501325,
+     1.2485015559864476,
+     1.0701441908455267
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.2485015559864476,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     -54.759299251040524,
+     1.1393724442547573,
+     -84.38163486080285
+    ],
+    "rotation": [
+     0.0,
+     237.8108340737619,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.4833651520017817,
+     0.0,
+     0.8754188310918919,
+     0.0
+    ],
+    "scale": [
+     1.1017341837404562,
+     1.1017341837404562,
+     1.1017341837404562
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.2119076021145019,
+     0.7712139286183193,
+     0.6610405102442737
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.7712139286183193,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     52.95574885559519,
+     2.898169202133207,
+     -66.59386615672732
+    ],
+    "rotation": [
+     0.0,
+     281.6290382753124,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.775104624316638,
+     0.0,
+     0.63183290620461,
+     0.0
+    ],
+    "scale": [
+     2.0917325650620677,
+     2.0917325650620677,
+     2.0917325650620677
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.3009058215682745,
+     1.4642127955434474,
+     1.2550395390372406
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.4642127955434474,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     50.694459348044106,
+     3.816957694916207,
+     -9.26796583049682
+    ],
+    "rotation": [
+     0.0,
+     172.09178805384008,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.06895740077511568,
+     0.0,
+     0.9976196052997054,
+     0.0
+    ],
+    "scale": [
+     1.90016855179655,
+     1.90016855179655,
+     1.90016855179655
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.090185406976205,
+     1.330117986257585,
+     1.14010113107793
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.330117986257585,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     52.78007323327465,
+     2.1546694779612987,
+     -75.3485961516422
+    ],
+    "rotation": [
+     0.0,
+     284.0887551672995,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7884873685227516,
+     0.0,
+     0.6150509488490092,
+     0.0
+    ],
+    "scale": [
+     1.2142260620050882,
+     1.2142260620050882,
+     1.2142260620050882
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.335648668205597,
+     0.8499582434035617,
+     0.7285356372030529
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.8499582434035617,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     -32.42637053243645,
+     2.797324705115832,
+     -89.95434236654283
+    ],
+    "rotation": [
+     0.0,
+     288.2964848028088,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8105350721738882,
+     0.0,
+     0.5856901030204197,
+     0.0
+    ],
+    "scale": [
+     1.399020639837532,
+     1.399020639837532,
+     1.399020639837532
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.5389227038212854,
+     0.9793144478862723,
+     0.8394123839025192
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9793144478862723,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     14.391702102786908,
+     0.13701434241467964,
+     -18.567316184283897
+    ],
+    "rotation": [
+     0.0,
+     142.5018582250013,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.32142410977349606,
+     0.0,
+     0.9469353418561985,
+     0.0
+    ],
+    "scale": [
+     2.16598874677859,
+     2.16598874677859,
+     2.16598874677859
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.3825876214564494,
+     1.516192122745013,
+     1.299593248067154
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.516192122745013,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 02"
+   },
+   "transform": {
+    "position": [
+     39.49052116439762,
+     1.9614943536332814,
+     -63.17581681627695
+    ],
+    "rotation": [
+     0.0,
+     340.8469223273615,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9860642419658568,
+     0.0,
+     0.1663649924602531,
+     0.0
+    ],
+    "scale": [
+     1.481664181441242,
+     1.481664181441242,
+     1.481664181441242
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_02"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6298305995853661,
+     1.0371649270088692,
+     0.8889985088647451
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0371649270088692,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     26.076645213568966,
+     0.20778891230787389,
+     -95.97961204297908
+    ],
+    "rotation": [
+     0.0,
+     105.46799496127882,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6055162851253958,
+     0.0,
+     0.7958329149061004,
+     0.0
+    ],
+    "scale": [
+     1.0014678490923632,
+     1.0014678490923632,
+     1.0014678490923632
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1016146340015995,
+     0.9013210641831269,
+     1.1016146340015995
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9013210641831269,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     -43.26354939344774,
+     2.7715974906445147,
+     -97.97802575956209
+    ],
+    "rotation": [
+     0.0,
+     211.11738053974622,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.26822531942619254,
+     0.0,
+     0.9633562051591908,
+     0.0
+    ],
+    "scale": [
+     0.9924315140466677,
+     0.9924315140466677,
+     0.9924315140466677
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.0916746654513345,
+     0.893188362642001,
+     1.0916746654513345
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.893188362642001,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     46.96284310505577,
+     0.9909961578267457,
+     -28.510789904587213
+    ],
+    "rotation": [
+     0.0,
+     150.8445189916357,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.25169338277331305,
+     0.0,
+     0.9678070267714151,
+     0.0
+    ],
+    "scale": [
+     1.0074918362161682,
+     1.0074918362161682,
+     1.0074918362161682
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1082410198377852,
+     0.9067426525945514,
+     1.1082410198377852
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9067426525945514,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     -41.0437801857106,
+     3.8312197216607404,
+     -26.389889276308978
+    ],
+    "rotation": [
+     0.0,
+     327.6061402736003,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9603086337565291,
+     0.0,
+     0.27893964926605275,
+     0.0
+    ],
+    "scale": [
+     0.9048589412027868,
+     0.9048589412027868,
+     0.9048589412027868
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.9953448353230655,
+     0.8143730470825081,
+     0.9953448353230655
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.8143730470825081,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     55.71548943985553,
+     2.2444915580320535,
+     -44.329560969981884
+    ],
+    "rotation": [
+     0.0,
+     164.9379551298241,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.13106298457013663,
+     0.0,
+     0.9913740434747967,
+     0.0
+    ],
+    "scale": [
+     1.0830272191626071,
+     1.0830272191626071,
+     1.0830272191626071
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.191329941078868,
+     0.9747244972463465,
+     1.191329941078868
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9747244972463465,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     -17.352728589729665,
+     0.6057829769985904,
+     -55.84203533740141
+    ],
+    "rotation": [
+     0.0,
+     325.54683883513434,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9551410748410981,
+     0.0,
+     0.2961511896842417,
+     0.0
+    ],
+    "scale": [
+     1.2666790176334801,
+     1.2666790176334801,
+     1.2666790176334801
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.3933469193968282,
+     1.140011115870132,
+     1.3933469193968282
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.140011115870132,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     -42.80587316690375,
+     2.1571404880274,
+     -112.49024855545281
+    ],
+    "rotation": [
+     0.0,
+     330.37959036335917,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9667778764186247,
+     0.0,
+     0.25561795255320885,
+     0.0
+    ],
+    "scale": [
+     1.1365026165672523,
+     1.1365026165672523,
+     1.1365026165672523
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.2501528782239777,
+     1.022852354910527,
+     1.2501528782239777
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.022852354910527,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Namaqualand Boulder 04"
+   },
+   "transform": {
+    "position": [
+     37.834009210565654,
+     0.020768733041504284,
+     -91.62951224321623
+    ],
+    "rotation": [
+     0.0,
+     191.45698647693618,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.09981457939863544,
+     0.0,
+     0.9950060551270397,
+     0.0
+    ],
+    "scale": [
+     1.2013191528961853,
+     1.2013191528961853,
+     1.2013191528961853
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_boulder_04"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.3214510681858038,
+     1.0811872376065668,
+     1.3214510681858038
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0811872376065668,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree Trunk 02"
+   },
+   "transform": {
+    "position": [
+     -57.54383210822553,
+     0.8057281190386334,
+     -29.2879322478245
+    ],
+    "rotation": [
+     0.0,
+     182.7770370452354,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.024231847898468665,
+     0.0,
+     0.9997063656631509,
+     0.0
+    ],
+    "scale": [
+     1.3089044395021951,
+     1.3089044395021951,
+     1.3089044395021951
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_tree_trunk_02"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree Trunk 02"
+   },
+   "transform": {
+    "position": [
+     -38.00778138323993,
+     0.6004524396272656,
+     -63.80974915903263
+    ],
+    "rotation": [
+     0.0,
+     273.597531332406,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7289538799246886,
+     0.0,
+     0.6845628100786243,
+     0.0
+    ],
+    "scale": [
+     1.2246917546625904,
+     1.2246917546625904,
+     1.2246917546625904
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_tree_trunk_02"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree Trunk 02"
+   },
+   "transform": {
+    "position": [
+     26.122419371895845,
+     0.5604379373425985,
+     -55.01358376036539
+    ],
+    "rotation": [
+     0.0,
+     159.569421687878,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.1773473627841756,
+     0.0,
+     0.984148318554423,
+     0.0
+    ],
+    "scale": [
+     1.3649952145319246,
+     1.3649952145319246,
+     1.3649952145319246
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_tree_trunk_02"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree Trunk 02"
+   },
+   "transform": {
+    "position": [
+     -20.186070478331764,
+     0.7739624199345355,
+     -59.055036453478095
+    ],
+    "rotation": [
+     0.0,
+     181.9991271064398,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.017444790163626638,
+     0.0,
+     0.9998478280699253,
+     0.0
+    ],
+    "scale": [
+     1.2450111537377841,
+     1.2450111537377841,
+     1.2450111537377841
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_tree_trunk_02"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree Trunk 02"
+   },
+   "transform": {
+    "position": [
+     -45.69130761582832,
+     0.6270973736529211,
+     -54.60860984010106
+    ],
+    "rotation": [
+     0.0,
+     249.3831609173625,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5691587042723429,
+     0.0,
+     0.8222276870496564,
+     0.0
+    ],
+    "scale": [
+     1.2048645889741276,
+     1.2048645889741276,
+     1.2048645889741276
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_tree_trunk_02"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Tree Trunk 02"
+   },
+   "transform": {
+    "position": [
+     -29.17465875900156,
+     1.044852016496895,
+     -84.64679053073316
+    ],
+    "rotation": [
+     0.0,
+     191.98275752850154,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.10437881742014252,
+     0.0,
+     0.9945376123978281,
+     0.0
+    ],
+    "scale": [
+     1.1809383169059637,
+     1.1809383169059637,
+     1.1809383169059637
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "dead_tree_trunk_02"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     23.10927433291316,
+     0.5605935781646837,
+     -21.087238931257104
+    ],
+    "rotation": [
+     0.0,
+     51.47243925272539,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.900802702955811,
+     0.0,
+     0.43422861530247514,
+     0.0
+    ],
+    "scale": [
+     1.5961539091148225,
+     1.5961539091148225,
+     1.5961539091148225
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     51.29294824321478,
+     1.3927657335667702,
+     -86.48321682352478
+    ],
+    "rotation": [
+     0.0,
+     348.3161217598982,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9948064715556696,
+     0.0,
+     0.10178449857890273,
+     0.0
+    ],
+    "scale": [
+     1.7296997001942453,
+     1.7296997001942453,
+     1.7296997001942453
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     39.439974873611874,
+     0.31334694752881,
+     -99.46374979493375
+    ],
+    "rotation": [
+     0.0,
+     342.90148641083505,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9888884271481778,
+     0.0,
+     0.1486596066603265,
+     0.0
+    ],
+    "scale": [
+     1.3317526984811519,
+     1.3317526984811519,
+     1.3317526984811519
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     -43.89185329143504,
+     0.4965975652818966,
+     -67.13548264284537
+    ],
+    "rotation": [
+     0.0,
+     175.41387899671685,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.040010772716234,
+     0.0,
+     0.999199248431788,
+     0.0
+    ],
+    "scale": [
+     1.4389541248303632,
+     1.4389541248303632,
+     1.4389541248303632
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     -49.58465243984736,
+     1.4689506941415171,
+     -88.49229160395339
+    ],
+    "rotation": [
+     0.0,
+     299.6800810138611,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8646261206753506,
+     0.0,
+     0.5024158351862469,
+     0.0
+    ],
+    "scale": [
+     1.793922872846572,
+     1.793922872846572,
+     1.793922872846572
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     -49.51799103116978,
+     0.07913590541508997,
+     -43.03595259715105
+    ],
+    "rotation": [
+     0.0,
+     155.34785447915,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.21347497417950775,
+     0.0,
+     0.9769485326254698,
+     0.0
+    ],
+    "scale": [
+     1.2968796359285275,
+     1.2968796359285275,
+     1.2968796359285275
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     32.936577992086,
+     2.2132100170569218,
+     -18.91519811485071
+    ],
+    "rotation": [
+     0.0,
+     122.08181196197515,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.48418506720408594,
+     0.0,
+     0.8749656111508468,
+     0.0
+    ],
+    "scale": [
+     1.5093630346826155,
+     1.5093630346826155,
+     1.5093630346826155
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Tree Stump 01"
+   },
+   "transform": {
+    "position": [
+     -40.08419164283171,
+     1.67365299735115,
+     -38.09129242445121
+    ],
+    "rotation": [
+     0.0,
+     114.66920460156983,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5397320133665059,
+     0.0,
+     0.8418368926029186,
+     0.0
+    ],
+    "scale": [
+     1.3174467996803587,
+     1.3174467996803587,
+     1.3174467996803587
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "tree_stump_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root Cluster 01"
+   },
+   "transform": {
+    "position": [
+     25.769496876377545,
+     3.4691532243419663,
+     -111.93480962644632
+    ],
+    "rotation": [
+     0.0,
+     95.60313804366712,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6717003024357775,
+     0.0,
+     0.7408229908066333,
+     0.0
+    ],
+    "scale": [
+     1.0523897971364158,
+     1.0523897971364158,
+     1.0523897971364158
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "root_cluster_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root Cluster 01"
+   },
+   "transform": {
+    "position": [
+     -55.90249022406364,
+     0.8942335572948319,
+     -78.861223750949
+    ],
+    "rotation": [
+     0.0,
+     280.4390748244412,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7685017513187864,
+     0.0,
+     0.6398476836091214,
+     0.0
+    ],
+    "scale": [
+     1.0197940949570339,
+     1.0197940949570339,
+     1.0197940949570339
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "root_cluster_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root Cluster 01"
+   },
+   "transform": {
+    "position": [
+     14.375540571456227,
+     2.462761318299721,
+     -59.700197846873714
+    ],
+    "rotation": [
+     0.0,
+     46.64000135004383,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9183082492998759,
+     0.0,
+     0.3958660875445092,
+     0.0
+    ],
+    "scale": [
+     1.1352230487606545,
+     1.1352230487606545,
+     1.1352230487606545
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "root_cluster_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root Cluster 01"
+   },
+   "transform": {
+    "position": [
+     -50.54226805947278,
+     2.611717846652372,
+     -9.581176121785475
+    ],
+    "rotation": [
+     0.0,
+     328.1089738260992,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9615233857566291,
+     0.0,
+     0.2747230944844436,
+     0.0
+    ],
+    "scale": [
+     1.2111270906388305,
+     1.2111270906388305,
+     1.2111270906388305
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "root_cluster_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root Cluster 01"
+   },
+   "transform": {
+    "position": [
+     33.450114507319384,
+     3.4453054164188766,
+     -11.000228383410146
+    ],
+    "rotation": [
+     0.0,
+     93.099245325783,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6877260862056427,
+     0.0,
+     0.7259702682288504,
+     0.0
+    ],
+    "scale": [
+     1.4094894898906407,
+     1.4094894898906407,
+     1.4094894898906407
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "root_cluster_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Graves"
+   },
+   "transform": {
+    "position": [
+     9.792415368848939,
+     0.0,
+     -23.0
+    ],
+    "rotation": [
+     0.0,
+     330.9017430642377,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9679325952844557,
+     0.0,
+     0.2512100535127885,
      0.0
     ],
     "scale": [
@@ -7910,43 +10477,28 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
-   },
-   "box_collider": {
-    "half_extents": [
-     3.05,
-     4.5,
-     3.64
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     4.5,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_graves"
    }
   },
   {
    "tag": {
-    "name": "Ruined Tower"
+    "name": "Graves"
    },
    "transform": {
     "position": [
-     48.0,
-     2.391699391918033,
-     -70.0
+     -17.152860895280952,
+     0.0,
+     -73.0
     ],
     "rotation": [
      0.0,
-     200.0,
+     252.15028075678242,
      0.0
     ],
     "rotation_quaternion": [
-     -0.1736481776669303,
+     -0.5888457294380297,
      0.0,
-     0.984807753012208,
+     0.808245449676393,
      0.0
     ],
     "scale": [
@@ -7957,43 +10509,28 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
-   },
-   "box_collider": {
-    "half_extents": [
-     3.05,
-     4.5,
-     3.64
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     4.5,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_graves"
    }
   },
   {
    "tag": {
-    "name": "Ruined Tower"
+    "name": "Graves"
    },
    "transform": {
     "position": [
-     -40.0,
-     3.4023862103022395,
-     -100.0
+     11.073546494161693,
+     0.0,
+     -91.0
     ],
     "rotation": [
      0.0,
-     120.0,
+     20.70954447874067,
      0.0
     ],
     "rotation_quaternion": [
-     0.5000000000000001,
+     0.9837136613618147,
      0.0,
-     0.8660254037844386,
+     0.17974268399613066,
      0.0
     ],
     "scale": [
@@ -8004,43 +10541,28 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
-   },
-   "box_collider": {
-    "half_extents": [
-     3.05,
-     4.5,
-     3.64
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     4.5,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_graves"
    }
   },
   {
    "tag": {
-    "name": "Ruined Tower"
+    "name": "Sword Graves"
    },
    "transform": {
     "position": [
-     52.0,
-     4.692886172537712,
-     -12.0
+     -20.0,
+     0.8555586852880871,
+     -60.0
     ],
     "rotation": [
      0.0,
-     300.0,
+     247.75400568547732,
      0.0
     ],
     "rotation_quaternion": [
-     -0.8660254037844387,
+     -0.5574119169569154,
      0.0,
-     0.49999999999999994,
+     0.8302360837944933,
      0.0
     ],
     "scale": [
@@ -8051,22 +10573,453 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
+    "model_name": "arena_sword_graves"
    },
    "box_collider": {
     "half_extents": [
-     3.05,
-     4.5,
-     3.64
+     0.99,
+     0.75,
+     0.95
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     4.5,
+     0.75,
      0.0
     ],
     "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Sword Graves"
+   },
+   "transform": {
+    "position": [
+     26.0,
+     0.25108913453617876,
+     -76.0
+    ],
+    "rotation": [
+     0.0,
+     153.11413468646015,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.23247675510695137,
+     0.0,
+     0.9726019526686869,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "arena_sword_graves"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.99,
+     0.75,
+     0.95
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.75,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     -62.0,
+     4.284495567942646,
+     -13.420687242214477
+    ],
+    "rotation": [
+     0.0,
+     -72.4660116383935,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8066199538403709,
+     0.0,
+     -0.5910704273321056,
+     0.0
+    ],
+    "scale": [
+     2.83443950629656,
+     2.83443950629656,
+     2.83443950629656
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     62.0,
+     5.8375788836012035,
+     -7.586971267428882
+    ],
+    "rotation": [
+     0.0,
+     73.34970104938073,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8020378892654079,
+     0.0,
+     0.5972731570920372,
+     0.0
+    ],
+    "scale": [
+     3.056228636372149,
+     3.056228636372149,
+     3.056228636372149
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     -62.0,
+     1.3254175292759052,
+     -33.467019721004306
+    ],
+    "rotation": [
+     0.0,
+     -75.48900123784615,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7907483321282852,
+     0.0,
+     -0.6121413850054047,
+     0.0
+    ],
+    "scale": [
+     2.653773520972925,
+     2.653773520972925,
+     2.653773520972925
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     62.0,
+     2.27482092407491,
+     -31.286785781722912
+    ],
+    "rotation": [
+     0.0,
+     92.1225647383214,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.693888582434094,
+     0.0,
+     0.7200823808201416,
+     0.0
+    ],
+    "scale": [
+     3.1266692840712276,
+     3.1266692840712276,
+     3.1266692840712276
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     -62.0,
+     1.2212448802255695,
+     -51.85712202658037
+    ],
+    "rotation": [
+     0.0,
+     -104.83100800418684,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6099307512495766,
+     0.0,
+     -0.792454717116459,
+     0.0
+    ],
+    "scale": [
+     2.726915026527172,
+     2.726915026527172,
+     2.726915026527172
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     62.0,
+     2.406031012949471,
+     -52.09251064430917
+    ],
+    "rotation": [
+     0.0,
+     74.37805860317135,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.796645668921841,
+     0.0,
+     0.6044465883666418,
+     0.0
+    ],
+    "scale": [
+     2.3614490915976116,
+     2.3614490915976116,
+     2.3614490915976116
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     -62.0,
+     2.5492229447913237,
+     -73.59696226232374
+    ],
+    "rotation": [
+     0.0,
+     -101.92927004926,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6297999530299916,
+     0.0,
+     -0.7767573747081005,
+     0.0
+    ],
+    "scale": [
+     2.511992404078477,
+     2.511992404078477,
+     2.511992404078477
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     62.0,
+     2.9958608486439644,
+     -71.55995681696619
+    ],
+    "rotation": [
+     0.0,
+     100.37993019994245,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6402442484146007,
+     0.0,
+     0.7681714016884664,
+     0.0
+    ],
+    "scale": [
+     2.4899608347243585,
+     2.4899608347243585,
+     2.4899608347243585
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     -62.0,
+     2.678088028059766,
+     -89.99929120110528
+    ],
+    "rotation": [
+     0.0,
+     -102.88400463148285,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6233065131084867,
+     0.0,
+     -0.7819776152272774,
+     0.0
+    ],
+    "scale": [
+     2.547001022127859,
+     2.547001022127859,
+     2.547001022127859
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     62.0,
+     1.8579329743693718,
+     -93.85469514164335
+    ],
+    "rotation": [
+     0.0,
+     80.0179502478091,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7659437439581954,
+     0.0,
+     0.6429075991861525,
+     0.0
+    ],
+    "scale": [
+     2.2153461174550197,
+     2.2153461174550197,
+     2.2153461174550197
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     -62.0,
+     1.6203662980433253,
+     -108.1353569325415
+    ],
+    "rotation": [
+     0.0,
+     -87.95803487954986,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7195941462458756,
+     0.0,
+     -0.6943948910300748,
+     0.0
+    ],
+    "scale": [
+     2.3894564964937786,
+     2.3894564964937786,
+     2.3894564964937786
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
+   }
+  },
+  {
+   "tag": {
+    "name": "Cliff"
+   },
+   "transform": {
+    "position": [
+     62.0,
+     1.39844360712145,
+     -110.20191489185812
+    ],
+    "rotation": [
+     0.0,
+     107.38571359129415,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5921136512395299,
+     0.0,
+     0.8058544682607353,
+     0.0
+    ],
+    "scale": [
+     2.3062813450270916,
+     2.3062813450270916,
+     2.3062813450270916
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "namaqualand_cliff_01"
    }
   },
   {
@@ -8528,7 +11481,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 176
+    "index": 250
    },
    "point_light": {
     "attenuation": {
@@ -8828,7 +11781,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 178,
+    "index": 252,
     "bone_name": "Weapon_R"
    }
   },
@@ -9079,7 +12032,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 180,
+    "index": 254,
     "bone_name": "Weapon_R"
    }
   },
@@ -9343,7 +12296,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 182,
+    "index": 256,
     "bone_name": "Weapon_L"
    }
   },
@@ -9594,7 +12547,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 184,
+    "index": 258,
     "bone_name": "Weapon_R"
    }
   },
@@ -9853,7 +12806,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 186,
+    "index": 260,
     "bone_name": "Weapon_L"
    }
   },
@@ -10109,7 +13062,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 188,
+    "index": 262,
     "bone_name": "Weapon_R"
    }
   },
@@ -10360,7 +13313,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 190,
+    "index": 264,
     "bone_name": "Weapon_R"
    }
   },
@@ -10619,7 +13572,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 192,
+    "index": 266,
     "bone_name": "Weapon_L"
    }
   },
@@ -10865,7 +13818,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 194,
+    "index": 268,
     "bone_name": "head"
    }
   },
@@ -11111,7 +14064,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 196,
+    "index": 270,
     "bone_name": "head"
    }
   },
@@ -11357,7 +14310,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 198,
+    "index": 272,
     "bone_name": "head"
    }
   },
@@ -11406,1212 +14359,13 @@
   },
   {
    "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     0.0,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     0.0,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     0.0,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -12.0,
-     0.0,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -12.0,
-     0.0,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -12.0,
-     0.0,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -12.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -12.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -12.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     0.0,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     0.0,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     0.0,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     4.0,
-     0.0,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     4.0,
-     0.0,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     4.0,
-     0.0,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     4.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     4.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     4.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     0.0,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     0.0,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     0.0,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     20.0,
-     0.0,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     20.0,
-     0.0,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     20.0,
-     0.0,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     20.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     20.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Floor Slab"
-   },
-   "transform": {
-    "position": [
-     20.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_floor"
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -20.0,
-     6.633648463464573,
-     -168.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
      -16.0,
-     6.895922076830883,
-     -168.0
+     0.06,
+     -162.0
     ],
     "rotation": [
      0.0,
@@ -12632,33 +14386,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
-     -12.0,
-     6.939435786303952,
-     -168.0
+     -16.0,
+     0.06,
+     -146.0
     ],
     "rotation": [
      0.0,
@@ -12679,33 +14418,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
-     -8.0,
-     8.395071199751749,
-     -168.0
+     -16.0,
+     0.06,
+     -130.0
     ],
     "rotation": [
      0.0,
@@ -12726,80 +14450,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -4.0,
-     8.586067591785257,
-     -168.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
      0.0,
-     9.535311518281603,
-     -168.0
+     0.06,
+     -162.0
     ],
     "rotation": [
      0.0,
@@ -12820,33 +14482,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
-     4.0,
-     11.229353763828943,
-     -168.0
+     0.0,
+     0.06,
+     -146.0
     ],
     "rotation": [
      0.0,
@@ -12867,33 +14514,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
-     7.9999999999999964,
-     11.185447700198933,
-     -168.0
+     0.0,
+     0.06,
+     -130.0
     ],
     "rotation": [
      0.0,
@@ -12914,80 +14546,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_floor"
    }
   },
   {
    "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     12.0,
-     13.344958219012973,
-     -168.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
+    "name": "Arena Floor"
    },
    "transform": {
     "position": [
      16.0,
-     11.45784377107666,
-     -168.0
+     0.06,
+     -162.0
     ],
     "rotation": [
      0.0,
@@ -13008,19 +14578,111 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Floor"
+   },
+   "transform": {
+    "position": [
+     16.0,
+     0.06,
+     -146.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Floor"
+   },
+   "transform": {
+    "position": [
+     16.0,
+     0.06,
+     -130.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_floor"
+   }
+  },
+  {
+   "tag": {
+    "name": "Border"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     4.0,
+     -168.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
    },
    "box_collider": {
     "half_extents": [
-     2.0,
-     3.0,
+     22.0,
+     8.0,
      0.5
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     0.0,
      0.0
     ],
     "show_gizmos": false
@@ -13028,13 +14690,1145 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Border"
+   },
+   "transform": {
+    "position": [
+     -22.0,
+     4.0,
+     -146.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     8.0,
+     22.0
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Border"
+   },
+   "transform": {
+    "position": [
+     22.0,
+     4.0,
+     -146.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "box_collider": {
+    "half_extents": [
+     0.5,
+     8.0,
+     22.0
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Border"
+   },
+   "transform": {
+    "position": [
+     -12.100000000000001,
+     4.0,
+     -124.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "box_collider": {
+    "half_extents": [
+     9.9,
+     8.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Border"
+   },
+   "transform": {
+    "position": [
+     12.100000000000001,
+     4.0,
+     -124.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "box_collider": {
+    "half_extents": [
+     9.9,
+     8.0,
+     0.5
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -166.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -162.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -158.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Arch"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -154.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -150.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -146.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -142.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Arch"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -138.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -134.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -130.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -22.5,
+     0.0,
+     -126.0
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -166.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -162.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -158.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Arch"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -154.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -150.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -146.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -142.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Arch"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -138.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_arch_ruin"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -130.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     22.5,
+     0.0,
+     -126.0
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -16.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -12.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -8.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -4.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Window"
+   },
+   "transform": {
+    "position": [
+     0.0,
+     0.0,
+     -168.6
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_stained_window"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     8.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     12.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     16.0,
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
    },
    "transform": {
     "position": [
      20.0,
-     10.401905385890467,
-     -168.0
+     0.0,
+     -168.5
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Wall"
+   },
+   "transform": {
+    "position": [
+     -12.0,
+     0.0,
+     -123.5
     ],
     "rotation": [
      0.0,
@@ -13055,1067 +15849,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_wall"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Wall"
    },
    "transform": {
     "position": [
-     -22.0,
-     5.2523975926526285,
-     -166.0
-    ],
-    "rotation": [
+     -8.0,
      0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     1.974119362744759,
-     -162.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.880841107344854,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.34187913028110545,
-     -154.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.03911050600421616,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     7.541831792681674e-05,
-     -146.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.0,
-     -138.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.0,
-     -130.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -22.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     6.861885387483947,
-     -166.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     3.1697788077348563,
-     -162.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     1.5049369273466,
-     -158.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.47717761508545126,
-     -154.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.05168251086551478,
-     -150.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     9.208403076890206e-05,
-     -146.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.0,
-     -142.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.0,
-     -138.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.0,
-     -134.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.0,
-     -130.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     22.0,
-     0.0,
-     -126.0
-    ],
-    "rotation": [
-     0.0,
-     -90.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     0.7071067811865476,
-     0.0,
-     -0.7071067811865476,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -20.16,
-     0.0,
-     -124.0
+     -123.5
     ],
     "rotation": [
      0.0,
@@ -14136,33 +15881,18 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
+    "model_name": "gc_crypt_wall"
    }
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Wall"
    },
    "transform": {
     "position": [
-     -16.48,
+     16.0,
      0.0,
-     -124.0
+     -123.5
     ],
     "rotation": [
      0.0,
@@ -14183,19 +15913,51 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_wall"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Chain"
+   },
+   "transform": {
+    "position": [
+     -19.0,
+     0.0,
+     -165.0
+    ],
+    "rotation": [
+     0.0,
+     -45.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9238795325112867,
+     0.0,
+     -0.3826834323650898,
+     0.0
+    ],
+    "scale": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     2.0,
-     3.0,
-     0.5
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -14203,13 +15965,13 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Column"
    },
    "transform": {
     "position": [
-     -12.8,
+     -9.0,
      0.0,
-     -124.0
+     -155.0
     ],
     "rotation": [
      0.0,
@@ -14223,26 +15985,26 @@
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     0.9,
+     0.9,
+     0.9
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "kit_wall"
+    "model_name": "gc_crypt_column"
    },
    "box_collider": {
     "half_extents": [
-     2.0,
-     3.0,
-     0.5
+     0.55,
+     4.0,
+     0.55
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     3.0,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -14250,342 +16012,13 @@
   },
   {
    "tag": {
-    "name": "Wall"
+    "name": "Arena Chain"
    },
    "transform": {
     "position": [
-     -9.120000000000001,
+     -19.0,
      0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     -5.440000000000001,
-     0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     5.4399999999999995,
-     0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     9.12,
-     0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     12.799999999999999,
-     0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     16.48,
-     0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Wall"
-   },
-   "transform": {
-    "position": [
-     20.16,
-     0.0,
-     -124.0
-    ],
-    "rotation": [
-     0.0,
-     0.0,
-     0.0
-    ],
-    "rotation_quaternion": [
-     1.0,
-     0.0,
-     0.0,
-     0.0
-    ],
-    "scale": [
-     1.0,
-     1.0,
-     1.0
-    ]
-   },
-   "model": {
-    "is_visible": true,
-    "model_name": "kit_wall"
-   },
-   "box_collider": {
-    "half_extents": [
-     2.0,
-     3.0,
-     0.5
-    ],
-    "is_trigger": false,
-    "layer": 1,
-    "local_offset": [
-     0.0,
-     3.0,
-     0.0
-    ],
-    "show_gizmos": false
-   }
-  },
-  {
-   "tag": {
-    "name": "Corner Tower"
-   },
-   "transform": {
-    "position": [
-     -23.0,
-     8.04793857215768,
-     -169.0
+     -127.0
     ],
     "rotation": [
      0.0,
@@ -14599,26 +16032,26 @@
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.6,
+     1.6,
+     1.6
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     3.05,
-     4.5,
-     3.64
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     4.5,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -14626,46 +16059,46 @@
   },
   {
    "tag": {
-    "name": "Corner Tower"
+    "name": "Arena Column"
    },
    "transform": {
     "position": [
-     -23.0,
-     0.34422044153421827,
-     -123.0
+     -9.0,
+     0.0,
+     -137.0
     ],
     "rotation": [
      0.0,
-     225.0,
+     0.0,
      0.0
     ],
     "rotation_quaternion": [
-     -0.3826834323650897,
+     1.0,
      0.0,
-     0.9238795325112867,
+     0.0,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     0.9,
+     0.9,
+     0.9
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
+    "model_name": "gc_crypt_column"
    },
    "box_collider": {
     "half_extents": [
-     3.05,
-     4.5,
-     3.64
+     0.55,
+     4.0,
+     0.55
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     4.5,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -14769,7 +16202,7 @@
    "transform": {
     "position": [
      -12.0,
-     3.2056634788350227,
+     1.6,
      -158.0
     ],
     "rotation": [
@@ -14911,13 +16344,107 @@
   },
   {
    "tag": {
-    "name": "Corner Tower"
+    "name": "Arena Chain"
    },
    "transform": {
     "position": [
-     23.0,
-     9.584803351093647,
-     -169.0
+     19.0,
+     0.0,
+     -165.0
+    ],
+    "rotation": [
+     0.0,
+     -135.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.38268343236508984,
+     0.0,
+     -0.9238795325112867,
+     0.0
+    ],
+    "scale": [
+     1.6,
+     1.6,
+     1.6
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_chain_anchor"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.6,
+     1.0,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Column"
+   },
+   "transform": {
+    "position": [
+     9.0,
+     0.0,
+     -155.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     0.9,
+     0.9,
+     0.9
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crypt_column"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.55,
+     4.0,
+     0.55
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     4.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Chain"
+   },
+   "transform": {
+    "position": [
+     19.0,
+     0.0,
+     -127.0
     ],
     "rotation": [
      0.0,
@@ -14931,26 +16458,26 @@
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     1.6,
+     1.6,
+     1.6
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
+    "model_name": "gc_chain_anchor"
    },
    "box_collider": {
     "half_extents": [
-     3.05,
-     4.5,
-     3.64
+     0.6,
+     1.0,
+     0.6
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     4.5,
+     1.0,
      0.0
     ],
     "show_gizmos": false
@@ -14958,46 +16485,46 @@
   },
   {
    "tag": {
-    "name": "Corner Tower"
+    "name": "Arena Column"
    },
    "transform": {
     "position": [
-     23.0,
-     0.2954825576544812,
-     -123.0
+     9.0,
+     0.0,
+     -137.0
     ],
     "rotation": [
      0.0,
-     315.0,
+     0.0,
      0.0
     ],
     "rotation_quaternion": [
-     -0.9238795325112867,
+     1.0,
      0.0,
-     0.3826834323650899,
+     0.0,
      0.0
     ],
     "scale": [
-     1.0,
-     1.0,
-     1.0
+     0.9,
+     0.9,
+     0.9
     ]
    },
    "model": {
     "is_visible": true,
-    "model_name": "arena_corner_tower"
+    "model_name": "gc_crypt_column"
    },
    "box_collider": {
     "half_extents": [
-     3.05,
-     4.5,
-     3.64
+     0.55,
+     4.0,
+     0.55
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     4.5,
+     4.0,
      0.0
     ],
     "show_gizmos": false
@@ -15101,7 +16628,7 @@
    "transform": {
     "position": [
      12.0,
-     2.9967151073726095,
+     1.6,
      -158.0
     ],
     "rotation": [
@@ -15329,7 +16856,7 @@
     ]
    },
    "parent": {
-    "index": 292
+    "index": 338
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -15638,7 +17165,7 @@
     ]
    },
    "parent": {
-    "index": 294
+    "index": 340
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -15726,7 +17253,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 294,
+    "index": 340,
     "bone_name": "Weapon_R"
    }
   },
