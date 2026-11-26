@@ -92,6 +92,9 @@ struct HUDStyle
 	float bossWidth = 0.0f;
 	// The mark on the locked-on enemy (a picture centered on its aim point, 'lockOnSize' pixels); none = a small square
 	std::shared_ptr<Texture> lockOnMark;
+	// The panel behind menus and read texts (the level up, a book, the pause menu): a nine-slice picture, its border
+	std::shared_ptr<Texture> menuPanel;
+	float menuPanelBorder = 40.0f;
 	float lockOnSize = 28.0f;
 	bool hasPostureMark     = false;
 

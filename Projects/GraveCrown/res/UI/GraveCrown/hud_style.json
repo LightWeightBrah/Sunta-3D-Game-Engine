@@ -117,5 +117,7 @@
   "posture_mark": true,
   "boss_width": 0.46,
   "lock_on_mark": "@game/UI/GraveCrown/lock_on.png",
-  "lock_on_size": 30
+  "lock_on_size": 30,
+  "menu_panel": "@game/UI/GraveCrown/menu_panel.png",
+  "menu_panel_border": 80
 }

@@ -59,6 +59,8 @@ namespace StyleKeys
 	constexpr const char* BossWidth    = "boss_width";
 	constexpr const char* LockOnMark   = "lock_on_mark";
 	constexpr const char* LockOnSize   = "lock_on_size";
+	constexpr const char* MenuPanel    = "menu_panel";
+	constexpr const char* MenuPanelBorder = "menu_panel_border";
 }
 
 std::unordered_map<std::string, std::unique_ptr<HUDStyle>> styles;
@@ -155,6 +157,8 @@ std::unique_ptr<HUDStyle> Load(const std::string& path)
 	style->bossWidth          = data.value(StyleKeys::BossWidth, 0.0f);
 	style->lockOnMark         = ReadImage(data, StyleKeys::LockOnMark, path);
 	style->lockOnSize         = data.value(StyleKeys::LockOnSize, style->lockOnSize);
+	style->menuPanel          = ReadImage(data, StyleKeys::MenuPanel, path);
+	style->menuPanelBorder    = data.value(StyleKeys::MenuPanelBorder, style->menuPanelBorder);
 	style->flaskIcon    = ReadImage(data, StyleKeys::FlaskIcon, path);
 	style->currencyIcon = ReadImage(data, StyleKeys::CurrencyIcon, path);
 

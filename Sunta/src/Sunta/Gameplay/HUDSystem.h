@@ -47,6 +47,10 @@ public:
 
 	// The sign of a blow that can't be blocked (Sekiro's perilous kanji): a red mark in the middle of the screen that
 	// swells in and fades within a second, drawn with the screen flash
+	// The panel of a menu or a read text: the style's framed panel when the game has one (true), else nothing drawn
+	// (false: the caller draws its own plain one). 'alpha' fades it
+	static bool DrawMenuPanel(const glm::vec2& topLeft, const glm::vec2& size, float alpha = 1.0f);
+
 	static void ShowPerilousSign();
 	static void DrawScreenFlash(const glm::vec2& screenSize);
 

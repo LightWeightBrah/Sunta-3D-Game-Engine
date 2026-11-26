@@ -407,14 +407,15 @@ void DrawPrompt(const HUDArea& area, const PlayerHUDComponent& hud)
 
 std::vector<std::string> WrapText(const std::string& text, float width, float pixelHeight);
 
-void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud)
+void DrawNotification(const HUDArea& area, const PlayerHUDComponent& hud, bool isMenuOpen)
 {
 	if (hud.notificationSecondsLeft <= 0.0f)
 		return;
 
 	const float alpha  = glm::clamp(hud.notificationSecondsLeft / NotificationFadeOut, 0.0f, 1.0f);
 	// While a text is read (a book's panel in the upper part of the screen) the message goes low, under it
-	const float areaY = hud.readingSecondsLeft > 0.0f ? NotificationUnderReadingY : NotificationAreaY;
+	// (and while a menu is open: the level up at a bonfire fills the upper half)
+	const float areaY = (hud.readingSecondsLeft > 0.0f || isMenuOpen) ? NotificationUnderReadingY : NotificationAreaY;
 	const glm::vec2 center = glm::vec2(area.topLeft.x + area.size.x * 0.5f, area.topLeft.y + area.size.y * areaY);
 
 	// A long message is broken into lines (and a smaller text) so it never runs off the screen
@@ -493,7 +494,8 @@ void DrawReading(const HUDArea& area, const PlayerHUDComponent& hud)
 	const glm::vec2 topLeft = glm::vec2(area.topLeft.x + (area.size.x - width) * 0.5f, area.topLeft.y + area.size.y * ReadingTopOfArea);
 	const float padding = 18.0f;
 
-	UIRenderer::DrawRectangle(topLeft - glm::vec2(padding), glm::vec2(width, height) + glm::vec2(padding * 2.0f), WithAlpha(ReadingBackground, ReadingBackground.a * alpha));
+	if (!HUDSystem::DrawMenuPanel(topLeft - glm::vec2(padding * 2.0f), glm::vec2(width, height) + glm::vec2(padding * 4.0f), alpha))
+		UIRenderer::DrawRectangle(topLeft - glm::vec2(padding), glm::vec2(width, height) + glm::vec2(padding * 2.0f), WithAlpha(ReadingBackground, ReadingBackground.a * alpha));
 	UIRenderer::DrawFadeLine(glm::vec2(topLeft.x + width * 0.5f, topLeft.y - padding), width, 2.0f, WithAlpha(PromptLineColor, alpha));
 	UIRenderer::DrawFadeLine(glm::vec2(topLeft.x + width * 0.5f, topLeft.y + height + padding), width, 2.0f, WithAlpha(PromptLineColor, alpha));
 	UIRenderer::DrawTextCentered(hud.readingTitle, glm::vec2(topLeft.x + width * 0.5f, topLeft.y + ReadingTitleHeight * 0.5f),
@@ -813,7 +815,8 @@ void DrawPlayer(EntityManager& entityManager, const glm::mat4& viewProjection, c
 
 	LevelUpSystem::DrawMenu(entityManager, area);
 	DrawPrompt(area, *hud);
-	DrawNotification(area, *hud);
+	const CharacterActionsComponent* playerActions = entityManager.GetComponent<CharacterActionsComponent>(playerID);
+	DrawNotification(area, *hud, playerActions && playerActions->IsResting());
 	DrawReading(area, *hud);
 	DrawVictoryMessage(area, *hud);
 
@@ -1057,6 +1060,15 @@ void HUDSystem::FlashScreen(const glm::vec3& color, float seconds, float holdSec
 	flash.fadeSeconds = glm::max(seconds, 0.01f);
 	flash.fadeLeft    = flash.fadeSeconds;
 	flash.strength    = glm::clamp(strength, 0.0f, 1.0f);
+}
+
+bool HUDSystem::DrawMenuPanel(const glm::vec2& topLeft, const glm::vec2& size, float alpha)
+{
+	if (!activeStyle || !activeStyle->menuPanel)
+		return false;
+	UIRenderer::DrawNineSlice(topLeft, size, *activeStyle->menuPanel, glm::vec4(activeStyle->menuPanelBorder), 0.5f,
+		glm::vec4(1.0f, 1.0f, 1.0f, alpha));
+	return true;
 }
 
 void HUDSystem::ShowPerilousSign()

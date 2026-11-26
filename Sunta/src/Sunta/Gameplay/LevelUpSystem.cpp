@@ -312,6 +312,8 @@ void DrawChangeRow(const std::string& label, const std::string& now, const std::
 
 void DrawPanel(const glm::vec2& topLeft, const glm::vec2& size)
 {
+	if (HUDSystem::DrawMenuPanel(topLeft - glm::vec2(6.0f), size + glm::vec2(12.0f)))
+		return;
 	UIRenderer::DrawRectangle(topLeft, size, MenuBackground);
 	UIRenderer::DrawRectangleOutline(topLeft, size, LineThickness * 2.0f, MenuBorder);
 }

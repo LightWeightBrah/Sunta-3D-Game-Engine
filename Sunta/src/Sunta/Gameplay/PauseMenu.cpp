@@ -1,4 +1,5 @@
 #include "Core/SuntaPreCompiled.h"
+#include "HUDSystem.h"
 #include "PauseMenu.h"
 
 #include "Audio/Audio.h"
@@ -99,6 +100,9 @@ void PauseMenu::Draw(const glm::vec2& areaTopLeft, const glm::vec2& areaSize)
 	UIRenderer::DrawRectangle(areaTopLeft, areaSize, ShadeColor);
 
 	const float titleY = center.y - unit * 0.17f;
+	// The game's framed panel behind the title and the buttons, when its HUD style has one
+	const bool isFramed = HUDSystem::DrawMenuPanel(glm::vec2(center.x - unit * ButtonWidth * 0.9f, titleY - unit * TitleHeight * 1.1f),
+		glm::vec2(unit * ButtonWidth * 1.8f, unit * (TitleHeight * 2.2f + 0.06f + ButtonCount * (ButtonHeight + ButtonGap)) + unit * 0.12f));
 	UIRenderer::DrawTextCentered("PAUSED", glm::vec2(center.x, titleY), unit * TitleHeight, TitleColor);
 	const float lineWidth = unit * ButtonWidth * 1.3f;
 	UIRenderer::DrawRectangle(glm::vec2(center.x - lineWidth * 0.5f, titleY + unit * TitleHeight * 0.75f), glm::vec2(lineWidth, 2.0f), LineColor);
@@ -110,8 +114,22 @@ void PauseMenu::Draw(const glm::vec2& areaTopLeft, const glm::vec2& areaSize)
 		const bool isSelected = i == selected;
 		buttonTopLeft[i] = glm::vec2(center.x - buttonSize.x * 0.5f, top);
 
-		UIRenderer::DrawRectangle(buttonTopLeft[i], buttonSize, isSelected ? SelectedColor : ButtonColor);
-		UIRenderer::DrawRectangleOutline(buttonTopLeft[i], buttonSize, isSelected ? 2.0f : 1.0f, LineColor);
+		if (isFramed)
+		{
+			// In a framed panel: the words alone, the chosen one on a soft band between two fading lines
+			if (isSelected)
+			{
+				const glm::vec2 middle = buttonTopLeft[i] + buttonSize * 0.5f;
+				UIRenderer::DrawFadeBand(middle, glm::vec2(buttonSize.x * 1.3f, buttonSize.y), glm::vec4(0.55f, 0.3f, 0.85f, 0.28f));
+				UIRenderer::DrawFadeLine(middle - glm::vec2(0.0f, buttonSize.y * 0.5f), buttonSize.x, 1.0f, LineColor);
+				UIRenderer::DrawFadeLine(middle + glm::vec2(0.0f, buttonSize.y * 0.5f), buttonSize.x, 1.0f, LineColor);
+			}
+		}
+		else
+		{
+			UIRenderer::DrawRectangle(buttonTopLeft[i], buttonSize, isSelected ? SelectedColor : ButtonColor);
+			UIRenderer::DrawRectangleOutline(buttonTopLeft[i], buttonSize, isSelected ? 2.0f : 1.0f, LineColor);
+		}
 		UIRenderer::DrawTextCentered(Labels[i], buttonTopLeft[i] + buttonSize * 0.5f, unit * TextHeight,
 			isSelected ? SelectedTextColor : TextColor);
 

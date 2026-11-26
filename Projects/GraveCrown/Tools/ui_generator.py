@@ -306,6 +306,30 @@ def lock_on_mark():
     save(finish(image, (S, S)), "lock_on.png")
 
 
+def menu_panel():
+    """The panel behind menus and books: a smoky near-black cloth, an iron frame whose corners are pointed brackets,
+    a violet hairline inside it (nine-slice: the 80 px border keeps its shape)"""
+    S = 256
+    W = S * SS
+    rng = np.random.default_rng(3)
+    smoke = Image.fromarray((rng.random((S // 8, S // 8)) * 255).astype(np.uint8)).resize((W, W), Image.BICUBIC)
+    smoke = np.asarray(smoke.filter(ImageFilter.GaussianBlur(6 * SS)), dtype=np.float32) / 255.0
+    inside = mask_from(lambda d: d.rectangle([10 * SS, 10 * SS, W - 10 * SS, W - 10 * SS], fill=255), W, W)
+    cloth = np.dstack([10 + 10 * smoke, 8 + 8 * smoke, 14 + 12 * smoke, inside * 228]).astype(np.uint8)
+
+    def frame(d):
+        d.rectangle([10 * SS, 10 * SS, W - 10 * SS, W - 10 * SS], outline=255, width=3 * SS)
+        for cx, cy, sx, sy in ((0, 0, 1, 1), (W, 0, -1, 1), (0, W, 1, -1), (W, W, -1, -1)):
+            d.polygon([(cx + sx * 2 * SS, cy + sy * 2 * SS), (cx + sx * 46 * SS, cy + sy * 10 * SS), (cx + sx * 16 * SS, cy + sy * 16 * SS),
+                       (cx + sx * 10 * SS, cy + sy * 46 * SS)], fill=255)
+
+    m = mask_from(frame, W, W)
+    hair = mask_from(lambda d: d.rectangle([20 * SS, 20 * SS, W - 20 * SS, W - 20 * SS], outline=255, width=SS), W, W)
+    image = layer(Image.new("RGBA", (W, W), (0, 0, 0, 0)), Image.fromarray(cloth, "RGBA"), glow(hair, VIOLET, 2 * SS, 0.6),
+                  glow(m, (0, 0, 0), 4 * SS, 0.7), iron_shape(m))
+    save(finish(image, (S, S)), "menu_panel.png")
+
+
 def main():
     health = bar_frame("health_frame.png", 420, 48, 18, 32, 70, 26)
     stamina = bar_frame("stamina_frame.png", 380, 36, 14, 22, 46, 22, left_spike=False)
@@ -318,6 +342,7 @@ def main():
     helm_icon()
     ash_icon()
     lock_on_mark()
+    menu_panel()
 
     # The style: the medallion at the top left, the bars beside it
     emblem = 96
@@ -352,6 +377,8 @@ def main():
         "boss_width": 0.46,
         "lock_on_mark": "@game/UI/GraveCrown/lock_on.png",
         "lock_on_size": 30,
+        "menu_panel": "@game/UI/GraveCrown/menu_panel.png",
+        "menu_panel_border": 80,
     }
     with open(os.path.join(OUT, "hud_style.json"), "w", encoding="utf-8") as out:
         json.dump(style, out, indent=2)
