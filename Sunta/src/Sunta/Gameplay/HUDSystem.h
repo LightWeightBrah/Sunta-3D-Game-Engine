@@ -44,6 +44,10 @@ public:
 	// 'strength' is how much it covers at its fullest: 1 = the color alone (a white screen), 0.35 = a blink of light
 	// over the picture that is still seen through it
 	static void FlashScreen(const glm::vec3& color, float seconds, float holdSeconds = 0.0f, float strength = 1.0f);
+
+	// The sign of a blow that can't be blocked (Sekiro's perilous kanji): a red mark in the middle of the screen that
+	// swells in and fades within a second, drawn with the screen flash
+	static void ShowPerilousSign();
 	static void DrawScreenFlash(const glm::vec2& screenSize);
 
 	// Call after the scene is drawn. 'viewProjection' is the camera the scene was drawn with, 'screenSize' the whole window

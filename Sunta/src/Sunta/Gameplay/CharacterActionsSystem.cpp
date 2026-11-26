@@ -654,7 +654,9 @@ void StartAction(EntityManager& entityManager, Character& character, CharacterAc
 	{
 		if (!actions.perilousWarningEffect.empty())
 			ParticleSystem::BurstAt(entityManager, actions.perilousWarningEffect, character.transform->position + glm::vec3(0.0f, 2.0f, 0.0f), 40);
-		HUDSystem::FlashScreen(glm::vec3(0.9f, 0.08f, 0.04f), 0.35f, 0.05f, 0.22f);
+		// (stronger and longer than before: the short faint flash was lost on a dark arena)
+		HUDSystem::FlashScreen(glm::vec3(0.95f, 0.06f, 0.03f), 0.55f, 0.12f, 0.38f);
+		HUDSystem::ShowPerilousSign();
 	}
 }
 

@@ -886,8 +886,44 @@ void HUDSystem::FlashScreen(const glm::vec3& color, float seconds, float holdSec
 	flash.strength    = glm::clamp(strength, 0.0f, 1.0f);
 }
 
+namespace
+{
+constexpr float PerilousSignSeconds = 0.9f;
+float perilousSignLeft = 0.0f;
+}
+
+void HUDSystem::ShowPerilousSign()
+{
+	perilousSignLeft = PerilousSignSeconds;
+}
+
 void HUDSystem::DrawScreenFlash(const glm::vec2& screenSize)
 {
+	if (perilousSignLeft > 0.0f)
+	{
+		// It swells in over the first fifth, then fades: a red diamond with a white "!" in it, as a warning sign
+		perilousSignLeft = glm::max(perilousSignLeft - EngineTime::deltaTime, 0.0f);
+		const float age   = 1.0f - perilousSignLeft / PerilousSignSeconds;
+		const float swell = glm::smoothstep(0.0f, 0.2f, age);
+		const float alpha = age < 0.2f ? swell : glm::clamp((1.0f - age) / 0.8f, 0.0f, 1.0f);
+		const float size  = screenSize.y * (0.06f + 0.02f * swell);
+		const glm::vec2 center = glm::vec2(screenSize.x * 0.5f, screenSize.y * 0.36f);
+
+		UIRenderer::Begin(screenSize);
+		// the diamond: stacked bars, widest in the middle
+		const int rows = 24;
+		for (int row = 0; row < rows; ++row)
+		{
+			const float t = (row + 0.5f) / rows * 2.0f - 1.0f;
+			const float half = size * (1.0f - std::abs(t));
+			const float y = center.y + t * size;
+			UIRenderer::DrawRectangle(glm::vec2(center.x - half, y - size / rows), glm::vec2(half * 2.0f, size * 2.0f / rows + 0.5f),
+				glm::vec4(0.75f, 0.03f, 0.02f, alpha * 0.85f));
+		}
+		UIRenderer::DrawTextCentered("!", center, size * 1.1f, glm::vec4(1.0f, 0.92f, 0.85f, alpha));
+		UIRenderer::End();
+	}
+
 	const ScreenFlash& flash = GetScreenFlash();
 	if (flash.fadeLeft <= 0.0f)
 		return;
