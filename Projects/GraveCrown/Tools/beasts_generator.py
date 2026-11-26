@@ -48,7 +48,7 @@ WOLF_CLIPS = {"idle": "Idle", "walk": "Walk", "run": "Run", "bite": "Attack_Ligh
               "death": "Death", "shake-off": "Hit", "howl": "Howl", "idle-alert": "Alert"}
 
 BEASTS = [
-    Beast("horse.glb", "BlackHorse", "black_horse", 2.25, HORSE_CLIPS, HORSE_NAMES, HORSE_NAMES),
+    Beast("horse.glb", "BlackHorse", "black_horse", 2.25, HORSE_CLIPS, None, HORSE_NAMES, brightness=0.9),
     Beast("enemy_wolf.glb", "AshWolf", "ash_wolf", 1.25, os.path.join(FOX, "skeleton.glb"),
           {os.path.join(FOX, "animations", name + ".glb"): ours for name, ours in WOLF_CLIPS.items()}, None),
 ]
