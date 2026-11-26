@@ -888,7 +888,7 @@ def reskin_with_heat(mesh, armature, least_covered=0.97):
     return False
 
 
-def reskin_by_proxy(mesh, armature, voxel_size=0.025, most_bones=4):
+def reskin_by_proxy(mesh, armature, voxel_size=0.025, most_bones=4, only_bones=None):
     """Skin weights from bone heat computed on a watertight copy of the body, then carried over to the real mesh.
     Bone heat (Blender's automatic weights) spreads a shoulder's weights the way skin stretches, but fails on
     generated meshes full of holes and loose shells; a voxel remesh of the body is closed, the heat solves on it, and
@@ -964,9 +964,17 @@ def reskin_by_proxy(mesh, armature, voxel_size=0.025, most_bones=4):
     bpy.ops.object.modifier_apply(modifier=transfer.name)
     bpy.data.objects.remove(proxy)
 
+    def strongest(slots):
+        return max(slots, key=lambda slot: slot[1])[0] if slots else None
+
     kept = 0
     for vertex in mesh.data.vertices:
-        if sum(slot.weight for slot in vertex.groups) > 0.05:
+        new_slots = [(mesh.vertex_groups[slot.group].name, slot.weight) for slot in vertex.groups]
+        is_weighted = sum(weight for _, weight in new_slots) > 0.05
+        # 'only_bones': the new weights only where both the old and the new ones give the vertex to those bones (the
+        # shoulders and arms of a body in a cape: the cloth keeps its own weights)
+        is_inside = only_bones is None or (strongest(previous[vertex.index]) in only_bones and strongest(new_slots) in only_bones)
+        if is_weighted and is_inside:
             continue
         kept += 1
         for slot in list(vertex.groups):
