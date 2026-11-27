@@ -68,12 +68,20 @@
      0.19
     ],
     "fog_density": 0.022,
-    "outline_strength": 0.45,
+    "outline_strength": 0.85,
     "outline_color": [
      0.06,
      0.03,
      0.07
     ],
+    "pixel_size": 3,
+    "palette_levels": 9,
+    "dither_strength": 0.0,
+    "hue_shift": 0.6,
+    "shadow_hue": 300.0,
+    "light_hue": 75.0,
+    "clean_lines": true,
+    "remove_orphans": true,
     "paint_radius": 0,
     "saturation": 0.85,
     "contrast": 1.18,

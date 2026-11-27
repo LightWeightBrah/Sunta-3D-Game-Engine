@@ -58,6 +58,15 @@ struct EnvironmentComponent
 	float     ditherStrength  = 0.5f;
 	float     outlineStrength = 0.0f;
 	glm::vec3 outlineColor    = glm::vec3(0.05f, 0.04f, 0.06f);
+	// The palette's color ramps (pixelSize > 1 and paletteLevels > 1: 'paletteLevels' steps of lightness): the darker
+	// steps turn their hue towards 'shadowHue', the lighter towards 'lightHue' (degrees of OKLab hue: 290 violet,
+	// 80 warm yellow), 'hueShift' 0..1 how far; 'cleanLines' keeps the outlines one pixel thick (no corners of L's),
+	// 'removeOrphans' drops lone pixels of a color unlike all their neighbours
+	float     hueShift        = 0.0f;
+	float     shadowHue       = 290.0f;
+	float     lightHue        = 80.0f;
+	bool      cleanLines      = true;
+	bool      removeOrphans   = true;
 
 	// A painted look (the picture as an oil painting: flat strokes of color with sharp edges between them, which
 	// hides how simple the models and their textures are): 'paintRadius' is the size of a stroke in screen pixels
@@ -90,6 +99,11 @@ struct EnvironmentComponent
 				ADD_PROPERTY_RANGED(EnvironmentComponent, ditherStrength, PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, outlineStrength, PropertyDataType::Float, 0.0f, 1.0f),
 				ADD_PROPERTY(EnvironmentComponent, outlineColor, PropertyDataType::Color),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, hueShift, PropertyDataType::Float, 0.0f, 1.0f),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, shadowHue, PropertyDataType::Float, 0.0f, 360.0f),
+				ADD_PROPERTY_RANGED(EnvironmentComponent, lightHue, PropertyDataType::Float, 0.0f, 360.0f),
+				ADD_PROPERTY(EnvironmentComponent, cleanLines, PropertyDataType::Bool),
+				ADD_PROPERTY(EnvironmentComponent, removeOrphans, PropertyDataType::Bool),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, paintRadius, PropertyDataType::Int, 0, 8),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, saturation, PropertyDataType::Float, 0.0f, 3.0f),
 				ADD_PROPERTY_RANGED(EnvironmentComponent, contrast, PropertyDataType::Float, 0.0f, 3.0f),

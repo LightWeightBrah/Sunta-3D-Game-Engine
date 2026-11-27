@@ -24,6 +24,7 @@ namespace
 constexpr const char* BrightPassShaderPath = "@engine/Shaders/BloomBrightPass.shader";
 constexpr const char* BlurShaderPath       = "@engine/Shaders/BloomBlur.shader";
 constexpr const char* CompositeShaderPath  = "@engine/Shaders/Composite.shader";
+constexpr const char* PixelArtShaderPath   = "@engine/Shaders/PixelArt.shader";
 
 // The glow is made in a picture this many times smaller than the screen: faster, and the blur reaches farther (a quarter: a glow wide enough to see around a fire)
 constexpr int BloomDownscale = 4;
@@ -119,6 +120,7 @@ void PostProcessing::EnsureInitialized()
 	brightPassShader = rendererDevice.CreateShader(VirtualFileSystem::Resolve(BrightPassShaderPath));
 	blurShader       = rendererDevice.CreateShader(VirtualFileSystem::Resolve(BlurShaderPath));
 	compositeShader  = rendererDevice.CreateShader(VirtualFileSystem::Resolve(CompositeShaderPath));
+	pixelArtShader   = rendererDevice.CreateShader(VirtualFileSystem::Resolve(PixelArtShaderPath));
 }
 
 void PostProcessing::EnsureTargets(int width, int height)
@@ -236,6 +238,14 @@ void PostProcessing::End(const PostProcessSettings& settings)
 
 	const int bloom = settings.isBloomEnabled ? MakeBloom(settings) : -1;
 
+	// Pixel art: its own three passes through a low resolution picture (the painted look keeps the composite)
+	if (settings.pixelSize > 1 && settings.paintRadius <= 0)
+	{
+		DrawPixelArt(settings, bloom);
+		rendererDevice.SetDepthTest(true);
+		return;
+	}
+
 	// 3. On the screen: the scene with the glow, tone mapped
 	compositeShader->Bind();
 	sceneTarget->BindColorTexture(0, SceneSlot);
@@ -272,6 +282,69 @@ void PostProcessing::End(const PostProcessSettings& settings)
 	DrawScreenQuad();
 
 	rendererDevice.SetDepthTest(true);
+}
+
+void PostProcessing::DrawPixelArt(const PostProcessSettings& settings, int bloom)
+{
+	const FramebufferSpecification& scene = sceneTarget->GetSpecification();
+	const int size   = glm::max(settings.pixelSize, 1);
+	const int width  = glm::max((scene.width  + size - 1) / size, 1);
+	const int height = glm::max((scene.height + size - 1) / size, 1);
+	for (auto& target : pixelTargets)
+		ResizeOrCreate(target, width, height, false);
+
+	Shader& shader = *pixelArtShader;
+	shader.Bind();
+	shader.TrySetUniform1f("pixelSize", (float)size);
+
+	// 0. Down: one surface per block, tone mapped, graded, brought to the palette's ramps
+	{
+		ScopedFramebufferBind bind(*pixelTargets[0]);
+		shader.TrySetUniform1i("pass", 0);
+		sceneTarget->BindColorTexture(0, SceneSlot);
+		shader.TrySetUniform1i("scene", SceneSlot);
+		sceneTarget->BindDepthTexture(DepthSlot);
+		shader.TrySetUniform1i("sceneDepth", DepthSlot);
+		shader.TrySetUniformBool("hasBloom", bloom >= 0);
+		if (bloom >= 0)
+		{
+			bloomTargets[bloom]->BindColorTexture(0, BloomSlot);
+			shader.TrySetUniform1i("bloom", BloomSlot);
+			shader.TrySetUniform1f("bloomIntensity", settings.bloomIntensity);
+		}
+		shader.TrySetUniform1f("exposure", settings.exposure);
+		shader.TrySetUniform1f("impact", CurrentImpact());
+		shader.TrySetUniform4f("depthFromProjection", settings.depthFromProjection.x, settings.depthFromProjection.y, 0.0f, 0.0f);
+		shader.TrySetUniform1f("saturation", settings.saturation);
+		shader.TrySetUniform1f("contrast", settings.contrast);
+		shader.TrySetUniform3f("colorTint", settings.colorTint);
+		shader.TrySetUniform1f("vignette", settings.vignette);
+		shader.TrySetUniform1f("paletteLevels", (float)glm::max(settings.paletteLevels, 0));
+		shader.TrySetUniform1f("hueShift", settings.hueShift);
+		shader.TrySetUniform1f("shadowHue", settings.shadowHue);
+		shader.TrySetUniform1f("lightHue", settings.lightHue);
+		DrawScreenQuad();
+	}
+
+	// 1. Ink: lone pixels, one pixel outlines without doubles
+	shader.TrySetUniform1f("outlineStrength", settings.outlineStrength);
+	shader.TrySetUniform3f("outlineColor", settings.outlineColor);
+	shader.TrySetUniform1f("outlineFog", settings.outlineFog);
+	shader.TrySetUniformBool("cleanLines", settings.cleanLines);
+	shader.TrySetUniformBool("removeOrphans", settings.removeOrphans);
+	{
+		ScopedFramebufferBind bind(*pixelTargets[1]);
+		shader.TrySetUniform1i("pass", 1);
+		pixelTargets[0]->BindColorTexture(0, SceneSlot);
+		shader.TrySetUniform1i("pixels", SceneSlot);
+		DrawScreenQuad();
+	}
+
+	// 2. Up: on the screen, each low pixel a square
+	shader.TrySetUniform1i("pass", 2);
+	pixelTargets[1]->BindColorTexture(0, SceneSlot);
+	shader.TrySetUniform1i("pixels", SceneSlot);
+	DrawScreenQuad();
 }
 
 void PostProcessing::Kick(float strength, float seconds)

@@ -181,6 +181,11 @@ namespace SceneKeys
 	constexpr const char* DitherStrength            = "dither_strength";
 	constexpr const char* OutlineStrength           = "outline_strength";
 	constexpr const char* OutlineColor              = "outline_color";
+	constexpr const char* HueShift                  = "hue_shift";
+	constexpr const char* ShadowHue                 = "shadow_hue";
+	constexpr const char* LightHue                  = "light_hue";
+	constexpr const char* CleanLines                = "clean_lines";
+	constexpr const char* RemoveOrphans             = "remove_orphans";
 	constexpr const char* PaintRadius               = "paint_radius";
 	constexpr const char* Saturation                = "saturation";
 	constexpr const char* Contrast                  = "contrast";
@@ -1265,6 +1270,11 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 			{ SceneKeys::DitherStrength,          environment->ditherStrength          },
 			{ SceneKeys::OutlineStrength,         environment->outlineStrength         },
 			{ SceneKeys::OutlineColor,            SerializeVec3(environment->outlineColor) },
+			{ SceneKeys::HueShift,                environment->hueShift                },
+			{ SceneKeys::ShadowHue,               environment->shadowHue               },
+			{ SceneKeys::LightHue,                environment->lightHue                },
+			{ SceneKeys::CleanLines,              environment->cleanLines              },
+			{ SceneKeys::RemoveOrphans,           environment->removeOrphans           },
 			{ SceneKeys::PaintRadius,             environment->paintRadius             },
 			{ SceneKeys::Saturation,              environment->saturation              },
 			{ SceneKeys::Contrast,                environment->contrast                },
@@ -2319,6 +2329,11 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		environment.hitImpactFrame          = environmentData.value(SceneKeys::HitImpactFrame,          environment.hitImpactFrame);
 		environment.pixelSize               = environmentData.value(SceneKeys::PixelSize,               environment.pixelSize);
 		environment.paletteLevels           = environmentData.value(SceneKeys::PaletteLevels,           environment.paletteLevels);
+		environment.hueShift                = environmentData.value(SceneKeys::HueShift,                environment.hueShift);
+		environment.shadowHue               = environmentData.value(SceneKeys::ShadowHue,               environment.shadowHue);
+		environment.lightHue                = environmentData.value(SceneKeys::LightHue,                environment.lightHue);
+		environment.cleanLines              = environmentData.value(SceneKeys::CleanLines,              environment.cleanLines);
+		environment.removeOrphans           = environmentData.value(SceneKeys::RemoveOrphans,           environment.removeOrphans);
 		environment.ditherStrength          = environmentData.value(SceneKeys::DitherStrength,          environment.ditherStrength);
 		environment.outlineStrength         = environmentData.value(SceneKeys::OutlineStrength,         environment.outlineStrength);
 		if (environmentData.contains(SceneKeys::OutlineColor))

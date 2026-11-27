@@ -33,6 +33,13 @@ struct PostProcessSettings
 	glm::vec3 outlineColor        = glm::vec3(0.0f);
 	float     outlineFog          = 0.0f; // the scene's fog density: the outlines fade with distance as the fog thickens
 	glm::vec2 depthFromProjection = glm::vec2(-1.0f, -0.2f);
+	// The palette's color ramps (PixelArt.shader): how far darker steps turn towards 'shadowHue' and lighter ones
+	// towards 'lightHue' (OKLab hue, degrees); one pixel lines without the corners of their L's; lone pixels removed
+	float     hueShift            = 0.0f;
+	float     shadowHue           = 290.0f;
+	float     lightHue            = 80.0f;
+	bool      cleanLines          = true;
+	bool      removeOrphans       = true;
 
 	// The painted look and the grade of the colors (see EnvironmentComponent)
 	int       paintRadius = 0;
@@ -87,6 +94,9 @@ private:
 	static inline std::shared_ptr<Shader> brightPassShader;
 	static inline std::shared_ptr<Shader> blurShader;
 	static inline std::shared_ptr<Shader> compositeShader;
+	static inline std::shared_ptr<Shader> pixelArtShader;
+	// The pixel art's low resolution pictures: the scene brought down to them, then inked
+	static inline std::shared_ptr<Framebuffer> pixelTargets[2];
 
 	// Two triangles over the whole screen
 	static inline std::shared_ptr<VertexArray> screenQuad;
@@ -97,6 +107,7 @@ private:
 
 	// Returns which of the two bloom targets holds the blurred glow
 	static int MakeBloom(const PostProcessSettings& settings);
+	static void DrawPixelArt(const PostProcessSettings& settings, int bloom);
 };
 
 }

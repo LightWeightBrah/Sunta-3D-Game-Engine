@@ -56,7 +56,11 @@ ENVIRONMENT = {
     # An ash-violet haze that takes the far hills into layers of silhouettes (the color of the storm's horizon),
     # ink on the near edges fading with it, colors a little drained and warm: one look for the whole world
     "fog_color": [0.22, 0.13, 0.19], "fog_density": 0.022,
-    "outline_strength": 0.45, "outline_color": [0.06, 0.03, 0.07],
+    "outline_strength": 0.85, "outline_color": [0.06, 0.03, 0.07],
+    # Pixel art, always on (PixelArt.shader, AIContext/PIXEL_ART_FUNDAMENTALS.md): small pixels (1080p -> 640 x 360),
+    # color ramps of 9 lightness steps whose shadows turn violet and lights warm, one pixel outlines without doubles
+    "pixel_size": 3, "palette_levels": 9, "dither_strength": 0.0, "hue_shift": 0.6, "shadow_hue": 300.0,
+    "light_hue": 75.0, "clean_lines": True, "remove_orphans": True,
     # (no paint filter: its strokes turned the black armor into grey patches and blurred every figure)
     "paint_radius": 0, "saturation": 0.85, "contrast": 1.18, "color_tint": [1.04, 0.96, 0.93], "vignette": 0.38, "exposure": 1.0,
 }
