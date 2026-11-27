@@ -222,12 +222,26 @@ vec4 Ink()
 	vec3  color = here.rgb;
 
 	// A lone pixel unlike its four neighbours (which agree with each other) is noise: it takes their color
+	// Noise of a texture on one surface: a pixel whose neighbours (three of the four at least) agree on another color
+	// takes it - only where all five lie on the same surface (a thin thing before it, a blade or a sword's tip, stays)
 	if (removeOrphans)
 	{
-		vec3 r = At(p + ivec2(1, 0)).rgb, l = At(p - ivec2(1, 0)).rgb, u = At(p + ivec2(0, 1)).rgb, d = At(p - ivec2(0, 1)).rgb;
+		vec4 n[4] = vec4[4](At(p + ivec2(1, 0)), At(p - ivec2(1, 0)), At(p + ivec2(0, 1)), At(p - ivec2(0, 1)));
 		const float same = 0.004;
-		if (distance(r, l) < same && distance(r, u) < same && distance(r, d) < same && distance(r, color) > same)
-			color = r;
+		bool oneSurface = true;
+		for (int i = 0; i < 4; i++)
+			oneSurface = oneSurface && abs(n[i].a - here.a) < here.a * 0.03 + 0.02;
+		for (int i = 0; i < 4 && oneSurface; i++)
+		{
+			int agree = 0;
+			for (int j = 0; j < 4; j++)
+				agree += distance(n[i].rgb, n[j].rgb) < same ? 1 : 0;
+			if (agree >= 3 && distance(n[i].rgb, color) > same)
+			{
+				color = n[i].rgb;
+				break;
+			}
+		}
 	}
 
 	if (outlineStrength > 0.0)

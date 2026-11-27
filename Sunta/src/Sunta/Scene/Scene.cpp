@@ -686,6 +686,13 @@ void Scene::Render(Renderer& renderer)
 		postProcessSettings.lightHue        = environment->lightHue;
 		postProcessSettings.cleanLines      = environment->cleanLines;
 		postProcessSettings.removeOrphans   = environment->removeOrphans;
+		if (PostProcessing::isClassicPixelLook)
+		{
+			postProcessSettings.pixelSize       = 4;
+			postProcessSettings.paletteLevels   = 16;
+			postProcessSettings.ditherStrength  = 0.0f;
+			postProcessSettings.outlineStrength = 0.7f;
+		}
 		postProcessSettings.outlineFog      = environment->isFogEnabled ? environment->fogDensity : 0.0f;
 		postProcessSettings.depthFromProjection = glm::vec2(sceneData.projectionMatrix[2][2], sceneData.projectionMatrix[3][2]);
 		postProcessSettings.paintRadius     = environment->paintRadius;

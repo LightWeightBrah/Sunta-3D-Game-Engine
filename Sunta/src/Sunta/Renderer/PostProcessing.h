@@ -83,6 +83,9 @@ public:
 	// A blow in the game kicks the picture by its camera shake times this (the scene's Environment sets it; 0: never)
 	static void KickFromHit(float cameraShake);
 	static inline float hitKickPerShake = 0.0f;
+	// Developer builds (F4): the first pixel look instead of PixelArt.shader - the full picture read in blocks of 4,
+	// 16 levels a channel, ink from the depth (Composite.shader) - to compare the two
+	static inline bool  isClassicPixelLook = false;
 
 private:
 	static inline std::shared_ptr<Framebuffer> sceneTarget;

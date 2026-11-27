@@ -239,7 +239,7 @@ void PostProcessing::End(const PostProcessSettings& settings)
 	const int bloom = settings.isBloomEnabled ? MakeBloom(settings) : -1;
 
 	// Pixel art: its own three passes through a low resolution picture (the painted look keeps the composite)
-	if (settings.pixelSize > 1 && settings.paintRadius <= 0)
+	if (settings.pixelSize > 1 && settings.paintRadius <= 0 && !isClassicPixelLook)
 	{
 		DrawPixelArt(settings, bloom);
 		rendererDevice.SetDepthTest(true);

@@ -6,6 +6,7 @@
 #include "Core/KeyCodes.h"
 #include "ECS/Component.h"
 #include "ECS/EntityManager.h"
+#include "Renderer/PostProcessing.h"
 
 namespace Sunta
 {
@@ -19,6 +20,8 @@ constexpr float ImmortalFloorPart = 0.1f;
 // F3 shows the scene as pixel art made of 3D (see EnvironmentComponent: big pixels, few colors, inked edges) and back,
 // to compare the looks while testing
 constexpr int PixelLookKey = SUNTA_KEY_F3;
+// the first pixel look against the new one (see PostProcessing::isClassicPixelLook)
+constexpr int ClassicPixelKey = SUNTA_KEY_F4;
 
 struct SavedLook
 {
@@ -83,6 +86,12 @@ void DeveloperCheats::Update(EntityManager& entityManager)
 
 	if (InputManager::IsKeyDown(PixelLookKey))
 		TogglePixelLook(entityManager);
+
+	if (InputManager::IsKeyDown(ClassicPixelKey))
+	{
+		PostProcessing::isClassicPixelLook = !PostProcessing::isClassicPixelLook;
+		HUDSystem::ShowNotification(entityManager, PostProcessing::isClassicPixelLook ? "OLD PIXEL LOOK (F4)" : "NEW PIXEL LOOK (F4)");
+	}
 
 	if (!isPlayerImmortal)
 		return;
