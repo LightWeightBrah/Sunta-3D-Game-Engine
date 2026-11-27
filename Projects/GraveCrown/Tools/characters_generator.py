@@ -105,6 +105,51 @@ GOLEM = {
     "Death":          MotionClip(MUTANT + "Dying.fbx"),
 }
 
+# The enemies' own moves (2026-11-27; before they had the Scrap Souls knight's and cultist's): Mixamo clips exported on
+# the king's rig (Tools/Blender/Mixamo/GraveEnemies/), retargeted like his
+def grave_enemy(name, first_frame=None, last_frame=None, **settings):
+    return MotionClip("Mixamo/GraveEnemies/{}.fbx".format(name), first_frame, last_frame, rig=motion_retarget.MIXAMO_NATIVE, **settings)
+
+
+# The hollow knight: a dead man still walking in his armor - the zombie's shamble, idle sway and stumbles (Mixamo's
+# Scary Zombie Pack), his blows wild swipes of the sword and a one-handed combo; the knight's block and parry stay
+HOLLOW = dict(ONE_HANDED)
+HOLLOW.update({
+    "Idle":           grave_enemy("HK_Idle"),
+    # (the zombie's own walk reached forward with both arms: a limp keeps the sword down)
+    "Walk":           grave_enemy("HK_Limp"),
+    "Walk_Back":      grave_enemy("HK_Limp_Back"),
+    "Run":            grave_enemy("HK_Limp_Run"),
+    "Attack_Light_1": grave_enemy("HK_Swipe", speed=1.1),
+    "Attack_Light_2": grave_enemy("HK_Right_Hand", speed=1.1),
+    "Attack_Light_3": grave_enemy("HK_Swipe", speed=1.25),
+    "Attack_Heavy":   grave_enemy("HK_Combo"),
+    "Hit":            grave_enemy("HK_Hit"),
+    "Parried":        grave_enemy("HK_Stumble", speed=0.8),
+    "Death":          grave_enemy("HK_Death"),
+    "Taunt":          grave_enemy("HK_Scream"),
+})
+
+# The gods' cultist: a sweep of the hand and an upward sweep for its blows, the slam into the ground, a spell thrown
+# forward
+GODS_CULTIST = dict(enemies_generator.CULTIST)
+GODS_CULTIST.update({
+    "Idle":           grave_enemy("GC_Idle"),
+    "Walk":           grave_enemy("GC_Walk"),
+    "Run":            grave_enemy("GC_Run"),
+    "Walk_Back":      grave_enemy("GC_Walk_Back"),
+    "Strafe_Left":    grave_enemy("GC_Walk_Left"),
+    "Strafe_Right":   grave_enemy("GC_Walk_Right"),
+    "Attack_Light_1": grave_enemy("GC_Sweep"),
+    "Attack_Light_2": grave_enemy("GC_Upward"),
+    "Attack_Light_3": grave_enemy("GC_Sweep", speed=1.2),
+    "Attack_Heavy":   grave_enemy("GC_Ground"),
+    "Cast_Spell":     grave_enemy("GC_Forwards"),
+    "Hit":            grave_enemy("GC_Hit"),
+    "Parried":        grave_enemy("GC_Hit_Large", speed=0.8),
+    "Death":          grave_enemy("GC_Death"),
+})
+
 CHARACTERS = [
     Enemy("player.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
@@ -112,10 +157,10 @@ CHARACTERS = [
           mixamo_skin="Mixamo/GraveKing/King_Skin_Idle.fbx"),
 
     # The hollow knight of the gods: a long sword of the same forge as the king's (the great sword's model, shorter)
-    Enemy("enemy_knight_rigged.glb", "HollowKnight", "hollow_knight", 1.95, ONE_HANDED,
+    Enemy("enemy_knight_rigged.glb", "HollowKnight", "hollow_knight", 1.95, HOLLOW,
           Weapon("weapon_greatsword_upright.glb", "hollow_knight_sword", 1.15, 0.1), brightness=1.5),
     # The masked cultist of the gods: a staff upright in the left hand (Scrap Souls' ash cultist staff), spells from the right
-    Enemy("enemy_cultist_b_rigged.glb", "GodsCultist", "gods_cultist", 1.85, enemies_generator.CULTIST,
+    Enemy("enemy_cultist_b_rigged.glb", "GodsCultist", "gods_cultist", 1.85, GODS_CULTIST,
           Weapon("../Enemies/cultist_staff.glb", "gods_cultist_staff", 1.85, 0.42), is_staff_in_left=True, brightness=1.7),
     # The court in the crypt (they stand by the throne; the lich reads the books found in the world aloud): the magic
     # pack's calm idle; the lich keeps a staff in its left hand, the butler's staff is never shown (its hands rest)

@@ -87,7 +87,10 @@ COURT_SWORD_HITBOX = {"local_offset": [0.0, 0.54, 0.0], "half_extents": [0.12, 0
 STAFF_HITBOX = {"local_offset": [0.0, 0.54, 0.0], "half_extents": [0.16, 0.54, 0.09]}
 # The knight pack's clips (one-handed): light 0.33-0.56, heavy 0.46-0.80
 KNIGHT_WINDOWS = {"light_hit_from": 0.33, "light_hit_to": 0.56, "heavy_hit_from": 0.46, "heavy_hit_to": 0.78}
-CULTIST_WINDOWS = {"light_hit_from": 0.38, "light_hit_to": 0.52, "heavy_hit_from": 0.24, "heavy_hit_to": 0.46}
+# (the gods' cultist's own clips, 2026-11-27: sweeps strike at 0.52-0.71, the slam at 0.25-0.45)
+CULTIST_WINDOWS = {"light_hit_from": 0.5, "light_hit_to": 0.72, "heavy_hit_from": 0.24, "heavy_hit_to": 0.46}
+# The hollow knight's zombie swipes (0.28-0.51) and its one-handed combo (several cuts from 0.18)
+HOLLOW_WINDOWS = {"light_hit_from": 0.26, "light_hit_to": 0.52, "heavy_hit_from": 0.16, "heavy_hit_to": 0.62}
 
 IDENTITY = [1.0, 0.0, 0.0, 0.0]
 
@@ -348,7 +351,9 @@ def hollow_knight(builder, position, yaw, name="Hollow Knight"):
     index = enemy_from(builder, "Hollow Ghoul", name, "hollow_knight", position, yaw, "Hollow Knight of the Gods", 150.0, 120,
                        ("hollow_knight_sword", KNIGHT_SWORD_HITBOX, 22.0, 22.0))
     entity = builder.get(index)
-    entity["character_actions"].update(KNIGHT_WINDOWS)
+    entity["character_actions"].update(HOLLOW_WINDOWS)
+    # (it limps: the clip's stride is 1.29 m walking, 2.39 running)
+    entity["character_animation"].update({"walk_animation_speed": 1.0, "run_animation_speed": 1.8})
     # A Sekiro swordsman: it guards about one blow in three and answers at once; blocked blows wear its posture down
     entity["melee_enemy"].update({"guard_chance": 0.35, "guard_seconds": 0.8})
     unseen_guard(builder, index, name)
@@ -415,6 +420,9 @@ def court_knight_ally(builder):
     entity = builder.get(index)
     entity["model"]["model_name"] = "court_knight"
     entity["model"]["emissive_strength"] = 1.0
+    # (a knight's clips, not the hollow one's limp: the knight's windows and strides)
+    entity["character_actions"].update(KNIGHT_WINDOWS)
+    entity["character_animation"].update({"walk_animation_speed": 1.37, "run_animation_speed": 3.2})
     entity["enemy"].update({"starts_dormant": True, "is_ally": True, "sight_distance": 18.0, "sight_angle_degrees": 120.0})
     entity["enemy_health_bar"]["display_name"] = "Knight of the Court"
     entity["box_collider"]["layer"] = 2  # the player's layer (a bit mask: Player = 1 << 1)
