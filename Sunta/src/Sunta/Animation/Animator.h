@@ -8,6 +8,23 @@
 
 namespace Sunta
 {
+	// Bones that hang and swing on their own (a cape, a loincloth, a tail, hair): every bone whose name starts with
+	// one of the 'prefix' list ("Cape_,Loin_") follows the animation only loosely. Its end is a point of its own in the world that keeps its speed
+	// ('damping' 0..1 slows it), falls with 'gravity' (m/s^2) and is pulled back towards where the animation puts it
+	// ('stiffness' 0..1 a frame at 60 fps); it never goes into the capsules from one node to another ('colliders':
+	// pairs "Thigh_L>Calf_L") of 'colliderRadius' meters. The bone then turns towards that point (at most 'mostTurn'
+	// degrees) and the bones below it follow
+	struct SpringBoneSettings
+	{
+		std::string prefix;
+		float       stiffness      = 0.12f;
+		float       damping        = 0.12f;
+		float       gravity        = 6.0f;
+		std::string colliders;
+		float       colliderRadius = 0.13f;
+		float       mostTurn       = 75.0f;
+	};
+
 	class Animator 
 	{
 	private:
@@ -49,6 +66,22 @@ namespace Sunta
 	    // Extra turns of bones on top of the animation (aiming the spine at an enemy), in the space of the model,
 	    // around the bone's own position; the bones below follow
 	    std::unordered_map<std::string, glm::quat> extraRotations;
+
+	    // Spring bones (see SpringBoneSettings): their simulated ends in the world, the capsules of the colliders from
+	    // the last pose, where the model stands in the world, and the step of time being simulated (0: no simulation)
+	    struct SpringState
+	    {
+	        glm::vec3 tail     = glm::vec3(0.0f);
+	        glm::vec3 previous = glm::vec3(0.0f);
+	        bool      isSet    = false;
+	    };
+	    SpringBoneSettings                          springs;
+	    std::unordered_map<std::string, SpringState> springStates;
+	    std::vector<std::string>                    springPrefixes;
+	    std::vector<std::pair<std::string, std::string>> springColliderNames;
+	    std::vector<std::pair<glm::vec3, glm::vec3>> springCapsules;
+	    glm::mat4                                   worldTransform = glm::mat4(1.0f);
+	    float                                       springStep     = 0.0f;
 	
 	public:
 	    Animator() = default;
@@ -89,6 +122,11 @@ namespace Sunta
 	    void SetExtraRotation(const std::string& nodeName, const glm::quat& modelSpaceRotation);
 	    void ClearExtraRotations() { extraRotations.clear(); }
 
+	    // Bones that swing on their own (an empty prefix: none). The model's place in the world is given every frame
+	    // before UpdateAnimation (the ends of the bones swing when the character moves or turns)
+	    void SetSpringBones(const SpringBoneSettings& settings);
+	    void SetWorldTransform(const glm::mat4& transform) { worldTransform = transform; }
+
 	    // How far the current animation is: 0 at the start, 1 at the end
 	    float GetProgress() const;
 
@@ -104,6 +142,9 @@ namespace Sunta
 	    void      AdvanceLayer             (float deltaTime);
 	    glm::mat4 GetLayerLocalTransform   (const AssimpNodeData* node);
 	    float     GetBlendFactor           () const;
+	    void      ApplySpring              (const AssimpNodeData* node, glm::mat4& globalTransform);
+	    void      UpdateSpringColliders    ();
+	    bool      IsSpringBone             (const std::string& name) const;
 	    glm::mat4 GetPreviousLocalTransform(const AssimpNodeData* node);
 	};
 }

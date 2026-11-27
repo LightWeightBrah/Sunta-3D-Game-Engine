@@ -266,6 +266,11 @@ def add_player(builder):
                     "deflect_seconds": 0.22, "riposte_animation": "Riposte",
                     "swing_effect": "", "heavy_swing_effect": ""})
     entity["character_animation"].update({"walk_animation_speed": 0.95, "run_animation_speed": 3.3})
+    # The cape and the loincloth swing on their own bones (characters_generator: cloth_bones), kept off the legs
+    entity.setdefault("animator", {}).update({
+        "spring_bones": "Cape_,Loin_", "spring_stiffness": 0.1, "spring_damping": 0.12, "spring_gravity": 5.0,
+        "spring_colliders": "Hips>Thigh_L,Hips>Thigh_R,Thigh_L>Shin_L,Shin_L>Foot_L,Thigh_R>Shin_R,Shin_R>Foot_R",
+        "spring_collider_radius": 0.17, "spring_most_turn": 70.0})
     entity["healing_flask"].update({"display_name": "Grave Draught", "hidden_while_drinking": "", "max_charges": 4,
                                     "heal_amount": 70.0})
     entity["currency"].update({"display_name": "Ash", "retrieve_prompt": "Gather your ash"})

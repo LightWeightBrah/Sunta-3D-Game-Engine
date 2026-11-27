@@ -145,7 +145,14 @@
   },
   {
    "animator": {
-    "current_animation_name": "Idle"
+    "current_animation_name": "Idle",
+    "spring_bones": "Cape_,Loin_",
+    "spring_stiffness": 0.1,
+    "spring_damping": 0.12,
+    "spring_gravity": 5.0,
+    "spring_colliders": "Hips>Thigh_L,Hips>Thigh_R,Thigh_L>Shin_L,Shin_L>Foot_L,Thigh_R>Shin_R,Shin_R>Foot_R",
+    "spring_collider_radius": 0.17,
+    "spring_most_turn": 70.0
    },
    "box_collider": {
     "half_extents": [

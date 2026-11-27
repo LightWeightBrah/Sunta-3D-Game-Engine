@@ -511,6 +511,10 @@ struct AnimatorComponent
 	std::string currentAnimationName;
 	bool needsModelSync = true;
 
+	// Bones that swing on their own: a cape, a loincloth (see SpringBoneSettings; an empty prefix: none)
+	SpringBoneSettings springBones;
+	bool               areSpringsSet = false;
+
 	static void RegisterToInspector()
 	{
 		InspectorComponentRegistry::RegisterComponent<AnimatorComponent>("Animator", EngineAssets::Icons::AnimationController, { });

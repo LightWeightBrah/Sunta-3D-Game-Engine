@@ -212,12 +212,16 @@ void Animator::UpdateAnimation(float deltaTime)
 	if (!currentAnimation) 
 	    return;
 	
+	springStep = springs.prefix.empty() ? 0.0f : glm::min(deltaTime, 1.0f / 20.0f);
 	currentTime = AdvanceTime(*currentAnimation, currentTime, deltaTime * playbackSpeed, isLooping);
 
 	AdvanceBlend(deltaTime);
 	AdvanceLayer(deltaTime);
 
 	CalculatePose();
+	if (springStep > 0.0f)
+		UpdateSpringColliders();
+	springStep = 0.0f;
 }
 
 void Animator::CalculatePose()
@@ -280,6 +284,9 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 		}
 	}
 
+	if (springStep > 0.0f && IsSpringBone(nodeName))
+		ApplySpring(node, globalTransform);
+
 	if (nodeWalkIndex < nodeModelTransforms.size())
 		nodeModelTransforms[nodeWalkIndex] = currentModel->GetGlobalInverseTransform() * globalTransform;
 	nodeWalkIndex++;
@@ -293,6 +300,142 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	
 	for (const auto& child : node->children)
 	    CalculateBoneTransform(&child, globalTransform, isInLayer, layerGlobal);
+}
+
+bool Animator::IsSpringBone(const std::string& name) const
+{
+	for (const std::string& prefix : springPrefixes)
+		if (name.compare(0, prefix.size(), prefix) == 0)
+			return true;
+	return false;
+}
+
+void Animator::SetSpringBones(const SpringBoneSettings& settings)
+{
+	springs = settings;
+	springStates.clear();
+	springCapsules.clear();
+	springColliderNames.clear();
+
+	// "Cape_,Loin_": every bone whose name starts with one of them
+	springPrefixes.clear();
+	size_t from = 0;
+	while (from < settings.prefix.size())
+	{
+		size_t comma = settings.prefix.find(',', from);
+		if (comma == std::string::npos)
+			comma = settings.prefix.size();
+		if (comma > from)
+			springPrefixes.push_back(settings.prefix.substr(from, comma - from));
+		from = comma + 1;
+	}
+
+	// "Thigh_L>Calf_L,Calf_L>Foot_L": capsules between two nodes
+	std::string list = settings.colliders;
+	size_t start = 0;
+	while (start < list.size())
+	{
+		size_t end = list.find(',', start);
+		if (end == std::string::npos)
+			end = list.size();
+		const std::string pair = list.substr(start, end - start);
+		const size_t arrow = pair.find('>');
+		if (arrow != std::string::npos)
+			springColliderNames.push_back({ pair.substr(0, arrow), pair.substr(arrow + 1) });
+		start = end + 1;
+	}
+}
+
+void Animator::UpdateSpringColliders()
+{
+	springCapsules.clear();
+	if (!currentModel)
+		return;
+	for (const auto& [from, to] : springColliderNames)
+	{
+		unsigned int a = 0, b = 0;
+		glm::mat4 first, second;
+		if (currentModel->TryGetNodeIndex(from, a) && currentModel->TryGetNodeIndex(to, b)
+			&& TryGetNodeModelTransform(a, first) && TryGetNodeModelTransform(b, second))
+		{
+			springCapsules.push_back({ glm::vec3(worldTransform * first[3]), glm::vec3(worldTransform * second[3]) });
+		}
+	}
+}
+
+// One spring bone: its end simulated in the world, the bone turned towards it (the bones below follow)
+void Animator::ApplySpring(const AssimpNodeData* node, glm::mat4& globalTransform)
+{
+	const glm::mat4 toModel     = currentModel->GetGlobalInverseTransform();
+	const glm::mat4 modelGlobal = toModel * globalTransform;
+
+	// Where the animation puts its end: its first child's resting place, or along the bone (its local Y)
+	glm::vec3 localTail = glm::vec3(0.0f, 0.3f, 0.0f);
+	if (!node->children.empty())
+		localTail = glm::vec3(node->children.front().transformation[3]);
+	const glm::vec3 head     = glm::vec3(worldTransform * modelGlobal[3]);
+	const glm::vec3 animated = glm::vec3(worldTransform * modelGlobal * glm::vec4(localTail, 1.0f));
+	const float     length   = glm::length(animated - head);
+	if (length < 0.0001f)
+		return;
+
+	SpringState& state = springStates[node->name];
+	if (!state.isSet)
+	{
+		state.tail = state.previous = animated;
+		state.isSet = true;
+	}
+
+	// Verlet: it keeps its speed (less some), falls, and is pulled back towards the animation
+	const float step     = springStep;
+	const float frames   = step * 60.0f;
+	const float keep     = glm::pow(1.0f - glm::clamp(springs.damping, 0.0f, 1.0f), frames);
+	const float pullBack = 1.0f - glm::pow(1.0f - glm::clamp(springs.stiffness, 0.0f, 1.0f), frames);
+	glm::vec3 tail = state.tail + (state.tail - state.previous) * keep + glm::vec3(0.0f, -springs.gravity, 0.0f) * step * step;
+	tail += (animated - tail) * pullBack;
+
+	// Out of the colliders' capsules (the legs walk inside the cape, the cape stays outside them)
+	for (const auto& [from, to] : springCapsules)
+	{
+		const glm::vec3 axis  = to - from;
+		const float     along = glm::clamp(glm::dot(tail - from, axis) / glm::max(glm::dot(axis, axis), 1e-6f), 0.0f, 1.0f);
+		const glm::vec3 closest = from + axis * along;
+		const glm::vec3 away  = tail - closest;
+		const float     gap   = glm::length(away);
+		if (gap < springs.colliderRadius)
+			tail = closest + (gap > 1e-5f ? away / gap : glm::normalize(animated - closest + glm::vec3(0.0f, 0.0f, 1e-3f))) * springs.colliderRadius;
+	}
+
+	// The bone keeps its length, and never turns further than mostTurn from where the animation has it
+	glm::vec3 wanted = glm::normalize(tail - head);
+	const glm::vec3 rest = (animated - head) / length;
+	const float angle = glm::acos(glm::clamp(glm::dot(rest, wanted), -1.0f, 1.0f));
+	const float most  = glm::radians(springs.mostTurn);
+	if (angle > most)
+	{
+		const glm::vec3 side = glm::cross(rest, wanted);
+		if (glm::length(side) > 1e-5f)
+			wanted = glm::angleAxis(most, glm::normalize(side)) * rest;
+	}
+	tail = head + wanted * length;
+	state.previous = state.tail;
+	state.tail     = tail;
+
+	if (glm::dot(rest, wanted) > 0.99999f)
+		return;
+	// The turn from the animated direction to the simulated one, in the world, said in the model's space
+	const glm::quat worldTurn = glm::rotation(rest, wanted);
+	const glm::quat modelRotation = glm::quat_cast(glm::mat3(glm::normalize(glm::vec3(worldTransform[0])),
+	                                                         glm::normalize(glm::vec3(worldTransform[1])),
+	                                                         glm::normalize(glm::vec3(worldTransform[2]))));
+	const glm::quat modelTurn = glm::inverse(modelRotation) * worldTurn * modelRotation;
+
+	// (the tree is in the space of the file's root: as SetExtraRotation)
+	const glm::mat4 rotation = glm::inverse(toModel) * glm::mat4_cast(modelTurn) * toModel;
+	const glm::vec3 pivot    = glm::vec3(globalTransform[3]);
+	glm::mat4 turn = rotation;
+	turn[3] = glm::vec4(pivot - glm::mat3(rotation) * pivot, 1.0f);
+	globalTransform = turn * globalTransform;
 }
 
 void Animator::SetExtraRotation(const std::string& nodeName, const glm::quat& modelSpaceRotation)

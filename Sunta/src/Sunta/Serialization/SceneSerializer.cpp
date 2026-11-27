@@ -29,6 +29,13 @@ namespace SceneKeys
 	constexpr const char* MeshComponent             = "mesh";
 	constexpr const char* ModelComponent            = "model";
 	constexpr const char* AnimatorComponent         = "animator";
+	constexpr const char* SpringBones               = "spring_bones";
+	constexpr const char* SpringStiffness           = "spring_stiffness";
+	constexpr const char* SpringDamping             = "spring_damping";
+	constexpr const char* SpringGravity             = "spring_gravity";
+	constexpr const char* SpringColliders           = "spring_colliders";
+	constexpr const char* SpringColliderRadius      = "spring_collider_radius";
+	constexpr const char* SpringMostTurn            = "spring_most_turn";
 	constexpr const char* BoxColliderComponent      = "box_collider";
 	constexpr const char* PhysicsBodyComponent      = "physics_body";
 	constexpr const char* DirectionalLightComponent = "directional_light";
@@ -853,6 +860,17 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		{
 			{ SceneKeys::CurrentAnimationName, animator->currentAnimationName }
 		};
+		if (!animator->springBones.prefix.empty())
+		{
+			auto& data = entityJson[SceneKeys::AnimatorComponent];
+			data[SceneKeys::SpringBones]          = animator->springBones.prefix;
+			data[SceneKeys::SpringStiffness]      = animator->springBones.stiffness;
+			data[SceneKeys::SpringDamping]        = animator->springBones.damping;
+			data[SceneKeys::SpringGravity]        = animator->springBones.gravity;
+			data[SceneKeys::SpringColliders]      = animator->springBones.colliders;
+			data[SceneKeys::SpringColliderRadius] = animator->springBones.colliderRadius;
+			data[SceneKeys::SpringMostTurn]       = animator->springBones.mostTurn;
+		}
 	}
 
 	if (auto* boxCollider = entityManager.GetComponent<BoxColliderComponent>(i))
@@ -1882,6 +1900,14 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 		auto& animatorComponent = entityManager.AddComponent<AnimatorComponent>(entity);
 
 		animatorComponent.currentAnimationName = animatorData.value(SceneKeys::CurrentAnimationName, "");
+		SpringBoneSettings& springs = animatorComponent.springBones;
+		springs.prefix         = animatorData.value(SceneKeys::SpringBones,          springs.prefix);
+		springs.stiffness      = animatorData.value(SceneKeys::SpringStiffness,      springs.stiffness);
+		springs.damping        = animatorData.value(SceneKeys::SpringDamping,        springs.damping);
+		springs.gravity        = animatorData.value(SceneKeys::SpringGravity,        springs.gravity);
+		springs.colliders      = animatorData.value(SceneKeys::SpringColliders,      springs.colliders);
+		springs.colliderRadius = animatorData.value(SceneKeys::SpringColliderRadius, springs.colliderRadius);
+		springs.mostTurn       = animatorData.value(SceneKeys::SpringMostTurn,       springs.mostTurn);
 	}
 
 	if (entityJson.contains(SceneKeys::BoxColliderComponent))

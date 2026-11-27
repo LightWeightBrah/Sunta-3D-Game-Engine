@@ -139,6 +139,7 @@ class Enemy:
     # own for this skeleton (rig=MIXAMO_NATIVE), the fingers close around the grip with the finger bones
     mixamo_skin: str = ""
     skirt: bool = False  # a loincloth between the legs hangs from the hips (see skirt_between_legs)
+    cloth_bones: bool = False  # bones for the cape and the loincloth the engine swings (see add_cloth_bones)
     brightness: float = 1.3
     weapons: list = field(default_factory=list)
 
@@ -305,6 +306,8 @@ def make_enemy(enemy, arguments):
         character_from_mesh.cape_follows_hips(armature, body)
     if enemy.skirt:
         character_from_mesh.skirt_between_legs(armature, body)
+    if enemy.cloth_bones:
+        character_from_mesh.add_cloth_bones(armature, body)
     body.name = enemy.name
     character_from_mesh.make_engine_textures(body, out_folder, enemy.name, enemy.brightness)
 

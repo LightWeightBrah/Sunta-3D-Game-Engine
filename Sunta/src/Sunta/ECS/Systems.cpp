@@ -114,7 +114,20 @@ void Systems::UpdateAnimators(EntityManager& entityManager, float deltaTime)
 	auto& animatorComponents = entityManager.GetAllComponents<AnimatorComponent>();
 
 	for (auto& component : animatorComponents)
+	{
+		if (!component.springBones.prefix.empty())
+		{
+			if (!component.areSpringsSet)
+			{
+				component.animator.SetSpringBones(component.springBones);
+				component.areSpringsSet = true;
+			}
+			const auto entity = entityManager.GetEntityIDForComponent(component);
+			if (const auto* world = entityManager.GetComponent<WorldMatrixComponent>(entity))
+				component.animator.SetWorldTransform(world->matrix);
+		}
 		component.animator.UpdateAnimation(deltaTime);
+	}
 }
 
 namespace

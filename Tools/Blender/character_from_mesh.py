@@ -120,7 +120,7 @@ def straighten_spine(armature, chain=("Hips", "Spine02", "Spine", "Chest", "Neck
     print("SPINE_STRAIGHTENED", [(name, round(armature.data.bones[name].head_local.z, 2)) for name in names])
 
 
-def cape_follows_hips(armature, mesh, behind=0.1, legs=("Thigh_L", "Thigh_R", "Calf_L", "Calf_R", "Foot_L", "Foot_R")):
+def cape_follows_hips(armature, mesh, behind=0.1, legs=("Thigh_L", "Thigh_R", "Calf_L", "Calf_R", "Shin_L", "Shin_R", "Foot_L", "Foot_R")):
     """A cape or a long coat rigged to the legs stretches between them in every stride and blow. The part of the mesh
     behind the legs (more than 'behind' meters behind the thighs' line, below the hips) moves its leg weights to the
     hips: the cape swings with the body and the legs move inside it"""
@@ -145,7 +145,7 @@ def cape_follows_hips(armature, mesh, behind=0.1, legs=("Thigh_L", "Thigh_R", "C
     print("CAPE_ON_HIPS {} vertices".format(moved))
 
 
-def skirt_between_legs(armature, mesh, keep_legs=0.3, legs=("Thigh_L", "Thigh_R", "Calf_L", "Calf_R")):
+def skirt_between_legs(armature, mesh, keep_legs=0.3, legs=("Thigh_L", "Thigh_R", "Calf_L", "Calf_R", "Shin_L", "Shin_R")):
     """A loincloth or a tabard hanging between the legs, weighted to both of them, is torn in two by every stride. The
     mesh between the thighs (closer to the middle than the thighs' roots, below the hips) moves its leg weights to the
     hips but for 'keep_legs' of them: the cloth hangs from the belt and only sways a little with the legs. It fades out
@@ -174,6 +174,85 @@ def skirt_between_legs(armature, mesh, keep_legs=0.3, legs=("Thigh_L", "Thigh_R"
         hips_group.add([vertex.index], weight * taken, "ADD")
         moved += 1
     print("SKIRT_ON_HIPS {} vertices".format(moved))
+
+
+def add_cloth_bones(armature, mesh, cape_bones=3, loin_bones=2):
+    """Chains of bones for the cloth that hangs (the engine swings them as spring bones, see Animator's
+    SpringBoneSettings): "Cape_1.." down the back from the chest to the cape's hem, "Loin_1.." down the front from the
+    hips. The mesh behind the back (or before the hips, between the legs) moves its weights to them by height, fading
+    in away from the body, so the cape's top stays on the shoulders and the armor under it on the body"""
+    bones = armature.data.bones
+    hips, chest = bones["Hips"].head_local.copy(), bones["Chest"].head_local.copy()
+    half = (abs(bones["Thigh_L"].head_local.x - hips.x) + abs(bones["Thigh_R"].head_local.x - hips.x)) * 0.5
+    points = [(v.index, v.co.copy()) for v in mesh.data.vertices]
+    low = min(co.z for _, co in points)
+    scale = chest.z - hips.z
+
+    def chain(prefix, parent, top, bottom, count):
+        select_only([armature])
+        bpy.context.view_layer.objects.active = armature
+        bpy.ops.object.mode_set(mode="EDIT")
+        edit_bones = armature.data.edit_bones
+        names, previous = [], edit_bones[parent]
+        for k in range(count):
+            bone = edit_bones.new("{}_{}".format(prefix, k + 1))
+            bone.head = top.lerp(bottom, k / count)
+            bone.tail = top.lerp(bottom, (k + 1) / count)
+            bone.roll = 0.0
+            bone.parent = previous
+            bone.use_connect = k > 0
+            previous = bone
+            names.append(bone.name)
+        bpy.ops.object.mode_set(mode="OBJECT")
+        return names
+
+    def reweight(names, top, bottom, share_of):
+        groups = [mesh.vertex_groups.get(name) or mesh.vertex_groups.new(name=name) for name in names]
+        moved = 0
+        for index, co in points:
+            share = share_of(co)
+            if share <= 0.0:
+                continue
+            vertex = mesh.data.vertices[index]
+            for slot in vertex.groups:
+                slot.weight *= 1.0 - share
+            # along the chain: between the two nearest bones' heads
+            t = min(max((top.z - co.z) / max(top.z - bottom.z, 1e-4), 0.0), 1.0) * len(names)
+            first = min(int(t), len(names) - 1)
+            second = min(first + 1, len(names) - 1)
+            blend = min(max(t - first, 0.0), 1.0) if second != first else 0.0
+            groups[first].add([index], share * (1.0 - blend), "ADD")
+            if blend > 0.0:
+                groups[second].add([index], share * blend, "ADD")
+            moved += 1
+        return moved
+
+    def smooth(value, low_edge, high_edge):
+        t = min(max((value - low_edge) / max(high_edge - low_edge, 1e-6), 0.0), 1.0)
+        return t * t * (3.0 - 2.0 * t)
+
+    # The back: the character faces +Y; the cape hangs behind the spine's line
+    behind = [co for _, co in points if co.y < chest.y - 0.12 * scale and co.z < chest.z]
+    if cape_bones and behind:
+        back_y = min(co.y for co in behind)
+        top = Vector((0.0, chest.y - 0.16 * scale, chest.z + 0.1 * scale))
+        bottom = Vector((0.0, back_y * 0.5 + chest.y * 0.5 - 0.1 * scale, low + 0.15 * scale))
+        names = chain("Cape", "Chest", top, bottom, cape_bones)
+        # how far behind the body (fades in from 10 to 22% of the chest's height behind the spine), and lower than the
+        # shoulder blades
+        moved = reweight(names, top, bottom, lambda co: smooth(chest.y - co.y, 0.12 * scale, 0.26 * scale)
+                         * (1.0 - smooth(co.z, chest.z - 0.25 * scale, chest.z + 0.05 * scale)))
+        print("CAPE_BONES {} vertices".format(moved))
+    if loin_bones:
+        front = [co for _, co in points if co.y > hips.y + 0.05 * scale and co.z < hips.z and abs(co.x - hips.x) < half * 0.6]
+        if front:
+            top = Vector((hips.x, max(co.y for co in front) - 0.04 * scale, hips.z - 0.05 * scale))
+            bottom = Vector((hips.x, top.y + 0.04 * scale, max(low + 0.3 * scale, min(co.z for co in front))))
+            names = chain("Loin", "Hips", top, bottom, loin_bones)
+            moved = reweight(names, top, bottom, lambda co: (1.0 - smooth(abs(co.x - hips.x) / max(half, 1e-4), 0.35, 0.8))
+                             * smooth(co.y - hips.y, 0.06 * scale, 0.14 * scale)
+                             * (1.0 - smooth(co.z, hips.z - 0.2 * scale, hips.z - 0.02 * scale)))
+            print("LOIN_BONES {} vertices".format(moved))
 
 
 def load_rigged_character(path, height, bone_names):
