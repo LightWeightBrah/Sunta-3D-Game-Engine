@@ -28,6 +28,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import boss_generator  # noqa: E402
 import character_from_mesh  # noqa: E402
+import finger_rig  # noqa: E402
 import hand_pinning  # noqa: E402
 import held_item_check  # noqa: E402
 import strike_windows  # noqa: E402
@@ -133,6 +134,11 @@ class Enemy:
     cape: bool = False  # a cape behind the legs follows the hips, not the legs (see cape_follows_hips)
     proxy_heat: object = False  # True, or the bones that take them (a tuple): skin weights from bone heat on a closed copy of the body (see reskin_by_proxy)
     smooth_weights: int = 0  # times the generated rig's skin weights are blurred (hard patches crush bulky armor; 0 = as rigged)
+    # A skin Mixamo's Auto-Rigger made (an .fbx in Tools/Blender, downloaded with its skin): its skeleton, weights and
+    # fingers instead of the generated rig, 'source' only lends its materials (the same mesh). Its clips are Mixamo's
+    # own for this skeleton (rig=MIXAMO_NATIVE), the fingers close around the grip with the finger bones
+    mixamo_skin: str = ""
+    skirt: bool = False  # a loincloth between the legs hangs from the hips (see skirt_between_legs)
     brightness: float = 1.3
     weapons: list = field(default_factory=list)
 
@@ -237,16 +243,59 @@ def shield_on_fist(armature, body, grip, weapon, thickness):
 # ========== Enemies ==========
 
 
+def take_materials(body, model_path):
+    """The materials of another model of the same mesh (the same texture coordinates) put on 'body'"""
+    objects_before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=model_path)
+    imported = [obj for obj in bpy.data.objects if obj not in objects_before]
+    donor = next(obj for obj in imported if obj.type == "MESH")
+    body.data.materials.clear()
+    for material in donor.data.materials:
+        body.data.materials.append(material)
+    for obj in imported:
+        bpy.data.objects.remove(obj)
+
+
+def grip_of_finger_bones(armature, hand, height):
+    """The Grip of a hand with finger bones: the middle of the hole its fingers make when posed into a fist (halfway
+    between the knuckles and the curled middle fingertip), the hole towards the thumb"""
+    rotations = finger_rig.pose_rotations(armature, hand, "fist")
+    for name, rotation in rotations.items():
+        bone = armature.pose.bones[name]
+        bone.rotation_mode = "QUATERNION"
+        bone.rotation_quaternion = rotation
+    bpy.context.view_layer.update()
+    # (a mitten hand has one finger chain for all four)
+    knuckle_fingers = [finger for finger in ("Index", "Middle", "Ring") if finger in hand.bones]
+    knuckles = sum((armature.matrix_world @ armature.pose.bones[hand.bones[finger][0]].head
+                    for finger in knuckle_fingers), Vector()) / len(knuckle_fingers)
+    middle = "Middle" if "Middle" in hand.bones else knuckle_fingers[0]
+    tip = armature.matrix_world @ armature.pose.bones[hand.bones[middle][-1]].tail
+    for name in rotations:
+        armature.pose.bones[name].rotation_quaternion = (1.0, 0.0, 0.0, 0.0)
+    bpy.context.view_layer.update()
+    center = (knuckles + tip) * 0.5
+    return character_from_mesh.Grip(center, hand.across.normalized(), hand.fingers.normalized(), hand.palm.normalized(),
+                                    0.045 * height / 1.8)
+
+
 def make_enemy(enemy, arguments):
     clear_scene()
     out_folder = os.path.join(os.path.abspath(arguments.out), enemy.folder)
     os.makedirs(out_folder, exist_ok=True)
 
-    our_names = {theirs: ours for ours, theirs in motion_retarget.MESHY.bone_of.items()}
-    armature, body = character_from_mesh.load_rigged_character(os.path.join(ENEMIES_FOLDER, enemy.source), enemy.height, our_names)
-    if enemy.straight_spine:
+    rig = None
+    if enemy.mixamo_skin:
+        armature, body = character_from_mesh.load_rigged_character(
+            os.path.join(BLENDER_FOLDER, enemy.mixamo_skin), enemy.height, motion_retarget.mixamo_native_names())
+        take_materials(body, os.path.join(ENEMIES_FOLDER, enemy.source))
+        rig = finger_rig.hands_from_skeleton(armature)
+    else:
+        our_names = {theirs: ours for ours, theirs in motion_retarget.MESHY.bone_of.items()}
+        armature, body = character_from_mesh.load_rigged_character(os.path.join(ENEMIES_FOLDER, enemy.source), enemy.height, our_names)
+    if enemy.straight_spine and not rig:
         character_from_mesh.straighten_spine(armature)
-    if enemy.proxy_heat:
+    if enemy.proxy_heat and not rig:
         upper = None if enemy.proxy_heat is True else set(enemy.proxy_heat)
         print("PROXY_HEAT", character_from_mesh.reskin_by_proxy(body, armature, only_bones=upper))
     # (blurred first: the cape's own weights are set after)
@@ -254,23 +303,27 @@ def make_enemy(enemy, arguments):
         character_from_mesh.smooth_skin_weights(body, enemy.smooth_weights)
     if enemy.cape:
         character_from_mesh.cape_follows_hips(armature, body)
+    if enemy.skirt:
+        character_from_mesh.skirt_between_legs(armature, body)
     body.name = enemy.name
     character_from_mesh.make_engine_textures(body, out_folder, enemy.name, enemy.brightness)
 
+    # The fists: the mesh's fingers bent around the grip (a rig without finger bones), or the finger bones' fist
+    make_fist = (lambda side: grip_of_finger_bones(armature, rig[side], enemy.height)) if rig else         (lambda side: character_from_mesh.make_fist(armature, body, side))
     if enemy.is_staff_in_left:
         # The right hand stays open (it casts), the staff goes through the left fist
         weapon_bone = STAFF_BONE
-        staff_fist = character_from_mesh.make_fist(armature, body, "_L")
+        staff_fist = make_fist("_L")
         held = [(STAFF_BONE, "Hand_L", weapon_in_fist(enemy.right_hand, staff_fist))]
     else:
         weapon_bone = knight_generator.WEAPON_BONE
-        right = character_from_mesh.make_fist(armature, body, "_R")
+        right = make_fist("_R")
         held = [(knight_generator.WEAPON_BONE, knight_generator.WEAPON_PARENT_BONE, weapon_in_fist(enemy.right_hand, right))]
     weapons = [(enemy.right_hand, held[0])]
 
     left = None
     if enemy.left_hand or enemy.is_left_fist:
-        left = character_from_mesh.make_fist(armature, body, "_L")
+        left = make_fist("_L")
         if enemy.left_hand:
             shield = load_weapon(enemy.left_hand, out_folder, enemy.brightness)
             thickness = max(v.co.y for v in shield.data.vertices) - min(v.co.y for v in shield.data.vertices)
@@ -282,6 +335,10 @@ def make_enemy(enemy, arguments):
     # The fists turn as the clips' hands do (the weapons lie in them as the motion capture held its props)
     grips = {"_R": None if enemy.is_staff_in_left else right, "_L": staff_fist if enemy.is_staff_in_left else left}
     actions = knight_generator.create_animations(armature, enemy.animations, character_from_mesh.hand_frames(armature, grips))
+    if rig:
+        # Every clip closes both hands around the hafts (the clips' own fingers hold props of other sizes)
+        for action in actions:
+            finger_rig.key_poses(armature, rig, action, {side: "fist" for side in ("_R", "_L") if rig[side].bones})
     if enemy.is_two_handed:
         # The left fist one fist from the right one on the haft (on the side the Idle holds it, see hold_with_both_hands)
         spacing = hand_pinning.FIST_SPACING * enemy.height / 1.8
@@ -310,7 +367,9 @@ def make_enemy(enemy, arguments):
     # Last: the twists of the hands spread up the arms (after every pin, which set the hands), and no arm bone jumps
     # further than a fast swing turns it in one frame
     hand_pinning.spread_twist(armature, actions)
-    hand_pinning.smooth_jerks(armature, actions, MOST_ARM_TURN_PER_FRAME)
+    if not rig:
+        # (motion capture made for this very skeleton keeps its own fast turns)
+        hand_pinning.smooth_jerks(armature, actions, MOST_ARM_TURN_PER_FRAME)
     held_item_check.check_actions(armature, body, actions, shield=shield)
     held_item_check.check_arms(armature, actions)
     weapon = enemy.right_hand

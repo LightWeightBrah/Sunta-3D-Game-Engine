@@ -67,14 +67,15 @@ MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specula
 # ========== The characters (Tools/characters_generator.py; STRIKE / STRIDE / WEAPON_HITBOX lines of its log) ==========
 
 KING_MOVES = [
-    {"animation": "Attack_Light_1", "hit_from": 0.38, "hit_to": 0.58, "damage_multiplier": 1.0},
-    {"animation": "Attack_Light_2", "hit_from": 0.2, "hit_to": 0.42, "damage_multiplier": 1.0},
-    {"animation": "Attack_Light_3", "hit_from": 0.38, "hit_to": 0.58, "damage_multiplier": 1.15},
-    {"animation": "Attack_Heavy", "hit_from": 0.43, "hit_to": 0.58, "damage_multiplier": 1.0},
-    {"animation": "Attack_Heavy_2", "hit_from": 0.12, "hit_to": 0.32, "damage_multiplier": 1.0},
-    {"animation": "Attack_Running", "hit_from": 0.44, "hit_to": 0.63, "damage_multiplier": 1.2},
-    # the finisher: the first cleave of the pack's "slash (2)" (frames 0-42), the blade comes down at 0.48-0.71
-    {"animation": "Riposte", "hit_from": 0.42, "hit_to": 0.72, "damage_multiplier": 1.0},
+    # (the clips Mixamo exported for the king's own rig, 2026-11-27: STRIKE lines of characters_generator.py's log)
+    {"animation": "Attack_Light_1", "hit_from": 0.4, "hit_to": 0.58, "damage_multiplier": 1.0},
+    {"animation": "Attack_Light_2", "hit_from": 0.38, "hit_to": 0.61, "damage_multiplier": 1.0},
+    {"animation": "Attack_Light_3", "hit_from": 0.42, "hit_to": 0.6, "damage_multiplier": 1.15},
+    {"animation": "Attack_Heavy", "hit_from": 0.3, "hit_to": 0.56, "damage_multiplier": 1.0},
+    {"animation": "Attack_Heavy_2", "hit_from": 0.14, "hit_to": 0.3, "damage_multiplier": 1.0},
+    {"animation": "Attack_Running", "hit_from": 0.44, "hit_to": 0.62, "damage_multiplier": 1.2},
+    # the finisher: the power slash, slower
+    {"animation": "Riposte", "hit_from": 0.3, "hit_to": 0.58, "damage_multiplier": 1.0},
 ]
 KING_SWORD_HITBOX = {"local_offset": [0.0, 0.79, 0.0], "half_extents": [0.17, 0.8, 0.07]}
 KNIGHT_SWORD_HITBOX = {"local_offset": [0.0, 0.52, 0.0], "half_extents": [0.12, 0.53, 0.05]}
@@ -826,11 +827,15 @@ def add_foliage(builder):
     Foliage draws thousands of them near the camera, swaying), off the road, camps and arena (grass_mask.png)"""
     center = (terrain_map.CENTER_X, 0.0, terrain_map.CENTER_Z)
     for name, model, count, scale, sway, distance, tint, seed in (
-            # (darkened: in the moonlight full-bright tufts read as white specks on the dark ash)
-            ("Ash Grass", "grass_ash", 20000, (0.8, 1.4), 0.10, 50.0, [0.55, 0.52, 0.52], 1),
-            ("Dead Grass", "grass_dead", 4500, (0.8, 1.3), 0.12, 60.0, [0.7, 0.62, 0.55], 2),
-            ("Grave Flowers", "grave_flowers", 1400, (0.7, 1.1), 0.08, 45.0, [1.0, 1.0, 1.0], 3),
-            ("Thistles", "thistle", 700, (0.8, 1.3), 0.05, 50.0, [1.0, 1.0, 1.0], 4)):
+            # Poly Haven's scanned clumps rendered into cards (foliage_from_scans.py), toned to the ash; the drawn
+            # violet grave flowers and thistles stay for the king's colour
+            ("Ash Grass", "scan_grass_low", 16000, (0.8, 1.3), 0.10, 50.0, [0.62, 0.6, 0.58], 1),
+            ("Tall Grass", "scan_grass_tall", 6000, (0.8, 1.35), 0.14, 60.0, [0.7, 0.66, 0.62], 2),
+            ("Nettles", "scan_nettle", 1600, (0.8, 1.2), 0.08, 45.0, [0.62, 0.6, 0.6], 5),
+            ("Ferns", "scan_fern", 900, (0.7, 1.1), 0.06, 45.0, [0.6, 0.58, 0.58], 6),
+            ("Celandine", "scan_celandine", 900, (0.8, 1.2), 0.08, 40.0, [0.72, 0.7, 0.68], 7),
+            ("Grave Flowers", "grave_flowers", 1000, (0.7, 1.1), 0.08, 45.0, [1.0, 1.0, 1.0], 3),
+            ("Thistles", "thistle", 500, (0.8, 1.3), 0.05, 50.0, [1.0, 1.0, 1.0], 4)):
         builder.add(named(name, center, foliage={
             "model_name": model, "count": count, "area_size_x": terrain_map.SIZE_X, "area_size_z": terrain_map.SIZE_Z,
             "density_mask": "@game/Terrain/grass_mask.png", "min_scale": scale[0], "max_scale": scale[1], "sway": sway,

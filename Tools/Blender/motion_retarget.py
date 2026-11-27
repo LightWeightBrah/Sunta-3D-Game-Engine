@@ -293,6 +293,10 @@ def world_rest_direction(armature, bone_name, aims_at=None):
     """Where the bone points at rest: towards the joint it aims at, or along itself"""
     bone = armature.data.bones[bone_name]
     target = aims_at.get(bone_name) if aims_at else None
+    if target and target not in armature.data.bones:
+        # (a mitten hand Mixamo rigged: one finger chain, "Index", instead of the middle finger the hand aims at)
+        target = target.replace("Middle", "Index")
+        target = target if target in armature.data.bones else None
     end = world_rest_head(armature, target) if target else armature.matrix_world @ bone.tail_local
     return (end - world_rest_head(armature, bone_name)).normalized()
 
@@ -315,6 +319,8 @@ def make_rest_corrections(source, rig, character):
     the motion capture did (an axe hanging down stuck out sideways)"""
     corrections = {}
     for our_bone, their_bone in rig.bone_of.items():
+        if their_bone not in source.data.bones or our_bone not in character.data.bones:
+            continue
         if rig.same_skeleton:
             corrections[our_bone] = world_rest_rotation(source, their_bone).inverted() @ world_rest_rotation(character, our_bone)
             continue

@@ -145,6 +145,37 @@ def cape_follows_hips(armature, mesh, behind=0.1, legs=("Thigh_L", "Thigh_R", "C
     print("CAPE_ON_HIPS {} vertices".format(moved))
 
 
+def skirt_between_legs(armature, mesh, keep_legs=0.3, legs=("Thigh_L", "Thigh_R", "Calf_L", "Calf_R")):
+    """A loincloth or a tabard hanging between the legs, weighted to both of them, is torn in two by every stride. The
+    mesh between the thighs (closer to the middle than the thighs' roots, below the hips) moves its leg weights to the
+    hips but for 'keep_legs' of them: the cloth hangs from the belt and only sways a little with the legs. It fades out
+    towards the thighs' line, so the leg armor beside it still follows the legs"""
+    bones = armature.data.bones
+    hips = bones["Hips"].head_local
+    half = (abs(bones["Thigh_L"].head_local.x - hips.x) + abs(bones["Thigh_R"].head_local.x - hips.x)) * 0.5
+    leg_groups = {mesh.vertex_groups[name].index for name in legs if name in mesh.vertex_groups}
+    hips_group = mesh.vertex_groups.get("Hips") or mesh.vertex_groups.new(name="Hips")
+    moved = 0
+    for vertex in mesh.data.vertices:
+        if vertex.co.z > hips.z:
+            continue
+        # 1 in the middle, 0 at 85% of the way to a thigh's root
+        side = abs(vertex.co.x - hips.x) / max(half, 1e-4)
+        share = 1.0 - min(max((side - 0.35) / 0.5, 0.0), 1.0)
+        if share <= 0.0:
+            continue
+        slots = [slot for slot in vertex.groups if slot.group in leg_groups]
+        weight = sum(slot.weight for slot in slots)
+        if weight <= 0.0:
+            continue
+        taken = (1.0 - keep_legs) * share
+        for slot in slots:
+            slot.weight *= 1.0 - taken
+        hips_group.add([vertex.index], weight * taken, "ADD")
+        moved += 1
+    print("SKIRT_ON_HIPS {} vertices".format(moved))
+
+
 def load_rigged_character(path, height, bone_names):
     """A rigged character (.glb: an armature with the mesh bound to it) standing on the ground at the origin, facing +Y,
     'height' tall, its bones renamed with 'bone_names' (theirs -> ours; the weights follow the names). Returns (armature, mesh)"""

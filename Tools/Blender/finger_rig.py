@@ -235,20 +235,32 @@ def hands_from_skeleton(armature):
             return armature.matrix_world @ armature.data.bones[name].head_local
 
         wrist = head("Hand" + side)
-        fingers = (head(bone_name("Middle", 1, side)) - wrist).normalized()
-        across = head(bone_name("Index", 1, side)) - head(bone_name("Little", 1, side))
+        # A hand Mixamo saw as a mitten (an armored gauntlet) has a thumb and one finger chain ("Index") for all four
+        bones = armature.data.bones
+        present = [finger for finger in FINGERS if bone_name(finger, 1, side) in bones]
+        middle = "Middle" if "Middle" in present else present[0]
+        fingers = (head(bone_name(middle, 1, side)) - wrist).normalized()
+        if "Index" in present and "Little" in present:
+            across = head(bone_name("Index", 1, side)) - head(bone_name("Little", 1, side))
+        else:
+            # towards the thumb's root
+            across = head(bone_name("Thumb", 1, side)) - wrist
         across = (across - fingers * across.dot(fingers)).normalized()
-        # Out of the palm: the side of the hand's plane where the thumb's root lies
         palm = fingers.cross(across)
-        if (head(bone_name("Thumb", 2, side)) - wrist).dot(palm) < 0.0:
+        if "Little" in present:
+            # Out of the palm: the side of the hand's plane where the thumb's root lies
+            if (head(bone_name("Thumb", 2, side)) - wrist).dot(palm) < 0.0:
+                palm = -palm
+        elif (head("Hips") - wrist).dot(palm) < 0.0:
+            # (uploaded in an A pose: the palms face the body)
             palm = -palm
-        tip = armature.matrix_world @ armature.data.bones[bone_name("Middle", 3, side)].tail_local
+        tip = armature.matrix_world @ bones[bone_name(middle, 3, side)].tail_local
         hand = Hand(side, wrist, fingers, across, palm, length=(tip - wrist).length)
-        for finger in FINGERS + ("Thumb",):
+        for finger in present + ["Thumb"]:
             hand.bones[finger] = tuple(bone_name(finger, joint, side) for joint in (1, 2, 3))
             hand.axes[finger] = fingers.copy() if finger == "Thumb" else across.copy()
         # The fingers of the uploaded mesh rest a little curled: measured, so 'open' is straight and 'two' points up
-        for finger in FINGERS:
+        for finger in present:
             sign = closing_sign(hand, finger)
             before = fingers
             for name in hand.bones[finger]:

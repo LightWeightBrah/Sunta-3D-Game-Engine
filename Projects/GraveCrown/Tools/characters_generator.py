@@ -29,35 +29,49 @@ enemies_generator.ENEMIES_FOLDER = os.path.join(BLENDER, "Generated", "GraveCrow
 
 GREAT_SWORD = "Mixamo/GreatSword/great sword "
 
-# The dead king: a great sword in both hands (Mixamo's Great Sword Pack), the dodges, the bonfire and the flask of the
-# Scrap Souls knight. A block is the great sword held across (no shield: the posture takes the blows), the parry a short
-# beat of it
-KING = dict(TWO_HANDED)
-KING.update({
-    "Idle":           MotionClip(GREAT_SWORD + "idle.fbx"),
-    "Roll":           MotionClip("Mixamo/Sprinting Forward Roll.fbx", 4, 36, speed=1.1),
-    "Backstep":       MotionClip("Mixamo/Standing Dodge Backward.fbx", 4, 40, speed=1.2),
-    "Attack_Running": MotionClip(GREAT_SWORD + "jump attack.fbx", speed=1.1),
-    # (the pack's "slash (3)" bent the right wrist 94 degrees mid-blow)
-    "Attack_Light_2": MotionClip(GREAT_SWORD + "slash (5).fbx", speed=0.95),
-    "Attack_Heavy_2": MotionClip(GREAT_SWORD + "high spin attack.fbx"),
-    "Block":          MotionClip(GREAT_SWORD + "blocking.fbx"),
-    "Block_Impact":   MotionClip(GREAT_SWORD + "impact (2).fbx"),
-    "Parry":          MotionClip(GREAT_SWORD + "blocking (2).fbx", speed=1.4),
-    "Hit":            MotionClip(GREAT_SWORD + "impact.fbx"),
-    "Parried":        MotionClip(GREAT_SWORD + "impact (3).fbx", speed=0.6),
-    "Rest":           MotionClip("Mixamo/Kneel Campfire.fbx", 50, 110, speed=1.2),
-    "Stand_Up":       MotionClip("Mixamo/Kneel Campfire.fbx", 188, 238, speed=1.3),
-    "Drink":          MotionClip("Mixamo/Drinking.fbx", 60, 180, speed=1.6),
-    "Taunt":          MotionClip(GREAT_SWORD + "power up.fbx"),
-    # The finisher on a broken guard: the pack's great overhead cleave, the whole body thrown into it
-    "Riposte":        MotionClip(GREAT_SWORD + "slash (2).fbx", 0, 42, speed=0.9),
+# The dead king: Mixamo's Auto-Rigger rigged him (2026-11-27; Meshy's rig twisted his shoulders and wrists in every
+# blow), and every clip is Mixamo's own for that skeleton - the Great Sword Pack's moves, a roll and a dodge, the bonfire
+# and the flask - exported for it (Tools/Blender/Mixamo/GraveKing/, not in the repository). A block is the great sword
+# held across (no shield: the posture takes the blows), the parry a short beat of it
+
+
+def king(name, first_frame=None, last_frame=None, **settings):
+    """A clip Mixamo exported for the king's own skeleton"""
+    return MotionClip("Mixamo/GraveKing/{}.fbx".format(name), first_frame, last_frame, rig=motion_retarget.MIXAMO_NATIVE, **settings)
+
+
+KING = {
+    "Idle":           king("GS_Idle"),
+    "Walk":           king("GS_Walk"),
+    "Run":            king("GS_Run"),
+    "Walk_Back":      king("GS_Walk_Back"),
+    "Strafe_Left":    king("GS_Strafe_Left"),
+    "Strafe_Right":   king("GS_Strafe_Right"),
+    "Attack_Light_1": king("GS_Downward_Slash", speed=0.95),
+    "Attack_Light_2": king("GS_Low_Slash", speed=0.95),
+    "Attack_Light_3": king("GS_Combo_Slash", speed=0.9),
+    "Attack_Heavy":   king("GS_Power_Slash", speed=0.85),
+    "Attack_Heavy_2": king("GS_High_Spin"),
+    "Attack_Running": king("GS_Jump_Attack", speed=1.1),
+    "Riposte":        king("GS_Power_Slash", speed=0.9),
+    "Roll":           king("Roll", 4, 36, speed=1.1),
+    "Backstep":       king("Dodge_Back", speed=1.2),
+    "Block":          king("GS_Block_Idle"),
+    "Block_Impact":   king("GS_Blocked_Impact"),
+    "Parry":          king("GS_To_Block", speed=1.4),
+    "Hit":            king("GS_Unblocked_Impact"),
+    "Parried":        king("GS_Head_Impact", speed=0.6),
+    "Death":          king("Death_Forward"),
+    "Rest":           king("Campfire", 50, 110, speed=1.2),
+    "Stand_Up":       king("Campfire", 188, 238, speed=1.3),
+    "Drink":          king("Drinking", 60, 180, speed=1.6),
+    "Taunt":          king("GS_Power_Up"),
     # In the saddle (Mesh2Motion's riding clips, CC0; baked by bake_mount_clips.py): the sword in the right fist, the
     # left hand on the reins
     "Ride_Idle":      MotionClip("Mesh2Motion/human/Mount_Idle.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Idle"),
     "Ride_Walk":      MotionClip("Mesh2Motion/human/Mount_Walk.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Walk"),
     "Ride_Gallop":    MotionClip("Mesh2Motion/human/Mount_Gallop.glb", rig=motion_retarget.QUATERNIUS, action="Mount_Gallop"),
-})
+}
 RIDING = ("Ride_Idle", "Ride_Walk", "Ride_Gallop")
 
 # The Chain Warden, the gods' hand at the edge of the plains: the horned black knight (the rider's model, on foot), half a
@@ -92,11 +106,10 @@ GOLEM = {
 }
 
 CHARACTERS = [
-    Enemy("player_rigged.glb", "GraveKing", "grave_king", 2.05, KING,
+    Enemy("player.glb", "GraveKing", "grave_king", 2.05, KING,
           Weapon("weapon_greatsword_upright.glb", "grave_greatsword", 1.75, 0.1),
-          is_left_fist=True, is_two_handed=True, brightness=0.9, one_hand_actions=RIDING, straight_spine=True, cape=True, proxy_heat=("Chest", "Neck", "Shoulder_L", "Shoulder_R", "UpperArm_L", "UpperArm_R", "LowerArm_L", "LowerArm_R", "Hand_L", "Hand_R")),
-    # The shoulders and arms take bone heat weights from a closed copy of the body (the generated ones crumpled the
-    # shoulders); the cape and the legs keep theirs (heat tied the cape to the arms). smooth_weights tore the cape
+          is_left_fist=True, is_two_handed=True, brightness=0.9, one_hand_actions=RIDING, cape=True, skirt=True,
+          mixamo_skin="Mixamo/GraveKing/King_Skin_Idle.fbx"),
 
     # The hollow knight of the gods: a long sword of the same forge as the king's (the great sword's model, shorter)
     Enemy("enemy_knight_rigged.glb", "HollowKnight", "hollow_knight", 1.95, ONE_HANDED,
