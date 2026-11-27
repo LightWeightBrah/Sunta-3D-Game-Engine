@@ -48,6 +48,7 @@
 #include "Effects/ParticleSystem.h"
 #include "Effects/LiquidOrbRenderer.h"
 #include "Effects/SwarmSystem.h"
+#include "Effects/FoliageSystem.h"
 #include "Effects/EffectSystem.h"
 #include "Gameplay/DeveloperCheats.h"
 #include "Effects/WeaponTrailSystem.h"
@@ -740,6 +741,9 @@ void Scene::Render(Renderer& renderer)
 	// The swarms: thousands of solid copies, then the streaks of light behind the falling ones
 	SwarmSystem::Draw(entityManager, sceneData);
 
+	// Grass and flowers near the camera, swaying
+	FoliageSystem::Draw(entityManager, sceneData, sceneSeconds);
+
 	// The balls of liquid bend the sky of the scene: after the solid things (they are a little see-through)
 	sceneSeconds += EngineTime::deltaTime;
 	LiquidOrbRenderer::Draw(entityManager, sceneData.viewMatrix, sceneData.projectionMatrix, sceneData.cameraPosition,
@@ -929,6 +933,7 @@ void Scene::BeginPlay()
 	MountSystem::PrepareForPlay(entityManager);
 	PickupSystem::PrepareForPlay(entityManager);
 	TerrainSystem::PrepareForPlay(entityManager);
+	FoliageSystem::PrepareForPlay(entityManager);
 	RespawnSystem::PrepareForPlay(entityManager);
 	BossSystem::PrepareForPlay(entityManager);
 	ParticleSystem::Clear(entityManager);

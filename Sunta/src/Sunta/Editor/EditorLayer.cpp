@@ -252,6 +252,7 @@ void EditorLayer::RegisterComponentsToInspector()
 	GlowSpriteComponent::RegisterToInspector();
 	LiquidOrbComponent::RegisterToInspector();
 	SwarmComponent::RegisterToInspector();
+	FoliageComponent::RegisterToInspector();
 	EffectShapeComponent::RegisterToInspector();
 	CutsceneComponent::RegisterToInspector();
 	AudioSourceComponent::RegisterToInspector();

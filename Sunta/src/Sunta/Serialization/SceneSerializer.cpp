@@ -107,6 +107,20 @@ namespace SceneKeys
 	constexpr const char* GlowSpriteComponent       = "glow_sprite";
 	constexpr const char* LiquidOrbComponent        = "liquid_orb";
 	constexpr const char* SwarmComponent            = "swarm";
+	constexpr const char* FoliageComponent          = "foliage";
+	constexpr const char* FoliageModel              = "model_name";
+	constexpr const char* FoliageCount              = "count";
+	constexpr const char* FoliageAreaX              = "area_size_x";
+	constexpr const char* FoliageAreaZ              = "area_size_z";
+	constexpr const char* FoliageMask               = "density_mask";
+	constexpr const char* FoliageMinScale           = "min_scale";
+	constexpr const char* FoliageMaxScale           = "max_scale";
+	constexpr const char* FoliageSway               = "sway";
+	constexpr const char* FoliageSwaySpeed          = "sway_speed";
+	constexpr const char* FoliageDrawDistance       = "draw_distance";
+	constexpr const char* FoliageTint               = "tint";
+	constexpr const char* FoliageTintVariation      = "tint_variation";
+	constexpr const char* FoliageSeed               = "seed";
 	constexpr const char* SwarmCount                = "count";
 	constexpr const char* SwarmSeed                 = "seed";
 	constexpr const char* SwarmPieceSize            = "piece_size";
@@ -1348,6 +1362,26 @@ static json SerializeEntity(EntityManager& entityManager, unsigned int i)
 		};
 	}
 
+	if (auto* foliage = entityManager.GetComponent<FoliageComponent>(i))
+	{
+		entityJson[SceneKeys::FoliageComponent] =
+		{
+			{ SceneKeys::FoliageModel,         foliage->modelName     },
+			{ SceneKeys::FoliageCount,         foliage->count         },
+			{ SceneKeys::FoliageAreaX,         foliage->areaSizeX     },
+			{ SceneKeys::FoliageAreaZ,         foliage->areaSizeZ     },
+			{ SceneKeys::FoliageMask,          foliage->densityMask   },
+			{ SceneKeys::FoliageMinScale,      foliage->minScale      },
+			{ SceneKeys::FoliageMaxScale,      foliage->maxScale      },
+			{ SceneKeys::FoliageSway,          foliage->sway          },
+			{ SceneKeys::FoliageSwaySpeed,     foliage->swaySpeed     },
+			{ SceneKeys::FoliageDrawDistance,  foliage->drawDistance  },
+			{ SceneKeys::FoliageTint,          { foliage->tint.x, foliage->tint.y, foliage->tint.z } },
+			{ SceneKeys::FoliageTintVariation, foliage->tintVariation },
+			{ SceneKeys::FoliageSeed,          foliage->seed          }
+		};
+	}
+
 	if (auto* swarm = entityManager.GetComponent<SwarmComponent>(i))
 	{
 		entityJson[SceneKeys::SwarmComponent] =
@@ -2426,6 +2460,26 @@ static void DeserializeEntity(EntityManager& entityManager, unsigned int entity,
 
 		if (orbData.contains(SceneKeys::OrbTint))
 			orb.tint = DeserializeVec3(orbData[SceneKeys::OrbTint]);
+	}
+
+	if (entityJson.contains(SceneKeys::FoliageComponent))
+	{
+		const auto& data = entityJson[SceneKeys::FoliageComponent];
+		auto& foliage = entityManager.AddComponent<FoliageComponent>(entity);
+		foliage.modelName     = data.value(SceneKeys::FoliageModel,         foliage.modelName);
+		foliage.count         = data.value(SceneKeys::FoliageCount,         foliage.count);
+		foliage.areaSizeX     = data.value(SceneKeys::FoliageAreaX,         foliage.areaSizeX);
+		foliage.areaSizeZ     = data.value(SceneKeys::FoliageAreaZ,         foliage.areaSizeZ);
+		foliage.densityMask   = data.value(SceneKeys::FoliageMask,          foliage.densityMask);
+		foliage.minScale      = data.value(SceneKeys::FoliageMinScale,      foliage.minScale);
+		foliage.maxScale      = data.value(SceneKeys::FoliageMaxScale,      foliage.maxScale);
+		foliage.sway          = data.value(SceneKeys::FoliageSway,          foliage.sway);
+		foliage.swaySpeed     = data.value(SceneKeys::FoliageSwaySpeed,     foliage.swaySpeed);
+		foliage.drawDistance  = data.value(SceneKeys::FoliageDrawDistance,  foliage.drawDistance);
+		if (data.contains(SceneKeys::FoliageTint) && data[SceneKeys::FoliageTint].size() == 3)
+			foliage.tint = glm::vec3(data[SceneKeys::FoliageTint][0], data[SceneKeys::FoliageTint][1], data[SceneKeys::FoliageTint][2]);
+		foliage.tintVariation = data.value(SceneKeys::FoliageTintVariation, foliage.tintVariation);
+		foliage.seed          = data.value(SceneKeys::FoliageSeed,          foliage.seed);
 	}
 
 	if (entityJson.contains(SceneKeys::SwarmComponent))

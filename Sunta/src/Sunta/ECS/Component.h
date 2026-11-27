@@ -24,6 +24,7 @@
 #include "Effects/GlowSpriteComponent.h"
 #include "Effects/LiquidOrbComponent.h"
 #include "Effects/SwarmComponent.h"
+#include "Effects/FoliageComponent.h"
 #include "Effects/EffectShapeComponent.h"
 #include "Gameplay/CutsceneComponent.h"
 #include "Gameplay/FogGateComponent.h"

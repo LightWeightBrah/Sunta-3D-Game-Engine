@@ -122,6 +122,7 @@ const std::vector<MenuEntry>& GetEntries()
 		Plain<WeaponTrailComponent>     ("Weapon Trail",      Rendering, "A glowing streak behind a swung weapon"),
 		Plain<GlowSpriteComponent>      ("Glow Sprite",       Rendering, "A soft spot of light facing the camera: glowing eyes, a halo"),
 		Plain<LiquidOrbComponent>       ("Liquid Orb",        Rendering, "A ball of clear liquid that bends and mirrors the sky"),
+		Plain<FoliageComponent>         ("Foliage",           Rendering, "Grass, flowers, stones: thousands of copies over the ground"),
 		Plain<SwarmComponent>           ("Swarm",             Rendering, "Thousands of copies of a model: a sphere, a sky, a rain of missiles"),
 		Plain<EffectShapeComponent>     ("Effect Shape",      Rendering, "A shape of light played as an effect: a slash, a shockwave ring, a pillar of fire, a blast"),
 

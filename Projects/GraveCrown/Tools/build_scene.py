@@ -779,6 +779,22 @@ def dress_plains(builder, rng):
               scale=rng.uniform(2.2, 3.2))
 
 
+def add_foliage(builder):
+    """Ash grass, tall dead grass, pale grave flowers and thistles over the plains (foliage_generator.py; the engine's
+    Foliage draws thousands of them near the camera, swaying), off the road, camps and arena (grass_mask.png)"""
+    center = (terrain_map.CENTER_X, 0.0, terrain_map.CENTER_Z)
+    for name, model, count, scale, sway, distance, tint, seed in (
+            # (darkened: in the moonlight full-bright tufts read as white specks on the dark ash)
+            ("Ash Grass", "grass_ash", 20000, (0.8, 1.4), 0.10, 50.0, [0.55, 0.52, 0.52], 1),
+            ("Dead Grass", "grass_dead", 4500, (0.8, 1.3), 0.12, 60.0, [0.7, 0.62, 0.55], 2),
+            ("Grave Flowers", "grave_flowers", 1400, (0.7, 1.1), 0.08, 45.0, [1.0, 1.0, 1.0], 3),
+            ("Thistles", "thistle", 700, (0.8, 1.3), 0.05, 50.0, [1.0, 1.0, 1.0], 4)):
+        builder.add(named(name, center, foliage={
+            "model_name": model, "count": count, "area_size_x": terrain_map.SIZE_X, "area_size_z": terrain_map.SIZE_Z,
+            "density_mask": "@game/Terrain/grass_mask.png", "min_scale": scale[0], "max_scale": scale[1], "sway": sway,
+            "sway_speed": 1.5, "draw_distance": distance, "tint": tint, "tint_variation": 0.25, "seed": seed}))
+
+
 def add_plains(builder, rng):
     # The ground: hills, the old road, mountains at the edges (Tools/terrain_map.py, terrain_generator.py)
     builder.add(named("Ash Plains", (terrain_map.CENTER_X, 0.0, terrain_map.CENTER_Z),
@@ -792,6 +808,7 @@ def add_plains(builder, rng):
     invisible_wall(builder, (-38.0, 5.0, 0.0), (26.0, 10.0, 0.5))
     invisible_wall(builder, (38.0, 5.0, 0.0), (26.0, 10.0, 0.5))
     dress_plains(builder, rng)
+    add_foliage(builder)
     # Camps of the faithful: fires and their guards
     # (two fires at the edge of each camp, away from where its guards fight: one in the middle filled the screen
     # with flame whenever the camera came close in a fight)
@@ -886,7 +903,7 @@ def add_arena(builder):
 def stand_on_terrain(builder):
     """Everything placed on the plains rises to the ground's height where it stands (the floors, the borders and the
     templates far below the world stay where they are)"""
-    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena", "Chained Titan", "Camera Point", "Chain Warden Intro")
+    keep = ("Floor", "Border", "Ash Plains", "Falling Ash", "Ash Grass", "Dead Grass", "Grave Flowers", "Thistles", "Gate Pier", "Gate Lintel", "Gate Portal", "Arena", "Chained Titan", "Camera Point", "Chain Warden Intro")
     half_x, half_z = terrain_map.SIZE_X * 0.5, terrain_map.SIZE_Z * 0.5
     for entity in builder.entities:
         if "parent" in entity or entity["tag"]["name"].startswith(keep):

@@ -952,6 +952,30 @@ How to use it: Add Component > Swarm on an entity where the cloud is born (its c
 
 ## Other
 
+### Foliage
+
+Grass, flowers, stones: thousands of copies of a small model scattered over an area and drawn in one call
+
+How to use it: Add Component > Foliage on an entity in the middle of the area. 'modelName' is a model without bones (a tuft of grass made of crossed cards with an alpha texture: transparent pixels are cut out); 'count' copies are scattered over the 'areaSizeX' x 'areaSizeZ' rectangle around the entity, each turned at random, between 'minScale' and 'maxScale' big, standing on a Terrain where there is one. A 'densityMask' (a grey picture over the area: white = full, black = none, rows from -Z to +Z) keeps them off roads and out of camps. The wind sways their tops ('sway' meters at the top of a 1 m model, 'swaySpeed'); past 'drawDistance' meters from the camera they shrink away (no popping). 'tint' colors them, 'tintVariation' 0..1 makes some darker or lighter
+
+| Field | Type |
+|---|---|
+| `modelName` | String |
+| `count` | Int |
+| `areaSizeX` | Float |
+| `areaSizeZ` | Float |
+| `densityMask` | String |
+| `minScale` | Float |
+| `maxScale` | Float |
+| `sway` | Float |
+| `swaySpeed` | Float |
+| `drawDistance` | Float |
+| `tint` | Color |
+| `tintVariation` | Float |
+| `seed` | Int |
+
+<sub>Defined in `Sunta/src/Sunta/Effects/FoliageComponent.h`</sub>
+
 ### Follow Camera
 
 A camera that circles around the player and follows it, no script needed
@@ -1033,6 +1057,7 @@ How to use it: Add Component > Pickup on an entity with a Model (and a Particle 
 | `itemId` | String |
 | `displayName` | String |
 | `prompt` | String |
+| `obtainedText` | String |
 | `interactDistance` | Float |
 | `readText` | String |
 | `voiceSound` | String |
