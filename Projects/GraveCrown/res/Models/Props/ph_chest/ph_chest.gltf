@@ -1,0 +1,153 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_chest"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "treasure_chest",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    }
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "Plane.020",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "treasure_chest_nor_gl_1k",
+   "uri": "treasure_chest_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "treasure_chest_diff_1k",
+   "uri": "treasure_chest_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "treasure_chest_arm_1k",
+   "uri": "treasure_chest_arm_1k.jpg"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 5860,
+   "max": [
+    0.47411617636680603,
+    0.6197229027748108,
+    0.26129981875419617
+   ],
+   "min": [
+    -0.47411617636680603,
+    0,
+    -0.26129981875419617
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 5860,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 5860,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 15000,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 70320,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 70320,
+   "byteOffset": 70320,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 46880,
+   "byteOffset": 140640,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 30000,
+   "byteOffset": 187520,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 217520,
+   "uri": "ph_chest.bin"
+  }
+ ]
+}

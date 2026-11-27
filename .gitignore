@@ -44,6 +44,7 @@ bin-intermediates/**.obj
 Tools/Blender/Mixamo/
 # Quaternius animation libraries (CC0) as served by Mesh2Motion, downloaded by hand (see enemies_generator.py)
 Tools/Blender/Mesh2Motion/
+Tools/Blender/PolyHaven/
 
 # Python caches (made when Blender runs the Tools/Blender scripts)
 __pycache__/

@@ -1,0 +1,153 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_hatchet"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "hatchet",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    }
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "Plane.002",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "hatchet_nor_gl_1k",
+   "uri": "hatchet_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "hatchet_diff_1k",
+   "uri": "hatchet_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "hatchet_arm_1k",
+   "uri": "hatchet_arm_1k.jpg"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 1707,
+   "max": [
+    0.013005964457988739,
+    0.28863009810447693,
+    0.052167512476444244
+   ],
+   "min": [
+    -0.013005964457988739,
+    0,
+    -0.052167512476444244
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 1707,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 1707,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 4500,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 20484,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 20484,
+   "byteOffset": 20484,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 13656,
+   "byteOffset": 40968,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 9000,
+   "byteOffset": 54624,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 63624,
+   "uri": "ph_hatchet.bin"
+  }
+ ]
+}

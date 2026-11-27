@@ -13595,7 +13595,7 @@
   },
   {
    "tag": {
-    "name": "Supplies"
+    "name": "Barrel"
    },
    "transform": {
     "position": [
@@ -13622,19 +13622,113 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "gc_crates"
+    "model_name": "ph_barrel_a"
    },
    "box_collider": {
     "half_extents": [
-     1.1,
-     0.6,
-     0.6
+     0.3,
+     0.45,
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.6,
+     0.45,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Barrel"
+   },
+   "transform": {
+    "position": [
+     15.42545882248518,
+     0.0,
+     -21.83814161698494
+    ],
+    "rotation": [
+     0.0,
+     306.7201113458539,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8938418598339978,
+     0.0,
+     0.44838234756566847,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_barrel_b"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.45,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.45,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Chest"
+   },
+   "transform": {
+    "position": [
+     14.275458822485179,
+     0.0,
+     -21.138141616984942
+    ],
+    "rotation": [
+     0.0,
+     356.7201113458539,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9995904062702909,
+     0.0,
+     0.028618520094421035,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_chest"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.45,
+     0.3,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.3,
      0.0
     ],
     "show_gizmos": false
@@ -13862,7 +13956,7 @@
   },
   {
    "tag": {
-    "name": "Supplies"
+    "name": "Barrel"
    },
    "transform": {
     "position": [
@@ -13889,19 +13983,113 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "gc_crates"
+    "model_name": "ph_barrel_a"
    },
    "box_collider": {
     "half_extents": [
-     1.1,
-     0.6,
-     0.6
+     0.3,
+     0.45,
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.6,
+     0.45,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Barrel"
+   },
+   "transform": {
+    "position": [
+     -17.47097641942754,
+     0.0,
+     -71.804070595641
+    ],
+    "rotation": [
+     0.0,
+     145.50105732892075,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.29653276305554593,
+     0.0,
+     0.9550226805865102,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_barrel_b"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.45,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.45,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Chest"
+   },
+   "transform": {
+    "position": [
+     -18.62097641942754,
+     0.0,
+     -71.10407059564099
+    ],
+    "rotation": [
+     0.0,
+     195.50105732892075,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.13486007292367896,
+     0.0,
+     0.990864653083871,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_chest"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.45,
+     0.3,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.3,
      0.0
     ],
     "show_gizmos": false
@@ -14082,7 +14270,7 @@
   },
   {
    "tag": {
-    "name": "Supplies"
+    "name": "Barrel"
    },
    "transform": {
     "position": [
@@ -14109,19 +14297,113 @@
    },
    "model": {
     "is_visible": true,
-    "model_name": "gc_crates"
+    "model_name": "ph_barrel_a"
    },
    "box_collider": {
     "half_extents": [
-     1.1,
-     0.6,
-     0.6
+     0.3,
+     0.45,
+     0.3
     ],
     "is_trigger": false,
     "layer": 1,
     "local_offset": [
      0.0,
-     0.6,
+     0.45,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Barrel"
+   },
+   "transform": {
+    "position": [
+     16.517337049386253,
+     0.0,
+     -89.80451270108829
+    ],
+    "rotation": [
+     0.0,
+     387.64003722116263,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9710508792726055,
+     0.0,
+     -0.23887274826547256,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_barrel_b"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.45,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.45,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Chest"
+   },
+   "transform": {
+    "position": [
+     15.367337049386252,
+     0.0,
+     -89.10451270108828
+    ],
+    "rotation": [
+     0.0,
+     437.64003722116263,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7791189878443706,
+     0.0,
+     -0.6268760665238094,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_chest"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.45,
+     0.3,
+     0.3
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.3,
      0.0
     ],
     "show_gizmos": false
@@ -14639,6 +14921,2964 @@
     "local_offset": [
      0.0,
      0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Table"
+   },
+   "transform": {
+    "position": [
+     10.800267917914946,
+     0.0,
+     -27.95859223652935
+    ],
+    "rotation": [
+     0.0,
+     92.0470671746013,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6943628512602926,
+     0.0,
+     0.7196250626469847,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_table"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.6,
+     0.4,
+     0.4
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Stool"
+   },
+   "transform": {
+    "position": [
+     9.900343269828523,
+     0.0,
+     -27.946946303053227
+    ],
+    "rotation": [
+     0.0,
+     122.0470671746013,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.4844503393018973,
+     0.0,
+     0.8748187633734639,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_stool"
+   }
+  },
+  {
+   "tag": {
+    "name": "Jug"
+   },
+   "transform": {
+    "position": [
+     10.800267917914946,
+     0.8,
+     -27.95859223652935
+    ],
+    "rotation": [
+     0.0,
+     34.413120334245356,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9552444983194139,
+     0.0,
+     0.2958174241495777,
+     0.0
+    ],
+    "scale": [
+     1.2,
+     1.2,
+     1.2
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_jug"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urn"
+   },
+   "transform": {
+    "position": [
+     15.447203611037839,
+     0.0,
+     -32.366417491284935
+    ],
+    "rotation": [
+     0.0,
+     204.87295181513673,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.2153570572911886,
+     0.0,
+     0.9765353746152158,
+     0.0
+    ],
+    "scale": [
+     1.3,
+     1.3,
+     1.3
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_urn"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urn"
+   },
+   "transform": {
+    "position": [
+     17.514697538598774,
+     0.0,
+     -30.967642365947707
+    ],
+    "rotation": [
+     0.0,
+     247.70227669942534,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5570370745347097,
+     0.0,
+     0.8304876263941638,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_vase"
+   }
+  },
+  {
+   "tag": {
+    "name": "Grave Spade"
+   },
+   "transform": {
+    "position": [
+     9.105374199013104,
+     -0.25,
+     -22.2
+    ],
+    "rotation": [
+     0.0,
+     285.2849019359452,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7948644127730339,
+     0.0,
+     0.6067870839981517,
+     0.0
+    ],
+    "scale": [
+     1.2,
+     1.2,
+     1.2
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_spade"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dropped Shield"
+   },
+   "transform": {
+    "position": [
+     16.56165545708932,
+     0.0,
+     -32.5
+    ],
+    "rotation": [
+     0.0,
+     61.924212859988714,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8575077426876819,
+     0.0,
+     0.5144710596629087,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_shield"
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Table"
+   },
+   "transform": {
+    "position": [
+     -21.19833491649594,
+     0.0,
+     -77.89678293783052
+    ],
+    "rotation": [
+     0.0,
+     270.0810695848369,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7076068579043402,
+     0.0,
+     0.7066063505564798,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_table"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.6,
+     0.4,
+     0.4
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Stool"
+   },
+   "transform": {
+    "position": [
+     -22.097866611760423,
+     0.0,
+     -77.86775313909536
+    ],
+    "rotation": [
+     0.0,
+     300.0810695848369,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8663789198234662,
+     0.0,
+     0.49938719175157464,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_stool"
+   }
+  },
+  {
+   "tag": {
+    "name": "Jug"
+   },
+   "transform": {
+    "position": [
+     -21.19833491649594,
+     0.8,
+     -77.89678293783052
+    ],
+    "rotation": [
+     0.0,
+     317.3852294709492,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9316443977858924,
+     0.0,
+     0.3633713198288522,
+     0.0
+    ],
+    "scale": [
+     1.2,
+     1.2,
+     1.2
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_jug"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urn"
+   },
+   "transform": {
+    "position": [
+     -16.43607595972309,
+     0.0,
+     -82.3259844655574
+    ],
+    "rotation": [
+     0.0,
+     56.44555588736806,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8811155198161567,
+     0.0,
+     0.4729010898053674,
+     0.0
+    ],
+    "scale": [
+     1.3,
+     1.3,
+     1.3
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_urn"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urn"
+   },
+   "transform": {
+    "position": [
+     -14.549344821475199,
+     0.0,
+     -81.04187094383045
+    ],
+    "rotation": [
+     0.0,
+     125.88458572975729,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.45488767283568976,
+     0.0,
+     0.8905488224135331,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_vase"
+   }
+  },
+  {
+   "tag": {
+    "name": "Grave Spade"
+   },
+   "transform": {
+    "position": [
+     -17.67362588602441,
+     -0.25,
+     -72.2
+    ],
+    "rotation": [
+     0.0,
+     336.1283477090435,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9783798576028432,
+     0.0,
+     0.20681599125077396,
+     0.0
+    ],
+    "scale": [
+     1.2,
+     1.2,
+     1.2
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_spade"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dropped Shield"
+   },
+   "transform": {
+    "position": [
+     -19.67597631333626,
+     0.0,
+     -82.5
+    ],
+    "rotation": [
+     0.0,
+     0.24493197581504145,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9999977156872984,
+     0.0,
+     0.0021374330831704634,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_shield"
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Table"
+   },
+   "transform": {
+    "position": [
+     13.594233270711204,
+     0.0,
+     -93.88995581936133
+    ],
+    "rotation": [
+     0.0,
+     123.70735210501067,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.4717249315361805,
+     0.0,
+     0.881745762091991,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_table"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.6,
+     0.4,
+     0.4
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.4,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Stool"
+   },
+   "transform": {
+    "position": [
+     12.91761137809873,
+     0.0,
+     -93.29650589355671
+    ],
+    "rotation": [
+     0.0,
+     153.70735210501067,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.22743869810739584,
+     0.0,
+     0.9737924001568368,
+     0.0
+    ],
+    "scale": [
+     1.1,
+     1.1,
+     1.1
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_stool"
+   }
+  },
+  {
+   "tag": {
+    "name": "Jug"
+   },
+   "transform": {
+    "position": [
+     13.594233270711204,
+     0.8,
+     -93.88995581936133
+    ],
+    "rotation": [
+     0.0,
+     135.84669121485598,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.37584671067982234,
+     0.0,
+     0.9266818494343989,
+     0.0
+    ],
+    "scale": [
+     1.2,
+     1.2,
+     1.2
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_jug"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urn"
+   },
+   "transform": {
+    "position": [
+     13.706788715516822,
+     0.0,
+     -99.98762861920703
+    ],
+    "rotation": [
+     0.0,
+     132.5024409020767,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.4027271928191724,
+     0.0,
+     0.9153200577743226,
+     0.0
+    ],
+    "scale": [
+     1.3,
+     1.3,
+     1.3
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_urn"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urn"
+   },
+   "transform": {
+    "position": [
+     18.46827918962025,
+     0.0,
+     -99.88170038025703
+    ],
+    "rotation": [
+     0.0,
+     347.4336356631184,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9939931225679284,
+     0.0,
+     0.10944255245405828,
+     0.0
+    ],
+    "scale": [
+     2.0,
+     2.0,
+     2.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_vase"
+   }
+  },
+  {
+   "tag": {
+    "name": "Grave Spade"
+   },
+   "transform": {
+    "position": [
+     19.703336166813724,
+     -0.25,
+     -90.2
+    ],
+    "rotation": [
+     0.0,
+     40.08744828485435,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9394313412711195,
+     0.0,
+     0.34273715152802653,
+     0.0
+    ],
+    "scale": [
+     1.2,
+     1.2,
+     1.2
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_spade"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dropped Shield"
+   },
+   "transform": {
+    "position": [
+     16.261755440514136,
+     0.0,
+     -100.5
+    ],
+    "rotation": [
+     0.0,
+     181.7918177073262,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.015635922107010432,
+     0.0,
+     0.9998777514975836,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_shield"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rocks Moss"
+   },
+   "transform": {
+    "position": [
+     -24.681499986914268,
+     0.5293499667628789,
+     -66.8490665970655
+    ],
+    "rotation": [
+     0.0,
+     212.14275283487498,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.2768346367412264,
+     0.0,
+     0.9609175739366791,
+     0.0
+    ],
+    "scale": [
+     1.075666973039513,
+     1.075666973039513,
+     1.075666973039513
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rocks_moss"
+   },
+   "box_collider": {
+    "half_extents": [
+     3.7648344056382954,
+     0.6454001838237078,
+     1.5059337622553182
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6454001838237078,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rocks Moss"
+   },
+   "transform": {
+    "position": [
+     52.40208849393626,
+     2.2364682578521986,
+     -40.14641895001914
+    ],
+    "rotation": [
+     0.0,
+     99.08472662761339,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.648885642424086,
+     0.0,
+     0.7608859461547973,
+     0.0
+    ],
+    "scale": [
+     0.8832936342302522,
+     0.8832936342302522,
+     0.8832936342302522
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rocks_moss"
+   },
+   "box_collider": {
+    "half_extents": [
+     3.0915277198058826,
+     0.5299761805381513,
+     1.236611087922353
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5299761805381513,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rocks Moss"
+   },
+   "transform": {
+    "position": [
+     -52.844848214628485,
+     0.7658316599202037,
+     -109.17236783893408
+    ],
+    "rotation": [
+     0.0,
+     350.2249088864312,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9963638398174868,
+     0.0,
+     0.08520034450724642,
+     0.0
+    ],
+    "scale": [
+     1.0769014249140236,
+     1.0769014249140236,
+     1.0769014249140236
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rocks_moss"
+   },
+   "box_collider": {
+    "half_extents": [
+     3.769154987199083,
+     0.6461408549484141,
+     1.507661994879633
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6461408549484141,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rocks Moss"
+   },
+   "transform": {
+    "position": [
+     34.949271572485145,
+     0.0,
+     -81.27660610118711
+    ],
+    "rotation": [
+     0.0,
+     332.58403068050563,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9715161051306199,
+     0.0,
+     0.23697353749275502,
+     0.0
+    ],
+    "scale": [
+     0.9182587777172395,
+     0.9182587777172395,
+     0.9182587777172395
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rocks_moss"
+   },
+   "box_collider": {
+    "half_extents": [
+     3.213905722010338,
+     0.5509552666303437,
+     1.2855622888041351
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5509552666303437,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rocks Moss"
+   },
+   "transform": {
+    "position": [
+     24.545510125416072,
+     3.466105373261097,
+     -108.32854201126146
+    ],
+    "rotation": [
+     0.0,
+     355.60559115557606,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9992647882405638,
+     0.0,
+     0.03833905296875815,
+     0.0
+    ],
+    "scale": [
+     0.8891424898135755,
+     0.8891424898135755,
+     0.8891424898135755
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rocks_moss"
+   },
+   "box_collider": {
+    "half_extents": [
+     3.1119987143475143,
+     0.5334854938881453,
+     1.2447994857390057
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5334854938881453,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Rocks Moss"
+   },
+   "transform": {
+    "position": [
+     10.639530039310628,
+     1.8934316500396113,
+     -44.614045977435325
+    ],
+    "rotation": [
+     0.0,
+     241.9287440888812,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5145049672020049,
+     0.0,
+     0.8574873985805644,
+     0.0
+    ],
+    "scale": [
+     0.7508895085205755,
+     0.7508895085205755,
+     0.7508895085205755
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rocks_moss"
+   },
+   "box_collider": {
+    "half_extents": [
+     2.628113279822014,
+     0.45053370511234525,
+     1.0512453119288057
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.45053370511234525,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     55.648075968740145,
+     1.205655961061567,
+     -94.44820889598014
+    ],
+    "rotation": [
+     0.0,
+     192.98073197717724,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.11303614781084097,
+     0.0,
+     0.9935908762101662,
+     0.0
+    ],
+    "scale": [
+     1.2739185731335319,
+     1.2739185731335319,
+     1.2739185731335319
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.764351143880119,
+     0.6369592865667659,
+     1.0191348585068256
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6369592865667659,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     -53.036653774252386,
+     0.6401114912264457,
+     -104.29120636306395
+    ],
+    "rotation": [
+     0.0,
+     230.01197912115757,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.42271300262950284,
+     0.0,
+     0.9062636026057485,
+     0.0
+    ],
+    "scale": [
+     1.6406173148198597,
+     1.6406173148198597,
+     1.6406173148198597
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.9843703888919157,
+     0.8203086574099299,
+     1.312493851855888
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.8203086574099299,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     48.570710745884185,
+     0.9405892798923058,
+     -81.92184756327572
+    ],
+    "rotation": [
+     0.0,
+     343.8447798828551,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9900786432524944,
+     0.0,
+     0.14051434152889827,
+     0.0
+    ],
+    "scale": [
+     1.0343437052001718,
+     1.0343437052001718,
+     1.0343437052001718
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.620606223120103,
+     0.5171718526000859,
+     0.8274749641601375
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5171718526000859,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     8.480063384294809,
+     1.312320879891806,
+     -58.9917760982125
+    ],
+    "rotation": [
+     0.0,
+     51.32386803210537,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9013649354492758,
+     0.0,
+     0.43306033429826246,
+     0.0
+    ],
+    "scale": [
+     1.1670446782037946,
+     1.1670446782037946,
+     1.1670446782037946
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.7002268069222768,
+     0.5835223391018973,
+     0.9336357425630357
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5835223391018973,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     -13.637089418065706,
+     0.28241449652138056,
+     -88.80747378441967
+    ],
+    "rotation": [
+     0.0,
+     198.39116448043976,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.15980507461418472,
+     0.0,
+     0.9871485896903034,
+     0.0
+    ],
+    "scale": [
+     1.291154986530588,
+     1.291154986530588,
+     1.291154986530588
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.7746929919183528,
+     0.645577493265294,
+     1.0329239892244704
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.645577493265294,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     35.67096368560725,
+     2.957778064315584,
+     -8.880102944012407
+    ],
+    "rotation": [
+     0.0,
+     119.96756202094977,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5002451299046381,
+     0.0,
+     0.8658838317041679,
+     0.0
+    ],
+    "scale": [
+     1.5353572541549498,
+     1.5353572541549498,
+     1.5353572541549498
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.9212143524929699,
+     0.7676786270774749,
+     1.2282858033239599
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.7676786270774749,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Boulder"
+   },
+   "transform": {
+    "position": [
+     -56.12394705316324,
+     0.42890850962593396,
+     -54.918913781718636
+    ],
+    "rotation": [
+     0.0,
+     356.26843232092335,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9994698374877112,
+     0.0,
+     0.032558316177102656,
+     0.0
+    ],
+    "scale": [
+     1.1442072583922662,
+     1.1442072583922662,
+     1.1442072583922662
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_boulder"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.6865243550353597,
+     0.5721036291961331,
+     0.9153658067138131
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5721036291961331,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     -57.41754526949386,
+     3.6276855796469567,
+     -8.074140484567181
+    ],
+    "rotation": [
+     0.0,
+     324.1539933942424,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9514709286175703,
+     0.0,
+     0.30773864235032056,
+     0.0
+    ],
+    "scale": [
+     1.1103551571402068,
+     1.1103551571402068,
+     1.1103551571402068
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     15.751007524386083,
+     2.5704917849998528,
+     -59.821150164305884
+    ],
+    "rotation": [
+     0.0,
+     275.8193092518697,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7420888006858154,
+     0.0,
+     0.6703015827944077,
+     0.0
+    ],
+    "scale": [
+     1.1005656227075966,
+     1.1005656227075966,
+     1.1005656227075966
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     43.86659025557829,
+     2.2978299883080653,
+     -64.36515255751044
+    ],
+    "rotation": [
+     0.0,
+     58.578292438784814,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8721619625614272,
+     0.0,
+     0.4892172432171618,
+     0.0
+    ],
+    "scale": [
+     1.1958734199158418,
+     1.1958734199158418,
+     1.1958734199158418
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     21.066587606767968,
+     2.4486444941104226,
+     -81.93358501401482
+    ],
+    "rotation": [
+     0.0,
+     21.153455241025924,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9830099853588518,
+     0.0,
+     0.1835520871164095,
+     0.0
+    ],
+    "scale": [
+     1.2004998000480769,
+     1.2004998000480769,
+     1.2004998000480769
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     -7.532779612369467,
+     0.0,
+     -78.96415984187993
+    ],
+    "rotation": [
+     0.0,
+     147.55599317310467,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.27935986897286585,
+     0.0,
+     0.9601864733516419,
+     0.0
+    ],
+    "scale": [
+     1.2002799778977724,
+     1.2002799778977724,
+     1.2002799778977724
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     -46.997766906746826,
+     1.2818620647778394,
+     -82.55883276428153
+    ],
+    "rotation": [
+     0.0,
+     129.1286482488334,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.42949752231780075,
+     0.0,
+     0.903068036375372,
+     0.0
+    ],
+    "scale": [
+     1.2202153542157155,
+     1.2202153542157155,
+     1.2202153542157155
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     -23.997366927668978,
+     3.0561694547965894,
+     -34.72497780037776
+    ],
+    "rotation": [
+     0.0,
+     206.2715562361083,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.22725945856605695,
+     0.0,
+     0.9738342459023829,
+     0.0
+    ],
+    "scale": [
+     1.1840435829389342,
+     1.1840435829389342,
+     1.1840435829389342
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Dead Trunk"
+   },
+   "transform": {
+    "position": [
+     -52.47484785338424,
+     0.2618728253284013,
+     -54.47986322658089
+    ],
+    "rotation": [
+     0.0,
+     145.75492339946817,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.29441628042709267,
+     0.0,
+     0.9556772749309651,
+     0.0
+    ],
+    "scale": [
+     1.0422665738591934,
+     1.0422665738591934,
+     1.0422665738591934
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_dead_trunk"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     18.89652033530797,
+     1.5018079805060303,
+     -72.38714392378526
+    ],
+    "rotation": [
+     0.0,
+     333.68597793107074,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9737499602470208,
+     0.0,
+     0.2276203306361837,
+     0.0
+    ],
+    "scale": [
+     1.2409481871560846,
+     1.2409481871560846,
+     1.2409481871560846
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     53.68067757971838,
+     1.342081006946505,
+     -101.477043957389
+    ],
+    "rotation": [
+     0.0,
+     252.49260960822232,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5912576368320411,
+     0.0,
+     0.8064827381213997,
+     0.0
+    ],
+    "scale": [
+     1.5365207613552827,
+     1.5365207613552827,
+     1.5365207613552827
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -50.65914834889303,
+     0.9227956663656036,
+     -84.40407837944906
+    ],
+    "rotation": [
+     0.0,
+     196.12546598989547,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.14025725916918164,
+     0.0,
+     0.9901150949512633,
+     0.0
+    ],
+    "scale": [
+     1.4874537574880273,
+     1.4874537574880273,
+     1.4874537574880273
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -22.306596945970114,
+     3.0684309229356743,
+     -34.53476784668291
+    ],
+    "rotation": [
+     0.0,
+     138.49063761685352,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.35436743942455784,
+     0.0,
+     0.9351062602055888,
+     0.0
+    ],
+    "scale": [
+     1.35139321698249,
+     1.35139321698249,
+     1.35139321698249
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -25.368641205964508,
+     1.8988054919478885,
+     -92.42379370534036
+    ],
+    "rotation": [
+     0.0,
+     114.64139895744744,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5399362692141203,
+     0.0,
+     0.8417059018369403,
+     0.0
+    ],
+    "scale": [
+     1.4132453566542822,
+     1.4132453566542822,
+     1.4132453566542822
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -7.733059375324068,
+     0.0,
+     -15.814290267794547
+    ],
+    "rotation": [
+     0.0,
+     3.4087912643771245,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9995575812353755,
+     0.0,
+     0.02974292848536609,
+     0.0
+    ],
+    "scale": [
+     1.2390388529389345,
+     1.2390388529389345,
+     1.2390388529389345
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -46.261296499664844,
+     0.6615805471419688,
+     -43.20337737215952
+    ],
+    "rotation": [
+     0.0,
+     13.671092497465601,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9928918593048536,
+     0.0,
+     0.1190199803652765,
+     0.0
+    ],
+    "scale": [
+     1.181671424743417,
+     1.181671424743417,
+     1.181671424743417
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -29.822333149935037,
+     4.0487039956832005,
+     -20.819909065418145
+    ],
+    "rotation": [
+     0.0,
+     108.70972577470157,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5827633431030369,
+     0.0,
+     0.812641917412197,
+     0.0
+    ],
+    "scale": [
+     1.2413934263512676,
+     1.2413934263512676,
+     1.2413934263512676
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     10.374498775556361,
+     2.0733621426900526,
+     -58.80253423852327
+    ],
+    "rotation": [
+     0.0,
+     15.954158754937877,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9903236643558689,
+     0.0,
+     0.1387769426697545,
+     0.0
+    ],
+    "scale": [
+     1.2066261597153551,
+     1.2066261597153551,
+     1.2066261597153551
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -31.932328130752023,
+     3.848756645106005,
+     -106.57506447250289
+    ],
+    "rotation": [
+     0.0,
+     127.47426910632116,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.44249006682515,
+     0.0,
+     0.8967734054715686,
+     0.0
+    ],
+    "scale": [
+     1.0284040858054293,
+     1.0284040858054293,
+     1.0284040858054293
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     27.025806898794414,
+     0.0,
+     -73.40479629673197
+    ],
+    "rotation": [
+     0.0,
+     278.0866321898371,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7552053506851549,
+     0.0,
+     0.6554882747208467,
+     0.0
+    ],
+    "scale": [
+     1.0133253112410607,
+     1.0133253112410607,
+     1.0133253112410607
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -34.19778833198555,
+     1.1107754750592738,
+     -55.88791291992464
+    ],
+    "rotation": [
+     0.0,
+     241.08291119294182,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5081616503346431,
+     0.0,
+     0.8612617123320715,
+     0.0
+    ],
+    "scale": [
+     1.0508548744316097,
+     1.0508548744316097,
+     1.0508548744316097
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     30.331233640590312,
+     0.795737258521932,
+     -99.98582314518006
+    ],
+    "rotation": [
+     0.0,
+     229.198461774963,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.41626858705037434,
+     0.0,
+     0.9092416969294165,
+     0.0
+    ],
+    "scale": [
+     1.2152970532341265,
+     1.2152970532341265,
+     1.2152970532341265
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Branches"
+   },
+   "transform": {
+    "position": [
+     -45.754356110194244,
+     0.17243289779373772,
+     -58.46440336058913
+    ],
+    "rotation": [
+     0.0,
+     29.543573181029696,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9669490571897835,
+     0.0,
+     0.2549696468205359,
+     0.0
+    ],
+    "scale": [
+     1.3758930988568991,
+     1.3758930988568991,
+     1.3758930988568991
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_branches"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     -11.467430731576485,
+     1.2594966510458878,
+     -37.52992115230049
+    ],
+    "rotation": [
+     0.0,
+     25.817132356137677,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9747278056161631,
+     0.0,
+     0.22339584812323446,
+     0.0
+    ],
+    "scale": [
+     1.4945016872395391,
+     1.4945016872395391,
+     1.4945016872395391
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     -24.794062112744875,
+     2.263915160035651,
+     -103.82823742923972
+    ],
+    "rotation": [
+     0.0,
+     223.14289623909607,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.3676611767597005,
+     0.0,
+     0.9299598158542509,
+     0.0
+    ],
+    "scale": [
+     1.4369784473255227,
+     1.4369784473255227,
+     1.4369784473255227
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     -37.04006757972405,
+     0.6036303190242526,
+     -62.97015469891483
+    ],
+    "rotation": [
+     0.0,
+     316.0967000347353,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9274996425409829,
+     0.0,
+     0.3738240402734272,
+     0.0
+    ],
+    "scale": [
+     1.0190474133891758,
+     1.0190474133891758,
+     1.0190474133891758
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     25.57184208331745,
+     1.8933102151436743,
+     -39.31329768480876
+    ],
+    "rotation": [
+     0.0,
+     108.61955904351555,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.5834025924983668,
+     0.0,
+     0.8121831167084087,
+     0.0
+    ],
+    "scale": [
+     1.0960052052321931,
+     1.0960052052321931,
+     1.0960052052321931
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     10.026737557709552,
+     2.0793416778900835,
+     -55.63880133638327
+    ],
+    "rotation": [
+     0.0,
+     92.12078318164484,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6938997774817437,
+     0.0,
+     0.7200715928369807,
+     0.0
+    ],
+    "scale": [
+     1.568103137276657,
+     1.568103137276657,
+     1.568103137276657
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     57.35609377610429,
+     1.6362140860442222,
+     -105.27190259619911
+    ],
+    "rotation": [
+     0.0,
+     204.20955580507336,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.20970009964670872,
+     0.0,
+     0.9777657532395786,
+     0.0
+    ],
+    "scale": [
+     1.5363830109980918,
+     1.5363830109980918,
+     1.5363830109980918
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     -42.98503351457649,
+     2.806724766327348,
+     -101.71371636847209
+    ],
+    "rotation": [
+     0.0,
+     27.665685183846005,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9709973902851521,
+     0.0,
+     0.23909008356563866,
+     0.0
+    ],
+    "scale": [
+     1.5014802068730957,
+     1.5014802068730957,
+     1.5014802068730957
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     -39.963279494511546,
+     3.9897661596682386,
+     -24.944867448017618
+    ],
+    "rotation": [
+     0.0,
+     269.8808000404338,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7063708550535188,
+     0.0,
+     0.7078419421954034,
+     0.0
+    ],
+    "scale": [
+     1.4775301137734886,
+     1.4775301137734886,
+     1.4775301137734886
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     38.90324481617138,
+     0.7732983463033543,
+     -25.774115382589997
+    ],
+    "rotation": [
+     0.0,
+     9.737277822565433,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.996391900254043,
+     0.0,
+     0.08487155653184,
+     0.0
+    ],
+    "scale": [
+     1.3436799227369018,
+     1.3436799227369018,
+     1.3436799227369018
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Root"
+   },
+   "transform": {
+    "position": [
+     48.1859984634671,
+     1.2318201995092188,
+     -30.850422419869645
+    ],
+    "rotation": [
+     0.0,
+     238.58927908675173,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.48930086088375113,
+     0.0,
+     0.8721150540716632,
+     0.0
+    ],
+    "scale": [
+     1.0988949392174978,
+     1.0988949392174978,
+     1.0988949392174978
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_root"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -24.285835084801363,
+     1.5727422826303608,
+     -90.82683310807504
+    ],
+    "rotation": [
+     0.0,
+     320.3529960535986,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9407417439770421,
+     0.0,
+     0.33912382862169005,
+     0.0
+    ],
+    "scale": [
+     5.750054911016112,
+     5.750054911016112,
+     5.750054911016112
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -49.3567564463785,
+     0.35831127331508905,
+     -63.304360447977295
+    ],
+    "rotation": [
+     0.0,
+     325.76552284475946,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9557045036448003,
+     0.0,
+     0.2943278813042452,
+     0.0
+    ],
+    "scale": [
+     4.473898061571463,
+     4.473898061571463,
+     4.473898061571463
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -48.507074356006015,
+     0.31486492714391257,
+     -55.18588485349382
+    ],
+    "rotation": [
+     0.0,
+     177.5178612843037,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.021659052752953795,
+     0.0,
+     0.9997654152019086,
+     0.0
+    ],
+    "scale": [
+     4.380798666694638,
+     4.380798666694638,
+     4.380798666694638
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -42.35148943822073,
+     0.6490041725025247,
+     -55.820495565498526
+    ],
+    "rotation": [
+     0.0,
+     190.22357846704043,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.08909924133031827,
+     0.0,
+     0.9960227533517303,
+     0.0
+    ],
+    "scale": [
+     4.99130179470531,
+     4.99130179470531,
+     4.99130179470531
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     49.32713683481464,
+     1.222461597245948,
+     -111.75283845872035
+    ],
+    "rotation": [
+     0.0,
+     164.78573083668613,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.1323798173141291,
+     0.0,
+     0.9911990637444518,
+     0.0
+    ],
+    "scale": [
+     6.126875786100058,
+     6.126875786100058,
+     6.126875786100058
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     16.818312997375912,
+     2.2350791143853437,
+     -75.5094829894166
+    ],
+    "rotation": [
+     0.0,
+     212.4975397277622,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.2798084017676272,
+     0.0,
+     0.9600558620727474,
+     0.0
+    ],
+    "scale": [
+     6.716901007994906,
+     6.716901007994906,
+     6.716901007994906
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -41.19174818460261,
+     3.025470844120319,
+     -103.50258323025538
+    ],
+    "rotation": [
+     0.0,
+     237.2914040918592,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.47939202973630907,
+     0.0,
+     0.877600867037688,
+     0.0
+    ],
+    "scale": [
+     7.814666893953873,
+     7.814666893953873,
+     7.814666893953873
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -20.520717001369533,
+     0.8958796272358713,
+     -12.33200229590038
+    ],
+    "rotation": [
+     0.0,
+     355.7471332554749,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9993113818768733,
+     0.0,
+     0.037104744323792516,
+     0.0
+    ],
+    "scale": [
+     7.1456946269996955,
+     7.1456946269996955,
+     7.1456946269996955
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     43.73921681961872,
+     0.10875361750402157,
+     -101.7361791073778
+    ],
+    "rotation": [
+     0.0,
+     146.68636779870045,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.28663852630815745,
+     0.0,
+     0.9580388067483946,
+     0.0
+    ],
+    "scale": [
+     4.15904615514495,
+     4.15904615514495,
+     4.15904615514495
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     42.80045500650044,
+     0.7766756704648247,
+     -24.648875499453382
+    ],
+    "rotation": [
+     0.0,
+     164.11217703287383,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.13820363201805191,
+     0.0,
+     0.9904038348557718,
+     0.0
+    ],
+    "scale": [
+     5.769296809774376,
+     5.769296809774376,
+     5.769296809774376
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     33.43601450859771,
+     1.0415604594685126,
+     -85.6785422945913
+    ],
+    "rotation": [
+     0.0,
+     241.9027241486476,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.514310247008163,
+     0.0,
+     0.8576042034775729,
+     0.0
+    ],
+    "scale": [
+     7.604495994751284,
+     7.604495994751284,
+     7.604495994751284
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -56.1973546082347,
+     0.6881680535951437,
+     -42.61700190420032
+    ],
+    "rotation": [
+     0.0,
+     55.209008449857905,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8861671551443839,
+     0.0,
+     0.4633657013022322,
+     0.0
+    ],
+    "scale": [
+     6.36866452909783,
+     6.36866452909783,
+     6.36866452909783
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     28.25722247287699,
+     3.285096343658762,
+     -107.8756066918894
+    ],
+    "rotation": [
+     0.0,
+     185.1311781124596,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.044763013976153496,
+     0.0,
+     0.9989976339210072,
+     0.0
+    ],
+    "scale": [
+     6.427313761287449,
+     6.427313761287449,
+     6.427313761287449
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     38.485250159512276,
+     1.0919825850123057,
+     -24.074707788396736
+    ],
+    "rotation": [
+     0.0,
+     76.60210976083681,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7847649595637117,
+     0.0,
+     0.6197934803149885,
+     0.0
+    ],
+    "scale": [
+     7.094001939851259,
+     7.094001939851259,
+     7.094001939851259
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -27.558403372421896,
+     2.6694485791980322,
+     -100.96962440694372
+    ],
+    "rotation": [
+     0.0,
+     235.43216298910406,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.4650905352927922,
+     0.0,
+     0.8852631213266844,
+     0.0
+    ],
+    "scale": [
+     5.166509861959777,
+     5.166509861959777,
+     5.166509861959777
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Rock A"
+   },
+   "transform": {
+    "position": [
+     -43.785454519326734,
+     5.288674846763977,
+     -16.403102079949235
+    ],
+    "rotation": [
+     0.0,
+     128.79972613984043,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.4320879040729315,
+     0.0,
+     0.9018314937691304,
+     0.0
+    ],
+    "scale": [
+     6.412355096543322,
+     6.412355096543322,
+     6.412355096543322
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_rock_a"
+   }
+  },
+  {
+   "tag": {
+    "name": "Statue of the Old Faith"
+   },
+   "transform": {
+    "position": [
+     -8.0,
+     0.29716170281023563,
+     -30.0
+    ],
+    "rotation": [
+     0.0,
+     60.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.8660254037844387,
+     0.0,
+     0.49999999999999994,
+     0.0
+    ],
+    "scale": [
+     1.5,
+     1.5,
+     1.5
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_statue"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.7,
+     0.9,
+     0.7
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Statue of the Old Faith"
+   },
+   "transform": {
+    "position": [
+     8.5,
+     1.523876173615316,
+     -84.0
+    ],
+    "rotation": [
+     0.0,
+     250.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5735764363510462,
+     0.0,
+     0.8191520442889917,
+     0.0
+    ],
+    "scale": [
+     1.5,
+     1.5,
+     1.5
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "ph_statue"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.7,
+     0.9,
+     0.7
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9,
      0.0
     ],
     "show_gizmos": false
@@ -15464,7 +18704,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 334
+    "index": 424
    },
    "point_light": {
     "attenuation": {
@@ -15766,7 +19006,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 336,
+    "index": 426,
     "bone_name": "Weapon_R"
    }
   },
@@ -15804,7 +19044,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 336,
+    "index": 426,
     "bone_name": "Hand_L"
    }
   },
@@ -16057,7 +19297,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 339,
+    "index": 429,
     "bone_name": "Weapon_R"
    }
   },
@@ -16095,7 +19335,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 339,
+    "index": 429,
     "bone_name": "Hand_L"
    }
   },
@@ -16359,7 +19599,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 342,
+    "index": 432,
     "bone_name": "Weapon_L"
    }
   },
@@ -16612,7 +19852,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 344,
+    "index": 434,
     "bone_name": "Weapon_R"
    }
   },
@@ -16650,7 +19890,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 344,
+    "index": 434,
     "bone_name": "Hand_L"
    }
   },
@@ -16909,7 +20149,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 347,
+    "index": 437,
     "bone_name": "Weapon_L"
    }
   },
@@ -17167,7 +20407,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 349,
+    "index": 439,
     "bone_name": "Weapon_R"
    }
   },
@@ -17205,7 +20445,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 349,
+    "index": 439,
     "bone_name": "Hand_L"
    }
   },
@@ -17458,7 +20698,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 352,
+    "index": 442,
     "bone_name": "Weapon_R"
    }
   },
@@ -17496,7 +20736,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 352,
+    "index": 442,
     "bone_name": "Hand_L"
    }
   },
@@ -17755,7 +20995,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 355,
+    "index": 445,
     "bone_name": "Weapon_L"
    }
   },
@@ -18001,7 +21241,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 357,
+    "index": 447,
     "bone_name": "head"
    }
   },
@@ -18247,7 +21487,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 359,
+    "index": 449,
     "bone_name": "head"
    }
   },
@@ -18493,7 +21733,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 361,
+    "index": 451,
     "bone_name": "head"
    }
   },
@@ -18769,7 +22009,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 363,
+    "index": 453,
     "bone_name": "Weapon_R"
    }
   },
@@ -21444,7 +24684,7 @@
     ]
    },
    "parent": {
-    "index": 433
+    "index": 523
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -21551,7 +24791,7 @@
     ]
    },
    "parent": {
-    "index": 435,
+    "index": 525,
     "bone_name": ""
    }
   },
@@ -21583,7 +24823,7 @@
     ]
    },
    "parent": {
-    "index": 435,
+    "index": 525,
     "bone_name": ""
    }
   },
@@ -21615,7 +24855,7 @@
     ]
    },
    "parent": {
-    "index": 435,
+    "index": 525,
     "bone_name": ""
    }
   },
@@ -21647,7 +24887,7 @@
     ]
    },
    "parent": {
-    "index": 435,
+    "index": 525,
     "bone_name": ""
    }
   },
@@ -21679,7 +24919,7 @@
     ]
    },
    "parent": {
-    "index": 435,
+    "index": 525,
     "bone_name": ""
    }
   },
@@ -21711,7 +24951,7 @@
     ]
    },
    "parent": {
-    "index": 435,
+    "index": 525,
     "bone_name": ""
    }
   },
@@ -22021,7 +25261,7 @@
     ]
    },
    "parent": {
-    "index": 442
+    "index": 532
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -22093,7 +25333,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 442,
+    "index": 532,
     "bone_name": "Hand_L"
    }
   },
@@ -22147,7 +25387,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 442,
+    "index": 532,
     "bone_name": "Weapon_R"
    }
   },

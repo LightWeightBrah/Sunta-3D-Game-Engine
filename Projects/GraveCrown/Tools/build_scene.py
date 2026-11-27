@@ -808,8 +808,11 @@ def dress_camps(builder, rng):
         piece(builder, "Weapon Rack", "gc_weapon_rack", (cx_ + math.cos(a) * 4.0, 0.0, cz_ + math.sin(a) * 4.0), rng.uniform(0, 360),
               (0.9, 0.9, 0.2), (0.0, 0.9, 0.0))
         a = math.radians(rng.uniform(80, 130))
-        piece(builder, "Supplies", "gc_crates", (cx_ + math.cos(a) * 6.0, 0.0, cz_ + math.sin(a) * 6.0), rng.uniform(0, 360),
-              (1.1, 0.6, 0.6), (0.0, 0.6, 0.0))
+        # (scanned barrels and a chest instead of the generated crates, see dress_with_scans)
+        supplies_x, supplies_z, supplies_yaw = cx_ + math.cos(a) * 6.0, cz_ + math.sin(a) * 6.0, rng.uniform(0, 360)
+        piece(builder, "Barrel", "ph_barrel_a", (supplies_x, 0.0, supplies_z), supplies_yaw, (0.3, 0.45, 0.3), (0.0, 0.45, 0.0))
+        piece(builder, "Barrel", "ph_barrel_b", (supplies_x + 0.75, 0.0, supplies_z + 0.2), supplies_yaw + 40.0, (0.3, 0.45, 0.3), (0.0, 0.45, 0.0))
+        piece(builder, "Chest", "ph_chest", (supplies_x - 0.4, 0.0, supplies_z + 0.9), supplies_yaw + 90.0, (0.45, 0.3, 0.3), (0.0, 0.3, 0.0))
         piece(builder, "Bones", "gc_bones", (cx_ + rng.uniform(-3, 3), 0.0, cz_ + rng.uniform(-3, 3)), rng.uniform(0, 360))
         if index == 0:
             piece(builder, "Gibbet Cage", "gc_cage", (cx_ - 7.0, 0.0, cz_ + 2.0), 30.0, (0.2, 1.9, 0.2), (0.0, 1.9, 0.0))
@@ -824,6 +827,43 @@ def dress_camps(builder, rng):
                 "color": {"ambient": [0.01, 0.005, 0.015], "diffuse": [0.55, 0.3, 0.85], "specular": [0.3, 0.2, 0.5]}}))
     for x, z, yaw in ((9.0, -58.0, 30.0), (-9.5, -104.0, 200.0)):
         piece(builder, "Broken Cart", "gc_cart", (x, 0.0, z), yaw, (1.1, 0.6, 0.6), (0.0, 0.6, 0.0))
+
+
+def dress_with_scans(builder):
+    """Poly Haven's scanned props (props_from_scans.py, toned to the plains): in every camp a table with a stool, a jug
+    and urns, a spade stuck by the graves and a shield against the rack; over the plains mossy rocks, fallen dead trunks,
+    dry branches and roots; broken statues of the old faith by the road. A random of its own (the rest of the scene
+    keeps its places)"""
+    rng = random.Random(1127)
+    for cx_, cz_ in ((14.0, -28.0), (-18.0, -78.0), (16.0, -96.0)):
+        a = rng.uniform(0, 2 * math.pi)
+        tx, tz = cx_ + math.cos(a) * 3.2, cz_ + math.sin(a) * 3.2
+        yaw = rng.uniform(0, 360)
+        piece(builder, "Camp Table", "ph_table", (tx, 0.0, tz), yaw, (0.6, 0.4, 0.4), (0.0, 0.4, 0.0), scale=1.1)
+        piece(builder, "Camp Stool", "ph_stool", (tx + math.cos(a) * 0.9, 0.0, tz + math.sin(a) * 0.9), yaw + 30.0, scale=1.1)
+        piece(builder, "Jug", "ph_jug", (tx, 0.8, tz), rng.uniform(0, 360), scale=1.2)
+        for k in range(2):
+            b = a + rng.uniform(1.5, 2.5) + k * 0.4
+            piece(builder, "Urn", "ph_urn" if k == 0 else "ph_vase", (cx_ + math.cos(b) * 4.6, 0.0, cz_ + math.sin(b) * 4.6),
+                  rng.uniform(0, 360), scale=1.3 if k == 0 else 2.0)
+        piece(builder, "Grave Spade", "ph_spade", (cx_ + rng.uniform(-5, 5), -0.25, cz_ + 5.8), rng.uniform(0, 360), scale=1.2)
+        piece(builder, "Dropped Shield", "ph_shield", (cx_ + rng.uniform(-4, 4), 0.0, cz_ - 4.5), rng.uniform(0, 360), scale=1.0)
+    x_range, z_range = (-PLAINS_HALF_WIDTH + 6, PLAINS_HALF_WIDTH - 6), (PLAINS_TO_Z + 6, -8.0)
+    camps = [(14.0, -28.0, 10.0), (-18.0, -78.0, 10.0), (16.0, -96.0, 10.0), (-10.0, -48.0, 7.0), (-30.0, -43.0, 9.0),
+             (0.0, PLAINS_TO_Z + 10.0, 24.0)]
+    for model, count, sizes, half in (("ph_rocks_moss", 6, (0.7, 1.1), (3.5, 0.6, 1.4)),
+                                      ("ph_boulder", 7, (1.0, 1.8), (0.6, 0.5, 0.8)),
+                                      ("ph_dead_trunk", 8, (1.0, 1.3), None),
+                                      ("ph_branches", 14, (1.0, 1.6), None),
+                                      ("ph_root", 10, (1.0, 1.6), None),
+                                      ("ph_rock_a", 16, (4.0, 8.0), None)):
+        for x, z in scatter(rng, count, x_range, z_range, 7.5, camps):
+            size = rng.uniform(*sizes)
+            collider_half = tuple(h * size for h in half) if half else None
+            piece(builder, model.replace("ph_", "").replace("_", " ").title(), model, (x, 0.0, z), rng.uniform(0, 360),
+                  collider_half, (0.0, collider_half[1], 0.0) if half else None, scale=size)
+    for x, z, yaw in ((-8.0, -30.0, 60.0), (8.5, -84.0, 250.0)):
+        piece(builder, "Statue of the Old Faith", "ph_statue", (x, 0.0, z), yaw, (0.7, 0.9, 0.7), (0.0, 0.9, 0.0), scale=1.5)
 
 
 def add_foliage(builder):
@@ -861,6 +901,7 @@ def add_plains(builder, rng):
     dress_plains(builder, rng)
     add_foliage(builder)
     dress_camps(builder, rng)
+    dress_with_scans(builder)
     # Camps of the faithful: fires and their guards
     # (two fires at the edge of each camp, away from where its guards fight: one in the middle filled the screen
     # with flame whenever the camera came close in a fight)

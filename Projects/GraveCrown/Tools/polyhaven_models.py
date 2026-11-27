@@ -89,5 +89,6 @@ def download(asset):
     print("GOT", asset)
 
 
-for model in MODELS:
-    download(model)
+if __name__ == "__main__":
+    for model in MODELS:
+        download(model)

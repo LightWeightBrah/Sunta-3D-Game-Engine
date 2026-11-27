@@ -1,0 +1,256 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_shield"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "kite_shield_body",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    }
+   }
+  },
+  {
+   "doubleSided": true,
+   "name": "kite_shield_clamps_and_trim",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 4
+    }
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "Plane",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    },
+    {
+     "attributes": {
+      "POSITION": 4,
+      "NORMAL": 5,
+      "TEXCOORD_0": 6
+     },
+     "indices": 7,
+     "material": 1
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  },
+  {
+   "sampler": 0,
+   "source": 3
+  },
+  {
+   "sampler": 0,
+   "source": 4
+  },
+  {
+   "sampler": 0,
+   "source": 5
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "kite_shield_body_nor_gl_1k",
+   "uri": "kite_shield_body_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "kite_shield_body_diff_1k",
+   "uri": "kite_shield_body_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "kite_shield_body_arm_1k",
+   "uri": "kite_shield_body_arm_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "kite_shield_clamps_trim_nor_gl_1k",
+   "uri": "kite_shield_clamps_trim_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "kite_shield_clamps_trim_diff_1k",
+   "uri": "kite_shield_clamps_trim_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "kite_shield_clamps_trim_arm_1k",
+   "uri": "kite_shield_clamps_trim_arm_1k.jpg"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 928,
+   "max": [
+    0.2662733793258667,
+    1.388113260269165,
+    0.061564184725284576
+   ],
+   "min": [
+    -0.26626020669937134,
+    0.023045003414154053,
+    -0.06735078990459442
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 928,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 928,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 3021,
+   "type": "SCALAR"
+  },
+  {
+   "bufferView": 4,
+   "componentType": 5126,
+   "count": 1565,
+   "max": [
+    0.2720307409763336,
+    1.3941595554351807,
+    0.06735078990459442
+   ],
+   "min": [
+    -0.2720307409763336,
+    0,
+    -0.0630023181438446
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 5,
+   "componentType": 5126,
+   "count": 1565,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 6,
+   "componentType": 5126,
+   "count": 1565,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 7,
+   "componentType": 5123,
+   "count": 4479,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 11136,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 11136,
+   "byteOffset": 11136,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 7424,
+   "byteOffset": 22272,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 6042,
+   "byteOffset": 29696,
+   "target": 34963
+  },
+  {
+   "buffer": 0,
+   "byteLength": 18780,
+   "byteOffset": 35740,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 18780,
+   "byteOffset": 54520,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 12520,
+   "byteOffset": 73300,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 8958,
+   "byteOffset": 85820,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 94780,
+   "uri": "ph_shield.bin"
+  }
+ ]
+}

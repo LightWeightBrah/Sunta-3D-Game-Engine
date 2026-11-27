@@ -1,0 +1,154 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_rocks_moss"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "rock_moss_set_02",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    },
+    "metallicFactor": 0
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "low.004",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "rock_moss_set_02_nor_gl_1k",
+   "uri": "rock_moss_set_02_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "rock_moss_set_02_diff_1k",
+   "uri": "rock_moss_set_02_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/png",
+   "name": "rock_moss_set_02_rough_1k",
+   "uri": "rock_moss_set_02_rough_1k.png"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 3967,
+   "max": [
+    4.136686325073242,
+    1.3594422340393066,
+    1.7056951522827148
+   ],
+   "min": [
+    -4.136686325073242,
+    0,
+    -1.7056951522827148
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 3967,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 3967,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 18000,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 47604,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 47604,
+   "byteOffset": 47604,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 31736,
+   "byteOffset": 95208,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 36000,
+   "byteOffset": 126944,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 162944,
+   "uri": "ph_rocks_moss.bin"
+  }
+ ]
+}

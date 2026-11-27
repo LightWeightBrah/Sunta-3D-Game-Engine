@@ -1,0 +1,154 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_dead_trunk"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "dead_tree_trunk",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    },
+    "metallicFactor": 0
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "dead_tree",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "dead_tree_trunk_nor_gl_1k",
+   "uri": "dead_tree_trunk_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "dead_tree_trunk_diff_1k",
+   "uri": "dead_tree_trunk_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/png",
+   "name": "dead_tree_trunk_arm_1k",
+   "uri": "dead_tree_trunk_arm_1k.png"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 3858,
+   "max": [
+    1.5246309041976929,
+    0.28640756011009216,
+    0.1379711925983429
+   ],
+   "min": [
+    -1.5246309041976929,
+    0,
+    -0.1379711925983429
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 3858,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 3858,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 17997,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 46296,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 46296,
+   "byteOffset": 46296,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 30864,
+   "byteOffset": 92592,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 35994,
+   "byteOffset": 123456,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 159452,
+   "uri": "ph_dead_trunk.bin"
+  }
+ ]
+}

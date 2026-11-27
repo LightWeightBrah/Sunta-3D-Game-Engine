@@ -1,0 +1,167 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_root"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "name": "single_root",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    },
+    "metallicFactor": 0
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "realCap_Model_7",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2,
+      "COLOR_0": 3
+     },
+     "indices": 4,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "single_root_nor_gl_1k",
+   "uri": "single_root_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "single_root_diff_1k",
+   "uri": "single_root_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/png",
+   "name": "single_root_arm_1k",
+   "uri": "single_root_arm_1k.png"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 2167,
+   "max": [
+    0.2775110602378845,
+    0.17751067876815796,
+    0.917812705039978
+   ],
+   "min": [
+    -0.2775110602378845,
+    0,
+    -0.917812705039978
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 2167,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 2167,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5126,
+   "count": 2167,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 4,
+   "componentType": 5123,
+   "count": 8997,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 26004,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 26004,
+   "byteOffset": 26004,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 17336,
+   "byteOffset": 52008,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 26004,
+   "byteOffset": 69344,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 17994,
+   "byteOffset": 95348,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 113344,
+   "uri": "ph_root.bin"
+  }
+ ]
+}

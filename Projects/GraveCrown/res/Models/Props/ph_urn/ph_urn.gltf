@@ -1,0 +1,165 @@
+{
+ "asset": {
+  "generator": "Khronos glTF Blender I/O v5.3.43",
+  "version": "2.0"
+ },
+ "extensionsUsed": [
+  "KHR_materials_specular"
+ ],
+ "scene": 0,
+ "scenes": [
+  {
+   "name": "Scene",
+   "nodes": [
+    0
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "mesh": 0,
+   "name": "ph_urn"
+  }
+ ],
+ "materials": [
+  {
+   "doubleSided": true,
+   "extensions": {
+    "KHR_materials_specular": {
+     "specularColorFactor": [
+      2.0,
+      2.0,
+      2.0
+     ]
+    }
+   },
+   "name": "ceramic_pot",
+   "pbrMetallicRoughness": {
+    "baseColorTexture": {
+     "index": 1
+    }
+   }
+  }
+ ],
+ "meshes": [
+  {
+   "name": "PRL_CERAMIC_POT_COMBINED",
+   "primitives": [
+    {
+     "attributes": {
+      "POSITION": 0,
+      "NORMAL": 1,
+      "TEXCOORD_0": 2
+     },
+     "indices": 3,
+     "material": 0
+    }
+   ]
+  }
+ ],
+ "textures": [
+  {
+   "sampler": 0,
+   "source": 0
+  },
+  {
+   "sampler": 0,
+   "source": 1
+  },
+  {
+   "sampler": 0,
+   "source": 2
+  }
+ ],
+ "images": [
+  {
+   "mimeType": "image/jpeg",
+   "name": "ceramic_pot_nor_gl_1k",
+   "uri": "ceramic_pot_nor_gl_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "ceramic_pot_diff_1k",
+   "uri": "ceramic_pot_diff_1k.jpg"
+  },
+  {
+   "mimeType": "image/jpeg",
+   "name": "ceramic_pot_arm_1k",
+   "uri": "ceramic_pot_arm_1k.jpg"
+  }
+ ],
+ "accessors": [
+  {
+   "bufferView": 0,
+   "componentType": 5126,
+   "count": 1525,
+   "max": [
+    0.32812514901161194,
+    0.3717057406902313,
+    0.2508714497089386
+   ],
+   "min": [
+    -0.32812514901161194,
+    0,
+    -0.2508714497089386
+   ],
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 1,
+   "componentType": 5126,
+   "count": 1525,
+   "type": "VEC3"
+  },
+  {
+   "bufferView": 2,
+   "componentType": 5126,
+   "count": 1525,
+   "type": "VEC2"
+  },
+  {
+   "bufferView": 3,
+   "componentType": 5123,
+   "count": 7497,
+   "type": "SCALAR"
+  }
+ ],
+ "bufferViews": [
+  {
+   "buffer": 0,
+   "byteLength": 18300,
+   "byteOffset": 0,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 18300,
+   "byteOffset": 18300,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 12200,
+   "byteOffset": 36600,
+   "target": 34962
+  },
+  {
+   "buffer": 0,
+   "byteLength": 14994,
+   "byteOffset": 48800,
+   "target": 34963
+  }
+ ],
+ "samplers": [
+  {
+   "magFilter": 9729,
+   "minFilter": 9987
+  }
+ ],
+ "buffers": [
+  {
+   "byteLength": 63796,
+   "uri": "ph_urn.bin"
+  }
+ ]
+}
