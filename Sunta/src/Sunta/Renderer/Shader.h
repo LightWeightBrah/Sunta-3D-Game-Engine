@@ -44,6 +44,10 @@ public:
 	void AddFeature(ShaderFeature feature) { features |= (unsigned int)feature; }
 	bool HasFeature(ShaderFeature feature) const { return (features & (unsigned int)feature) != 0; }
 
+	// The lights of which scene picture this shader holds now (see Renderer::NewLightingVersion): uniforms stay in the
+	// program between draws, so the lights are sent once a picture, not once a model
+	unsigned int uploadedLightingVersion = 0;
+
 	virtual bool HasUniform(const std::string& name) const = 0;
 
 	virtual void SetUniformBool(const std::string& name, bool value) const = 0;

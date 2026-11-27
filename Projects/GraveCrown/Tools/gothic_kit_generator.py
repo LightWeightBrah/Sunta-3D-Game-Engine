@@ -56,6 +56,8 @@ COLORS = {
     "glass_gold":  ((0.95, 0.68, 0.20), 0.6, True),
     "rune":        ((0.70, 0.30, 1.00), 0.0, True),
     "cloth":       ((0.30, 0.05, 0.07), 0.05),
+    "wood":        ((0.24, 0.18, 0.13), 0.06),
+    "canvas":      ((0.46, 0.42, 0.36), 0.03),
 }
 
 DARK_STONE = SurfaceTexture("rock_08_diff_1k.jpg", meters=1.2, strength=1.4)
@@ -68,6 +70,8 @@ SURFACES = {
     "ash":         SurfaceTexture("burned_ground_01_diff_1k.jpg", meters=1.0),
     "iron":        SurfaceTexture("rust_coarse_01_diff_1k.jpg", meters=0.8, strength=0.8),
     "cloth":       SurfaceTexture("brown_leather_diff_1k.jpg", meters=0.5, strength=0.6),
+    "wood":        SurfaceTexture("old_wood_floor_diff_1k.jpg", meters=0.8, strength=1.0),
+    "canvas":      SurfaceTexture("brown_leather_diff_1k.jpg", meters=1.2, strength=0.5),
 }
 
 TEXTURE_PIXELS = 1024
@@ -529,6 +533,173 @@ def build_grave_shrine(parts, generator):
         parts.limb(None, "glass_gold", (x, -0.01, 0.98 + 0.03), (x, -0.01, 0.98 + 0.08 + 0.02 * (index % 2)), 0.012, 0.004, segments=5)
 
 
+
+# ========== Props: the camps of the gods' faithful, the road, the crypt ==========
+
+
+def build_tent(parts, generator):
+    """A pale tent of the church: two poles and a ridge, the canvas sloping to the ground on both sides, its front open"""
+    length, half_width, height = 3.0, 1.5, 2.1
+    for y in (-length * 0.5, length * 0.5):
+        parts.cylinder(None, "wood", make_matrix((0.0, y, height * 0.5)), 0.05, 0.05, height, segments=8)
+    parts.limb(None, "wood", (0.0, -length * 0.5, height), (0.0, length * 0.5, height), 0.045, 0.045, segments=8)
+    slope = math.degrees(math.atan2(height, half_width))
+    side = math.hypot(height, half_width)
+    for sx in (-1.0, 1.0):
+        parts.box(None, "canvas", (sx * half_width * 0.5, 0.0, height * 0.5), (side, length + 0.1, 0.03),
+                  rotation=(0, sx * slope, 0), bevel=0.0)
+    # the back closed, pegs and ropes at the corners
+    for k in range(6):
+        t = (k + 0.5) / 6
+        w = half_width * (1.0 - t) * 2
+        parts.box(None, "canvas", (0.0, length * 0.5, height * t), (w, 0.03, height / 6 + 0.02), bevel=0.0)
+    for sx in (-1.0, 1.0):
+        for y in (-length * 0.5, length * 0.5):
+            parts.limb(None, "canvas", (sx * half_width * 0.9, y, 0.15), (sx * (half_width + 0.6), y * 1.15, 0.0), 0.012, 0.012, segments=4)
+
+
+def build_weapon_rack(parts, generator):
+    """A rack of the faithful's spears and swords"""
+    for x in (-0.8, 0.8):
+        parts.box(None, "wood", (x, 0.0, 0.7), (0.1, 0.1, 1.4), bevel=0.01)
+    parts.box(None, "wood", (0.0, 0.0, 1.25), (1.8, 0.08, 0.08), bevel=0.01)
+    parts.box(None, "wood", (0.0, 0.0, 0.35), (1.8, 0.08, 0.08), bevel=0.01)
+    for k in range(6):
+        x = -0.65 + k * 0.26
+        lean = generator.uniform(-6, 6)
+        if k % 2 == 0:
+            parts.cylinder(None, "wood", make_matrix((x, 0.08, 1.0), (lean, 0, 0)), 0.02, 0.02, 2.0, segments=6)
+            parts.box(None, "iron", (x, 0.08 - math.sin(math.radians(lean)) * 1.0, 2.05), (0.05, 0.02, 0.22), rotation=(lean, 0, 0), bevel=0.0)
+        else:
+            parts.box(None, "iron", (x, 0.08, 0.95), (0.05, 0.015, 1.1), rotation=(lean, 0, 0), bevel=0.0)
+            parts.box(None, "iron", (x, 0.08, 1.52), (0.22, 0.03, 0.03), bevel=0.0)
+
+
+def build_crates(parts, generator):
+    """Crates stacked by a barrel"""
+    for (x, y, z, size) in ((0.0, 0.0, 0.0, 0.8), (0.85, 0.1, 0.0, 0.7), (0.3, 0.0, 0.8, 0.6)):
+        turn = generator.uniform(-12, 12)
+        parts.box(None, "wood", (x, y, z + size * 0.5), (size, size, size), rotation=(0, 0, turn), bevel=0.02)
+        for dz in (0.1, size - 0.1):
+            parts.box(None, "iron", (x, y, z + dz), (size + 0.02, size + 0.02, 0.04), rotation=(0, 0, turn), bevel=0.0)
+    parts.cylinder(None, "wood", make_matrix((-0.75, 0.3, 0.5)), 0.35, 0.35, 1.0, segments=14)
+    for z in (0.15, 0.85):
+        parts.cylinder(None, "iron", make_matrix((-0.75, 0.3, z)), 0.36, 0.36, 0.05, segments=14)
+
+
+def build_cart(parts, generator):
+    """A broken cart: its bed tipped on one wheel, the other wheel fallen beside it"""
+    tilt = (0, 14, 0)
+    parts.box(None, "wood", (0.0, 0.0, 0.75), (2.2, 1.2, 0.1), rotation=tilt, bevel=0.01)
+    for y in (-0.6, 0.6):
+        parts.box(None, "wood", (0.0, y, 0.95), (2.2, 0.06, 0.4), rotation=tilt, bevel=0.01)
+    parts.limb(None, "wood", (1.1, 0.0, 0.5), (2.4, 0.0, 0.1), 0.05, 0.05, segments=6)
+
+    def wheel(center, axis_y=True):
+        ring(parts, "wood", center, 0.5, 0.05, axis="y" if axis_y else "z", segments=16)
+        for k in range(6):
+            a = math.pi * k / 6
+            if axis_y:
+                a_end = (center[0] + math.cos(a) * 0.5, center[1], center[2] + math.sin(a) * 0.5)
+                b_end = (center[0] - math.cos(a) * 0.5, center[1], center[2] - math.sin(a) * 0.5)
+            else:
+                a_end = (center[0] + math.cos(a) * 0.5, center[1] + math.sin(a) * 0.5, center[2])
+                b_end = (center[0] - math.cos(a) * 0.5, center[1] - math.sin(a) * 0.5, center[2])
+            parts.limb(None, "wood", a_end, b_end, 0.025, 0.025, segments=5)
+
+    wheel((-0.4, 0.7, 0.5))
+    wheel((-1.2, -1.4, 0.06), axis_y=False)
+
+
+def build_cage(parts, generator):
+    """A gibbet: a post and an arm, an iron cage hanging from it, a skeleton slumped inside"""
+    parts.box(None, "wood", (0.0, 0.0, 1.9), (0.18, 0.18, 3.8), bevel=0.02)
+    parts.box(None, "wood", (0.7, 0.0, 3.7), (1.5, 0.15, 0.15), bevel=0.02)
+    parts.limb(None, "wood", (0.0, 0.0, 3.1), (0.6, 0.0, 3.65), 0.05, 0.05, segments=6)
+    parts.limb(None, "iron", (1.3, 0.0, 3.65), (1.3, 0.0, 3.1), 0.02, 0.02, segments=5)
+    cx, cz = 1.3, 2.1
+    for k in range(8):
+        a = 2 * math.pi * k / 8
+        x, y = cx + math.cos(a) * 0.35, math.sin(a) * 0.35
+        parts.limb(None, "iron", (x, y, cz - 0.9), (x, y, cz + 0.9), 0.015, 0.015, segments=4)
+    for z in (cz - 0.9, cz, cz + 0.9):
+        ring(parts, "iron", (cx, 0.0, z), 0.36, 0.02, axis="z", segments=12)
+    parts.sphere(None, "bone", (cx + 0.05, 0.05, cz + 0.35), (0.1, 0.09, 0.12))
+    parts.limb(None, "bone", (cx, 0.0, cz + 0.25), (cx + 0.05, 0.05, cz - 0.3), 0.04, 0.03)
+    parts.limb(None, "bone", (cx, 0.0, cz - 0.3), (cx + 0.15, -0.15, cz - 0.85), 0.025, 0.02)
+    parts.limb(None, "bone", (cx, 0.0, cz - 0.3), (cx - 0.15, 0.12, cz - 0.85), 0.025, 0.02)
+
+
+def build_bones(parts, generator):
+    """A heap of skulls and bones"""
+    for _ in range(9):
+        x, y = generator.uniform(-0.5, 0.5), generator.uniform(-0.4, 0.4)
+        a = generator.uniform(0, math.pi)
+        length = generator.uniform(0.3, 0.5)
+        z = generator.uniform(0.03, 0.15)
+        parts.limb(None, "bone", (x - math.cos(a) * length * 0.5, y - math.sin(a) * length * 0.5, z),
+                   (x + math.cos(a) * length * 0.5, y + math.sin(a) * length * 0.5, z + generator.uniform(-0.05, 0.05)), 0.025, 0.022)
+    for _ in range(4):
+        x, y = generator.uniform(-0.4, 0.4), generator.uniform(-0.3, 0.3)
+        parts.sphere(None, "bone", (x, y, 0.16), (0.11, 0.13, 0.12))
+        parts.box(None, "mortar", (x + 0.035, y - 0.1, 0.18), (0.035, 0.03, 0.035), bevel=0.0)
+        parts.box(None, "mortar", (x - 0.035, y - 0.1, 0.18), (0.035, 0.03, 0.035), bevel=0.0)
+
+
+def build_urns(parts, generator):
+    """Funerary urns of the court on a low stone shelf"""
+    parts.box(None, "stone_dark", (0.0, 0.0, 0.15), (1.8, 0.6, 0.3), bevel=0.03)
+    for k in range(4):
+        x = -0.65 + k * 0.43
+        h = generator.uniform(0.35, 0.55)
+        parts.cylinder(None, "stone_light" if k % 2 else "stone", make_matrix((x, 0.0, 0.3 + h * 0.5)), 0.12, 0.17, h, segments=12)
+        parts.cylinder(None, "stone_dark", make_matrix((x, 0.0, 0.3 + h + 0.04)), 0.13, 0.1, 0.08, segments=12)
+        parts.sphere(None, "iron", (x, 0.0, 0.3 + h + 0.1), (0.035, 0.035, 0.035))
+
+
+def build_candelabra(parts, generator):
+    """A tall iron candle stand with five candles burning"""
+    parts.cylinder(None, "iron", make_matrix((0.0, 0.0, 0.06)), 0.28, 0.2, 0.12, segments=10)
+    parts.cylinder(None, "iron", make_matrix((0.0, 0.0, 0.95)), 0.035, 0.03, 1.7, segments=8)
+    for k in range(5):
+        a = 2 * math.pi * k / 5
+        x, y = math.cos(a) * 0.28, math.sin(a) * 0.28
+        parts.limb(None, "iron", (0.0, 0.0, 1.55), (x, y, 1.75), 0.018, 0.018, segments=5)
+        parts.cylinder(None, "iron", make_matrix((x, y, 1.76)), 0.05, 0.04, 0.03, segments=8)
+        h = generator.uniform(0.12, 0.22)
+        parts.cylinder(None, "wax", make_matrix((x, y, 1.78 + h * 0.5)), 0.03, 0.028, h, segments=8)
+        parts.sphere(None, "flame", (x, y, 1.78 + h + 0.04), (0.02, 0.02, 0.045), segments=8, rings=6)
+
+
+def build_lantern_post(parts, generator):
+    """A crooked post by the road, a lantern hanging from its arm, a violet flame in it"""
+    parts.limb(None, "wood", (0.0, 0.0, 0.0), (0.05, 0.0, 2.6), 0.08, 0.06, segments=8)
+    parts.limb(None, "wood", (0.03, 0.0, 2.4), (0.7, 0.0, 2.55), 0.04, 0.04, segments=6)
+    parts.limb(None, "iron", (0.65, 0.0, 2.55), (0.65, 0.0, 2.3), 0.01, 0.01, segments=4)
+    parts.box(None, "iron", (0.65, 0.0, 2.12), (0.2, 0.2, 0.03), bevel=0.0)
+    parts.box(None, "iron", (0.65, 0.0, 1.88), (0.22, 0.22, 0.03), bevel=0.0)
+    for dx, dy in ((-0.09, -0.09), (0.09, -0.09), (-0.09, 0.09), (0.09, 0.09)):
+        parts.box(None, "iron", (0.65 + dx, dy, 2.0), (0.02, 0.02, 0.24), bevel=0.0)
+    parts.sphere(None, "rune", (0.65, 0.0, 1.99), (0.05, 0.05, 0.08))
+
+
+def build_statue_broken(parts, generator):
+    """A knight of the old kings kneeling on a plinth, his head broken off and lying at his knee"""
+    parts.box(None, "stone_dark", (0.0, 0.0, 0.3), (1.2, 1.0, 0.6), bevel=0.05)
+    top = 0.6
+    parts.box(None, "stone_light", (0.0, 0.1, top + 0.25), (0.5, 0.35, 0.5), bevel=0.06)
+    parts.box(None, "stone_light", (0.0, -0.05, top + 0.9), (0.55, 0.35, 0.8), bevel=0.08)
+    parts.limb(None, "stone_light", (-0.12, -0.15, top + 0.5), (-0.12, -0.45, top + 0.05), 0.11, 0.09)
+    parts.limb(None, "stone", (0.12, 0.15, top + 0.5), (0.12, 0.45, top + 0.1), 0.11, 0.09)
+    for sx in (-1.0, 1.0):
+        parts.limb(None, "stone_light", (sx * 0.32, -0.05, top + 1.2), (sx * 0.1, -0.35, top + 0.85), 0.08, 0.07)
+    # the sword planted before him, his hands on the pommel
+    parts.box(None, "stone", (0.0, -0.45, top + 0.45), (0.08, 0.03, 0.9), bevel=0.0)
+    parts.box(None, "stone", (0.0, -0.45, top + 0.85), (0.3, 0.05, 0.05), bevel=0.0)
+    parts.box(None, "stone_dark", (0.0, -0.05, top + 1.33), (0.32, 0.3, 0.08), rotation=(8, -5, 0), bevel=0.02)
+    parts.sphere(None, "stone_light", (0.45, -0.35, top + 0.12), (0.15, 0.14, 0.13))
+
+
 # Every piece: its builder and the size of its texture
 PIECES = {
     "gc_crypt_floor":   (build_floor, BIG_TEXTURE_PIXELS),
@@ -543,6 +714,16 @@ PIECES = {
     "gc_banner":        (build_banner, TEXTURE_PIXELS),
     "gc_king_banner":   (build_king_banner, TEXTURE_PIXELS),
     "gc_grave_shrine":  (build_grave_shrine, TEXTURE_PIXELS),
+    "gc_tent":          (build_tent, TEXTURE_PIXELS),
+    "gc_weapon_rack":   (build_weapon_rack, TEXTURE_PIXELS),
+    "gc_crates":        (build_crates, TEXTURE_PIXELS),
+    "gc_cart":          (build_cart, TEXTURE_PIXELS),
+    "gc_cage":          (build_cage, TEXTURE_PIXELS),
+    "gc_bones":         (build_bones, TEXTURE_PIXELS),
+    "gc_urns":          (build_urns, TEXTURE_PIXELS),
+    "gc_candelabra":    (build_candelabra, TEXTURE_PIXELS),
+    "gc_lantern_post":  (build_lantern_post, TEXTURE_PIXELS),
+    "gc_statue_broken": (build_statue_broken, TEXTURE_PIXELS),
     "gc_arch_ruin":     (build_arch_ruin, TEXTURE_PIXELS),
     "gc_runestone":     (build_runestone, TEXTURE_PIXELS),
     "gc_chain_anchor":  (build_chain_anchor, TEXTURE_PIXELS),

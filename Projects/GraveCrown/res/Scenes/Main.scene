@@ -6261,6 +6261,510 @@
   },
   {
    "tag": {
+    "name": "Candelabra"
+   },
+   "transform": {
+    "position": [
+     -2.6,
+     0.0,
+     6.0
+    ],
+    "rotation": [
+     0.0,
+     187.91420749649754,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.06900959718289407,
+     0.0,
+     0.9976159960108171,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candelabra"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.2,
+     1.0,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candelabra"
+   },
+   "transform": {
+    "position": [
+     2.6,
+     0.0,
+     6.0
+    ],
+    "rotation": [
+     0.0,
+     290.4086797627245,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8211924356021805,
+     0.0,
+     0.5706513679206935,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candelabra"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.2,
+     1.0,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candelabra"
+   },
+   "transform": {
+    "position": [
+     -2.6,
+     0.0,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     345.77811875659563,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9923083181084725,
+     0.0,
+     0.12379096014141905,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candelabra"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.2,
+     1.0,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Candelabra"
+   },
+   "transform": {
+    "position": [
+     2.6,
+     0.0,
+     22.0
+    ],
+    "rotation": [
+     0.0,
+     104.26513599520759,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6138365706654544,
+     0.0,
+     0.7894331285889101,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_candelabra"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.2,
+     1.0,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Urns"
+   },
+   "transform": {
+    "position": [
+     -7.8,
+     0.0,
+     36.5
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_urns"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.5,
+     0.9
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Urns"
+   },
+   "transform": {
+    "position": [
+     -7.8,
+     0.0,
+     2.2
+    ],
+    "rotation": [
+     0.0,
+     -90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     -0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_urns"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.5,
+     0.9
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     -8.2,
+     0.0,
+     10.0
+    ],
+    "rotation": [
+     0.0,
+     275.79867760726296,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7419681041670714,
+     0.0,
+     0.6704351813551568,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     -8.2,
+     0.0,
+     26.0
+    ],
+    "rotation": [
+     0.0,
+     253.51915206362855,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5984585083947561,
+     0.0,
+     0.8011538015449491,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Urns"
+   },
+   "transform": {
+    "position": [
+     7.8,
+     0.0,
+     36.5
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_urns"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.5,
+     0.9
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Urns"
+   },
+   "transform": {
+    "position": [
+     7.8,
+     0.0,
+     2.2
+    ],
+    "rotation": [
+     0.0,
+     90.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7071067811865476,
+     0.0,
+     0.7071067811865476,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_urns"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.3,
+     0.5,
+     0.9
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.5,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     8.2,
+     0.0,
+     10.0
+    ],
+    "rotation": [
+     0.0,
+     238.09790060057895,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.4855566692435893,
+     0.0,
+     0.8742051938492882,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     8.2,
+     0.0,
+     26.0
+    ],
+    "rotation": [
+     0.0,
+     39.658337610196256,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9407081983760466,
+     0.0,
+     0.33921687090723046,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
     "name": "Throne Dais"
    },
    "transform": {
@@ -7233,7 +7737,7 @@
     ]
    },
    "parent": {
-    "index": 149,
+    "index": 161,
     "bone_name": ""
    }
   },
@@ -7265,7 +7769,7 @@
     ]
    },
    "parent": {
-    "index": 149,
+    "index": 161,
     "bone_name": ""
    }
   },
@@ -7297,7 +7801,7 @@
     ]
    },
    "parent": {
-    "index": 149,
+    "index": 161,
     "bone_name": ""
    }
   },
@@ -7329,7 +7833,7 @@
     ]
    },
    "parent": {
-    "index": 149,
+    "index": 161,
     "bone_name": ""
    }
   },
@@ -7361,7 +7865,7 @@
     ]
    },
    "parent": {
-    "index": 149,
+    "index": 161,
     "bone_name": ""
    }
   },
@@ -7393,7 +7897,7 @@
     ]
    },
    "parent": {
-    "index": 149,
+    "index": 161,
     "bone_name": ""
    }
   },
@@ -7503,7 +8007,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 156
+    "index": 168
    },
    "point_light": {
     "attenuation": {
@@ -7949,7 +8453,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 162,
+    "index": 174,
     "bone_name": "Weapon_R"
    }
   },
@@ -7987,7 +8491,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 162,
+    "index": 174,
     "bone_name": "Hand_L"
    }
   },
@@ -12801,6 +13305,1198 @@
   },
   {
    "tag": {
+    "name": "Camp Tent"
+   },
+   "transform": {
+    "position": [
+     19.013434246803776,
+     0.0,
+     -25.738257960558926
+    ],
+    "rotation": [
+     0.0,
+     65.71813747758952,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.840007686081777,
+     0.0,
+     0.542574499330312,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_tent"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6,
+     1.1,
+     1.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Tent"
+   },
+   "transform": {
+    "position": [
+     8.569937451834749,
+     0.0,
+     -27.125688429098016
+    ],
+    "rotation": [
+     0.0,
+     279.1468691906861,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.7612377224507457,
+     0.0,
+     0.6484729214994266,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_tent"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6,
+     1.1,
+     1.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Weapon Rack"
+   },
+   "transform": {
+    "position": [
+     12.81179546565157,
+     0.0,
+     -31.819446292927005
+    ],
+    "rotation": [
+     0.0,
+     46.734689214317825,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9179808287181914,
+     0.0,
+     0.3966247573032508,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_weapon_rack"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.9,
+     0.9,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Supplies"
+   },
+   "transform": {
+    "position": [
+     14.67545882248518,
+     0.0,
+     -22.03814161698494
+    ],
+    "rotation": [
+     0.0,
+     266.7201113458539,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.6865808050564501,
+     0.0,
+     0.7270535043090273,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crates"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1,
+     0.6,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     12.533563260618182,
+     0.0,
+     -30.020520878341745
+    ],
+    "rotation": [
+     0.0,
+     30.414554174855052,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.964983186267972,
+     0.0,
+     0.26231174243657607,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Gibbet Cage"
+   },
+   "transform": {
+    "position": [
+     7.0,
+     0.0,
+     -26.0
+    ],
+    "rotation": [
+     0.0,
+     30.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9659258262890683,
+     0.0,
+     0.25881904510252074,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_cage"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.2,
+     1.9,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.9,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Tent"
+   },
+   "transform": {
+    "position": [
+     -14.499802685704697,
+     0.0,
+     -73.75752209658083
+    ],
+    "rotation": [
+     0.0,
+     39.52386108895462,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9411056313728778,
+     0.0,
+     0.3381126892002975,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_tent"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6,
+     1.1,
+     1.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Tent"
+   },
+   "transform": {
+    "position": [
+     -23.09111699867358,
+     0.0,
+     -80.08099200042116
+    ],
+    "rotation": [
+     0.0,
+     247.76773072513515,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5575113532948199,
+     0.0,
+     0.8301693146264674,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_tent"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6,
+     1.1,
+     1.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Weapon Rack"
+   },
+   "transform": {
+    "position": [
+     -17.064374581678234,
+     0.0,
+     -81.88903652291802
+    ],
+    "rotation": [
+     0.0,
+     101.49598163038662,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6327324837152849,
+     0.0,
+     0.774370456597801,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_weapon_rack"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.9,
+     0.9,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Supplies"
+   },
+   "transform": {
+    "position": [
+     -18.22097641942754,
+     0.0,
+     -72.004070595641
+    ],
+    "rotation": [
+     0.0,
+     105.50105732892077,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.6052866433580153,
+     0.0,
+     0.7960075875093069,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crates"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1,
+     0.6,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     -18.243282339631676,
+     0.0,
+     -80.05480236102477
+    ],
+    "rotation": [
+     0.0,
+     160.4968589641465,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.1693765185755256,
+     0.0,
+     0.9855514166978985,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Tent"
+   },
+   "transform": {
+    "position": [
+     21.292340498388903,
+     0.0,
+     -94.50295890199611
+    ],
+    "rotation": [
+     0.0,
+     74.20541598015664,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7975554183083964,
+     0.0,
+     0.6032456835543201,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_tent"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6,
+     1.1,
+     1.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Camp Tent"
+   },
+   "transform": {
+    "position": [
+     11.130656015577458,
+     0.0,
+     -98.55724249170234
+    ],
+    "rotation": [
+     0.0,
+     242.2928079982432,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.5172266522959174,
+     0.0,
+     0.855848462144297,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_tent"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.6,
+     1.1,
+     1.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.1,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Weapon Rack"
+   },
+   "transform": {
+    "position": [
+     17.916676474630414,
+     0.0,
+     -99.51089038444641
+    ],
+    "rotation": [
+     0.0,
+     196.94641468280705,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.14734691128111843,
+     0.0,
+     0.9890848738788367,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_weapon_rack"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.9,
+     0.9,
+     0.2
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.9,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Supplies"
+   },
+   "transform": {
+    "position": [
+     15.767337049386253,
+     0.0,
+     -90.00451270108829
+    ],
+    "rotation": [
+     0.0,
+     347.64003722116263,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9941886372584886,
+     0.0,
+     0.10765200205341875,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_crates"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1,
+     0.6,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Bones"
+   },
+   "transform": {
+    "position": [
+     14.857287506067717,
+     0.0,
+     -96.86049649791607
+    ],
+    "rotation": [
+     0.0,
+     0.3848093801722019,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9999943616031481,
+     0.0,
+     0.0033580890268546533,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern"
+   },
+   "transform": {
+    "position": [
+     -6.3,
+     0.1184865298285314,
+     -25.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_lantern_post"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.12,
+     1.3,
+     0.12
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern Light"
+   },
+   "transform": {
+    "position": [
+     -5.6499999999999995,
+     2.0314399088627364,
+     -25.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.07
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.005,
+      0.015
+     ],
+     "diffuse": [
+      0.55,
+      0.3,
+      0.85
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.5
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern"
+   },
+   "transform": {
+    "position": [
+     6.3,
+     0.2209102445846092,
+     -47.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_lantern_post"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.12,
+     1.3,
+     0.12
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern"
+   },
+   "transform": {
+    "position": [
+     -6.3,
+     0.2281272804788863,
+     -69.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_lantern_post"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.12,
+     1.3,
+     0.12
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern Light"
+   },
+   "transform": {
+    "position": [
+     -5.6499999999999995,
+     2.061748243844626,
+     -69.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.07
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.005,
+      0.015
+     ],
+     "diffuse": [
+      0.55,
+      0.3,
+      0.85
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.5
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern"
+   },
+   "transform": {
+    "position": [
+     6.3,
+     0.19027316994876617,
+     -91.0
+    ],
+    "rotation": [
+     0.0,
+     180.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     6.123233995736766e-17,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_lantern_post"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.12,
+     1.3,
+     0.12
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern"
+   },
+   "transform": {
+    "position": [
+     -6.3,
+     0.10528250581206122,
+     -113.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_lantern_post"
+   },
+   "box_collider": {
+    "half_extents": [
+     0.12,
+     1.3,
+     0.12
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     1.3,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Road Lantern Light"
+   },
+   "transform": {
+    "position": [
+     -5.6499999999999995,
+     2.024649550406193,
+     -113.0
+    ],
+    "rotation": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     1.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "point_light": {
+    "attenuation": {
+     "attenuation_constant": 1.0,
+     "attenuation_linear": 0.14,
+     "attenuation_quadratic": 0.07
+    },
+    "color": {
+     "ambient": [
+      0.01,
+      0.005,
+      0.015
+     ],
+     "diffuse": [
+      0.55,
+      0.3,
+      0.85
+     ],
+     "specular": [
+      0.3,
+      0.2,
+      0.5
+     ]
+    }
+   }
+  },
+  {
+   "tag": {
+    "name": "Broken Cart"
+   },
+   "transform": {
+    "position": [
+     9.0,
+     1.5842871140097434,
+     -58.0
+    ],
+    "rotation": [
+     0.0,
+     30.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.9659258262890683,
+     0.0,
+     0.25881904510252074,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_cart"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1,
+     0.6,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
+    "name": "Broken Cart"
+   },
+   "transform": {
+    "position": [
+     -9.5,
+     0.0,
+     -104.0
+    ],
+    "rotation": [
+     0.0,
+     200.0,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.1736481776669303,
+     0.0,
+     0.984807753012208,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_cart"
+   },
+   "box_collider": {
+    "half_extents": [
+     1.1,
+     0.6,
+     0.6
+    ],
+    "is_trigger": false,
+    "layer": 1,
+    "local_offset": [
+     0.0,
+     0.6,
+     0.0
+    ],
+    "show_gizmos": false
+   }
+  },
+  {
+   "tag": {
     "name": "Brazier"
    },
    "transform": {
@@ -13619,7 +15315,7 @@
   {
    "parent": {
     "bone_name": "",
-    "index": 293
+    "index": 331
    },
    "point_light": {
     "attenuation": {
@@ -13921,7 +15617,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 295,
+    "index": 333,
     "bone_name": "Weapon_R"
    }
   },
@@ -13959,7 +15655,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 295,
+    "index": 333,
     "bone_name": "Hand_L"
    }
   },
@@ -14212,7 +15908,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 298,
+    "index": 336,
     "bone_name": "Weapon_R"
    }
   },
@@ -14250,7 +15946,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 298,
+    "index": 336,
     "bone_name": "Hand_L"
    }
   },
@@ -14514,7 +16210,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 301,
+    "index": 339,
     "bone_name": "Weapon_L"
    }
   },
@@ -14767,7 +16463,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 303,
+    "index": 341,
     "bone_name": "Weapon_R"
    }
   },
@@ -14805,7 +16501,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 303,
+    "index": 341,
     "bone_name": "Hand_L"
    }
   },
@@ -15064,7 +16760,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 306,
+    "index": 344,
     "bone_name": "Weapon_L"
    }
   },
@@ -15322,7 +17018,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 308,
+    "index": 346,
     "bone_name": "Weapon_R"
    }
   },
@@ -15360,7 +17056,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 308,
+    "index": 346,
     "bone_name": "Hand_L"
    }
   },
@@ -15613,7 +17309,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 311,
+    "index": 349,
     "bone_name": "Weapon_R"
    }
   },
@@ -15651,7 +17347,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 311,
+    "index": 349,
     "bone_name": "Hand_L"
    }
   },
@@ -15910,7 +17606,7 @@
     "camera_shake": 0.2
    },
    "parent": {
-    "index": 314,
+    "index": 352,
     "bone_name": "Weapon_L"
    }
   },
@@ -16156,7 +17852,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 316,
+    "index": 354,
     "bone_name": "head"
    }
   },
@@ -16402,7 +18098,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 318,
+    "index": 356,
     "bone_name": "head"
    }
   },
@@ -16648,7 +18344,7 @@
     "camera_shake": 0.15
    },
    "parent": {
-    "index": 320,
+    "index": 358,
     "bone_name": "head"
    }
   },
@@ -16924,7 +18620,7 @@
     "camera_shake": 0.25
    },
    "parent": {
-    "index": 322,
+    "index": 360,
     "bone_name": "Weapon_R"
    }
   },
@@ -19383,6 +21079,134 @@
    }
   },
   {
+   "tag": {
+    "name": "Arena Bones"
+   },
+   "transform": {
+    "position": [
+     -15.0,
+     0.06,
+     -158.0
+    ],
+    "rotation": [
+     0.0,
+     312.6080313170329,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.9156907621884943,
+     0.0,
+     0.40188360011656904,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Bones"
+   },
+   "transform": {
+    "position": [
+     14.0,
+     0.06,
+     -140.0
+    ],
+    "rotation": [
+     0.0,
+     234.41424735780535,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.45720850613216346,
+     0.0,
+     0.8893595346767219,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Bones"
+   },
+   "transform": {
+    "position": [
+     -6.0,
+     0.06,
+     -131.0
+    ],
+    "rotation": [
+     0.0,
+     78.60925700356526,
+     0.0
+    ],
+    "rotation_quaternion": [
+     0.7737890410507308,
+     0.0,
+     0.6334433833814909,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
+   "tag": {
+    "name": "Arena Bones"
+   },
+   "transform": {
+    "position": [
+     17.0,
+     0.06,
+     -162.0
+    ],
+    "rotation": [
+     0.0,
+     286.77393820628976,
+     0.0
+    ],
+    "rotation_quaternion": [
+     -0.8026818537809577,
+     0.0,
+     0.596407445971934,
+     0.0
+    ],
+    "scale": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "model": {
+    "is_visible": true,
+    "model_name": "gc_bones"
+   }
+  },
+  {
    "box_collider": {
     "half_extents": [
      1.75,
@@ -19471,7 +21295,7 @@
     ]
    },
    "parent": {
-    "index": 388
+    "index": 430
    },
    "particle_emitter": {
     "is_emitting": true,
@@ -19578,7 +21402,7 @@
     ]
    },
    "parent": {
-    "index": 390,
+    "index": 432,
     "bone_name": ""
    }
   },
@@ -19610,7 +21434,7 @@
     ]
    },
    "parent": {
-    "index": 390,
+    "index": 432,
     "bone_name": ""
    }
   },
@@ -19642,7 +21466,7 @@
     ]
    },
    "parent": {
-    "index": 390,
+    "index": 432,
     "bone_name": ""
    }
   },
@@ -19674,7 +21498,7 @@
     ]
    },
    "parent": {
-    "index": 390,
+    "index": 432,
     "bone_name": ""
    }
   },
@@ -19706,7 +21530,7 @@
     ]
    },
    "parent": {
-    "index": 390,
+    "index": 432,
     "bone_name": ""
    }
   },
@@ -19738,7 +21562,7 @@
     ]
    },
    "parent": {
-    "index": 390,
+    "index": 432,
     "bone_name": ""
    }
   },
@@ -20048,7 +21872,7 @@
     ]
    },
    "parent": {
-    "index": 397
+    "index": 439
    },
    "particle_emitter": {
     "is_emitting": false,
@@ -20120,7 +21944,7 @@
     "block_effect": "Hit Sparks"
    },
    "parent": {
-    "index": 397,
+    "index": 439,
     "bone_name": "Hand_L"
    }
   },
@@ -20174,7 +21998,7 @@
     "camera_shake": 0.45
    },
    "parent": {
-    "index": 397,
+    "index": 439,
     "bone_name": "Weapon_R"
    }
   },

@@ -66,6 +66,14 @@ private:
 	void SetBaseTransform(Shader& shader, const glm::mat4& modelMatrix, const SceneData& sceneData) const;
 	void SetBaseLighting(Shader& shader, const SceneData& sceneData) const;
 
+public:
+	// Call when the lights of a picture are set (each render of the scene, each view): the lit shaders send them again
+	// once, at their next draw. Sending all of them before every model (26 point lights, dozens of uniforms found by
+	// name) cost about a tenth of a millisecond a model
+	static void NewLightingVersion() { ++lightingVersion; }
+private:
+	static inline unsigned int lightingVersion = 1;
+
 	void SetDirectionalLights(Shader& shader, const SceneData& sceneData) const;
 	void SetPointLights(Shader& shader, const SceneData& sceneData) const;
 	void SetSpotLights(Shader& shader, const SceneData& sceneData) const;

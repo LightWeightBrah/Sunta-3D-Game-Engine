@@ -39,6 +39,9 @@ constexpr unsigned int DiffuseSlot = 0;
 constexpr float FadePart = 0.25f;
 // Tries per copy before a sparse mask gives up on it
 constexpr int MaskTries = 8;
+// Copies farther than this and outside a cone of the view (the cosine of its half angle, wide for a wide lens) are skipped
+constexpr float NearAlways = 4.0f;
+constexpr float ViewCone   = 0.35f;
 
 struct FoliageDrawer
 {
@@ -231,11 +234,19 @@ void FoliageSystem::Draw(EntityManager& entityManager, const SceneData& sceneDat
 		const float reach = foliage.drawDistance;
 		const float fadeFrom = reach * (1.0f - FadePart);
 		const glm::vec2 eye = glm::vec2(sceneData.cameraPosition.x, sceneData.cameraPosition.z);
+		// Where the camera looks, along the ground (the view matrix's third row is its backward axis)
+		glm::vec2 viewForward = -glm::vec2(sceneData.viewMatrix[0][2], sceneData.viewMatrix[2][2]);
+		viewForward = glm::length(viewForward) > 0.001f ? glm::normalize(viewForward) : glm::vec2(0.0f, -1.0f);
 		for (size_t i = 0; i < foliage.places.size(); ++i)
 		{
 			const glm::vec4& place = foliage.places[i];
-			const float distance = glm::length(glm::vec2(place.x, place.z) - eye);
+			const glm::vec2 toCopy = glm::vec2(place.x, place.z) - eye;
+			const float distance = glm::length(toCopy);
 			if (distance > reach)
+				continue;
+			// Outside the camera's view (behind it or far to a side): not drawn. Near ones always are (a tuft at
+			// the edge of the screen must not vanish while its top still shows)
+			if (distance > NearAlways && glm::dot(toCopy / distance, viewForward) < ViewCone)
 				continue;
 			const float shrink = distance > fadeFrom ? 1.0f - (distance - fadeFrom) / (reach - fadeFrom) : 1.0f;
 			visible.push_back({ glm::vec4(glm::vec3(place), place.w * shrink), foliage.extras[i] });

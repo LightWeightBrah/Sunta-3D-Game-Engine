@@ -224,6 +224,10 @@ void Renderer::SetBaseLighting(Shader& shader, const SceneData& sceneData) const
 		shader.TrySetUniform1i("shadowSoftness", sceneData.shadowSoftness);
 	}
 
+	// The lights: once a picture per shader (see NewLightingVersion)
+	if (shader.uploadedLightingVersion == lightingVersion)
+		return;
+	shader.uploadedLightingVersion = lightingVersion;
 	SetDirectionalLights(shader, sceneData);
 	SetPointLights(shader, sceneData);
 	SetSpotLights(shader, sceneData);

@@ -634,6 +634,7 @@ def candles(builder, position, light=True):
 def add_crypt(builder):
     """The dead king's crypt: a gothic nave of clustered columns under ribbed vaults, aisles of sarcophagi lit by
     candles, the throne on its dais under a stained glass window, the gate south to the plains"""
+    rng_crypt = random.Random(17)
     builder.add(named("Floor Crypt", (0.0, 0.0, 20.0), box_collider=collider((CRYPT_HALF_WIDTH, 0.15, 20.0), (0.0, -0.15, 0.0))))
     for x in (-8.0, 8.0):
         for z in (8.0, 24.0, 40.0):
@@ -688,6 +689,15 @@ def add_crypt(builder):
         for z in (6.0, 14.0, 22.0, 30.0):
             piece(builder, "Sarcophagus", "gc_sarcophagus", (side * 6.9, 0.0, z), 90.0, (0.55, 0.6, 1.25), (0.0, 0.6, 0.0))
             candles(builder, (side * 6.9, 0.0, z + 1.75))
+    # Iron candelabras in the nave between the columns, urns of the court at the aisles' ends, bones by the walls
+    for z in (6.0, 22.0):
+        for side in (-1.0, 1.0):
+            piece(builder, "Candelabra", "gc_candelabra", (side * 2.6, 0.0, z), rng_crypt.uniform(0, 360), (0.2, 1.0, 0.2), (0.0, 1.0, 0.0))
+    for side in (-1.0, 1.0):
+        piece(builder, "Urns", "gc_urns", (side * 7.8, 0.0, 36.5), 90.0 * side, (0.3, 0.5, 0.9), (0.0, 0.5, 0.0))
+        piece(builder, "Urns", "gc_urns", (side * 7.8, 0.0, 2.2), 90.0 * side, (0.3, 0.5, 0.9), (0.0, 0.5, 0.0))
+        for z in (10.0, 26.0):
+            piece(builder, "Bones", "gc_bones", (side * 8.2, 0.0, z), rng_crypt.uniform(0, 360))
     # The throne on its dais, candles and violet fire at its sides
     piece(builder, "Throne Dais", "gc_throne_dais", (0.0, 0.0, THRONE_Z), 180.0, (2.4, 0.3, 1.9), (0.0, 0.3, 0.0))
     piece(builder, "Throne of the Dead King", "arena_throne", (0.0, 0.6, THRONE_Z + 0.4), 180.0, (1.55, 1.7, 1.53))
@@ -779,6 +789,38 @@ def dress_plains(builder, rng):
               scale=rng.uniform(2.2, 3.2))
 
 
+def dress_camps(builder, rng):
+    """The camps of the gods' faithful: tents turned to the fire, a rack of weapons, crates and a barrel, bones, and at
+    the biggest a gibbet cage; the old road gets lantern posts with violet flames and carts left broken by it"""
+    for index, (cx_, cz_) in enumerate(((14.0, -28.0), (-18.0, -78.0), (16.0, -96.0))):
+        for k, angle in enumerate((rng.uniform(0, 60), rng.uniform(150, 210))):
+            a = math.radians(angle)
+            x, z = cx_ + math.cos(a) * 5.5, cz_ + math.sin(a) * 5.5
+            # (the tent's open front faces -Y in Blender, -Z... turned towards the camp's middle)
+            yaw = math.degrees(math.atan2(cx_ - x, cz_ - z)) + 180.0
+            piece(builder, "Camp Tent", "gc_tent", (x, 0.0, z), yaw, (1.6, 1.1, 1.6), (0.0, 1.1, 0.0))
+        a = math.radians(rng.uniform(250, 300))
+        piece(builder, "Weapon Rack", "gc_weapon_rack", (cx_ + math.cos(a) * 4.0, 0.0, cz_ + math.sin(a) * 4.0), rng.uniform(0, 360),
+              (0.9, 0.9, 0.2), (0.0, 0.9, 0.0))
+        a = math.radians(rng.uniform(80, 130))
+        piece(builder, "Supplies", "gc_crates", (cx_ + math.cos(a) * 6.0, 0.0, cz_ + math.sin(a) * 6.0), rng.uniform(0, 360),
+              (1.1, 0.6, 0.6), (0.0, 0.6, 0.0))
+        piece(builder, "Bones", "gc_bones", (cx_ + rng.uniform(-3, 3), 0.0, cz_ + rng.uniform(-3, 3)), rng.uniform(0, 360))
+        if index == 0:
+            piece(builder, "Gibbet Cage", "gc_cage", (cx_ - 7.0, 0.0, cz_ + 2.0), 30.0, (0.2, 1.9, 0.2), (0.0, 1.9, 0.0))
+    # The old road: a lantern every 22 m, on alternate sides, every other one lit
+    for k, z in enumerate((-25.0, -47.0, -69.0, -91.0, -113.0)):
+        side = -1.0 if k % 2 == 0 else 1.0
+        x = side * 6.3
+        piece(builder, "Road Lantern", "gc_lantern_post", (x, 0.0, z), 90.0 + 90.0 * side, (0.12, 1.3, 0.12), (0.0, 1.3, 0.0))
+        if k % 2 == 0:
+            builder.add(named("Road Lantern Light", (x - side * 0.65, 2.0, z), point_light={
+                "attenuation": {"attenuation_constant": 1.0, "attenuation_linear": 0.14, "attenuation_quadratic": 0.07},
+                "color": {"ambient": [0.01, 0.005, 0.015], "diffuse": [0.55, 0.3, 0.85], "specular": [0.3, 0.2, 0.5]}}))
+    for x, z, yaw in ((9.0, -58.0, 30.0), (-9.5, -104.0, 200.0)):
+        piece(builder, "Broken Cart", "gc_cart", (x, 0.0, z), yaw, (1.1, 0.6, 0.6), (0.0, 0.6, 0.0))
+
+
 def add_foliage(builder):
     """Ash grass, tall dead grass, pale grave flowers and thistles over the plains (foliage_generator.py; the engine's
     Foliage draws thousands of them near the camera, swaying), off the road, camps and arena (grass_mask.png)"""
@@ -809,6 +851,7 @@ def add_plains(builder, rng):
     invisible_wall(builder, (38.0, 5.0, 0.0), (26.0, 10.0, 0.5))
     dress_plains(builder, rng)
     add_foliage(builder)
+    dress_camps(builder, rng)
     # Camps of the faithful: fires and their guards
     # (two fires at the edge of each camp, away from where its guards fight: one in the middle filled the screen
     # with flame whenever the camera came close in a fight)
@@ -876,6 +919,8 @@ def add_arena(builder):
                   scale=0.9)
         brazier(builder, (cx + sx * 12.0, 0.0, cz - 12.0))
         brazier(builder, (cx + sx * 12.0, 0.0, cz + 12.0))
+    for x, z in ((-15.0, -12.0), (14.0, 6.0), (-6.0, 15.0), (17.0, -16.0)):
+        piece(builder, "Arena Bones", "gc_bones", (cx + x, FLOOR_LIFT, cz + z), rng.uniform(0, 360))
     fog = builder.copy_named("Arena Fog")
     builder.get(fog)["transform"] = transform((cx, 0.0, cz + h))
     # the fog's mist in the world's ash-violet (a grey-white cloud stood out of the haze around it)

@@ -662,6 +662,7 @@ void Scene::Render(Renderer& renderer)
 		sceneData.pointLights.resize(MaxSceneLights);
 	}
 	EffectSystem::AddLights(entityManager, sceneData.pointLights, MaxPointLights);
+	Renderer::NewLightingVersion();
 
 	PostProcessSettings postProcessSettings;
 	bool isPostProcessingWanted = true;
