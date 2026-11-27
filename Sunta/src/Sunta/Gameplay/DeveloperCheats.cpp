@@ -47,17 +47,29 @@ void TogglePixelLook(EntityManager& entityManager)
 
 	EnvironmentComponent& environment = environments.front();
 	SavedLook& saved = GetSavedLook();
+	// F3 only turns the pixel look on and off: a scene that has it (Grave Crown) loses it until F3 again, a scene
+	// without it gets the engine's (16 levels a channel, no dither: a dither pattern crawled over the world)
+	bool isOn = false;
 	if (!saved.isPixel)
 	{
 		saved = { true, environment.pixelSize, environment.paletteLevels, environment.ditherStrength,
 		          environment.outlineStrength, environment.paintRadius };
-		// 16 levels a channel and no dither: clean flat areas of color (a dither pattern read as a checkered noise
-		// and, fixed to the screen, crawled over the world whenever the camera moved; 7 levels without it banded)
-		environment.pixelSize       = 4;
-		environment.paletteLevels   = 16;
-		environment.ditherStrength  = 0.0f;
-		environment.outlineStrength = 0.7f;
-		environment.paintRadius     = 0;
+		if (environment.pixelSize > 1)
+		{
+			// (the full picture: no palette, the thin ink of the painted look)
+			environment.pixelSize       = 1;
+			environment.paletteLevels   = 0;
+			environment.outlineStrength = 0.45f;
+		}
+		else
+		{
+			environment.pixelSize       = 3;
+			environment.paletteLevels   = 9;
+			environment.ditherStrength  = 0.0f;
+			environment.outlineStrength = 0.8f;
+			environment.paintRadius     = 0;
+			isOn = true;
+		}
 	}
 	else
 	{
@@ -67,9 +79,11 @@ void TogglePixelLook(EntityManager& entityManager)
 		environment.outlineStrength = saved.outline;
 		environment.paintRadius     = saved.paintRadius;
 		saved.isPixel = false;
+		isOn = environment.pixelSize > 1;
 	}
-	HUDSystem::ShowNotification(entityManager, saved.isPixel ? "PIXEL LOOK ON (F3)" : "PIXEL LOOK OFF (F3)");
+	HUDSystem::ShowNotification(entityManager, isOn ? "PIXEL LOOK ON (F3)" : "PIXEL LOOK OFF (F3)");
 }
+
 
 }
 

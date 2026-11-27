@@ -12,9 +12,9 @@
    },
    "directional_light": {
     "ambient": [
-     0.2,
-     0.18,
-     0.21
+     0.28,
+     0.25,
+     0.29
     ],
     "diffuse": [
      0.9,
@@ -90,8 +90,8 @@
      0.96,
      0.93
     ],
-    "vignette": 0.38,
-    "exposure": 1.0
+    "vignette": 0.22,
+    "exposure": 1.35
    }
   },
   {

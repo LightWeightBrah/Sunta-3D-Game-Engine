@@ -62,9 +62,9 @@ ENVIRONMENT = {
     "pixel_size": 3, "palette_levels": 9, "dither_strength": 0.0, "hue_shift": 0.6, "shadow_hue": 300.0,
     "light_hue": 75.0, "clean_lines": True, "remove_orphans": True,
     # (no paint filter: its strokes turned the black armor into grey patches and blurred every figure)
-    "paint_radius": 0, "saturation": 0.85, "contrast": 1.18, "color_tint": [1.04, 0.96, 0.93], "vignette": 0.38, "exposure": 1.0,
+    "paint_radius": 0, "saturation": 0.85, "contrast": 1.18, "color_tint": [1.04, 0.96, 0.93], "vignette": 0.22, "exposure": 1.35,
 }
-MOONLIGHT = {"ambient": [0.2, 0.18, 0.21], "diffuse": [0.9, 0.82, 0.8], "specular": [0.14, 0.12, 0.18],
+MOONLIGHT = {"ambient": [0.28, 0.25, 0.29], "diffuse": [0.9, 0.82, 0.8], "specular": [0.14, 0.12, 0.18],
              "casts_shadows": True, "shadow_distance": 45.0, "shadow_strength": 1.0, "shadow_softness": 1,
              "shadow_resolution": 2048}
 
